@@ -39,6 +39,7 @@ race.info <- function(data)
 ## ??? This function needs a description, what is candidate, task and data?
 race.wrapper <- function(candidate, task, data)
 {
+  debug.level <- 0
   ## This is not configurable. Just replace the file with the appropriate one.
   ## ??? FIXME: check that the hooks exist and are executable.
   hookInstanceFinished <- "../hooks/hook-instance-finished"
@@ -112,11 +113,16 @@ race.wrapper <- function(candidate, task, data)
 ##           }
 ##         }
       }
-    
-      print(command)
+
+      if (debug.level >= 1) { print(command) }
       #q()
     
       #command="echo \$RANDOM"
+
+      ## FIXME: for the future: Investigate the multicore package to execute
+      ## nParallel (a new parameter) calls in parallel and collect the
+      ## results. This would allow to execute on multi-core computers
+      ## and also in the cluster by using 'qsub -sync y'
 
       ## Run the command
       if (system (command))
@@ -131,8 +137,8 @@ race.wrapper <- function(candidate, task, data)
 #  print(candidate)
   output <- as.numeric (system (paste (hookInstanceFinished, ins, candidate), intern=TRUE))
   if (is.na (output))
-    stop("The output of `", hookInstanceFinished, "' on instance `", ins,
-         "' for candidate `", candidate, "' is not a number!\n")
+    stop ("The output of `", hookInstanceFinished, ins, candidate,
+          "' is not a number!\n")
   return (output)
 }
 
