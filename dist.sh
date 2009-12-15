@@ -2,8 +2,9 @@
 set -e
 set -u
 BASEDIR=`pwd`
-#VERSION=`svnversion -n .`
-VERSION=`date '+%F' | tr -d '\n'`
+VERSION=`svnversion -n .`
+VERSION=svn${VERSION}
+#VERSION=`date '+%F' | tr -d '\n'`
 DIST_SRC=ifrace-${VERSION}
 echo "ifrace: version $VERSION"
 mkdir -p ../${DIST_SRC}
