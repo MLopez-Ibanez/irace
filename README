@@ -4,11 +4,12 @@ Iterated F-Race
 Configuration
 -------------
 
-* Modify the hook programs in hooks/ following the
-  instructions in each file.
+* For each template hook (*.tmpl) in hooks/, make a copy removing the
+  '.tmpl' suffix, and modify them following the instructions in each
+  file.
 
-* Modify the file TUNE/parameters.txt following the
-  instructions there.
+* Make a copy of the file TUNE/parameters.tmpl as TUNE/parameters.txt,
+  and modify it following the instructions there.
 
 * Put the instances in Instances/
 
@@ -18,8 +19,8 @@ Configuration
 * Modify the variable TUNE_CMD of submitJobs.sh to use or not qsub to
   submit jobs.
 
-* Modify the variable REPETITIONS of submitJobs.sh to specify how many
-  repetitions of Iterated F-race will be executed in parallel.
+* Call submitJobs.sh with the number of repetitions of Iterated F-race
+  to be executed in parallel.
 
 I think this is all for now.  If you find that you need to modify
 anything else, something is not clear or if you have problems:

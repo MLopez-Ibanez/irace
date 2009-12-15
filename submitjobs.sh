@@ -4,9 +4,23 @@
 #
 ###############################################################################
 
+usage() {
+    cat <<EOF
+usage: submitjobs.sh N
+
+Parameters:
+ N an integer giving the number of repetitions of F-Race
+
+EOF
+    exit 1
+}
+
+# Issue usage if no parameters are given.
+test $# -ne 1 && usage
+
 ## BEGIN configuration
 # Number of repetitions of F-Race
-REPETITIONS=1
+REPETITIONS=$1
 # Directory with R files and TUNE_CMD
 EXP=TUNE
 
