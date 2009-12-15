@@ -1,0 +1,24 @@
+#!/bin/bash
+###############################################################################
+# This hook is run after all candidate configurations have been run on
+# a single instance. 
+#
+# PARAMETERS:
+# $1 is the instance name
+# $2 is the number of candidates
+#
+# RETURN VALUE:
+# This script should print a single numerical value
+###############################################################################
+INSTANCE=$1
+NUMCAND=$2
+
+while [ -s "$NUMCAND" ]; do
+    sleep 10
+done
+
+COST=`cat ${NUMCAND}.run.output | grep -e '^[0-9]' | cut -f1`
+echo "$COST"
+rm -f ${NUMCAND}.run.output ${NUMCAND}.run.stderr
+#exit 0
+

@@ -1,0 +1,11 @@
+## The format is
+## One parameter per line
+## 1: name of the parameter
+## 2: quoted switch to pass the parameter, it can be an empty string
+## 3: type: i: Integer, c: component, r: real
+## 4: quoted string: c: specify all values; i,r: minimum and maximum values
+# 1:            2:                   3: 4:
+beamwidth       "--beamwidth"        i  "1, 10"
+mu              "--mu"               r  "1.0, 3.5"
+samplerate      "--sample-rate"      i  "0, 100"
+#samples         "-S"                 i  "1, 5"
