@@ -161,121 +161,125 @@ validate.subsidiary.parameters<-function(configurations, parameter.subsidiary.li
 }
 
 
-store.prob.vector=function(parameter.type.list, parameter.boundary.list, candidate.configurations.dataframe) {
-  type.c.names<-names(which(parameter.type.list[]=="c" | parameter.type.list[]=="m"))
+store.prob.vector <- function (parameter.type.list, parameter.boundary.list,
+                               candidate.configurations.dataframe)
+{
+  ## ??? m is undocumented
+  type.c.names <- names (which (parameter.type.list[] == "c"
+                                | parameter.type.list[] == "m"))
   # hashtable with
-  typ.c.prob.vector<-list()
-  if(any(parameter.type.list[]=="c" | parameter.type.list[]=="m")){
-    for( i in 1:length(type.c.names)){
+  typ.c.prob.vector <- list()
+  if (any (parameter.type.list[]=="c" | parameter.type.list[]=="m")) {
+    ## ??? use seq_along(type.c.names)
+    for (i in 1:length(type.c.names)) {
       # name of parameter
-      typ.c.name<-type.c.names[i]
+      typ.c.name <- type.c.names[i]
       
       # num.c.name - number of levels
-      num.c.name<-length(parameter.boundary.list[[typ.c.name]])
-      prob<-(1/num.c.name)
-      typ.c.prob.vector[[typ.c.name]]<-rep(prob, times=num.c.name)
+      num.c.name <- length(parameter.boundary.list[[typ.c.name]])
+      prob <- (1/num.c.name)
+      typ.c.prob.vector[[typ.c.name]] <- rep(prob, times=num.c.name)
     }
-  }
-  
-  
-  if(any(parameter.type.list[]=="c" | parameter.type.list[]=="m")){
-  
-    for( i in 1:length(type.c.names)){
-      typ.c.name<-type.c.names[i]
+
+    for (i in 1:length(type.c.names)){
+      typ.c.name <- type.c.names[i]
       
       # compute key for the hashtable. e.g. "0.18#0.39#0.2#4.6#50#35#ants" (configurations+parameter_name)
-      tmp<-compute.key.value(candidate.configurations.dataframe,typ.c.name,typ.c.prob.vector[[typ.c.name]])
-      prob.vector.type.c.list<<-append(prob.vector.type.c.list, tmp)
+      tmp <- compute.key.value(candidate.configurations.dataframe,typ.c.name,typ.c.prob.vector[[typ.c.name]])
+      prob.vector.type.c.list <<- append(prob.vector.type.c.list, tmp)
  
     }
-  
   }
 }
 
-generate.configurations.uniform<-function(N,parameter.names.vector,parameter.type.list,parameter.boundary.list,parameter.subsidiary.list){
+generate.configurations.uniform <-
+  function (N, parameter.names.vector, parameter.type.list,
+            parameter.boundary.list, parameter.subsidiary.list)
+{
+  debug.level <- 1
+  cat ("Start sampling", N, "candidates by uniform distribution.\n")
+  part <- NULL
+  configurations <- NULL
+  num.samples=N
+  is.first=TRUE
+  counter=0
+	
+  # ###############################################################################################
+  # To prevent repetitions in configurations
+  # ###############################################################################################
+  while (TRUE) {
+    if (! is.null(configurations)) {
+      part=unique(rbind(part, configurations))
+    }
 
-	cat("Start sampling", N, "candidates by uniform distribution.\n")
-	
-	part=NULL
-	configurations<-NULL
-	
-	num.samples=N
-	is.first=TRUE
-	counter=0
-	
-	# ###############################################################################################
-	# To prevent repetitions in configurations
-	# ###############################################################################################
-	while (TRUE) {
-		if (! is.null(configurations)) {
-			part=unique(rbind(part, configurations))
-		}
-		#cat(is.first, is.null(part), nrow(part), num.samples, N, "\n")
-		#print("new configurations")
-		#print(configurations)
-		#print("all current configurations")
-		#print(part)
-		if (! is.first) {
-			if (is.null(part)) {
-				break
-			} else {
-				if (nrow(part) >= num.samples) {
-					break
-				} else {
-					N=num.samples - nrow(part)
-				}
-			}
-		} else {
-			is.first=FALSE
-		}
-		
-		configurations=NULL
-		
-		if (counter >= max.sample.itr) {
-			cat("maximum sampling iterations (", counter, ") has been reached, sample uniformly\n")
-			
-			configurations=generate.configurations.uniform(N, parameter.names.vector, parameter.type.list, parameter.boundary.list, parameter.subsidiary.list)
-			#print(configurations)
-			configurations=as.matrix(configurations)
-			next
-		} else {
-			counter=counter + 1
-		}
-	
-		for ( i in 1:length(parameter.names.vector) ){
-			
-			parameter.name<-parameter.names.vector[i]
-			
-			if(parameter.type.list[[parameter.name]]=="c" | parameter.type.list[[parameter.name]]=="m"){
-				tmp<-sample(parameter.boundary.list[[parameter.name]],N,replace=TRUE)
-			} else {
-				
-				tmp<-runif(N,min=min(parameter.boundary.list[[parameter.name]]),max=max(parameter.boundary.list[[parameter.name]]))
-				tmp<-signif(tmp,digits=signif.digit)
-				
-				if(parameter.type.list[[parameter.name]] == "i"){
-				
-					tmp<-round(tmp)
-			
-				}
-			
-			}
-			
-			configurations<-cbind(configurations,tmp)
-		
-		}
+    if (debug.level > 0) {
+      cat(is.first, is.null(part), nrow(part), num.samples, N, "\n")
+      print("new configurations")
+      print(configurations)
+      print("all current configurations")
+      print(part)
+    }
+    
+    if (! is.first) {
+      if (is.null(part)) {
+        break
+      } else {
+        if (nrow(part) >= num.samples) {
+          break
+        } else {
+          N=num.samples - nrow(part)
+        }
+      }
+    } else {
+      is.first=FALSE
+    }
+    
+    configurations=NULL
+    
+    if (counter >= max.sample.itr) {
+      cat("maximum sampling iterations (", counter, ") has been reached, sample uniformly\n")
+      
+      configurations=generate.configurations.uniform(N, parameter.names.vector, parameter.type.list, parameter.boundary.list, parameter.subsidiary.list)
+      #print(configurations)
+      configurations=as.matrix(configurations)
+      next
+    } else {
+      counter=counter + 1
+    }
+    
+    for ( i in 1:length(parameter.names.vector) ){
+      
+      parameter.name<-parameter.names.vector[i]
+      
+      if(parameter.type.list[[parameter.name]]=="c" | parameter.type.list[[parameter.name]]=="m"){
+        tmp<-sample(parameter.boundary.list[[parameter.name]],N,replace=TRUE)
+      } else {
+        
+        tmp<-runif(N,min=min(parameter.boundary.list[[parameter.name]]),max=max(parameter.boundary.list[[parameter.name]]))
+        tmp<-signif(tmp,digits=signif.digit)
+        
+        if(parameter.type.list[[parameter.name]] == "i"){
+          
+          tmp<-round(tmp)
+          
+        }
+        
+      }
+      
+      configurations<-cbind(configurations,tmp)
+      
+    }
 	}
-	
-	configurations=part
-	
-	configurations<-as.data.frame(configurations)
-	
-	names(configurations)<-parameter.names.vector
-	
-	configurations=validate.subsidiary.parameters(configurations, parameter.subsidiary.list)
-	
-	return(configurations)
-
+  
+  configurations=part
+  
+  configurations<-as.data.frame(configurations)
+  
+  names(configurations)<-parameter.names.vector
+  
+  configurations=validate.subsidiary.parameters(configurations, parameter.subsidiary.list)
+  
+  return(configurations)
 }
 
 
