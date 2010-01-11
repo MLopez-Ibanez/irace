@@ -1,14 +1,14 @@
 ###############################################################################
-# What is this file for?
+# ??? What is this file for?
 ###############################################################################
 
-## What is this loaded for?
+## ??? What is this loaded for?
 source("util.R")
 
 ## we need instances maximum 2 times the normal number of rounds (6) per iteration
 ##maxInstance <- 2*round(maxExperiments/nrow(candidate.configurations.dataframe))
 ## modified the maxInstance to infinity
-## What is this??
+## ??? What is this??
 maxInstance <- 150
 
 hrace.wrapper <-
