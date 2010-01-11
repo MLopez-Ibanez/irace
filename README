@@ -8,7 +8,7 @@ Configuration
   '.tmpl' suffix, and modify them following the instructions in each
   file.
 
-* Make a copy of the file TUNE/parameters.tmpl as TUNE/parameters.txt,
+* Make a copy of the file parameters.tmpl as parameters.txt,
   and modify it following the instructions there.
 
 * Put the instances in Instances/

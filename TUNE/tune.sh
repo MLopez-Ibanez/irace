@@ -3,7 +3,7 @@
 #$ -l opteron244
 #$ -cwd 
 
-# FIXME: move all this to its own R file. Pass configuration as paramters.
+# FIXME: move all this to its own R file. Pass configuration as parameters.
 R --no-save --no-restore --slave<<EOF
 ## Configuration
 experiment.name <- "F-RACE applied to Beam-ACO"
@@ -18,7 +18,7 @@ instance.dir <- "../Instances"
 test.instance.dir <- ""
 ## Maximum number of experiments
 maxAllotedExperiments <- 1000
-parameters.file <- "./parameter.txt"
+parameters.file <- "../parameters.txt"
 ## END of configuration
 
 ### ??? Remove the quoted \$ once this goes into a pure R file
