@@ -39,7 +39,7 @@ race.info <- function(data)
 ## ??? This function needs a description, what is candidate, task and data?
 race.wrapper <- function(candidate, task, data)
 {
-  debug.level <- 0
+  debug.level <- 1
   ## This is not configurable. Just replace the file with the appropriate one.
   ## ??? FIXME: check that the hooks exist and are executable.
   hookInstanceFinished <- "../hooks/hook-instance-finished"
@@ -80,10 +80,13 @@ race.wrapper <- function(candidate, task, data)
       l <- length(names(cnd))
       cnd.names <- names(cnd)[1:l]
 
+      ## ??? This could be for (p in seq_along(params)) { p$names, p$param, etc }
       ## Constructs the command line
-      for (i in 1:l){
-##         print(cnd.names[i])
-##         print(data$parameter.param.list[i])
+      for (i in 1:l) {
+        if (debug.level >= 2) {
+          print(cnd.names[i])
+          print(data$parameter.param.list[i])
+        }
         ## ??? Why as.vector()
         tmp <- as.vector(cnd[[cnd.names[i]]])
         ## ??? Why as.numeric(), tmp could be a string.
@@ -135,9 +138,11 @@ race.wrapper <- function(candidate, task, data)
   }
 
 #  print(candidate)
+  ## FIXME: this should be silent
   output <- as.numeric (system (paste (hookInstanceFinished, ins, candidate), intern=TRUE))
+  ## This should handle vectors of NAs
   if (is.na (output))
-    stop ("The output of `", hookInstanceFinished, ins, candidate,
+    stop ("The output of `", hookInstanceFinished, " ", ins, " ", candidate,
           "' is not a number!\n")
   return (output)
 }
