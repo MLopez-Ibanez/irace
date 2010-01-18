@@ -4,6 +4,11 @@
 #
 ###############################################################################
 
+error () {
+    echo "submitjobs.sh: error: $@"
+    exit 1
+}
+
 usage() {
     cat <<EOF
 usage: submitjobs.sh N
@@ -24,9 +29,9 @@ REPETITIONS=$1
 # Directory with R files and TUNE_CMD
 EXP=TUNE
 
-#TUNE_CMD="qsub tune.sh"
-# This command is relative to $EXP dir
-TUNE_CMD="./tune.sh"
+# FIXME: This command is relative to $EXP dir, it should be a hook
+# located in hooks/ instead.
+TUNE_CMD="tune-main"
 
 ## END of configuration (uou should not need to touch what is below)
 
@@ -34,13 +39,12 @@ for i in $(seq 1 $REPETITIONS); do
     TRY=$(printf '%s-%002d' $EXP $i)
     echo "try = $TRY"
 
-    ## All this should be replaced by calling hrace.R with a parameter $i
+    ## FIXME: All this should be replaced by calling hrace.R with a parameter $i
     rm -rf $TRY
     cp -r $EXP $TRY
     perl -p -i -e "s/trailNum<-1/trailNum<-$i/g" $TRY/hrace.R
     cd $TRY
-
-    ## This should be configurable
+    test -x ${TUNE_CMD} || error "${TUNE_CMD} must be executable"
     eval ${TUNE_CMD}
     sleep 1
 

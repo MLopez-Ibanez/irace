@@ -6,18 +6,17 @@ Configuration
 
 * For each template hook (*.tmpl) in hooks/, make a copy removing the
   '.tmpl' suffix, and modify them following the instructions in each
-  file.
+  file. See the examples in hooks/examples/. The hooks should be
+  executable.
 
 * Make a copy of the file parameters.tmpl as parameters.txt,
   and modify it following the instructions there.
 
 * Put the instances in Instances/
 
-* Modify the header of TUNE/tune.sh to be what you want for the
-  cluster configuration (queues, etc).
-
-* Modify the variable TUNE_CMD of submitJobs.sh to use or not qsub to
-  submit jobs.
+* Make a copy of TUNE/tune-main.tmpl to TUNE/tune-main and adjust it
+  depending on your usage (local, cluster, etc). See the examples in
+  hooks/examples/tune-main-*. TUNE/tune-main should be executable.
 
 * Call submitJobs.sh with the number of repetitions of Iterated F-race
   to be executed in parallel.
@@ -25,5 +24,3 @@ Configuration
 I think this is all for now.  If you find that you need to modify
 anything else, something is not clear or if you have problems:
 <manuel.lopez-ibanez@ulb.ac.be>
-
-

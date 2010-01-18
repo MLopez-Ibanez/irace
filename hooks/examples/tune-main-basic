@@ -1,0 +1,5 @@
+#!/bin/sh
+ 
+# The simplest is to just invoke tune.R locally
+R --vanilla --slave < tune.R
+
