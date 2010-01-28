@@ -28,7 +28,7 @@ divideInThree <- function(left, right, s, v) {
   s.left <- trim(substr(s, 1, left-1))
   tokens.left <- tokens(s.left, v)
   v <- c(v, tokens.left)
-  v <- c(v, trim(substr(s, left+1, right-1)))
+  v <- c(v, substr(s, left+1, right-1))
   s.right <- trim(substr(s, right+1, nchar(s)))
   tokens.right <- tokens(s.right, v)
   v <- c(v, tokens.right)  

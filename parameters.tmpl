@@ -4,8 +4,9 @@
 ##
 ## 1: Name of the parameter. An unquoted alphanumeric string,
 ##    example: ants
-## 2: Switch to pass the parameter. A quoted (possibly empty) string,
-##    example : "--version1 --ants= "
+## 2: Switch to pass the parameter. A quoted (possibly empty) string, 
+##    if the value and the switch must be separated, add a space at
+##    the end of the string. Example : "--version1 --ants "
 ## 3: Type. An unquoted single letter, among 
 ##     i: Integer, c: component, r: real.
 ## 4: For c: All possible values, for i,r: minimum and maximum
@@ -13,7 +14,7 @@
 ##    parenthesis separated by commas.
 ##
 # 1:            2:                   3: 4:
-beamwidth       "--beamwidth"        i  ( 1, "10" , "mmas a" , 0.335, "0.335")
-mu              "--mu"               r  (1.0, 3.5)
-samplerate      "--sample-rate"      i  (0, 100)
-#samples         "-S"                 i  (1, 5)
+beamwidth       "--beamwidth "        i  ( 1, "10" , "mmas a" , 0.335, "0.335")
+mu              "--mu "               r  (1.0, 3.5)
+samplerate      "--sample-rate "      i  (0, 100)
+#samples         "-S "                 i  (1, 5)
