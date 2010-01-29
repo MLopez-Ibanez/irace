@@ -38,9 +38,12 @@ divideInThree <- function(left, right, s) {
   return(v)
 }
 
-# We divide a string s into an array of tokens by three levels: brackets, quotes and spaces. so quotes inside brackets are allowed, and spaces inside quotes are allowed too.
-# we assume the parameter presentations don't contain brackets "()", and the brackets are well corresponded. 
-# is there a way to print our own error messages or print stack trace after the assert error? 
+# We divide a string s into an array of tokens by three levels:
+# brackets, quotes and spaces. so quotes inside brackets are allowed,
+# and spaces inside quotes are allowed too.  we assume the parameter
+# presentations don't contain brackets "()", and the brackets are well
+# corresponded.  is there a way to print our own error messages or
+# print stack trace after the assert error?
 tokens <- function(s) {
   if (is.null(s) || length(s)==0 || nchar(s)==0) {
     return(NULL)
@@ -85,7 +88,7 @@ param.names <- slave.names <- c()
 parameter.type.list <- parameter.param.list <- parameter.boundary.list <- parameter.subsidiary.list <- master.list <- list()
 
 for (i in myparams) {
-  line <- trim(gsub("#.*$", "", i))
+  line <- trim(sub("#.*$", "", i))
   if (nchar(line) > 0) {
     items <- tokens(line)
     name <- items[1]
