@@ -8,9 +8,9 @@ parameter.param.list <- parameters$switches
 parameter.boundary.list <- parameters$boundary
 parameter.subsidiary.list <- parameters$subsidiary
 
-source("race.R")
+source("../race.R")
 source("hrace.R")
-#source("eval.R")
+source("../eval.R")
 
 hrace.wrapper(maxAllotedExperiments = maxAllotedExperiments,
               parameter.type.list = parameter.type.list,

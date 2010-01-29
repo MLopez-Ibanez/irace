@@ -70,7 +70,8 @@ parseValues2Vector <- function(s, is.number=FALSE) {
 }
 
 # Main function to read the parameter file. 
-readparameters <- function (filename) {
+readparameters <- function (filename = stop("readparameters: argument \"filename\" is mandatory"))
+{
   parameters <- list(names = list(),
                      types = list(),
                      switches = list(),

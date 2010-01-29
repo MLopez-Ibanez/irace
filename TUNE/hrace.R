@@ -3,7 +3,7 @@
 ###############################################################################
 
 ## ??? What is this loaded for?
-source("util.R")
+source("../util.R")
 
 ## we need instances maximum 2 times the normal number of rounds (6) per iteration
 ##maxInstance <- 2*round(maxExperiments/nrow(candidate.configurations.dataframe))
@@ -62,7 +62,7 @@ function(maxAllotedExperiments, parameter.type.list, parameter.boundary.list, pa
     cat("maxExperiments:",  maxExperiments,  "\n")
 
     ## ??? Which parameters are for F-Race and which ones are for the wrappers?
-    result <- race("race-wrapper.R", maxExp=maxExperiments,  first.test=5,  stop.min.cand=survival.quota, candidates=candidate.configurations.dataframe, maxIns=maxInstance, 
+    result <- race("../race-wrapper.R", maxExp=maxExperiments,  first.test=5,  stop.min.cand=survival.quota, candidates=candidate.configurations.dataframe, maxIns=maxInstance, 
                    experiment.name=experiment.name, extra.description=extra.description, executable=executable, instance.dir=instance.dir, parameter.name.list=parameter.name.list)
     # end of one iteration F-race
     
