@@ -89,8 +89,12 @@ race.wrapper <- function(candidate, task, data)
         }
         ## ??? Why as.vector()
         tmp <- as.vector(cnd[[cnd.names[i]]])
-        ## ??? Why as.numeric(), tmp could be a string.
-        command <- paste(command, " ", data$parameter.param.list[[i]], signif(as.numeric(tmp, signif.digit)), sep="")
+        if (! is.na(tmp)) {
+          if (is.numeric(tmp)) {
+            tmp <- signif(tmp, signif.digit)
+          }
+          command <- paste(command, " ", data$parameter.param.list[[i]], tmp, sep="")
+        }
 #        command <- paste(command, params.param[[i]], " ", signif(as.numeric(tmp, signif.digit)), sep="")
 ##         # added specifically for ACOTSP,  mode can be as,  eas,  mmas,  acs,  bwas,  ras. 
 ##         # to be modified for general boolean parameters,  cuz they are called as "--level".

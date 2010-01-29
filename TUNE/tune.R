@@ -23,14 +23,17 @@ trim <- function(s) {
 }
 
 # divide the given string s by three parts seperated by left and right
-divideInThree <- function(left, right, s, v) {
-  stopifnot(left < right)
+divideInThree <- function(left, right, s) {
+  stopifnot(left <= right)
+  v <- NULL
   s.left <- trim(substr(s, 1, left-1))
-  tokens.left <- tokens(s.left, v)
+  tokens.left <- tokens(s.left)
   v <- c(v, tokens.left)
-  v <- c(v, substr(s, left+1, right-1))
+  if (left < right) {
+    v <- c(v, substr(s, left+1, right-1))
+  }
   s.right <- trim(substr(s, right+1, nchar(s)))
-  tokens.right <- tokens(s.right, v)
+  tokens.right <- tokens(s.right)
   v <- c(v, tokens.right)  
   return(v)
 }
@@ -38,11 +41,11 @@ divideInThree <- function(left, right, s, v) {
 # We divide a string s into an array of tokens by three levels: brackets, quotes and spaces. so quotes inside brackets are allowed, and spaces inside quotes are allowed too.
 # we assume the parameter presentations don't contain brackets "()", and the brackets are well corresponded. 
 # is there a way to print our own error messages or print stack trace after the assert error? 
-tokens <- function(s, v) {
+tokens <- function(s) {
   if (is.null(s) || length(s)==0 || nchar(s)==0) {
     return(NULL)
   }
-  pos.space <- as.vector(gregexpr("[ \t]", s)[[1]])
+  pos.space <- as.vector(gregexpr("[[:space:]]", s)[[1]])
   pos.quote <- as.vector(gregexpr("\"", s)[[1]])
   pos.bracket.left <- as.vector(gregexpr("\\(", s)[[1]])
   pos.bracket.right <- as.vector(gregexpr("\\)", s)[[1]])
@@ -51,53 +54,70 @@ tokens <- function(s, v) {
     # first priority in the case of brackets
     left <- pos.bracket.left[1]
     right <- pos.bracket.right[1]
-    v <- divideInThree(left, right, s, v)
+    v <- divideInThree(left, right, s)
   } else if (length(pos.quote) > 0 && pos.quote[1] >= 0) {
     # second priority in the case of quotes
     stopifnot(! is.na(pos.quote[2]))
     left <- pos.quote[1]
     right <- pos.quote[2]
-    v <- divideInThree(left, right, s, v)
+    v <- divideInThree(left, right, s)
   } else if (length(pos.space) > 0 && pos.space[1] >= 0) {
     # if there exists no quotes and brackets, only white space characters are delimiters
-    left <- pos.space[1]
-    right <- pos.space[1] + 1
-    v <- divideInThree(left, right, s, v)
+    left <- right <- pos.space[1]
+    v <- divideInThree(left, right, s)
   } else {
     v <- s
   }
   return(v)
 }
 
-myparams <- readLines(con=parameters.file)
-param.list <- list(name=c(), param=c(), type=c(), value=c())
+parseValues2Vector <- function(s, is.number=FALSE) {
+  s <- trim(s)
+  values <- strsplit(s, "[[:space:]]?,[[:space:]]?")[[1]]
+  if (is.number) {
+    values <- as.numeric(values)
+  }
+  return(values)
+}
 
+myparams <- readLines(con=parameters.file)
+param.names <- slave.names <- c()
+parameter.type.list <- parameter.param.list <- parameter.boundary.list <- parameter.subsidiary.list <- master.list <- list()
 
 for (i in myparams) {
-  line <- gsub ("#.*$", "", i)
+  line <- trim(gsub("#.*$", "", i))
   if (nchar(line) > 0) {
-    items <- tokens(line, c())
-    param.list$name <- c(param.list$name, items[1])
-    param.list$param <- c(param.list$param, items[2])
-    param.list$type <- c(param.list$type, items[3])
-    param.list$value <- c(param.list$value, items[4])
+    items <- tokens(line)
+    name <- items[1]
+    param.names <- c(param.names, name)
+    count <- length(param.names)
+    parameter.param.list[[count]] <- items[2]
+    type <- items[3]
+    parameter.type.list[[count]] <- items[3]
+    parameter.boundary.list[[count]] <- parseValues2Vector(items[4], (type == "r" || type == "i"))
+    if (! is.na(items[5])) {
+      stopifnot(items[5] == "|")
+      stopifnot(! is.na(items[6]) &&  ! is.na(items[7]))
+      master.name <- items[6]
+      slave.names <- c(slave.names, name)
+      master.values <- parseValues2Vector(items[7])
+      master.list[[1]] <- master.values
+      names(master.list) <- master.name
+      master.count <- length(slave.names)
+      parameter.subsidiary.list[[master.count]] <- master.list
+    }
   }
 
 }
 
-evalparsevector <- function(x) return (eval(parse(text=paste("c(",x,")"))))
-param.list$value <- lapply (param.list$value, evalparsevector)
-parameter.param.list <- as.list(param.list$param)
-parameter.type.list <- as.list(param.list$type)
-names (parameter.type.list) <- param.list$name
-parameter.boundary.list <- param.list$value
-names (parameter.boundary.list) <- param.list$name
+names(parameter.type.list) <- names(parameter.param.list) <- names(parameter.boundary.list) <- param.names
+names(parameter.subsidiary.list) <- slave.names
+
 
 source("race.R")
 source("hrace.R")
 #source("eval.R")
 
-parameter.subsidiary.list<-list()
 parameter.name.list<-list()
 
 hrace.wrapper(maxAllotedExperiments = maxAllotedExperiments,
