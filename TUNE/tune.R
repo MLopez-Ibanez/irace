@@ -1,21 +1,4 @@
-## FIXME: configuration should be passed as parameters or read from a
-## configuration file.
-
-## Configuration
-experiment.name <- "F-RACE applied to Beam-ACO"
-extra.description <- "Iterative F-Race for tuning Beam-ACO"
-## This is not used anymore and should be deleted everywhere.
-executable <- ""
-## ????
-executablecomp <- ""
-## Folder to put instances
-instance.dir <- "../Instances"
-## ????
-test.instance.dir <- ""
-## Maximum number of experiments
-maxAllotedExperiments <- 1000
-parameters.file <- "../parameters.txt"
-## END of configuration
+source("../tune-conf")
 
 # remove leading and trailing white space characters
 trim <- function(s) {

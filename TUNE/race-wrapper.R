@@ -1,9 +1,6 @@
 ###############################################################################
-# This file needs a description
+# FIXME: This file needs a description
 ###############################################################################
-
-# global variable indicating the significant digit
-signif.digit <- 4
 
 ## ??? This function needs a description
 race.init <- function(candidatesConfig, maxIns, experiment.name, extra.description, executable, instance.dir, parameter.name.list)
@@ -39,43 +36,24 @@ race.info <- function(data)
 ## ??? This function needs a description, what is candidate, task and data?
 race.wrapper <- function(candidate, task, data)
 {
-  debug.level <- 1
   ## This is not configurable. Just replace the file with the appropriate one.
   ## ??? FIXME: check that the hooks exist and are executable.
   hookInstanceFinished <- "../hooks/hook-instance-finished"
   hookRun <- "../hooks/hook-run"
   
-  #print (data)
-  #q()
   cnd <- data$candidates[candidate, ];
   ins <- data$instances[task];
-  #parameter.type.list <- data$parameter.type.list
-  #timeWindow <- data$timeWindows[task]
   l <- length(names(cnd))
   names <- names(cnd)[1:l]
   
-  #print(cnd[["alpha"]])
-  #print(cnd$"alpha")
-  #q()
-
   real.names <- data$parameter.name.list
 
-  #timeWindow <- floor(runif(1, 0, 121))
-
   if (candidate == which.alive[1]) {
-    system("rm -f *.job", intern=TRUE, TRUE)
-    #system("rm -f DBLS.e*", intern=TRUE, TRUE)
-    #system("rm -f DBLS.o*", intern=TRUE, TRUE)
-    
     numJobs <- max(5, round(length(which.alive)/20))
-    #numJobs <- 1
-  
     counter <- 0
     for (candi in which.alive)  {
       # First parameter is the candidate number, second is the instance file
       command <- paste (hookRun, candi, ins)
-      #command <- paste(command, " -i ", ins, " -w ", timeWindow, sep="")
-
       cnd <- data$candidates[candi, ];
       l <- length(names(cnd))
       cnd.names <- names(cnd)[1:l]
@@ -95,35 +73,9 @@ race.wrapper <- function(candidate, task, data)
           }
           command <- paste(command, " ", data$parameter.param.list[[i]], tmp, sep="")
         }
-#        command <- paste(command, params.param[[i]], " ", signif(as.numeric(tmp, signif.digit)), sep="")
-##         # added specifically for ACOTSP,  mode can be as,  eas,  mmas,  acs,  bwas,  ras. 
-##         # to be modified for general boolean parameters,  cuz they are called as "--level".
-##         #cat("candi",  candi,  "i",  i,  "\n")
-##         #print(cnd)
-##         if (i == "mode") {
-##           command <- paste(command, "  --", cnd[[i]], sep="")
-##           #print(command)
-##         } else {
-##           #cat("i",  i,  "cnd[[i]]",  cnd[[i]],  "\n")
-##           #print(cnd[[i]])
-##           #print(cnd[["alpha"]])
-##         print(tmp)
-## ##           #cat("tmp", tmp, "\n")
-## ##           #command <- paste(command, "  --", i, "=", signif(as.numeric(cnd[[i]]), 2), sep="")
-        
-## ##           # FIXed take FALSE as flag might not be a standard way
-##           if (! is.na(tmp)) {
-##             if (!is.null(real.names) & length(real.names[[cnd.names[i]]])>0 & !is.null(real.names[[cnd.names[i]]])) {
-##               i <- real.names[[cnd.names[i]]]
-##               print(paste("real.names", i))
-##             }
-##           }
-##         }
       }
 
       if (debug.level >= 1) { print(command) }
-      #q()
-    
       #command="echo \$RANDOM"
 
       ## FIXME: for the future: Investigate the multicore package to execute
@@ -137,13 +89,11 @@ race.wrapper <- function(candidate, task, data)
 
       counter <- counter+1
     }
-  
-    #    system("sleep 1")
   }
 
-#  print(candidate)
   ## FIXME: this should be silent
-  output <- as.numeric (system (paste (hookInstanceFinished, ins, candidate), intern=TRUE))
+  output <- as.numeric (system (paste (hookInstanceFinished, ins, candidate),
+                                intern=TRUE))
   ## This should handle vectors of NAs
   if (is.na (output))
     stop ("The output of `", hookInstanceFinished, " ", ins, " ", candidate,
