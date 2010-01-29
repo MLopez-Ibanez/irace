@@ -1,0 +1,20 @@
+## The format is
+## One parameter per line
+## 1: name of the parameter
+## 2: quoted switch to pass the parameter, it can be an empty string
+## 3: type: i: Integer, c: component, r: real
+## 4: quoted string: c: specify all values; i,r: minimum and maximum values
+# 1:            2:                   3: 4:
+alpha       "--alpha "        r  (0.01, 5.0)
+beta       "--beta "        r  (0.0, 10.0)
+rho       "--rho "        r  (0.0, 1.0)
+ants       "--ants "        r  (1, 1000)
+nnants       "--nnants "        r  (3, 500)
+nnls       "--nnls "        r  (3, 500) | localsearch (1, 2, 3)
+q0       "--q0 "        r  (0.0, 1.0) | mode (acs)
+localsearch       "--localsearch "        c  (0, 1, 2, 3)
+dlb       "--dlb "        c  (0,1) | localsearch (1, 2, 3)
+mode       "--"        c  (as, eas, ras, acs, mmas)
+rasrank       "--rasrank "        i  (1, 100) | mode (ras)
+elitistants       "--elitistants "        i  (1, 750) | mode (eas)
+
