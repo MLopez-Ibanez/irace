@@ -36,16 +36,14 @@ TUNE_CMD="hooks/tune-main"
 for i in $(seq 1 $REPETITIONS); do
     TRY=$(printf '%s-%002d' $EXP $i)
     echo "try = $TRY"
-
-    ## FIXME: All this should be replaced by calling hrace.R with a parameter $i
     rm -rf $TRY
-    cp -r $EXP $TRY
-    perl -p -i -e "s/trailNum<-1/trailNum<-$i/g" $TRY/hrace.R
+    mkdir -p $TRY
+    ## FIXME: In fact trailNum is not in hrace.R but in eval.R and is
+    ## never used, so all this can be deleted.
+    #perl -p -i -e "s/trailNum<-1/trailNum<-$i/g" $TRY/hrace.R
     cd $TRY
     test -x ../${TUNE_CMD} || error "${TUNE_CMD} must be executable"
     ../${TUNE_CMD}
     sleep 1
-
     cd ..
-
 done

@@ -6,7 +6,6 @@ qsub <<EOF
 #$ -l opteron244
 #$ -cwd 
 
-# FIXME: the above configuration should be moved to 
-R --vanilla --slave < tune.R
+R --vanilla --slave < ../tune.R
 EOF
 
