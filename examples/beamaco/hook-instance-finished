@@ -5,7 +5,7 @@
 #
 # PARAMETERS:
 # $1 is the instance name
-# $2 is the number of candidates
+# $2 is the number of candidate
 #
 # RETURN VALUE:
 # This script should print a single numerical value
