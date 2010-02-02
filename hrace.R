@@ -13,7 +13,7 @@ hrace.wrapper <-
            parameter.name.list)
 {
   parameter.names.vector <- names(parameter.boundary.list)
-  # print(parameter.names.vector)
+  #print(parameter.names.vector)
   # number of parameters
   d <- length(parameter.names.vector)
 
@@ -42,7 +42,7 @@ hrace.wrapper <-
   candidate.configurations.dataframe <- generate.configurations.uniform (N, parameter.names.vector, parameter.type.list,
                                                                          parameter.boundary.list,  parameter.subsidiary.list)
   
-  store.prob.vector(parameter.type.list,  parameter.boundary.list,  candidate.configurations.dataframe)
+  store.prob.vector(parameter.type.list,  parameter.boundary.list, candidate.configurations.dataframe)
   
   # the minimal candidate number before we stop race. 
   survival.quota = 2 + round( log(d) / log(2) )
@@ -54,7 +54,9 @@ hrace.wrapper <-
   while( step < num.iterations ) {
     
     cat("maxExperiments:",  maxExperiments,  "\n")
-
+    if (debug.level >= 3) {
+      print (candidate.configurations.dataframe)
+    }
     ## ??? Which parameters are for F-Race and which ones are for the wrappers?
     result <- race("../race-wrapper.R", maxExp=maxExperiments,  first.test=5,  stop.min.cand=survival.quota, candidates=candidate.configurations.dataframe, maxIns=maxInstance, 
                    experiment.name=experiment.name, extra.description=extra.description, executable=executable, instance.dir=instance.dir, parameter.name.list=parameter.name.list)

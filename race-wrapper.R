@@ -40,13 +40,16 @@ race.wrapper <- function(candidate, task, data)
   ## ??? FIXME: check that the hooks exist and are executable.
   hookInstanceFinished <- "../hooks/hook-instance-finished"
   hookRun <- "../hooks/hook-run"
+
+  ## FIXME: this probably can be calculated much earlier and there is
+  ## no need to recalculate it here.
+  parameters.num <- ncol (data$candidates)
+  parameters.names <- names(data$candidates)
+  stopifnot (parameters.num > 0)
+  stopifnot (length(parameters.names) == parameters.num)
   
-  cnd <- data$candidates[candidate, ];
+  cnd <- c()
   ins <- data$instances[task];
-  l <- length(names(cnd))
-  names <- names(cnd)[1:l]
-  
-  real.names <- data$parameter.name.list
 
   if (candidate == which.alive[1]) {
     numJobs <- max(5, round(length(which.alive)/20))
@@ -54,19 +57,17 @@ race.wrapper <- function(candidate, task, data)
     for (candi in which.alive)  {
       # First parameter is the candidate number, second is the instance file
       command <- paste (hookRun, candi, ins)
-      cnd <- data$candidates[candi, ];
-      l <- length(names(cnd))
-      cnd.names <- names(cnd)[1:l]
-
+      cnd <- data$candidates[candi, ]
+      
       ## ??? This could be for (p in seq_along(params)) { p$names, p$param, etc }
       ## Constructs the command line
-      for (i in 1:l) {
+      for (i in seq_len(parameters.num)) {
         if (debug.level >= 2) {
-          print(cnd.names[i])
+          print(parameters.names[i])
           print(data$parameter.param.list[i])
+          print (cnd[i])
         }
-        ## ??? Why as.vector()
-        tmp <- as.vector(cnd[[cnd.names[i]]])
+        tmp <- cnd[i]
         if (! is.na(tmp)) {
           if (is.numeric(tmp)) {
             tmp <- signif(tmp, signif.digit)
@@ -87,7 +88,7 @@ race.wrapper <- function(candidate, task, data)
       if (system (command))
         stop("Command `", command, "' returned non-zero exit status!\n")
 
-      counter <- counter+1
+      counter <- counter + 1
     }
   }
 

@@ -196,11 +196,10 @@ generate.configurations.uniform <-
   function (N, parameter.names.vector, parameter.type.list,
             parameter.boundary.list, parameter.subsidiary.list)
 {
-  debug.level <- 1
   cat ("Start sampling", N, "candidates by uniform distribution.\n")
   part <- NULL
   configurations <- NULL
-  num.samples=N
+  num.samples <- N
   is.first=TRUE
   counter=0
 	
@@ -239,8 +238,11 @@ generate.configurations.uniform <-
     if (counter >= max.sample.itr) {
       cat("maximum sampling iterations (", counter, ") has been reached, sample uniformly\n")
       
-      configurations=generate.configurations.uniform(N, parameter.names.vector, parameter.type.list, parameter.boundary.list, parameter.subsidiary.list)
-      #print(configurations)
+      configurations <- generate.configurations.uniform(N, parameter.names.vector, parameter.type.list, parameter.boundary.list, parameter.subsidiary.list)
+      if (debug.level >= 2) {
+        cat ("Configurations:\n")
+        print(configurations)
+      }
       configurations=as.matrix(configurations)
       next
     } else {
@@ -248,8 +250,10 @@ generate.configurations.uniform <-
     }
     
     for ( i in 1:length(parameter.names.vector) ){
-      
       parameter.name<-parameter.names.vector[i]
+      if (debug.level >= 3) {
+        print (parameter.name)
+      }
       
       if(parameter.type.list[[parameter.name]]=="c" | parameter.type.list[[parameter.name]]=="m"){
         tmp<-sample(parameter.boundary.list[[parameter.name]],N,replace=TRUE)
@@ -271,14 +275,11 @@ generate.configurations.uniform <-
     }
 	}
   
-  configurations=part
-  
-  configurations<-as.data.frame(configurations)
-  
-  names(configurations)<-parameter.names.vector
-  
-  configurations=validate.subsidiary.parameters(configurations, parameter.subsidiary.list)
-  
+  configurations <- part
+  configurations <- as.data.frame(configurations)
+  names(configurations) <- parameter.names.vector
+  configurations <- validate.subsidiary.parameters(configurations, parameter.subsidiary.list)
+
   return(configurations)
 }
 
