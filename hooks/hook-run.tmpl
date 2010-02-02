@@ -3,6 +3,13 @@
 # This hook is the command that is executed every run.
 # Check the examples in examples/
 #
+# This hook is run in a temporary directory, the same directory where
+# hook-instance-finished is executed. Currently this temporary
+# directory is created under the working directory where you launched
+# F-Race, and, hence, you can copy files from F-Race directory to the
+# temporary directory with: cp --force ../file .
+#
+#
 # PARAMETERS:
 # $1 is the candidate number
 # $2 is the instance name
