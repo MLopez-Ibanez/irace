@@ -19,9 +19,11 @@ while [ -s "$NUMCAND" ]; do
     sleep 10
 done
 
-COST=`cat ${NUMCAND}.run.output | grep -e '^[0-9]' | cut -f1`
-echo "$COST"
-## FIXME: only delete these if the command above succeded
-rm -f ${NUMCAND}.run.output ${NUMCAND}.run.stderr
-#exit 0
+if COST=`cat ${NUMCAND}.run.output | grep -e '^[0-9]' | cut -f1`; then
+    echo "$COST"
+    rm -f ${NUMCAND}.run.output ${NUMCAND}.run.stderr
+    exit 0
+else
+    exit 1
+fi
 
