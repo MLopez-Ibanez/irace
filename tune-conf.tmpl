@@ -24,6 +24,12 @@ test.instance.dir <- ""
 ## Maximum number of experiments
 maxAllotedExperiments <- 1000
 
+## we need instances maximum 2 times the normal number of rounds (6) per iteration
+##maxInstance <- 2*round(maxExperiments/nrow(candidate.configurations.dataframe))
+## modified the maxInstance to infinity
+## ??? What is this??
+maxInstance <- 150
+
 ## File that contains the description of the parameters.
 parameters.file <- "../parameters.txt"
 

@@ -5,19 +5,13 @@
 ## ??? What is this loaded for?
 source("../util.R")
 
-## we need instances maximum 2 times the normal number of rounds (6) per iteration
-##maxInstance <- 2*round(maxExperiments/nrow(candidate.configurations.dataframe))
-## modified the maxInstance to infinity
-## ??? What is this??
-maxInstance <- 150
-
 hrace.wrapper <-
-function(maxAllotedExperiments, parameter.type.list, parameter.boundary.list, parameter.param.list,
-         experiment.name, extra.description, executable,
-         instance.dir, test.instance.dir, parameter.subsidiary.list, 
-         parameter.name.list)
+  function(maxAllotedExperiments, parameter.type.list, parameter.boundary.list,
+           parameter.param.list,
+           experiment.name, extra.description, executable,
+           instance.dir, test.instance.dir, parameter.subsidiary.list, 
+           parameter.name.list)
 {
-  
   parameter.names.vector <- names(parameter.boundary.list)
   # print(parameter.names.vector)
   # number of parameters
@@ -34,7 +28,6 @@ function(maxAllotedExperiments, parameter.type.list, parameter.boundary.list, pa
   # mu is the candidate-evaluation trade-off factor,  with value 6,  7,  ...
   mu <- 6 + step
   
-  
   # max number of experiments in each iteration
   maxExperiments <- floor( (maxAllotedExperiments - usedExperiments) / (num.iterations - step) )
   # the number of candidates
@@ -46,7 +39,8 @@ function(maxAllotedExperiments, parameter.type.list, parameter.boundary.list, pa
        "\nnumber of candidates of", (step + 1),
        "iteration:", N, "\n")
 
-  candidate.configurations.dataframe <- generate.configurations.uniform(N, parameter.names.vector, parameter.type.list, parameter.boundary.list,  parameter.subsidiary.list)
+  candidate.configurations.dataframe <- generate.configurations.uniform (N, parameter.names.vector, parameter.type.list,
+                                                                         parameter.boundary.list,  parameter.subsidiary.list)
   
   store.prob.vector(parameter.type.list,  parameter.boundary.list,  candidate.configurations.dataframe)
   
@@ -95,7 +89,6 @@ function(maxAllotedExperiments, parameter.type.list, parameter.boundary.list, pa
     # if the next iteration will be less than 6 rounds of evaluations,  stop.
     #if( (usedExperiments + 6*N) > maxAllotedExperiments )  break;
     
-    
     # compute the ranks of survivors for the update later
     if(maximum.elite.configurations>1){
       r <- t(apply(result$results[1:result$no.tasks, alive.configurations.index],  1,  rank))
@@ -111,10 +104,11 @@ function(maxAllotedExperiments, parameter.type.list, parameter.boundary.list, pa
     # compute probability for each elite configurations
     K <- length(elite.configurations.ranked.index)
     sumK <- K * (K + 1) / 2
+    ## FIXME: this should be equivalent to
+    ## prob.elite.configuration <- (K - (1:K) + 1) / sumK
     prob.elite.configuration <- NULL
-    
     for (i in 1:K){
-      prob.elite.configuration <- c(prob.elite.configuration, (K-i+1)/sumK)
+      prob.elite.configuration <- c(prob.elite.configuration, (K - i + 1) / sumK)
     }
     
     elite.configurations.dataframe.aux2 <- NULL
@@ -123,7 +117,6 @@ function(maxAllotedExperiments, parameter.type.list, parameter.boundary.list, pa
     
     print(elite.configurations.ranked.index)
 
-    
     for (i in 1 : length(elite.configurations.ranked.index)){
       # aux2 contains all the elite configurations for update
       elite.configurations.dataframe.aux2 <- rbind(elite.configurations.dataframe.aux2, 
@@ -133,30 +126,21 @@ function(maxAllotedExperiments, parameter.type.list, parameter.boundary.list, pa
     print(elite.configurations.dataframe.aux2)
     
     # to update and generate new candidates for the next iteration
-    configurations.dataframe.aux3 <- generate.configurations.normal(N, step,  num.iterations,  elite.configurations.dataframe.aux2, parameter.names.vector, parameter.type.list, parameter.boundary.list,  parameter.subsidiary.list)
-    
+    configurations.dataframe.aux3 <- generate.configurations.normal(N, step,
+                                                                    num.iterations,
+                                                                    elite.configurations.dataframe.aux2,
+                                                                    parameter.names.vector,
+                                                                    parameter.type.list,
+                                                                    parameter.boundary.list,
+                                                                    parameter.subsidiary.list)
     
     candidate.configurations.dataframe <- configurations.dataframe.aux3
     
-    if(nrow(unique(candidate.configurations.dataframe))==1) break;
-    
+    if (nrow(unique(candidate.configurations.dataframe)) == 1) break;
   }
   
-  
   stats <- data.frame(stats)
-  
   save(stats, file=paste("stats", ".Rdata", sep=""))
-  
-  
-##   system("rm -f *.job", intern=TRUE, TRUE)
-##   system("rm -f DBLS.e*", intern=TRUE, TRUE)
-##   system("rm -f DBLS.o*", intern=TRUE, TRUE)
-##   system("rm -f Race.e*", intern=TRUE, TRUE)
-##   system("rm -f Race.o*", intern=TRUE, TRUE)
-  
   #eval(result=result,  executable=executable,  test.instance.dir=test.instance.dir)
-
-  
-
 }
 
