@@ -2,10 +2,12 @@
 
 qsub <<EOF
 #!/bin/sh
-#$ -N SFT_20
-#$ -l opteron244
+#$ -N ifrace-$$
+#$ -l opteron2216
+#$ -l long
 #$ -cwd 
 
 R --vanilla --slave < ../tune.R
+
 EOF
 
