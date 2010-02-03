@@ -1,12 +1,13 @@
 
-signif.digit=4
+## FIXME: This is not currently working.
 
-eval=function(result, executable, test.instance.dir) {
-	
-	cnd<-result$description.best
-	#print(cnd)
-	l<-length(names(cnd))
-	names<-names(cnd)[1:l]
+signif.digit <- 4
+
+eval <- function(result, executable, test.instance.dir) {
+  cnd <- result$description.best
+  #print(cnd)
+  l <- length(names(cnd))
+  names <- names(cnd)[1:l]
 	
 	#executable<- "../../../Bin/acotsp --mmas --tries 1 --localsearch 0"
 	instancesTest<-list.files(path=test.instance.dir,pattern=".tsp",full.names=TRUE)

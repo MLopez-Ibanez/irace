@@ -17,7 +17,6 @@ race.init <- function(candidatesConfig, maxIns, experiment.name, extra.descripti
               experiment.name=experiment.name, 
               extra.description=extra.description, 
               executable=executable, 
-              #executablecomp=executablecomp, 
               #instance.name=instance.name, 
               instances=instances, 
 	      #timeWindows=timeWindows, 	
