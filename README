@@ -13,10 +13,10 @@ Configuration
 * Make a copy of the file parameters.tmpl as parameters.txt,
   and modify it following the instructions there.
 
-* Make a copy of the file tune-conf.tmpl as tune-conf
-  and modify it following the instructions there.
-
 * Put the instances in Instances/
+
+* Make a copy of the file tune-conf.tmpl as tune-conf 
+  and modify it following the instructions there.
 
 * Call submitJobs.sh with the number of repetitions of Iterated F-race
   to be executed in parallel.

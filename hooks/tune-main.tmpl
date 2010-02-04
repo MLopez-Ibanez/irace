@@ -3,7 +3,9 @@
 # This program launches one run of iterated F-Race.
 # It should execute tune.R at some point like in:
 #
-#R --vanilla --slave < tune.R
+#R --vanilla --slave --args $* < tune.R
+#
+# All parameters are passed down to tune.R
 #
 # However, it could be much more complicated, see the examples in
 # examples/
