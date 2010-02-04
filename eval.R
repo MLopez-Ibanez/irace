@@ -1,8 +1,6 @@
 
 ## FIXME: This is not currently working.
 
-signif.digit <- 4
-
 eval <- function(result, executable, test.instance.dir) {
   cnd <- result$description.best
   #print(cnd)
