@@ -42,9 +42,9 @@ for i in $(seq 1 $REPETITIONS); do
     ## FIXME: In fact trailNum is not in hrace.R but in eval.R and is
     ## never used, so all this can be deleted.
     #perl -p -i -e "s/trailNum<-1/trailNum<-$i/g" $TRY/hrace.R
-    cd $TRY
-    test -x ../${TUNE_CMD} || error "${TUNE_CMD} must be executable"
-    ../${TUNE_CMD} $*
+    #cd $TRY
+    test -x ./${TUNE_CMD} || error "${TUNE_CMD} must be executable"
+    ./${TUNE_CMD} $TRY $*
     sleep 1
-    cd ..
+
 done

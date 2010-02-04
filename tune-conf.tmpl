@@ -12,11 +12,14 @@ extra.description <- "Iterative F-Race for tuning Beam-ACO"
 ## FIXME: This is not used anymore and should be deleted everywhere.
 executable <- ""
 
+## Directory where the programs will be run
+.tune.execdir <- ""
+
 ## FIXME: What is this ????
 executablecomp <- ""
 
-## Folder to put instances
-instance.dir <- "../Instances"
+## Folder where tuning instances are located.
+.tune.tuning.instances.dir <- "./Instances"
 
 ## FIXME: What is this ????
 test.instance.dir <- ""
@@ -31,7 +34,7 @@ maxAllotedExperiments <- 1000
 maxInstance <- 150
 
 ## File that contains the description of the parameters.
-parameters.file <- "../parameters.txt"
+parameters.file <- "./parameters.txt"
 
 # Global variable indicating the significant digit.
 # FIXME: significant digits for what?
@@ -40,6 +43,9 @@ signif.digit <- 4
 # Debug level. debug.level <- 0 silences all debug messages.  Higher
 # values provide more verbose debug messages.
 debug.level <- 0
+
+# Maximum number of sampling iterations.
+max.sample.itr <- 10
 
 ## END of configuration file
 ############################################################################

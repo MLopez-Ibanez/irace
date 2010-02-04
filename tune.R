@@ -1,19 +1,27 @@
+## FIXME: Whe should handle this in plattform agnostic way, check help("file.path").
+path.rel2abs <- function (path) {
+  return (sub ('^(\\.)', paste (getwd(), '/\\1', sep=''), path))
+}
+
 .tune.config.file <- "tune-conf"
 args <- commandArgs(trailingOnly=TRUE)
 
-if (!is.na (args[1]) && !is.null(args[1]) && length(args[1]) > 0) {
-  .tune.config.file <- args[1]
+if (!is.na (args[2]) && !is.null(args[2]) && length(args[2]) > 0) {
+  .tune.config.file <- args[2]
 }
+
 cat ("Configuration file:", .tune.config.file, "\n")
-## FIXME: We should not need to do this, the working directory should
-## where we are invoked and not where the program is executed neither
-## where F-Race files are located.
-## FIXME: Whe should handle this in plattform agnostic way, check help("file.path").
-if (!any(grep ("^/", path.expand(.tune.config.file)))) {
-  .tune.config.file <- paste ("../", .tune.config.file, sep="")
-}
 source(.tune.config.file)
-source("../readparameters.R")
+
+if (!is.na (args[1]) && !is.null(args[1]) && length(args[1]) > 0) {
+  .tune.execdir <- args[1]
+}
+.tune.tuning.instances.dir <- path.rel2abs (.tune.tuning.instances.dir)
+
+cat ("Execution directory:", .tune.execdir, "\n")
+cat ("Tuning instances directory:", .tune.tuning.instances.dir, "\n")
+  
+source("readparameters.R")
 
 parameters <- readparameters(parameters.file)
 parameter.name.list <- parameters$names
@@ -22,9 +30,9 @@ parameter.param.list <- parameters$switches
 parameter.boundary.list <- parameters$boundary
 parameter.subsidiary.list <- parameters$subsidiary
 
-source("../race.R")
-source("../hrace.R")
-source("../eval.R")
+source("race.R")
+source("hrace.R")
+source("eval.R")
 
 hrace.wrapper(maxAllotedExperiments = maxAllotedExperiments,
               parameter.type.list = parameter.type.list,
@@ -33,7 +41,7 @@ hrace.wrapper(maxAllotedExperiments = maxAllotedExperiments,
               experiment.name = experiment.name,
               extra.description = extra.description,
               executable = executable,
-              instance.dir = instance.dir, 
+              instance.dir = .tune.tuning.instances.dir, 
               test.instance.dir,
               parameter.subsidiary.list = parameter.subsidiary.list,
               parameter.name.list = parameter.name.list)

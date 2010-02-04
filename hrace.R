@@ -3,7 +3,7 @@
 ###############################################################################
 
 ## ??? What is this loaded for?
-source("../util.R")
+source("util.R")
 
 # FIXME: This is a parameter that could be configured, it does not need to be linear.
 compute.mu <- function (iteration)
@@ -74,7 +74,7 @@ hrace.wrapper <-
     if (debug.level >= 3) {
       print (candidate.configurations.dataframe)
     }
-    result <- race("../race-wrapper.R", maxExp = maxExperiments,
+    result <- race("race-wrapper.R", maxExp = maxExperiments,
                    first.test = 5, # Minimum number of test before performing Friedman-test.
                    stop.min.cand = survival.quota,
                    candidates = candidate.configurations.dataframe,

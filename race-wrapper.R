@@ -6,9 +6,9 @@
 race.init <- function(candidatesConfig, maxIns, experiment.name, extra.description, executable, instance.dir, parameter.name.list)
 {
   candidates <- candidatesConfig
-  ins <- list.files(path=instance.dir, pattern="", full.names=TRUE)
+  ins <- list.files (path = instance.dir, full.names = TRUE)
   if (length (ins) == 0)
-    stop("No instances found in ", instance.dir, " !")
+    stop("No instances found in `", instance.dir, "' !\n")
   ins <- sample(ins)
   instances <- sample(ins, replace=TRUE, size=maxIns)
   # Return init list
@@ -84,16 +84,22 @@ race.wrapper <- function(candidate, task, data)
       ## and also in the cluster by using 'qsub -sync y'
 
       ## Run the command
-      if (system (command))
-        stop("Command `", command, "' returned non-zero exit status!\n")
+      cwd <- setwd (.tune.execdir)
+      command.exit.value <- system (command)
+      setwd (cwd)
+      if (command.exit.value) {
+        stop("Command `", command, "' returned non-zero exit status (", command.exit.value, ",)!\n")
+      }
 
       counter <- counter + 1
     }
   }
 
   ## FIXME: this should be silent
+  cwd <- setwd (.tune.execdir)
   output <- as.numeric (system (paste (hookInstanceFinished, ins, candidate),
                                 intern=TRUE))
+  setwd (cwd)
   ## This should handle vectors of NAs
   if (is.na (output))
     stop ("The output of `", hookInstanceFinished, " ", ins, " ", candidate,

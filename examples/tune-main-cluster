@@ -7,7 +7,7 @@ qsub <<EOF
 #$ -l long
 #$ -cwd 
 
-R --vanilla --slave --args $* < ../tune.R
+R --vanilla --slave --args $* < tune.R
 
 EOF
 
