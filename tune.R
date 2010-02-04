@@ -1,4 +1,18 @@
-source("../tune-conf")
+.tune.config.file <- "tune-conf"
+args <- commandArgs(trailingOnly=TRUE)
+
+if (!is.na (args[1]) && !is.null(args[1]) && length(args[1]) > 0) {
+  .tune.config.file <- args[1]
+}
+cat ("Configuration file:", .tune.config.file, "\n")
+## FIXME: We should not need to do this, the working directory should
+## where we are invoked and not where the program is executed neither
+## where F-Race files are located.
+## FIXME: Whe should handle this in plattform agnostic way, check help("file.path").
+if (!any(grep ("^/", path.expand(.tune.config.file)))) {
+  .tune.config.file <- paste ("../", .tune.config.file, sep="")
+}
+source(.tune.config.file)
 source("../readparameters.R")
 
 parameters <- readparameters(parameters.file)

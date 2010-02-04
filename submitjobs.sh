@@ -11,21 +11,22 @@ error () {
 
 usage() {
     cat <<EOF
-usage: submitjobs.sh N
+usage: submitjobs.sh N [IFRACE PARAMS]
 
 Parameters:
- N an integer giving the number of repetitions of F-Race
-
+ N                    an integer giving the number of repetitions of F-Race
+ IFRACE PARAMS       (optional) parameters for IFRACE
 EOF
     exit 1
 }
 
 # Issue usage if no parameters are given.
-test $# -ne 1 && usage
+test $# -ge 1 || usage
 
 ## BEGIN configuration
 # Number of repetitions of F-Race
 REPETITIONS=$1
+shift
 # Directory with R files and TUNE_CMD
 EXP=TUNE
 
@@ -43,7 +44,7 @@ for i in $(seq 1 $REPETITIONS); do
     #perl -p -i -e "s/trailNum<-1/trailNum<-$i/g" $TRY/hrace.R
     cd $TRY
     test -x ../${TUNE_CMD} || error "${TUNE_CMD} must be executable"
-    ../${TUNE_CMD}
+    ../${TUNE_CMD} $*
     sleep 1
     cd ..
 done
