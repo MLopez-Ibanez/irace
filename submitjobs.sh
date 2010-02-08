@@ -30,7 +30,9 @@ shift
 # Directory with R files and TUNE_CMD
 EXP=TUNE
 
-TUNE_CMD="hooks/tune-main"
+TUNE_CMD="tune-main"
+# Find our own location.
+BINDIR=$(dirname "$(readlink -f "$(type -P $0 || echo $0)")")
 
 ## END of configuration (uou should not need to touch what is below)
 
@@ -39,12 +41,9 @@ for i in $(seq 1 $REPETITIONS); do
     echo "try = $TRY"
     rm -rf $TRY
     mkdir -p $TRY
-    ## FIXME: In fact trailNum is not in hrace.R but in eval.R and is
-    ## never used, so all this can be deleted.
-    #perl -p -i -e "s/trailNum<-1/trailNum<-$i/g" $TRY/hrace.R
-    #cd $TRY
     test -x ./${TUNE_CMD} || error "${TUNE_CMD} must be executable"
-    ./${TUNE_CMD} $TRY $*
+    # FIXME: In fact there is a problem with the output files being
+    # overwritten, specially when using qsub.
+    ./${TUNE_CMD} $BINDIR $TRY $*
     sleep 1
-
 done

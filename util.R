@@ -169,13 +169,13 @@ init.prob.list <- function (parameter.type.list, parameter.boundary.list,
       # num.c.name - number of levels
       num.c.name <- length(parameter.boundary.list[[type.c.name]])
       prob <- (1 / num.c.name)
-      type.c.prob.vector[[typ.c.name]] <- rep(prob, times = num.c.name)
+      type.c.prob.vector[[type.c.name]] <- rep(prob, times = num.c.name)
     }
 
     for (i in 1:length(type.c.names)){
-      typ.c.name <- type.c.names[i]
+      type.c.name <- type.c.names[i]
       # compute key for the hashtable. e.g. "0.18#0.39#0.2#4.6#50#35#ants" (configurations+parameter_name)
-      tmp <- compute.key.value(candidate.configurations.dataframe,typ.c.name,type.c.prob.vector[[typ.c.name]])
+      tmp <- compute.key.value(candidate.configurations.dataframe,type.c.name,type.c.prob.vector[[type.c.name]])
       prob.list <- append(prob.list, tmp)
     }
   }
@@ -356,25 +356,25 @@ generate.configurations.normal <- function(num.candidates,
               if (extraSample <= 0) {
                 break
               } else {
-                i.number.samples = extraSample
+                i.number.samples <- extraSample
               }
               
             } else {
-              i.number.samples=num.samples - nrow(part)
+              i.number.samples <- num.samples - nrow(part)
             }
           }
         } else {
-          is.first=FALSE
+          is.first <- FALSE
         }
         
-        configurations=NULL
+        configurations <- NULL
         
         if (counter >= max.sample.itr) {
           cat("maximum sampling iterations (", counter, ") has been reached, sample uniformly\n")
           
-          configurations=generate.configurations.uniform(i.number.samples, parameter.names.vector, parameter.type.list, parameter.boundary.list, parameter.subsidiary.list)
+          configurations <- generate.configurations.uniform(i.number.samples, parameter.names.vector, parameter.type.list, parameter.boundary.list, parameter.subsidiary.list)
           #print(configurations)
-          configurations=as.matrix(configurations)
+          configurations <- as.matrix(configurations)
           next
         } else {
           counter=counter + 1
@@ -382,11 +382,11 @@ generate.configurations.normal <- function(num.candidates,
       	
         for ( j in 1:length(parameter.names.vector) ){
           
-          parameter.name<-parameter.names.vector[j]
-          parameter.value<-as.vector(i.index.data.row[[parameter.name]])
+          parameter.name <- parameter.names.vector[j]
+          parameter.value <- as.vector(i.index.data.row[[parameter.name]])
           cat("name", parameter.name, "value", parameter.value, "\n")
           
-          if(parameter.type.list[[parameter.name]] != "c" & parameter.type.list[[parameter.name]] != "m"){
+          if(parameter.type.list[[parameter.name]] != "c"){
             
             parameter.value<-as.numeric(parameter.value)
             
@@ -520,9 +520,9 @@ generate.configurations.normal <- function(num.candidates,
         configurations=validate.subsidiary.parameters(configurations, parameter.subsidiary.list)
 
         
-        type.c.names<-names(which(parameter.type.list[]=="c" | parameter.type.list[]=="m"))
+        type.c.names <- names(which(parameter.type.list[] == "c"))
         
-        if(any(parameter.type.list[]=="c" | parameter.type.list[]=="m")){
+        if(any(parameter.type.list[]=="c")){
           #print(prob.vector.type.c.list.aux)
           for( k in 1:length(type.c.names)){
             typ.c.name<-type.c.names[k]

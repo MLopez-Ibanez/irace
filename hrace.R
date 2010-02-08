@@ -74,7 +74,7 @@ hrace.wrapper <-
     if (debug.level >= 3) {
       print (candidate.configurations.dataframe)
     }
-    result <- race("race-wrapper.R", maxExp = maxExperiments,
+    result <- race(.tune.race.wrapper, maxExp = maxExperiments,
                    first.test = 5, # Minimum number of test before performing Friedman-test.
                    stop.min.cand = survival.quota,
                    candidates = candidate.configurations.dataframe,

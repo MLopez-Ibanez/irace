@@ -35,11 +35,20 @@ race.info <- function(data)
 ## ??? This function needs a description, what is candidate, task and data?
 race.wrapper <- function(candidate, task, data)
 {
-  ## This is not configurable. Just replace the file with the appropriate one.
-  ## ??? FIXME: check that the hooks exist and are executable.
-  hookInstanceFinished <- "../hooks/hook-instance-finished"
-  hookRun <- "../hooks/hook-run"
+  ## These files are relative to .tune.execdir
+  ## FIXME: make the paths absolute or relative to getwd() to print
+  ## nicer error messages.
+  hookRun <- paste (getwd(), "./hook-run", sep="/")
+  if (as.logical(file.access(hookRun, mode = 1))) {
+    stop ("hookRun `", hookRun, "' cannot be found or is not executable!\n")
+  }
 
+  hookInstanceFinished <- paste (getwd(), "./hook-instance-finished", sep="/")
+  if (as.logical(file.access(hookInstanceFinished, mode = 1))) {
+    stop ("hookInstanceFinished `", hookInstanceFinished,
+          "' cannot be found or is not executable!\n")
+  }
+  
   ## FIXME: this probably can be calculated much earlier and there is
   ## no need to recalculate it here.
   parameters.num <- ncol (data$candidates)
@@ -75,20 +84,18 @@ race.wrapper <- function(candidate, task, data)
         }
       }
 
-      if (debug.level >= 1) { print(command) }
-      #command="echo \$RANDOM"
-
       ## FIXME: for the future: Investigate the multicore package to execute
       ## nParallel (a new parameter) calls in parallel and collect the
       ## results. This would allow to execute on multi-core computers
       ## and also in the cluster by using 'qsub -sync y'
 
       ## Run the command
+      if (debug.level >= 1) { print(command) }
       cwd <- setwd (.tune.execdir)
       command.exit.value <- system (command)
       setwd (cwd)
       if (command.exit.value) {
-        stop("Command `", command, "' returned non-zero exit status (", command.exit.value, ",)!\n")
+        stop("Command `", command, "' returned non-zero exit status (", command.exit.value, ")!\n")
       }
 
       counter <- counter + 1
@@ -98,10 +105,10 @@ race.wrapper <- function(candidate, task, data)
   ## FIXME: this should be silent
   cwd <- setwd (.tune.execdir)
   output <- as.numeric (system (paste (hookInstanceFinished, ins, candidate),
-                                intern=TRUE))
+                                intern = TRUE))
   setwd (cwd)
   ## This should handle vectors of NAs
-  if (is.na (output))
+  if (any (is.na (output)))
     stop ("The output of `", hookInstanceFinished, " ", ins, " ", candidate,
           "' is not a number!\n")
   return (output)

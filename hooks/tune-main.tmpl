@@ -1,11 +1,13 @@
 #!/bin/bash
 
 # This program launches one run of iterated F-Race.
-# It should execute tune.R at some point like in:
+# It should execute ifrace at some point like in:
 #
-#R --vanilla --slave --args $* < tune.R
+#BINDIR=$1
+#shift
+#$BINDIR/ifrace $* 
 #
-# All parameters are passed down to tune.R
+# All parameters are passed down to ifrace
 #
 # However, it could be much more complicated, see the examples in
 # examples/

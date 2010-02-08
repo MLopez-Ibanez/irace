@@ -1,5 +1,7 @@
 #!/bin/sh
  
-# The simplest is to just invoke tune.R locally
-R --vanilla --slave --args $* < tune.R
+# The simplest is to just invoke ifrace locally
+BINDIR=$1
+shift
+$BINDIR/ifrace $* 
 

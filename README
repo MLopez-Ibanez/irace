@@ -4,23 +4,27 @@ Iterated F-Race
 Configuration
 -------------
 
-* For each template hook (*.tmpl) in hooks/, make a copy removing the
-  '.tmpl' suffix, and modify them following the instructions in each
-  file. In particular, tune-main.tmpl should be adjusted depending on
-  your usage (local, cluster, etc).  The hooks should be
+* Create a directory for the tuning, for example "tuning/".
+
+* Copy the files in the hooks/ directory to your tuning/ directory.
+  For each template hook (*.tmpl) in your tuning/ directory, remove
+  the '.tmpl' suffix, and modify them following the instructions in
+  each file. In particular, tune-main.tmpl should be adjusted
+  depending on your usage (local, cluster, etc).  The hooks should be
   executable. See the examples in examples/.
 
-* Make a copy of the file parameters.tmpl as parameters.txt,
+* Copy the file parameters.tmpl to your tuning directory as
+  parameters.txt, and modify it following the instructions there.
+
+* Put the instances in tuning/Instances/
+
+* Copy the file tune-conf.tmpl to your tuning/ directory as tune-conf
   and modify it following the instructions there.
 
-* Put the instances in Instances/
+* Call submitJobs.sh from your tuning directory with the number of
+  repetitions of Iterated F-race to be executed in parallel.
 
-* Make a copy of the file tune-conf.tmpl as tune-conf 
-  and modify it following the instructions there.
+* Results will appear in tuning/TUNE-dd, where dd is a number.
 
-* Call submitJobs.sh with the number of repetitions of Iterated F-race
-  to be executed in parallel.
-
-I think this is all for now.  If you find that you need to modify
-anything else, something is not clear or if you have problems:
-<manuel.lopez-ibanez@ulb.ac.be>
+If you find that you need to modify anything else, something is not
+clear or if you have problems: <manuel.lopez-ibanez@ulb.ac.be>
