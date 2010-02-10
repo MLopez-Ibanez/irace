@@ -34,11 +34,11 @@ TUNE_CMD="tune-main"
 # Find our own location.
 BINDIR=$(dirname "$(readlink -f "$(type -P $0 || echo $0)")")
 
-## END of configuration (uou should not need to touch what is below)
+## END of configuration (you should not need to touch what is below)
 
 for i in $(seq 1 $REPETITIONS); do
     TRY=$(printf '%s-%002d' $EXP $i)
-    echo "try = $TRY"
+    echo "execution directory = ./$TRY"
     rm -rf $TRY
     mkdir -p $TRY
     test -x ./${TUNE_CMD} || error "${TUNE_CMD} must be executable"
