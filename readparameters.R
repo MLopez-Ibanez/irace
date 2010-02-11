@@ -65,6 +65,8 @@ parseValues2Vector <- function(s, is.number=FALSE) {
   values <- strsplit(s, "[[:space:]]?,[[:space:]]?")[[1]]
   if (is.number) {
     values <- as.numeric(values)
+  } else {
+    values <- as.character(values)
   }
   return (values)
 }
