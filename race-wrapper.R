@@ -91,14 +91,14 @@ race.wrapper <- function(candidate, task, data)
       ## and also in the cluster by using 'qsub -sync y'
 
       ## Run the command
-      if (debug.level >= 1) { print(command) }
+      if (debug.level >= 1) { cat (format(Sys.time(), usetz=TRUE), ":", command, "\n") }
       cwd <- setwd (.tune.execdir)
       command.exit.value <- system (command)
       setwd (cwd)
       if (command.exit.value) {
         stop("Command `", command, "' returned non-zero exit status (", command.exit.value, ")!\n")
       }
-
+      if (debug.level >= 1) { cat (format(Sys.time(), usetz=TRUE), ": DONE\n") }
       counter <- counter + 1
     }
   }
