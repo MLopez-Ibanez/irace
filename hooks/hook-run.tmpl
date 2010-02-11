@@ -24,7 +24,7 @@ EXE=~/bin/program
 FIXED_PARAMS=""
 CANDIDATE=$1
 INSTANCE=$2
-shift 2
+shift 2 || exit 1
 CAND_PARAMS=$*
 
-exec $EXE ${FIXED_PARAMS} -i $INSTANCE ${CAND_PARAMS} 1> ${CANDIDATE}.run.output 2> ${CANDIDATE}.run.stderr
+exec $EXE ${FIXED_PARAMS} -i $INSTANCE ${CAND_PARAMS} 1> c${CANDIDATE}.stdout 2> c${CANDIDATE}.stderr

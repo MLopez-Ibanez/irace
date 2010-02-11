@@ -15,15 +15,16 @@
 INSTANCE=$1
 NUMCAND=$2
 
-while [ -s "$NUMCAND" ]; do
-    sleep 10
+SLEEPTIME=1
+while [ ! -s c${NUMCAND}.stdout ]; do
+    sleep $SLEEPTIME
+    let "SLEEPTIME += 1"
 done
 
 if COST=`cat ${NUMCAND}.run.output | grep -e '^[0-9]' | cut -f1`; then
     echo "$COST"
-    rm -f ${NUMCAND}.run.output ${NUMCAND}.run.stderr
+    rm -f c${NUMCAND}.stdout c${NUMCAND}.stderr
     exit 0
 else
     exit 1
 fi
-
