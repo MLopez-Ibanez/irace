@@ -21,10 +21,14 @@ Configuration
 * Copy the file tune-conf.tmpl to your tuning/ directory as tune-conf
   and modify it following the instructions there.
 
-* Call submitJobs.sh from your tuning directory with the number of
-  repetitions of Iterated F-race to be executed in parallel.
+* Call submitjobs.sh from your tuning directory with the number of
+  repetitions of Iterated F-race to be executed in parallel. If you
+  execute several in your local computer, then you may need to
+  redirect the output to a file, either manually or in tune-main.
 
-* Results will appear in tuning/TUNE-dd, where dd is a number.
+* Results will appear in tuning/TUNE-dd, where dd is a number. Be
+  careful, if you run submitjobs.sh again, these directories will be
+  deleted.
 
 If you find that you need to modify anything else, something is not
 clear or if you have problems: <manuel.lopez-ibanez@ulb.ac.be>
