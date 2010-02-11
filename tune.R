@@ -33,10 +33,11 @@ read.arg <- function(args, short="", long="", default=NULL)
 
 # FIXME: This should not have a default but check whether it is
 # missing and error out properly.
-.tune.config.file <- "tune-conf"
+.tune.installdir <- NULL
 args <- commandArgs(trailingOnly=FALSE)
-.tune.installdir <- dirname (read.arg(args,"-f","--file"))
-cat("Iterated F-Race install directory:", .tune.installdir, "\n")
+.tune.installdir <- dirname (read.arg(args,"-f","--file"), .tune.install.dir)
+
+.tune.config.file <- "tune-conf"
 args <- commandArgs(trailingOnly=TRUE)
 # FIXME: Make these real commandline parameters. 
 if (!is.na (args[2]) && !is.null(args[2]) && length(args[2]) > 0) {
@@ -45,10 +46,11 @@ if (!is.na (args[2]) && !is.null(args[2]) && length(args[2]) > 0) {
 
 cat ("Configuration file:", .tune.config.file, "\n")
 source(.tune.config.file)
-
 if (!is.na (args[1]) && !is.null(args[1]) && length(args[1]) > 0) {
   .tune.execdir <- args[1]
 }
+cat("Iterated F-Race install directory:", .tune.installdir, "\n")
+
 .tune.tuning.instances.dir <- path.rel2abs (.tune.tuning.instances.dir)
 
 cat ("Execution directory:", .tune.execdir, "\n")
