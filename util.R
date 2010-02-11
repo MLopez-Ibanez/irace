@@ -136,14 +136,16 @@ validate.subsidiary.parameters <- function(configurations, parameter.subsidiary.
     for (sname in sub.names) {
       master <- parameter.subsidiary.list[[sname]]
       for (mname in names(master)) {
-        # if the configuration value equals none of the value in the master vector 
-        if (! any(master[[mname]] == configurations[i,][[mname]])) {
-          # we take the corresponding unnecessary subsidiary parameter
+        # If the configuration value equals none of the value in the
+        # master vector.
+        if (is.na (configurations[i,][[mname]])
+            || ! any(master[[mname]] == configurations[i,][[mname]])) {
+          # We take the corresponding unnecessary subsidiary parameter
           # value away by setting them to be "NA". Note that this is
           # not the keyword NA, but under double quotes. We will test
           # this in the wrapper file. Further note that master$mname
           # is a vector, it can take more than one value, but we
-          # currently consider single value only
+          # currently consider single value only.
           configurations[i,][[sname]] <- NA
         }
       }
