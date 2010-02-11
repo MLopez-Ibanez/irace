@@ -60,27 +60,28 @@ race.wrapper <- function(candidate, task, data)
   ins <- data$instances[task];
 
   if (candidate == which.alive[1]) {
-    numJobs <- max(5, round(length(which.alive)/20))
+    # FIXME: This is never used!
+    #numJobs <- max(5, round(length(which.alive)/20))
     counter <- 0
     for (candi in which.alive)  {
       # First parameter is the candidate number, second is the instance file
       command <- paste (hookRun, candi, ins)
       cnd <- data$candidates[candi, ]
-      
-      ## ??? This could be for (p in seq_along(params)) { p$names, p$param, etc }
+      ## FIXME This could be for (p in seq_along(params)) { p$names, p$param, etc }
       ## Constructs the command line
       for (i in seq_len(parameters.num)) {
+        param.value <- cnd[[i]]
+        param.switch <- data$parameter.param.list[[i]]
         if (debug.level >= 2) {
           print(parameters.names[i])
-          print(data$parameter.param.list[i])
-          print (cnd[i])
+          print (param.switch)
+          print (param.value)
         }
-        tmp <- cnd[i]
-        if (! is.na(tmp)) {
-          if (is.numeric(tmp)) {
-            tmp <- signif(tmp, signif.digit)
+        if (! is.na(param.value)) {
+          if (is.numeric(param.value)) {
+            param.value <- signif(param.value, signif.digit)
           }
-          command <- paste(command, " ", data$parameter.param.list[[i]], tmp, sep="")
+          command <- paste(command, " ", param.switch, param.value, sep="")
         }
       }
 
@@ -104,6 +105,9 @@ race.wrapper <- function(candidate, task, data)
 
   ## FIXME: this should be silent
   cwd <- setwd (.tune.execdir)
+  if (debug.level >= 1) {
+    cat(paste (hookInstanceFinished, ins, candidate, "\n"))
+  }
   output <- as.numeric (system (paste (hookInstanceFinished, ins, candidate),
                                 intern = TRUE))
   setwd (cwd)
