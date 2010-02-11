@@ -35,7 +35,7 @@ read.arg <- function(args, short="", long="", default=NULL)
 # missing and error out properly.
 .tune.installdir <- NULL
 args <- commandArgs(trailingOnly=FALSE)
-.tune.installdir <- dirname (read.arg(args,"-f","--file"), .tune.install.dir)
+.tune.installdir <- dirname (read.arg(args,"-f","--file"), .tune.installdir)
 
 .tune.config.file <- "tune-conf"
 args <- commandArgs(trailingOnly=TRUE)
