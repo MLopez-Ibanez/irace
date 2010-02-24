@@ -13,7 +13,7 @@ race.init <- function(candidatesConfig, maxIns, experiment.name, extra.descripti
   instances <- sample(ins, replace=TRUE, size=maxIns)
   # Return init list
   return(list(no.candidates=nrow(candidates), 
-              no.tasks=length(instances), 
+              no.tasks=length(instances),
               experiment.name=experiment.name, 
               extra.description=extra.description, 
               executable=executable, 

@@ -71,7 +71,7 @@ hrace.wrapper <-
   while (iteration < num.iterations) {
     
     cat("maxExperiments:",  maxExperiments,  "\n")
-    if (debug.level >= 3) {
+    if (debug.level >= 5) {
       print (candidate.configurations.dataframe)
     }
     result <- race(.tune.race.wrapper, maxExp = maxExperiments,
@@ -112,12 +112,12 @@ hrace.wrapper <-
                      used.exp = result$no.experiments,
                      used.ins = result$no.tasks,
                      no.alive = result$no.alive))
-    
+
     # compute the ranks of survivors for the update later
     alive.configurations.index <- which(result$alive == TRUE)
     alive.configurations.dataframe <- candidate.configurations.dataframe[result$alive, ]
     maximum.elite.configurations <- min(result$no.alive, elite.quota)
-    
+
     if (maximum.elite.configurations > 1) {
       # Rank the ones alive.
       r <- t(apply(result$results[1:result$no.tasks, alive.configurations.index],  1,  rank))
@@ -138,20 +138,24 @@ hrace.wrapper <-
     for (i in 1:K){
       prob.elite.configuration <- c(prob.elite.configuration, (K - i + 1) / sumK)
     }
-    
     elite.configurations.dataframe.aux2 <- NULL
-    
+
+    # FIXME: at some moment here, the tables lose their proper column
+    # names (parameter.names), so they may not be indexable
+    # later. This is something we have to deal with earlier by either
+    # using a numerical index (which is also faster) or using the
+    # data.frame column names and a vector that matches the column
+    # names with the parameter.names.
+    if (debug.level >= 4) { print(candidate.configurations.dataframe) }
+    if (debug.level >= 4) { print(alive.configurations.dataframe) }
     alive.configurations.dataframe <- data.frame(alive.configurations.dataframe)
     
-    print(elite.configurations.ranked.index)
 
     for (i in 1 : length(elite.configurations.ranked.index)){
       # aux2 contains all the elite configurations for update
       elite.configurations.dataframe.aux2 <- rbind(elite.configurations.dataframe.aux2, 
       data.frame(cbind(config.ranks=i, config.prob=prob.elite.configuration[i], alive.configurations.dataframe[row.names(alive.configurations.dataframe)== elite.configurations.ranked.index[i], ]), row.names=i))
     }
-    
-    print(elite.configurations.dataframe.aux2)
     
     # to update and generate new candidates for the next iteration
     configurations.dataframe.aux3 <- generate.configurations.normal(num.candidates, iteration,

@@ -44,12 +44,12 @@ if (!is.na (args[2]) && !is.null(args[2]) && length(args[2]) > 0) {
   .tune.config.file <- args[2]
 }
 
+cat("Iterated F-Race install directory:", .tune.installdir, "\n")
 cat ("Configuration file:", .tune.config.file, "\n")
 source(.tune.config.file)
 if (!is.na (args[1]) && !is.null(args[1]) && length(args[1]) > 0) {
   .tune.execdir <- args[1]
 }
-cat("Iterated F-Race install directory:", .tune.installdir, "\n")
 
 .tune.tuning.instances.dir <- path.rel2abs (.tune.tuning.instances.dir)
 
