@@ -55,6 +55,7 @@ if (!is.na (args[1]) && !is.null(args[1]) && length(args[1]) > 0) {
 
 cat ("Execution directory:", .tune.execdir, "\n")
 cat ("Tuning instances directory:", .tune.tuning.instances.dir, "\n")
+cat ("Tuning instances file:", .tune.tuning.instances.file, "\n")
 
 # Read source files needed from the installation directory.
 cwd <- setwd(.tune.installdir)
@@ -72,6 +73,7 @@ parameter.param.list <- parameters$switches
 parameter.boundary.list <- parameters$boundary
 parameter.subsidiary.list <- parameters$subsidiary
 
+options(width=500)
 
 hrace.wrapper(maxAllotedExperiments = maxAllotedExperiments,
               parameter.type.list = parameter.type.list,

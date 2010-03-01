@@ -2,13 +2,37 @@
 # FIXME: This file needs a description
 ###############################################################################
 
+canonical.dirname <- function(dirname = stop("required parameter"))
+  {
+    return (sub ("([^/])$", "\\1/", dirname))
+  }
+
 ## ??? This function needs a description
 race.init <- function(candidatesConfig, maxIns, experiment.name, extra.description, executable, instance.dir, parameter.name.list)
 {
   candidates <- candidatesConfig
-  ins <- list.files (path = instance.dir, full.names = TRUE)
-  if (length (ins) == 0)
-    stop("No instances found in `", instance.dir, "' !\n")
+  instances.extra.params <- NULL
+  instance.dir <- canonical.dirname (instance.dir)
+
+  if (!is.null (.tune.tuning.instances.file) && .tune.tuning.instances.file != "") {
+    if (as.logical (file.access (.tune.tuning.instances.file, mode=4))) {
+      stop (".tune.tuning.instance.file `", .tune.tuning.instances.file, "' cannot be read!\n")
+    } else if (as.logical (file.info (.tune.tuning.instances.file)$isdir)) {
+      stop (".tune.tuning.instance.file `", .tune.tuning.instances.file, "' is a directory, not a file!\n")
+    }
+    lines <- readLines (.tune.tuning.instances.file)
+    lines <- sub("#.*$", "", lines) # Remove comments
+    lines <- sub("^[[:space:]]+$", "", lines) # Remove extra spaces
+    lines <- lines[lines != ""] # Delete empty lines
+    ins <- sub("[[:space:]]+.*$", "", lines)
+    ins <- sub ("^", instance.dir, ins)
+    instances.extra.params <- sub("^[^[:space:]]+ ", "", lines)
+    names (instances.extra.params) <- ins
+  } else {
+    ins <- list.files (path = instance.dir, full.names = TRUE)
+    if (length (ins) == 0)
+      stop("No instances found in `", instance.dir, "' !\n")
+  }
   ins <- sample(ins)
   instances <- sample(ins, replace=TRUE, size=maxIns)
   # Return init list
@@ -17,12 +41,12 @@ race.init <- function(candidatesConfig, maxIns, experiment.name, extra.descripti
               experiment.name=experiment.name, 
               extra.description=extra.description, 
               executable=executable, 
-              #instance.name=instance.name, 
-              instances=instances, 
-	      #timeWindows=timeWindows, 	
+              instances=instances,
               candidates=candidates, 
               parameter.name.list=parameter.name.list,
-              parameter.param.list=parameter.param.list))
+              parameter.param.list=parameter.param.list,
+              instances.extra.params = instances.extra.params
+              ))
 }
 
 ## ??? This function needs a description
@@ -59,13 +83,18 @@ race.wrapper <- function(candidate, task, data)
   cnd <- c()
   ins <- data$instances[task];
 
+  extra.params <- ""
+  if (!is.null (data$instances.extra.params) && !is.na (data$instances.extra.params[ins]))
+    extra.params <- data$instances.extra.params[ins]
+
+  ## FIXME: What is this really testing?
   if (candidate == which.alive[1]) {
     # FIXME: This is never used!
     #numJobs <- max(5, round(length(which.alive)/20))
     counter <- 0
     for (candi in which.alive)  {
       # First parameter is the candidate number, second is the instance file
-      command <- paste (hookRun, candi, ins)
+      command <- paste (hookRun, candi, ins, extra.params)
       cnd <- data$candidates[candi, ]
       ## FIXME This could be for (p in seq_along(params)) { p$names, p$param, etc }
       ## Constructs the command line
@@ -73,7 +102,7 @@ race.wrapper <- function(candidate, task, data)
         param.value <- cnd[[i]]
         param.switch <- data$parameter.param.list[[i]]
         if (debug.level >= 2) {
-          print(parameters.names[i])
+          print (parameters.names[i])
           print (param.switch)
           print (param.value)
         }
@@ -103,6 +132,7 @@ race.wrapper <- function(candidate, task, data)
     }
   }
 
+  ## 
   ## FIXME: this should be silent
   cwd <- setwd (.tune.execdir)
   if (debug.level >= 1) {

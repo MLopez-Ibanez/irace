@@ -11,10 +11,11 @@ error () {
 
 usage() {
     cat <<EOF
-usage: submitjobs.sh N [IFRACE PARAMS]
+usage: submitjobs.sh N [EXECDIR] [IFRACE PARAMS]
 
 Parameters:
  N                    an integer giving the number of repetitions of F-Race
+ EXECDIR             job M will use EXECDIR-M directory (default: TUNE-)
  IFRACE PARAMS       (optional) parameters for IFRACE
 EOF
     exit 1
@@ -27,8 +28,10 @@ test $# -ge 1 || usage
 # Number of repetitions of F-Race
 REPETITIONS=$1
 shift
+
 # Directory with R files and TUNE_CMD
-EXP=TUNE
+EXECDIR=${1:-TUNE}
+shift
 
 TUNE_CMD="tune-main"
 # Find our own location.
@@ -37,7 +40,7 @@ BINDIR=$(dirname "$(readlink -f "$(type -P $0 || echo $0)")")
 ## END of configuration (you should not need to touch what is below)
 
 for i in $(seq 1 $REPETITIONS); do
-    TRY=$(printf '%s-%002d' $EXP $i)
+    TRY=$(printf '%s-%002d' $EXECDIR $i)
     echo "execution directory = ./$TRY"
     rm -rf $TRY
     mkdir -p $TRY

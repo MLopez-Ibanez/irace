@@ -102,7 +102,7 @@ cat("samples",samples,"\n",sep=" ")
 # values c(mean - sd, mean + sd).
 compute.gaussian.range <- function(num.candidates, iteration, num.parameters, best.parameter.value, parameter.boundary)
 {
-  if (debug.level >= 2) {
+  if (debug.level >= 3) {
     cat(num.candidates, iteration, num.parameters, best.parameter.value, parameter.boundary, sep=" ")
   }
 
@@ -121,7 +121,8 @@ compute.gaussian.range <- function(num.candidates, iteration, num.parameters, be
   best.parameter.value <- as.numeric(best.parameter.value)
 
   if (debug.level >= 2) {
-    print (c(best.parameter.value - half, best.parameter.value + half))
+    cat ("gaussian range: (", best.parameter.value - half, ", ",
+         best.parameter.value + half, ")\n")
   }
   return (c(best.parameter.value - half, best.parameter.value + half))
 }
@@ -190,7 +191,7 @@ generate.configurations.uniform <- function (num.samples,
                                              parameter.boundary.list,
                                              parameter.subsidiary.list)
 {
-  if (debug.level > 0) {
+  if (debug.level >= 1) {
     cat ("Start sampling", num.samples, "candidates by uniform distribution.\n")
   }
   part <- NULL
@@ -233,7 +234,7 @@ generate.configurations.uniform <- function (num.samples,
 
     num.samples.left <- num.samples - nrow(part)
 
-    if (debug.level > 0) {
+    if (debug.level >= 3) {
       cat("Sampled", nrow(part), "configurations out of", num.samples, ", ", num.samples.left, "more needed (iteration", counter, ")\n")
       cat("new configurations:\n")
       print(configurations)
@@ -279,8 +280,8 @@ generate.configurations.normal <- function(num.candidates,
                                            elite.configurations.dataframe.aux2,
                                            parameter.names.vector,parameter.type.list,
                                            parameter.boundary.list,
-                                           parameter.subsidiary.list,
-                                           prob.vector.type.c.list)
+                                           parameter.subsidiary.list)
+#                                           prob.vector.type.c.list)
 {
   cat("Start sampling", num.candidates, "candidates by normal distribution.\n")
   
@@ -300,9 +301,13 @@ generate.configurations.normal <- function(num.candidates,
   elite.ranks <- elite.configurations.dataframe.aux2$config.ranks
   
   if (debug.level >= 2) {
+    cat ("prob.vector\n")
     print(prob.vector)
+    cat ("elite.ranks:\n")
     print(elite.ranks)
+    cat ("number.samples:\n")
     print(number.samples)
+    cat ("prob.vector.type.c.list:\n")
     print(prob.vector.type.c.list)
   }
   
@@ -312,21 +317,18 @@ generate.configurations.normal <- function(num.candidates,
   
   # sample of ranks from some probability vector
   sampled.ranks <- sample(elite.ranks, size = number.samples, replace = TRUE, prob = prob.vector)
-  cat("sampled.ranks\n")
-  print(sampled.ranks)
-  
-  #print(sampled.ranks)
+  if (debug.level >= 5) {
+    cat ("sampled.ranks:\n")
+    print (sampled.ranks)
+  }
   
   for (i in 1:nrow(elite.configurations.dataframe.aux2)) {
     configurations = NULL
     part = NULL
     type.c.prob.vector<-list()
     i.index<-which(elite.configurations.dataframe.aux2$config.ranks==i)
-    i.index.data.row<-elite.configurations.dataframe.aux2[i.index,]
+    i.index.data.row <- elite.configurations.dataframe.aux2[i.index,]
     i.number.samples<-length(which(sampled.ranks==i.index.data.row$config.ranks))
-    #print(i.index.data.row)
-    #print(i.number.samples)
-    
     # if rank i elite conf really have some samples by rank.
     if(i.number.samples>=0){
       num.samples=i.number.samples
@@ -340,7 +342,14 @@ generate.configurations.normal <- function(num.candidates,
         if (! is.null(configurations)) {
           part=unique(rbind(part, configurations))
         }
-        cat(is.first, is.null(part), nrow(part), num.samples, i.number.samples, "\n")
+        if (debug.level >= 2) {
+          cat("is.first=",is.first,
+              " is.null(part)=", is.null(part),
+              " nrow(part)=", nrow(part),
+              " num.samples=", num.samples,
+              " i.number.samples=", i.number.samples, "\n")
+        }
+        
         #print("new configurations")
         #print(configurations)
         #print("all current configurations")
@@ -386,9 +395,11 @@ generate.configurations.normal <- function(num.candidates,
           
           parameter.name <- parameter.names.vector[j]
           parameter.value <- as.vector(i.index.data.row[[parameter.name]])
-          cat("name", parameter.name, "value", parameter.value, "\n")
+          if (debug.level >= 3) {
+            cat("name=", parameter.name, "value=", parameter.value, "\n")
+          }
           
-          if(parameter.type.list[[parameter.name]] != "c"){
+          if (parameter.type.list[[parameter.name]] != "c"){
             
             parameter.value<-as.numeric(parameter.value)
             
@@ -407,12 +418,16 @@ generate.configurations.normal <- function(num.candidates,
                                                             best.parameter.value = parameter.value,
                                                             parameter.boundary = boundary)
                 #print(left.right.values)
+
+                if (debug.level >= 3) {
+                  cat("parameter.name=",parameter.name,
+                      "parameter.value=",parameter.value,
+                      "left.right.values=",left.right.values,
+                      "\n")
+                }                
                 
-                cat(parameter.name,parameter.value,left.right.values, sep=" ")
-                cat("",sep="\n")
-                
-                
-                tmp<-rnormalfull(i.number.samples,parameter.value,left.right.values,boundary)
+                tmp<-rnormalfull (i.number.samples,parameter.value,
+                                 left.right.values,boundary)
                 
               } else {
                 # parameter has no value in the last iteration, sample the next value uniformly. this is just a temporary solution, better ways should come.
@@ -431,41 +446,34 @@ generate.configurations.normal <- function(num.candidates,
           } else {
             # categorical parameters
             
-            tmp<-i.index.data.row
-            tmp$config.ranks<-NULL
-            tmp$config.prob<-NULL
-            #print("tmp")
-            #print(tmp)
-            # take the key. modified on 2008.09.02, we temporarily used only parameter name as the key, so that only the uniform probability is stored in the "rob.vector.type.c.list"
+            # take the key. modified on 2008.09.02, we temporarily used only parameter name as the key, so that only the uniform probability is stored in the "prob.vector.type.c.list"
             #key<-sprintf("%s#%s",as.vector(apply(tmp,MARGIN=1,FUN=paste,collapse="#")),parameter.name)
-            
-            #print("key")
-            #print(key)
-            #cat("key", key, "\n")
-            
-            #print("vector")
-            #print(prob.vector.type.c.list)
-            
-            #print(prob.vector.type.c.list)
-            #cat(key,sep="\n")
-            
             # extract method read.by.key
             #prob.vector<-prob.vector.type.c.list[[key]]
             
             # the code is really badly written
-            key <- generate.key(tmp,parameter.name)
-            prob.vector <- read.by.key (tmp,parameter.name, prob.vector.type.c.list)
             
-            print("prob.vector before update")
-            print(prob.vector)
-            #q()
+            tmp <- i.index.data.row
+            tmp$config.ranks <- NULL
+            tmp$config.prob <- NULL
+           
+            key <- generate.key(tmp, parameter.name)
+            prob.vector <- read.by.key (tmp,parameter.name, prob.vector.type.c.list)
+
+            if (debug.level >= 3) {
+              cat ("prob.vector before update: ")
+              print(prob.vector)
+            }
             
             #if(length(prob.vector.type.c.list[[key]])==0){
             if (is.null(prob.vector) | length(prob.vector)<=0) {
+              cat ("tmp:\n")
+              print (tmp);
               print(key)
               print(prob.vector)
-              print("key not found")
-              q()
+              # FIXME!!! It often happens that we do not find the key!
+              # stop ("key not found")
+              cat ("key not found!\n")
             }
             #cat("prob.vector",sep="\n")
             #cat(prob.vector,sep="\n")
@@ -479,14 +487,12 @@ generate.configurations.normal <- function(num.candidates,
               
               # update the prob vector. 5=number of iterations
               prob.vector<-update.prob.vector(prob.vector,update.index,step,num.iterations)
-              
             }
-            
-            print("prob.vector after update")
-            print(prob.vector)
-            
-            
-            #print(prob.vector)
+
+            if (debug.level >= 3) {
+              cat ("prob.vector after update: ")
+              print(prob.vector)
+            }
             
             # temp vector for storing the prob.vector by parameter name
             type.c.prob.vector[[parameter.name]]<-prob.vector
@@ -528,9 +534,14 @@ generate.configurations.normal <- function(num.candidates,
           #print(prob.vector.type.c.list.aux)
           for( k in 1:length(type.c.names)){
             typ.c.name<-type.c.names[k]
-            #print(typ.c.name)
-            #print(configurations)
-            #print(type.c.prob.vector[[typ.c.name]])
+            if (debug.level >= 3) {
+              cat ("type.c.name:")
+              print(typ.c.name)
+              cat ("configurations:")
+              print(configurations)
+              cat ("type.c.prob.vector:")
+              print(type.c.prob.vector[[typ.c.name]])
+            }
             prob.vector.type.c.list.aux <- c(prob.vector.type.c.list.aux,
                                              compute.key.value(configurations,typ.c.name,
                                                                type.c.prob.vector[[typ.c.name]]))
@@ -550,17 +561,20 @@ generate.configurations.normal <- function(num.candidates,
   prob.vector.type.c.list <<- prob.vector.type.c.list.aux
   
   row.names(elite.configurations.dataframe.aux3)<-c(1:nrow(elite.configurations.dataframe.aux3))
+
+  if (debug.level >= 3) {
+    cat("size before unique:", nrow(elite.configurations.dataframe.aux3), "\n")
+  }
   
-  cat("size before unique:", nrow(elite.configurations.dataframe.aux3), "\n")
   elite.configurations.dataframe.aux3=unique(elite.configurations.dataframe.aux3)
   elite.configurations.dataframe.aux3=as.data.frame(as.list(elite.configurations.dataframe.aux3))
-  cat("size after unique:", nrow(elite.configurations.dataframe.aux3), "\n")
-  print("the final list")
-  print(elite.configurations.dataframe.aux3)
+  if (debug.level >= 3) {
+    cat("size after unique:", nrow(elite.configurations.dataframe.aux3), "\n")
+    print("the final list")
+    print(elite.configurations.dataframe.aux3)
+  }
   
-  return(elite.configurations.dataframe.aux3)
-
-
+  return (elite.configurations.dataframe.aux3)
 }
 
 
@@ -595,9 +609,7 @@ read.by.key<-function(candidate.configurations.dataframe,name,prob.vector){
 }
 
 generate.key<-function(candidate.configurations.dataframe,name) {
-  key<-sprintf("%s#%s",as.vector(apply(candidate.configurations.dataframe,MARGIN=1,FUN=paste,collapse="#")),name)
-  
+  key <- sprintf("%s#%s",as.vector(apply(candidate.configurations.dataframe,MARGIN=1,FUN=paste,collapse="#")),name)
   #key<-c(name)
-  
   return(key)
 }

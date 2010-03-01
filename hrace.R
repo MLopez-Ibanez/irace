@@ -1,7 +1,7 @@
 ###############################################################################
 # ??? What is this file for?
 ###############################################################################
-
+prob.vector.type.c.list <- NULL
 ## ??? What is this loaded for?
 source("util.R")
 
@@ -33,7 +33,8 @@ hrace.wrapper <-
   num.iterations <- 2 + round( log(num.parameters) / log(2) )
 
   stats <- NULL
-
+  full.results <- NULL
+  
   iteration <- 0
 
   # mu * number of candidates = budget for one F-Race execution.
@@ -57,7 +58,7 @@ hrace.wrapper <-
                                                                          parameter.boundary.list,  parameter.subsidiary.list)
   
   # This is a hash table to store the prob vectors of each catogarical variable.
-  prob.vector.type.c.list <- init.prob.list(parameter.type.list,
+  prob.vector.type.c.list <<- init.prob.list(parameter.type.list,
                                             parameter.boundary.list,
                                             candidate.configurations.dataframe)
 
@@ -86,6 +87,19 @@ hrace.wrapper <-
                    instance.dir = instance.dir,
                    parameter.name.list = parameter.name.list)
     # end of one iteration F-race
+
+    transp.results <- t(result$results)
+    race.data <- result$race.data
+    for (k in seq_len (ncol(transp.results))) {
+      ins <- seq_len (nrow(transp.results))
+      full.results <- rbind(full.results,
+                            cbind(candidate.configurations.dataframe,
+                                  instance = race.data$instances[ins],
+                                  result = transp.results[,k]))
+    }
+    cwd <- setwd (.tune.execdir)
+    save (full.results, file=paste("fullresults", ".Rdata", sep=""))
+    setwd (cwd)
     
     cat("Experiments in this iteration:",  result$no.experiments,  "\n")
     
@@ -113,6 +127,11 @@ hrace.wrapper <-
                      used.ins = result$no.tasks,
                      no.alive = result$no.alive))
 
+    stats <- data.frame(stats)
+    cwd <- setwd (.tune.execdir)
+    save(stats, file=paste("stats", ".Rdata", sep=""))
+    setwd (cwd)
+    
     # compute the ranks of survivors for the update later
     alive.configurations.index <- which(result$alive == TRUE)
     alive.configurations.dataframe <- candidate.configurations.dataframe[result$alive, ]
@@ -164,16 +183,14 @@ hrace.wrapper <-
                                                                     parameter.names.vector,
                                                                     parameter.type.list,
                                                                     parameter.boundary.list,
-                                                                    parameter.subsidiary.list,
-                                                                    prob.vector.type.c.list)
+                                                                    parameter.subsidiary.list)
+#                                                                    prob.vector.type.c.list)
     
     candidate.configurations.dataframe <- configurations.dataframe.aux3
     
     if (nrow(unique(candidate.configurations.dataframe)) == 1) break;
   }
   
-  stats <- data.frame(stats)
-  save(stats, file=paste("stats", ".Rdata", sep=""))
   #eval(result=result,  executable=executable,  test.instance.dir=test.instance.dir)
 }
 

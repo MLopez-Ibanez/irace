@@ -16,7 +16,10 @@ Configuration
 * Copy the file parameters.tmpl to your tuning directory as
   parameters.txt, and modify it following the instructions there.
 
-* Put the instances in tuning/Instances/
+* Put the instances in tuning/Instances/. In addition, you can create
+  a file that specifies which instances from that directory should be
+  run and which instance-specific parameters to use. See
+  tune-conf.tmpl and instances-list.tmpl for examples.
 
 * Copy the file tune-conf.tmpl to your tuning/ directory as tune-conf
   and modify it following the instructions there.
@@ -28,7 +31,8 @@ Configuration
 
 * Results will appear in tuning/TUNE-dd, where dd is a number. Be
   careful, if you run submitjobs.sh again, these directories will be
-  deleted.
+  deleted. Check the help of submitjobs.sh by running it without
+  parameters.
 
 If you find that you need to modify anything else, something is not
 clear or if you have problems: <manuel.lopez-ibanez@ulb.ac.be>
