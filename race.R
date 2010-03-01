@@ -385,7 +385,8 @@ race<-function(wrapper.file=stop("Argument \"wrapper.file\" is mandatory"),
               alive=alive,
               best=best,
               mean.best=mean.best,
-              timestamp.start=timestamp.start)
+              timestamp.start=timestamp.start,
+              race.data=race.data)
     if (end)
       log<-c(log,list(timestamp.end=timestamp.current,
                       description.best=description.best,
