@@ -5,6 +5,10 @@
 #
 # Check the examples in examples/
 #
+# WARNING: This hook is run in a temporary directory, the same
+# directory where hook-run is executed. This means that you should
+# always use absolute paths.
+#
 # PARAMETERS:
 # $1 is the instance name
 # $2 is the candidate number
