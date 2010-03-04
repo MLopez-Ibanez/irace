@@ -33,7 +33,7 @@ hrace.wrapper <-
   num.iterations <- 2 + round( log(num.parameters) / log(2) )
 
   stats <- NULL
-  full.results <- NULL
+  fullresults <- NULL
   
   iteration <- 0
 
@@ -92,13 +92,13 @@ hrace.wrapper <-
     race.data <- result$race.data
     for (k in seq_len (ncol(transp.results))) {
       ins <- seq_len (nrow(transp.results))
-      full.results <- rbind(full.results,
-                            cbind(candidate.configurations.dataframe,
-                                  instance = race.data$instances[ins],
-                                  result = transp.results[,k]))
+      fullresults <- rbind(fullresults,
+                           cbind(candidate.configurations.dataframe,
+                                 instance = race.data$instances[ins],
+                                 result = transp.results[,k]))
     }
     cwd <- setwd (.tune.execdir)
-    save (full.results, file=paste("fullresults", ".Rdata", sep=""))
+    save (fullresults, file=paste("fullresults", ".Rdata", sep=""))
     setwd (cwd)
     
     cat("Experiments in this iteration:",  result$no.experiments,  "\n")
