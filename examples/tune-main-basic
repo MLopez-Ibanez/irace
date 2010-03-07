@@ -1,7 +1,10 @@
-#!/bin/sh
+#!/bin/bash
  
 # The simplest is to just invoke ifrace locally
 BINDIR=$1
-shift
-$BINDIR/ifrace $* 
+EXECDIR=$2
+shift 2
+exec 1> $EXECDIR/ifrace-$$.stdout 
+exec 2> $EXECDIR/ifrace-$$.stderr
+exec $BINDIR/ifrace $EXECDIR $*
 
