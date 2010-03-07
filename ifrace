@@ -1,4 +1,5 @@
 #!/bin/bash
 # Find our own location.
 BINDIR=$(dirname "$(readlink -f "$(type -P $0 || echo $0)")")
-R --vanilla --slave --file=$BINDIR/tune.R --args $*
+# Use exec to avoid a fork: faster and consumes less resources.
+exec R --vanilla --slave --file=$BINDIR/tune.R --args $*
