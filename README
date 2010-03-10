@@ -24,20 +24,29 @@ Configuration
 * Copy the file tune-conf.tmpl to your tuning/ directory as tune-conf
   and modify it following the instructions there.
 
-* Call submitjobs.sh from your tuning directory with the number of
-  repetitions of Iterated F-race to be executed in parallel. If you
-  execute several in your local computer, then you may need to
-  redirect the output to a file, either manually or in tune-main.
+* Call ifrace-parallel.sh from your tuning directory with the number of
+  repetitions of Iterated F-race to be executed in parallel.
 
-* Results will appear in tuning/TUNE-dd, where dd is a number. Be
-  careful, if you run submitjobs.sh again, these directories will be
-  deleted. Check the help of submitjobs.sh by running it without
+* Results will appear in tuning/TUNE-dd, where dd is a number, as two
+  files ifrace-PID.stdout and ifrace-PID.stderr. Be careful, if you
+  run ifrace-parallel.sh again, these directories will be deleted.
+  Check the help of ifrace-parallel.sh by running it without
   parameters.  In each directory, there will be also two Rdata files:
-  fullresults.Rdata and stats.Rdata. You can examine their contents
+  fullresults.Rdata and stats.Rdata.  You can examine their contents
   within R with the commands:
   
     load("fullresults.Rdata"); print(fullresults)
-
   
 If you find that you need to modify anything else, something is not
 clear or if you have problems: <manuel.lopez-ibanez@ulb.ac.be>
+
+If you want to know the details of Iterated F-Race, please check
+the references section.
+
+
+References
+----------
+
+ [1] M. Birattari, Z. Yuan, P. Balaprakash and T. Stuetzle. F-Race and
+     Iterated F-Race: An Overview. TR/IRIDIA/2009-018. June 2009.
+     http://iridia.ulb.ac.be/IridiaTrSeries/IridiaTr2009-018r001.pdf
