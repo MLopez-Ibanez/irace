@@ -5,13 +5,13 @@
 ###############################################################################
 
 error () {
-    echo "submitjobs.sh: error: $@"
+    echo "$0: error: $@"
     exit 1
 }
 
 usage() {
     cat <<EOF
-usage: submitjobs.sh N [EXECDIR] [IFRACE PARAMS]
+usage: $0 N [EXECDIR] [IFRACE PARAMS]
 
 Parameters:
  N                    an integer giving the number of repetitions of F-Race
@@ -41,12 +41,11 @@ BINDIR=$(dirname "$(readlink -f "$(type -P $0 || echo $0)")")
 
 for i in $(seq 1 $REPETITIONS); do
     TRY=$(printf '%s-%002d' $EXECDIR $i)
-    echo "execution directory = ./$TRY"
     rm -rf $TRY
     mkdir -p $TRY
     test -x ./${TUNE_CMD} || error "${TUNE_CMD} must be executable"
-    # FIXME: In fact there is a problem with the output files being
-    # overwritten, specially when using qsub.
+    echo "ifrace: ./${TUNE_CMD} $BINDIR $TRY $*"
+    # Run in parallel
     ./${TUNE_CMD} $BINDIR $TRY $*
     sleep 1
 done
