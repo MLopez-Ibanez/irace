@@ -62,12 +62,12 @@ race.wrapper <- function(candidate, task, data)
   ## These files are relative to .tune.execdir
   ## FIXME: make the paths absolute or relative to getwd() to print
   ## nicer error messages.
-  hookRun <- paste (getwd(), "./hook-run", sep="/")
+  hookRun <- paste (getwd(), .tune.hook.run, sep="/")
   if (as.logical(file.access(hookRun, mode = 1))) {
     stop ("hookRun `", hookRun, "' cannot be found or is not executable!\n")
   }
 
-  hookInstanceFinished <- paste (getwd(), "./hook-instance-finished", sep="/")
+  hookInstanceFinished <- paste (getwd(), .tune.hook.instance.finished, sep="/")
   if (as.logical(file.access(hookInstanceFinished, mode = 1))) {
     stop ("hookInstanceFinished `", hookInstanceFinished,
           "' cannot be found or is not executable!\n")
@@ -141,6 +141,9 @@ race.wrapper <- function(candidate, task, data)
   output <- as.numeric (system (paste (hookInstanceFinished, ins, candidate),
                                 intern = TRUE))
   setwd (cwd)
+  if (debug.level >= 2) {
+    print (output)
+  }
   ## This should handle vectors of NAs
   if (any (is.na (output)))
     stop ("The output of `", hookInstanceFinished, " ", ins, " ", candidate,

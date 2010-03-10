@@ -31,6 +31,9 @@ read.arg <- function(args, short="", long="", default=NULL)
   return(value)
 }
 
+.tune.hook.run <- "./hook-run"
+.tune.hook.instance.finished <- "./hook-instance-finished"
+
 # FIXME: This should not have a default but check whether it is
 # missing and error out properly.
 .tune.installdir <- NULL
