@@ -41,14 +41,15 @@ fi
 
 # FIXME: Handle --upper-bound $UPPER --lower-bound $LOWER
 if ! ls *.${OUTPUTEXT}_dat_nor &> /dev/null ; then
-    (~/bin/transform.pl -f 1,2 *.${OUTPUTEXT} \
-        && ~/bin/nondominated --quiet -n "1 2" *.${OUTPUTEXT}_dat -s "_nor" \
-        && ~/bin/hv --quiet -r "2.1 2.1" *.${OUTPUTEXT}_dat_nor -s "_hv") \
-        || exit 1
+    ~/bin/transform.pl -f 1,2 *.${OUTPUTEXT} || exit 1
+    ~/bin/nondominated --quiet -n "1 2" *.${OUTPUTEXT}_dat -s "_nor" || exit 1
+    # Do not check this because nondominated exits with 1 if dominated points are found.
+    cat *.${OUTPUTEXT}_dat_nor | ~/bin/nondominated -U --filter > reference 
+    ~/bin/epsilon --quiet -r reference *.${OUTPUTEXT}_dat_nor -s "_e" || exit 1
 fi
 
-if COST=`cat ${STDOUT}_dat_nor_hv | grep -e '^[0-9]' | cut -f1`; then
-    echo "-$COST"
+if COST=`cat ${STDOUT}_dat_nor_e | grep -e '^[0-9]' | cut -f1`; then
+    echo "$COST"
     rm -f ${CANDIDATE}.*
     exit 0
 else
