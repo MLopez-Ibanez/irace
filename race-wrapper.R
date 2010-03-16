@@ -24,17 +24,19 @@ race.init <- function(candidatesConfig, maxIns, experiment.name, extra.descripti
     lines <- sub("#.*$", "", lines) # Remove comments
     lines <- sub("^[[:space:]]+$", "", lines) # Remove extra spaces
     lines <- lines[lines != ""] # Delete empty lines
-    ins <- sub("[[:space:]]+.*$", "", lines)
-    ins <- sub ("^", instance.dir, ins)
+    instances <- sub("[[:space:]]+.*$", "", lines)
+    instances <- sub ("^", instance.dir, instances)
     instances.extra.params <- sub("^[^[:space:]]+ ", "", lines)
-    names (instances.extra.params) <- ins
+    names (instances.extra.params) <- instances
   } else {
-    ins <- list.files (path = instance.dir, full.names = TRUE)
-    if (length (ins) == 0)
+    instances <- list.files (path = instance.dir, full.names = TRUE)
+    if (length (instances) == 0)
       stop("No instances found in `", instance.dir, "' !\n")
   }
-  ins <- sample(ins)
-  instances <- sample(ins, replace=TRUE, size=maxIns)
+  if (.tune.sample.instances) {
+    instances <- sample(instances)
+    instances <- sample(instances, replace=TRUE, size=maxIns)
+  }
   # Return init list
   return(list(no.candidates=nrow(candidates), 
               no.tasks=length(instances),
@@ -134,18 +136,16 @@ race.wrapper <- function(candidate, task, data)
 
   ## 
   ## FIXME: this should be silent
-  cwd <- setwd (.tune.execdir)
   if (debug.level >= 1) {
     cat(paste (hookInstanceFinished, ins, candidate, "\n"))
   }
-  output <- as.numeric (system (paste (hookInstanceFinished, ins, candidate),
-                                intern = TRUE))
+  cwd <- setwd (.tune.execdir)
+  output <- system (paste (hookInstanceFinished, ins, candidate), intern = TRUE)
+  if (debug.level >= 2) { print (output) }
+  output <- as.numeric (output)
   setwd (cwd)
-  if (debug.level >= 2) {
-    print (output)
-  }
   ## This should handle vectors of NAs
-  if (any (is.na (output)))
+  if (length (output) != 1 || any (is.na (output)))
     stop ("The output of `", hookInstanceFinished, " ", ins, " ", candidate,
           "' is not a number!\n")
   return (output)
