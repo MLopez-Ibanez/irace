@@ -1,5 +1,5 @@
-VERSION = 0.9svn$(SVN_REV)
-#VERSION = 0.9
+VERSION = 0.9
+#VERSION = 0.9svn$(SVN_REV)
 RNODE=iridiacluster
 
 ## Do we have svnversion?
