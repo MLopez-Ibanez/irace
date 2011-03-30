@@ -3,6 +3,7 @@ set -e
 set -u
 
 cat > .excludes <<'EOF'
+Makefile
 .excludes
 .*
 dist.sh
