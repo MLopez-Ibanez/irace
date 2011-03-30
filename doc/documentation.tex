@@ -1055,7 +1055,7 @@ F.R.S.-FNRS, of which they are Research Associates.
 
 \defparameter{timeEstimate}{time-estimate}{1}
  An estimation of the average time in seconds required for one
- experiment. Only required if timeBudget is positive.
+ experiment. Only required if \parameter{timeBudget} is positive.
 
 \defparameter{signifDigits}{signif-digits}{4}
  Indicates the significant digits to be considered for the real parameters.
@@ -1093,11 +1093,10 @@ F.R.S.-FNRS, of which they are Research Associates.
  Specifies how many instances are seen before each test after the first one is 
  performed.
 
-\defparameter{minNbSurvival}{min-survival}{0}
- The minimum number of candidates that should survive to continue one iteration. 
- Do not use something else than
- the default (that is, the dynamic value) unless you know exactly
- what you are doing.
+ \defparameter{minNbSurvival}{min-survival}{0} The minimum number of
+ candidates that should survive to continue one iteration.  Do not use
+ something else than the default (that is, the dynamic value) unless
+ you know exactly what you are doing.
 
 \defparameter{nbCandidates}{num-candidates}{0}
  The number of candidates that should be sampled and evaluated at each 
@@ -1112,7 +1111,7 @@ F.R.S.-FNRS, of which they are Research Associates.
  what you are doing.
 
 \defparameter{seed}{seed}{NA}
- Seed of the random number generator (must be a positive integer, NA
+ Seed of the random number generator (must be a positive integer, \texttt{NA}
  means use a random seed).
 
 \defparameter{softRestart}{soft-restart}{1}
@@ -1124,12 +1123,12 @@ F.R.S.-FNRS, of which they are Research Associates.
  Less than 2 means calls to \parameter {hookRun} are sequentially executed.
 
 \defparameter{sgeCluster}{sge-cluster}{0}
- Enable/disable SGE cluster mode. Use qstat to wait for
- cluster jobs to finish (\parameter{hookRun} must invoke qsub).
+ Enable/disable SGE cluster mode. Use \texttt{qstat} to wait for
+ cluster jobs to finish (\parameter{hookRun} must invoke \texttt{qsub}).
 
 \defparameter{mpi}{mpi}{0}
  Enable/disable MPI. Use MPI to execute \parameter{hookRun} in parallel
- (if mpi is enabled with \texttt{1}, the value of parameter 
+ (if MPI is enabled with \texttt{1}, the value of parameter 
  \parameter{parallel} defines the number of slaves).
 
 \end{document}
