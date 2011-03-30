@@ -984,145 +984,152 @@ F.R.S.-FNRS, of which they are Research Associates.
 \addcontentsline{toc}{appendix}{Appendix A: \irace options}
 \section*{Appendix A: \irace options}
 
-\textbf{FIXME: Mention what the defaults mean, for example, when nbIterations is 0, what it is really?}
-
-
-The following is a list of configurable parameters in \irace. At each
-entry, we list first the name of the parameter in the configuration
-file, next the corresponding command-line switch (both long and short
-forms if available) and, finally, the default value. The value of a
-parameter may be given in the configuration file, in the command-line
-or in both. In the latter case, the command-line setting is given
-preference.
+ The following is a list of configurable parameters in \irace. At each
+ entry, we list first the name of the parameter in the configuration
+ file, next the corresponding command-line switch (both long and short
+ forms if available) and, finally, the default value. The value of a
+ parameter may be given in the configuration file, in the command-line
+ or in both. In the latter case, the command-line setting is given
+ preference.
 
 \defparameter[c]{}{config-file}{./tune-conf}
-This specifies the file that contains the configuration for \irace;
-see Section~\ref{sec:configFile} for more information on the configuration file.
-The path can be given either as an absolute one or a relative one. In the latter case, the path is relative to the working directory.
+ This specifies the file that contains the configuration for \irace;
+ see Section~\ref{sec:configFile} for more information on the configuration file.
+ The path can be given either as an absolute one or a relative one. 
+ In the latter case, the path is relative to the working directory.
 
 
 \defparameter[p]{parameterFile}{param-file}{./parameters.txt}
-This specifies the file that contains a description of the parameters
-for the algorithm to be tuned.
-See Section~\ref{sec:paramFile} for more information on the parameter file.
-The path can be given either as an absolute one or a relative one. In the latter case, the path is relative to the working directory.
+ This specifies the file that contains a description of the parameters
+ for the algorithm to be tuned.
+ See Section~\ref{sec:paramFile} for more information on the parameter file.
+ The path can be given either as an absolute one or a relative one. 
+ In the latter case, the path is relative to the working directory.
 
 
 \defparameter{execDir}{exec-dir}{./TUNE}
-This specifies the directory where the program to be tuned is run.
+ This specifies the directory where the program to be tuned is run.
 
 \defparameter{instanceDir}{instance-dir}{./Instances}
-This specifies the directory where tuning instances are located, either 
-absolute or relative to \parameter{execDir}.
+ This specifies the directory where tuning instances are located, either 
+ absolute or relative to \parameter{execDir}.
 
 \defparameter{instanceFile}{instance-file}{""}
-A file containing a list of instances and (optionally) additional 
-parameters for them.
-If this argument is empty, then the instances are simply taken from 
-the directory specified by \parameter{instanceDir}.
+ A file containing a list of instances and (optionally) additional 
+ parameters for them.
+ If this argument is empty, then the instances are simply taken from 
+ the directory specified by \parameter{instanceDir}.
 
 \defparameter{candidatesFile}{candidates-file}{""}
-A file containing a list of initial candidates. 
-If empty or \texttt{NULL}, do not use a file.
-
+ A file containing a list of initial candidates. 
+ If empty or \texttt{NULL}, do not use a file.
 
 \defparameter{hookRun}{hook-run}{"./hook-run"}
-The script called by \irace for each candidate that
-launches the program to be tuned. 
-See Section~\ref{sec:hooks} for more information.
+ The script called by \irace for each candidate that
+ launches the program to be tuned. 
+ See Section~\ref{sec:hooks} for more information.
 
 \defparameter{hookEvaluate}{hook-evaluate}{"./hook-evaluate"}
-The scrip that provides a numeric value for each
-candidate. 
-See Section~\ref{sec:hooks} for more information.
+ The scrip that provides a numeric value for each
+ candidate. 
+ See Section~\ref{sec:hooks} for more information.
 
 \defparameter{expName}{exp-name}{"Experiment Name"}
-Experiment name for output report.
+ Experiment name for output report.
 
 \defparameter{expDescription}{exp-description}{"Experiment Description"}
-Longer experiment description for output report.
+ Longer experiment description for output report.
 
 \defparameter{maxNbExperiments}{max-experiments}{1000}
-The maximum number of runs (invocations of \parameter{hookRun}) that will performed. It
-determines the (maximum) budget of experiments for the tuning, unless
-\parameter{timeBudget} is positive.
+ The maximum number of runs (invocations of \parameter{hookRun}) that will performed. It
+ determines the (maximum) budget of experiments for the tuning, unless
+ \parameter{timeBudget} is positive.
 
 \defparameter{timeBudget}{timeBudget}{0}
-The maximum computation time that should be used for tuning in
-seconds. This only works when tuning for time. 0 means no time
-limit (use \parameter{maxNbExperiments}).
-
+ If the value is greater than 0, it means tuning for computation time, and sets 
+ the maximum computation time that should be used for the whole tuning, 
+ in seconds. 
+ The default value (\texttt{0}), means tuning for solution quality (rather
+ than for computation time) the budget in this case being defined by 
+ \parameter{maxNbExperiments}.
 
 \defparameter{timeEstimate}{time-estimate}{1}
  An estimation of the average time in seconds required for one
  experiment. Only required if timeBudget is positive.
 
-
 \defparameter{signifDigits}{signif-digits}{4}
-Indicates the significant digits to be considered for the real parameters.
+ Indicates the significant digits to be considered for the real parameters.
 
 \defparameter{debugLevel}{debug-level}{0}
-A value of 0 silences all debug messages. Higher values provide 
-more verbose debug messages.
+ A value of 0 silences all debug messages. Higher values provide 
+ more verbose debug messages.
 
 \defparameter{nbIterations}{iterations}{0}
  Number of iterations of \irace. Do not use something else than the
  default (that is, the dynamic value) unless you know exactly what
- you are doing.
-
+ you are doing. The default value (\texttt{0}), means that the
+ appropriate setting is determined by \irace.
+ 
 \defparameter{nbExperimentsPerIteration}{experiments-per-iteration}{0}
  Number of experiments per iteration. Do not use something else than
  the default (that is, the dynamic value) unless you know exactly
- what you are doing.
-
+ what you are doing. The default value (\texttt{0}), means that the
+ appropriate setting is determined by \irace.
 
 \defparameter{sampleInstances}{sample-instances}{1}
-Sample the instances or take them always in the same order.
+ Sample the instances or take them always in the same order.
 
 \defparameter{maxInstances}{max-instances}{1000}
-The maximum number of instances to be considered for each iteration.
+ The maximum number of instances to be considered for each iteration.
 
 \defparameter{testType}{test-type}{F-test} %
-Specifies the statistical test type: \texttt{F-test} (Friedman test)
-or \texttt{t-test}.
+ Specifies the statistical test type: \texttt{F-test} (Friedman test)
+ or \texttt{t-test}.
 
 \defparameter{firstTest}{first-test}{5}
-Specifies after how many instances are seen before the first test is performed.
+ Specifies after how many instances are seen before the first test is performed.
 
 \defparameter{eachTest}{each-test}{1}
-Specifies after how many instances are seen before each test after the first one is performed.
+ Specifies how many instances are seen before each test after the first one is 
+ performed.
 
 \defparameter{minNbSurvival}{min-survival}{0}
-The minimum number of candidates that should survive to continue one iteration. Do not use something else than
+ The minimum number of candidates that should survive to continue one iteration. 
+ Do not use something else than
  the default (that is, the dynamic value) unless you know exactly
  what you are doing.
 
 \defparameter{nbCandidates}{num-candidates}{0}
-The number of candidates that should be sampled and evaluated at each iteration. Do not use something else than
+ The number of candidates that should be sampled and evaluated at each 
+ iteration. Do not use something else than
  the default (that is, the dynamic value) unless you know exactly
  what you are doing.
 
 \defparameter{mu}{mu}{5}
-This value is used to determine the number of candidates to 
-be sampled and evaluated at each iteration.
+ This value is used to determine the number of candidates to 
+ be sampled and evaluated at each iteration. 
+ Do not use something else than the default unless you know exactly 
+ what you are doing.
 
 \defparameter{seed}{seed}{NA}
-Seed of the random number generator (must be a positive integer, NA
-means use a random seed).
+ Seed of the random number generator (must be a positive integer, NA
+ means use a random seed).
 
 \defparameter{softRestart}{soft-restart}{1}
-Enable/disable the soft restart strategy that avoids premature convergence 
-of the probabilistic model.
+ Enable/disable the soft restart strategy that avoids premature convergence 
+ of the probabilistic model.
 
 \defparameter{parallel}{parallel}{0}
-Number of calls to \parameter{hookRun} to execute in parallel. Less than 2 means calls to \parameter{hookRun} are sequentially executed.
+ Number of calls to \parameter{hookRun} to execute in parallel. 
+ Less than 2 means calls to \parameter {hookRun} are sequentially executed.
 
 \defparameter{sgeCluster}{sge-cluster}{0}
-Enable/disable SGE cluster mode. Use qstat to wait for
-cluster jobs to finish (\parameter{hookRun} must invoke qsub).
+ Enable/disable SGE cluster mode. Use qstat to wait for
+ cluster jobs to finish (\parameter{hookRun} must invoke qsub).
 
 \defparameter{mpi}{mpi}{0}
  Enable/disable MPI. Use MPI to execute \parameter{hookRun} in parallel
- (the value of parameter \parameter{parallel} defines the number of slaves).
+ (if mpi is enabled with \texttt{1}, the value of parameter 
+ \parameter{parallel} defines the number of slaves).
 
 \end{document}
