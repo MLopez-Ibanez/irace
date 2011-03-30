@@ -1,0 +1,14 @@
+#!/bin/bash
+ 
+# The simplest is to just invoke ifrace locally
+BINDIR=$1
+EXECDIR=$2
+DESTMAIL=${USER}@localhost
+shift 2
+$BINDIR/ifrace --exec-dir=$EXECDIR $* \
+    1> $EXECDIR/ifrace-$$.stdout \
+    2> $EXECDIR/ifrace-$$.stderr
+if [ ${DESTMAIL} ]; then
+    cat "$EXECDIR/ifrace-$$.stderr" \
+        | mail -s "[ifrace] $EXECDIR/ifrace-$$ $*" $DESTMAIL
+fi

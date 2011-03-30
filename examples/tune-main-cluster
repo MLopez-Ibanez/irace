@@ -4,16 +4,30 @@ BINDIR=$1
 EXECDIR=$2
 shift 2
 
+#MACHINE=opteron244
+MACHINE=opteron2216
+#MACHINE=xeon5410
+
 exec qsub <<EOF
-#!/bin/sh
-#$ -N ifrace-$$
-#$ -l opteron2216
+#!/bin/bash
+#$ -N irace-$$
+#$ -l $MACHINE
 #$ -l long
-#$ -o $EXECDIR/ifrace-$$.stdout
-#$ -e $EXECDIR/ifrace-$$.stderr
+#$ -o $EXECDIR/irace-$$.stdout
+#$ -e $EXECDIR/irace-$$.stderr
+#$ -m ase
+#      b     Mail is sent at the beginning of the job.
+#      e     Mail is sent at the end of the job.
+#      a     Mail is sent when the job is aborted or rescheduled.
+#      s     Mail is sent when the job is suspended.
 #$ -cwd
 
-$BINDIR/ifrace $EXECDIR $* 
-
+# Working on /tmp should be faster
+TMP=$(mktemp -d)
+$BINDIR/irace --exec-dir=\$TMP $* 
+RET=\$?
+cp -R \$TMP/./ $EXECDIR/
+rm -rf \$TMP
+exit \$RET
 EOF
 

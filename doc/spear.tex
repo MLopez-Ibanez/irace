@@ -1,0 +1,175 @@
+\subsection{SPEAR: Tuning for computation time}
+
+SPEAR~\cite{BabHut2008spear} is a state-of-the-art theorem prover for
+solving industrial SAT instances. It is highly configurable, with a
+total of $26$ parameters, including continuous, integer and
+categorical parameters. For this reason,
+\citet{HutHooStu07aaai,HutBabHooHu2007fmcad,HutHooLeyStu2009jair} have
+used it extensively as a benchmark for testing automatic tuning tools.
+
+We consider in this section the tuning of SPEAR as a case study of
+using \irace for tuning algorithms for decision problems.  We are only
+interested in how much time SPEAR requires to decide whether a given
+SAT instance is satisfiable. SPEAR stops after a given cut-off time if
+it cannot determine an answer. Therefore, the computation effort of
+the tuning is given by the total computation time consumed by SPEAR,
+and, hence, we assign a total time budget (\irace
+option \parameter{timeBudget}) of three days (259200 seconds). In
+order to calculate the number of experiments that may be performed in
+the remaining budget, we need an estimate of the time required by a
+single run of SPEAR. In the first iteration of \irace, this estimate
+needs to be provided by the user (we set
+option \parameter{timeEstimate} to 30 seconds). In subsequent
+iterations, the estimate is adjusted by the program. During the tuning
+phase, we set the cut-off time of SPEAR to 30 seconds. After the
+tuning phase is over, the best configuration found by \irace is
+evaluated by running it once on each test instance with a cut-off time
+of $1000$ seconds. This setup is summarized in
+Table~\ref{tab:spear_tuning_conf}.  In our experiments, we use a
+benchmark set of software verification instances~\cite{BabHu2007cav},
+with 302 training instances and 302 test instances.
+
+\begin{table}[th]
+  \centering
+  \caption{Scenario setup for tuning SPEAR}
+  \label{tab:spear_tuning_conf}
+\begin{tabular}[t]{rr}
+\toprule
+Total time budget (\parameter{timedBudget}) & 259200 seconds\\
+Initial estimate of time per run (\parameter{timeEstimate})&  30 seconds\\
+Tuning cut-off time & 30 seconds\\
+Testing cut-off time & 1000 seconds\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+We first analyze the choice of the statistical test used within \irace
+(option \parameter{testType}), either the Friedman-test or the
+t-test. In this first experiment, all runs of \irace use a discretized
+parameter space, with all parameters specified as categorical, and the
+soft-restart feature is disabled. We execute five repetitions of
+\irace with different random seeds for each type of statistical test.
+We use the same five random seeds for all experiments in order to
+reduce variance. Each repetition of \irace returns one configuration
+of SPEAR, and these configurations are evaluated on the test
+instances, obtaining a computation time for each configuration on each
+test instance. We use two criteria to compare different tuning
+approaches:
+%
+\begin{itemize}
+\item The mean computation time required by the configurations
+  obtained when using each tuning approach. Moreover, we assess statistical
+  significance using a paired-samples t-test. Results are paired not only with
+  respect to the instance, but also with respect to the random seed
+  used by the run of \irace that generated each configuration.
+
+\item The percentage of success (\%succ), that is, the percentage of
+  times that the computation time of a configuration produced by one
+  tuning approach is lower than the corresponding run of the
+  configuration obtained by the other tuning approach. Results are
+  also paired as before by instance and by the random seed of
+  \irace. In this case, we use the two-tailed sign-test to assess
+  significance.
+\end{itemize}
+
+Table~\ref{tab:testtype} compares the use of F-test and t-test in
+\irace when configuring SPEAR. The table shows that the percentage of
+successes, that is, the number of instances that are solved faster,
+are maximized when using the F-test. On the other hand, using the
+t-test minimizes the mean computation time. Therefore, the choice of
+test clearly depends on the evaluation criterion.
+
+
+
+\begin{table}[tp] 
+  \centering \caption{Comparison of F-test and t-test (only categorical parameters, no soft-restart).}
+  \label{tab:testtype}
+  \begin{tabular}{rccl}
+    \toprule
+    & F-test & t-test  & 99\% CI\\\midrule
+    \%succ & 59.54 & 17.95 & $\Pr(a < b) \in [0.74, 0.8]$\\
+    mean   & 61.31 & 36.72 & mean$(a - b) \in [8.15, 41.03]$\\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+
+In the second experiment, we compare the use of discretized,
+categorical parameters versus using the appropriate type (integer,
+real or ordered) for some parameters. Table~\ref{tab:catmixed} reports
+the results of this experiment. When using the F-test, there is no
+significant difference between using either only categorical
+parameters or not. However, when using the t-test, there is a slight
+advantage in using only categorical parameters if our goal is to
+optimize \%succ, and an important difference in favor of using
+different types of parameters if our goal is to optimize the mean
+time.
+
+\begin{table}[tp]
+  \caption{Comparison of categorical versus mixed parameters.}
+  \label{tab:catmixed}
+  \centering
+  \begin{tabular}{rccl}
+    \toprule
+F-test\\
+    & Cat & Mixed  & 99\% CI\\\midrule
+    \%succ & 36.69 & 31.26& $\Pr(a < b) \in [0.50, 0.58]$\\
+    mean   & 61.31 & 58.53& mean$(a-b) \in [-3.98, 9.54]$\\
+\midrule
+t-test\\
+           & Cat & Mixed  & 95\% CI\\\midrule
+    \%succ & 47.28 & 32.65 & $\Pr(a < b) \in[0.55,  0.63]$\\
+    mean   & 36.72 & 8.10  & mean$(a-b) \in [15.85, 41.40]$\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+In a third experiment, we evaluate the effect of the new soft-restart
+strategy. The results are summarized in
+Table~\ref{tab:softrestart}. The soft-restart strategy always helps to
+improve \%succ, and when \irace uses the t-test and only categorical
+parameters, it significantly helps to reduce the mean time. Moreover,
+it never results in worse results.
+
+\begin{table}[tp]
+  \caption{Results when using the soft-restart option.}
+  \label{tab:softrestart}
+  \centering
+  \begin{tabular}{rccl}
+    \toprule
+F-test (Cat)\\
+           & Soft-restart & No  & 99\% CI\\\midrule
+    \%succ & 43.11&24.17 &  $\Pr(a < b) \in [0.60,  0.68]$\\
+    mean   & 59.05&61.31 &  mean$(a-b) \in [-7.89, 3.37]$\\
+\midrule
+t-test (cat)\\
+           & Soft-restart & No  & 95\% CI\\\midrule
+    \%succ & 57.62 & 22.32 & $\Pr(a < b) \in[0.69,  0.75]$\\
+    mean   & 17.89 & 36.72 & mean$(a-b) \in [-28.76, -8.89]$\\
+\midrule
+F-test (mixed)\\
+    & Soft-restart & No  & 99\% CI\\\midrule
+    \%succ &50.00 &17.88& $\Pr(a < b) \in [0.70, 0.77]$\\
+    mean   &54.59 &58.53& mean$(a-b) \in  [-11.81, 3.94]$\\
+\midrule
+t-test (mixed)\\
+           & Soft-restart & No  & 95\% CI\\\midrule
+    \%succ & 52.72 &26.95& $\Pr(a < b) \in[0.63, 0.70]$\\
+    mean   &  7.52 & 8.10& mean$(a-b) \in [-9.08, 1.16]$\\
+
+\bottomrule
+\end{tabular}
+\end{table}
+
+The main conclusions of these experiments is that the best approach
+depends on how the results are evaluated. If the goal is to maximise
+\%succ, the use of F-test is recommended, whereas if the goal is to
+minimise the mean time, then the t-test leads to better
+configurations. The soft-restart strategy sometimes leads to further
+improvements and, hence, we recommend its use by default.
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "documentation"
+%%% End: 

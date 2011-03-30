@@ -3,13 +3,6 @@
 # This hook is the command that is executed every run.
 # Check the examples in examples/
 #
-# This hook is run in a temporary directory, the same directory where
-# hook-instance-finished is executed. Currently this temporary
-# directory is created under the working directory where you launched
-# F-Race, and, hence, you can copy files from F-Race directory to the
-# temporary directory with: cp --force ../file .
-#
-#
 # PARAMETERS:
 # $1 is the candidate number
 # $2 is the instance name
@@ -19,36 +12,12 @@
 # This script should print nothing.
 # Exit with 0 if no error, with 1 in case of error
 ###############################################################################
+
 EXE=~/bin/moaco_btsp
-FIXED_PARAMS=" --trials 1 --wls 0 --aco mmas --rho 0.05 --ants 24 --beta 2"
+FIXED_PARAMS="--trials 1 --time 60 --wls 1 --PACO --candidate-list 40"
 CANDIDATE=$1
 INSTANCE=$2
 shift 2
 CAND_PARAMS=$*
-OUTPUTEXT=output
-STDOUT=${CANDIDATE}.${OUTPUTEXT}
-STDERR=${CANDIDATE}.stderr
 
-mkdir -p arena
-cd arena
-
-touch ${CANDIDATE}.running
-
-exec qsub <<EOF
-#!/bin/bash
-#$ -N ifrace-$PPID-$CANDIDATE
-#$ -l opteron2216
-# -l long
-#$ -o $STDOUT
-#$ -e $STDERR
-#$ -cwd
-
-$EXE ${FIXED_PARAMS} --input $INSTANCE ${CAND_PARAMS}
-echo "OK" >& 2
-rm -f ${CANDIDATE}.running
-EOF
-exit 0
-
-exec 1> $STDOUT
-exec 2> $STDERR
-exec $EXE ${FIXED_PARAMS} --input $INSTANCE ${CAND_PARAMS}
+exec $EXE ${FIXED_PARAMS} --input $INSTANCE ${CAND_PARAMS} --output ${CANDIDATE}.output &> ${CANDIDATE}.stderr

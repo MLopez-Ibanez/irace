@@ -2,8 +2,9 @@
 set -e
 set -u
 
-cat > .excludes <<EOF
+cat > .excludes <<'EOF'
 .excludes
+.*
 dist.sh
 TUNE*
 Program
@@ -13,21 +14,25 @@ parameters.txt
 tune-conf
 *.diff
 hooks/hook-run
-hooks/hook-instance-finished
+hooks/hook-evaluate
 hooks/tune-main
+doc/
+TODO
+examples/beamaco
+examples/hypervolume
+web/
 EOF
 
 BASEDIR=`pwd`
-VERSION=`svnversion -n .`
-VERSION=svn${VERSION}
+VERSION=$(cat VERSION)
 #VERSION=`date '+%F' | tr -d '\n'`
-DIST_SRC=ifrace-${VERSION}
-echo "ifrace: version $VERSION"
+DIST_SRC=irace-${VERSION}
+echo "irace: version $VERSION"
 mkdir -p ../${DIST_SRC}
 rsync -rlpC --exclude-from=.excludes . ../${DIST_SRC}/
 rm -f .excludes
 cd ..
-tar cf - ${DIST_SRC} | gzip -f9 > ${DIST_SRC}.tar.gz 
+(tar cf - ${DIST_SRC} | gzip -f9 > ${DIST_SRC}.tar.gz) && rm -rf ${DIST_SRC}
 cd ${BASEDIR}
 echo "${DIST_SRC}.tar.gz created."
 

@@ -1,0 +1,47 @@
+#!/bin/bash
+###############################################################################
+# This hook is run for each candidate after all candidate
+# configurations have been run on a single instance.
+#
+# Check the examples in examples/
+#
+# PARAMETERS:
+# $1 is the instance name
+# $2 is the candidate number
+#
+# RETURN VALUE:
+# This hook should print a single numerical value
+###############################################################################
+INSTANCE=$1
+NUMCAND=$2
+
+STDOUT=c${NUMCAND}.stdout
+STDERR=c${NUMCAND}.stderr
+
+TIMEOUT=30
+
+#####################################################################
+# Evaluate a floating point number conditional expression.
+function float_cond()
+{
+    local cond=0
+    if [[ $# -gt 0 ]]; then
+        cond=$(echo "$*" | bc -q 2>/dev/null)
+        if [[ -z "$cond" ]]; then cond=0; fi
+        if [[ "$cond" != 0  &&  "$cond" != 1 ]]; then cond=0; fi
+    fi
+    local stat=$((cond == 0))
+    return $stat
+}
+
+
+if COST=$(cat ${STDOUT} | grep -e '^c runtime [0-9]' | cut -f3 -d ' '); then
+    if float_cond "$COST > $TIMEOUT"; then
+        echo "$TIMEOUT"
+    else
+        echo "$COST"
+    fi
+    rm -f ${STDOUT} ${STDERR}
+    exit 0
+fi
+exit 1

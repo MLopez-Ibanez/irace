@@ -1,0 +1,33 @@
+#!/bin/bash
+###############################################################################
+# This hook is run for each candidate after all candidate
+# configurations have been run on a single instance.
+#
+# Check the examples in examples/
+#
+# PARAMETERS:
+# $1 is the instance name
+# $2 is the candidate number
+#
+# RETURN VALUE:
+# This hook should print a single numerical value
+###############################################################################
+INSTANCE=$1
+NUMCAND=$2
+
+while [ -s "$NUMCAND" ]; do
+    sleep 10
+done
+
+if [ $NUMCAND -eq 1 ]; then
+    transform.pl -f 1,2 *.output
+    nondominated --quiet -n "1 2" *.output_dat -s "_nor"
+    hv --quiet -r "2.1 2.1" *.output_dat_nor -s "_hv"
+fi
+
+COST=`cat ${NUMCAND}.output_dat_nor_hv | grep -e '^[0-9]' | cut -f1`
+echo "$COST"
+## FIXME: only delete these if the command above succeded
+#rm -f ${NUMCAND}.output* ${NUMCAND}.stderr
+#exit 0
+

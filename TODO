@@ -1,0 +1,136 @@
+------------------------------------------------------------*- mode: text -*-
+
+ * generateCandidatesNormal() takes too much time with >800 candidates
+   and >20 parameters (SPEAR testcase).
+ 
+ * Use the options() mechanism of R, that is, 
+   options(irace.debug.level = 1) and getOption("irace.debug.level").
+
+ * Implement constraints on values that allow the user to specify
+   restrictions on the values that parameters may take, such as all
+   candidates must satisfy that a < b. Such constraints would be
+   specified in a different file "constraints.txt". One way to handle
+   them would be by sampling and rejection but perhaps more effective
+   methods could be implemented.
+
+ * We should use list$element instead of list[["element"]] for
+   indexing elements that must exist. This way if we do a typo, the
+   whole thing fails to run instead of just returning
+   NULL. Unfortunately, list$__element__ does not work because
+   __element__ is not a valid R variable name, so I suggest .ID.,
+   which is valid.
+
+ * JEREMIE: I would like to try a version of I-Race with a kind of
+   bounding in the probability vectors, something equivalent somehow
+   to MaxMin AS for ACO.  This could be a better way to avoid
+   convergence than trying to "flat" the vectors when it is already
+   too late.
+
+ * If hook-run prints "Your job...", then enable cluster mode
+   automatically. We do not need then another parameter
+   --cluster/clusterMode.
+
+ * Somehow adapt how many instances should be seen.  Maybe such
+   choices should be done based on the perceived heterogeneity of the
+   instances; I think this is an issue we also could discuss. I also
+   think that one should be able to measure such things e.g. by the
+   variability of the results of same configurations or by some
+   measure of variation of ranks on instances for each configuration.
+
+ * Various initialization modes Latin Hyper-cube, random, exhaustive,
+   etc.
+
+ * If we have too many elites, remove some of them. Add a parameter
+   --max-elites.
+ 
+ * Add example of logarithmic/parameter conversions in hook-run.
+
+ * Resample / Randomize only the instances one has seen. When a race
+   stops, the instances already seen are randomized but the elite
+   configurations are not reevaluated on them.
+
+ * Parameters should be printed and put in the commandline in exactly
+   the same order given in the parameter file.
+
+ * oneParamUpperBound and oneParamLowerBound are too much. We can
+   have a single function: paramBound that returns 
+      return (as.numeric(parameters[["boundary"]][[paramName]]))
+   then the user can use directly [1] or [2] to select whatever they
+   want. [Jeremie]
+
+ * We should produce at least the ouput files in R data format using save()
+    * A data.frame/matrix with all experiments performed.
+    * A data.frame/matrix with all candidate results.
+   [Manuel]
+
+ * Forbidden parameter combinations (following ParamILS).
+
+ * Error/Warn about unknown parameters.
+
+ * Error messages start in uppercase and finish with a period.
+
+ * Use stop() for internal error, stopifnot() for asserts and
+   tunerError() for user-level errors. None of these functions nor
+   cat() require pasting their arguments.
+
+ * Do not add extra parenthesis around simple expressions. Example:
+      if ( (!file.exists(installDir)) ) has too many parenthesis.
+
+ * It could be nice to be able to set a different nb of significant
+   digits for each real parameters This number thus would be given in
+   the parameters.txt file.  It should requires very few
+   modifications, only in the sampling (generation uniform and normal)
+
+------------------------------------------------------------------------------
+
+ * [FIXED] Use the remaining budget always. But how? 
+
+ * [DONE] Allow to specify candidate configurations. Perhaps from an extra
+   input file --candidates=candidates.txt, which gives one candidate
+   per line in a table format:
+
+       param1 param2 param3 param4
+       10     5      none      8.2
+       9      NA     all       8.3
+
+   We would have to check that param names correspond to all
+   parameters given in parameters.txt and that constraints are
+   satisfied.
+
+ * [DONE] The "c" is not "component" but "categorical". We should rename
+   everything Component to Categorical, just use sed, check the diff
+   and test. [Jeremie]
+
+ * [DONE] If we want to keep the functions for isReal, isInteger, etc. then
+   you should use them everywhere. I would propose to have a paramType
+   function that returns the type, and then isReal(type) would just
+   test (type == "r"). [Jeremie]
+
+ * [DONE] Replace the constraints specifications by an R expression
+   using: eval(parse(text=constraint), list(a=4, b=3))
+
+ * In race.R: 
+
+  - [DONE] I wonder why first.test should be a single number? It seems
+    reasonable to choose 10 or more, no? I changed it in the check of
+    the variable first.test
+
+  - [DONE] Add a parameter each.test, to set how often the f-test
+    should be performed, and the corresponding test. For example, if
+    each.test == 10, the f-test will be performed only after having
+    seen 10, 20, 30... instances.
+
+ * [DONE] Print elite commandlines (that is, pairs switch-value) for easy
+   copy-paste.
+
+ * Remove the c() from all calls to printMsg. [DONE]
+
+ * I think the concept of ghosts parameters could be better handled if
+   we track the size of the domain of a parameter. Then, we do not
+   sample/update probabilities for parameters whose domain is size
+   1. Also, "ghost" is confusing, better would be "Fixed" or "Static".[DONE]
+
+ * Rename everything as irace instead irace (only after merging all
+   pending branches!). [DONE]
+
+------------------------------------------------------------------------------

@@ -1,21 +1,30 @@
 #!/bin/bash
 ###############################################################################
-# This hook is the command that is executed every run.
+# This hook is to tune the ACOTSP software.
 #
 # PARAMETERS:
-# $1 is the candidate number
-# $2 is the instance name
-# The rest are parameters to the run
+# $1 is the instance name  
+# $2 is the candidate number
+# The rest ($* after `shift 2') are parameters to the run of ACOTSP
 #
 # RETURN VALUE:
-# This script should print nothing.
-# Exit with 0 if no error, with 1 in case of error
+# This script print nothing but call ACOTSP.
 ###############################################################################
 
-EXE=/home/yuan/Work/ifrace/Bin_aco_full/acotsp
-CANDIDATE=$1
-INSTANCE=$2
-shift 2
-exec $EXE --time 5 -r 1 -i $INSTANCE $* 1> ${CANDIDATE}.run.output 2> ${CANDIDATE}.run.stderr
+# Path to the ACOTSP software:
+EXE=~/bin/acotsp
 
+# What "fixed" parameters should be always passed to ACOTSP?
+# The time to be used is always 5 seconds, and we want only one run:
+FIXED_PARAMS=" --time 5 --tries 1 "
 
+# The instance name and the candidate id are the first parameters
+INSTANCE=$1
+CANDIDATE=$2
+
+# All other parameters are the candidate parameters to be passed to ACOTSP
+shift 2 || exit 1
+CAND_PARAMS=$*
+
+# Now we can call ACOTSP by building a command line with all parameters for it
+exec $EXE ${FIXED_PARAMS} -i $INSTANCE ${CAND_PARAMS} 1> c${CANDIDATE}.stdout 2> c${CANDIDATE}.stderr

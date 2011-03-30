@@ -45,7 +45,7 @@
 
 # Load library rpvm if available
 .race.warn.save<-getOption("warn")
-.race.usePVM<-require(rpvm,quietly=TRUE)
+.race.usePVM<- suppressWarnings(require(rpvm, quietly = TRUE))
 
 # Conventional master-slave messages
 .race.MSG<-list(INIT       = 11,
@@ -64,6 +64,7 @@ race<-function(wrapper.file=stop("Argument \"wrapper.file\" is mandatory"),
                stat.test=c("friedman","t.bonferroni","t.holm","t.none"),
                conf.level=0.95,
                first.test=5,
+               each.test=1,
                interactive=TRUE,
                log.file="",
                no.slaves=0,
@@ -369,6 +370,7 @@ race<-function(wrapper.file=stop("Argument \"wrapper.file\" is mandatory"),
   no.experiments.sofar<-0
   no.subexperiments.sofar<-0
   best<-0
+  race.ranks <- c()
   no.tasks.sofar<-0
   no.subtasks.sofar<-0
   
@@ -386,7 +388,9 @@ race<-function(wrapper.file=stop("Argument \"wrapper.file\" is mandatory"),
               best=best,
               mean.best=mean.best,
               timestamp.start=timestamp.start,
-              race.data=race.data)
+	      race.data=race.data,
+              ranks = race.ranks)
+
     if (end)
       log<-c(log,list(timestamp.end=timestamp.current,
                       description.best=description.best,
@@ -436,6 +440,7 @@ race<-function(wrapper.file=stop("Argument \"wrapper.file\" is mandatory"),
       if (interactive)
         cat("|=|")
     }
+    race.ranks <<- R
     return(J)
   }
 
@@ -452,17 +457,21 @@ race<-function(wrapper.file=stop("Argument \"wrapper.file\" is mandatory"),
         if (median(V1-V2)<0){
           best<<-which.alive[1]
           alive[which.alive[2]]<<-FALSE
+          race.ranks<<-c(1)
         }else{
           best<<-which.alive[2]
           alive[which.alive[1]]<<-FALSE
+          race.ranks<<-c(1)
         }
       }else{
         if (interactive)
           cat("|=|")
         if (median(V1-V2)<0){
           best<<-which.alive[1]
+          race.ranks<<-c(1,2)
         }else{
           best<<-which.alive[2]
+          race.ranks<<-c(2,1)
         }
       }
     }else{
@@ -482,12 +491,20 @@ race<-function(wrapper.file=stop("Argument \"wrapper.file\" is mandatory"),
     for (j in 1:ncol(Results))
       mean.all[j]<-sum(Results[1:no.subtasks.sofar,j]/no.subtasks.sofar)
     best<<-match(min(mean.all[alive]),mean.all)
-    
+    race.ranks <<- mean.all[alive]
+
     PJ<-array(0,dim=c(2,0))
     for (j in which.alive) {
       Vb<-Results[1:no.subtasks.sofar,best]
       Vj<-Results[1:no.subtasks.sofar,j]
-      p <- t.test(Vb,Vj,paired=TRUE)$p.value
+      #cat("Vb:", Vb, "\n")
+      #cat("Vj:", Vj, "\n")
+      # t.test may fail if the data in each group is almost
+      # constant. Hence, we sourround the call in a try() and we
+      # initialize p with 1 if the means are equal or zero if they are
+      # different.
+      p <- as.integer(isTRUE(all.equal(mean(Vb),mean(Vj))))
+      try(p <- t.test(Vb,Vj,paired=TRUE)$p.value)
       if (!is.nan(p) & !is.na(p))
         PJ<-array(c(PJ,j,p),dim=dim(PJ)+c(0,1))
     }
@@ -577,21 +594,31 @@ race<-function(wrapper.file=stop("Argument \"wrapper.file\" is mandatory"),
     no.subtasks.sofar<-no.subtasks.sofar+current.no.subtasks
     
     # Drop bad candidates
-    if (no.tasks.sofar>=first.test) 
+    if ( (no.tasks.sofar>=first.test) && ((no.tasks.sofar %% each.test) == 0)) {
       switch(stat.test,
              friedman=aux.friedman(),
              t.none=aux.ttest("none"),
              t.holm=aux.ttest("holm"),
              t.bonferroni=aux.ttest("bonferroni"))
-    else {
+    } else {
       if (interactive)
         cat("|x|")
-      if (no.subtasks.sofar==1)
-        best<-order(Results[1,])[1]
-      else
-        best<-order(apply(t(apply(Results[1:(no.subtasks.sofar),],1,rank)),
-                          2,mean))[1]
+      if (no.subtasks.sofar==1)  {
+        race.ranks <- Results[1,]
+        best <- order(race.ranks)[1]
+      } else  {
+        tmpResults <- Results[1:no.subtasks.sofar, which.alive]
+        stopifnot(!any(is.na(tmpResults)))
+        if (stat.test == "friedman") {
+          race.ranks <- apply(t(apply(tmpResults, 1, rank)), 2, mean)
+        } else {
+          race.ranks <- apply(tmpResults, 2, mean)
+        }
+        best <- which.alive[order(race.ranks)[1]]
+      }
     }
+    stopifnot (best == which.alive[order(race.ranks)][1])
+    race.ranks <- race.ranks[which(which.alive %in% which(alive))]
 
     mean.best<-mean(Results[1:(no.subtasks.sofar),best])
 
@@ -603,10 +630,9 @@ race<-function(wrapper.file=stop("Argument \"wrapper.file\" is mandatory"),
                 formatC(no.experiments.sofar,width=11),"|\n",
                 sep=""))
 
-    # stop if 2^d candidates is reached
+    # stop race if we have less than the minimum number of candidates
     if (no.tasks.sofar>=first.test) {
         which.alive<-which(alive)
-      	
     	if(length(which.alive) <= stop.min.cand)
     	break	
    }
@@ -631,6 +657,7 @@ race<-function(wrapper.file=stop("Argument \"wrapper.file\" is mandatory"),
     }
   }
   
+  # Build the return variable with everything inside: 
   invisible(log.list(end=TRUE))
 }
 
