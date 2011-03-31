@@ -1,22 +1,11 @@
 #!/bin/bash
-
 # This is a version of tune-main for launching ifrace using the --mpi
 # option in a SGE Cluster.
-
-QUEUE=long
-JOBNAME=ifrace-$$
-#MACHINE=opteron244
-#MACHINE=opteron2216
-MACHINE=xeon5410
-
-MPIRUN=/opt/openmpi/bin/mpirun
-PARALLEL_ENV=mpich_fu
-
 set -e
 set -o pipefail
 
 if [ $# == 0 ]; then
-    echo "Usage: $0 <BINDIR> <EXECDIR> --parallel <NB_SLAVES> additional_args_to_ifrace"
+    echo "Usage: ./tune-main-cluster-mpi <BINDIR> <EXECDIR> --parallel <NB_SLAVES> additional_args_to_irace"
     exit 1
 fi
 
@@ -38,6 +27,14 @@ if [ $NB_SLAVES -lt 2 ]; then
     exit 1
 fi
 
+QUEUE=long
+JOBNAME=irace-$$
+#MACHINE=opteron244
+#MACHINE=opteron2216
+MACHINE=xeon5410
+
+MPIRUN=/opt/openmpi/bin/mpirun
+PARALLEL_ENV=mpich_fu
 let NB_PARALLEL_PROCESS=NB_SLAVES+1
 
 exec qsub <<EOF
@@ -52,11 +49,11 @@ exec qsub <<EOF
 #      a     Mail is sent when the job is aborted or rescheduled.
 #      s     Mail is sent when the job is suspended.
 #
-#$ -o $EXECDIR/ifrace-$$.stdout 
-#$ -e $EXECDIR/ifrace-$$.stderr 
+#$ -o $EXECDIR/irace-$$.stdout 
+#$ -e $EXECDIR/irace-$$.stderr 
 #$ -cwd
 export OMPI_MCA_plm_rsh_disable_qrsh=1
 $MPIRUN -x OMPI_MCA_plm_rsh_disable_qrsh \
         -np 1 \
-        $BINDIR/ifrace --exec-dir=$EXECDIR --parallel $NB_SLAVES --mpi 1 $PARAMS
+        $BINDIR/irace --exec-dir=$EXECDIR --parallel $NB_SLAVES --mpi 1 $PARAMS
 EOF
