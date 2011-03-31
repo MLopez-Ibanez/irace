@@ -23,7 +23,7 @@ exec qsub <<EOF
 #$ -cwd
 
 # Working on /tmp should be faster
-TMP=$(mktemp -d)
+TMP='mktemp -d'
 $BINDIR/irace --exec-dir=\$TMP $* 
 RET=\$?
 cp -R \$TMP/./ $EXECDIR/
