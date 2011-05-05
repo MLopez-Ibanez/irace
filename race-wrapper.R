@@ -143,7 +143,7 @@ race.wrapper <- function(candidate, task, data)
   ## FIXME: which.alive should not be a global variable.
   if (candidate == which.alive[1]) {
     for (candi in which.alive) {
-      # First parameter is the candidate number, second is the instance file.
+      # First parameter is the instance file, second is the candidate number.
       command <- paste (hookRun, ins, candi, extra.params)
       # Use drop = FALSE to avoid decaying to a simple vector.
       cnd <- data$candidates[candi, , drop = FALSE]
@@ -242,13 +242,11 @@ race.wrapper <- function(candidate, task, data)
   cwd <- setwd (execDir)
   ## Redirects STDERR so outputRaw captures the whole output.
   command <- paste (hookEvaluate, ins, candidate, length(which.alive), "2>&1")
-  if (debugLevel >= 1) {  cat(command, "\n") }
+  if (debugLevel >= 1) { cat(command, "\n") }
   outputRaw <- system (command, intern = TRUE)
   if (debugLevel >= 1) { cat (outputRaw, sep="\n") }
   # Avoid warning: NAs introduced by coercion 
-  op <- options(warn = -1)
-  output <- as.numeric (outputRaw)
-  options (op)
+  output <- suppressWarnings (as.numeric (outputRaw))
   setwd (cwd)
   if (length (output) != 1 || any (is.na (output)))
     tunerError("The output of `", command, "' is not a number!\n",
