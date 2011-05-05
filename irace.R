@@ -371,12 +371,13 @@ iteratedRace <- function(tunerConfig
       tunerResults$experiments[, c("instance", "iteration",
                                    as.character(seq(ncol(tunerResults$experiments) - 2)))]
     
-    remainingBudget <- remainingBudget - raceResults$experimentsUsed
     experimentsUsedSoFar <- experimentsUsedSoFar + raceResults$experimentsUsed
     if (timeBudget > 0) {
       timeUsedSoFar <- timeUsedSoFar + raceResults$timeUsed
       timeEstimate <- timeUsedSoFar / experimentsUsedSoFar
       remainingBudget <- (timeBudget - timeUsedSoFar) / timeEstimate
+    } else {
+      remainingBudget <- remainingBudget - raceResults$experimentsUsed
     }
 
     if (debugLevel > 1) {
