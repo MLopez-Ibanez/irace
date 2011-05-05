@@ -131,7 +131,8 @@ readConfiguration <- function(configuration, configurationFile, parameters)
   }
   ## read configuration file variables
   for (param in parameters) {
-    configuration[[param]] <- ifelse (exists (param), get(param), NA)
+    configuration[[param]] <- ifelse (exists (param, inherits = FALSE),
+                                      get(param, inherits = FALSE), NA)
   }
   return (configuration)
 }
