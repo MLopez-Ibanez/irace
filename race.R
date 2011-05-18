@@ -201,6 +201,9 @@ race<-function(wrapper.file=stop("Argument \"wrapper.file\" is mandatory"),
   no.tasks<-race.info$no.tasks
   no.subtasks<-race.info$no.subtasks   
 
+  if (no.candidates <= stop.min.cand) {
+    stop ("Not enough candidates for a race")
+  }
   
   # Prepare a precis for documentation
   format.precis<-function(title,value){
