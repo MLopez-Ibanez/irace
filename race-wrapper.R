@@ -152,7 +152,7 @@ race.wrapper <- function(candidate, task, data)
       for (i in seq_len (data$parameters$nbParameters)) {
         param.name <- data$parameters$names[[i]]
         param.switch <- data$parameters$switches[[i]]
-        if (debugLevel >= 2) {
+        if (debugLevel >= 4) {
           print (cnd)
           print (param.name)
           print (param.switch)
