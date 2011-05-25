@@ -201,10 +201,6 @@ race<-function(wrapper.file=stop("Argument \"wrapper.file\" is mandatory"),
   no.tasks<-race.info$no.tasks
   no.subtasks<-race.info$no.subtasks   
 
-  if (no.candidates <= stop.min.cand) {
-    stop ("Not enough candidates for a race")
-  }
-  
   # Prepare a precis for documentation
   format.precis<-function(title,value){
     dots<-function(n)
@@ -269,9 +265,13 @@ race<-function(wrapper.file=stop("Argument \"wrapper.file\" is mandatory"),
   if (interactive) 
     cat(paste(precis,"\n\n"))
 
-  if (maxExp && no.candidates>maxExp)
+  if (maxExp && no.candidates > maxExp)
     stop("Max number of experiments is smaller than number of candidates")
 
+  if (no.candidates <= stop.min.cand) {
+    stop("Not enough candidates (", no.candidates, ") for a race (stop.min.cand=", stop.min.cand, ")")
+  }
+  
   check.result<-function(result){
     expected.length<-ifelse(length(no.subtasks)==1,
                             no.subtasks,
