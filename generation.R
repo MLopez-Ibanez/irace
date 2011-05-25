@@ -40,7 +40,7 @@ generateCandidatesUniform <- function (tunerConfig, parameters,
         } else if ((currentType == "c") || (currentType == "o")) {
           newVal <- lowerBound
         } else if (currentType == "r") {
-          newVal <- signif(as.real(lowerBound), tunerConfig$signifDigits)
+          newVal <- as.double(lowerBound)
         } else {
           stop (irace.bug.report);
         }
@@ -71,8 +71,8 @@ generateCandidatesUniform <- function (tunerConfig, parameters,
 # 2) Nb candidates is the number of candidates at the end
 # included the elite ones obtained from the previous iteration
 generateCandidatesNormal <- function (tunerConfig, parameters,
-                                          eliteCandidates, model,
-                                          nbNewCandidates, indexIteration)
+                                      eliteCandidates, model,
+                                      nbNewCandidates)
 {
   nbCandidates <- nbNewCandidates + nrow(eliteCandidates)
   if (nbNewCandidates <= 0) {
@@ -107,7 +107,7 @@ generateCandidatesNormal <- function (tunerConfig, parameters,
           } else if (currentType == "c"  || currentType == "o") {
             newVal <- lowerBound
           } else if (currentType == "r") {
-            newVal <- signif(as.numeric(lowerBound), tunerConfig$signifDigits)
+            newVal <- as.double(lowerBound)
           } else {
             stop (irace.bug.report)
           }
