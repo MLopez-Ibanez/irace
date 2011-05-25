@@ -203,6 +203,9 @@ iteratedRace <- function(tunerConfig
 
   # To save the logs
   tunerResults <- list()
+  tunerResults$tunerConfig <- tunerConfig
+  tunerResults$parameters <- parameters
+  tunerResults$iterationElites <- NULL
   tunerResults$experiments <- as.data.frame(matrix(ncol=2, nrow=0))
   colnames(tunerResults$experiments) <- c("instance", "iteration")
   
@@ -249,8 +252,10 @@ iteratedRace <- function(tunerConfig
                             tunerConfig$nbCandidates)
 
     # Check that the number of candidates to produce is greater than
-    # the number of elites.
-    if (nbCandidates <= nrow(eliteCandidates)) {
+    # the number of elites...
+    if (nbCandidates <= nrow(eliteCandidates)
+        # ... or the number of candidates to test is larger than the minimum.
+        || nbCandidates <= minSurvival) {
       cat("# ", format(Sys.time(), usetz=TRUE), ": Stopped because ",
           "there is no enough budget to sample new candidates\n",
           #(number of elites  + 1) * (mu + min(5, indexIteration)) > remainingBudget\n",
@@ -303,7 +308,6 @@ iteratedRace <- function(tunerConfig
       model <- updateModel(parameters, eliteCandidates, model, indexIteration,
                            nbIterations, nbNewCandidates)
       if (debugLevel > 0) { printModel (model) }
-      tunerResults$model$beforeSR[[indexIteration]] <- model
       
       if (debugLevel > 0) {
         cat("# Sample", nbNewCandidates, "candidates from truncated normal distribution\n")
@@ -316,8 +320,7 @@ iteratedRace <- function(tunerConfig
       while (TRUE) {
         newCandidates <-
           generateCandidatesNormal(tunerConfig, parameters, eliteCandidates,
-                                   model, nbNewCandidates,
-                                   indexIteration)
+                                   model, nbNewCandidates)
         # Set ID of the new candidates.
         newCandidates <-
           cbind (.ID. = max(0, allCandidates$.ID.) + 1:nrow(newCandidates),
@@ -343,7 +346,7 @@ iteratedRace <- function(tunerConfig
       rownames(allCandidates) <- allCandidates$.ID.
     }
 
-    if (debugLevel > 1) {
+    if (debugLevel >= 1) {
       cat("Candidates for the race n", indexIteration, ": \n")
       candidates.print(testCandidates, metadata = TRUE)
     }
@@ -388,6 +391,9 @@ iteratedRace <- function(tunerConfig
     if (debugLevel > 0) { cat("# EXTRACT ELITES\n") }
     eliteCandidates <- extractElites(raceResults$candidates,
                                      min(raceResults$nbAlive, minSurvival))
+    cat("Elite candidates:\n")
+    candidates.print(eliteCandidates, metadata = debugLevel > 0)
+    tunerResults$iterationElites <- c(tunerResults$iterationElites, eliteCandidates$.ID.[1])
     
     if (indexIteration == 1) {
       if (debugLevel > 0)  { cat("# INITIALISE MODEL\n") }
@@ -396,13 +402,10 @@ iteratedRace <- function(tunerConfig
       
     if (debugLevel > 0) { cat("# End of iteration ", indexIteration, "\n") }
 
-    if (debugLevel > 1) {
+    if (debugLevel >= 3) {
       cat("All candidates:\n")
       candidates.print(allCandidates, metadata = TRUE)
     }
-
-    cat("Elite candidates:\n")
-    candidates.print(eliteCandidates, metadata = debugLevel > 0)
 
     ## Save to the log file
     tunerResults$allCandidates <- allCandidates
