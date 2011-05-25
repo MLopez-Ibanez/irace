@@ -8,7 +8,7 @@
 # The rest ($* after `shift 2') are parameters to the run of ACOTSP
 #
 # RETURN VALUE:
-# This script print nothing but call ACOTSP.
+# This script prints nothing, only calls ACOTSP.
 ###############################################################################
 
 # Path to the ACOTSP software:
@@ -26,5 +26,8 @@ CANDIDATE=$2
 shift 2 || exit 1
 CAND_PARAMS=$*
 
+STDOUT="c${CANDIDATE}.stdout"
+STDERR="c${CANDIDATE}.stderr"
+
 # Now we can call ACOTSP by building a command line with all parameters for it
-exec $EXE ${FIXED_PARAMS} -i $INSTANCE ${CAND_PARAMS} 1> c${CANDIDATE}.stdout 2> c${CANDIDATE}.stderr
+exec $EXE ${FIXED_PARAMS} -i $INSTANCE ${CAND_PARAMS} 1> $STDOUT 2> $STDERR

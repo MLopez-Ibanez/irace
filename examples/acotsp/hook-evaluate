@@ -14,41 +14,40 @@
 # This hook should print a single numerical value (the value to be minimized)
 ###############################################################################
 INSTANCE=$1
-NUMCAND=$2
+CANDIDATE=$2
 # Rem: The third parameter ($3) is the total number of candidates tested on 
 # this instance. However, in this case we do not need it.
 
-STDOUT=c${NUMCAND}.stdout
-STDERR=c${NUMCAND}.stderr
-
+STDOUT="c${CANDIDATE}.stdout"
+STDERR="c${CANDIDATE}.stderr"
 
 # In case of error, we print the current time:
 error() {
-    echo "`TZ=UTC date`: error: $@"
+    echo "`TZ=UTC date`: error: $@" >&2
     exit 1
 }
 
-
-# The output of the candidate $NUMCAND should be written in the file 
-# c${NUMCAND}.stdout (see hook run for ACOTSP). Does this file exist?
-if [ -s "${STDOUT}" ]; then
-    # Ok, the file exist. It contains the whole output written by ACOTSP.
-    # This script should return a single numerical value, the best objective 
-    # value found by this run of ACOTSP. The following line is to extract
-    # this value from the file containing ACOTSP output.
-    COST=$(cat ${STDOUT} | grep -o -E 'Best [0-9.e]+' | cut -d ' ' -f2)
-    
-    # Print it!
-    echo "$COST"
-
-    # We are done with our duty. Clean files and exit with 0 (no error).
-    rm -f "${STDOUT}" "${STDERR}"
-    rm -f best.* stat.* cmp.*
-    exit 0
-else
+# The output of the candidate $CANDIDATE should be written in the file 
+# c${CANDIDATE}.stdout (see hook run for ACOTSP). Does this file exist?
+if [ ! -s "${STDOUT}" ]; then
     # In this case, the file does not exist. Let's exit with a value 
     # different from 0. In this case irace will stop with an error.
     error "${STDOUT}: No such file or directory"
-    exit 1
 fi
 
+# Ok, the file exist. It contains the whole output written by ACOTSP.
+# This script should return a single numerical value, the best objective 
+# value found by this run of ACOTSP. The following line is to extract
+# this value from the file containing ACOTSP output.
+COST=$(cat ${STDOUT} | grep -o -E 'Best [-+0-9.e]+' | cut -d ' ' -f2)
+if ! [[ "$COST" =~ ^[-+0-9.e]+$ ]] ; then
+    error "${STDOUT}: Output is not a number"
+fi
+
+# Print it!
+echo "$COST"
+
+# We are done with our duty. Clean files and exit with 0 (no error).
+rm -f "${STDOUT}" "${STDERR}"
+rm -f best.* stat.* cmp.*
+exit 0

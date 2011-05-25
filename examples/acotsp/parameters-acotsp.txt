@@ -1,7 +1,5 @@
 ### PARAMETER FILE FOR THE ACOTSP SOFTWARE
 
-
-
 # name		switch		     type	values			[conditions (using R syntax)]
 
 algorithm       "--"                 c		(as,mmas,eas,ras,acs)
