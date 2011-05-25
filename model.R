@@ -21,16 +21,20 @@ initialiseModel <- function (parameters, candidates)
     nbValues <- length(parameters$boundary[[currentParameter]])
     oneParam <- list()
     if (type == "c") {
-      for (indexConfig in seq_len(nbCandidates)) {
-        idCurrentConfig <- as.character(candidates[indexConfig, ".ID."])
-        oneParam[[idCurrentConfig]] <- rep((1 / nbValues), nbValues)
-      }
-    } else {
-      stopifnot(type == "i" || type == "r" || type == "o")
-      for (indexConfig in seq_len(nbCandidates)) {
-        idCurrentConfig <- as.character(candidates[indexConfig, ".ID."])
-        oneParam[[idCurrentConfig]] <- 1
-      }
+      value <- rep((1 / nbValues), nbValues)
+    }
+    else if (type == "i" || type == "r") {
+      lowerBound <- oneParamLowerBound(currentParameter, parameters)
+      upperBound <- oneParamUpperBound(currentParameter, parameters)
+      value <- (upperBound - lowerBound) / 2
+    }
+    else {
+      stopifnot(type == "o")
+      value <- (length(oneParamBoundary(currentParameter, parameters)) - 1) / 2
+    }
+    for (indexConfig in seq_len(nbCandidates)) {
+      idCurrentConfig <- as.character(candidates[indexConfig, ".ID."])
+      oneParam[[idCurrentConfig]] <- value
     }
     model[[currentParameter]] <- oneParam
   }
@@ -148,11 +152,19 @@ restartCandidates <- function (candidates, restart.ids, model, parameters,
         model[[param]][[id]] <- probVector / sum(probVector)
       } else {
         stopifnot(type == "i" || type == "r" || type == "o")
-        # Bring back the value 2 iterations.
+        if (type == "i" || type == "r") {
+          lowerBound <- oneParamLowerBound(param, parameters)
+          upperBound <- oneParamUpperBound(param, parameters)
+          value <- (upperBound - lowerBound) / 2
+        } else {
+          stopifnot(type == "o")
+          value <- (length(oneParamBoundary(param, parameters)) - 1) / 2
+        }
+        # Bring back the value 2 iterations or to the second iteration value.
         model[[param]][[id]] <-
           min(model[[param]][[id]] /
               ((1 / nbCandidates)^(2 / parameters$nbVariable)),
-              (1 / nbCandidates)^(1 / parameters$nbVariable))
+              value * ((1 / nbCandidates)^(1 / parameters$nbVariable)))
       }
     }
   }

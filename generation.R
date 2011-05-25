@@ -121,9 +121,7 @@ generateCandidatesNormal <- function (tunerConfig, parameters,
             # parameter, let's sample uniformly.
             newVal <- runif(1, lowerBound, upperBound)
           } else {
-            stdDev <- ((upperBound - lowerBound)
-                       * model[[currentParameter]][[as.character(idEliteParent)]])
-
+            stdDev <- model[[currentParameter]][[as.character(idEliteParent)]]
             newVal <- rtnorm(1, mean, stdDev, lowerBound, upperBound)
           }
           newVal <- ifelse((currentType == "i"),
@@ -142,7 +140,7 @@ generateCandidatesNormal <- function (tunerConfig, parameters,
             # Find the position within the array of possible
             # values to determine the equivalent integer.
             mean <- match(value, possibleValues) # Return index of value in array
-            stdDev <- (length(possibleValues)-1) * model[[currentParameter]][[as.character(idEliteParent)]]
+            stdDev <- model[[currentParameter]][[as.character(idEliteParent)]]
 
             # Sample with truncated normal distribution.
             newValAsInt <- rtnorm(1, mean, stdDev, 1, length(possibleValues))
