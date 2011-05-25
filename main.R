@@ -135,8 +135,6 @@ paramDef <-
           "Number of experiments per iteration."),
          c("sampleInstances", "", "--sample-instances", 1, 
            "Sample the instances or take them always in the same order."),
-         c("maxInstances", "", "--max-instances", 1000, 
-           "The maximum number of instances to be considered for each iteration."),
          c("testType", "", "--test-type", "F-test", 
            "Specifies the statistical test type: F-test or t-test."),
          c("firstTest", "", "--first-test", 5, 

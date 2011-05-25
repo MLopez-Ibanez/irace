@@ -209,7 +209,7 @@ checkConfiguration <- function(configuration)
   intParams <- c("maxNbExperiments", "signifDigits", "debugLevel",
                  "nbIterations", "nbExperimentsPerIteration",
                  "firstTest", "eachTest", "minNbSurvival", "nbCandidates",
-                 "maxInstances", "mu", "timeBudget", "timeEstimate", "seed",
+                 "mu", "timeBudget", "timeEstimate", "seed",
                  "parallel")
 
   # TODO: Avoid the for-loop using lapply and configuration[intParams]
@@ -221,10 +221,6 @@ checkConfiguration <- function(configuration)
     configuration[[param]] <- as.integer(configuration[[param]])
     if (is.na (configuration[[param]]))
       tunerError ("'", param, "' must be an integer.")
-  }
-
-  if (configuration$maxInstances < 1) {
-    tunerError ("'maxInstances' must be a positive number.")
   }
 
   as.boolean.param <- function(x, name, params)

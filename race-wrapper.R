@@ -74,11 +74,13 @@ race.init <- function(candidates, parameters, tunerConfig)
     if (length (instances) == 0)
       tunerError("No instances found in `", instance.dir, "' !\n")
   }
-  maxInstances <- tunerConfig$maxInstances
+  # FIXME: Ideally, we wouldn't do this here but dynamically as we
+  # need more instances to avoid the artificial limit of 1000
+  # instances.
   if (tunerConfig$sampleInstances) {
-    instances <- rep(sample(instances), length.out = maxInstances)
+    instances <- rep(sample(instances), length.out = 1000)
   } else {
-    instances <- rep(instances, length.out = maxInstances)
+    instances <- rep(instances, length.out = 1000)
   }
   # Return init list
   return (list (no.candidates = nrow(candidates), 

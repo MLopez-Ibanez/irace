@@ -124,31 +124,35 @@ performance on a particular problem often depends on the particular
 settings of these parameters. This is particularly true in
 metaheuristics, that is, general-purpose solvers such as ant colony
 optimization, evolutionary algorithms and other stochastic local
-search methods~\cite{HooStu05sls-mk,Birattari09tuning}. Moreover,
+search methods~\citep{HooStu05sls-mk,Birattari09tuning}. Moreover,
 complex algorithms may be automatically designed by finding a
 particular configuration of a framework composed by alternative design
 choices and complementary algorithmic
-components~\cite{KhuXuHooLey2009:satenstein,IRIDIA-2011-003}.
+components~\citep{KhuXuHooLey2009:satenstein,IRIDIA-2011-003}.
 
 The scenario that \irace addresses is usually described as
-\emph{offline configuration}~\citep{Birattari09tuning}, that is, there are two clearly delimited
-phases. In a primary tuning  phase, an algorithm
-configuration is chosen given a set of tuning instances representative of a
-particular problem. In a secondary production (or testing) phase, the
-chosen algorithm configuration is used to solve unseen instances of the same problem. The goal is to find, during the tuning phase, an algorithm configuration that minimizes some cost measure over the set of instances that will be seen during the production phase.
+\emph{offline configuration}~\citep{Birattari09tuning}, that is, there
+are two clearly delimited phases. In a primary tuning phase, an
+algorithm configuration is chosen given a set of tuning instances
+representative of a particular problem. In a secondary production (or
+testing) phase, the chosen algorithm configuration is used to solve
+unseen instances of the same problem. The goal is to find, during the
+tuning phase, an algorithm configuration that minimizes some cost
+measure over the set of instances that will be seen during the
+production phase.
 
 Offline tuning is frequently performed ad-hoc by algorithm designers
 as a result of trial-and-error runs. More formal methods involve the
-use of experimental design techniques~\cite{AdeLag06tuning},
-evolutionary algorithms~\cite{NanEib2006gecco} and local
-search~\cite{HutHooLeyStu2009jair}. \citet{Birattari09tuning} proposed
+use of experimental design techniques~\citep{AdeLag06tuning},
+evolutionary algorithms~\citep{NanEib2006gecco} and local
+search~\citep{HutHooLeyStu2009jair}. \citet{Birattari09tuning} proposed
 an automatic configuration approach, \FRACE, based on \emph{racing}
 and Friedman's non-parametric two-way analysis of variance by
 ranks. This proposal was later improved by performing several
 iterations of \FRACE that successively refine a probabilistic model of
 the parameter space. The resulting automatic configuration approach
 was called Iterated F-race
-(\IFRACE)~\cite{BalBirStu07,BirYuaBal2010:emaoa}. Although a formal
+(\IFRACE)~\citep{BalBirStu07,BirYuaBal2010:emaoa}. Although a formal
 description of the \IFRACE procedure is given in the original
 publications, no implementation of it has been publicly available.
 The \irace package implements a general \emph{iterated racing}
@@ -156,7 +160,7 @@ procedure, which includes, as a special case, \IFRACE.
 
 
 The \irace software presented here has already been extensively tested
-in several research projects. \citet{DubLopStu2011cor,IRIDIA-2010-022}
+in several research projects. \citet{IRIDIA-2010-022,DubLopStu2011cor}
 used \irace for tuning the parameters of several iterated greedy (IG)
 variants for various objectives in the permutation flow-shop problem
 (PFSP). \citet{LopStu2010:ants} automatically configured a flexible
@@ -169,14 +173,6 @@ problem (bTSP). \citet{MonAydStu2011soco} designed an incremental particle swarm
 These examples demonstrate the potential of automatic configuration of
 algorithms, and the profound impact it will have on the way
 optimisation algorithms are designed and evaluated in the future.
-
-%The contents of this document are as follows.%  First we briefly
-% introduce the automatic configuration problem, racing and \IFRACE,
-% which are the ideas underlying the \irace software
-% (Section~\ref{sec:prelim}). Next, we describe the general outline of
-% the \irace software in Section~\ref{sec:irace}. The full details of
-% installing, configuring and using \irace are described in
-% Section~\ref{sec:setup}.
 
 
 \section{Automatic Configuration and \IFRACE}\label{sec:prelim}
@@ -227,8 +223,9 @@ The precise value of $c_\theta$ is generally unknown, and it can only
 be estimated by sampling from $\mathcal{C}(\theta)$. The particular
 definition of $c_\theta$ determines how to rank the configurations
 over a set of instances. The most typical definition of $c_\theta$ is
-$E[\mathcal{C}(\theta)]$, the expected cost value or mean cost. If the cost values over different instances are incommensurable,
-the median or the sum of ranks may be more meaningful.
+$E[\mathcal{C}(\theta)]$, the expected cost value or mean cost. If the
+cost values over different instances are incommensurable, the median
+or the sum of ranks may be more meaningful.
 
 
 
@@ -257,13 +254,10 @@ replacing one of the parameters by a surrogate parameter, \eg{}, $a'
 \in (0,1)$, such that $ a = a' \cdot b$.
 
 
-
-
-
 \subsection{Racing}
 
 Racing was first proposed in machine learning to deal with the problem
-of model selection~\cite{MarMoo1997air}. 
+of model selection~\citep{MarMoo1997air}. 
 \citet{Birattari09tuning} adapted the procedure for the configuration
 of optimization algorithms. A race starts with a finite set of
 candidate configurations. At each step of the race, the candidate
@@ -276,20 +270,13 @@ number of instances or a pre-defined computational budget. This
 computational budget may be an overall computation time or a number of
 experiments.
 
-% More formally, given a sequence 
-% Let $c^{\theta}_i$ denote the cost of a single run of configuration
-% $\theta$ on instance $i_k$.
-
-% If $\Theta_0$ denotes the set of initial candidate configurations,
-% then
-
 There are several alternatives for selecting which configurations
 should be discarded during the race. The \FRACE
-algorithm~\cite{Birattari09tuning,BirStuPaqVar02:gecco} relies on the
+algorithm~\citep{Birattari09tuning,BirStuPaqVar02:gecco} relies on the
 non-parametric Friedman's two-way analysis of variance by ranks, the
 Friedman test, and its associated post-hoc test, as described by
-Conover~\cite{Conover99:pns}. Nonetheless, the \texttt{race}
-package~\cite{IRIDIA-2003-037} implements various alternatives based
+Conover~\citep{Conover99:pns}. Nonetheless, the \texttt{race}
+package~\citep{IRIDIA-2003-037} implements various alternatives based
 on the paired t-test with and without p-value correction for multiple
 comparisons, which are also available in the proposed \texttt{irace}
 package.
@@ -302,7 +289,7 @@ practice that the configuration space is too large to be sampled
 effectively. Moreover, the knowledge gathered during the race itself
 could be used to sample new candidate configurations. 
 
-\IFRACE was proposed~\cite{BalBirStu07,BirYuaBal2010:emaoa} as an
+\IFRACE was proposed~\citep{BalBirStu07,BirYuaBal2010:emaoa} as an
 extension of \FRACE in order to search the configuration space more
 effectively by focusing on the most promising configurations. \IFRACE
 iterates over a sequence of races, and the candidate configurations
@@ -437,7 +424,7 @@ If $X_d$ is a numerical parameter defined within the range of $X_d \in
 the truncated normal distribution $\mathcal{N}(x_d^z, (\overline{x}_d - \underline{x}_d)\cdot\sigma_d^i)$,
 such that the new value is within the range.\footnote{%
   For sampling from a truncated normal distribution, we use the
-  \texttt{msm} package~\cite{Jac2011jss}.} The mean of the
+  \texttt{msm} package~\citep{Jac2011jss}.} The mean of the
 distribution $x_d^z$ is simply the value of parameter $d$ in the elite
 configuration $\theta_z$. The parameter $\sigma_d^i$ controlling the standard deviation of the distribution is initially set to $1$, and it is updated at each iteration before sampling as follows:
 %
@@ -522,7 +509,7 @@ experiments performed so far.
 
 Our implementation incorporates a ``soft-restart'' mechanism to avoid
 premature convergence. In the original \IFRACE
-proposal~\cite{BalBirStu07}, the standard deviation, in the case of
+proposal~\citep{BalBirStu07}, the standard deviation, in the case of
 numerical parameters, or the discrete probability of unselected
 parameter settings, in the case of categorical ones, decreases at every
 iteration. Diversity is introduced by the variability of the
@@ -1078,9 +1065,6 @@ F.R.S.-FNRS, of which they are Research Associates.
 
 \defparameter{sampleInstances}{sample-instances}{1}
  Sample the instances or take them always in the same order.
-
-\defparameter{maxInstances}{max-instances}{1000}
- The maximum number of instances to be considered for each iteration.
 
 \defparameter{testType}{test-type}{F-test} %
  Specifies the statistical test type: \texttt{F-test} (Friedman test)
