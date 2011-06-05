@@ -15,7 +15,7 @@ constraintsSatisfied <- function (parameters, partialCandidate, paramName)
 
 ### Uniform sampling for the initial generation
 generateCandidatesUniform <- function (tunerConfig, parameters,
-                                           nbCandidates)
+                                       nbCandidates)
 {
   namesParameters <- names(parameters$constraints)
   newCandidatesColnames <- c(namesParameters, ".PARENT.")
