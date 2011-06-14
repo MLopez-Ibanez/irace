@@ -30,13 +30,17 @@ test $# -ge 1 || usage
 REPETITIONS=$1
 shift
 
-# Directory with R files and TUNE_CMD
+if ! [[ "$REPETITIONS" =~ ^[0-9]+$ ]] ; then
+    error "number of repetitions must be an integer"
+fi
+
+# execDir (--exec-dir) directory
 EXECDIR=${1:-TUNE}
 shift
 
-TUNE_CMD="tune-main"
-test -e ./${TUNE_CMD} || error "${TUNE_CMD} not found"
-test -x ./${TUNE_CMD} || error "${TUNE_CMD} must be executable"
+IRACE_MAIN="tune-main"
+test -e ./${IRACE_MAIN} || error "${IRACE_MAIN} not found"
+test -x ./${IRACE_MAIN} || error "${IRACE_MAIN} must be executable"
 
 # Find our own location.
 BINDIR=$(dirname "$(readlink -f "$(type -P $0 || echo $0)")")
@@ -50,7 +54,7 @@ for i in $(seq 1 $REPETITIONS); do
     mkdir -p $TRY
     # FIXME: In fact there is a problem with the output files being
     # overwritten, specially when using qsub.
-    ./${TUNE_CMD} $BINDIR $TRY --seed $SEED $* &
+    ./${IRACE_MAIN} $BINDIR $TRY --seed $SEED $* &
     sleep 1
     let SEED=SEED+1 
 done
