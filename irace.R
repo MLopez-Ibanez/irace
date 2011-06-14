@@ -232,7 +232,11 @@ iteratedRace <- function(tunerConfig
 
     if (indexIteration > nbIterations) {
       cat("# ", format(Sys.time(), usetz=TRUE), ": Limit of iterations reached\n", sep="")
-      nbIterations <- indexIteration
+      if (tunerConfig$nbIterations == 0) {
+        nbIterations <- indexIteration
+      } else {
+        return (eliteCandidates)
+      }
     }
 
     # Compute the current budget (nb of experiments for this iteration)
