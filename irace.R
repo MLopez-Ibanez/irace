@@ -334,7 +334,7 @@ iteratedRace <- function(tunerConfig
         if (!retrial && tunerConfig$softRestart) {
           tmp.ids <- similarCandidates (testCandidates, parameters)
           if (is.null(tmp.ids)) break
-          if (debugLevel > 0) { cat("# Soft restart: ", tmp.ids, "!\n") }
+          cat("# Soft restart: ", tmp.ids, "!\n")
           model <- restartCandidates (testCandidates, tmp.ids, model, parameters, nbNewCandidates)
           tunerResults$softRestart[indexIteration] <- tunerResults$softRestart[indexIteration] + 1
           tunerResults$model$afterSR[[indexIteration]] <- model
