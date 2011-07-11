@@ -5,27 +5,32 @@
 #' @docType package
 NA
 
-candidates.distance <- function(x, y, parameters)
+candidates.equal <- function(x, y, parameters, threshold)
 {
   d <- 0.0
-  # FIXME: If the computation used anything different than the
+  # FIXME: If the distance used anything different than the
   # maximum, then fixed parameters should be ignored.
-  for (param in parameters$names) {
-    type <- parameters$types[[param]]
+  for (i in seq_along(parameters$names)) {
+#  for (param in parameters$names) {
+    type <- parameters$types[[i]]
+    param <- parameters$names[[i]]
     X <- x[[param]]
     Y <- y[[param]]
-    
     if (is.na (X) && is.na(Y)) {
+      # Both NA, just ignore this param
       next
     } else if (xor(is.na (X), is.na(Y))) {
-      d <- max(d, 1.0)
+      # Distance is 1.0, so not equal
+      return (FALSE)
     } else if (type == "i" || type == "r") {
       lower <- oneParamLowerBound(param, parameters)
       upper <- oneParamUpperBound(param, parameters)
       d <- max(d, abs((as.numeric(X) - as.numeric(Y)) / (upper - lower)))
+      if (d > threshold) return (FALSE)
     } else {
       stopifnot(type == "c" || type == "o")
-      d <- max(d, as.integer(X != Y))
+      # Distance is 1.0, so definitely not equal.
+      if (X != Y) return (FALSE)
     }
   }
   ## cat ("X:\n")
@@ -33,23 +38,28 @@ candidates.distance <- function(x, y, parameters)
   ## cat ("Y:\n")
   ## print (y)
   ## cat ("D = ", d, "\n")
-  return (d)
+  return (TRUE)
 }
 
 similarCandidates <- function(candidates, parameters)
 {
   similar <- c()
-  for (i in seq_len(nrow(candidates))) {
-    for (j in seq_len(nrow(candidates))) {
+  num.candidates <- nrow(candidates)
+  #cat("# ", format(Sys.time(), usetz=TRUE), " similarCandidates()\n")
+  cat ("# Computing similarity of candidates ")
+  for (i in seq_len(num.candidates - 1)) {
+    for (j in ((i+1):num.candidates)) {
       if (i == j) next
-      if (isTRUE(all.equal(candidates.distance (candidates[i,],
-                                                candidates[j,],
-                                                parameters),
-                           0))) {
+      if (candidates.equal (candidates[i,],
+                            candidates[j,],
+                            parameters, threshold = 0.00000001)) {
         similar <- c(similar, candidates[i,".ID."], candidates[j,".ID."])
       }
     }
+    cat(".")
   }
+  cat(" DONE\n")
+  #cat("# ", format(Sys.time(), usetz=TRUE), " similarCandidates() DONE\n")
   return (unique(similar))
 }
 
@@ -322,9 +332,11 @@ iteratedRace <- function(tunerConfig
       tunerResults$softRestart[indexIteration] <- 0
 
       while (TRUE) {
+        #cat("# ", format(Sys.time(), usetz=TRUE), " generateCandidatesNormal()\n")
         newCandidates <-
           generateCandidatesNormal(tunerConfig, parameters, eliteCandidates,
                                    model, nbNewCandidates)
+        #cat("# ", format(Sys.time(), usetz=TRUE), " generateCandidatesNormal() DONE\n")
         # Set ID of the new candidates.
         newCandidates <-
           cbind (.ID. = max(0, allCandidates$.ID.) + 1:nrow(newCandidates),
@@ -332,7 +344,9 @@ iteratedRace <- function(tunerConfig
         testCandidates <- rbind(eliteCandidates[, 1:ncol(allCandidates)], newCandidates)
         rownames(testCandidates) <- testCandidates$.ID.
         if (!retrial && tunerConfig$softRestart) {
+#          Rprof("profile.out")
           tmp.ids <- similarCandidates (testCandidates, parameters)
+#          Rprof(NULL)
           if (is.null(tmp.ids)) break
           cat("# Soft restart: ", tmp.ids, "!\n")
           model <- restartCandidates (testCandidates, tmp.ids, model, parameters, nbNewCandidates)
@@ -355,7 +369,7 @@ iteratedRace <- function(tunerConfig
       candidates.print(testCandidates, metadata = TRUE)
     }
 
-    if (debugLevel > 0) { cat("# Lauch race\n") }
+    if (debugLevel > 0) { cat("# Launch race\n") }
     raceResults <- oneIterationRace (tunerConfig = tunerConfig,
                                      parameters = parameters, 
                                      candidates = testCandidates,
