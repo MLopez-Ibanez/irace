@@ -13,21 +13,21 @@ exec qsub <<EOF
 #$ -N irace-$$
 #$ -l $MACHINE
 #$ -l long
-#$ -o $EXECDIR/irace-$$.stdout
-#$ -e $EXECDIR/irace-$$.stderr
+#$ -S /bin/bash
 #$ -m ase
 #      b     Mail is sent at the beginning of the job.
 #      e     Mail is sent at the end of the job.
 #      a     Mail is sent when the job is aborted or rescheduled.
 #      s     Mail is sent when the job is suspended.
+#$ -o $EXECDIR/irace-$$.stdout
+#$ -e $EXECDIR/irace-$$.stderr
 #$ -cwd
 
 # Working on /tmp should be faster
-TMP='mktemp -d'
+TMP=\$(mktemp -d)
 $BINDIR/irace --exec-dir=\$TMP $* 
 RET=\$?
 cp -R \$TMP/./ $EXECDIR/
 rm -rf \$TMP
 exit \$RET
 EOF
-
