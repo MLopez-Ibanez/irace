@@ -163,9 +163,11 @@ readParameters <- function (filename = stop("filename is mandatory"),
 
   errReadParameters <- function(filename, line, context, ...)
   {
+    if (!is.null (context)) {
+      context <- paste(sep="", " when reading: \"", context, "\"")
+    }
     tunerError (paste (sep="", ...),
-                " at ", filename, ", line ", nbLines, " when reading: \"",
-                line,"\"")
+                " at ", filename, ", line ", line, context)
   }
   
   # *************************************************************************
@@ -227,7 +229,12 @@ readParameters <- function (filename = stop("filename is mandatory"),
       errReadParameters (filename, nbLines, line,
                          "Allowed values must be a list within parenthesis")
     }
-    
+
+    if (param.name %in% param.names) {
+      errReadParameters (filename, nbLines, NULL,
+                         "duplicated parameter name '", param.name, "'")
+    }
+ 
     count <- count + 1
     param.names <- c(param.names, param.name)
     parameters$names[[count]] <- param.name
