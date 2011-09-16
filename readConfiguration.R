@@ -27,7 +27,7 @@ readCandidatesFile <-
   nbCandidates <- nrow(candidateTable)
   # Print the table that has been read.
   if (debugLevel >= 1) {
-    cat("Read ", nbCandidates, " candidates from file ", fileName, "\n")
+    cat("# Read ", nbCandidates, " candidates from file '", fileName, "'\n", sep="")
     if (debugLevel >= 2) {
       print(as.data.frame(candidateTable, stringAsFactor = FALSE))
     }
