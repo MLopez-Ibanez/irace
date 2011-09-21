@@ -45,7 +45,7 @@ license.text <- paste(
 "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.",
 "\n", sep = "\n")
 
-options(width = 1000) # Do not wrap the output.
+options(width = 9999) # Do not wrap the output.
 
 # Function to read command-line arguments.
 readArgOrDefault <- function(args, paramName, short="", long="", default=NULL)
