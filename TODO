@@ -1,5 +1,15 @@
 ------------------------------------------------------------*- mode: text -*-
 
+TODO:
+
+ * Add command-line option --cluster=[sge|pbs] to choose the type of
+   cluster. Then, hook-run calls qsub and prints a jobID. jobID must
+   be a single word ([0-9a-z._-@]+); if not or length(jobID) != 1 or
+   exit code is != 0, then complain. The option --cluster only chooses
+   which type of qstat command is invoked. This will leave parsing the
+   jobID to the user, since it is very fragile. We should put examples
+   for PBS and SGE in examples/cluster-mode/.
+
  * generateCandidatesNormal() takes too much time with >800 candidates
    and >20 parameters (SPEAR testcase).
  
@@ -25,10 +35,6 @@
    to MaxMin AS for ACO.  This could be a better way to avoid
    convergence than trying to "flat" the vectors when it is already
    too late.
-
- * If hook-run prints "Your job...", then enable cluster mode
-   automatically. We do not need then another parameter
-   --cluster/clusterMode.
 
  * Somehow adapt how many instances should be seen.  Maybe such
    choices should be done based on the perceived heterogeneity of the
@@ -58,11 +64,6 @@
    then the user can use directly [1] or [2] to select whatever they
    want. [Jeremie]
 
- * We should produce at least the ouput files in R data format using save()
-    * A data.frame/matrix with all experiments performed.
-    * A data.frame/matrix with all candidate results.
-   [Manuel]
-
  * Forbidden parameter combinations (following ParamILS).
 
  * Error/Warn about unknown parameters.
@@ -82,6 +83,14 @@
    modifications, only in the sampling (generation uniform and normal)
 
 ------------------------------------------------------------------------------
+
+DONE:
+
+ * [DONE] We should produce at least the ouput files in R data format
+   using save()
+    * A data.frame/matrix with all experiments performed.
+    * A data.frame/matrix with all candidate results.
+   [Manuel]
 
  * [FIXED] Use the remaining budget always. But how? 
 
@@ -130,7 +139,7 @@
    sample/update probabilities for parameters whose domain is size
    1. Also, "ghost" is confusing, better would be "Fixed" or "Static".[DONE]
 
- * Rename everything as irace instead irace (only after merging all
+ * Rename everything as irace instead ifrace (only after merging all
    pending branches!). [DONE]
 
 ------------------------------------------------------------------------------

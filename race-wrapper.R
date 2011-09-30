@@ -27,7 +27,7 @@ buildCommandLine <- function(values, switches, signifDigits) {
 ## Launch a job with qsub and return its jobID. This function does not
 ## call qsub directly, but instead command should be a script that
 ## invokes qsub and prints its output.
-Cluster.qsub <- function(command, debugLevel = 0)
+sge.cluster.qsub <- function(command, debugLevel = 0)
 {
   if (debugLevel >= 1) {
     cat (format(Sys.time(), usetz=TRUE), ":", command, "\n")
@@ -37,11 +37,40 @@ Cluster.qsub <- function(command, debugLevel = 0)
   ## ??? Can we make this more robust against different languages and
   ## variants of qsub?
   match <- grep("Your job \\d+ ", rawOutput, perl = TRUE)
+  if (length(match) != 1) {
+    # Some error matching.
+    return(NULL)
+  }
   jobID <- as.integer(grep("\\d+", unlist(strsplit(rawOutput[match], " ")),
                            perl = TRUE, value = TRUE)[1])
-  if (is.integer(jobID)) {
+  if (length(jobID) == 1 && is.integer(jobID)) {
     return(jobID)
   } else return(NULL)
+}
+
+pbs.cluster.qsub <- function(command, debugLevel = 0)
+{
+  if (debugLevel >= 1) {
+    cat (format(Sys.time(), usetz=TRUE), ":", command, "\n")
+  }
+  rawOutput <- system (paste(command, " 2>&1"), intern = TRUE)
+  if (debugLevel >= 1) { cat(rawOutput, sep="\n") }
+  ## ??? Can we make this more robust against different languages and
+  ## variants of qsub?
+  jobID <- grep("\\d+\\.[a-z]+", rawOutput, perl = TRUE,value=TRUE)
+  if (length(jobID) == 1) {
+    return(jobID)
+  } else return(NULL)
+}
+
+sge.job.status <- function(jobid)
+{
+  return(system (paste("qstat -j", jobid, "&> /dev/null")))
+}
+
+pbs.job.status <- function(jobid)
+{
+  return(system (paste("qstat -J", jobid, "&> /dev/null")))
 }
 
 ## ??? This function needs a description
@@ -109,6 +138,8 @@ race.wrapper <- function(candidate, task, data)
   execDir <- data$tunerConfig$execDir
   signifDigits <- data$tunerConfig$signifDigits
   sgeCluster <- data$tunerConfig$sgeCluster
+  cluster.qsub <- sge.cluster.qsub
+  cluster.job.status <- sge.job.status
   jobIDs <- c() # SGE Cluster jobIDs
   
   if (!isTRUE (file.info(execDir)$isdir)) {
@@ -199,7 +230,7 @@ race.wrapper <- function(candidate, task, data)
       # One process, all sequential
       for (command in commands) {
         if (sgeCluster) {
-          jobID <- Cluster.qsub(command, debugLevel)
+          jobID <- cluster.qsub(command, debugLevel)
           jobIDs <- c(jobIDs, jobID)
           command.exit.value <- is.null(jobID)
         } else {
@@ -231,7 +262,7 @@ race.wrapper <- function(candidate, task, data)
         jobwaitTime, "s) ")
   }
   for (jobID in jobIDs) {
-    while (!system (paste("qstat -j", jobID, "&> /dev/null"))) {
+    while (!cluster.job.status(jobID)) {
       if (debugLevel >= 1) { cat(".") }
       Sys.sleep(jobwaitTime)
     }
