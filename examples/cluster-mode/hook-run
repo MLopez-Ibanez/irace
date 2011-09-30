@@ -42,7 +42,7 @@ exec qsub <<EOF
 #$ -o /dev/null
 #$ -e /dev/null
 #$ -cwd
-TMP=$(mktemp -d)
+TMP=\$(mktemp -d)
 exec 2> \$TMP/$STDERR
 $EXE ${FIXED_PARAMS} --input $INSTANCE ${CAND_PARAMS} 1> \$TMP/$STDOUT
 RET=\$?
