@@ -171,6 +171,8 @@ readParameters <- function (filename = stop("filename is mandatory"),
   }
   
   # *************************************************************************
+  # FIXME: Only boundary needs to be a list, the rest should be
+  # vectors, which will make many operations way faster.
   parameters <- list(names = list(),
                      types = list(),
                      switches = list(),
