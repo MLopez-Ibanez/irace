@@ -33,6 +33,8 @@ readCandidatesFile <-
     }
   }
 
+  # FIXME: This should ignore fixed parameters. Only error out if they
+  # are given with a different value.
   if (ncol(candidateTable) != length(namesParameters)
       || !setequal (colnames(candidateTable), namesParameters)) {
     tunerError("The parameter names given in the first row of file ", fileName,

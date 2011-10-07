@@ -2,6 +2,9 @@
 
 TODO:
 
+ * Handle properly fixed parameters in candidatesFile (see FIXME in
+   readConfigurations.R).
+
  * Add command-line option --cluster=[sge|pbs] to choose the type of
    cluster. Then, hook-run calls qsub and prints a jobID. jobID must
    be a single word ([0-9a-z._-@]+); if not or length(jobID) != 1 or
