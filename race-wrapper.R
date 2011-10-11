@@ -272,17 +272,31 @@ race.wrapper <- function(candidate, task, data)
   }
 
   ## Evaluate candidates
-  cwd <- setwd (execDir)
   ## Redirects STDERR so outputRaw captures the whole output.
   command <- paste (hookEvaluate, ins, candidate, length(which.alive), "2>&1")
   if (debugLevel >= 1) { cat(command, "\n") }
+  cwd <- setwd (execDir)
   outputRaw <- system (command, intern = TRUE)
-  if (debugLevel >= 1) { cat (outputRaw, sep="\n") }
-  # Avoid warning: NAs introduced by coercion 
-  output <- suppressWarnings (as.numeric (outputRaw))
   setwd (cwd)
-  if (length (output) != 1 || any (is.na (output)))
-    tunerError("The output of `", command, "' is not a number!\n",
+  if (debugLevel >= 1) { cat (outputRaw, sep="\n") }
+
+  output <- NULL
+  # strsplit crashes if outputRaw == character(0)
+  if (length(outputRaw) > 0) {
+    output <- strsplit(outputRaw, "[[:space:]]+")[[1]]
+    # suppressWarnings to avoid NAs introduced by coercion
+    output <- suppressWarnings (as.numeric (output))
+  }
+  
+  err.msg <- NULL
+  if (length(output) < 1 || length(output) > 2 || any (is.na (output)))
+    err.msg <- paste("The output of `", command, "' is not numeric!\n", sep = "")
+
+  if (tunerConfig$timeBudget > 0 && length(output) < 2)
+    err.msg <- paste("When timeBudget > 0, the output of `", command, "' must be two numbers 'cost time'!\n", sep = "")
+
+  if (!is.null(err.msg)) {
+    tunerError(err.msg,
                "The output was:\n", paste(outputRaw, sep="\n"),
                "\nThe call to hook-run was: ",
                # First parameter is the candidate number, second is the instance file.
@@ -293,6 +307,7 @@ race.wrapper <- function(candidate, task, data)
                " running the command above or it was terminated before completion.",
                " Try to run the commands above from the execution directory '",
                execDir, "' to investigate the issue.")
+  }
   return (output)
 }
 

@@ -11,7 +11,7 @@
 # $3 is the total number of candidates alive in this iteration
 #
 # RETURN VALUE:
-# This hook should print a single numerical value
+# This hook should print one or two, if budget given as time, numerical values.
 ###############################################################################
 INSTANCE=$1
 CANDIDATE=$2
@@ -38,6 +38,8 @@ error() {
 # the first column of the only line starting with a digit.
 if [ -s "${STDOUT}" ]; then
     COST=$(cat ${STDOUT} | grep -e '^[[:space:]]*[+-]\?[0-9]' | cut -f1)
+    # If budget is given as time, this should print also the time as:
+    # echo $COST $TIME
     echo "$COST"
     rm -f "${STDOUT}" "${STDERR}"
     exit 0

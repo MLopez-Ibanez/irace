@@ -140,7 +140,7 @@ oneIterationRace <-
 
   return (list (nbAlive = result$no.alive,
                 experimentsUsed = result$no.experiments,
-                timeUsed = sum(result$results, na.rm = TRUE),
+                timeUsed = sum(result$time, na.rm = TRUE),
                 candidates = candidates,
                 expResults = expResults))
 }
@@ -398,6 +398,8 @@ iteratedRace <- function(tunerConfig
       timeEstimate <- timeUsedSoFar / experimentsUsedSoFar
       remainingBudget <- (timeBudget - timeUsedSoFar) / timeEstimate
     } else {
+      if (is.numeric(raceResults$timeUsed))
+        timeUsedSoFar <- timeUsedSoFar + raceResults$timeUsed
       remainingBudget <- remainingBudget - raceResults$experimentsUsed
     }
 

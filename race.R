@@ -369,6 +369,10 @@ race<-function(wrapper.file=stop("Argument \"wrapper.file\" is mandatory"),
                   nrow=ifelse(length(no.subtasks)==1,
                     no.tasks*no.subtasks,sum(no.subtasks)),
                   ncol=no.candidates)
+  Time <- matrix(data = NA,
+                 nrow = ifelse(length(no.subtasks) == 1,
+                   no.tasks * no.subtasks, sum(no.subtasks)),
+                 ncol = no.candidates)
   alive<-array(TRUE,no.candidates)
   no.experiments.sofar<-0
   no.subexperiments.sofar<-0
@@ -382,6 +386,7 @@ race<-function(wrapper.file=stop("Argument \"wrapper.file\" is mandatory"),
     timestamp.current<-date()
     log<-list(precis=precis,
               results=Results[1:no.subtasks.sofar,],
+              time = Time[1:no.subtasks.sofar, ],
               no.candidates=no.candidates,
               no.tasks=no.tasks.sofar,
               no.subtasks=no.subtasks,
@@ -584,8 +589,9 @@ race<-function(wrapper.file=stop("Argument \"wrapper.file\" is mandatory"),
       for (current.candidate in which.alive){
         result <- do.call (.slave.wrapper.function,
                            list(current.candidate,current.task,race.data))
-        check.result(result)
-        Results[subtasks.range,current.candidate]<-result
+        check.result(result[1])
+        Results[subtasks.range, current.candidate] <- result[1]
+        Time[subtasks.range, current.candidate] <- result[2]
       }
     }
 
