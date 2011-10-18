@@ -15,9 +15,10 @@ usage() {
 usage: $0.sh N [EXECDIR] [IRACE PARAMS]
 
 Parameters:
- N                    an integer giving the number of repetitions of Race
- EXECDIR             job M will use EXECDIR-M directory (default: TUNE-)
- IRACE PARAMS       (optional) parameters for IRACE
+ N                  an integer giving the number of repetitions of Race
+                    or a sequence N-M giving which repetitions to redo.
+ EXECDIR            job M will use EXECDIR-M directory (default: TUNE-).
+ IRACE PARAMS       (optional) parameters for IRACE.
 EOF
     exit 1
 }
@@ -29,10 +30,15 @@ test $# -ge 1 || usage
 # Number of repetitions of Race
 REPETITIONS=$1
 shift
+START=1
 
-if ! [[ "$REPETITIONS" =~ ^[0-9]+$ ]] ; then
+if [[ "$REPETITIONS" =~ ^([0-9]+)-([0-9]+)$ ]] ; then
+    START=${BASH_REMATCH[1]}
+    REPETITIONS=${BASH_REMATCH[2]}
+elif ! [[ "$REPETITIONS" =~ ^[0-9]+$ ]] ; then
     error "number of repetitions must be an integer"
 fi
+
 
 # execDir (--exec-dir) directory
 EXECDIR=${1:-TUNE}
@@ -47,14 +53,14 @@ BINDIR=$(dirname "$(readlink -f "$(type -P $0 || echo $0)")")
 
 ## END of configuration (you should not need to touch what is below)
 
-for i in $(seq 1 $REPETITIONS); do
+for i in $(seq $START $REPETITIONS); do
     TRY=$(printf '%s-%002d' $EXECDIR $i)
     echo "execution directory = ./$TRY"
     rm -rf $TRY
     mkdir -p $TRY
     # FIXME: In fact there is a problem with the output files being
     # overwritten, specially when using qsub.
-    ./${IRACE_MAIN} $BINDIR $TRY --seed $SEED $* &
+    let s=SEED+i-1 
+    ./${IRACE_MAIN} $BINDIR $TRY --seed $s $* &
     sleep 1
-    let SEED=SEED+1 
 done
