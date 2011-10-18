@@ -233,6 +233,7 @@ iteratedRace <- function(tunerConfig
           "# nbIterations: ", nbIterations, "\n",
           "# experimentsUsedSoFar: ", experimentsUsedSoFar, "\n",
           "# timeUsedSoFar: ", timeUsedSoFar, "\n",
+          "# timeEstimate: ", timeEstimate, "\n",
           "# remainingBudget: ", remainingBudget, "\n",
           "# currentBudget: ", currentBudget, "\n",
           "# number of elites: ", nrow(eliteCandidates), "\n",
@@ -262,7 +263,8 @@ iteratedRace <- function(tunerConfig
     # take the value given as a parameter.
     nbCandidates <- ifelse (tunerConfig$nbCandidates == 0,
                             computeNbCandidates(currentBudget, indexIteration,
-                                                tunerConfig$mu),
+                                                max(tunerConfig$mu,
+                                                    tunerConfig$firstTest)),
                             tunerConfig$nbCandidates)
 
     # Check that the number of candidates to produce is greater than
@@ -275,10 +277,11 @@ iteratedRace <- function(tunerConfig
           #(number of elites  + 1) * (mu + min(5, indexIteration)) > remainingBudget\n",
           "# number of elites: ", nrow(eliteCandidates), "\n",
           "# indexIteration: ", indexIteration, "\n",
-          "# mu: ", tunerConfig$mu, "\n",
+          "# mu: ", max(tunerConfig$mu, tunerConfig$firstTest), "\n",
           "# nbIterations: ", nbIterations, "\n",
           "# experimentsUsedSoFar: ", experimentsUsedSoFar, "\n",
           "# timeUsedSoFar: ", timeUsedSoFar, "\n",
+          "# timeEstimate: ", timeEstimate, "\n",
           "# remainingBudget: ", remainingBudget, "\n",
           "# currentBudget: ", currentBudget, "\n",
           "# nbCandidates: ", nbCandidates, "\n",
@@ -290,6 +293,7 @@ iteratedRace <- function(tunerConfig
         ": ITERATION ", indexIteration, " of ", nbIterations, "\n",
         "# experimentsUsedSoFar: ", experimentsUsedSoFar, "\n",
         "# timeUsedSoFar: ", timeUsedSoFar, "\n",
+        "# timeEstimate: ", timeEstimate, "\n",
         "# remainingBudget: ", remainingBudget, "\n",
         "# currentBudget: ", currentBudget, "\n",
         "# nbCandidates: ", nbCandidates, "\n", sep="")
@@ -440,6 +444,7 @@ iteratedRace <- function(tunerConfig
       "# nbIterations: ", nbIterations, "\n",
       "# experimentsUsedSoFar: ", experimentsUsedSoFar, "\n",
       "# timeUsedSoFar: ", timeUsedSoFar, "\n",
+      "# timeEstimate: ", timeEstimate, "\n",
       "# remainingBudget: ", remainingBudget, "\n",
       "# currentBudget: ", currentBudget, "\n",
       "# nbCandidates: ", nbCandidates, "\n", sep="")
