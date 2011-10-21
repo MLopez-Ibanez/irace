@@ -40,20 +40,6 @@ readParameters <- function (filename = stop("filename is mandatory"),
                             signifDigits = stop("signifDigits is mandatory"),
                             debugLevel = 0)
 {
-  trim.leading <- function(str)
-  {
-    return (sub('^[[:space:]]+', '', str)) ## white space, POSIX-style
-  }
-  trim.trailing <- function(str)
-  {
-    return (sub('[[:space:]]+$', '', str)) ## white space, POSIX-style
-  }
-  # remove leading and trailing white space characters
-  trim <- function(str)
-  {
-    return (trim.trailing(trim.leading(str)))
-  }
-  
   field.match <- function (line, pattern, delimited = FALSE, sep = "[[:space:]]")
   {
     #cat ("pattern:", pattern, "\n")

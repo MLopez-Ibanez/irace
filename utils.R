@@ -11,6 +11,20 @@ tunerError <- function(...)
   stop (..., call. = FALSE)
 }
 
+trim.leading <- function(str)
+{
+  return (sub('^[[:space:]]+', '', str)) ## white space, POSIX-style
+}
+trim.trailing <- function(str)
+{
+  return (sub('[[:space:]]+$', '', str)) ## white space, POSIX-style
+}
+# remove leading and trailing white space characters
+trim <- function(str)
+{
+  return (trim.trailing(trim.leading(str)))
+}
+
 isFixed <- function (paramName, parameters)
 {
   return (as.logical(parameters$isFixed[paramName]))

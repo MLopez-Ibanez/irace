@@ -283,7 +283,7 @@ race.wrapper <- function(candidate, task, data)
   output <- NULL
   # strsplit crashes if outputRaw == character(0)
   if (length(outputRaw) > 0) {
-    output <- strsplit(outputRaw, "[[:space:]]+")[[1]]
+    output <- strsplit(trim(outputRaw), "[[:space:]]+")[[1]]
     # suppressWarnings to avoid NAs introduced by coercion
     output <- suppressWarnings (as.numeric (output))
   }
