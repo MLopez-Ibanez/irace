@@ -40,8 +40,6 @@
 .slave.wrapper.function<-"race.wrapper"
 .slave.info.function<-"race.info"
 .slave.describe.function<-"race.describe"
-.title.width<-30
-.value.width<-33
 
 # Load library rpvm if available
 .race.warn.save<-getOption("warn")
@@ -202,24 +200,10 @@ race<-function(wrapper.file=stop("Argument \"wrapper.file\" is mandatory"),
   no.subtasks<-race.info$no.subtasks   
 
   # Prepare a precis for documentation
-  format.precis<-function(title,value){
-    dots<-function(n)
-      return(paste(rep(".",n),collapse=""))
-    spaces<-function(n)
-      return(paste(rep(" ",n),collapse=""))
-    string<-paste(title,dots(.title.width-nchar(title)),sep="")
-    if (nchar(value)<=.value.width){
-      string<-paste(string,dots(.value.width-nchar(value)),value,sep="")
-    }else{
-      f.vec<-strwrap(value,width=.value.width)
-      first<-f.vec[1]
-      first<-paste(dots(.title.width-nchar(first)),first,sep="")
-      rest<-format(f.vec[-1])
-      rest<-paste(spaces(.title.width+.value.width-max(nchar(rest))),
-                  rest,sep="",collapse="\n")
-      string<-paste(string,paste(first,rest,sep="\n"),sep="")
-    }
-    return(paste(string,"\n"))
+  format.precis <- function(title, value) {
+    title.width <- nchar(title) + nchar(": ")
+    string <- sprintf("%s: %*s", title, 79 - title.width, value)
+    return(paste(string, "\n"))
   }
 
   precis<-paste("\n",

@@ -2,6 +2,9 @@
 
 TODO:
 
+ * Reduce the output of the race package. Only report copyright info
+   once. Do not duplicate information already given by irace.
+
  * Handle properly fixed parameters in candidatesFile (see FIXME in
    readConfigurations.R).
 
