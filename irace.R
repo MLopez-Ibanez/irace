@@ -100,7 +100,7 @@ oneIterationRace <-
            budget = NULL,
            minSurvival = NULL,
            # parameters for the wrapper
-           wrapper.file = paste(tunerConfig$installDir, "race-wrapper.R", sep="/"))
+           wrapper.file = file.path(tunerConfig$installDir, "race-wrapper.R"))
 {
   # Call to Race:
   result <- race (wrapper.file = wrapper.file, 

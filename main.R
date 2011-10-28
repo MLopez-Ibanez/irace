@@ -32,7 +32,7 @@
 ## within R, following these steps:
 #  installDir <- "../irace"
 #  setwd("../tuning/")
-#  source(paste(installDir, "main.R", sep="/"))
+#  source(file.path(installDir, "main.R"))
 
 
 license.text <- paste(
