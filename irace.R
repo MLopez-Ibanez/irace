@@ -306,10 +306,8 @@ iteratedRace <- function(tunerConfig
         if (debugLevel > 0) {
           cat("# Sample", nbNewCandidates, "candidates from uniform distribution\n")
         }
-        newCandidates <-
-          generateCandidatesUniform(tunerConfig = tunerConfig,
-                                    parameters,
-                                    nbNewCandidates)        
+        newCandidates <- sampleUniform(tunerConfig = tunerConfig,
+                                       parameters, nbNewCandidates)        
         newCandidates <-
           cbind (.ID. = max(0, allCandidates$.ID.) + 1:nrow(newCandidates),
                  newCandidates)
@@ -328,7 +326,7 @@ iteratedRace <- function(tunerConfig
       if (debugLevel > 0) { printModel (model) }
       
       if (debugLevel > 0) {
-        cat("# Sample", nbNewCandidates, "candidates from truncated normal distribution\n")
+        cat("# Sample", nbNewCandidates, "candidates from model\n")
       }
 
       retrial <- FALSE
@@ -336,11 +334,10 @@ iteratedRace <- function(tunerConfig
       tunerResults$softRestart[indexIteration] <- 0
 
       while (TRUE) {
-        #cat("# ", format(Sys.time(), usetz=TRUE), " generateCandidatesNormal()\n")
-        newCandidates <-
-          generateCandidatesNormal(tunerConfig, parameters, eliteCandidates,
-                                   model, nbNewCandidates)
-        #cat("# ", format(Sys.time(), usetz=TRUE), " generateCandidatesNormal() DONE\n")
+        #cat("# ", format(Sys.time(), usetz=TRUE), " sampleModel()\n")
+        newCandidates <- sampleModel(tunerConfig, parameters, eliteCandidates,
+                                     model, nbNewCandidates)
+        #cat("# ", format(Sys.time(), usetz=TRUE), " sampleModel() DONE\n")
         # Set ID of the new candidates.
         newCandidates <-
           cbind (.ID. = max(0, allCandidates$.ID.) + 1:nrow(newCandidates),

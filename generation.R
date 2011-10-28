@@ -14,8 +14,7 @@ constraintsSatisfied <- function (parameters, partialCandidate, paramName)
 }
 
 ### Uniform sampling for the initial generation
-generateCandidatesUniform <- function (tunerConfig, parameters,
-                                       nbCandidates)
+sampleUniform <- function (tunerConfig, parameters, nbCandidates)
 {
   namesParameters <- names(parameters$constraints)
   newCandidatesColnames <- c(namesParameters, ".PARENT.")
@@ -70,9 +69,8 @@ generateCandidatesUniform <- function (tunerConfig, parameters,
 # To be called the first time before the second race (with indexIter =
 # 2) Nb candidates is the number of candidates at the end
 # included the elite ones obtained from the previous iteration
-generateCandidatesNormal <- function (tunerConfig, parameters,
-                                      eliteCandidates, model,
-                                      nbNewCandidates)
+sampleModel <- function (tunerConfig, parameters, eliteCandidates, model,
+                         nbNewCandidates)
 {
   nbCandidates <- nbNewCandidates + nrow(eliteCandidates)
   if (nbNewCandidates <= 0) {
