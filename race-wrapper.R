@@ -36,14 +36,18 @@ sge.cluster.qsub <- function(command, debugLevel = 0)
   if (debugLevel >= 1) { cat(rawOutput, sep="\n") }
   ## ??? Can we make this more robust against different languages and
   ## variants of qsub?
+  # FIXME: This is a bit too complex for just parsing a number and
+  # returning the number or NULL.
   match <- grep("Your job \\d+ ", rawOutput, perl = TRUE)
   if (length(match) != 1) {
     # Some error matching.
     return(NULL)
   }
-  jobID <- as.integer(grep("\\d+", unlist(strsplit(rawOutput[match], " ")),
-                           perl = TRUE, value = TRUE)[1])
-  if (length(jobID) == 1 && is.integer(jobID)) {
+  jobID <-
+    suppressWarnings(as.integer(grep("\\d+",
+                                     unlist(strsplit(rawOutput[match], " ")),
+                                     perl = TRUE, value = TRUE)[1]))
+  if (length(jobID) == 1 && is.numeric(jobID)) {
     return(jobID)
   } else return(NULL)
 }
@@ -70,7 +74,7 @@ sge.job.status <- function(jobid)
 
 pbs.job.status <- function(jobid)
 {
-  return(system (paste("qstat -J", jobid, "&> /dev/null")))
+  return(system (paste("qstat ", jobid, "&> /dev/null")))
 }
 
 ## ??? This function needs a description
