@@ -1,5 +1,5 @@
 #!/bin/bash
-# This is a version of tune-main for launching ifrace using the --mpi
+# This is a version of tune-main for launching irace using the --mpi
 # option in a SGE Cluster.
 set -e
 set -o pipefail
@@ -31,7 +31,8 @@ QUEUE=long
 JOBNAME=irace-$$
 #MACHINE=opteron244
 #MACHINE=opteron2216
-MACHINE=xeon5410
+#MACHINE=xeon5410
+MACHINE=opteron6128
 
 MPIRUN=/opt/openmpi/bin/mpirun
 PARALLEL_ENV=mpich_fu

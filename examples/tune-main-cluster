@@ -5,8 +5,10 @@ EXECDIR=$2
 shift 2
 
 #MACHINE=opteron244
-MACHINE=opteron2216
+#MACHINE=opteron2216
 #MACHINE=xeon5410
+MACHINE=opteron6128
+
 
 exec qsub <<EOF
 #!/bin/bash
