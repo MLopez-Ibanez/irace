@@ -1,0 +1,18 @@
+Package: irace
+Type: Package
+Title: Iterated Racing Procedures
+Version: 1.0
+Date: 2011-02-16
+Maintainer: Manuel López-Ibáñez <manuel.lopez-ibanez@ulb.ac.be>, 
+            Jérémie Dubois-Lacoste <jeremie.dubois-lacoste@ulb.ac.be>.
+Author: Manuel López-Ibáñez, Jérémie Dubois-Lacoste,
+        Thomas Stützle, Mauro Birattari, Eric Yuan and Prasanna Balaprakash.
+Description: Iterated racing for automatic algorithm configuration
+Depends: R (>= 2.10.0)
+Suggests: multicore, Rmpi
+License: GPL (>= 2)
+URL: http://iridia.ulb.ac.be/irace
+LazyLoad: true
+LazyData: true
+Encoding: UTF-8
+
