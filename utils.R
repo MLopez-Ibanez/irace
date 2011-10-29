@@ -11,6 +11,12 @@ tunerError <- function(...)
   stop (..., call. = FALSE)
 }
 
+# FIXME: Isn't a R function to do this? More portable?
+canonical.dirname <- function(dirname = stop("required parameter"))
+{
+  return (sub ("([^/])$", "\\1/", dirname))
+}
+
 trim.leading <- function(str)
 {
   return (sub('^[[:space:]]+', '', str)) ## white space, POSIX-style

@@ -1,11 +1,6 @@
 ###############################################################################
 # FIXME: This file needs a description
 ###############################################################################
-canonical.dirname <- function(dirname = stop("required parameter"))
-{
-  return (sub ("([^/])$", "\\1/", dirname))
-}
-
 buildCommandLine <- function(values, switches, signifDigits) {
   stopifnot(length(values) == length(switches))
   command <- ""
