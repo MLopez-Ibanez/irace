@@ -34,21 +34,20 @@
 #  setwd("../tuning/")
 #  source(file.path(installDir, "main.R"))
 
+irace.license <-
+'irace: An implementation in R of Iterated Race
+Copyright (C) 2010, 2011
+Manuel Lopez-Ibanez     <manuel.lopez-ibanez@ulb.ac.be>
+Jeremie Dubois-Lacoste  <jeremie.dubois-lacoste@ulb.ac.be>
 
-license.text <- paste(
-"irace: An implementation in R of Iterated Race",
-"Copyright (C) 2010",
-"Manuel Lopez-Ibanez     <manuel.lopez-ibanez@ulb.ac.be>",
-"Jeremie Dubois-Lacoste  <jeremie.dubois-lacoste@ulb.ac.be>",
-"\nThis is free software, and you are welcome to redistribute it under certain",
-"conditions.  See the GNU General Public License for details. There is NO   ",
-"warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.",
-"\n", sep = "\n")
+This is free software, and you are welcome to redistribute it under certain
+conditions.  See the GNU General Public License for details. There is NO   
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
-options(width = 9999) # Do not wrap the output.
+'
 
 # Function to read command-line arguments.
-readArgOrDefault <- function(args, paramName, short="", long="", default=NULL)
+readArgOrDefault <- function(args, short="", long="", default=NULL)
 {
   pos <- c()
   if (length (short) > 0) {
@@ -90,6 +89,7 @@ path.rel2abs <- function (path)
   }
 }
 
+# FIXME: Convert this to a text table and use read.table to read it.
 paramDef <- data.frame(stringsAsFactors = FALSE)
 paramDef <-
   rbind (
@@ -165,7 +165,7 @@ rownames (paramDef) <- paramDef[,"name"]
 ## read commandline parameters
 readCmdLineParameter <- function (args, paramDef, paramName, default)
 {
-  return (readArgOrDefault (args = args, paramName = paramName,
+  return (readArgOrDefault (args = args,
                             short = paramDef[paramName, "short"],
                             long   = paramDef[paramName,"long"],
                             default = ifelse(is.na(default),
@@ -176,100 +176,107 @@ readCmdLineParameter <- function (args, paramDef, paramName, default)
 iraceUsage <- function ()
 {
   cat ("irace\tversion ", IRACE.VERSION, "\n\n")
-  cat (license.text)
+  cat (irace.license)
   for (i in seq_len(nrow(paramDef))) {
     cat(paramDef[i,"short"], ", ", paramDef[i,"long"],
         "\t", paramDef[i,"description"], "\n")
   }
 }
-  
-# Get the installation directory
-args <- commandArgs (trailingOnly = FALSE)
-if (!exists ("installDir")) {
-  if (! is.null(args)) {
-    installDir <- readArgOrDefault(args,
-                                   paramName="installDir",
-                                   short="-f", long="--file", default=NULL)
-    if(!is.null(installDir))
-      installDir <- dirname (installDir)
-  } else {
-    installDir <- NULL
+
+irace.cmdline <- function()
+{
+  op <- options(width = 9999) # Do not wrap the output.
+  # Get the installation directory
+  args <- commandArgs (trailingOnly = FALSE)
+  if (!exists ("installDir")) {
+    if (! is.null(args)) {
+      installDir <- readArgOrDefault(args,
+                                     short="-f", long="--file", default=NULL)
+      if(!is.null(installDir))
+        installDir <- dirname (installDir)
+    } else {
+      installDir <- NULL
+    }
   }
+
+  if (is.null(installDir)) {
+    stop ("Cannot find the installation directory, ",
+          "you should invoke this R script with the parameter -f or --file\n")
+  } else {
+    installDir <- path.rel2abs(installDir)
+  }
+  
+  # Check that installDir exists and is a directory
+  if (!file.exists(installDir) || !file.info(installDir)$isdir) {
+    stop ("The installation directory '", installDir, "' does not exist\n")
+  }
+  
+  tunerConfig <- list()
+  tunerConfig$installDir <- installDir
+  
+  # Load required files
+  requiredFiles <- c ("utils.R", "readConfiguration.R",
+                      "generation.R", "model.R", "race.R", "race-wrapper.R", 
+                      "readParameters.R", "irace.R", "tnorm.R")
+  cwd <- setwd(installDir)
+  for (file in requiredFiles) {
+    if (!file.exists(file))
+      stop ("A file required '", file,
+            "' can not be found in the installation directory '",
+            installDir, "'.")
+    source(file)
+  }
+  IRACE.VERSION <- ifelse(file.exists("VERSION"),
+                          scan("VERSION", what = character(0), quiet = TRUE),
+                          "UNKNOWN")
+  setwd(cwd)
+  
+  args <- commandArgs (trailingOnly = TRUE)
+  if (!is.null(readArgOrDefault (args,
+                                 short = "-h", long="--help", default = NULL))) {
+    iraceUsage()
+    q()
+  }
+  
+  cat ("irace\tversion", IRACE.VERSION, "\n\n")
+  cat(irace.license)
+  
+  # Read the configuration file and the command line
+  configurationFile <-
+    readArgOrDefault(args = args,
+                     short = paramDef["configurationFile","short"],
+                     long = paramDef["configurationFile","long"],
+                     default = "")
+  
+  parameters <- as.vector(paramDef[!is.na(paramDef[, "name"]), "name"])
+  tunerConfig <- readConfiguration(tunerConfig, configurationFile, parameters)
+  for (param in parameters) {
+    tunerConfig[[param]] <- readCmdLineParameter (args = args,
+                                                  paramDef = paramDef,
+                                                  paramName = param,
+                                                  default = tunerConfig[[param]])
+  }
+  tunerConfig <- checkConfiguration (tunerConfig)
+  printConfiguration (tunerConfig)
+  
+  # Read parameters definition
+  parameters <- readParameters (filename = tunerConfig$parameterFile,
+                                signifDigits = tunerConfig$signifDigits,
+                                debugLevel = tunerConfig$debugLevel)
+  if (tunerConfig$debugLevel >= 2) { cat("Parameters have been read\n") }
+  
+  eliteCandidates <- iteratedRace (tunerConfig = tunerConfig,
+                                   parameters = parameters)
+  
+  cat("# Best candidates\n")
+  candidates.print(eliteCandidates)
+  
+  cat("# Best candidates (as commandlines)\n")
+  candidates.print.command (eliteCandidates, parameters)
+  
+  options(op)
+
+  invisible(eliteCandidates)
 }
 
-if (is.null(installDir)) {
-  stop ("Cannot find the installation directory, ",
-        "you should invoke this R script with the parameter -f or --file\n")
-} else {
-  installDir <- path.rel2abs(installDir)
-}
-
-# Check that installDir exists and is a directory
-if (!file.exists(installDir) || !file.info(installDir)$isdir) {
-  stop ("The installation directory '", installDir, "' does not exist\n")
-}
-
-tunerConfig <- list()
-tunerConfig$installDir <- installDir
-
-# Load required files
-requiredFiles <- c ("utils.R", "readConfiguration.R",
-                    "generation.R", "model.R", "race.R", "race-wrapper.R", 
-                    "readParameters.R", "irace.R", "tnorm.R")
-cwd <- setwd(installDir)
-for (file in requiredFiles) {
-  if (!file.exists(file))
-    stop ("A file required '", file,
-          "' can not be found in the installation directory '",
-          installDir, "'.")
-  source(file)
-}
-IRACE.VERSION <- ifelse(file.exists("VERSION"),
-                        scan("VERSION", what = character(0), quiet = TRUE),
-                        "UNKNOWN")
-setwd(cwd)
-
-args <- commandArgs (trailingOnly = TRUE)
-if (!is.null(readArgOrDefault (args, paramName = "",
-                               short = "-h", long="--help", default = NULL))) {
-  iraceUsage()
-  q()
-}
-
-cat ("irace\tversion", IRACE.VERSION, "\n\n")
-cat(license.text)
-
-# Read the configuration file and the command line
-configurationFile <-
-  readArgOrDefault(args = args,
-                   paramName = "configurationFile",
-                   short = paramDef["configurationFile","short"],
-                   long = paramDef["configurationFile","long"],
-                   default = "")
-
-parameters <- as.vector(paramDef[!is.na(paramDef[, "name"]), "name"])
-tunerConfig <- readConfiguration(tunerConfig, configurationFile, parameters)
-for (param in parameters) {
-  tunerConfig[[param]] <- readCmdLineParameter (args = args,
-                                                paramDef = paramDef,
-                                                paramName = param,
-                                                default = tunerConfig[[param]])
-}
-tunerConfig <- checkConfiguration (tunerConfig)
-printConfiguration (tunerConfig)
-
-# Read parameters definition
-parameters <- readParameters (filename = tunerConfig$parameterFile,
-                              signifDigits = tunerConfig$signifDigits,
-                              debugLevel = tunerConfig$debugLevel)
-if (tunerConfig$debugLevel >= 2) { cat("Parameters have been read\n") }
-
-eliteCandidates <- iteratedRace (tunerConfig = tunerConfig,
-                                 parameters = parameters)
-
-cat("# Best candidates\n")
-candidates.print(eliteCandidates)
-
-cat("# Best candidates (as commandlines)\n")
-candidates.print.command (eliteCandidates, parameters)
-
+irace.cmdline()
