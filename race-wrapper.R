@@ -137,6 +137,10 @@ race.wrapper <- function(candidate, task, data)
   execDir <- data$tunerConfig$execDir
   signifDigits <- data$tunerConfig$signifDigits
   sgeCluster <- data$tunerConfig$sgeCluster
+  parallel <- data$tunerConfig$parallel
+  mpi <- data$tunerConfig$mpi
+  timeBudget <- data$tunerConfig$timeBudget
+  
   cluster.qsub <- sge.cluster.qsub
   cluster.job.status <- sge.job.status
   jobIDs <- c() # SGE Cluster jobIDs
@@ -216,14 +220,15 @@ race.wrapper <- function(candidate, task, data)
 
     cwd <- setwd (execDir)
     returnCodes <- list()
+
     # Execute commands
-    if (tunerConfig$parallel > 1) {
-      if (tunerConfig$mpi) {
-        mpiInit(tunerConfig$parallel)
+    if (parallel > 1) {
+      if (mpi) {
+        mpiInit(parallel)
         returnCodes <- mpi.applyLB(commands, runcommand)
       } else {
         library(multicore)
-        returnCodes <- mclapply(commands, runcommand, mc.cores = tunerConfig$parallel)
+        returnCodes <- mclapply(commands, runcommand, mc.cores = parallel)
       }
     } else {
       # One process, all sequential
@@ -291,7 +296,7 @@ race.wrapper <- function(candidate, task, data)
   if (length(output) < 1 || length(output) > 2 || any (is.na (output)))
     err.msg <- paste("The output of `", command, "' is not numeric!\n", sep = "")
 
-  if (tunerConfig$timeBudget > 0 && length(output) < 2)
+  if (timeBudget > 0 && length(output) < 2)
     err.msg <- paste("When timeBudget > 0, the output of `", command, "' must be two numbers 'cost time'!\n", sep = "")
 
   if (!is.null(err.msg)) {
