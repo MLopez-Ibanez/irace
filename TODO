@@ -1,6 +1,23 @@
 ------------------------------------------------------------*- mode: text -*-
 
-TODO:
+TODO R package:
+
+ * Hidden global variables should have a prefix .irace. For example,
+   paramDef.
+ * race.R should not source race-wrapper.R but call functions there
+   directly. 
+ * main.R should not source any files since all code should be
+   available after doing library(irace).
+ * Decide which functions need to be exported and mention them in
+   NAMESPACE.
+ * Create Rd files for those functions: See ?prompt
+ * Create a small example that can be run with example(irace).
+ * Delete PVM stuff from race.R
+ * Read about vignette, what we need to do to convert/use the IRIDIA
+   TR as the vignette.
+
+
+TODO General:
 
  * Reduce the output of the race package. Only report copyright info
    once. Do not duplicate information already given by irace.
@@ -28,13 +45,6 @@ TODO:
    specified in a different file "constraints.txt". One way to handle
    them would be by sampling and rejection but perhaps more effective
    methods could be implemented.
-
- * We should use list$element instead of list[["element"]] for
-   indexing elements that must exist. This way if we do a typo, the
-   whole thing fails to run instead of just returning
-   NULL. Unfortunately, list$__element__ does not work because
-   __element__ is not a valid R variable name, so I suggest .ID.,
-   which is valid.
 
  * JEREMIE: I would like to try a version of I-Race with a kind of
    bounding in the probability vectors, something equivalent somehow
@@ -85,12 +95,19 @@ TODO:
 
  * It could be nice to be able to set a different nb of significant
    digits for each real parameters This number thus would be given in
-   the parameters.txt file.  It should requires very few
+   the parameters.txt file.  It should require very few
    modifications, only in the sampling (generation uniform and normal)
 
 ------------------------------------------------------------------------------
 
 DONE:
+
+ * [DONE] We should use list$element instead of list[["element"]] for
+   indexing elements that must exist. This way if we do a typo, the
+   whole thing fails to run instead of just returning
+   NULL. Unfortunately, list$__element__ does not work because
+   __element__ is not a valid R variable name, so I suggest .ID.,
+   which is valid.
 
  * [DONE] We should produce at least the ouput files in R data format
    using save()
