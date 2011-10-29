@@ -1,5 +1,6 @@
 VERSION = 0.99svn$(SVN_REV)
 RNODE=iridiacluster
+DATE=$(shell date +%F)
 
 ## Do we have svnversion?
 ifeq ($(shell sh -c 'which svnversion 1> /dev/null 2>&1 && echo y'),y)
@@ -31,4 +32,6 @@ else
 endif
 
 dist : version
+	@sed -i 's/Version: .*/Version: $(VERSION)/' ./DESCRIPTION
+	@sed -i 's/Date: .*/Date: $(DATE)/' ./DESCRIPTION
 	./dist.sh
