@@ -6,6 +6,7 @@ irace.bug.report <-
 
 # Print a user-level fatal error message, when the calling context
 # cannot help the user to understand why the program failed.
+## FIXME: rename this function to irace.error
 tunerError <- function(...)
 {
   stop (..., call. = FALSE)
@@ -103,23 +104,27 @@ candidates.print.command <- function(cand, parameters)
                        signifDigits = 4), stringsAsFactors = FALSE))
 }
 
-# Initialize Rmpi and create slaves.
+
+# FIXME: This may not work when working interactively. For example,
+# one cannot change the number of slaves. Using .Last is dangerous
+# because other package or the user may override it.
 mpiInit <- function(nslaves)
 {
   # Load the R MPI package if it is not already loaded. 
   if (!is.loaded("mpi_initialize")) {
-    library("Rmpi")
+    if (! require("Rmpi"))
+      stop("the `Rmpi' package is required for using MPI.")
 
     # When R exits, finalize MPI.
     .Last <<- function() {
       if (is.loaded("mpi_initialize")) {
         cat("# Finalize MPI...\n")
-        if (mpi.comm.size(1) > 0)
-          mpi.close.Rslaves()
-        mpi.finalize()
+        if (Rmpi::mpi.comm.size(1) > 0)
+          Rmpi::mpi.close.Rslaves()
+        Rmpi::mpi.finalize()
       }
     }
     # Create slaves
-    mpi.spawn.Rslaves(nslaves = nslaves)
+    Rmpi::mpi.spawn.Rslaves(nslaves = nslaves)
   }
 }
