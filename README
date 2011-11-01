@@ -11,41 +11,57 @@ Contact email: irace@iridia.ulb.ac.be
 Usage
 -------------
 
-* Create a directory for storing the configuration of the tuning, for
-  example "/path/to/tuning/".
+1. Install the package with
 
-* Copy the files in the templates/ directory to your
-  "/path/to/tuning/" directory.  For each template hook (*.tmpl) in
-  your "/path/to/tuning/" directory, remove the '.tmpl' suffix, and
-  modify them following the instructions in each file. In particular,
-  tune-main.tmpl should be adjusted depending on your usage (local,
-  cluster, etc).  The hooks should be executable. In tune-conf.tmpl,
-  uncomment and assign only the parameters for which you need a value
-  different than the default one. See the examples in examples/.
+    R CMD INSTALL irace.tar.gz
 
-* Put the instances in "/path/to/tuning/Instances/". In addition, you
-  can create a file that specifies which instances from that directory
-  should be run and which instance-specific parameters to use. See
-  tune-conf.tmpl and instances-list.tmpl for examples.
+   This will print a line:
 
-* Assuming that irace is installed in /path/to/installdir/, calling
-  the command /path/to/installdir/irace from your tuning directory
-  performs one run of Iterated Race. See the output of "irace
-  --help" for additional configuration parameters. Command-line
-  parameters override the configuration specified in the tune-conf
-  file. The command irace will not attempt to create the execution
-  directory (execDir), so it must exist before calling irace.
+    * installing to library `PACKAGE_PATH'
 
-* For executing several repetitions of Iterated F-race in parallel,
-  call the program parallel-irace.sh from your tuning directory with
-  the number of repetitions. The execution directory of each run of
-  irace will be set to "/path/to/tuning/TUNE-dd", where dd is a
-  number padded with zeroes. Be careful, parallel-irace.sh will
-  create these directories from scratch, deleting them first if they
-  already exist. Check the help of parallel-irace.sh by running it
-  without parameters.
+   where PACKAGE_PATH/irace is the installation directory of
+   irace. You must be able to invoke irace as follows:
 
-* There are three ways to execute calls to hookRun in parallel:
+    PACKAGE_PATH/irace/bin/irace --help
+
+2. Create a directory for storing the configuration of the tuning, for
+   example "~/tuning/".  Copy the files in the
+   PACKAGE_PATH/irace/templates/*.tmpl directory to your "~/tuning/"
+   directory.  For each template in your tuning directory, remove the
+   '.tmpl' suffix, and modify them following the instructions in each
+   file. In particular, tune-main.tmpl should be adjusted depending on
+   your usage (local, cluster, etc).  The scripts hook-run,
+   hook-evaluate and tune-main should be executable. In tune-conf,
+   uncomment and assign only the parameters for which you need a value
+   different than the default one. See the examples in
+   PACKAGE_PATH/irace/examples/.
+
+4. Put the instances in "~/tuning/Instances/". In addition, you can
+   create a file that specifies which instances from that directory
+   should be run and which instance-specific parameters to use. See
+   tune-conf.tmpl and instances-list.tmpl for examples. The command
+   irace will not attempt to create the execution directory (execDir),
+   so it must exist before calling irace. The default execDir is
+   "~/tuning/TUNE/".
+
+5. Calling the command:
+
+    cd ~/tuning/ && PACKAGE_PATH/irace/bin/irace
+
+   performs one run of Iterated Race. See the output of "irace --help"
+   for additional configuration parameters. Command-line parameters
+   override the configuration specified in the tune-conf file.
+
+6. For executing several repetitions of irace in parallel, call the
+   program PACKAGE_PATH/irace/bin/parallel-irace.sh from your tuning
+   directory with the number of repetitions. The execution directory
+   of each run of irace will be set to "~/tuning/TUNE-dd", where dd is
+   a number padded with zeroes. Be careful, parallel-irace.sh will
+   create these directories from scratch, deleting them first if they
+   already exist. Check the help of parallel-irace.sh by running it
+   without parameters.
+
+7. There are three ways to execute calls to hookRun in parallel:
   
   1) --parallel N : will use the multicore package to launch locally up to
   N calls of hookRun in parallel.
@@ -53,7 +69,7 @@ Usage
   2) --mpi 1 --parallel N : will use the Rmpi package to launch N slaves
   + 1 master, in order to execute N calls of hookRun in parallel. The
   user is responsible to set up MPI correctly. For an example of
-  using MPI mode in an SGE cluster, see examples/mpi/.
+  using MPI mode in an SGE cluster, see PACKAGE_PATH/irace/examples/mpi/.
 
   3) --sge-cluster 1 : will launch as many calls of hookRun as possible
   and use 'qstat' to wait for cluster jobs. The user *must* call qsub
@@ -61,7 +77,7 @@ Usage
   otherwise hookRun will not submit jobs to the cluster. In this mode,
   irace must run in the submission node, and hence, qsub should not
   be used to invoke irace (either directly or throught tune-main).
-  See the examples in examples/cluster-mode/.
+  See the examples in PACKAGE_PATH/irace/examples/cluster-mode/.
 
 If you find that you need to modify anything else, something is not
 clear or if you have problems, please contact irace@iridia.ulb.ac.be
