@@ -98,13 +98,10 @@ oneIterationRace <-
            parameters = NULL,
            candidates = NULL, 
            budget = NULL,
-           minSurvival = NULL,
-           # parameters for the wrapper
-           wrapper.file = file.path(tunerConfig$installDir, "race-wrapper.R"))
+           minSurvival = NULL)
 {
   # Call to Race:
-  result <- race (wrapper.file = wrapper.file, 
-                  maxExp = budget,
+  result <- race (maxExp = budget,
                   first.test = tunerConfig$firstTest,
                   each.test = tunerConfig$eachTest,
                   stat.test = tunerConfig$testType,
@@ -158,10 +155,10 @@ oneIterationRace <-
 #' @return Elites candidates obtained after the last iteration
 #' @callGraphPrimitives
 #' @note This is a note for the function \code{iteratedRace}
-iteratedRace <- function(tunerConfig
-                          = stop("parameter `tunerConfig' is mandatory."),
-                          parameters
-                          = stop("parameter `parameters' is mandatory."))
+irace <- function(tunerConfig
+                  = stop("parameter `tunerConfig' is mandatory."),
+                  parameters
+                  = stop("parameter `parameters' is mandatory."))
 {
 
   if (is.na(tunerConfig$seed)) {

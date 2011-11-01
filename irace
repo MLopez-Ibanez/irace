@@ -1,5 +1,0 @@
-#!/bin/bash
-# Find our own location.
-BINDIR=$(dirname "$(readlink -f "$(type -P $0 || echo $0)")")
-# Use exec to avoid a fork: faster and consumes less resources.
-exec R --vanilla --slave --file=$BINDIR/main.R --args $*

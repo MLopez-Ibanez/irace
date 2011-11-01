@@ -1,0 +1,5 @@
+#!/bin/bash
+exec R --vanilla --slave --args $* <<EOF
+library(irace)
+irace.cmdline()
+EOF

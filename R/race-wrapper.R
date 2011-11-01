@@ -131,7 +131,7 @@ race.info <- function(data)
               extra = data$tunerConfig$expDescription))
 
 ## ??? This function needs a description, what is candidate, task and data?
-race.wrapper <- function(candidate, task, data)
+race.wrapper <- function(candidate, task, which.alive, data)
 {
   debugLevel <- data$tunerConfig$debugLevel
   execDir <- data$tunerConfig$execDir
@@ -174,9 +174,15 @@ race.wrapper <- function(candidate, task, data)
 
   commands <- c()
   
-  ## This is testing if this is the first candidate. If so, record all
-  ## candidates. Otherwise, just collect the results.
-  ## FIXME: which.alive should not be a global variable.
+  ## FIXME: This is testing if this is the first candidate. If so,
+  ## record all candidates. Otherwise, just collect the results.  This
+  ## is an awful historical artefact because of the way the first
+  ## ifrace was developed on top of race. We should have function to
+  ## generate all candidates (this 'for' loop). Then another function
+  ## to call all candidates (the rest of this function). This function
+  ## will call another hook.run function that will be in charge of
+  ## calling system(). This will allow to override hook.run while
+  ## keeping the rest intact.
   if (candidate == which.alive[1]) {
     for (candi in which.alive) {
       # First parameter is the instance file, second is the candidate number.

@@ -114,8 +114,8 @@ readConfiguration <- function(configuration, configurationFile, parameters)
 {
   # First find out which file...
   if (configurationFile == ""
-      && file.exists(paramDef["configurationFile","default"])) {
-    configurationFile <- paramDef["configurationFile","default"]
+      && file.exists(.irace.params.def["configurationFile","default"])) {
+    configurationFile <- .irace.params.def["configurationFile","default"]
     cat("Warning: A default configuration file '", 
         configurationFile, "' has been found and will be read\n")
   }
@@ -235,37 +235,37 @@ checkConfiguration <- function(configuration)
     return(as.logical(tmp))
   }
   for (p in c("sampleInstances", "sgeCluster", "softRestart", "mpi")) {
-    configuration[[p]] <- as.boolean.param (configuration[[p]], p, paramDef)
+    configuration[[p]] <- as.boolean.param (configuration[[p]], p, .irace.params.def)
   }
 
   if (configuration$mpi && configuration$parallel < 2) {
-    tunerError ("'parallel' (", paramDef["parallel","long"],
+    tunerError ("'parallel' (", .irace.params.def["parallel","long"],
                 ") must be larger than 1 when mpi is enabled")
   }
 
   if (configuration$sgeCluster && configuration$mpi) {
-    tunerError("'mpi' (", paramDef["mpi","long"], ") and ",
-               "'sgeCluster' (", paramDef["sgeCluster","long"], ") ",
+    tunerError("'mpi' (", .irace.params.def["mpi","long"], ") and ",
+               "'sgeCluster' (", .irace.params.def["sgeCluster","long"], ") ",
                "cannot be enabled at the same time")
   }
 
   if (configuration$sgeCluster && configuration$parallel > 1) {
     tunerError("It does not make sense to use ",
-               "'parallel' (", paramDef["parallel","long"], ") and ",
-               "'sgeCluster' (", paramDef["sgeCluster","long"], ") ",
+               "'parallel' (", .irace.params.def["parallel","long"], ") and ",
+               "'sgeCluster' (", .irace.params.def["sgeCluster","long"], ") ",
                "at the same time")
   }
   
   if (configuration$timeBudget > 0 && configuration$timeEstimate <= 0) {
-    tunerError ("When using 'timeBudget' (", paramDef["timeBudget","long"],
+    tunerError ("When using 'timeBudget' (", .irace.params.def["timeBudget","long"],
                 "), 'timeEstimate' (",
-                paramDef["timeEstimate","long"], ") must be larger than zero")
+                .irace.params.def["timeEstimate","long"], ") must be larger than zero")
   }
 
   if (configuration$timeBudget <= 0 && configuration$timeEstimate > 0) {
-    tunerError ("When using 'timeEstimate' (", paramDef["timeEstimate","long"],
+    tunerError ("When using 'timeEstimate' (", .irace.params.def["timeEstimate","long"],
                 "), 'timeBudget' (",
-                paramDef["timeBudget","long"], ") must be larger than zero")
+                .irace.params.def["timeBudget","long"], ") must be larger than zero")
   }
 
   if (grepl("f-test", tolower(configuration$testType), fixed = TRUE)) {
@@ -274,7 +274,7 @@ checkConfiguration <- function(configuration)
     configuration$testType <- "t.none"
   } else {
     tunerError ("invalid setting '", configuration$testType,
-                "' of 'testType' (", paramDef["testType","long"],
+                "' of 'testType' (", .irace.params.def["testType","long"],
                 "), valid values are: F-test, t-test")
   }
   

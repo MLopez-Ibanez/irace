@@ -6,13 +6,13 @@
 SEED=1234567
 
 error () {
-    echo "$0: error: $@"
+    echo "$0: error: $@" >&2
     exit 1
 }
 
 usage() {
     cat <<EOF
-usage: $0.sh N [EXECDIR] [IRACE PARAMS]
+usage: $0.sh N[-M] [EXECDIR] [IRACE PARAMS]
 
 Parameters:
  N                  an integer giving the number of repetitions of Race
@@ -38,7 +38,6 @@ if [[ "$REPETITIONS" =~ ^([0-9]+)-([0-9]+)$ ]] ; then
 elif ! [[ "$REPETITIONS" =~ ^[0-9]+$ ]] ; then
     error "number of repetitions must be an integer"
 fi
-
 
 # execDir (--exec-dir) directory
 EXECDIR=${1:-TUNE}
