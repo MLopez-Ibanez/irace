@@ -118,7 +118,6 @@ race<-function(maxExp=0,
 
   # Collect info on race from wrapper
   race.info<-do.call(.slave.info.function,list(race.data))
-  print(race.info)
   # Check race.info
   if (# race.info$race.name must be a string
       is.na(match("race.name",names(race.info)))||
