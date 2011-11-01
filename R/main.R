@@ -27,7 +27,6 @@
 # $Revision$
 # =========================================================================
 
-irace.version <- "IRACE.VERSION"
 irace.license <-
 'irace: An implementation in R of Iterated Race
 Copyright (C) 2010, 2011
