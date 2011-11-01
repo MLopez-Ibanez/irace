@@ -4,7 +4,8 @@ BINDIR=..
 RNODE=iridiacluster
 RDIR=~/$(PACKAGE)
 INSTALL_FLAGS=
-VERSION = 0.98.$(SVN_REV)
+PACKAGEVERSION=0.98
+VERSION = $(PACKAGEVERSION)r$(SVN_REV)
 DATE=$(shell date +%F)
 PACKAGEDIR=$(PWD)
 
@@ -37,10 +38,9 @@ pdf:
 	cd $(BINDIR) &&	R CMD Rd2pdf $(PACKAGEDIR)
 
 version :
-#       We cannot use 500M because R packages versions only contain numbers.
-	@sed -i 's/Version: .*/Version: $(VERSION:M=)/' $(PACKAGEDIR)/DESCRIPTION
-	@sed -i 's/Date: .*/Date: $(DATE)/' $(PACKAGEDIR)/DESCRIPTION
 	echo 'irace.version <- "$(VERSION)"' > $(PACKAGEDIR)/R/version.R
+	@sed -i 's/Date: .*/Date: $(DATE)/' $(PACKAGEDIR)/DESCRIPTION
+	@sed -i 's/Version: .*/Version: $(PACKAGEVERSION)/' $(PACKAGEDIR)/DESCRIPTION
 
 rsync : version
 ifdef RNODE
