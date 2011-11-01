@@ -231,7 +231,7 @@ race.wrapper <- function(candidate, task, which.alive, data)
     if (parallel > 1) {
       if (mpi) {
         mpiInit(parallel)
-        returnCodes <- mpi.applyLB(commands, runcommand)
+        returnCodes <- Rmpi::mpi.applyLB(commands, runcommand)
       } else {
         library(multicore)
         returnCodes <- mclapply(commands, runcommand, mc.cores = parallel)
@@ -311,7 +311,7 @@ race.wrapper <- function(candidate, task, which.alive, data)
                "\nThe call to hook-run was: ",
                # First parameter is the candidate number, second is the instance file.
                paste (hookRun, ins, candidate, extra.params,
-                      buildCommandLine(data$candidates[candidate,unlist(parameters$names)],
+                      buildCommandLine(data$candidates[candidate,unlist(data$parameters$names)],
                                        data$parameters$switches, signifDigits)),
                "\nThis is not a bug in irace, but means that something failed when",
                " running the command above or it was terminated before completion.",
