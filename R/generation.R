@@ -22,13 +22,18 @@ sampleUniform <- function (tunerConfig, parameters, nbCandidates)
     as.data.frame(matrix(nrow = nbCandidates,
                          ncol = length(newCandidatesColnames)))
   colnames(newCandidates) <- newCandidatesColnames
+
+  empty.candidate <- as.list(rep(NA, length(newCandidatesColnames)))
+  names(empty.candidate) <- newCandidatesColnames
   
   for (idxCandidate in seq_len(nbCandidates)) {
-    for (currentParameter in namesParameters) {
+    candidate <- empty.candidate
+    for (p in seq_along(namesParameters)) {
+      currentParameter <- namesParameters[p]
       currentType <- parameters$types[[currentParameter]]
-      if (!constraintsSatisfied(parameters, newCandidates[idxCandidate, ],
+      if (!constraintsSatisfied(parameters, candidate,
                                 currentParameter)) {
-        newCandidates[idxCandidate, currentParameter] <- NA
+        candidate[[p]] <- NA
         next
       }
       if (isFixed(currentParameter, parameters)) {
@@ -60,8 +65,9 @@ sampleUniform <- function (tunerConfig, parameters, nbCandidates)
       } else {
         stop (irace.bug.report);
       }
-      newCandidates[idxCandidate, currentParameter] <- newVal
+      candidate[[p]] <- newVal
     }
+    newCandidates[idxCandidate,] <- candidate
   }
   return (newCandidates)
 }
