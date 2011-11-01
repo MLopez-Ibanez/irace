@@ -27,13 +27,6 @@
 # $Revision$
 # =========================================================================
 
-## Assuming irace is installed in "../irace/" directory and we want
-## to perform the tuning in "../tuning/", we can run this script
-## within R, following these steps:
-#  installDir <- "../irace"
-#  setwd("../tuning/")
-#  source(file.path(installDir, "main.R"))
-
 irace.version <- "IRACE.VERSION"
 irace.license <-
 'irace: An implementation in R of Iterated Race
@@ -90,77 +83,49 @@ path.rel2abs <- function (path)
   }
 }
 
-# FIXME: Convert this to a text table and use read.table to read it.
-.irace.params.def <- data.frame(stringsAsFactors = FALSE)
-.irace.params.def <-
-  rbind (
-         c(NA, "-h","--help", NA, "show this help"),
-         c("configurationFile", "-c","--config-file", "./tune-conf", 
-          "File that contains the configuration for irace."),
-         c("parameterFile", "-p","--param-file", "./parameters.txt", 
-          "File that contains the description of the parameters to be tuned. See the template."),
-         c("execDir", "","--exec-dir", "./TUNE", 
-          "Directory where the programs will be run."),
-         c("logFile", "-l", "--log-file", "./irace.Rdata", 
-          "File (if relative path, relative to execDir) to save tuning results as an R dataset."),
-         c("instanceDir","","--instance-dir", "./Instances", 
-          "Folder where tuning instances are located, either absolute or relative to execDir."),
-         c("instanceFile", "", "--instance-file", "" , 
-          "A file containing a list of instances and (optionally) additional parameters for them."),
-         c("candidatesFile", "", "--candidates-file", "" , 
-           "A file containing a list of initial candidates. If empty or NULL, do not use a file."),
-         c("hookRun", "", "--hook-run", "./hook-run", 
-          "The script called for each candidate that launches the program to be tuned. See templates/."),
-         c("hookEvaluate", "", "--hook-evaluate", "./hook-evaluate", 
-          "The scrip that provides a numeric value for each candidate. See templates/."),
-         c("expName", "", "--exp-name", "Experiment Name", 
-          "Experiment name for output report."),
-         c("expDescription", "", "--exp-description", "Experiment Description", 
-          "Longer experiment description for output report."),
-         c("maxNbExperiments", "", "--max-experiments", 1000,
-           "The maximum number of runs (invocations of hookRun) that will performed. It determines the (maximum) budget of experiments for the tuning, unless timeBudget is positive."
-           ),
-         c("timeBudget", "", "--time-budget", 0,
-           "The maximum computation time that should be used for tuning. This only works when tuning for time. 0 means no time limit (use maxNbExperiments)."
-           ),
-         c("timeEstimate", "", "--time-estimate", 0, 
-           "An estimation of the average time required for one experiment. Only required if timeBudget is positive."
-           ),
-         c("signifDigits", "", "--signif-digits", 4,
-          "Indicates the significant digits to be considered for the real parameters."),
-         c("debugLevel", "", "--debug-level", 0, 
-          "A value of 0 silences all debug messages. Higher values provide more verbose debug messages."),
-         c("nbIterations", "", "--iterations", 0, 
-          "Number of iterations."),
-         c("nbExperimentsPerIteration", "", "--experiments-per-iteration", 0, 
-          "Number of experiments per iteration."),
-         c("sampleInstances", "", "--sample-instances", 1, 
-           "Sample the instances or take them always in the same order."),
-         c("testType", "", "--test-type", "F-test", 
-           "Specifies the statistical test type: F-test or t-test."),
-         c("firstTest", "", "--first-test", 5, 
-           "Specifies after how many instances should be performed the first test."),
-         c("eachTest", "", "--each-test", 1, 
-           "Specifies after how many instances should be performed each test."),
-         c("minNbSurvival", "", "--min-survival", 0, 
-          "The minimum number of candidates that should survive to continue one iteration."),
-         c("nbCandidates", "", "--num-candidates", 0, 
-          "The number of candidates that should be sampled and evaluated at each iteration."),
-         c("mu", "", "--mu", 5, 
-          "This value is used to determine the number of candidates to be sampled and evaluated at each iteration."),
-         c("seed", "", "--seed", NA, 
-           "Seed of the random number generator (must be a positive integer, NA means use a random seed)."),
-         c("parallel", "", "--parallel", 0, 
-           "Number of calls to hookRun to execute in parallel. 0 or 1 mean disabled."),
-         c("sgeCluster", "", "--sge-cluster", 0, 
-           "Enable/disable SGE cluster mode. Use qstat to wait for cluster jobs to finish (hookRun must invoke qsub)."),
-         c("mpi", "", "--mpi", 0, 
-           "Enable/disable mpi. Use MPI to execute hookRun in parallel (parameter parallel is the number of slaves)."),
-         c("softRestart", "", "--soft-restart", 1, 
-           "Enable/disable the soft restart strategy that avoids premature convergence of the probabilistic model."),
-         NULL
-         )
-colnames (.irace.params.def) <- c("name", "short", "long", "default", "description")
+read.table.text <- function(text, header = TRUE, stringsAsFactors = FALSE, ...)
+{
+  con <- textConnection(text)
+  x <- read.table(con, header = header, stringsAsFactors = stringsAsFactors,
+                  ...)
+  close(con)
+  return(x)
+}
+
+.irace.params.def <- read.table.text('
+name               short  long             default            description
+""               "-h"   "--help"         NA                 "show this help." 
+configurationFile  "-c"   "--config-file"  "./tune-conf"      "File that contains the configuration for irace." 
+parameterFile      "-p"   "--param-file"   "./parameters.txt" "File that contains the description of the parameters to be tuned. See the template." 
+execDir            ""     "--exec-dir"     "./TUNE"           "Directory where the programs will be run." 
+"logFile"  "-l"  "--log-file"  "./irace.Rdata"  "File (if relative path  relative to execDir to save tuning results as an R dataset." 
+"instanceDir" "" "--instance-dir"  "./Instances"  "Folder where tuning instances are located  either absolute or relative to execDir." 
+"instanceFile"  ""  "--instance-file"  ""   "A file containing a list of instances and (optionally additional parameters for them." 
+"candidatesFile"  ""  "--candidates-file"  ""   "A file containing a list of initial candidates. If empty or NULL  do not use a file." 
+"hookRun"  ""  "--hook-run"  "./hook-run" "The script called for each candidate that launches the program to be tuned. See templates/." 
+"hookEvaluate"  ""  "--hook-evaluate"  "./hook-evaluate" "The scrip that provides a numeric value for each candidate. See templates/." 
+"expName"  ""  "--exp-name"  "Experiment Name"  "Experiment name for output report." 
+"expDescription"  ""  "--exp-description"  "Experiment Description" "Longer experiment description for output report." 
+"maxNbExperiments"  ""  "--max-experiments"  1000 "The maximum number of runs (invocations of hookRun that will performed. It determines the (maximum budget of experiments for the tuning  unless timeBudget is positive."
+"timeBudget"  ""  "--time-budget"  0 "The maximum computation time that should be used for tuning. This only works when tuning for time. 0 means no time limit (use maxNbExperiments."
+"timeEstimate"  ""  "--time-estimate"  0  "An estimation of the average time required for one experiment. Only required if timeBudget is positive."
+"signifDigits"  ""  "--signif-digits"  4 "Indicates the significant digits to be considered for the real parameters." 
+"debugLevel"  ""  "--debug-level"  0 "A value of 0 silences all debug messages. Higher values provide more verbose debug messages." 
+"nbIterations"  ""  "--iterations"  0  "Number of iterations." 
+"nbExperimentsPerIteration"  ""  "--experiments-per-iteration"  0  "Number of experiments per iteration." 
+"sampleInstances"  ""  "--sample-instances"  1  "Sample the instances or take them always in the same order." 
+"testType"  ""  "--test-type"  "F-test"  "Specifies the statistical test type: F-test or t-test." 
+"firstTest"  ""  "--first-test"  5    "Specifies after how many instances should be performed the first test." 
+"eachTest"  ""  "--each-test"  1    "Specifies after how many instances should be performed each test." 
+"minNbSurvival"  ""  "--min-survival"  0   "The minimum number of candidates that should survive to continue one iteration." 
+"nbCandidates"  ""  "--num-candidates"  0   "The number of candidates that should be sampled and evaluated at each iteration." 
+"mu"  ""  "--mu"  5   "This value is used to determine the number of candidates to be sampled and evaluated at each iteration." 
+"seed"  ""  "--seed"  NA    "Seed of the random number generator (must be a positive integer  NA means use a random seed." 
+"parallel"  ""  "--parallel"  0    "Number of calls to hookRun to execute in parallel. 0 or 1 mean disabled." 
+"sgeCluster"  ""  "--sge-cluster"  0    "Enable/disable SGE cluster mode. Use qstat to wait for cluster jobs to finish (hookRun must invoke qsub." 
+"mpi"  ""  "--mpi"  0    "Enable/disable mpi. Use MPI to execute hookRun in parallel (parameter parallel is the number of slaves." 
+"softRestart"  ""  "--soft-restart"  1    "Enable/disable the soft restart strategy that avoids premature convergence of the probabilistic model." 
+')
 rownames (.irace.params.def) <- .irace.params.def[,"name"]
   
 ## read commandline parameters
@@ -178,6 +143,11 @@ irace.usage <- function ()
 {
   cat ("irace\tversion ", irace.version, "\n\n")
   cat (irace.license)
+  # FIXME: The output would be nicer if we used cat(sprintf()) to
+  # print short and long within a fixed width field. The description
+  # can be wrapped with strwrap to the remainder space up to 80
+  # columns. We can calculate the field width from the largest string
+  # for each of short and long.
   for (i in seq_len(nrow(.irace.params.def))) {
     cat(.irace.params.def[i,"short"], ", ", .irace.params.def[i,"long"],
         "\t", .irace.params.def[i,"description"], "\n")
@@ -210,54 +180,8 @@ irace.main <- function(tunerConfig, output.width = 9999)
 }
 
 
-irace.cmdline <- function()
+irace.cmdline <- function(args = commandArgs (trailingOnly = TRUE))
 {
-  # Get the installation directory
-  args <- commandArgs (trailingOnly = FALSE)
-  ## if (!exists ("installDir")) {
-  ##   if (! is.null(args)) {
-  ##     installDir <- readArgOrDefault(args,
-  ##                                    short="-f", long="--file", default=NULL)
-  ##     if(!is.null(installDir))
-  ##       installDir <- dirname (installDir)
-  ##   } else {
-  ##     installDir <- NULL
-  ##   }
-  ## }
-
-  ## if (is.null(installDir)) {
-  ##   stop ("Cannot find the installation directory, ",
-  ##         "you should invoke this R script with the parameter -f or --file\n")
-  ## } else {
-  ##   installDir <- path.rel2abs(installDir)
-  ## }
-  
-  ## # Check that installDir exists and is a directory
-  ## if (!file.exists(installDir) || !file.info(installDir)$isdir) {
-  ##   stop ("The installation directory '", installDir, "' does not exist\n")
-  ## }
-  
-  tunerConfig <- list()
-  ## tunerConfig$installDir <- installDir
-  
-  # Load required files
-  ## requiredFiles <- c ("utils.R", "readConfiguration.R",
-  ##                     "generation.R", "model.R", "race.R", "race-wrapper.R", 
-  ##                     "readParameters.R", "irace.R", "tnorm.R")
-  ## cwd <- setwd(installDir)
-  ## for (file in requiredFiles) {
-  ##   if (!file.exists(file))
-  ##     stop ("A file required '", file,
-  ##           "' can not be found in the installation directory '",
-  ##           installDir, "'.")
-  ##   source(file)
-  ## }
-  ## irace.version <- ifelse(file.exists("VERSION"),
-  ##                         scan("VERSION", what = character(0), quiet = TRUE),
-  ##                         "UNKNOWN")
-  ## setwd(cwd)
-  
-  args <- commandArgs (trailingOnly = TRUE)
   if (!is.null(readArgOrDefault (args,
                                  short = "-h", long="--help", default = NULL))) {
     irace.usage()
@@ -272,9 +196,9 @@ irace.cmdline <- function()
     readArgOrDefault(args = args,
                      short = .irace.params.def["configurationFile","short"],
                      long  = .irace.params.def["configurationFile","long"],
-                     
                      default = "")
-  parameters <- as.vector(.irace.params.def[!is.na(.irace.params.def[, "name"]), "name"])
+  parameters <- rownames(.irace.params.def)[rownames(.irace.params.def) != ""]
+  tunerConfig <- list()
   tunerConfig <- readConfiguration(tunerConfig, configurationFile, parameters)
   for (param in parameters) {
     tunerConfig[[param]] <-
