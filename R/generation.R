@@ -7,6 +7,9 @@
 constraintsSatisfied <- function (parameters, partialCandidate, paramName)
 {
   constraint <- parameters$constraints[[paramName]]
+  # If there is no constraint, do not waste time evaluating it.
+  if(!length(all.vars(constraint, max.names = 1L))) return(TRUE)
+
   v <- eval(constraint,as.list(partialCandidate))
   # Return TRUE if TRUE, FALSE if FALSE or NA
   v <- !is.na(v) && v 
@@ -31,8 +34,7 @@ sampleUniform <- function (tunerConfig, parameters, nbCandidates)
     for (p in seq_along(namesParameters)) {
       currentParameter <- namesParameters[p]
       currentType <- parameters$types[[currentParameter]]
-      if (!constraintsSatisfied(parameters, candidate,
-                                currentParameter)) {
+      if (!constraintsSatisfied(parameters, candidate, currentParameter)) {
         candidate[[p]] <- NA
         next
       }
