@@ -16,6 +16,15 @@ constraintsSatisfied <- function (parameters, partialCandidate, paramName)
   return(v)
 }
 
+new.empty.candidate <- function(parameters)
+{
+  namesParameters <- names(parameters$constraints)
+  newCandidatesColnames <- c(namesParameters, ".PARENT.")
+  empty.candidate <- as.list(rep(NA, length(newCandidatesColnames)))
+  names(empty.candidate) <- newCandidatesColnames
+  return(empty.candidate)
+}
+
 ### Uniform sampling for the initial generation
 sampleUniform <- function (tunerConfig, parameters, nbCandidates)
 {
@@ -25,13 +34,14 @@ sampleUniform <- function (tunerConfig, parameters, nbCandidates)
     as.data.frame(matrix(nrow = nbCandidates,
                          ncol = length(newCandidatesColnames)))
   colnames(newCandidates) <- newCandidatesColnames
-
-  empty.candidate <- as.list(rep(NA, length(newCandidatesColnames)))
-  names(empty.candidate) <- newCandidatesColnames
+  empty.candidate <- new.empty.candidate(parameters)
   
   for (idxCandidate in seq_len(nbCandidates)) {
     candidate <- empty.candidate
     for (p in seq_along(namesParameters)) {
+      # FIXME: We must be careful because parameters$types does not
+      # have the same order as parameters$constraints. Ideally, we
+      # should fix this or make it impossible to confuse them.
       currentParameter <- namesParameters[p]
       currentType <- parameters$types[[currentParameter]]
       if (!constraintsSatisfied(parameters, candidate, currentParameter)) {
@@ -80,97 +90,99 @@ sampleUniform <- function (tunerConfig, parameters, nbCandidates)
 sampleModel <- function (tunerConfig, parameters, eliteCandidates, model,
                          nbNewCandidates)
 {
-  nbCandidates <- nbNewCandidates + nrow(eliteCandidates)
   if (nbNewCandidates <= 0) {
-    stop ("The number of candidates to generate appears to be negative, or zero.")
+    stop ("The number of candidates to generate appears to be negative or zero.")
   }
-
   namesParameters <- names(parameters$constraints)
   newCandidatesColnames <- c(namesParameters, ".PARENT.")
   newCandidates  <-
     as.data.frame(matrix(nrow = nbNewCandidates,
                          ncol = length(newCandidatesColnames)))
   colnames(newCandidates) <- newCandidatesColnames
+  empty.candidate <- new.empty.candidate(parameters)
 
-  for (idxCandidate in seq(nbNewCandidates)) {
+  for (idxCandidate in seq_len(nbNewCandidates)) {
     # Choose the elite which will be the parent.
-    indexEliteParent <- sample(size = 1, x = 1:nrow(eliteCandidates),
-                               prob = eliteCandidates[, ".WEIGHT."])
+    indexEliteParent <- sample.int (n = nrow(eliteCandidates), size = 1,
+                                    prob = eliteCandidates[[".WEIGHT."]])
     eliteParent <- eliteCandidates[indexEliteParent, ]
-    idEliteParent <- eliteParent[".ID."]
-    newCandidates[idxCandidate, ".PARENT."] <- idEliteParent
+    idEliteParent <- eliteParent[[".ID."]]
+    candidate <- empty.candidate
+    candidate[[".PARENT."]] <- idEliteParent
 
-    # Sample of every parameter for the new candidate.
-    for (currentParameter in namesParameters) {
+    # Sample a value for every parameter of the new candidate.
+    for (p in seq_along(namesParameters)) {
+      # FIXME: We must be careful because parameters$types does not
+      # have the same order as parameters$constraints. Ideally, we
+      # should fix this or make it impossible to confuse them.
+      currentParameter <- namesParameters[p]
       currentType <- parameters$types[[currentParameter]]
-      if (constraintsSatisfied(parameters, newCandidates[idxCandidate, ],
-                               currentParameter)) {
-        if (isFixed(currentParameter, parameters)) {
-          # We don't even need to sample, there is only one possible value !
-          lowerBound <- oneParamBoundary(currentParameter, parameters)[1]
-          if (currentType == "i") {
-            newVal <- as.integer(lowerBound)
-          } else if (currentType == "c"  || currentType == "o") {
-            newVal <- lowerBound
-          } else if (currentType == "r") {
-            newVal <- as.double(lowerBound)
-          } else {
-            stop (irace.bug.report)
-          }
-          # The parameter is not a fixed and should be sampled
-        } else if (currentType == "i" || currentType == "r") {
-          lowerBound <- oneParamLowerBound(currentParameter, parameters)
-          upperBound <- oneParamUpperBound(currentParameter, parameters)
-          mean <- as.numeric(eliteParent[currentParameter])
-          if (is.na(mean)) {
-            # The elite parent does not have any value for this
-            # parameter, let's sample uniformly.
-            newVal <- runif(1, lowerBound, upperBound)
-          } else {
-            stdDev <- model[[currentParameter]][[as.character(idEliteParent)]]
-            newVal <- rtnorm(1, mean, stdDev, lowerBound, upperBound)
-          }
-          newVal <- ifelse((currentType == "i"),
-                           round(newVal),
-                           signif(newVal, tunerConfig$signifDigits))
+      if (!constraintsSatisfied(parameters, candidate, currentParameter)) {
+        # Some constraints are unsatisfied.
+        # Should be useless, NA is ?always? assigned when matrix created
+        newVal <- NA
 
-        } else if (currentType == "o") {
-          possibleValues <- oneParamBoundary(currentParameter, parameters)  
-          value <- eliteParent[currentParameter]
-
-          if (is.na(value)) {
-            # The elite parent does not have any value for this
-            # parameter, let's sample uniformly
-            newVal <- sample(possibleValues, 1)
-          } else {
-            # Find the position within the array of possible
-            # values to determine the equivalent integer.
-            mean <- match(value, possibleValues) # Return index of value in array
-            stdDev <- model[[currentParameter]][[as.character(idEliteParent)]]
-
-            # Sample with truncated normal distribution.
-            newValAsInt <- rtnorm(1, mean, stdDev, 1, length(possibleValues))
-
-            # Get back to categorical values, find the one corresponding to the
-            # newVal
-            newVal <- possibleValues[round(newValAsInt)]
-          } 
-        } else if (currentType == "c") {
-          # FIXME: Why is idEliteParent character?
-          # FIXME: Why the model is <parameter><Parent>? It makes more sense to be <Parent><parameter>.
-          probVector <-
-            model[[currentParameter]][[as.character(idEliteParent)]]
-          possibleValues <- oneParamBoundary(currentParameter, parameters)
-          newVal <- sample(x = possibleValues, size = 1, prob = probVector)
+      } else if (isFixed(currentParameter, parameters)) {
+        # We don't even need to sample, there is only one possible value !
+        lowerBound <- oneParamBoundary(currentParameter, parameters)[1]
+        if (currentType == "i") {
+          newVal <- as.integer(lowerBound)
+        } else if (currentType == "c"  || currentType == "o") {
+          newVal <- lowerBound
+        } else if (currentType == "r") {
+          newVal <- as.double(lowerBound)
         } else {
           stop (irace.bug.report)
         }
-      } else { # Some constraints are unsatisfied.
-        # Should be useless, NA is ?always? assigned when matrix created
-        newVal <- NA
+        # The parameter is not a fixed and should be sampled
+      } else if (currentType == "i" || currentType == "r") {
+        lowerBound <- oneParamLowerBound(currentParameter, parameters)
+        upperBound <- oneParamUpperBound(currentParameter, parameters)
+        mean <- as.numeric(eliteParent[currentParameter])
+        if (is.na(mean)) {
+          # The elite parent does not have any value for this
+          # parameter, let's sample uniformly.
+          newVal <- runif(1, lowerBound, upperBound)
+        } else {
+          stdDev <- model[[currentParameter]][[as.character(idEliteParent)]]
+            newVal <- rtnorm(1, mean, stdDev, lowerBound, upperBound)
+        }
+        newVal <- ifelse((currentType == "i"), round(newVal),
+                         signif(newVal, tunerConfig$signifDigits))
+        
+      } else if (currentType == "o") {
+        possibleValues <- oneParamBoundary(currentParameter, parameters)  
+        value <- eliteParent[currentParameter]
+        
+        if (is.na(value)) {
+          # The elite parent does not have any value for this
+          # parameter, let's sample uniformly
+          newVal <- sample(possibleValues, 1)
+        } else {
+          # Find the position within the array of possible
+          # values to determine the equivalent integer.
+          mean <- match(value, possibleValues) # Return index of value in array
+          stdDev <- model[[currentParameter]][[as.character(idEliteParent)]]
+          
+          # Sample with truncated normal distribution.
+          newValAsInt <- rtnorm(1, mean, stdDev, 1, length(possibleValues))
+          
+          # Get back to categorical values, find the one corresponding to the
+          # newVal
+          newVal <- possibleValues[round(newValAsInt)]
+        } 
+      } else if (currentType == "c") {
+        # FIXME: Why is idEliteParent character?
+        # FIXME: Why the model is <parameter><Parent>? It makes more sense to be <Parent><parameter>.
+        probVector <- model[[currentParameter]][[as.character(idEliteParent)]]
+        possibleValues <- oneParamBoundary(currentParameter, parameters)
+        newVal <- sample(x = possibleValues, size = 1, prob = probVector)
+      } else {
+        stop (irace.bug.report)
       }
-      newCandidates[idxCandidate, currentParameter] <- newVal
+      candidate[[p]] <- newVal
     }
+    newCandidates[idxCandidate, ] <- candidate
   }
   return (newCandidates)
 }
