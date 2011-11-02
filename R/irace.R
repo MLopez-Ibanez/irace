@@ -301,7 +301,9 @@ irace <- function(tunerConfig
       if (nbNewCandidates > 0) {
         # Sample new candidates.
         if (debugLevel > 0) {
-          cat("# Sample", nbNewCandidates, "candidates from uniform distribution\n")
+          cat(sep="", "# ", format(Sys.time(), usetz=TRUE), ": ",
+              "Sample ", nbNewCandidates,
+              " candidates from uniform distribution\n")
         }
         newCandidates <- sampleUniform(tunerConfig = tunerConfig,
                                        parameters, nbNewCandidates)        
@@ -317,14 +319,16 @@ irace <- function(tunerConfig
       nbNewCandidates <- nbCandidates - nrow(eliteCandidates)
 
       # Update the model based on elites candidates
-      if (debugLevel > 0) { cat("# Update model\n") }
+      if (debugLevel > 0) {
+        cat(sep="", "# ", format(Sys.time(), usetz=TRUE), ": ",
+            "Update model\n") }
       model <- updateModel(parameters, eliteCandidates, model, indexIteration,
                            nbIterations, nbNewCandidates)
       if (debugLevel > 0) { printModel (model) }
       
       if (debugLevel > 0) {
-        cat("# Sample", nbNewCandidates, "candidates from model\n")
-      }
+        cat(sep="", "# ", format(Sys.time(), usetz=TRUE), ": ",
+            "Sample ", nbNewCandidates, " candidates from model\n") }
 
       retrial <- FALSE
 
@@ -346,7 +350,8 @@ irace <- function(tunerConfig
           tmp.ids <- similarCandidates (testCandidates, parameters)
 #          Rprof(NULL)
           if (is.null(tmp.ids)) break
-          cat("# Soft restart: ", tmp.ids, "!\n")
+          cat(sep="", "# ", format(Sys.time(), usetz=TRUE), ": ",
+              "Soft restart: ", paste(sep=" ", tmp.ids), "!\n")
           model <- restartCandidates (testCandidates, tmp.ids, model, parameters, nbNewCandidates)
           tunerResults$softRestart[indexIteration] <- tunerResults$softRestart[indexIteration] + 1
           tunerResults$model$afterSR[[indexIteration]] <- model
@@ -363,11 +368,12 @@ irace <- function(tunerConfig
     }
 
     if (debugLevel >= 1) {
-      cat("Candidates for the race n", indexIteration, ": \n")
+      cat("# Candidates for the race n", indexIteration, ": \n")
       candidates.print(testCandidates, metadata = TRUE)
     }
 
-    if (debugLevel > 0) { cat("# Launch race\n") }
+    if (debugLevel > 0) {
+      cat(sep="", "# ", format(Sys.time(), usetz=TRUE), ": ", "Launch race\n")}
     raceResults <- oneIterationRace (tunerConfig = tunerConfig,
                                      parameters = parameters, 
                                      candidates = testCandidates,
@@ -406,7 +412,7 @@ irace <- function(tunerConfig
       candidates.print (raceResults$candidates, metadata=TRUE)
     }
 
-    if (debugLevel > 0) { cat("# EXTRACT ELITES\n") }
+    if (debugLevel > 0) { cat("# Extract elites\n") }
     eliteCandidates <- extractElites(raceResults$candidates,
                                      min(raceResults$nbAlive, minSurvival))
     cat("Elite candidates:\n")
@@ -414,14 +420,14 @@ irace <- function(tunerConfig
     tunerResults$iterationElites <- c(tunerResults$iterationElites, eliteCandidates$.ID.[1])
     
     if (indexIteration == 1) {
-      if (debugLevel > 0)  { cat("# INITIALISE MODEL\n") }
+      if (debugLevel > 0)  { cat("# Initialise model\n") }
       model <- initialiseModel(parameters, eliteCandidates)
     }
       
     if (debugLevel > 0) { cat("# End of iteration ", indexIteration, "\n") }
 
     if (debugLevel >= 3) {
-      cat("All candidates:\n")
+      cat("# All candidates:\n")
       candidates.print(allCandidates, metadata = TRUE)
     }
 
