@@ -16,5 +16,5 @@ hooks/hook-run
 hooks/tune-main
 inst/.+~
 parameters\.txt
-tune-conf
+tune-conf$
 web
