@@ -1,4 +1,4 @@
-PACKAGE=crace
+PACKAGE=irace
 # FIXME: This Makefile only works in BINDIR=.. !
 BINDIR=..
 RNODE=iridiacluster
