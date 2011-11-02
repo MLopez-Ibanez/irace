@@ -300,7 +300,7 @@ irace <- function(tunerConfig
       nbNewCandidates <- nbCandidates - nrow(allCandidates)
       if (nbNewCandidates > 0) {
         # Sample new candidates.
-        if (debugLevel > 0) {
+        if (debugLevel>= 1) {
           cat(sep="", "# ", format(Sys.time(), usetz=TRUE), ": ",
               "Sample ", nbNewCandidates,
               " candidates from uniform distribution\n")
@@ -319,14 +319,14 @@ irace <- function(tunerConfig
       nbNewCandidates <- nbCandidates - nrow(eliteCandidates)
 
       # Update the model based on elites candidates
-      if (debugLevel > 0) {
+      if (debugLevel >= 1) {
         cat(sep="", "# ", format(Sys.time(), usetz=TRUE), ": ",
             "Update model\n") }
       model <- updateModel(parameters, eliteCandidates, model, indexIteration,
                            nbIterations, nbNewCandidates)
-      if (debugLevel > 0) { printModel (model) }
+      if (debugLevel >= 2) { printModel (model) }
       
-      if (debugLevel > 0) {
+      if (debugLevel >= 1) {
         cat(sep="", "# ", format(Sys.time(), usetz=TRUE), ": ",
             "Sample ", nbNewCandidates, " candidates from model\n") }
 
@@ -355,7 +355,7 @@ irace <- function(tunerConfig
           model <- restartCandidates (testCandidates, tmp.ids, model, parameters, nbNewCandidates)
           tunerResults$softRestart[indexIteration] <- tunerResults$softRestart[indexIteration] + 1
           tunerResults$model$afterSR[[indexIteration]] <- model
-          if (debugLevel > 0) { printModel (model) }
+          if (debugLevel >= 2) { printModel (model) }
           retrial <- TRUE
         } else {
           break
@@ -372,7 +372,7 @@ irace <- function(tunerConfig
       candidates.print(testCandidates, metadata = TRUE)
     }
 
-    if (debugLevel > 0) {
+    if (debugLevel >= 1) {
       cat(sep="", "# ", format(Sys.time(), usetz=TRUE), ": ", "Launch race\n")}
     raceResults <- oneIterationRace (tunerConfig = tunerConfig,
                                      parameters = parameters, 
@@ -407,24 +407,24 @@ irace <- function(tunerConfig
       remainingBudget <- remainingBudget - raceResults$experimentsUsed
     }
 
-    if (debugLevel > 1) {
+    if (debugLevel >= 2) {
       cat("Results for the race n", indexIteration, ": \n")
       candidates.print (raceResults$candidates, metadata=TRUE)
     }
 
-    if (debugLevel > 0) { cat("# Extract elites\n") }
+    if (debugLevel >= 1) { cat("# Extract elites\n") }
     eliteCandidates <- extractElites(raceResults$candidates,
                                      min(raceResults$nbAlive, minSurvival))
-    cat("Elite candidates:\n")
-    candidates.print(eliteCandidates, metadata = debugLevel > 0)
+    cat("# Elite candidates:\n")
+    candidates.print(eliteCandidates, metadata = debugLevel >= 1)
     tunerResults$iterationElites <- c(tunerResults$iterationElites, eliteCandidates$.ID.[1])
     
     if (indexIteration == 1) {
-      if (debugLevel > 0)  { cat("# Initialise model\n") }
+      if (debugLevel >= 1)  { cat("# Initialise model\n") }
       model <- initialiseModel(parameters, eliteCandidates)
     }
       
-    if (debugLevel > 0) { cat("# End of iteration ", indexIteration, "\n") }
+    if (debugLevel >= 1) { cat("# End of iteration ", indexIteration, "\n") }
 
     if (debugLevel >= 3) {
       cat("# All candidates:\n")
