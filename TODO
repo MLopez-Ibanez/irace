@@ -2,20 +2,10 @@
 
 TODO R package:
 
- * Hidden global variables should have a prefix .irace. For example,
-   paramDef.
- * race.R should not source race-wrapper.R but call functions there
-   directly. 
- * main.R should not source any files since all code should be
-   available after doing library(irace).
- * Decide which functions need to be exported and mention them in
-   NAMESPACE.
  * Create Rd files for those functions: See ?prompt
  * Create a small example that can be run with example(irace).
- * Delete PVM stuff from race.R
  * Read about vignette, what we need to do to convert/use the IRIDIA
    TR as the vignette.
-
 
 TODO General:
 
