@@ -1,0 +1,21 @@
+citHeader("To cite package 'irace' in publications use:")
+     
+## R >= 2.8.0 passes package metadata to citation().
+if(!exists("meta") || is.null(meta)) meta <- packageDescription("eaf")
+year <- sub(".*(2[[:digit:]]{3})-.*", "\\1", meta$Date)
+vers <- paste("R package version", meta$Version)
+     
+citEntry(entry="techreport",
+         title = "The irace package, Iterated Race for Automatic Algorithm Configuration",
+         author = personList(as.person("Manuel López-Ibáñez"),
+           as.person("Jérémie Dubois-Lacoste"),
+           as.person("Thomas Stützle"),
+           as.person("Mauro Birattari")),
+         year = 2011,
+         institution="IRIDIA, Université Libre de Bruxelles, Belgium",
+         number="TR/IRIDIA/2011-003",
+         url="http://iridia.ulb.ac.be/IridiaTrSeries/IridiaTr2011-003.pdf",
+         textVersion=
+         paste("Manuel López-Ibáñez, Jérémie Dubois-Lacoste, Thomas Stützle, and Mauro Birattari. ", 
+         "The irace package, Iterated Race for Automatic Algorithm Configuration. ",
+         "Technical Report TR/IRIDIA/2011-004, IRIDIA, Université Libre de Bruxelles, Belgium, 2011.", sep=""))
