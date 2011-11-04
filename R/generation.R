@@ -25,6 +25,20 @@ new.empty.candidate <- function(parameters)
   return(empty.candidate)
 }
 
+get.fixed.value <- function(param, parameters)
+{
+  value <- parameters$boundary[[param]][1]
+  type <- parameters$types[[param]]
+  if (type == "i") {
+    return (as.integer(value))
+  } else if (type == "c" || type == "o") {
+    return (value)
+  } else if (type == "r") {
+    return (as.double(value))
+  } 
+  stop (.irace.bug.report)
+}
+
 ### Uniform sampling for the initial generation
 sampleUniform <- function (tunerConfig, parameters, nbCandidates)
 {
@@ -50,16 +64,7 @@ sampleUniform <- function (tunerConfig, parameters, nbCandidates)
       }
       if (isFixed(currentParameter, parameters)) {
         # We don't even need to sample, there is only one possible value !
-        lowerBound <- parameters$boundary[[currentParameter]][1]
-        if (currentType == "i") {
-          newVal <- as.integer(lowerBound)
-        } else if ((currentType == "c") || (currentType == "o")) {
-          newVal <- lowerBound
-        } else if (currentType == "r") {
-          newVal <- as.double(lowerBound)
-        } else {
-          stop (irace.bug.report);
-        }
+        newVal <- get.fixed.value (currentParameter, parameters)
         # The parameter is not a fixed and should be sampled          
       } else if (currentType == "i") {
         lowerBound <- parameters$boundary[[currentParameter]][1]
@@ -71,7 +76,7 @@ sampleUniform <- function (tunerConfig, parameters, nbCandidates)
         upperBound <- parameters$boundary[[currentParameter]][2]
         newVal <- runif(1, as.real(lowerBound), as.real(upperBound))
         newVal <- signif(newVal, tunerConfig$signifDigits)
-      } else if ((currentType == "c") || (currentType == "o")) {
+      } else if (currentType == "c" || currentType == "o") {
         possibleValues <- parameters$boundary[[currentParameter]]
         newVal <- sample(possibleValues, 1)
       } else {
@@ -123,18 +128,9 @@ sampleModel <- function (tunerConfig, parameters, eliteCandidates, model,
         newVal <- NA
 
       } else if (isFixed(currentParameter, parameters)) {
-        # We don't even need to sample, there is only one possible value !
-        lowerBound <- oneParamBoundary(currentParameter, parameters)[1]
-        if (currentType == "i") {
-          newVal <- as.integer(lowerBound)
-        } else if (currentType == "c"  || currentType == "o") {
-          newVal <- lowerBound
-        } else if (currentType == "r") {
-          newVal <- as.double(lowerBound)
-        } else {
-          stop (irace.bug.report)
-        }
-        # The parameter is not a fixed and should be sampled
+          # We don't even need to sample, there is only one possible value !
+          newVal <- get.fixed.value (currentParameter, parameters)
+          # The parameter is not a fixed and should be sampled
       } else if (currentType == "i" || currentType == "r") {
         lowerBound <- oneParamLowerBound(currentParameter, parameters)
         upperBound <- oneParamUpperBound(currentParameter, parameters)

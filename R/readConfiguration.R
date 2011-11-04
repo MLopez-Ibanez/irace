@@ -110,25 +110,27 @@ readCandidatesFile <-
   return (candidateTable)
 }
 
-readConfiguration <- function(configuration, configurationFile, parameters)
+readConfiguration <- function(filename = "", configuration = list())
 {
+  parameters <- rownames(.irace.params.def)[rownames(.irace.params.def) != ""]
+
   # First find out which file...
-  if (configurationFile == ""
+  if (filename == ""
       && file.exists(.irace.params.def["configurationFile","default"])) {
-    configurationFile <- .irace.params.def["configurationFile","default"]
+    filename <- .irace.params.def["configurationFile","default"]
     cat("Warning: A default configuration file '", 
-        configurationFile, "' has been found and will be read\n")
+        filename, "' has been found and will be read\n")
   }
 
-  if (configurationFile != "") {
-    if (file.exists (configurationFile)) {
+  if (filename != "") {
+    if (file.exists (filename)) {
       # FIXME: conditional on debuglevel
-      cat ("Note: Reading configuration file '", configurationFile, "'.......")
-      source(configurationFile, local=TRUE)
+      cat ("Note: Reading configuration file '", filename, "'.......")
+      source(filename, local = TRUE)
       # FIXME: conditional on debuglevel
       cat (" done!\n")
     } else {
-      stop ("The configuration file ", configurationFile, " does not exist.")
+      stop ("The configuration file ", filename, " does not exist.")
     }
   }
   ## read configuration file variables
@@ -220,7 +222,7 @@ checkConfiguration <- function(configuration)
       next # Allow NA default values
     if (is.null(configuration[[param]]))
       tunerError ("'", param, "' must be an integer.")
-    configuration[[param]] <- as.integer(configuration[[param]])
+    configuration[[param]] <- suppressWarnings(as.integer(configuration[[param]]))
     if (is.na (configuration[[param]]))
       tunerError ("'", param, "' must be an integer.")
   }
@@ -293,3 +295,12 @@ printConfiguration <- function(tunerConfig)
   cat("### end of configuration\n")
 }
 
+defaultConfiguration <- function(configuration)
+{
+  for (param in names(configuration)) {
+    if (is.na(configuration[[param]])) {
+      configuration[[param]] <- .irace.params.def[param, "default"]
+    }
+  }
+  return (configuration)
+}

@@ -84,7 +84,7 @@ readParameters <- function (filename = stop("filename is mandatory"),
     return (v)
   }
 
-  # Determine if a parameter is a fixed
+  # Determine if a parameter is fixed.
   isFixed <- function (type = stop("type is mandatory."),
                        boundaries = stop("boundaries is mandatory."),
                        signifDigits)

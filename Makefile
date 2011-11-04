@@ -1,4 +1,4 @@
-PACKAGE=irace
+PACKAGE=$(shell sh -c 'grep -F "Package: " DESCRIPTION | cut -f2 -d" "')
 # FIXME: This Makefile only works in BINDIR=.. !
 BINDIR=..
 RNODE=iridiacluster

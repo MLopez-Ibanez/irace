@@ -196,10 +196,8 @@ irace.cmdline <- function(args = commandArgs (trailingOnly = TRUE))
                      short = .irace.params.def["configurationFile","short"],
                      long  = .irace.params.def["configurationFile","long"],
                      default = "")
-  parameters <- rownames(.irace.params.def)[rownames(.irace.params.def) != ""]
-  tunerConfig <- list()
-  tunerConfig <- readConfiguration(tunerConfig, configurationFile, parameters)
-  for (param in parameters) {
+  tunerConfig <- readConfiguration(configurationFile)
+  for (param in names(tunerConfig)) {
     tunerConfig[[param]] <-
       readCmdLineParameter (args = args,
                             params.def = .irace.params.def,

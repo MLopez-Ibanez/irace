@@ -121,6 +121,8 @@ mpiInit <- function(nslaves)
         cat("# Finalize MPI...\n")
         if (Rmpi::mpi.comm.size(1) > 0)
           Rmpi::mpi.close.Rslaves()
+        # FIXME: How to avoid the message?
+        # "Rmpi cannot be used unless relaunching R."
         Rmpi::mpi.finalize()
       }
     }

@@ -155,10 +155,8 @@ oneIterationRace <-
 #' @return Elites candidates obtained after the last iteration
 #' @callGraphPrimitives
 #' @note This is a note for the function \code{iteratedRace}
-irace <- function(tunerConfig
-                  = stop("parameter `tunerConfig' is mandatory."),
-                  parameters
-                  = stop("parameter `parameters' is mandatory."))
+irace <- function(tunerConfig = stop("parameter `tunerConfig' is mandatory."),
+                  parameters = stop("parameter `parameters' is mandatory."))
 {
 
   if (is.na(tunerConfig$seed)) {
