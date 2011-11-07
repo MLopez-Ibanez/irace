@@ -112,7 +112,7 @@ mpiInit <- function(nslaves)
 {
   # Load the R MPI package if it is not already loaded. 
   if (!is.loaded("mpi_initialize")) {
-    if (! require("Rmpi"))
+    if (! require("Rmpi", quietly = TRUE))
       stop("the `Rmpi' package is required for using MPI.")
 
     # When R exits, finalize MPI.

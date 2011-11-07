@@ -233,7 +233,7 @@ race.wrapper <- function(candidate, task, which.alive, data)
         mpiInit(parallel)
         returnCodes <- Rmpi::mpi.applyLB(commands, runcommand)
       } else {
-        library(multicore)
+        library(multicore, quietly = TRUE)
         returnCodes <- mclapply(commands, runcommand, mc.cores = parallel)
       }
     } else {
