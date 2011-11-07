@@ -1,8 +1,8 @@
 ## Functions to print error messages and\or exit
 
-irace.bug.report <-
+.irace.bug.report <-
   paste("An unexpected condition ocurred.",
-        "Please report this bug to the authors of the I/F-race package")
+        "Please report this bug to the authors of the irace package <http://iridia.ulb.ac.be/irace>")
 
 # Print a user-level fatal error message, when the calling context
 # cannot help the user to understand why the program failed.

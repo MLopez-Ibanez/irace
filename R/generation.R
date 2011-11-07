@@ -80,7 +80,7 @@ sampleUniform <- function (tunerConfig, parameters, nbCandidates)
         possibleValues <- parameters$boundary[[currentParameter]]
         newVal <- sample(possibleValues, 1)
       } else {
-        stop (irace.bug.report);
+        stop (.irace.bug.report);
       }
       candidate[[p]] <- newVal
     }
@@ -128,9 +128,9 @@ sampleModel <- function (tunerConfig, parameters, eliteCandidates, model,
         newVal <- NA
 
       } else if (isFixed(currentParameter, parameters)) {
-          # We don't even need to sample, there is only one possible value !
-          newVal <- get.fixed.value (currentParameter, parameters)
-          # The parameter is not a fixed and should be sampled
+        # We don't even need to sample, there is only one possible value !
+        newVal <- get.fixed.value (currentParameter, parameters)
+        # The parameter is not a fixed and should be sampled
       } else if (currentType == "i" || currentType == "r") {
         lowerBound <- oneParamLowerBound(currentParameter, parameters)
         upperBound <- oneParamUpperBound(currentParameter, parameters)
@@ -141,7 +141,7 @@ sampleModel <- function (tunerConfig, parameters, eliteCandidates, model,
           newVal <- runif(1, lowerBound, upperBound)
         } else {
           stdDev <- model[[currentParameter]][[as.character(idEliteParent)]]
-            newVal <- rtnorm(1, mean, stdDev, lowerBound, upperBound)
+          newVal <- rtnorm(1, mean, stdDev, lowerBound, upperBound)
         }
         newVal <- ifelse((currentType == "i"), round(newVal),
                          signif(newVal, tunerConfig$signifDigits))
@@ -174,7 +174,7 @@ sampleModel <- function (tunerConfig, parameters, eliteCandidates, model,
         possibleValues <- oneParamBoundary(currentParameter, parameters)
         newVal <- sample(x = possibleValues, size = 1, prob = probVector)
       } else {
-        stop (irace.bug.report)
+        stop (.irace.bug.report)
       }
       candidate[[p]] <- newVal
     }
