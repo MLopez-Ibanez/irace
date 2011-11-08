@@ -349,7 +349,7 @@ irace <- function(tunerConfig = stop("parameter `tunerConfig' is mandatory."),
 #          Rprof(NULL)
           if (is.null(tmp.ids)) break
           cat(sep="", "# ", format(Sys.time(), usetz=TRUE), ": ",
-              "Soft restart: ", paste(sep=" ", tmp.ids), "!\n")
+              "Soft restart: ", paste(collapse = " ", tmp.ids), " !\n")
           model <- restartCandidates (testCandidates, tmp.ids, model, parameters, nbNewCandidates)
           tunerResults$softRestart[indexIteration] <- tunerResults$softRestart[indexIteration] + 1
           tunerResults$model$afterSR[[indexIteration]] <- model
