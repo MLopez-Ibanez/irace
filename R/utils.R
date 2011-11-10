@@ -64,12 +64,12 @@ nbParam <- function (parameters)
 # Output: nbElites elites, sorted by ranks, with the weights assigned.
 extractElites <- function(candidates, nbElites)
 {
-  # Sort by rank.
-  elites <- candidates[order(as.numeric(candidates$.RANK.)), , drop = FALSE]
   if (nbElites < 1) {
     ## ??? Should this be an error or should we handle it in some other way?
     stop("nbElites is lower or equal to zero.") 
   }
+  # Sort by rank.
+  elites <- candidates[order(as.numeric(candidates$.RANK.)), , drop = FALSE]
   elites <- elites[1:nbElites, , drop = FALSE]
   elites[, ".WEIGHT."] <- ((nbElites - (1:nbElites) + 1)
                            / (nbElites * (nbElites + 1) / 2))
