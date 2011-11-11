@@ -36,7 +36,7 @@ Usage
    different than the default one. See the examples in
    PACKAGE_PATH/irace/examples/.
 
-4. Put the instances in "~/tuning/Instances/". In addition, you can
+3. Put the instances in "~/tuning/Instances/". In addition, you can
    create a file that specifies which instances from that directory
    should be run and which instance-specific parameters to use. See
    tune-conf.tmpl and instances-list.tmpl for examples. The command
@@ -44,7 +44,7 @@ Usage
    so it must exist before calling irace. The default execDir is
    "~/tuning/TUNE/".
 
-5. Calling the command:
+4. Calling the command:
 
     cd ~/tuning/ && PACKAGE_PATH/irace/bin/irace
 
@@ -52,7 +52,7 @@ Usage
    for additional configuration parameters. Command-line parameters
    override the configuration specified in the tune-conf file.
 
-6. For executing several repetitions of irace in parallel, call the
+5. For executing several repetitions of irace in parallel, call the
    program PACKAGE_PATH/irace/bin/parallel-irace.sh from your tuning
    directory with the number of repetitions. The execution directory
    of each run of irace will be set to "~/tuning/TUNE-dd", where dd is
@@ -61,7 +61,7 @@ Usage
    already exist. Check the help of parallel-irace.sh by running it
    without parameters.
 
-7. There are three ways to execute calls to hookRun in parallel:
+6. There are three ways to execute calls to hookRun in parallel:
   
   1) --parallel N : will use the multicore package to launch locally up to
   N calls of hookRun in parallel.
