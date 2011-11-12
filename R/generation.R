@@ -67,10 +67,9 @@ sampleUniform <- function (tunerConfig, parameters, nbCandidates)
         newVal <- get.fixed.value (currentParameter, parameters)
         # The parameter is not a fixed and should be sampled          
       } else if (currentType == "i") {
-        lowerBound <- parameters$boundary[[currentParameter]][1]
-        upperBound <- parameters$boundary[[currentParameter]][2]
-        newVal <- runif(1, as.integer(lowerBound), as.integer(upperBound))
-        newVal <- round(newVal)
+        lowerBound <- as.integer(parameters$boundary[[currentParameter]][1])
+        upperBound <- as.integer(parameters$boundary[[currentParameter]][2])
+        newVal <- sample(lowerBound:upperBound, 1)
       } else if (currentType == "r") {
         lowerBound <- parameters$boundary[[currentParameter]][1]
         upperBound <- parameters$boundary[[currentParameter]][2]
@@ -138,12 +137,16 @@ sampleModel <- function (tunerConfig, parameters, eliteCandidates, model,
         if (is.na(mean)) {
           # The elite parent does not have any value for this
           # parameter, let's sample uniformly.
-          newVal <- runif(1, lowerBound, upperBound)
+          newVal <- ifelse(currentType == "i",
+                           sample(lowerBound:upperBound, 1),
+                           runif(1, lowerBound, upperBound))
         } else {
           stdDev <- model[[currentParameter]][[as.character(idEliteParent)]]
-          newVal <- rtnorm(1, mean, stdDev, lowerBound, upperBound)
+          newVal <- ifelse(currentType == "i",
+                           rtnorm(1, mean + 0.5, stdDev, lowerBound, upperBound + 1) - 0.5,
+                           rtnorm(1, mean, stdDev, lowerBound, upperBound))
         }
-        newVal <- ifelse((currentType == "i"), round(newVal),
+        newVal <- ifelse(currentType == "i", round(newVal),
                          signif(newVal, tunerConfig$signifDigits))
         
       } else if (currentType == "o") {
@@ -160,12 +163,13 @@ sampleModel <- function (tunerConfig, parameters, eliteCandidates, model,
           mean <- match(value, possibleValues) # Return index of value in array
           stdDev <- model[[currentParameter]][[as.character(idEliteParent)]]
           
-          # Sample with truncated normal distribution.
-          newValAsInt <- rtnorm(1, mean, stdDev, 1, length(possibleValues))
+          # Sample with truncated normal distribution as an integer.
+          newValAsInt <- round(rtnorm(1, mean + 0.5, stdDev, 1,
+                                      length(possibleValues) + 1) - 0.5)
           
           # Get back to categorical values, find the one corresponding to the
           # newVal
-          newVal <- possibleValues[round(newValAsInt)]
+          newVal <- possibleValues[newValAsInt]
         } 
       } else if (currentType == "c") {
         # FIXME: Why is idEliteParent character?
