@@ -1,6 +1,6 @@
 PACKAGE=$(shell sh -c 'grep -F "Package: " DESCRIPTION | cut -f2 -d" "')
-# FIXME: This Makefile only works in BINDIR=.. !
-BINDIR=..
+# FIXME: This Makefile only works with this BINDIR!
+BINDIR=$(CURDIR)/..
 RNODE=iridiacluster
 RDIR=~/$(PACKAGE)
 INSTALL_FLAGS=
@@ -8,7 +8,7 @@ MAJORVERSION=0.99
 PACKAGEVERSION=$(MAJORVERSION).$(REVNUM)
 VERSION=$(MAJORVERSION).$(SVN_REV)
 DATE=$(shell date +%F)
-PACKAGEDIR=$(PWD)
+PACKAGEDIR=$(CURDIR)
 
 ## Do we have svnversion?
 ifeq ($(shell sh -c 'which svnversion 1> /dev/null 2>&1 && echo y'),y)
