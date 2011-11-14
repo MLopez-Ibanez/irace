@@ -4,8 +4,9 @@ BINDIR=..
 RNODE=iridiacluster
 RDIR=~/$(PACKAGE)
 INSTALL_FLAGS=
-PACKAGEVERSION=0.99
-VERSION = $(PACKAGEVERSION)r$(SVN_REV)
+MAJORVERSION=0.99
+PACKAGEVERSION=$(MAJORVERSION).$(REVNUM)
+VERSION=$(MAJORVERSION).$(SVN_REV)
 DATE=$(shell date +%F)
 PACKAGEDIR=$(PWD)
 
@@ -18,13 +19,14 @@ ifeq ($(shell sh -c 'which svnversion 1> /dev/null 2>&1 && echo y'),y)
 endif
 ## Set version information:
 SVN_REV = $(shell sh -c 'cat svn_version 2> /dev/null')
+REVNUM = $(shell sh -c 'cat svn_version | tr -d -c "[:digit:]" 2> /dev/null')
 
-.PHONY : build check clean install pdf rsync version
+.PHONY : build check clean install pdf rsync version bumpdate
 
 install: version clean
 	cd $(BINDIR) && R CMD INSTALL $(INSTALL_FLAGS) $(PACKAGEDIR)
 
-build : version clean
+build : bumpdate clean
 	cd $(BINDIR) &&	R CMD build $(PACKAGEDIR)
 
 check: clean 
@@ -37,9 +39,11 @@ pdf:
 	$(RM) $(BINDIR)/$(PACKAGE).pdf
 	cd $(BINDIR) &&	R CMD Rd2pdf $(PACKAGEDIR)
 
+bumpdate: version
+	@sed -i 's/Date: .*/Date: $(DATE)/' $(PACKAGEDIR)/DESCRIPTION
+
 version :
 	echo 'irace.version <- "$(VERSION)"' > $(PACKAGEDIR)/R/version.R
-	@sed -i 's/Date: .*/Date: $(DATE)/' $(PACKAGEDIR)/DESCRIPTION
 	@sed -i 's/Version: .*/Version: $(PACKAGEVERSION)/' $(PACKAGEDIR)/DESCRIPTION
 
 rsync : version
