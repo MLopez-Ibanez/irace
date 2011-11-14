@@ -9,9 +9,9 @@
 #' be always set to the first values in the vector of boundaries. In this function we
 #' set isFixed to TRUE if either the parameter is a categorical and has only one possible value,
 #' or it is an integer and the two boundaries are equal, or it is a real and the two boundaries 
-#' satisfy the following test: signif(boundary1, signifDigits) == signif(boundary2, signifDigits)
+#' satisfy the following test: round(boundary1, digits) == round(boundary2, digits)
 #' 
-#' @param signifDigits The number of significant digits wished (used to know if parameters are fixed or not).
+#' @param digits The number of decimal digits wished (used to know if parameters are fixed or not).
 #' @param filename The name of the file containing the parameters. The fact that
 #' this file should exist and be readable should be check before.
 #' @return A list as follows.
@@ -37,7 +37,7 @@
 #'        +---- (nbVariable) ------ a simple integer to know the number of no-fixed parameters (to be sampled)
 #'        
 readParameters <- function (filename = stop("filename is mandatory"),
-                            signifDigits = stop("signifDigits is mandatory"),
+                            digits = stop("digits is mandatory"),
                             debugLevel = 0)
 {
   field.match <- function (line, pattern, delimited = FALSE, sep = "[[:space:]]")
@@ -87,7 +87,7 @@ readParameters <- function (filename = stop("filename is mandatory"),
   # Determine if a parameter is fixed.
   isFixed <- function (type = stop("type is mandatory."),
                        boundaries = stop("boundaries is mandatory."),
-                       signifDigits)
+                       digits)
   {
     type <- as.character(type)
     if (type == "i") {
@@ -95,8 +95,8 @@ readParameters <- function (filename = stop("filename is mandatory"),
     } else if ((type == "c") || (type == "o")) {
       return (length(boundaries) == 1)
     } else if (type == "r") {
-      return (signif (as.numeric(boundaries[[1]]), signifDigits)
-              == signif (as.numeric(boundaries[[2]]), signifDigits))
+      return (round (as.numeric(boundaries[[1]]), digits)
+              == round (as.numeric(boundaries[[2]]), digits))
     }
   }
   # *************************************************************************
@@ -232,7 +232,7 @@ readParameters <- function (filename = stop("filename is mandatory"),
     parameters$isFixed[[count]] <-
       isFixed (type = param.type,
                boundaries = parameters$boundary[[count]],
-               signifDigits = signifDigits)
+               digits = digits)
     
     ## Match start of constraints 
     result <- field.match (line, "\\|", sep="")

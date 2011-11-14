@@ -1,7 +1,7 @@
 ###############################################################################
 # FIXME: This file needs a description
 ###############################################################################
-buildCommandLine <- function(values, switches, signifDigits) {
+buildCommandLine <- function(values, switches, digits) {
   stopifnot(length(values) == length(switches))
   command <- ""
   # FIXME: This probably can be implemented faster with apply() and
@@ -10,7 +10,7 @@ buildCommandLine <- function(values, switches, signifDigits) {
     value <- values[i]
     if (!is.na(value)) {
       if (is.numeric(value)) {
-        value <- signif(value, signifDigits)
+        value <- round(value, digits)
       }
       command <- paste(command, " ", switches[i], value, sep="")
     }
@@ -135,7 +135,7 @@ race.wrapper <- function(candidate, task, which.alive, data)
 {
   debugLevel <- data$tunerConfig$debugLevel
   execDir <- data$tunerConfig$execDir
-  signifDigits <- data$tunerConfig$signifDigits
+  digits <- data$tunerConfig$digits
   sgeCluster <- data$tunerConfig$sgeCluster
   parallel <- data$tunerConfig$parallel
   mpi <- data$tunerConfig$mpi
@@ -203,7 +203,7 @@ race.wrapper <- function(candidate, task, which.alive, data)
         param.value <- cnd[[param.name]]
         if (!is.na(param.value)) {
           if (is.numeric(param.value)) {
-            param.value <- signif(param.value, signifDigits)
+            param.value <- round(param.value, digits)
           }
           command <- paste(command, " ", param.switch, param.value, sep="")
         }
@@ -312,7 +312,7 @@ race.wrapper <- function(candidate, task, which.alive, data)
                # First parameter is the candidate number, second is the instance file.
                paste (hookRun, ins, candidate, extra.params,
                       buildCommandLine(data$candidates[candidate,unlist(data$parameters$names)],
-                                       data$parameters$switches, signifDigits)),
+                                       data$parameters$switches, digits)),
                "\nThis is not a bug in irace, but means that something failed when",
                " running the command above or it was terminated before completion.",
                " Try to run the commands above from the execution directory '",

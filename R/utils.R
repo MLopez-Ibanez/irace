@@ -98,10 +98,11 @@ candidates.print.command <- function(cand, parameters)
   rownames(cand) <- cand$.ID.
   cand <- removeCandidatesMetaData(cand)
   if (nrow(cand) <= 0) return(invisible())
+  # FIXME: This should use tunerConfig$digits
   print(data.frame(command =
                  apply(cand[,unlist(parameters$names), drop = FALSE],
                        1, buildCommandLine, switches = parameters$switches,
-                       signifDigits = 4), stringsAsFactors = FALSE))
+                       digits = 4), stringsAsFactors = FALSE))
 }
 
 

@@ -74,7 +74,7 @@ sampleUniform <- function (tunerConfig, parameters, nbCandidates)
         lowerBound <- parameters$boundary[[currentParameter]][1]
         upperBound <- parameters$boundary[[currentParameter]][2]
         newVal <- runif(1, as.real(lowerBound), as.real(upperBound))
-        newVal <- signif(newVal, tunerConfig$signifDigits)
+        newVal <- round(newVal, tunerConfig$digits)
       } else if (currentType == "c" || currentType == "o") {
         possibleValues <- parameters$boundary[[currentParameter]]
         newVal <- sample(possibleValues, 1)
@@ -147,7 +147,7 @@ sampleModel <- function (tunerConfig, parameters, eliteCandidates, model,
                            rtnorm(1, mean, stdDev, lowerBound, upperBound))
         }
         newVal <- ifelse(currentType == "i", round(newVal),
-                         signif(newVal, tunerConfig$signifDigits))
+                         round(newVal, tunerConfig$digits))
         
       } else if (currentType == "o") {
         possibleValues <- oneParamBoundary(currentParameter, parameters)  

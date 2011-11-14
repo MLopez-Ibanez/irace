@@ -83,7 +83,7 @@ TODO General:
  * Do not add extra parenthesis around simple expressions. Example:
       if ( (!file.exists(installDir)) ) has too many parenthesis.
 
- * It could be nice to be able to set a different nb of significant
+ * It could be nice to be able to set a different nb of rounding
    digits for each real parameters This number thus would be given in
    the parameters.txt file.  It should require very few
    modifications, only in the sampling (generation uniform and normal)

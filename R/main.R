@@ -108,7 +108,7 @@ execDir            ""     "--exec-dir"     "./TUNE"           "Directory where t
 "maxNbExperiments"  ""  "--max-experiments"  1000 "The maximum number of runs (invocations of hookRun that will performed. It determines the (maximum budget of experiments for the tuning  unless timeBudget is positive."
 "timeBudget"  ""  "--time-budget"  0 "The maximum computation time that should be used for tuning. This only works when tuning for time. 0 means no time limit (use maxNbExperiments."
 "timeEstimate"  ""  "--time-estimate"  0  "An estimation of the average time required for one experiment. Only required if timeBudget is positive."
-"signifDigits"  ""  "--signif-digits"  4 "Indicates the significant digits to be considered for the real parameters." 
+"digits"  ""  "--digits"  4 "Indicates the number of decimal places to be considered for the real parameters." 
 "debugLevel"  ""  "--debug-level"  0 "A value of 0 silences all debug messages. Higher values provide more verbose debug messages." 
 "nbIterations"  ""  "--iterations"  0  "Number of iterations." 
 "nbExperimentsPerIteration"  ""  "--experiments-per-iteration"  0  "Number of experiments per iteration." 
@@ -161,7 +161,7 @@ irace.main <- function(tunerConfig, output.width = 9999)
   
   # Read parameters definition
   parameters <- readParameters (filename = tunerConfig$parameterFile,
-                                signifDigits = tunerConfig$signifDigits,
+                                digits = tunerConfig$digits,
                                 debugLevel = tunerConfig$debugLevel)
   if (tunerConfig$debugLevel >= 2) { cat("Parameters have been read\n") }
   

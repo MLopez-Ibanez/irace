@@ -11,7 +11,7 @@
 ## The order of the columns does not necessarily have to be the same
 ## as in the file containing the definition of the parameters.
 ##
-## TODO: What about signifDigits?
+## FIXME: What about digits?
 readCandidatesFile <-
   function(fileName = stop("'fileName' is mandatory"), 
            parameters = stop("'parameters' is mandatory"), 
@@ -210,7 +210,7 @@ checkConfiguration <- function(configuration)
 
   # We have characters everywhere, set to the right types to avoid
   # problem later.
-  intParams <- c("maxNbExperiments", "signifDigits", "debugLevel",
+  intParams <- c("maxNbExperiments", "digits", "debugLevel",
                  "nbIterations", "nbExperimentsPerIteration",
                  "firstTest", "eachTest", "minNbSurvival", "nbCandidates",
                  "mu", "timeBudget", "timeEstimate", "seed",

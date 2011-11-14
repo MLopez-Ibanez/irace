@@ -58,9 +58,9 @@ maxNbExperiments <- 3000
 ## experiment. Only required if timeBudget is positive.
 # timeEstimate <- 1
 
-## Indicates the significant digits to be considered
-## for the real parameters.
-# signifDigits <- 4
+## Indicates the number of decimal places to be considered for the
+## real parameters.
+# digits <- 4
 
 ## A value of 0 silences all debug messages. Higher values provide
 ## more verbose debug messages.
