@@ -70,18 +70,6 @@ readArgOrDefault <- function(args, short="", long="", default=NULL)
   return(value)
 }
 
-# Function to convert a relative to an absolute path
-path.rel2abs <- function (path)
-{
-  if (is.null(path) || is.na(path)) {
-    return (NULL)
-  } else if (path == "") {
-    return ("")
-  } else {
-    return (sub ('^(\\.)', paste (getwd(), '/\\1', sep=''), path))
-  }
-}
-
 read.table.text <- function(text, header = TRUE, stringsAsFactors = FALSE, ...)
 {
   con <- textConnection(text)
@@ -96,13 +84,15 @@ name               short  long             default            description
 ""               "-h"   "--help"         NA                 "show this help." 
 configurationFile  "-c"   "--config-file"  "./tune-conf"      "File that contains the configuration for irace." 
 parameterFile      "-p"   "--param-file"   "./parameters.txt" "File that contains the description of the parameters to be tuned. See the template." 
-execDir            ""     "--exec-dir"     "./TUNE"           "Directory where the programs will be run." 
+execDir            ""     "--exec-dir"     "./"           "Directory where the programs will be run." 
 "logFile"  "-l"  "--log-file"  "./irace.Rdata"  "File (if relative path  relative to execDir to save tuning results as an R dataset." 
+"instances"  "" "" "" ""
+"instances.extra.params"  "" "" "" ""
 "instanceDir" "" "--instance-dir"  "./Instances"  "Folder where tuning instances are located  either absolute or relative to execDir." 
 "instanceFile"  ""  "--instance-file"  ""   "A file containing a list of instances and (optionally additional parameters for them." 
 "candidatesFile"  ""  "--candidates-file"  ""   "A file containing a list of initial candidates. If empty or NULL  do not use a file." 
 "hookRun"  ""  "--hook-run"  "./hook-run" "The script called for each candidate that launches the program to be tuned. See templates/." 
-"hookEvaluate"  ""  "--hook-evaluate"  "./hook-evaluate" "The scrip that provides a numeric value for each candidate. See templates/." 
+"hookEvaluate"  ""  "--hook-evaluate"  "" "The scrip that provides a numeric value for each candidate. See templates/." 
 "expName"  ""  "--exp-name"  "Experiment Name"  "Experiment name for output report." 
 "expDescription"  ""  "--exp-description"  "Experiment Description" "Longer experiment description for output report." 
 "maxNbExperiments"  ""  "--max-experiments"  1000 "The maximum number of runs (invocations of hookRun that will performed. It determines the (maximum budget of experiments for the tuning  unless timeBudget is positive."
@@ -148,19 +138,20 @@ irace.usage <- function ()
   # columns. We can calculate the field width from the largest string
   # for each of short and long.
   for (i in seq_len(nrow(.irace.params.def))) {
-    cat(.irace.params.def[i,"short"], ", ", .irace.params.def[i,"long"],
-        "\t", .irace.params.def[i,"description"], "\n")
+    if (.irace.params.def[i,"description"] != "")
+      cat(.irace.params.def[i,"short"], ", ", .irace.params.def[i,"long"],
+          "\t", .irace.params.def[i,"description"], "\n")
   }
 }
 
-irace.main <- function(tunerConfig, output.width = 9999)
+irace.main <- function(tunerConfig = defaultConfiguration(), output.width = 9999)
 {
   op <- options(width = output.width) # Do not wrap the output.
   tunerConfig <- checkConfiguration (tunerConfig)
   printConfiguration (tunerConfig)
   
   # Read parameters definition
-  parameters <- readParameters (filename = tunerConfig$parameterFile,
+  parameters <- readParameters (file = tunerConfig$parameterFile,
                                 digits = tunerConfig$digits,
                                 debugLevel = tunerConfig$debugLevel)
   if (tunerConfig$debugLevel >= 2) { cat("Parameters have been read\n") }

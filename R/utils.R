@@ -12,6 +12,75 @@ tunerError <- function(...)
   stop (..., call. = FALSE)
 }
 
+file.check <- function (file, executable = FALSE, readable = executable,
+                        isdir = FALSE, notempty = FALSE,
+                        text = NULL)
+{
+  EXEC <- 1 # See documentation of the function file.access()
+  READ <- 4
+
+  if (!file.exists(file)) {
+    stop (text, " '", file, "' does not exist")
+    return(FALSE)
+  }
+  if (readable && (file.access(file, mode = READ) != 0)) {
+    stop(text, " '", file, "' is not readable")
+    return (FALSE)
+  }
+  if (executable && file.access(file, mode = EXEC) != 0) {
+    stop(text, " '", file, "' is not executable")
+    return (FALSE)
+  }
+
+  if (isdir) {
+    if (!file.info(file)$isdir) {
+      stop(text, " '", file, "' is not a directory")
+      return (FALSE)
+    }
+    if (notempty && length(list.files (file, recursive=TRUE)) == 0) {
+      stop(text, " '", file, "' does not contain any file")
+      return (FALSE)
+    }
+  } else if (file.info(file)$isdir) {
+    stop(text, " '", file, "' is a directory, not a file")
+    return (FALSE)
+  }
+  return (TRUE)
+}
+
+is.wholenumber <-
+  function(x, tol = .Machine$double.eps^0.5)  abs(x - round(x)) < tol
+
+is.null.or.na <- function(x)
+{
+  is.null(x) || (length(x) == 1 && suppressWarnings(is.na(x)))
+}
+
+is.null.or.empty <- function(x)
+{
+  is.null(x) || (length(x) == 1 && x == "")
+}
+
+# Function to convert a relative to an absolute path
+path.rel2abs <- function (path)
+{
+  if (is.null.or.na(path)) {
+    return (NULL)
+  } else if (path == "") {
+    return ("")
+  } else {
+    return (sub ('^(\\.)', paste (getwd(), '/\\1', sep=''), path))
+  }
+}
+
+is.function.name <- function(FUN)
+{
+  is.function(FUN) ||
+  (!is.null(FUN) && !is.na(FUN) && as.character(FUN) != "" &&
+   !is.null(mget(as.character(FUN), envir = as.environment(-1),
+                 mode="function", ifnotfound=list(NULL), inherits=TRUE)[[1]]))
+}
+
 # FIXME: Isn't a R function to do this? More portable?
 canonical.dirname <- function(dirname = stop("required parameter"))
 {
@@ -80,7 +149,7 @@ extractElites <- function(candidates, nbElites)
 removeCandidatesMetaData <- function(candidates)
 {
   # Meta-data colnames begin with "."
-  return (candidates[, grep("^[_.]", colnames(candidates), invert=TRUE),
+  return (candidates[, grep("^\\.", colnames(candidates), invert=TRUE),
                      drop = FALSE])
 }
 
@@ -98,11 +167,10 @@ candidates.print.command <- function(cand, parameters)
   rownames(cand) <- cand$.ID.
   cand <- removeCandidatesMetaData(cand)
   if (nrow(cand) <= 0) return(invisible())
-  # FIXME: This should use tunerConfig$digits
   print(data.frame(command =
-                 apply(cand[,unlist(parameters$names), drop = FALSE],
-                       1, buildCommandLine, switches = parameters$switches,
-                       digits = 4), stringsAsFactors = FALSE))
+                   apply(cand[,unlist(parameters$names), drop = FALSE],
+                         1, buildCommandLine, switches = parameters$switches),
+                   stringsAsFactors = FALSE))
 }
 
 

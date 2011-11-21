@@ -143,67 +143,75 @@ readConfiguration <- function(filename = "", configuration = list())
 
 checkConfiguration <- function(configuration)
 {
-  for (param in c("parameterFile", "execDir", "instanceDir", "instanceFile",
-                  "hookRun", "hookEvaluate","candidatesFile")) {
-    configuration[[param]] <- path.rel2abs (configuration[[param]])
-  }
   ## Check that everything is fine with external parameters
-  file.check <- function (file, executable = FALSE, readable = executable,
-                          isdir = FALSE, notempty = FALSE,
-                          text = NULL)
-    {
-      EXEC <- 1 # See documentation of the function file.access()
-      READ <- 4
-
-      if (!file.exists(file)) {
-        stop (text, " '", file, "' does not exist")
-        return(FALSE)
-      }
-      if (readable && (file.access(file, mode = READ) != 0)) {
-        stop(text, " '", file, "' is not readable")
-        return (FALSE)
-      }
-      if (executable && file.access(file, mode = EXEC) != 0) {
-        stop(text, " '", file, "' is not executable")
-        return (FALSE)
-      }
-
-      if (isdir) {
-        if (!file.info(file)$isdir) {
-          stop(text, " '", file, "' is not a directory")
-          return (FALSE)
-        }
-        if (notempty && length(list.files (file, recursive=TRUE)) == 0) {
-          stop(text, " '", file, "' does not contain any file")
-          return (FALSE)
-        }
-        
-      }
-      return (TRUE)
-    }
   # Check that the files exists and are readable.
-  file.check (configuration$parameterFile, readable= TRUE,
-              text = "parameter file")
-  file.check (configuration$execDir, isdir = TRUE,
-              text = "execution directory")
-  
-  file.check (configuration$hookRun, executable = TRUE,
-              text = "run program hook")
-  file.check (configuration$hookEvaluate, executable = TRUE,
-              text = "evaluate hook")
-  
-  if (!is.null(configuration$instanceFile)
-      && configuration$instanceFile != "") {
-    file.check (configuration$instanceFile, readable = TRUE,
-                text = "instance file")
-  }
-  else {
-    file.check (configuration$instanceDir, isdir = TRUE, notempty = TRUE,
-                text = "instances directory")
+  configuration$parameterFile <- path.rel2abs(configuration$parameterFile)
+  # We don't check this file here because the user may give the
+  # parameters explicitly. And it is checked in readParameters anyway.
+
+  configuration$execDir <- path.rel2abs(configuration$execDir)
+  file.check (configuration$execDir, isdir = TRUE, text = "execution directory")
+
+  if (is.function.name(configuration$hookRun)) {
+    .irace$hook.run <- configuration$hookRun
+  } else if (is.character(configuration$hookRun)) {
+    configuration$hookRun <- path.rel2abs(configuration$hookRun)
+    file.check (configuration$hookRun, executable = TRUE,
+                text = "run program hook")
+    .irace$hook.run <- hook.run.default
+  } else {
+    stop("hookRun must be a function or an executable program")
   }
   
-  if (!is.null(configuration$candidatesFile)
-      && configuration$candidatesFile != "") {
+  if (configuration$hookEvaluate == "") configuration$hookEvaluate <- NULL
+  if (is.null(configuration$hookEvaluate)) {
+    .irace$hook.evaluate <- NULL
+  } else if (is.function.name(configuration$hookEvaluate)) {
+    .irace$hook.evaluate <- configuration$hookEvaluate
+  } else if (is.character(configuration$hookEvaluate)) {
+    configuration$hookEvaluate <- path.rel2abs(configuration$hookEvaluate)
+    file.check (configuration$hookEvaluate, executable = TRUE,
+                text = "evaluate hook")
+    .irace$hook.evaluate <- hook.evaluate.default
+  } else {
+    stop("hookEvaluate must be a function or an executable program")
+  }
+
+  if (is.null.or.empty(configuration$instances.extra.params)) {
+    configuration$instances.extra.params <- NULL
+  }
+  
+  if (is.null.or.empty(configuration$instances)) {
+    configuration$instanceDir <- path.rel2abs(configuration$instanceDir)
+    instance.dir <- canonical.dirname (configuration$instanceDir)
+    if (!is.null(configuration$instanceFile) && configuration$instanceFile != "") {
+      configuration$instanceFile <- path.rel2abs(configuration$instanceFile)
+      file.check (configuration$instanceFile, readable = TRUE,
+                  text = "instance file")
+      lines <- readLines (configuration$instanceFile)
+      lines <- sub("#.*$", "", lines) # Remove comments
+      lines <- sub("^[[:space:]]+", "", lines) # Remove extra spaces
+      lines <- lines[lines != ""] # Delete empty lines
+      instances <- sub("^([^[:space:]]+).*$", "\\1", lines)
+      instances <- paste (instance.dir, instances, sep="")
+      instances.extra.params <- sub("^[^[:space:]]+(.*)$", "\\1", lines)
+      names (instances.extra.params) <- instances
+      configuration$instances.extra.params <- instances.extra.params
+    } else {
+      file.check (configuration$instanceDir, isdir = TRUE, notempty = TRUE,
+                  text = "instances directory")
+      # The files are sorted in alphabetical order, on the full path if
+      # 'full.names = TRUE'.
+      instances <- list.files (path = instance.dir, full.names = TRUE,
+                               recursive = TRUE)
+      if (length (instances) == 0)
+        tunerError("No instances found in `", instance.dir, "' !\n")
+    }
+    configuration$instances <- instances
+  }
+  
+  if (!is.null.or.empty(configuration$candidatesFile)) {
+    configuration$candidatesFile <- path.rel2abs(configuration$candidatesFile)
     file.check (configuration$candidatesFile, readable = TRUE,
                 text = "candidates file")
   }
@@ -220,13 +228,19 @@ checkConfiguration <- function(configuration)
   for (param in intParams) {
     if (is.na(configuration[[param]]))
       next # Allow NA default values
-    if (is.null(configuration[[param]]))
-      tunerError ("'", param, "' must be an integer.")
-    configuration[[param]] <- suppressWarnings(as.integer(configuration[[param]]))
-    if (is.na (configuration[[param]]))
+    if (!is.null(configuration[[param]]))
+      configuration[[param]] <- suppressWarnings(as.numeric(configuration[[param]]))
+    if (is.null(configuration[[param]])
+        || is.na (configuration[[param]])
+        || !is.wholenumber(configuration[[param]]))
       tunerError ("'", param, "' must be an integer.")
   }
 
+  if (configuration$mu < configuration$firstTest) {
+    warning("Assuming 'mu <- firstTest' because 'mu' cannot be lower than 'firstTest'")
+    configuration$mu <- configuration$firstTtest
+  }
+  
   as.boolean.param <- function(x, name, params)
   {
     tmp <- as.integer(x)
@@ -270,9 +284,9 @@ checkConfiguration <- function(configuration)
                 .irace.params.def["timeBudget","long"], ") must be larger than zero")
   }
 
-  if (grepl("f-test", tolower(configuration$testType), fixed = TRUE)) {
+  if (tolower(configuration$testType) %in% c("f-test", "friedman")) {
     configuration$testType <- "friedman"
-  } else if (grepl("t-test", tolower(configuration$testType), fixed = TRUE)) {
+  } else if (tolower(configuration$testType) %in% c("t-test", "t.none")) {
     configuration$testType <- "t.none"
   } else {
     tunerError ("invalid setting '", configuration$testType,
@@ -295,12 +309,18 @@ printConfiguration <- function(tunerConfig)
   cat("### end of configuration\n")
 }
 
-defaultConfiguration <- function(configuration)
+defaultConfiguration <- function(config = list())
 {
-  for (param in names(configuration)) {
-    if (is.na(configuration[[param]])) {
-      configuration[[param]] <- .irace.params.def[param, "default"]
+  config.names <- rownames(.irace.params.def)[rownames(.irace.params.def) != ""]
+  if (!is.null(names(config)) && !all(names(config) %in% config.names)) {
+    stop("Unknown configuration parameters: ",
+         paste(names(config)[which(!names(config) %in% config.names)], sep=", "))
+  }
+
+  for (k in config.names) {
+    if (is.null.or.na(config[[k]])) {
+      config[[k]] <- .irace.params.def[k, "default"]
     }
   }
-  return (configuration)
+  return (config)
 }

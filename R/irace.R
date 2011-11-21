@@ -109,7 +109,7 @@ oneIterationRace <-
                   # Parameters for race-wrapper.R
                   candidates = removeCandidatesMetaData(candidates),
                   parameters = parameters,
-                  tunerConfig = tunerConfig)
+                  config = tunerConfig)
 
   # Let's transform a bit the matrix with all the results
   # Give colnames the proper global IDs
@@ -158,7 +158,8 @@ oneIterationRace <-
 irace <- function(tunerConfig = stop("parameter `tunerConfig' is mandatory."),
                   parameters = stop("parameter `parameters' is mandatory."))
 {
-
+  tunerConfig <- checkConfiguration(defaultConfiguration(tunerConfig))
+  
   if (is.na(tunerConfig$seed)) {
     tunerConfig$seed <- runif(1, 1, .Machine$integer.max)
   }
