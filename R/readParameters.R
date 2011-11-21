@@ -36,10 +36,19 @@
 #'        +---- (nbFixed) ----- a simple integer to know the number of fixed parameters
 #'        +---- (nbVariable) ------ a simple integer to know the number of no-fixed parameters (to be sampled)
 #'        
-readParameters <- function (filename = stop("filename is mandatory"),
-                            digits = stop("digits is mandatory"),
-                            debugLevel = 0)
+readParameters <- function (file, digits = 4, debugLevel = 0, text)
 {
+  if (missing(file) && !missing(text)) {
+    filename <- "text="
+    file <- textConnection(text)
+    on.exit(close(file))
+  } else if (is.character(file)) {
+    filename <- file
+    file.check (file, readable= TRUE, text = "readParameter: parameter file")
+  } else {
+    stop("'file' must be a character string")
+  }
+
   field.match <- function (line, pattern, delimited = FALSE, sep = "[[:space:]]")
   {
     #cat ("pattern:", pattern, "\n")
@@ -168,7 +177,7 @@ readParameters <- function (filename = stop("filename is mandatory"),
 
   param.names <- c()
   constraints <- list()
-  lines <- readLines(con=filename)
+  lines <- readLines(con = file)
   nbLines <- 0
   count <- 0
 
