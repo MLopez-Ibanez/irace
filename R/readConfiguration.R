@@ -218,7 +218,7 @@ checkConfiguration <- function(configuration)
 
   # We have characters everywhere, set to the right types to avoid
   # problem later.
-  intParams <- c("maxNbExperiments", "digits", "debugLevel",
+  intParams <- c("maxExperiments", "digits", "debugLevel",
                  "nbIterations", "nbExperimentsPerIteration",
                  "firstTest", "eachTest", "minNbSurvival", "nbCandidates",
                  "mu", "timeBudget", "timeEstimate", "seed",

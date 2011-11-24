@@ -4,12 +4,14 @@
 \newcommand{\irace}{\texttt{irace}\xspace}
 \newcommand{\iraceversion}{0.9\xspace}
 
-\usepackage{IridiaTrCover}
+\providecommand{\IridiaTrCover}[1][]{}
+%\usepackage{IridiaTrCover}
 \newcommand{\techrep}{2011-004}
 \newcommand{\techdate}{February 2011}
 \newcommand{\revdate}{February 2011}
 \newcommand{\ifIridiaTrElse}[2]{#1}
 \newcommand{\IridiaTrOnly}[1]{#1}
+\usepackage{hyperref}
 
 \usepackage{algorithm,algorithmic}
 \usepackage{amsmath,amsfonts,amssymb}
@@ -21,6 +23,7 @@
 \usepackage{url}
 \usepackage{ifthen}
 \usepackage{graphicx}
+
 
 \providecommand{\email}[2]{\normalsize\href{mailto:#1@#2}{\textsf{#1}\textrm{@}\textsf{#2}}}
 \newcommand{\true}{\textsc{true}}
@@ -626,7 +629,7 @@ given in Section~\ref{sec:applications}.
 \toprule
 \textbf{Iterated racing parameter}&\textbf{\irace configuration option}\\
 \midrule
-\Budget     & either \parameter{maxNbExperiments} or \parameter{timeBudget}\\
+\Budget     & either \parameter{maxExperiments} or \parameter{timeBudget}\\
 $\mathcal{C}$ (cost measure) & \parameter{hookRun} and \parameter{hookEvaluate}, see also Section~\ref{sec:hooks}\\
 $\Niter$    & \parameter{nbIterations}\\
 $\mu$       & \parameter{mu}\\
@@ -934,7 +937,7 @@ There are three ways to execute the calls to \parameter{hookRun} in parallel:
 
 \input{acotsp}
 
-\input{spear}
+%\input{spear}
 
 \section{Summary and Conclusions}
 
@@ -1027,7 +1030,7 @@ F.R.S.-FNRS, of which they are Research Associates.
 \defparameter{expDescription}{exp-description}{"Experiment Description"}
  Longer experiment description for output report.
 
-\defparameter{maxNbExperiments}{max-experiments}{1000}
+\defparameter{maxExperiments}{max-experiments}{1000}
  The maximum number of runs (invocations of \parameter{hookRun}) that will performed. It
  determines the (maximum) budget of experiments for the tuning, unless
  \parameter{timeBudget} is positive.
@@ -1038,7 +1041,7 @@ F.R.S.-FNRS, of which they are Research Associates.
  in seconds. 
  The default value (\texttt{0}), means tuning for solution quality (rather
  than for computation time) the budget in this case being defined by 
- \parameter{maxNbExperiments}.
+ \parameter{maxExperiments}.
 
 \defparameter{timeEstimate}{time-estimate}{0}
  An estimation of the average time in seconds required for one

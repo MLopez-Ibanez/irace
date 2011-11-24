@@ -203,7 +203,7 @@ irace <- function(tunerConfig = stop("parameter `tunerConfig' is mandatory."),
   # experiments that we can perform.
   remainingBudget <- ifelse (timeBudget > 0,
                              timeBudget / timeEstimate,
-                             tunerConfig$maxNbExperiments)
+                             tunerConfig$maxExperiments)
   experimentsUsedSoFar <- 0
   timeUsedSoFar <- 0
 

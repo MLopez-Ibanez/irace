@@ -9,7 +9,7 @@ In particular, we present the tuning of ACOTSP as a case study of using
 in a parametrization of ACOTSP that finds the best possible solution
 quality for some TSP instances in a given time. 
 Therefore, the computation effort that can be spent for the tuning is defined
-by the number of experiments \parameter{maxNbExperiments} (we set this option 
+by the number of experiments \parameter{maxExperiments} (we set this option 
 to $3000$). The setup
 used for the tuning of ACOTSP is summarized in 
 Table~\ref{tab:acotsp_tuning_conf}. We use a training set of $1000$ 
@@ -22,7 +22,7 @@ $750$ cities.
   \label{tab:acotsp_tuning_conf}
 \begin{tabular}[t]{rr}
 \toprule
-Max number of experiments (\parameter{maxNbExperiments}) & 3000 \\
+Max number of experiments (\parameter{maxExperiments}) & 3000 \\
 Time per experiment & 5 seconds\\
 \bottomrule
 \end{tabular}
@@ -43,7 +43,7 @@ tuning ACOTSP in the directory \texttt{examples/acotsp}.
 
 
 
-% LocalWords:   softRestart maxNbExperiments
+% LocalWords:   softRestart maxExperiments
 %%% Local Variables: 
 %%% mode: latex
 %%% TeX-master: "documentation"

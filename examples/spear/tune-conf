@@ -45,11 +45,11 @@
 ## The maximum number of runs (invocations of hookRun) that will performed. It
 ## determines the (maximum) budget of experiments for the tuning, unless
 ## timeBudget is positive.
-# maxNbExperiments <- 1000
+# maxExperiments <- 1000
 
 ## The maximum computation time that should be used for tuning in
 ## seconds. This only works when tuning for time. 0 means no time
-## limit (use maxNbExperiments).
+## limit (use maxExperiments).
 timeBudget <- 259200
 
 ## An estimation of the average time in seconds required for one
