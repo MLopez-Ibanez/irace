@@ -9,6 +9,13 @@ TODO R package:
 
 TODO General:
 
+ * Fix issues with digits, rounding and real parameters. If digits=d,
+   perhaps it is more correct to sample like:
+
+   round(rtnorm(1, mean + (10^-d) / 2, lower, upper + 10^-d) - (10^-d)/2, d)
+
+   The same applies to runif().   
+
  * Reduce the output of the race package. Only report copyright info
    once. Do not duplicate information already given by irace.
 
