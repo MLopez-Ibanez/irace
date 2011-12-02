@@ -4,20 +4,32 @@
 # Check the examples in examples/
 #
 # PARAMETERS:
-# $1 is the candidate number
-# $2 is the instance name
-# The rest ($* after `shift 2') are parameters to the run
+# $1 is the instance name  
+# $2 is the candidate number
+# The rest ($* after `shift 2') are parameters to the run of program
 #
 # RETURN VALUE:
 # This script should print nothing.
 # Exit with 0 if no error, with 1 in case of error
 ###############################################################################
 
-EXE=~/bin/moaco_btsp
-FIXED_PARAMS="--trials 1 --time 60 --wls 1 --PACO --candidate-list 40"
-CANDIDATE=$1
-INSTANCE=$2
-shift 2
+# Path to the software:
+EXE=~/bin/program
+FIXED_PARAMS="--trials 1 --time 60"
+
+# The instance name and the candidate id are the first parameters
+INSTANCE=$1
+CANDIDATE=$2
+
+# All other parameters are the candidate parameters to be passed to program
+shift 2 || exit 1
 CAND_PARAMS=$*
 
-exec $EXE ${FIXED_PARAMS} --input $INSTANCE ${CAND_PARAMS} --output ${CANDIDATE}.output &> ${CANDIDATE}.stderr
+STDOUT="c${CANDIDATE}.stdout"
+STDERR="c${CANDIDATE}.stderr"
+
+mkdir -p arena
+cd arena
+
+$EXE ${FIXED_PARAMS} --input $INSTANCE ${CAND_PARAMS} 1> $STDOUT 2> $STDERR
+echo "OK" >> $STDERR
