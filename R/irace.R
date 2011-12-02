@@ -262,15 +262,34 @@ irace <- function(tunerConfig = stop("parameter `tunerConfig' is mandatory."),
                                                 max(tunerConfig$mu,
                                                     tunerConfig$firstTest)),
                             tunerConfig$nbCandidates)
-
-    # Check that the number of candidates to produce is greater than
+    
+    # Stop if  the number of candidates to produce is not greater than
     # the number of elites...
-    if (nbCandidates <= nrow(eliteCandidates)
-        # ... or the number of candidates to test is larger than the minimum.
-        || nbCandidates <= minSurvival) {
+    if (nbCandidates <= nrow(eliteCandidates)) {
       cat("# ", format(Sys.time(), usetz=TRUE), ": Stopped because ",
           "there is no enough budget to sample new candidates\n",
           #(number of elites  + 1) * (mu + min(5, indexIteration)) > remainingBudget\n",
+          "# number of elites: ", nrow(eliteCandidates), "\n",
+          "# indexIteration: ", indexIteration, "\n",
+          "# mu: ", max(tunerConfig$mu, tunerConfig$firstTest), "\n",
+          "# nbIterations: ", nbIterations, "\n",
+          "# experimentsUsedSoFar: ", experimentsUsedSoFar, "\n",
+          "# timeUsedSoFar: ", timeUsedSoFar, "\n",
+          "# timeEstimate: ", timeEstimate, "\n",
+          "# remainingBudget: ", remainingBudget, "\n",
+          "# currentBudget: ", currentBudget, "\n",
+          "# nbCandidates: ", nbCandidates, "\n",
+          sep="")
+      return (eliteCandidates)
+    }
+    # ... or the number of candidates to test is NOT larger than the minimum.
+    if (nbCandidates <= minSurvival) {
+      cat("# ", format(Sys.time(), usetz=TRUE), ": Stopped because ",
+          "the number of candidates (", nbCandidates,
+          ") is smaller than the minimum (", minSurvival,")\n",
+          "# You may either increase the budget or set 'minNbSurvival' to a lower value\n",
+          # FIXME: Create a helper function to report all this info
+          # and avoid repetition.
           "# number of elites: ", nrow(eliteCandidates), "\n",
           "# indexIteration: ", indexIteration, "\n",
           "# mu: ", max(tunerConfig$mu, tunerConfig$firstTest), "\n",
