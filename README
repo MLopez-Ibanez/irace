@@ -24,6 +24,13 @@ Usage
 
     PACKAGE_PATH/irace/bin/irace --help
 
+   You may need to force a local installation by doing the following
+   (in GNU/Linux):
+   
+   mkdir ~/Rlibs
+   R CMD INSTALL -I ~/Rlibs irace.tar.gz
+   export R_LIBS=~/Rlibs:$(R_LIBS)
+
 2. Create a directory for storing the configuration of the tuning, for
    example "~/tuning/".  Copy the files in the
    PACKAGE_PATH/irace/templates/*.tmpl directory to your "~/tuning/"
