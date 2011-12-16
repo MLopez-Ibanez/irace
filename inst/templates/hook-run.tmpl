@@ -27,6 +27,37 @@ CAND_PARAMS=$*
 STDOUT=c${CANDIDATE}.stdout
 STDERR=c${CANDIDATE}.stderr
 
-# We use 'exec' to avoid creating another process. There can be no
-# other commands after exec.
-exec $EXE ${FIXED_PARAMS} -i $INSTANCE ${CAND_PARAMS} 1> ${STDOUT} 2> ${STDERR}
+# If the program just prints a number, we can use 'exec' to avoid
+# creating another process, but there can be no other commands after exec.
+#exec $EXE ${FIXED_PARAMS} -i $INSTANCE ${CAND_PARAMS}
+# exit 1
+# 
+# Otherwise, save the output to a file, and parse the result from it.
+$EXE ${FIXED_PARAMS} -i $INSTANCE ${CAND_PARAMS} 1> ${STDOUT} 2> ${STDERR}
+
+error() {
+    echo "`TZ=UTC date`: error: $@"
+    exit 1
+}
+
+# # This may be used to introduce a delay if there are filesystem
+# # issues.
+# SLEEPTIME=1
+# while [ ! -s "${STDOUT}" ]; do
+#     sleep $SLEEPTIME
+#     let "SLEEPTIME += 1"
+# done
+
+# This is an example of reading a number from the output.
+# It assumes that the objective value is the first number in
+# the first column of the only line starting with a digit.
+if [ -s "${STDOUT}" ]; then
+    COST=$(cat ${STDOUT} | grep -e '^[[:space:]]*[+-]\?[0-9]' | cut -f1)
+    # If budget is given as time, this should print also the time as:
+    # echo $COST $TIME
+    echo "$COST"
+    rm -f "${STDOUT}" "${STDERR}"
+    exit 0
+else
+    error "${STDOUT}: No such file or directory"
+fi
