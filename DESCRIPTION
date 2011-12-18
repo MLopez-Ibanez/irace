@@ -1,8 +1,8 @@
 Package: irace
 Type: Package
 Title: Iterated Racing Procedures
-Version: 0.99.522
-Date: 2011-11-25
+Version: 0.99.532
+Date: 2011-12-18
 Maintainer: Manuel López-Ibáñez and Jérémie Dubois-Lacoste 
             <irace@iridia.ulb.ac.be>
 Author: Manuel López-Ibáñez, Jérémie Dubois-Lacoste,
