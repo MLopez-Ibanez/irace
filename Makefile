@@ -41,12 +41,12 @@ pdf:
 
 bumpdate: version
 	@sed -i 's/Date: .*/Date: $(DATE)/' $(PACKAGEDIR)/DESCRIPTION
-	@sed -i 's/Date: .*/Date: \\tab $(DATE) \\cr/' $(PACKAGEDIR)/man/irace-package.Rd
+	@sed -i 's/Date:.*$$/Date: \\tab $(DATE) \\cr/' $(PACKAGEDIR)/man/irace-package.Rd
 
 version :
 	echo 'irace.version <- "$(VERSION)"' > $(PACKAGEDIR)/R/version.R
-	@sed -i 's/Version: .*/Version: $(PACKAGEVERSION)/' $(PACKAGEDIR)/DESCRIPTION
-	@sed -i 's/Version: .*/Version: \\tab $(PACKAGEVERSION) \\cr/' $(PACKAGEDIR)/man/irace-package.Rd
+	@sed -i 's/Version:.*$$/Version: $(PACKAGEVERSION)/' $(PACKAGEDIR)/DESCRIPTION
+	@sed -i 's/Version:.*$$/Version: \\tab $(PACKAGEVERSION) \\cr/' $(PACKAGEDIR)/man/irace-package.Rd
 
 rsync : version
 ifdef RNODE
