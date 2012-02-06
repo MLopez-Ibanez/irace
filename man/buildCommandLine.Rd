@@ -26,14 +26,9 @@
   space between each parameter (but none between the switches and the
   corresponding values).
 }
-\references{
-}
-\seealso{
-}
 \examples{
 switches <- c("--switch1 ", "--switch2 ")
 values <- c("value_1", "value_2")
 buildCommandLine (values, switches)
 }
-\author{Manuel Lopez-Ibanez and Jeremie Dubois-Lacoste}
-\keyword{}
+\author{Manuel López-Ibáñez and Jérémie Dubois-Lacoste}

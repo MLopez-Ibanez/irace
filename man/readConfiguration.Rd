@@ -19,14 +19,9 @@
 \value{
   The configuration read from the file.
 }
-\details{
-}
-\references{}
 \seealso{
   'checkConfiguration' to check that the configuration is valid.
   'defaultConfiguration' to set the configuration to the default.
   'printConfiguration' to print the configuration.
 }
-\examples{}
-\author{Manuel Lopez-Ibanez and Jeremie Dubois-Lacoste}
-\keyword{}
+\author{Manuel López-Ibáñez and Jérémie Dubois-Lacoste}

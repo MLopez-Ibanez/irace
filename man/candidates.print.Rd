@@ -16,14 +16,7 @@
 \value{
   None.
 }
-\details{
-}
-\references{
-}
 \seealso{
   'candidates.print.command' to print the candidates as command line.
 }
-\examples{
-}
-\author{Manuel Lopez-Ibanez and Jeremie Dubois-Lacoste}
-\keyword{}
+\author{Manuel López-Ibáñez and Jérémie Dubois-Lacoste}

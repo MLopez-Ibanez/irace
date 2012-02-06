@@ -16,16 +16,9 @@
   A list indexed by the \pkg{irace} parameter names,
   containing the default values for each parameter.
 }
-\details{
-}
-\references{
-}
 \seealso{
   'readConfiguration' for reading \pkg{irace} configuration.
   'printConfiguration' for printing \pkg{irace} configuration.
   'checkConfiguration' to check that a configuration is valid.
 }
-\examples{
-}
-\author{Manuel Lopez-Ibanez and Jeremie Dubois-Lacoste}
-\keyword{}
+\author{Manuel López-Ibáñez and Jérémie Dubois-Lacoste}

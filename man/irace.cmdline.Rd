@@ -24,10 +24,7 @@
   the command line. It finally starts \pkg{irace} by calling
   'irace.main'.
 }
-\references{}
 \seealso{
   'irace.main' to start \pkg{irace} from a configuration.
 }
-\examples{}
-\author{Manuel Lopez-Ibanez and Jeremie Dubois-Lacoste}
-\keyword{}
+\author{Manuel López-Ibáñez and Jérémie Dubois-Lacoste}

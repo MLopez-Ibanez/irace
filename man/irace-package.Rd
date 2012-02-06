@@ -3,38 +3,117 @@
 \alias{irace}
 \docType{package}
 \title{
-What the package does (short line)
-~~ package title ~~
+The irace package
 }
 \description{
-More about what it does (maybe more than one line)
-~~ A concise (1-5 lines) description of the package ~~
+Iterated racing for Automatic Algorithm Configuration
 }
 \details{
 \tabular{ll}{
 Package: \tab irace\cr
 Type: \tab Package\cr
-Version: \tab 1.0\cr
-Date: \tab 2011-10-29\cr
+Version: \tab 0.99.534 \cr
+Date: \tab 2012-02-06\cr
 License: \tab What license is it under?\cr
 LazyLoad: \tab yes\cr
 }
-~~ An overview of how to use the package, including the most important functions ~~
 }
 \author{
-Who wrote it
+Maintainer: Manuel López-Ibáñez and Jérémie Dubois-Lacoste
+<irace@iridia.ulb.ac.be>
+Author: Manuel López-Ibáñez, Jérémie Dubois-Lacoste,
+Thomas Stützle, Mauro Birattari, Eric Yuan and Prasanna Balaprakash
+}
+\keyword{package}
+\examples{
+#######################################################################
+# This example illustrates how to tune the parameters of the simulated
+# annealing algorithm (SANN) provided by the optim() function in the
+# Rbase package.  The goal in this example is to optimize instances of
+# the following family:
+# f(x) = wwww . f_rastrigin(x) + (1 - wwww) . f_rosenbrock(x)
+# where wwww follows a normal distribution whose mean is 0.9 and
+# standard deviation is 0.02. f_rastrigin and f_rosenbrock are the
+# well-known Rastrigin and Rosenbrock benchmark functions. In this
+# scenario, different instances are given by different values of
+# wwww.
+#######################################################################
+## First we provide an implementation of the functions to be optimized:
+f_rosenbrock <- function (x) {
+d <- length(x)
+z <- x + 1
+hz <- z[1:(d - 1)]
+tz <- z[2:d]
+s <- sum(100 * (hz^2 - tz)^2 + (hz - 1)^2)
+return(s)
+}
+f_rastrigin <- function (x) {
+sum(x * x - 10 * cos(2 * pi * x) + 10)
+}
 
-Maintainer: Who to complain to <yourfault@somewhere.net>
-~~ The author and/or maintainer of the package ~~
+## We generate 200 instances (in this case, weights):
+weights <- rnorm(200, mean = 0.9, sd = 0.02)
+
+## On this set of instances, we are interested in optimizing two
+## parameters of the SANN algorithm: tmax and temp. We setup the
+## parameter space as follows:
+parameters.table <- '
+tmax "" i (1, 5000)
+temp "" r (0, 100)
+'
+
+## We use the irace function readParameters to read this table:
+parameters <- readParameters(text=parameters.table)
+
+## Next, we define the function that will evaluate each candidate
+## configuration on a single in stance. For simplicity, we restrict to
+## three-dimensional functions and we set the maximum number of
+## iterations of SANN to 5000.
+hook.run <- function(instance, candidate, extra.params = NULL, config = list())
+{
+D <- 3
+par <- runif(D, min=-1, max=1)
+fn <- function(x) {
+weight <- instance
+return(weight * f_rastrigin(x) + (1 - weight) * f_rosenbrock(x))
 }
-\references{
-~~ Literature or other references for background information ~~
+res <- optim(par,fn, method="SANN",
+control=list(maxit=5000
+, tmax = as.numeric(candidate$values[["tmax"]])
+, temp = as.numeric(candidate$values[["temp"]])
+))
+return(res$value)
 }
-\keyword{ package }
-\seealso{
- Optional links to other man pages, e.g. 
-#~~ \code{\link[<pkg>:<pkg>-package]{<pkg>}} ~~
+
+## We are now ready to launch irace. We do it by means of the irace
+## function by setting hookRun to the function define above, instances to
+## the first 100 random weights, and a maximum budget of 1000 calls to
+## hookRun. The function irace will print information about its
+## progress.
+result <- irace(tunerConfig = list(
+hookRun = hook.run,
+instances = weights[1:100],
+maxExperiments = 1000),
+parameters = parameters)
+
+## We can print the best configurations found by \pkg{irace} as follows:
+candidates.print(result)
+
+## We can evaluate the quality of the best configuraiton found by
+## \pkg{irace} versus the default configuration of the SANN algorithm on
+## the other 100 instances previously generated.
+## To do so, first we apply the default configuration of the SANN
+## algorithm to these instances:
+default <- sapply(weights[101:200], hook.run,
+
+## We extract and apply the winning configuration found by \pkg{irace}
+## to these instances:
+candidate=list(values=list(tmax=10,temp=10)))
+result.list <- as.list(removeCandidatesMetaData(result[1,]))
+tuned <- sapply(weights[101:200], hook.run, candidate=list(values=result.list))
+
+## Finally, we can compare using a boxplot the quality obtained with the
+## default parameterization of SANN and the quality obtained with the
+## best configuration found by \pkg{irace}.
+boxplot(list(default=default, tuned=tuned))
 }
-% \examples{
-% #simple examples of the most important functions
-% }

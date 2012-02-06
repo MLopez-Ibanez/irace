@@ -16,14 +16,7 @@
 \value{
   None.
 }
-\details{
-}
-\references{
-}
 \seealso{
   'candidates.print' to print the candidates as a data frame.
 }
-\examples{
-}
-\author{Manuel Lopez-Ibanez and Jeremie Dubois-Lacoste}
-\keyword{}
+\author{Manuel López-Ibáñez and Jérémie Dubois-Lacoste}

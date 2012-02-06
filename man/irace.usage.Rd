@@ -9,17 +9,4 @@
 \usage{
   irace.usage()
 }
-\arguments{
-  None.
-}
-\value{
-  None.
-}
-\details{
-}
-\references{}
-\seealso{
-}
-\examples{}
-\author{Manuel Lopez-Ibanez and Jeremie Dubois-Lacoste}
-\keyword{}
+\author{Manuel López-Ibáñez and Jérémie Dubois-Lacoste}

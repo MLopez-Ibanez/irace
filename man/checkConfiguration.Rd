@@ -28,12 +28,9 @@
   \pkg{irace} from running properly, it will stop and display a message
   explaining this error.
 }
-\references{}
 \seealso{
   'readConfiguration' for reading \pkg{irace} configuration.
   'printConfiguration' for printing \pkg{irace} configuration.
   'defaultConfiguration' to set the configuration to the default.
 }
-\examples{}
-\author{Manuel Lopez-Ibanez and Jeremie Dubois-Lacoste}
-\keyword{}
+\author{Manuel López-Ibáñez and Jérémie Dubois-Lacoste}
