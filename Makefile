@@ -37,7 +37,7 @@ clean:
 
 pdf:
 	$(RM) $(BINDIR)/$(PACKAGE).pdf
-	cd $(BINDIR) &&	R CMD Rd2pdf --output=$(PACKAGE).pdf $(PACKAGEDIR) 
+	cd $(BINDIR) &&	R CMD Rd2pdf --no-preview --batch --output=$(PACKAGE).pdf $(PACKAGEDIR) 
 
 bumpdate: version
 	@sed -i 's/Date: .*/Date: $(DATE)/' $(PACKAGEDIR)/DESCRIPTION
