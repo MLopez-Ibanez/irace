@@ -29,7 +29,7 @@ Usage
    
    mkdir ~/Rlibs
    R CMD INSTALL -I ~/Rlibs irace.tar.gz
-   export R_LIBS=~/Rlibs:$(R_LIBS)
+   export R_LIBS=~/Rlibs:${R_LIBS}
 
 2. Create a directory for storing the configuration of the tuning, for
    example "~/tuning/".  Copy the files in the
