@@ -95,7 +95,7 @@ hook.run <- function(instance, candidate, extra.params = NULL, config = list())
 result <- irace(tunerConfig = list(
                   hookRun = hook.run,
                   instances = weights[1:100],
-                  maxExperiments = 100),
+                  maxExperiments = 1000),
                 parameters = parameters)
 
 ## We can print the best configurations found by irace as follows:
