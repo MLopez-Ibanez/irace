@@ -29,9 +29,9 @@ Thomas Stützle, Mauro Birattari, Eric Yuan and Prasanna Balaprakash
 #######################################################################
 # This example illustrates how to tune the parameters of the simulated
 # annealing algorithm (SANN) provided by the optim() function in the
-# Rbase package.  The goal in this example is to optimize instances of
+# R base package.  The goal in this example is to optimize instances of
 # the following family:
-# f(x) = lambda . f_rastrigin(x) + (1 - lambda) . f_rosenbrock(x)
+# f(x) = lambda * f_rastrigin(x) + (1 - lambda) * f_rosenbrock(x)
 # where lambda follows a normal distribution whose mean is 0.9 and
 # standard deviation is 0.02. f_rastrigin and f_rosenbrock are the
 # well-known Rastrigin and Rosenbrock benchmark functions. In this
@@ -99,7 +99,7 @@ parameters = parameters)
 ## We can print the best configurations found by irace as follows:
 candidates.print(result)
 
-## We can evaluate the quality of the best configuraiton found by
+## We can evaluate the quality of the best configuration found by
 ## irace versus the default configuration of the SANN algorithm on
 ## the other 100 instances previously generated.
 ## To do so, first we apply the default configuration of the SANN
@@ -113,7 +113,7 @@ result.list <- as.list(removeCandidatesMetaData(result[1,]))
 tuned <- sapply(weights[101:200], hook.run, candidate=list(values=result.list))
 
 ## Finally, we can compare using a boxplot the quality obtained with the
-## default parameterization of SANN and the quality obtained with the
+## default parametrization of SANN and the quality obtained with the
 ## best configuration found by irace.
 boxplot(list(default=default, tuned=tuned))
 }
