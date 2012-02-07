@@ -2,7 +2,7 @@
 \alias{irace.cmdline}
 \title{irace.cmdline}
 \description{
-  'irace.cmdLine' starts \pkg{irace} using the parameters
+  'irace.cmdline' starts \pkg{irace} using the parameters
   of the command line used to invoke R.
 }
 \usage{
@@ -25,6 +25,6 @@
   'irace.main'.
 }
 \seealso{
-  'irace.main' to start \pkg{irace} from a configuration.
+  \code{\link{irace.main}} to start \pkg{irace} from a configuration.
 }
 \author{Manuel López-Ibáñez and Jérémie Dubois-Lacoste}

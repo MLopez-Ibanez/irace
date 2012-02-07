@@ -2,7 +2,7 @@
 \alias{readParameters}
 \title{readParameters}
 \description{
-  'readParameters' read the parameters to be tuned by 
+  'readParameters' reads the parameters to be tuned by 
   \pkg{irace} from a file or directly from a character string.
 }
 \usage{

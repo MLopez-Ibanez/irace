@@ -20,8 +20,8 @@
   The configuration read from the file.
 }
 \seealso{
-  'checkConfiguration' to check that the configuration is valid.
-  'defaultConfiguration' to set the configuration to the default.
-  'printConfiguration' to print the configuration.
+  \code{\link{checkConfiguration}} to check that the configuration is valid.
+  \code{\link{defaultConfiguration}} to set the configuration to the default.
+  \code{\link{printConfiguration}} to print the configuration.
 }
 \author{Manuel López-Ibáñez and Jérémie Dubois-Lacoste}

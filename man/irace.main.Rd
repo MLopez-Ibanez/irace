@@ -16,9 +16,9 @@
   output.}
 }
 \seealso{
-  'irace.cmdLine' to read the command line before calling 'irace.main'.
-  'readConfiguration' to read the configuration for \pkg{irace} from
+  \code{\link{irace.cmdline}} to read the command line before calling 'irace.main'.
+  \code{\link{readConfiguration}} to read the configuration for \pkg{irace} from
   a file.
-  'defaultConfiguration' to provide a default configuration for \pkg{irace}.
+  \code{\link{defaultConfiguration}} to provide a default configuration for \pkg{irace}.
 }
 \author{Manuel López-Ibáñez and Jérémie Dubois-Lacoste}

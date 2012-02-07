@@ -2,7 +2,7 @@
 \alias{irace.usage}
 \title{irace.usage}
 \description{
-  iraceUsage' prints all possible arguments for the configuration
+  This function prints all possible arguments for the configuration
   to be used by \pkg{irace}, with the corresponding switches and
   a short description.
 }

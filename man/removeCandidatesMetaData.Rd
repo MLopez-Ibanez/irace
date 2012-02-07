@@ -17,7 +17,7 @@
 \value{
   The same matrix without the "metadata".}
 \seealso{
-  'candidates.print.command' to print the candidates as command line.
-  'candidates.print' to print the candidates as a data frame.
+  \code{\link{candidates.print.command}} to print the candidates as command lines.
+  \code{\link{candidates.print}} to print the candidates as a data frame.
 }
 \author{Manuel López-Ibáñez and Jérémie Dubois-Lacoste}

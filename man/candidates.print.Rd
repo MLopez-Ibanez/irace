@@ -17,6 +17,6 @@
   None.
 }
 \seealso{
-  'candidates.print.command' to print the candidates as command line.
+  \code{\link{candidates.print.command}} to print the candidates as command lines.
 }
 \author{Manuel López-Ibáñez and Jérémie Dubois-Lacoste}

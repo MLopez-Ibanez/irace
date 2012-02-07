@@ -29,8 +29,8 @@
   explaining this error.
 }
 \seealso{
-  'readConfiguration' for reading \pkg{irace} configuration.
-  'printConfiguration' for printing \pkg{irace} configuration.
-  'defaultConfiguration' to set the configuration to the default.
+  \code{\link{readConfiguration}} for reading \pkg{irace} configuration.
+  \code{\link{printConfiguration}} for printing \pkg{irace} configuration.
+  \code{\link{defaultConfiguration}} to set the configuration to the default.
 }
 \author{Manuel López-Ibáñez and Jérémie Dubois-Lacoste}

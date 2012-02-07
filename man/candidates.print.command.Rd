@@ -17,6 +17,6 @@
   None.
 }
 \seealso{
-  'candidates.print' to print the candidates as a data frame.
+  \code{\link{candidates.print}} to print the candidates as a data frame.
 }
 \author{Manuel López-Ibáñez and Jérémie Dubois-Lacoste}

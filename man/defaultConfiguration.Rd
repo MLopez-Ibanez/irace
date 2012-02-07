@@ -17,8 +17,8 @@
   containing the default values for each parameter.
 }
 \seealso{
-  'readConfiguration' for reading \pkg{irace} configuration.
-  'printConfiguration' for printing \pkg{irace} configuration.
-  'checkConfiguration' to check that a configuration is valid.
+  \code{\link{readConfiguration}} for reading \pkg{irace} configuration.
+  \code{\link{printConfiguration}} for printing \pkg{irace} configuration.
+  \code{\link{checkConfiguration}} to check that a configuration is valid.
 }
 \author{Manuel López-Ibáñez and Jérémie Dubois-Lacoste}

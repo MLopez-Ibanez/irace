@@ -11,11 +11,11 @@
 \arguments{
   \item{tunerConfig}{A list indexed by the \pkg{irace} parameter names,
   containing their values. This list can be provided by
-  'readConfiguration', or 'defaultConfiguration'.}
+  \code{\link{readConfiguration}}, or \code{\link{defaultConfiguration}}.}
 }
 \seealso{
-  'readConfiguration' for reading \pkg{irace} configuration.
-  'checkConfiguration' to check that the configuration is valid.
-  'defaultConfiguration' to set the configuration to the default.
+  \code{\link{readConfiguration}} for reading \pkg{irace} configuration.
+  \code{\link{checkConfiguration}} to check that the configuration is valid.
+  \code{\link{defaultConfiguration}} to set the configuration to the default.
 }
 \author{Manuel López-Ibáñez and Jérémie Dubois-Lacoste}
