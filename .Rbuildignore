@@ -18,3 +18,4 @@ inst/.+~
 ^parameters\.txt
 ^tune-conf$
 ^web
+^irace-Ex.R
