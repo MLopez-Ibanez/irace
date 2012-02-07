@@ -9,6 +9,7 @@ PACKAGEVERSION=$(MAJORVERSION)#.$(REVNUM)
 VERSION=$(MAJORVERSION).$(SVN_REV)
 DATE=$(shell date +%F)
 PACKAGEDIR=$(CURDIR)
+FTP_COMMANDS="user anonymous anonymous\nbinary\ncd incoming\nput $(PACKAGE)_$(PACKAGEVERSION).tar.gz\nquit\n"
 
 ## Do we have svnversion?
 ifeq ($(shell sh -c 'which svnversion 1> /dev/null 2>&1 && echo y'),y)
@@ -21,7 +22,7 @@ endif
 SVN_REV = $(shell sh -c 'cat svn_version 2> /dev/null')
 REVNUM = $(shell sh -c 'cat svn_version | tr -d -c "[:digit:]" 2> /dev/null')
 
-.PHONY : build check clean install pdf rsync version bumpdate
+.PHONY : build check clean install pdf rsync version bumpdate submit
 
 install: version clean
 	cd $(BINDIR) && R CMD INSTALL $(INSTALL_FLAGS) $(PACKAGEDIR)
@@ -59,3 +60,6 @@ else
 	@exit 1
 endif
 
+submit: 
+	cd $(BINDIR) && echo $(FTP_COMMANDS) | ftp -e -g -i -n cran.r-project.org
+	@echo "Don't forget to send email to cran@r-project.org !"
