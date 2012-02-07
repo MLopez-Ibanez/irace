@@ -20,7 +20,9 @@ LazyLoad: \tab yes\cr
 }
 \author{
 Maintainer: Manuel López-Ibáñez and Jérémie Dubois-Lacoste
-<irace@iridia.ulb.ac.be>
+\email{irace@iridia.ulb.ac.be}
+
+
 Author: Manuel López-Ibáñez, Jérémie Dubois-Lacoste,
 Thomas Stützle, Mauro Birattari, Eric Yuan and Prasanna Balaprakash
 }
