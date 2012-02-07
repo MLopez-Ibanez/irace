@@ -12,7 +12,7 @@ Iterated racing for Automatic Algorithm Configuration
 \tabular{ll}{
 Package: \tab irace\cr
 Type: \tab Package\cr
-Version: \tab 0.99.544 \cr
+Version: \tab 0.99.545 \cr
 Date: \tab 2012-02-06\cr
 License: \tab GPL (>= 2)\cr
 LazyLoad: \tab yes\cr
@@ -40,15 +40,15 @@ Thomas Stützle, Mauro Birattari, Eric Yuan and Prasanna Balaprakash
 #######################################################################
 ## First we provide an implementation of the functions to be optimized:
 f_rosenbrock <- function (x) {
-d <- length(x)
-z <- x + 1
-hz <- z[1:(d - 1)]
-tz <- z[2:d]
-s <- sum(100 * (hz^2 - tz)^2 + (hz - 1)^2)
-return(s)
+  d <- length(x)
+  z <- x + 1
+  hz <- z[1:(d - 1)]
+  tz <- z[2:d]
+  s <- sum(100 * (hz^2 - tz)^2 + (hz - 1)^2)
+  return(s)
 }
 f_rastrigin <- function (x) {
-sum(x * x - 10 * cos(2 * pi * x) + 10)
+  sum(x * x - 10 * cos(2 * pi * x) + 10)
 }
 
 ## We generate 200 instances (in this case, weights):
@@ -70,20 +70,20 @@ parameters <- readParameters(text=parameters.table)
 ## three-dimensional functions and we set the maximum number of
 ## iterations of SANN to 5000.
 hook.run <- function(instance, candidate, extra.params = NULL, config = list())
-{
-D <- 3
-par <- runif(D, min=-1, max=1)
-fn <- function(x) {
-weight <- instance
-return(weight * f_rastrigin(x) + (1 - weight) * f_rosenbrock(x))
-}
-res <- optim(par,fn, method="SANN",
-control=list(maxit=5000
-, tmax = as.numeric(candidate$values[["tmax"]])
-, temp = as.numeric(candidate$values[["temp"]])
-))
-return(res$value)
-}
+  {
+    D <- 3
+    par <- runif(D, min=-1, max=1)
+    fn <- function(x) {
+      weight <- instance
+      return(weight * f_rastrigin(x) + (1 - weight) * f_rosenbrock(x))
+    }
+    res <- optim(par,fn, method="SANN",
+                 control=list(maxit=5000
+                   , tmax = as.numeric(candidate$values[["tmax"]])
+                   , temp = as.numeric(candidate$values[["temp"]])
+                   ))
+    return(res$value)
+  }
 
 ## We are now ready to launch irace. We do it by means of the irace
 ## function by setting hookRun to the function define above, instances to
@@ -91,10 +91,10 @@ return(res$value)
 ## hookRun. The function irace will print information about its
 ## progress.
 result <- irace(tunerConfig = list(
-hookRun = hook.run,
-instances = weights[1:100],
-maxExperiments = 1000),
-parameters = parameters)
+                  hookRun = hook.run,
+                  instances = weights[1:100],
+                  maxExperiments = 100),
+                parameters = parameters)
 
 ## We can print the best configurations found by irace as follows:
 candidates.print(result)
@@ -105,7 +105,7 @@ candidates.print(result)
 ## To do so, first we apply the default configuration of the SANN
 ## algorithm to these instances:
 default <- sapply(weights[101:200], hook.run,
-
+                  
 ## We extract and apply the winning configuration found by irace
 ## to these instances:
 candidate=list(values=list(tmax=10,temp=10)))
