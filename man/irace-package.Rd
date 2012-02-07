@@ -12,7 +12,7 @@ Iterated racing for Automatic Algorithm Configuration
 \tabular{ll}{
 Package: \tab irace\cr
 Type: \tab Package\cr
-Version: \tab 0.99.542 \cr
+Version: \tab 0.99.544 \cr
 Date: \tab 2012-02-06\cr
 License: \tab GPL (>= 2)\cr
 LazyLoad: \tab yes\cr
