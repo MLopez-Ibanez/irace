@@ -124,10 +124,10 @@ readConfiguration <- function(filename = "", configuration = list())
 
   if (filename != "") {
     if (file.exists (filename)) {
-      # FIXME: conditional on debuglevel
+      # FIXME: subordinate on debuglevel
       cat ("Note: Reading configuration file '", filename, "'.......")
       source(filename, local = TRUE)
-      # FIXME: conditional on debuglevel
+      # FIXME: subordinate on debuglevel
       cat (" done!\n")
     } else {
       stop ("The configuration file ", filename, " does not exist.")

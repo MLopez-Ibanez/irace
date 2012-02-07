@@ -21,7 +21,7 @@ STDERR=c${NUMCAND}.stderr
 TIMEOUT=30
 
 #####################################################################
-# Evaluate a floating point number conditional expression.
+# Evaluate a floating point number subordinate expression.
 function float_cond()
 {
     local cond=0

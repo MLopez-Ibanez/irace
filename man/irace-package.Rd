@@ -14,7 +14,7 @@ Package: \tab irace\cr
 Type: \tab Package\cr
 Version: \tab 0.99.540 \cr
 Date: \tab 2012-02-06\cr
-License: \tab What license is it under?\cr
+License: \tab GPL (>= 2)\cr
 LazyLoad: \tab yes\cr
 }
 }

@@ -4,7 +4,7 @@ sp.orig.clause.sort.heur     "--sp-orig-clause-sort-heur "         c (0,1,2,3,4,
 sp.res.order.heur            "--sp-res-order-heur "                c (0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19)  | sp.resolution != 0  # All values make sense here. 20 requires modular arithmetic input format 
 sp.clause.del.heur           "--sp-clause-del-heur "               c (0,1,2)      # All values make sense here.
 sp.phase.dec.heur            "--sp-phase-dec-heur "                c (0,1,2,3,4,5,6)      # All values make sense here. 
-sp.resolution                "--sp-resolution "                    c (0,1,2)      # 0 renders a whole bunch of conditionals irrelevant.
+sp.resolution                "--sp-resolution "                    c (0,1,2)      # 0 renders a whole bunch of subordinates irrelevant.
 sp.variable.decay            "--sp-variable-decay "                r (1.0,2.0) # Should be bigger than 1 (o/w increase not decay). 
 sp.clause.decay              "--sp-clause-decay "                  r (1.0,2.0) # Same thing.
 sp.restart.inc               "--sp-restart-inc "                   r (1.0,2.0) # 1.3 and 1.7 were introduced later. Uniform because multiplicative.

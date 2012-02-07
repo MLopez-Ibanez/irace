@@ -213,7 +213,7 @@ assigns a quality value to one run of a particular configuration on a
 particular instance. The criterion that we want to optimize when
 configuring an algorithm for a problem is a function of the cost of a
 configuration over the whole set of instances. In that sense, it is a
-statistical parameter $c_\theta$ defined on the conditional
+statistical parameter $c_\theta$ defined on the subordinate
 distribution $\mathcal{C}(\theta) = \mathcal{C}(\mathcal{I} \mid
 \theta)$. We can now formally define the automatic configuration
 problem as finding the best configuration $\theta^*$ such that:
@@ -244,13 +244,13 @@ values. An example would be a parameter with three values
 $\{$\texttt{low}, \texttt{medium}, \texttt{high}$\}$. Such parameters
 are called \emph{ordinal} and are typically handled as numerical
 parameters~\citep{BirYuaBal2010:emaoa}. Finally, parameters may be
-\emph{conditional} on other parameters, that is, they are only enabled
+\emph{subordinate} on other parameters, that is, they are only enabled
 when the values of other parameters satisfy a particular
-condition. For instance, the tabu list length only matters if tabu search is chosen as the local search algorithm. Conditional parameters are not the same as
+condition. For instance, the tabu list length only matters if tabu search is chosen as the local search algorithm. Subordinate parameters are not the same as
 constraints on the values of parameters.  For example, given
 parameters $a$ and $b$, a constraint may be that $a < b$. Such
 constraints limit the range of values that a certain parameter can
-take in dependence of other parameters, whereas conditional parameters
+take in dependence of other parameters, whereas subordinate parameters
 are either disabled or they have a value according to a predefined
 range. In some cases, parameter constraints may be modeled by
 replacing one of the parameters by a surrogate parameter, \eg{}, $a'
@@ -416,9 +416,9 @@ with a probability proportional to its weight $w_z$. Next, a new value
 is sampled for each parameter $X_d$, $d=1,\dotsc,\Nparam$, according
 to a distribution that its associated to each parameter of
 $\theta_z$. Parameters are considered in the order determined by the
-dependency graph of conditions, that is, unconditional parameters are
-sampled first, those parameters that are conditional on them are
-sampled next if the condition is satisfied, and so on. Moreover, if a conditional parameter that was disabled in the
+dependency graph of conditions, that is, unsubordinate parameters are
+sampled first, those parameters that are subordinate on them are
+sampled next if the condition is satisfied, and so on. Moreover, if a subordinate parameter that was disabled in the
 parent configuration becomes enabled in the new configuration, then
 the parameter is sampled uniformly, as in the initialization phase.
 
@@ -533,10 +533,10 @@ distance between two configurations is defined as the maximum distance
 between their parameter settings, which is defined as follows:
 
 \begin{itemize}
-\item If the parameter is conditional and disabled in both configurations, the distance is zero;
+\item If the parameter is subordinate and disabled in both configurations, the distance is zero;
 \item if it is disabled in one configuration but enabled in the other,
   the distance is one;
-\item if the parameter is enabled in both configurations (or it is not conditional), then: 
+\item if the parameter is enabled in both configurations (or it is not subordinate), then: 
 
   \begin{itemize}
   \item in the case of numerical parameters (integral or real), the
@@ -785,10 +785,10 @@ Parameters can be of four types:
 \end{itemize}
 
 
-\paragraph{Conditional parameters.} 
-A conditional parameter is one that is enabled or disabled depending
+\paragraph{Subordinate parameters.} 
+A subordinate parameter is one that is enabled or disabled depending
 on the values of other parameters. A parameter is marked as
-conditional by adding the character \texttt{'|'} followed by an \aR
+subordinate by adding the character \texttt{'|'} followed by an \aR
 expression involving the names of other parameters. This expression
 must return \texttt{TRUE} when the parameter should be enabled, and
 \texttt{FALSE} otherwise. Examples of operators that are valid in a condition are relational operators 

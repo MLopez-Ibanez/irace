@@ -109,7 +109,7 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
     }
   }
   # *************************************************************************
-  # Conditional parameter: ordering of the parameters according to
+  # Subordinate parameter: ordering of the parameters according to
   # constraints hierarchy
   # *  The constraints hierarchy is an acyclic directed graph.
   #    Functions treeLevel() and treeLevelAux() compute an order on vertex s.t:
@@ -129,7 +129,7 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
       for (child in vars) {
         # The following line detects cycles
         if (child == rootParam)
-          tunerError("a cycle detected in conditional parameters! ",
+          tunerError("a cycle detected in subordinate parameters! ",
                      "Check definition of constraints.\n",
                      "One parameter of this cycle is '", rootParam, "'")
         
