@@ -1,4 +1,5 @@
 \.diff$
+\.patch$
 \.orig$
 \.svn$
 \.Rhistory$
@@ -9,8 +10,7 @@ TODO
 TUNE.*
 dist\.sh
 ^doc$
-examples/beamaco
-examples/hypervolume
+^examples
 ^hooks/hook-evaluate
 ^hooks/hook-run
 ^hooks/tune-main
