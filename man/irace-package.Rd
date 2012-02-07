@@ -12,7 +12,7 @@ Iterated racing for Automatic Algorithm Configuration
 \tabular{ll}{
 Package: \tab irace\cr
 Type: \tab Package\cr
-Version: \tab 0.99.540 \cr
+Version: \tab 0.99.542 \cr
 Date: \tab 2012-02-06\cr
 License: \tab GPL (>= 2)\cr
 LazyLoad: \tab yes\cr
@@ -31,12 +31,12 @@ Thomas Stützle, Mauro Birattari, Eric Yuan and Prasanna Balaprakash
 # annealing algorithm (SANN) provided by the optim() function in the
 # Rbase package.  The goal in this example is to optimize instances of
 # the following family:
-# f(x) = wwww . f_rastrigin(x) + (1 - wwww) . f_rosenbrock(x)
-# where wwww follows a normal distribution whose mean is 0.9 and
+# f(x) = lambda . f_rastrigin(x) + (1 - lambda) . f_rosenbrock(x)
+# where lambda follows a normal distribution whose mean is 0.9 and
 # standard deviation is 0.02. f_rastrigin and f_rosenbrock are the
 # well-known Rastrigin and Rosenbrock benchmark functions. In this
 # scenario, different instances are given by different values of
-# wwww.
+# lambda.
 #######################################################################
 ## First we provide an implementation of the functions to be optimized:
 f_rosenbrock <- function (x) {
