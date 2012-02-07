@@ -30,7 +30,7 @@ instanceDir <- "./Instances"
 ## If empty or NULL, do not use a file.
 # candidatesFile <- ""
 
-## The script called by Race for each candidate that
+## The script called for each candidate that
 ## launches the program to be tuned. See templates/.
 # hookRun <- "./hook-run"
 
@@ -56,7 +56,7 @@ maxExperiments <- 3000
 
 ## An estimation of the average time in seconds required for one
 ## experiment. Only required if timeBudget is positive.
-# timeEstimate <- 1
+# timeEstimate <- 0
 
 ## Indicates the number of decimal places to be considered for the
 ## real parameters.
@@ -79,7 +79,7 @@ maxExperiments <- 3000
 ## Sample the instances or take them always in the same order.
 # sampleInstances <- 1
 
-## Specifies the statistical test type: "F-test" or t-test.
+## Specifies the statistical test type: F-test or t-test.
 # testType <- "F-test"
 
 ## Specifies after how many instances are seen before the first test
