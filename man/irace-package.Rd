@@ -96,17 +96,17 @@ instances = weights[1:100],
 maxExperiments = 1000),
 parameters = parameters)
 
-## We can print the best configurations found by \pkg{irace} as follows:
+## We can print the best configurations found by irace as follows:
 candidates.print(result)
 
 ## We can evaluate the quality of the best configuraiton found by
-## \pkg{irace} versus the default configuration of the SANN algorithm on
+## irace versus the default configuration of the SANN algorithm on
 ## the other 100 instances previously generated.
 ## To do so, first we apply the default configuration of the SANN
 ## algorithm to these instances:
 default <- sapply(weights[101:200], hook.run,
 
-## We extract and apply the winning configuration found by \pkg{irace}
+## We extract and apply the winning configuration found by irace
 ## to these instances:
 candidate=list(values=list(tmax=10,temp=10)))
 result.list <- as.list(removeCandidatesMetaData(result[1,]))
@@ -114,6 +114,6 @@ tuned <- sapply(weights[101:200], hook.run, candidate=list(values=result.list))
 
 ## Finally, we can compare using a boxplot the quality obtained with the
 ## default parameterization of SANN and the quality obtained with the
-## best configuration found by \pkg{irace}.
+## best configuration found by irace.
 boxplot(list(default=default, tuned=tuned))
 }
