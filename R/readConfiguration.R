@@ -1,6 +1,6 @@
 ## Read some candidates from a file.
 ## Example of an input file,
-## it should be readable with read.table( , head=TRUE).
+## it should be readable with read.table( , header=TRUE).
 ## -------------------------------
 ## <param_name_1>  <param_name_2> 
 ##       1           "value_1"
@@ -20,7 +20,7 @@ readCandidatesFile <-
   namesParameters <- names(parameters$constraints)
 
   # Read the file.
-  candidateTable <- read.table(fileName, head = TRUE,
+  candidateTable <- read.table(fileName, header = TRUE,
                                colClasses = "character",
                                stringsAsFactors = FALSE)
   stopifnot(is.data.frame(candidateTable))
