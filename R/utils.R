@@ -185,7 +185,9 @@ mpiInit <- function(nslaves)
       stop("the `Rmpi' package is required for using MPI.")
 
     # When R exits, finalize MPI.
-    .Last <<- function() {
+    # FIXME: This is equivalent to .Last <<- function()
+    # Is there a better way to do this?
+    assign(".Last", function() {
       if (is.loaded("mpi_initialize")) {
         cat("# Finalize MPI...\n")
         if (Rmpi::mpi.comm.size(1) > 0)
@@ -194,7 +196,7 @@ mpiInit <- function(nslaves)
         # "Rmpi cannot be used unless relaunching R."
         Rmpi::mpi.finalize()
       }
-    }
+    }, .GlobalEnv)
     # Create slaves
     Rmpi::mpi.spawn.Rslaves(nslaves = nslaves)
   }
