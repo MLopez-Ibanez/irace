@@ -11,11 +11,12 @@
  <link rel="stylesheet" type="text/css" media="screen,projection" href=
  "simple.css">
  <!-- link rel="stylesheet" type="text/css" media="screen,projection" href="css/style.css" -->
-<script type="text/javascript" src="files/ga.js"></script>
+
+ <script type="text/javascript" src="files/ga.js">
+</script>
 
  <title>The irace Package, Iterated Race for Automatic Algorithm
  Configuration</title>
-
 </head>
 
 <body>
@@ -44,12 +45,13 @@
 
    <h2 id="intro">Introduction</h2>
 
-   <p>The program <code>irace</code> implements the <em>iterated racing</em>
-   procedure, which is an extension of the Iterated F-race procedure. Its main
-   purpose is to automatically configure optimization algorithms by finding the
-   most appropriate settings given a set of instances of an optimization
-   problem. It builds upon the <a href="http://cran.r-project.org/web/packages/race/">race package</a> by Birattari and it
-   is implemented in <a href="http://www.r-project.org/">R</a>.</p>
+   <p>The <code><b>irace</b></code> package implements the <em>iterated
+   racing</em> procedure, which is an extension of the Iterated F-race
+   procedure. Its main purpose is to automatically configure optimization
+   algorithms by finding the most appropriate settings given a set of instances
+   of an optimization problem. It builds upon the <a href=
+   "http://cran.r-project.org/web/packages/race/">race package</a> by Birattari
+   and it is implemented in <a href="http://www.r-project.org/">R</a>.</p>
 
    <p><b>Keywords:</b> automatic configuration, offline tuning, parameter
    tuning, racing, F-race.</p>
@@ -72,17 +74,16 @@
    <h2 id="people">People</h2>
 
    <p><b>Maintainers:</b> <a href="http://iridia.ulb.ac.be/~manuel">Manuel
-   L&oacute;pez-Ib&aacute;&ntilde;ez</a> and 
-     <a href="http://iridia.ulb.ac.be/~jdubois">Jérémie Dubois-Lacoste.</a></p>
+   L&oacute;pez-Ib&aacute;&ntilde;ez</a> and <a href=
+   "http://iridia.ulb.ac.be/~jdubois">Jérémie Dubois-Lacoste.</a></p>
 
    <p><b>Contributors:</b> Thomas St&uuml;tzle, Mauro Birattari, Eric Yuan and
    Prasanna Balaprakash.</p>
-   
    <hr>
 
    <h2 id="license">License</h2>
 
-   <p>This software is Copyright (C) 2011 Manuel
+   <p>This software is Copyright (C) 2011, 2012 Manuel
    L&oacute;pez-Ib&aacute;&ntilde;ez and Jérémie Dubois-Lacoste.</p>
 
    <p>This program is free software (software libre); you can redistribute it
@@ -114,8 +115,8 @@
 
    <p>Moreover, as a personal note, we would appreciate if you would email
    <strong><code>irace<img id="at" src="img/at.png" alt="@" name=
-   "at">iridia.ulb.ac.be</code></strong> with citations of papers referencing this
-   work.</p>
+   "at">iridia.ulb.ac.be</code></strong> with citations of papers referencing
+   this work.</p>
 
    <p>The race package is Copyright (C) 2003 Mauro Birattari, used under the
    GPL.</p>
@@ -123,20 +124,32 @@
 
    <h2 id="download">Download</h2>
 
+   <p>The software is provided as an R package available from CRAN. This means
+   that it can be installed by invoking R and within R calling:</p>
+   <pre>
+   install.packages("irace")
+</pre>
+
+   <p>Or it can also be installed by <a href=
+   "http://cran.r-project.org/web/packages/irace/">downloading the package</a>
+   and invoking at the command-line:<br></p>
+   <pre>
+   R CMD INSTALL &lt;<em>package</em>&gt;
+</pre>
+
+   <p>where <code>&lt;<em>package</em>&gt;</code> is one of the three versions
+   available: <code>.tar.gz</code> (Unix/BSD/GNU/Linux), <code>.tgz</code>
+   (MacOS X), or <code>.zip</code> (Windows).</p>
+
    <div class="sectionBody">
-    <a name="latestversion" id="latestversion"></a>
-
-    <div id="v0.9" class="newsheading">
-     <span class="newsversion">Version 0.9</span> <span class="sourcelink">[
-     <a href="http://iridia.ulb.ac.be/irace/files/irace-0.9.tar.gz">Download source code</a> ]</span> <span class="pdfdoc">[
-     <a href="http://iridia.ulb.ac.be/IridiaTrSeries/IridiaTr2011-004.pdf">Download the documentation (PDF)</a> ]</span>
-    </div>
-
-    <div class="newsbody">
-     <ul>
-       <li>Preliminary version</li>
-     </ul>
-    </div>
+    <span class="sourcelink">[ <a href=
+    "http://cran.r-project.org/web/packages/irace/"><strong>Download irace
+    package from CRAN</strong></a> ]</span> 
+    <!-- <span class="sourcelink">[ <a href="files/irace_0.9.zip">download Windows binary</a> ]</span> -->
+     <!--  <span class="pdfdoc">[<a href= -->
+     
+    <!-- "http://cran.r-project.org/web/packages/irace/irace.pdf"><strong> Download Reference -->
+     <!-- manual </strong></a>]</span> -->
    </div>
   </div>
   <hr>
@@ -152,8 +165,8 @@
    <!-- img style="padding: 5px;" alt="Get Firefox!" title="Get Firefox!" -->
     <!-- width="80" height="15" src="img/white_2.gif" --></p>
 
-   <p id="lastupdate"><!-- hhmts start -->Last modified: 24 October 2011<!-- hhmts end --></p>
-  </div>
- </div><!-- counter.htm -->
+   <p id="lastupdate"><!-- hhmts start -->Last modified: 08 February 2012<!-- hhmts end --></p>
+  </div><!-- counter.htm -->
+ </div>
 </body>
 </html>
