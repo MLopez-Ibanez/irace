@@ -12,8 +12,8 @@ Iterated racing for Automatic Algorithm Configuration
 \tabular{ll}{
 Package: \tab irace\cr
 Type: \tab Package\cr
-Version: \tab 1.0 \cr
-Date: \tab 2012-02-08 \cr
+Version: \tab 1.0.563 \cr
+Date: \tab 2012-02-09 \cr
 License: \tab GPL (>= 2)\cr
 LazyLoad: \tab yes\cr
 }
@@ -26,7 +26,23 @@ Maintainer: Manuel López-Ibáñez and Jérémie Dubois-Lacoste
 Author: Manuel López-Ibáñez, Jérémie Dubois-Lacoste,
 Thomas Stützle, Mauro Birattari, Eric Yuan and Prasanna Balaprakash
 }
+\references{
+
+  Manuel López-Ibáñez, Jérémie Dubois-Lacoste, Thomas Stützle, and Mauro
+  Birattari. \emph{The irace package, Iterated Race for Automatic
+  Algorithm Configuration}. Technical Report TR/IRIDIA/2011-004, IRIDIA,
+  Université Libre de Bruxelles, Belgium, 2011.
+  
+  Manuel López-Ibáñez and Thomas Stützle. The Automatic Design of
+  Multi-Objective Ant Colony Optimization Algorithms. IEEE Transactions
+  on Evolutionary Computation, 2012.
+
+}
 \keyword{package}
+\keyword{optimize}
+\keyword{tuning}
+\keyword{automatic configuration}
+
 \examples{
 #######################################################################
 # This example illustrates how to tune the parameters of the simulated
