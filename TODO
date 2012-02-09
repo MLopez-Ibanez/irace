@@ -2,12 +2,13 @@
 
 TODO R package:
 
- * Create Rd files for those functions: See ?prompt
- * Create a small example that can be run with example(irace).
  * Read about vignette, what we need to do to convert/use the IRIDIA
    TR as the vignette.
 
 TODO General:
+
+ * irace.Rdata should keep a list with the all the eliteCandidates after each
+   race. Right now we only keep the best one.
 
  * Fix issues with digits, rounding and real parameters. If digits=d,
    perhaps it is more correct to sample like:

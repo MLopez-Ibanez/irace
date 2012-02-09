@@ -1,0 +1,10 @@
+README file for developers
+===========================
+
+How to set version numbers?
+---------------------------
+
+* Before a release, remove the revision number. Release.
+* After the release, bump the version number and add the revision
+  number.
+

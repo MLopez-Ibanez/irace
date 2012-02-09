@@ -19,3 +19,5 @@ inst/.+~
 ^tune-conf$
 ^web
 ^irace-Ex.R
+DEVEL-README
+
