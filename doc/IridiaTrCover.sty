@@ -1,0 +1,319 @@
+\def\IridiaTrCover@Version{2.0}
+\NeedsTeXFormat{LaTeX2e}[1995/12/01]
+\ProvidesPackage{IridiaTrCover}[2009/04/20, v. \IridiaTrCover@Version]
+
+\typeout{Copyright (C) 2004 Mauro Birattari, 
+                       IRIDIA-ULB, Brussels, Belgium.}
+
+%% TODO:
+%%  * Parse \@author, recognize surnames, and wrap them with \textsc{}
+%%
+%%  * Use package kvoptions to have all options of \IridiaTrCover as
+%%    package options, then make \IridiaTrCover not take any options and
+%%    either \IridiaTrCover or \maketitle would print the cover.
+%%
+%%  * Detect overflow in the cover fields and either error out or
+%%    adjust automagically. Example of packages that do this are
+%%    svmult.cls.
+%%
+%%  * We could have an option to enable/disable the package. Then
+%%    the user could use the following commands \ifIridiaTrElse{Text
+%%    for the TR}{Text when not producing a TR} and
+%%    \OnlyIridiaTr{Text only appears in the TR}. Then the commands
+%%    would be defined something like:
+%%    % With \usepackage{IridiaTrCover}
+%%    \newcommand{\ifIridiaTrElse}[2]{#1}
+%%    \newcommand{\IridiaTrOnly}[1]{#1}   
+%%    % With \usepackage[disable]{IridiaTrCover}
+%%    \newcommand{\ifIridiaTrElse}[2]{#2}
+%%    \newcommand{\IridiaTrOnly}[1]{}   
+%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Handle package options
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newif\if@hyperref
+\DeclareOption{hyperref}{\@hyperreftrue}
+\DeclareOption{nohyperref}{\@hyperreffalse}
+
+\newif\if@printCover
+\DeclareOption{coverpage}{\@printCovertrue}
+\DeclareOption{nocoverpage}{\@printCoverfalse}
+
+\newif\if@stdHeadings
+\DeclareOption{headings}{\@stdHeadingstrue}
+\DeclareOption{noheadings}{\@stdHeadingsfalse}
+
+% This is unused for now. If we ever use package options and
+% make \maketitle generate the cover, then this option will generate
+% the cover but not execute the real \maketitle.
+%\newif\if@printTitle
+%\@printTitletrue
+%\DeclareOption{onlycover}{\@printCovertrue\@printTitlefalse}
+
+\ExecuteOptions{hyperref,coverpage,headings}
+\ProcessOptions
+
+% These settings are set as early as possible.
+\if@printCover
+  \@mparswitchtrue % Marginpars go on outside of page
+  \setlength\paperheight{297mm}
+  \setlength\paperwidth{210mm}
+\fi
+
+
+%%%%%%%%%%%%%%%
+% Load Packages
+%%%%%%%%%%%%%%%
+%\RequirePackage[a4paper]{geometry}
+\RequirePackage{ifpdf}
+\ifpdf
+ \RequirePackage{xcolor}
+ \RequirePackage{graphicx}
+\else
+ \RequirePackage[dvips]{xcolor}
+ \RequirePackage[dvips]{graphicx}
+\fi
+ \if@hyperref
+    \RequirePackage{hyperref}
+ \fi   
+\RequirePackage{calc}
+%Unused: \RequirePackage{eepic}
+\RequirePackage{ifthen}
+\RequirePackage{keyval}
+\RequirePackage{tikz}
+\RequirePackage{xspace}
+
+% Hyperreff options:
+\if@hyperref
+  \definecolor{darkblue}{rgb}{0,0,0.5}
+  \hypersetup{linkcolor=darkblue, citecolor=darkblue, urlcolor=darkblue}
+\ifpdf
+ \hypersetup{bookmarks,colorlinks,plainpages=false,pdfpagelabels}
+\else
+ \hypersetup{dvips,bookmarks,colorlinks}
+\fi
+\fi
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Define \IridiaTrCover options
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\define@key{COVER}{title}{\def\cover@title{#1}}
+\define@key{COVER}{author}{\def\cover@author{#1}}
+\define@key{COVER}{date}{\def\cover@date{#1}}  
+\define@key{COVER}{revdate}{\def\cover@revdate{\par\small Last revision: #1}}  
+\define@key{COVER}{number}{\def\cover@number{#1}}
+\define@key{COVER}{history}{\def\cover@history{\par\medskip
+    Revision history:\par\smallskip
+    \hspace*{2em}\begin{tabular}{@{TR/IRIDIA/}lr}#1\end{tabular}}}
+\define@key{COVER}{published}{\def\cover@published{#1}}
+
+\def\IridiaTrCover@example{\protect\IridiaTrCover[%\MessageBreak
+  author={Arne \protect\textsc{Brutschy} \protect\and Manuel \protect\textsc{L{\'o}pez-Ib{\'a}{\~n}ez}}, 
+  % \MessageBreak\space
+  date={March 2010}, %\MessageBreak\space
+  number={2010-001}]}%
+
+\def\IridiaTrCover@revexample{\protect\IridiaTrCover[%\MessageBreak
+  author={Arne \protect\textsc{Brutschy} \protect\and Manuel \protect\textsc{L{\'o}pez-Ib{\'a}{\~n}ez}}, 
+  % \MessageBreak\space
+  date={April 2005}, %\MessageBreak\space
+  number={2005-006},
+  revdate={March 2010},
+  history={2005-006.001 &April 2005\\
+    2005-006.002 &March 2010\\}]}%
+
+%
+% \IridiaTrCover parses the options and check missing ones.
+%
+\newcommand\IridiaTrCover[1][]{%
+  \setkeys{COVER}{#1}
+  \ifthenelse{\isundefined{\cover@title}}{\def\cover@title{\@title}}{\relax}
+  \ifthenelse{\isundefined{\cover@author}}{%
+    \@printCoverfalse\PackageError{IridiaTrCover}{Please use the option
+      author= of the command \protect\IridiaTrCover\space and
+      set author surnames using \protect\textsc, for
+      example: %\MessageBreak
+      \IridiaTrCover@example}{}%
+    % FIXME: It would be extremely nice to do the above automatically so we
+    % only needed to do the following:
+    % \def\cover@author{\@author}
+  }{\relax}
+  \ifthenelse{\isundefined{\cover@number}}{%
+    \@printCoverfalse\PackageError{IridiaTrCover}{Please use the option
+      number= of the command \protect\IridiaTrCover\space to
+      specify the number of this TR, for example: %\MessageBreak
+      \IridiaTrCover@example}{}%
+  }{\relax}
+  \ifthenelse{\isundefined{\cover@date}}{\def\cover@date{\@date}}{\relax}%
+  % If any of history or revdate are specified, then both have to be specified.
+  \ifthenelse{\isundefined{\cover@history}}{
+    \ifthenelse{\isundefined{\cover@revdate}}{%
+      % Both undefined, then OK
+      \def\cover@history{\relax}\def\cover@revdate{\relax}}{%
+      % revdate specified, error
+      \@printCoverfalse\PackageError{IridiaTrCover}{Please use the option
+        history= of the command \protect\IridiaTrCover\space to
+        specify the revision history, for example: %\MessageBreak
+        \IridiaTrCover@revexample}{}}}{%
+    \ifthenelse{\isundefined{\cover@revdate}}{%
+      % history defined, revdate undefined, then error
+      \@printCoverfalse\PackageError{IridiaTrCover}{Please use the option
+        revdate= of the command \protect\IridiaTrCover\space to
+        specify the date of the last revision, for example: %\MessageBreak
+        \IridiaTrCover@revexample}{}}{%
+      % Both defined, then OK
+      \relax}}
+  \if@printCover
+    \IridiaTrCover@Print
+  \fi
+  \@printCoverfalse
+}
+
+% FIXME: If we ever use package options, then we could make \maketitle
+% generate the cover automatically. However, right now, this is not
+% needed.
+% 
+%\let\maketitle@default\maketitle
+%\renewcommand{\maketitle}{%
+%  \if@printCover
+%    \IridiaTrCover@Print
+%  \fi
+%  \@printCoverfalse  
+%  \if@printTitle
+%  \maketitle@default
+%  \fi
+%}
+
+%
+% \IridiaTrCover@Print produces the cover.
+%
+\def\IridiaTrCover@Print{%
+  % This is to avoid the following pdfTeX warning (ext4):
+  % destination with the same identifier (name{page.b}) has been
+  % already used, duplicate ignored
+  \pagenumbering{alph}
+  \begin{tikzpicture}[remember picture,overlay]
+    \node[inner sep=0pt] at (current page.center) {\includegraphics[width=\paperwidth]{IridiaTrCover}};
+  \end{tikzpicture}
+  \begin{tikzpicture}[remember picture, overlay]
+    \node [above,shift={(105mm,156mm)}]  at (current page.south west)
+    {\makebox[0pt]{%
+  	\begin{minipage}[c][40mm]{130mm}
+  	  \begin{center}
+   	    {\usefont{OT1}{cmr}{b}{n} \fontsize{17.28pt}{22pt}\selectfont
+  	      \textbf{\cover@title} \par}
+  	  \end{center}
+        \end{minipage}}};
+    \node [above,shift={(105mm,138mm)}]  at (current page.south west)
+    {\makebox[0pt]{%
+        \begin{minipage}[c][17mm]{130mm}
+          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+          % FIXME: All the code below is to handle \and
+          % correctly. This should be moved to its own
+          % function. Bonus points for measuring the length of
+          % \cover@author and giving an error or adjusting it if it
+          % overflows the space available. Extra bonus points for
+          % parsing author surnames and adding \textsc{}
+          % automatically.
+          \newcounter{IridiaTr@authiter}
+          \newcounter{IridiaTr@authornum}
+          \def\lastandname{, and}%
+          \def\andname{and}%
+          \setbox0=\vbox{\setcounter{IridiaTr@authiter}{1}\def\and{\stepcounter{IridiaTr@authiter}}%
+            \def\thanks##1{}\cover@author}%
+          \global\value{IridiaTr@authornum}=\value{IridiaTr@authiter}%
+          \def\lastand{\ifnum\value{IridiaTr@authiter}=2\relax
+            \unskip{} \andname\
+            \else
+            \unskip \lastandname\
+            \fi}%
+          \def\and{\stepcounter{IridiaTr@authiter}\relax
+            \ifnum\value{IridiaTr@authiter}=\value{IridiaTr@authornum}%
+            \lastand
+            \else
+            \unskip,
+            \fi}%
+          \setcounter{IridiaTr@authiter}{1}%
+          % End of parsing \and
+          %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+          \begin{center}
+            {\usefont{OT1}{cmr}{m}{n}%
+              \fontsize{14pt}{18pt}\selectfont{\unboldmath\cover@author\unskip}\par}
+          \end{center}
+        \end{minipage}}}; 
+    \node [above,shift={(105mm,49mm)}]  at (current page.south west)   
+    {\makebox[0pt]{%
+        \begin{minipage}[c][34mm]{100mm}
+          \begin{center}
+            \vfill
+            {\usefont{OT1}{cmr}{b}{n} \fontsize{14.4pt}{21pt}\selectfont 
+              IRIDIA -- Technical Report Series}
+            \par\vfill
+            {\usefont{OT1}{cmr}{m}{n} \fontsize{14pt}{20pt}\selectfont
+              Technical Report No.\\[5pt]
+              TR/IRIDIA/\cover@number}
+            \par\vfill
+            {\usefont{OT1}{cmr}{m}{n} 
+              \fontsize{12pt}{16pt}\selectfont\cover@date \cover@revdate}
+            \vfill
+          \end{center}
+        \end{minipage}}};    
+    \node [above,shift={(105mm,14mm)}]  at (current page.south west)   
+    {\ifthenelse{\isundefined{\cover@published}}{\relax}{%
+        \makebox[0pt]{%	 
+          \begin{minipage}[c][10mm]{165mm}
+            {\usefont{OT1}{cmr}{m}{n} \fontsize{12pt}{16pt}\selectfont 
+              \cover@published \par}
+          \end{minipage}}}};
+  \end{tikzpicture}
+  % 
+  \thispagestyle{empty}
+  \clearpage
+  \if@stdHeadings
+     \pagestyle{myheadings}
+     \markboth%
+     {IRIDIA -- Technical Report Series: TR/IRIDIA/\cover@number}
+     {IRIDIA -- Technical Report Series: TR/IRIDIA/\cover@number}
+     \renewcommand\pagestyle[1]{\relax}
+     \renewcommand\markboth[2]{\relax}
+     \renewcommand\markright[1]{\relax}
+  \fi
+  % 
+  \thispagestyle{empty}
+  \begin{minipage}{.9\textwidth}
+    \shortstack{\textbf{IRIDIA -- Technical Report Series}\\
+      \hspace*{\fill}ISSN~1781-3794}\par
+    \bigskip
+    Published by:\par\smallskip
+    \begin{tabular}{l}
+      IRIDIA, {\small\em Institut de Recherches Interdisciplinaires}\\ 
+      \hspace*{\fill}
+      {\small\em et de D\'eveloppements en 
+        Intelligence Artificielle}\\
+      \textsc{Universit\'e Libre de Bruxelles}\\
+      Av F. D. Roosevelt 50, CP~194/6\\ 
+      1050 Bruxelles, Belgium
+    \end{tabular}
+    \par
+    \bigskip
+    Technical report number TR/IRIDIA/\cover@number
+    \cover@history
+  \end{minipage}
+  \vfill 
+  \begin{minipage}{.9\textwidth}
+    The information provided is the sole responsibility of the
+    authors and does not necessarily reflect the opinion of the
+    members of IRIDIA.  The authors take full responsibility for any
+    copyright breaches that may result from publication of this paper
+    in the IRIDIA -- Technical Report Series.  IRIDIA is not
+    responsible for any use that might be made of data appearing in
+    this publication.
+  \end{minipage}
+  \clearpage
+  % This is to avoid the following pdfTeX warning (ext4):
+  % destination with the same identifier (name{page.b}) has been
+  % already used, duplicate ignored
+  \pagenumbering{arabic}
+}
+\endinput
