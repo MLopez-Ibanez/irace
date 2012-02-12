@@ -5,6 +5,8 @@ TODO R package:
  * Read about vignette, what we need to do to convert/use the IRIDIA
    TR as the vignette.
 
+ * Move the README information to the TR to avoid duplication.
+
 TODO General:
 
  * irace.Rdata should keep a list with the all the eliteCandidates after each
