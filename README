@@ -94,7 +94,7 @@ Requisites
 -------------
 
  * R (http://www.r-project.org/).
-   Versions that work: 2.10
+   Versions that work: >= 2.9.2
    Versions that do not work: 2.4 and earlier.
 
  * The wrappers irace and parallel-irace require GNU Bash.
