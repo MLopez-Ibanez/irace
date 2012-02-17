@@ -5,8 +5,6 @@
 
 ## Most of the parameters are commented, which means the default values
 ## will be used. 
-## The only parameters that we set are parameterFile, execDir, instanceDir
-## and maxExperiments.
 
 ## File that contains the description of the parameters.
 parameterFile <- "./parameters-acotsp.txt"
@@ -47,7 +45,7 @@ instanceDir <- "./Instances"
 ## The maximum number of runs (invocations of hookRun) that will performed. It
 ## determines the (maximum) budget of experiments for the tuning, unless
 ## timeBudget is positive.
-maxExperiments <- 3000
+maxExperiments <- 1000
 
 ## The maximum computation time that should be used for tuning in
 ## seconds. This only works when tuning for time. 0 means no time
@@ -60,7 +58,7 @@ maxExperiments <- 3000
 
 ## Indicates the number of decimal places to be considered for the
 ## real parameters.
-# digits <- 4
+digits <- 2
 
 ## A value of 0 silences all debug messages. Higher values provide
 ## more verbose debug messages.

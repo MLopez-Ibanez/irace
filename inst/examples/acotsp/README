@@ -8,4 +8,9 @@ ACOTSP is a software that implements various Ant Colony algorithms
 for the symmetric Traveling Salesman Problem. 
 The ACOTSP software is available at:
 
-http://iridia.ulb.ac.be/~mdorigo/ACO/aco-code/public-software.html
+http://www.aco-metaheuristic.org/aco-code/
+
+TSP instances and more information is available at:
+
+http://iridia.ulb.ac.be/irace/
+

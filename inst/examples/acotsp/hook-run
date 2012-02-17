@@ -8,7 +8,7 @@
 # The rest ($* after `shift 2') are parameters to the run of ACOTSP
 #
 # RETURN VALUE:
-# This script prints nothing, only calls ACOTSP.
+# This hook should print a single numerical value (the value to be minimized)
 ###############################################################################
 
 # Path to the ACOTSP software:
@@ -16,7 +16,7 @@ EXE=~/bin/acotsp
 
 # What "fixed" parameters should be always passed to ACOTSP?
 # The time to be used is always 5 seconds, and we want only one run:
-FIXED_PARAMS=" --time 5 --tries 1 "
+FIXED_PARAMS=" --time 20 --tries 1 "
 
 # The instance name and the candidate id are the first parameters
 INSTANCE=$1
