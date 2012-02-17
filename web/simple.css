@@ -23,7 +23,8 @@
 
 h1 { color: #326fa3; font: 30px  'Lucida Grande', Geneva, Verdana, Arial, sans-serif; font-weight: bold;}
 
-h2 { color: #326fa3; font: 20px   'Lucida Grande', Geneva, Verdana, Arial, sans-serif; font-weight: bold;} 
+h2 { color: #326fa3; font: 20px   'Lucida Grande', Geneva, Verdana, Arial, sans-serif; font-weight: bold;
+} 
 
 h3 { color: #326fa3; font: 14px   'Lucida Grande', Geneva, Verdana, Arial, sans-serif; font-weight: bold;}
 
@@ -65,4 +66,17 @@ ol.publications li:before {
     margin-left: -5.5ex;
     content: "["counter(publication)"] ";
     counter-increment: publication;
+}
+
+table.data { background-color: #E6E6FA /*lavender*/; min-width: 800px; }
+table.data td {  border: 1px solid #C9D1D7; padding: 20px;  }
+table.toc {background-color: #F5F5F5 /*whitesmoke*/; border: 1px solid #C9D1D7; width: 38em}
+
+.coldefault {
+    text-align: center;
+    vertical-align: middle;
+}
+.coldescription { 
+    text-align: left;
+    max-width: 25ex; 
 }

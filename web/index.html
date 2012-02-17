@@ -10,8 +10,6 @@
  <link rel="icon" href="img/favicon.png" type="image/png">
  <link rel="stylesheet" type="text/css" media="screen,projection" href=
  "simple.css">
- <!-- link rel="stylesheet" type="text/css" media="screen,projection" href="css/style.css" -->
-
  <script type="text/javascript" src="files/ga.js">
 </script>
 
@@ -37,6 +35,8 @@
      <li><a href="#usage">People</a></li>
 
      <li><a href="#license">License</a></li>
+
+     <li><a href="#examples">Examples</a></li>
 
      <li><a href="#download">Download</a></li>
     </ul>
@@ -122,6 +122,43 @@
    GPL.</p>
    <hr>
 
+   <h2 id="examples">Examples</h2>
+
+   <table class="data" summary="Examples of tuning scenarios">
+    <colgroup>
+     <col span="3" class="coldefault">
+     <col class="coldescription">
+    </colgroup>
+
+    <tr>
+     <th>Scenario</th>
+
+     <th>Training instances</th>
+
+     <th>Testing instances</th>
+
+     <th>Comments</th>
+    </tr>
+
+    <tbody>
+     <tr>
+      <td>ACOTSP</td>
+
+      <td><a href="files/tsp-instances-training.tar.bz2">50 random euclidean
+      TSP instances (1000 cities)</a></td>
+
+      <td><a href="files/tsp-instances-testing.tar.bz2">50 random euclidean TSP
+      instances (1000 cities)</a></td>
+
+      <td>The files required to set up this tuning scenario are included in the
+      package at <code>inst/examples/acotsp/</code> (once installed at
+      <code>file.path(system.file(package="irace"), "inst",
+      "examples","acotsp")</code>.</td>
+     </tr>
+    </tbody>
+   </table>
+   <hr>
+
    <h2 id="download">Download</h2>
 
    <p>The software is provided as an R package available from CRAN. This means
@@ -166,7 +203,7 @@
    <!-- img style="padding: 5px;" alt="Get Firefox!" title="Get Firefox!" -->
     <!-- width="80" height="15" src="img/white_2.gif" --></p>
 
-   <p id="lastupdate"><!-- hhmts start -->Last modified: 12 February 2012<!-- hhmts end --></p>
+   <p id="lastupdate"><!-- hhmts start -->Last modified: 17 February 2012<!-- hhmts end --></p>
   </div><!-- counter.htm -->
  </div>
 </body>
