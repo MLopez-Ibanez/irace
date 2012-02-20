@@ -14,7 +14,7 @@
 # The rest ($* after `shift 2') are parameters to the run
 #
 # RETURN VALUE:
-# This script should print nothing.
+# This hook should print one numerical value: the cost that must be minimized.
 # Exit with 0 if no error, with 1 in case of error
 ###############################################################################
 EXE=~/bin/program
@@ -53,8 +53,6 @@ error() {
 # the first column of the only line starting with a digit.
 if [ -s "${STDOUT}" ]; then
     COST=$(cat ${STDOUT} | grep -e '^[[:space:]]*[+-]\?[0-9]' | cut -f1)
-    # If budget is given as time, this should print also the time as:
-    # echo $COST $TIME
     echo "$COST"
     rm -f "${STDOUT}" "${STDERR}"
     exit 0
