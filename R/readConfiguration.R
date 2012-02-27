@@ -48,14 +48,14 @@ readCandidatesFile <-
     # Loop over all parameters, in an order taken from the constraints
     for (currentParameter in namesParameters) {
       currentValue <- candidateTable[k, currentParameter]
-      currentType <- parameters$types[[currentParameter]]
+      type <- parameters$types[[currentParameter]]
       
       # Check the status of the constraints for this parameter to know
       # if it must be enabled or not.
       if (constraintsSatisfied(parameters, candidateTable[k, ], 
                                currentParameter)) {
         # Check that the value is among the valid ones.
-        if (currentType == "i" || currentType == "r") {
+        if (type == "i" || type == "r") {
           currentValue <- as.numeric(currentValue)
           lower <- oneParamLowerBound(currentParameter, parameters)
           upper <- oneParamUpperBound(currentParameter, parameters)
@@ -70,7 +70,7 @@ readCandidatesFile <-
             return(NULL)
           }
           # For integers, only accept an integer.
-          if (currentType == "i" && as.integer(currentValue) != currentValue) {
+          if (type == "i" && as.integer(currentValue) != currentValue) {
             tunerError ("Candidate n. ", k, " from file ", fileName,
                         " is invalid because parameter ", currentParameter,
                         " is of type integer but its value ",
@@ -103,7 +103,7 @@ readCandidatesFile <-
   # Fix up numeric columns.
   for (currentParameter in namesParameters) {
     type <- parameters$types[[currentParameter]]
-    if (currentType == "i" || currentType == "r") {
+    if (type == "i" || type == "r") {
       candidateTable[, currentParameter] <- as.numeric(candidateTable[, currentParameter])
     }
   }
