@@ -92,7 +92,7 @@ execDir            ""     "--exec-dir"     "./"           "Directory where the p
 "instanceFile"  ""  "--instance-file"  ""   "A file containing a list of instances and (optionally additional parameters for them." 
 "candidatesFile"  ""  "--candidates-file"  ""   "A file containing a list of initial candidates. If empty or NULL  do not use a file." 
 "hookRun"  ""  "--hook-run"  "./hook-run" "The script called for each candidate that launches the program to be tuned. See templates/." 
-"hookEvaluate"  ""  "--hook-evaluate"  "" "The scrip that provides a numeric value for each candidate. See templates/." 
+hookEvaluate  ""  --hook-evaluate  "" "Optional script that provides a numeric value for each candidate. See templates/hook-evaluate.tmpl" 
 "expName"  ""  "--exp-name"  "Experiment Name"  "Experiment name for output report." 
 "expDescription"  ""  "--exp-description"  "Experiment Description" "Longer experiment description for output report." 
 "maxExperiments"  ""  "--max-experiments"  1000 "The maximum number of runs (invocations of hookRun that will performed. It determines the (maximum budget of experiments for the tuning  unless timeBudget is positive."
