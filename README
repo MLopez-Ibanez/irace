@@ -24,12 +24,10 @@ methods:
 
 1. Install within R (automatic download):
 
-
         $ R
         > install.packages("irace")
 
    select a mirror close to you, and test the installation with
-
 
         > library(irace)
         > CTRL+d
@@ -50,6 +48,7 @@ you need to force a *local installation* by doing:
     $ R CMD INSTALL --library=~/R irace.tar.gz
     $ export R_LIBS=~/R:${R_LIBS}
 
+
 Once installed, test that it is working by doing:
 
     $ R
@@ -57,6 +56,7 @@ Once installed, test that it is working by doing:
     > system.file(package="irace")
     [1] "~/R/irace"
     
+
 The last command tells you the installation directory of `irace`. Save
 that path to a variable, and add it to your `.bash_profile`, `.bashrc`
 or `.profile`:
@@ -64,6 +64,7 @@ or `.profile`:
     export IRACE_HOME=~/R/irace/
     export PATH=${IRACE_HOME}/bin/:$PATH
     # export R_LIBS=~/R:${R_LIBS} # Only if local installation was forced
+
 
 After adding this, you should be able to invoke `irace` as follows:
 
