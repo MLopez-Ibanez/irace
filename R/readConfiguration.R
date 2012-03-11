@@ -304,6 +304,8 @@ printConfiguration <- function(tunerConfig)
     value <- ifelse(is.character(tunerConfig[[param]]),
                     paste("\"", tunerConfig[[param]], "\"", sep=""),
                     tunerConfig[[param]])
+    # FIXME: This does not handle multiple values (vectors, lists)
+    # like tunerConfig$instances.
     cat(param, "<-", value, "\n")
   }
   cat("### end of configuration\n")
