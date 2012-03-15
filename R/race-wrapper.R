@@ -196,7 +196,7 @@ race.wrapper <- function(candidate, task, which.alive, data)
   extra.params <- NULL
   if (!is.null (data$config$instances.extra.params)
       && !is.na (data$config$instances.extra.params[[instance.idx]]))
-    extra.params <- data$instances.extra.params[[instance.idx]]
+    extra.params <- data$config$instances.extra.params[[instance.idx]]
 
   ## FIXME: This is testing if this is the first candidate. If so, run
   ## and evaluate all candidates. Otherwise, just print the output for
