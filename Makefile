@@ -4,12 +4,11 @@ BINDIR=$(CURDIR)/..
 RNODE=iridiacluster
 RDIR=~/$(PACKAGE)
 INSTALL_FLAGS=
-MAJORVERSION=1.01
-PACKAGEVERSION=$(MAJORVERSION).$(REVNUM)
-VERSION=$(MAJORVERSION).$(SVN_REV)
+PACKAGEVERSION=1.01
+REALVERSION=$(PACKAGEVERSION).$(SVN_REV)
 DATE=$(shell date +%F)
 PACKAGEDIR=$(CURDIR)
-FTP_COMMANDS="user anonymous anonymous\nbinary\ncd incoming\nput $(PACKAGE)_$(PACKAGEVERSION).tar.gz\nquit\n"
+FTP_COMMANDS="user anonymous anonymous\nbinary\ncd incoming\nput $(PACKAGE)_$(PAPACKAGEVERSION).tar.gz\nquit\n"
 
 ## Do we have svnversion?
 ifeq ($(shell sh -c 'which svnversion 1> /dev/null 2>&1 && echo y'),y)
@@ -45,9 +44,9 @@ bumpdate: version
 	@sed -i 's/Date: .*$$/Date: \\tab $(DATE) \\cr/' $(PACKAGEDIR)/man/irace-package.Rd
 
 version :
-	echo 'irace.version <- "$(VERSION)"' > $(PACKAGEDIR)/R/version.R
-	@sed -i 's/Version:.*$$/Version: $(MAJORVERSION)/' $(PACKAGEDIR)/DESCRIPTION
-	@sed -i 's/Version:.*$$/Version: \\tab $(MAJORVERSION) \\cr/' $(PACKAGEDIR)/man/irace-package.Rd
+	echo 'irace.version <- "$(REALVERSION)"' > $(PACKAGEDIR)/R/version.R
+	@sed -i 's/Version:.*$$/Version: $(PACKAGEVERSION)/' $(PACKAGEDIR)/DESCRIPTION
+	@sed -i 's/Version:.*$$/Version: \\tab $(PACKAGEVERSION) \\cr/' $(PACKAGEDIR)/man/irace-package.Rd
 
 rsync : version
 ifdef RNODE
