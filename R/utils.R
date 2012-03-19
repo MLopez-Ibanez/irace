@@ -19,6 +19,10 @@ file.check <- function (file, executable = FALSE, readable = executable,
   EXEC <- 1 # See documentation of the function file.access()
   READ <- 4
 
+  ## Remove trailing slash if present for windows OS compatibility
+  if (substring(file, nchar(file), nchar(file)) == "/")
+    file <- substring(file, 1, nchar(file)-1)
+  
   if (!file.exists(file)) {
     stop (text, " '", file, "' does not exist")
     return(FALSE)
