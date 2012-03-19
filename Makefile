@@ -8,7 +8,7 @@ PACKAGEVERSION=1.01
 REALVERSION=$(PACKAGEVERSION).$(SVN_REV)
 DATE=$(shell date +%F)
 PACKAGEDIR=$(CURDIR)
-FTP_COMMANDS="user anonymous anonymous\nbinary\ncd incoming\nput $(PACKAGE)_$(PAPACKAGEVERSION).tar.gz\nquit\n"
+FTP_COMMANDS="user anonymous anonymous\nbinary\ncd incoming\nput $(PACKAGE)_$(PACKAGEVERSION).tar.gz\nquit\n"
 
 ## Do we have svnversion?
 ifeq ($(shell sh -c 'which svnversion 1> /dev/null 2>&1 && echo y'),y)
