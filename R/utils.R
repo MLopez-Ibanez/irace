@@ -20,8 +20,8 @@ file.check <- function (file, executable = FALSE, readable = executable,
   READ <- 4
 
   ## Remove trailing slash if present for windows OS compatibility
-  if (substring(file, nchar(file), nchar(file)) == "/")
-    file <- substring(file, 1, nchar(file)-1)
+  if (substring(file, nchar(file), nchar(file)) %in% c("/", "\\"))
+    file <- substring(file, 1, nchar(file) - 1)
   
   if (!file.exists(file)) {
     stop (text, " '", file, "' does not exist")

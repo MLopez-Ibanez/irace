@@ -1,4 +1,8 @@
 1.01
+
+ * Fix bug caused by file.exists (and possibly other functions)
+   not handling directory names with a trailing backslash or slash on
+   Windows.
  
  * Fix bug using per-instance parameters (Leslie Perez).
 
