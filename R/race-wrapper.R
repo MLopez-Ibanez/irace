@@ -236,11 +236,11 @@ race.wrapper <- function(candidate, task, which.alive, data)
                             instance = instance, extra.params = extra.params,
                             config = data$config)
       } else {
-        library(multicore, quietly = TRUE)
+        library("multicore", quietly = TRUE)
         .irace$hook.output <-
-          mclapply(candidates, .irace$hook.run, mc.cores = parallel,
-                   instance = instance, extra.params = extra.params,
-                   config = data$config)
+          multicore::mclapply(candidates, .irace$hook.run, mc.cores = parallel,
+                              instance = instance, extra.params = extra.params,
+                              config = data$config)
       }
     } else if (sgeCluster) {
       .irace$hook.output <-
