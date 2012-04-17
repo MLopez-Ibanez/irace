@@ -175,7 +175,7 @@ irace.cmdline <- function(args = commandArgs (trailingOnly = TRUE))
   if (!is.null(readArgOrDefault (args,
                                  short = "-h", long="--help", default = NULL))) {
     irace.usage()
-    q()
+    return(invisible(NULL))
   }
   
   cat ("irace\tversion", irace.version, "\n\n")
