@@ -1,3 +1,5 @@
+ * irace.cmdline ("--help") does not try to quit R anymore.
+
 1.01
 
  * Fix bug caused by file.exists (and possibly other functions)
