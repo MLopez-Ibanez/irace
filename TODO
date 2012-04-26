@@ -9,6 +9,8 @@ TODO R package:
 
 TODO General:
 
+ * How to avoid that MPI creates so many log files?
+
  * irace.Rdata should keep a list with the all the eliteCandidates after each
    race. Right now we only keep the best one.
 
