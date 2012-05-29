@@ -32,10 +32,11 @@ JOBNAME=irace-$$
 #MACHINE=opteron244
 #MACHINE=opteron2216
 #MACHINE=xeon5410
-MACHINE=opteron6128
+MACHINE=opteron6272
 
 MPIRUN=/opt/openmpi/bin/mpirun
-PARALLEL_ENV=mpich_fu
+#PARALLEL_ENV=mpich_fu
+PARALLEL_ENV=mpich_rr
 let NB_PARALLEL_PROCESS=NB_SLAVES+1
 
 exec qsub <<EOF
