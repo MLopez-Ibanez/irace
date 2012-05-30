@@ -1,5 +1,10 @@
 #!/bin/sh
 
+if [ $# == 0 ]; then
+    echo "Usage: ./tune-main-cluster <BINDIR> <EXECDIR> additional_args_to_irace"
+    exit 1
+fi
+
 BINDIR=$1
 EXECDIR=$2
 shift 2
@@ -7,7 +12,7 @@ shift 2
 #MACHINE=opteron244
 #MACHINE=opteron2216
 #MACHINE=xeon5410
-MACHINE=opteron6128
+MACHINE=opteron6272
 
 
 exec qsub <<EOF
