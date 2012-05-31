@@ -1,0 +1,4 @@
+#!/bin/bash
+# Parse the output of irace and print the best candidates as commandlines.
+# FIXME: A better way to do this would be to have an R script that reads the irace.Rdat file.
+tail -n 50 $@ | grep -A 50 "^[ ]*command$" | grep "^[0-9]" | cut -f2- -d ' ' | sed 's/^\(.*\)$/" \1 ",/'
