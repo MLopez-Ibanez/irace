@@ -168,9 +168,9 @@ candidates.print <- function(cand, metadata = FALSE)
 
 candidates.print.command <- function(cand, parameters)
 {
+  if (nrow(cand) <= 0) return(invisible())
   rownames(cand) <- cand$.ID.
   cand <- removeCandidatesMetaData(cand)
-  if (nrow(cand) <= 0) return(invisible())
   print(data.frame(command =
                    apply(cand[,unlist(parameters$names), drop = FALSE],
                          1, buildCommandLine, switches = parameters$switches),
