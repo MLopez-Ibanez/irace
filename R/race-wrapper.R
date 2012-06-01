@@ -211,13 +211,6 @@ race.wrapper <- function(candidate, task, which.alive, data)
       cnd <- data$candidates[candi, , drop = FALSE]
       for (i in seq_len (data$parameters$nbParameters)) {
         name <- data$parameters$names[[i]]
-        value <- cnd[[name]]
-        type <- data$parameters$types[[name]]
-        # FIXME: This should not be necessary if data$candidates
-        # always has correctly rounded values.
-        if (!is.na(value) && type == "r") {
-          value <- round(value, digits)
-        }
         values[[name]] <- cnd[[name]]
       }
       candidates[[k]] <- list(index = candi, values = values,
