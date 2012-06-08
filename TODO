@@ -9,6 +9,9 @@ TODO R package:
 
 TODO General:
 
+ * Make tune-main, tune-main-cluster, tune-main-mpi and other scripts
+   use /tmp as much as possible.
+
  * How to avoid that MPI creates so many log files?
 
  * irace.Rdata should keep a list with the all the eliteCandidates after each
