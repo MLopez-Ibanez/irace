@@ -21,16 +21,16 @@ candidates.equal <- function(x, y, parameters, threshold)
       next
     } else if (xor(is.na (X), is.na(Y))) {
       # Distance is 1.0, so not equal
-      return (FALSE)
+      return(FALSE)
     } else if (type == "i" || type == "r") {
       lower <- oneParamLowerBound(param, parameters)
       upper <- oneParamUpperBound(param, parameters)
       d <- max(d, abs((as.numeric(X) - as.numeric(Y)) / (upper - lower)))
-      if (d > threshold) return (FALSE)
+      if (d > threshold) return(FALSE)
     } else {
       stopifnot(type == "c" || type == "o")
       # Distance is 1.0, so definitely not equal.
-      if (X != Y) return (FALSE)
+      if (X != Y) return(FALSE)
     }
   }
   ## cat ("X:\n")
@@ -38,10 +38,10 @@ candidates.equal <- function(x, y, parameters, threshold)
   ## cat ("Y:\n")
   ## print (y)
   ## cat ("D = ", d, "\n")
-  return (TRUE)
+  return(TRUE)
 }
 
-similarCandidates <- function(candidates, parameters)
+similarCandidates.old <- function(candidates, parameters)
 {
   similar <- c()
   num.candidates <- nrow(candidates)
@@ -60,7 +60,136 @@ similarCandidates <- function(candidates, parameters)
   }
   cat(" DONE\n")
   #cat("# ", format(Sys.time(), usetz=TRUE), " similarCandidates() DONE\n")
-  return (unique(similar))
+  return(unique(similar))
+}
+
+##
+## Numerical candidates similarity function
+##
+numeric.candidates.equal <- function(x, candidates, parameters, threshold, param.names)
+{
+  d <- rep(0.0, nrow(candidates))
+  bmat <- matrix(TRUE, nrow=nrow(candidates),ncol=length(param.names))
+  selected <- 1:nrow(candidates)
+  for (i in seq_along(param.names)) {
+    param <- param.names[i]
+    lower <- oneParamLowerBound(param, parameters)
+    upper <- oneParamUpperBound(param, parameters)
+ 
+    X <- x[[param]]
+    y <- candidates[,param]
+    for (j in seq_len(nrow(bmat))) { # Candidates loop
+      Y <- y[selected[j]]
+      if (is.na (X) && is.na(Y)) { # Both NA, just ignore this param
+        next
+      } else if (xor(is.na (X), is.na(Y))) { # Distance is 1.0, so not equal
+        bmat[j,i] <- FALSE 
+      } else {
+        d[j] <- max(d[j], abs((as.numeric(X) - as.numeric(Y)) / (upper - lower)))
+        if (d[j] > threshold) bmat[j,i] <- FALSE
+      }
+    }
+    index <- which(apply(bmat,1,all))
+    bmat <- bmat[index, , drop=FALSE]
+    d <- d[index]
+    selected  <- selected[index]
+    if (nrow(bmat) == 0) break
+  }
+  
+  similar <- c()
+  if (length(selected) != 0)
+    similar <- c(x[[".ID."]], candidates[selected,".ID."])
+  
+  return(similar)
+}
+
+##
+## New similar candidates function categorical+numerical
+##
+similarCandidates.new <- function(candidates, parameters) {
+  cat ("# Computing similarity of candidates ")
+
+  listCater <- c()
+  listNumer <- c()
+
+  # Create vectors of categorical and numerical
+  # Change the name to vectorCater, vectorNumer!
+  for (p in parameters$names) {
+    if (parameters$isFixed[[p]]) next
+    if (parameters$types[[p]] %in% c("c","o")) {
+      listCater <- c(listCater, p)
+    } else {
+      listNumer <- c(listNumer, p)
+    }
+  }
+  
+  nbCater <- length(listCater)
+  nbNumer <- length(listNumer)
+  
+  ### CATEGORICAL/ORDINAL FILTERING ####
+  if (nbCater > 0) {
+    ## Build an array with the categorical append together in a string
+    strings <- c()
+    for (i in 1:nrow(candidates)) {
+      strings[i] <- paste(candidates[i, listCater], collapse=" ; ")
+    }
+    if (nbNumer != 0) candidates <- candidates[, c(".ID.", listNumer)]
+    ord.strings <- order(strings)
+    candidates <- candidates[ord.strings, ]
+    strings <- strings[ord.strings]
+
+    ## keep similar (index i == true means is the same as i + 1)
+    similarIdx <- strings[-length(strings)] == strings[-1]
+    
+    ## Now let's get just a FALSE if we remove it, TRUE otherwise:
+    keepIdx <- c(similarIdx[1],
+                 (similarIdx[-1] | similarIdx[-length(similarIdx)]),
+                 similarIdx[length(similarIdx)])
+    
+    ## filtering them out:
+    candidates <- candidates [keepIdx, , drop=FALSE]
+
+    ## if everything is already filtered out, return
+    if (nrow(candidates) == 0)
+      return(NULL)
+  }
+
+  ### NUMERICAL PARAMETERS ###
+  if (nbNumer > 0) {
+    similar <- c()
+    num.candidates <- nrow(candidates)
+
+    ## Compare numerical candidates
+    for (i in seq_len(num.candidates - 1)) {
+      similar <- c(similar,
+                   numeric.candidates.equal(candidates[i, ], candidates[(i+1):nrow(candidates),],
+                                            parameters, threshold = 0.00000001, param.names = listNumer))
+      cat(".")
+    }
+    similar <- unique(similar)
+    candidates <- candidates[candidates[, ".ID."] %in% similar,]
+  }
+
+  cat(" DONE\n")
+  if (nrow(candidates) == 0) {
+    return (NULL)
+  } else {
+    return(candidates[,".ID."])
+  }
+}
+
+
+similarCandidates <- function(candidates, parameters) {
+  similarIds.old <- similarCandidates.old (candidates,parameters)
+  similarIds.new <- similarCandidates.new (candidates,parameters)
+  
+  if (!setequal(similarIds.old, similarIds.new)) {
+    tunerError("\nSimilar Candidates Error:\n",
+               "Old: ",similarIds.old, "\nNew: ", similarIds.new,
+               "\nIntersect:", intersect(similarIds.old, similarIds.new),
+               "\nLength: ", length(intersect(similarIds.old,similarIds.new)), "\n")
+  }
+  return(similarIds.new)
 }
 
 ## Number of iterations.
@@ -118,7 +247,7 @@ oneIterationRace <-
   expResults <- as.data.frame(matrix(ncol = 2, nrow = nrow(result$results)))
   colnames(expResults) <- c("instance", "iteration")
   # Fill instances (Iter will be outside this function)
-  expResults$instance <- result$race.data$instances[1:result$no.tasks]
+  expResults$instance <- result$race.data$race.instances[1:result$no.tasks]
   # cbind matrix and two new columns
   expResults <- cbind(expResults, result$results)
   
