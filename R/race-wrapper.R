@@ -191,7 +191,7 @@ race.wrapper <- function(candidate, task, which.alive, data)
   stopifnot (data$parameters$nbParameters > 0)
   stopifnot (length(data$parameters$names) == data$parameters$nbParameters)
   
-  instance.idx <- data$race.instances[task];
+  instance.idx <- data$race.instances[task]
   instance <- data$config$instances[[instance.idx]]
   extra.params <- NULL
   if (!is.null (data$config$instances.extra.params)
