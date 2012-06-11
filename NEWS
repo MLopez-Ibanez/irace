@@ -1,3 +1,8 @@
+ * Faster computation of similar candidates (Jeremie Dubois-Lacoste
+   and Leslie Perez).
+
+ * Fix bug when saving instances in tunerResults$experiments.
+
  * irace.cmdline ("--help") does not try to quit R anymore.
 
 1.01
