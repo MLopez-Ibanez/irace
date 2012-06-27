@@ -48,7 +48,6 @@ race<-function(maxExp=0,
                first.test=5,
                each.test=1,
                interactive=TRUE,
-               log.file="",
                stop.min.cand=1,
                ...){
 
@@ -99,12 +98,6 @@ race<-function(maxExp=0,
       (!is.logical(interactive) || length(interactive)!=1))
     stop("interactive must be a logical")
 
-  # Check argument: log.file
-  if (.Platform$OS.type=="unix")
-    if (!missing(log.file) && (log.file!="") && 
-        (system(paste("touch",log.file),ignore.stderr=TRUE)!=0))
-      stop(paste("I cannot create file ",log.file,sep=""))
-  
   # Run init function
   if (exists(.slave.init.function,inherits=TRUE,mode="function")){
     race.data<-do.call(.slave.init.function,list(...))
@@ -241,6 +234,7 @@ race<-function(maxExp=0,
   no.subtasks.sofar<-0
   
   # Define some functions...
+  # FIXME: Keep only what we need!
   log.list<-function(end=FALSE){
     timestamp.current<-date()
     log<-list(precis=precis,
@@ -270,13 +264,6 @@ race<-function(maxExp=0,
     return(log)
   }
   
-  logger<-function(){
-    if (log.file!=""){
-      log<-log.list()
-      save(log,file=log.file)
-    }
-  }
-   
   aux2.friedman<-function(y,I=1:ncol(y),n=nrow(y),conf.level=0.95){
     k<-length(I)
     r<-t(apply(y[1:n,I], 1, rank))
@@ -457,9 +444,9 @@ race<-function(maxExp=0,
         tmpResults <- Results[1:no.subtasks.sofar, which.alive]
         stopifnot(!any(is.na(tmpResults)))
         if (stat.test == "friedman") {
-          race.ranks <- apply(t(apply(tmpResults, 1, rank)), 2, mean)
+          race.ranks <- colSums(t(apply(tmpResults, 1, rank)))
         } else {
-          race.ranks <- apply(tmpResults, 2, mean)
+          race.ranks <- colMeans(tmpResults)
         }
         best <- which.alive[order(race.ranks)[1]]
       }
@@ -483,7 +470,6 @@ race<-function(maxExp=0,
     	if(length(which.alive) <= stop.min.cand)
     	break	
    }
-    logger()
   }
 
   if (exists(.slave.describe.function,inherits=TRUE,mode="function"))
