@@ -201,7 +201,7 @@ race.wrapper <- function(candidate, task, which.alive, data)
   ## FIXME: This is testing if this is the first candidate. If so, run
   ## and evaluate all candidates. Otherwise, just print the output for
   ## the corresponding candidate.  This is an awful historical
-  ## artifact because of the way the first ifrace was developed on top
+  ## artifact because of the way the first irace was developed on top
   ## of race.
   if (candidate == which.alive[1]) {
     candidates <- vector("list", length(which.alive))
