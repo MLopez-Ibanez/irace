@@ -1,10 +1,3 @@
-#' Package description
-#' 
-#' package full description
-#' @name essai
-#' @docType package
-NA
-
 candidates.equal <- function(x, y, parameters, threshold)
 {
   d <- 0.0
@@ -28,7 +21,7 @@ candidates.equal <- function(x, y, parameters, threshold)
       d <- max(d, abs((as.numeric(X) - as.numeric(Y)) / (upper - lower)))
       if (d > threshold) return(FALSE)
     } else {
-      stopifnot(type == "c" || type == "o")
+      irace.assert(type == "c" || type == "o")
       # Distance is 1.0, so definitely not equal.
       if (X != Y) return(FALSE)
     }
@@ -260,9 +253,9 @@ oneIterationRace <-
   candidates <- candidates[order(as.numeric(candidates[, ".RANK."])), ]
 
   # Consistency check
-  stopifnot (all(as.logical(candidates[1:(result$no.alive), ".ALIVE."])))
+  irace.assert (all(as.logical(candidates[1:(result$no.alive), ".ALIVE."])))
   if (result$no.alive < nrow(candidates))
-    stopifnot(!any(as.logical(candidates[(result$no.alive + 1):nrow(candidates) , ".ALIVE."])))
+    irace.assert(!any(as.logical(candidates[(result$no.alive + 1):nrow(candidates) , ".ALIVE."])))
 
   return (list (nbAlive = result$no.alive,
                 experimentsUsed = result$no.experiments,
@@ -295,12 +288,12 @@ irace <- function(tunerConfig = stop("parameter `tunerConfig' is mandatory."),
   set.seed(tunerConfig$seed)
   debugLevel <- tunerConfig$debugLevel
 
-  # Data.frame of all candidates ever generated.
+  # Data frame of all candidates ever generated.
   namesParameters <- names(parameters$constraints)
   if (!is.null(tunerConfig$candidatesFile)
       && tunerConfig$candidatesFile != "") {
     allCandidates <- readCandidatesFile(tunerConfig$candidatesFile,
-                                                parameters, debugLevel)
+                                        parameters, debugLevel)
     allCandidates <- cbind(.ID. = 1:nrow(allCandidates),
                            allCandidates,
                            .PARENT. = NA)
@@ -460,6 +453,8 @@ irace <- function(tunerConfig = stop("parameter `tunerConfig' is mandatory."),
         allCandidates <- rbind(allCandidates, newCandidates)
         rownames(allCandidates) <- allCandidates$.ID.
       }
+      # FIXME: We should probably also truncate allCandidates like this:
+      # testCandidates <- allCandidates <- allCandidates[1:nbCandidates,]
       testCandidates <- allCandidates[1:nbCandidates,]
     } else {
       # How many new candidates should be sampled?
