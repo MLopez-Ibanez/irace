@@ -311,21 +311,21 @@ race<-function(maxExp=0,
         if (median(V1-V2)<0){
           best<<-which.alive[1]
           alive[which.alive[2]]<<-FALSE
-          race.ranks<<-c(1)
+          race.ranks <<- c(1,2)
         }else{
           best<<-which.alive[2]
           alive[which.alive[1]]<<-FALSE
-          race.ranks<<-c(1)
+          race.ranks <<- c(2,1)
         }
       }else{
         if (interactive)
           cat("|=|")
         if (median(V1-V2)<0){
           best<<-which.alive[1]
-          race.ranks<<-c(1,2)
+          race.ranks <<- c(1,2)
         }else{
           best<<-which.alive[2]
-          race.ranks<<-c(2,1)
+          race.ranks <<- c(2,1)
         }
       }
     }else{
@@ -442,7 +442,7 @@ race<-function(maxExp=0,
         best <- order(race.ranks)[1]
       } else  {
         tmpResults <- Results[1:no.subtasks.sofar, which.alive]
-        stopifnot(!any(is.na(tmpResults)))
+        irace.assert(!any(is.na(tmpResults)))
         if (stat.test == "friedman") {
           race.ranks <- colSums(t(apply(tmpResults, 1, rank)))
         } else {
@@ -451,10 +451,14 @@ race<-function(maxExp=0,
         best <- which.alive[order(race.ranks)[1]]
       }
     }
-    stopifnot (best == which.alive[order(race.ranks)][1])
-    race.ranks <- race.ranks[which(which.alive %in% which(alive))]
-
-    mean.best<-mean(Results[1:(no.subtasks.sofar),best])
+    irace.assert(best == which.alive[order(race.ranks)][1])
+    irace.assert(length(race.ranks) == length(which.alive))
+    # Remove the ranks of those that are not alive anymore
+    race.ranks <- race.ranks[which.alive %in% which(alive)]
+    irace.assert(length(race.ranks) == sum(alive))
+    # FIXME: This is the mean of the best, but perhaps it should be
+    # the sum of ranks in the case of test == friedman?
+    mean.best <- mean(Results[1:no.subtasks.sofar, best])
 
     if (interactive) 
       cat(paste(formatC(no.tasks.sofar,width=11),"|",
