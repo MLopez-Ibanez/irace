@@ -22,8 +22,7 @@ irace.assert <- function(exp)
 }
 
 file.check <- function (file, executable = FALSE, readable = executable,
-                        isdir = FALSE, notempty = FALSE,
-                        text = NULL)
+                        isdir = FALSE, notempty = FALSE, text = NULL)
 {
   EXEC <- 1 # See documentation of the function file.access()
   READ <- 4
@@ -61,8 +60,8 @@ file.check <- function (file, executable = FALSE, readable = executable,
   return (TRUE)
 }
 
-is.wholenumber <-
-  function(x, tol = .Machine$double.eps^0.5)  abs(x - round(x)) < tol
+is.wholenumber <- function(x, tol = .Machine$double.eps^0.5)
+  { abs(x - round(x)) < tol }
 
 is.null.or.na <- function(x)
 {
@@ -195,7 +194,7 @@ mpiInit <- function(nslaves)
   # Load the R MPI package if it is not already loaded. 
   if (!is.loaded("mpi_initialize")) {
     if (! require("Rmpi", quietly = TRUE))
-      stop("the `Rmpi' package is required for using MPI.")
+      stop("The `Rmpi' package is required for using MPI.")
 
     # When R exits, finalize MPI.
     # FIXME: This is equivalent to .Last <<- function()
