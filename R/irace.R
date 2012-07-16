@@ -178,8 +178,8 @@ similarCandidates <- function(candidates, parameters) {
   
   if (!setequal(similarIds.old, similarIds.new)) {
     tunerError("\nSimilar Candidates Error:\n",
-               "Old: ",similarIds.old, "\nNew: ", similarIds.new,
-               "\nIntersect:", intersect(similarIds.old, similarIds.new),
+               "Old: ", paste(similarIds.old), "\nNew: ", paste(similarIds.new),
+               "\nIntersect:", paste(intersect(similarIds.old, similarIds.new)),
                "\nLength: ", length(intersect(similarIds.old,similarIds.new)), "\n")
   }
   return(similarIds.new)
