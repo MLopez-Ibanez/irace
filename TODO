@@ -91,9 +91,10 @@ TODO General:
 
  * Error messages start in uppercase and finish with a period.
 
- * Use stop() for internal error, stopifnot() for asserts and
-   tunerError() for user-level errors. None of these functions nor
-   cat() require pasting their arguments.
+ * Use tunerError() for user-level errors and irace.assert() for
+   internal assertions. All stopfinot() should be irace.assert(). Some
+   stop() should be tunerError(), a few should be irace.assert(). None
+   of these functions nor cat() require pasting their arguments.
 
  * Do not add extra parenthesis around simple expressions. Example:
       if ( (!file.exists(installDir)) ) has too many parenthesis.
