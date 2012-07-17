@@ -57,6 +57,24 @@ TODO General:
    convergence than trying to "flat" the vectors when it is already
    too late.
 
+ * JEREMIE: The way we handle initial candidates is to simply inject
+   them among other candidates generated randomly. When we know some
+   very good initial candidates, it could be interesting to sample the
+   remaining ones from them. In other words, to consider the
+   candidates provided as we consider elites between races. This would
+   easily allows to hot-start a tuning with the results of a previous
+   one. I have a real need for this.
+
+ * JEREMIE: AFAK, there are very few (no?) state-of-the-art algorithms
+   in optimization that do not use local search. I am not aware of any
+   GA, for instance, that cannot be outperformed by its memetic
+   counter-part. This is a strong motivation to try to include a
+   local-search component into irace, since irace is performing search
+   rather globally. I would like to implement a quick&dirty
+   improvement of the winner at the end, testing values slightly
+   smaller/bigger, parameter by parameter (at least 'r', 'i' and 'o'
+   ones). Should not requires much evaluations.
+  
  * Somehow adapt how many instances should be seen.  Maybe such
    choices should be done based on the perceived heterogeneity of the
    instances; I think this is an issue we also could discuss. I also
