@@ -39,13 +39,13 @@ MPIRUN=/opt/openmpi/bin/mpirun
 PARALLEL_ENV=mpich_rr
 let NB_PARALLEL_PROCESS=NB_SLAVES+1
 
-exec qsub <<EOF
+exec qsub -v PATH <<EOF
 #!/bin/sh
 #$ -N $JOBNAME
 #$ -l $MACHINE 
 #$ -l $QUEUE
 #$ -pe $PARALLEL_ENV $NB_PARALLEL_PROCESS 
-#$ -m ase 
+#$ -m ase
 #      b     Mail is sent at the beginning of the job.
 #      e     Mail is sent at the end of the job.
 #      a     Mail is sent when the job is aborted or rescheduled.
