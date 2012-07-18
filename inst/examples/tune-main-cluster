@@ -15,7 +15,7 @@ shift 2
 MACHINE=opteron6272
 
 
-exec qsub <<EOF
+exec qsub -v PATH <<EOF
 #!/bin/bash
 #$ -N irace-$$
 #$ -l $MACHINE
@@ -31,9 +31,10 @@ exec qsub <<EOF
 #$ -cwd
 
 # Working on /tmp should be faster
-TMP=\$(mktemp -d)
-exec 1> \${TMP}/irace-$$.stdout
-$BINDIR/irace --exec-dir=\$TMP $* 
+TMP=\$(mktemp -d -t \${HOSTNAME}-XXXXXXXXXX)
+exec 1> \$TMP/irace-$$.stdout
+echo \$TMP/irace-$$.stdout >&2
+$BINDIR/irace --exec-dir=\$TMP $*
 RET=\$?
 cp -R \$TMP/./ $EXECDIR/
 rm -rf \$TMP
