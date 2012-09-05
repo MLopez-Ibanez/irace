@@ -61,7 +61,7 @@ The last command tells you the installation directory of `irace`. Save
 that path to a variable, and add it to your `.bash_profile`, `.bashrc`
 or `.profile`:
 
-    export IRACE_HOME=~/R/irace/
+    export IRACE_HOME=~/R/irace/ # Path given by system.file(package="irace")
     export PATH=${IRACE_HOME}/bin/:$PATH
     # export R_LIBS=~/R:${R_LIBS} # Only if local installation was forced
 
