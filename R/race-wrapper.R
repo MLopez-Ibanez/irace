@@ -45,8 +45,7 @@ race.init <- function(candidates, parameters, config)
 race.info <- function(data)
   return(list(race.name = data$config$expName, 
               no.candidates = data$no.candidates, 
-              no.tasks = data$no.tasks, 
-              extra = data$config$expDescription))
+              no.tasks = data$no.tasks))
 
 check.output <- function(output, command = "", config = stop("config needed"))
 {

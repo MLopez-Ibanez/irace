@@ -94,7 +94,6 @@ execDir            ""     "--exec-dir"     "./"           "Directory where the p
 "hookRun"  ""  "--hook-run"  "./hook-run" "The script called for each candidate that launches the program to be tuned. See templates/." 
 hookEvaluate  ""  --hook-evaluate  "" "Optional script that provides a numeric value for each candidate. See templates/hook-evaluate.tmpl" 
 "expName"  ""  "--exp-name"  "Experiment Name"  "Experiment name for output report." 
-"expDescription"  ""  "--exp-description"  "Experiment Description" "Longer experiment description for output report." 
 "maxExperiments"  ""  "--max-experiments"  1000 "The maximum number of runs (invocations of hookRun) that will be performed. It determines the maximum budget of experiments for the tuning unless timeBudget is positive."
 "timeBudget"  ""  "--time-budget"  0 "The maximum computation time that should be used for tuning. This only works when tuning for time. 0 means no time limit (then it uses maxExperiments)."
 "timeEstimate"  ""  "--time-estimate"  0  "An estimation of the average time required for one experiment. Only required if timeBudget is positive."
