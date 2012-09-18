@@ -1,3 +1,5 @@
+ * expDescription parameter was removed.
+
  * Faster computation of similar candidates (Jeremie Dubois-Lacoste
    and Leslie Perez).
 
