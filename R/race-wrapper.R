@@ -222,7 +222,7 @@ race.wrapper <- function(candidate, task, which.alive, data)
     cwd <- setwd (execDir)
     if (parallel > 1) {
       if (mpi) {
-        mpiInit(parallel)
+        mpiInit(parallel, data$config$debugLevel)
         .irace$hook.output <-
           Rmpi::mpi.applyLB(candidates, .irace$hook.run,
                             instance = instance, extra.params = extra.params,

@@ -189,7 +189,7 @@ candidates.print.command <- function(cand, parameters)
 # FIXME: This may not work when working interactively. For example,
 # one cannot change the number of slaves. Using .Last is dangerous
 # because other package or the user may override it.
-mpiInit <- function(nslaves)
+mpiInit <- function(nslaves, debugLevel = 0)
 {
   # Load the R MPI package if it is not already loaded. 
   if (!is.loaded("mpi_initialize")) {
@@ -210,6 +210,10 @@ mpiInit <- function(nslaves)
       }
     }, .GlobalEnv)
     # Create slaves
-    Rmpi::mpi.spawn.Rslaves(nslaves = nslaves)
+    if (debugLevel >= 1) {
+      Rmpi::mpi.spawn.Rslaves(nslaves = nslaves, quiet=FALSE)
+    } else {
+      Rmpi::mpi.spawn.Rslaves(nslaves = nslaves, quiet=TRUE)
+    }
   }
 }
