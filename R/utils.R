@@ -210,10 +210,6 @@ mpiInit <- function(nslaves, debugLevel = 0)
       }
     }, .GlobalEnv)
     # Create slaves
-    if (debugLevel >= 1) {
-      Rmpi::mpi.spawn.Rslaves(nslaves = nslaves, quiet=FALSE)
-    } else {
-      Rmpi::mpi.spawn.Rslaves(nslaves = nslaves, quiet=TRUE)
-    }
+    Rmpi::mpi.spawn.Rslaves(nslaves = nslaves, quiet = (debugLevel == 0))
   }
 }

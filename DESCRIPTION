@@ -8,7 +8,7 @@ Author: Manuel López-Ibáñez, Jérémie Dubois-Lacoste,
         Thomas Stützle, Mauro Birattari, Eric Yuan and Prasanna Balaprakash
 Description: Iterated racing for automatic algorithm configuration
 Depends: R (>= 2.9.2)
-Suggests: multicore, Rmpi
+Suggests: multicore, Rmpi (>= 0.6.0)
 License: GPL (>= 2)
 URL: http://iridia.ulb.ac.be/irace
 LazyLoad: true
