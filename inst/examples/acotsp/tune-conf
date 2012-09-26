@@ -12,12 +12,8 @@ parameterFile <- "./parameters-acotsp.txt"
 ## Directory where the programs will be run.
 execDir <- "./acotsp-arena"
 
-## File (if relative path, relative to execDir) to save tuning 
-## results as an R dataset.
-# logFile <- "./irace.Rdata"
-
 ## Folder where tuning instances are located, either absolute or
-## relative to execDir.
+## relative to working directory.
 instanceDir <- "./Instances"
 
 ## File with a list of instances and (optionally) parameters.
