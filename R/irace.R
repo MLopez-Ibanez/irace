@@ -39,7 +39,7 @@ similarCandidates.old <- function(candidates, parameters)
   similar <- c()
   num.candidates <- nrow(candidates)
   #cat("# ", format(Sys.time(), usetz=TRUE), " similarCandidates()\n")
-  cat ("# Computing similarity of candidates ")
+  #cat ("# Computing similarity of candidates ")
   for (i in seq_len(num.candidates - 1)) {
     for (j in ((i+1):num.candidates)) {
       if (i == j) next
@@ -49,9 +49,9 @@ similarCandidates.old <- function(candidates, parameters)
         similar <- c(similar, candidates[i,".ID."], candidates[j,".ID."])
       }
     }
-    cat(".")
+    #cat(".")
   }
-  cat(" DONE\n")
+  #cat(" DONE\n")
   #cat("# ", format(Sys.time(), usetz=TRUE), " similarCandidates() DONE\n")
   return(unique(similar))
 }
@@ -99,8 +99,11 @@ numeric.candidates.equal <- function(x, candidates, parameters, threshold, param
 ##
 ## New similar candidates function categorical+numerical
 ##
-similarCandidates.new <- function(candidates, parameters) {
-  cat ("# Computing similarity of candidates ")
+similarCandidates.new <- function(candidates, parameters)
+{
+  debug.level <- getOption(".irace.debug.level")
+  
+  if (debug.level >= 1) cat ("# Computing similarity of candidates .")
 
   listCater <- c()
   listNumer <- c()
@@ -143,8 +146,10 @@ similarCandidates.new <- function(candidates, parameters) {
     candidates <- candidates [keepIdx, , drop=FALSE]
 
     ## if everything is already filtered out, return
-    if (nrow(candidates) == 0)
+    if (nrow(candidates) == 0) {
+      if (debug.level >= 1) cat(" DONE\n")
       return(NULL)
+    }
   }
 
   ### NUMERICAL PARAMETERS ###
@@ -157,13 +162,13 @@ similarCandidates.new <- function(candidates, parameters) {
       similar <- c(similar,
                    numeric.candidates.equal(candidates[i, ], candidates[(i+1):nrow(candidates),],
                                             parameters, threshold = 0.00000001, param.names = listNumer))
-      cat(".")
+      if (debug.level >= 1) cat(".")
     }
     similar <- unique(similar)
     candidates <- candidates[candidates[, ".ID."] %in% similar,]
   }
 
-  cat(" DONE\n")
+  if (debug.level >= 1) cat(" DONE\n")
   if (nrow(candidates) == 0) {
     return (NULL)
   } else {
@@ -172,15 +177,19 @@ similarCandidates.new <- function(candidates, parameters) {
 }
 
 
-similarCandidates <- function(candidates, parameters) {
-  similarIds.old <- similarCandidates.old (candidates,parameters)
+similarCandidates <- function(candidates, parameters)
+{
   similarIds.new <- similarCandidates.new (candidates,parameters)
-  
-  if (!setequal(similarIds.old, similarIds.new)) {
-    tunerError("\nSimilar Candidates Error:\n",
-               "Old: ", paste(similarIds.old), "\nNew: ", paste(similarIds.new),
-               "\nIntersect:", paste(intersect(similarIds.old, similarIds.new)),
-               "\nLength: ", length(intersect(similarIds.old,similarIds.new)), "\n")
+
+  if (getOption(".irace.debug.level") >= 1) {
+    similarIds.old <- similarCandidates.old (candidates,parameters)
+    
+    if (!setequal(similarIds.old, similarIds.new)) {
+      tunerError("\nSimilar Candidates Error:\n",
+                 "Old: ", paste(similarIds.old), "\nNew: ", paste(similarIds.new),
+                 "\nIntersect:", paste(intersect(similarIds.old, similarIds.new)),
+                 "\nLength: ", length(intersect(similarIds.old,similarIds.new)), "\n")
+    }
   }
   return(similarIds.new)
 }
@@ -241,10 +250,8 @@ oneIterationRace <-
   colnames(expResults) <- c("instance", "iteration")
   # Fill instances (Iter will be outside this function)
   expResults$instance <- result$race.data$race.instances[1:result$no.tasks]
-  # cbind matrix and two new columns
+  # Add two new columns to the matrix of results
   expResults <- cbind(expResults, result$results)
-  
-  # Assign the flag alive or not.
   candidates$.ALIVE. <- as.logical(result$alive)
   # Assign the proper ranks in the candidates data.frame
   candidates$.RANK. <- Inf
@@ -287,8 +294,12 @@ irace <- function(tunerConfig = stop("parameter `tunerConfig' is mandatory."),
   }
   set.seed(tunerConfig$seed)
   debugLevel <- tunerConfig$debugLevel
-
-  # Data frame of all candidates ever generated.
+  # Set options controlling debug level.
+  # FIXME: This should be the other way around, the options set the debugLevel.
+  options(.race.debug.level = debugLevel)
+  options(.irace.debug.level = debugLevel)
+  
+  # Create a data frame of all candidates ever generated.
   namesParameters <- names(parameters$constraints)
   if (!is.null(tunerConfig$candidatesFile)
       && tunerConfig$candidatesFile != "") {
