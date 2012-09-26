@@ -32,16 +32,6 @@ instanceDir <- "./Instances"
 ## launches the program to be tuned. See templates/.
 # hookRun <- "./hook-run"
 
-## The scrip that provides a numeric value for each
-## candidate. See templates/.
-# hookEvaluate  <- "./hook-evaluate"
-
-## Experiment name for output report.
-# expName  <- "Experiment Name"
-
-## Longer experiment description for output report.
-# expDescription <- "Experiment Description"
-
 ## The maximum number of runs (invocations of hookRun) that will performed. It
 ## determines the (maximum) budget of experiments for the tuning, unless
 ## timeBudget is positive.
