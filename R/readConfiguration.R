@@ -118,19 +118,19 @@ readConfiguration <- function(filename = "", configuration = list())
   if (filename == ""
       && file.exists(.irace.params.def["configurationFile","default"])) {
     filename <- .irace.params.def["configurationFile","default"]
-    cat("Warning: A default configuration file '", 
-        filename, "' has been found and will be read\n")
+    cat("Warning: A default configuration file", shQuote(filename),
+        "has been found and will be read\n")
   }
 
   if (filename != "") {
     if (file.exists (filename)) {
-      # FIXME: subordinate on debuglevel
-      cat ("Note: Reading configuration file '", filename, "'.......")
+      debug.level <- getOption(".irace.debug.level", default = 0)
+      if (debug.level >= 1)
+        cat ("# Reading configuration file", shQuote(filename), ".......")
       source(filename, local = TRUE)
-      # FIXME: subordinate on debuglevel
-      cat (" done!\n")
+      if (debug.level >= 1) cat (" done!\n")
     } else {
-      stop ("The configuration file ", filename, " does not exist.")
+      stop ("The configuration file ", shQuote(filename), " does not exist.")
     }
   }
   ## read configuration file variables
@@ -299,7 +299,7 @@ checkConfiguration <- function(configuration)
 
 printConfiguration <- function(tunerConfig)
 {
-  cat("###   CONFIGURATION STATE TO BE USED\n")
+  cat("## irace configuration:\n")
   for (param in names(tunerConfig)) {
     value <- ifelse(is.character(tunerConfig[[param]]),
                     paste("\"", tunerConfig[[param]], "\"", sep=""),
@@ -308,7 +308,7 @@ printConfiguration <- function(tunerConfig)
     # like tunerConfig$instances.
     cat(param, "<-", value, "\n")
   }
-  cat("### end of configuration\n")
+  cat("## end of irace configuration\n")
 }
 
 defaultConfiguration <- function(config = list())
