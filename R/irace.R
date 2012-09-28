@@ -352,7 +352,7 @@ irace <- function(tunerConfig = stop("parameter `tunerConfig' is mandatory."),
       "# nbIterations: ", nbIterations, "\n",
       "# minSurvival: ", minSurvival, "\n",
       "# nbParameters: ", parameters$nbVariable, "\n",
-      "# Seed: ", tunerConfig$seed, "\n",
+      "# seed: ", tunerConfig$seed, "\n",
       sep = "")
 
   while (TRUE) {
