@@ -115,6 +115,7 @@ hookEvaluate  ""  --hook-evaluate  "" "Optional script that provides a numeric v
 "softRestart"  ""  "--soft-restart"  1    "Enable/disable the soft restart strategy that avoids premature convergence of the probabilistic model." 
 ')
 rownames (.irace.params.def) <- .irace.params.def[,"name"]
+.irace.params.names <- rownames(.irace.params.def)[rownames(.irace.params.def) != ""]
   
 ## read commandline parameters
 readCmdLineParameter <- function (args, params.def, paramName, default)
@@ -122,9 +123,8 @@ readCmdLineParameter <- function (args, params.def, paramName, default)
   return (readArgOrDefault (args = args,
                             short = params.def[paramName, "short"],
                             long   = params.def[paramName,"long"],
-                            default = ifelse(is.na(default),
-                              params.def[paramName,"default"],
-                              default)))
+                            default = if (is.null(default))
+                            params.def[paramName, "default"] else default))
 }
 
 irace.usage <- function ()
@@ -171,8 +171,7 @@ irace.main <- function(tunerConfig = defaultConfiguration(), output.width = 9999
 
 irace.cmdline <- function(args = commandArgs (trailingOnly = TRUE))
 {
-  if (!is.null(readArgOrDefault (args,
-                                 short = "-h", long="--help", default = NULL))) {
+  if (!is.null(readArgOrDefault (args, short = "-h", long="--help"))) {
     irace.usage()
     return(invisible(NULL))
   }
@@ -187,7 +186,7 @@ irace.cmdline <- function(args = commandArgs (trailingOnly = TRUE))
                      long  = .irace.params.def["configurationFile","long"],
                      default = "")
   tunerConfig <- readConfiguration(configurationFile)
-  for (param in names(tunerConfig)) {
+  for (param in .irace.params.names) {
     tunerConfig[[param]] <-
       readCmdLineParameter (args = args,
                             params.def = .irace.params.def,

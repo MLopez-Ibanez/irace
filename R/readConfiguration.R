@@ -110,10 +110,11 @@ readCandidatesFile <-
   return (candidateTable)
 }
 
+# reads configuration from filename and returns it as a list. Anything
+# not mentioned in the file is not present in the list (that is, it is
+# NULL).
 readConfiguration <- function(filename = "", configuration = list())
 {
-  parameters <- rownames(.irace.params.def)[rownames(.irace.params.def) != ""]
-
   # First find out which file...
   if (filename == ""
       && file.exists(.irace.params.def["configurationFile","default"])) {
@@ -134,9 +135,9 @@ readConfiguration <- function(filename = "", configuration = list())
     }
   }
   ## read configuration file variables
-  for (param in parameters) {
-    configuration[[param]] <- ifelse (exists (param, inherits = FALSE),
-                                      get(param, inherits = FALSE), NA)
+  for (param in .irace.params.names) {
+    configuration[[param]] <- if (exists (param, inherits = FALSE))
+      get(param, inherits = FALSE) else NULL
   }
   return (configuration)
 }
@@ -237,7 +238,9 @@ checkConfiguration <- function(configuration)
   }
 
   if (configuration$mu < configuration$firstTest) {
-    warning("Assuming 'mu <- firstTest' because 'mu' cannot be lower than 'firstTest'")
+    if (configuration$debugLevel >= 1) {
+      cat("Warning: Assuming 'mu <- firstTest' because 'mu' cannot be lower than 'firstTest'")
+    }
     configuration$mu <- configuration$firstTtest
   }
   
@@ -313,13 +316,13 @@ printConfiguration <- function(tunerConfig)
 
 defaultConfiguration <- function(config = list())
 {
-  config.names <- rownames(.irace.params.def)[rownames(.irace.params.def) != ""]
-  if (!is.null(names(config)) && !all(names(config) %in% config.names)) {
+  if (!is.null(names(config)) && !all(names(config) %in% .irace.params.names)) {
     stop("Unknown configuration parameters: ",
-         paste(names(config)[which(!names(config) %in% config.names)], sep=", "))
+         paste(names(config)[which(!names(config) %in% .irace.params.names)],
+               sep=", "))
   }
 
-  for (k in config.names) {
+  for (k in .irace.params.names) {
     if (is.null.or.na(config[[k]])) {
       config[[k]] <- .irace.params.def[k, "default"]
     }
