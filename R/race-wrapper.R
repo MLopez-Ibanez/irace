@@ -269,7 +269,7 @@ race.wrapper <- function(candidate, task, which.alive, data)
   return(output)
 }
 
-race.describe <- function(candidate, data)
+race.describe <- function(candidates, data)
 {
-  return (data$candidates[candidate, ])
+  return (data$candidates[candidates, , drop = FALSE])
 }
