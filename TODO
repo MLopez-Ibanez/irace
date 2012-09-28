@@ -1,5 +1,17 @@
 ------------------------------------------------------------*- mode: text -*-
 
+BUGS
+
+#1 
+
+$ irace --debug-level
+Error in if (configuration$debugLevel >= 1) { : 
+  missing value where TRUE/FALSE needed
+Calls: irace.cmdline -> irace.main -> checkConfiguration
+Execution halted
+
+
+
 TODO R package:
 
  * Read about vignette, what we need to do to convert/use the IRIDIA
