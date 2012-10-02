@@ -195,7 +195,7 @@ race<-function(maxExp=0,
   }
 
 
-  # Do not print precis. All information are redondant with
+  # Do not print precis. All information are redundant with
   # the ones provided from irace.
   interactive <- FALSE
   # Print out precis if interactive

@@ -319,10 +319,11 @@ printConfiguration <- function(tunerConfig)
       cat (tunerConfig$instances, sep=", ")
       cat ("\"\n")
     }
-    # All other parameters (no vector)
+    # All other parameters (no vector, but can be functions)
     else {
       value <- paste("\"", tunerConfig[[param]], "\"", sep="")
-      cat(param, "<-", value, "\n")
+      # FIXME: Perhaps deparse() is not the right way to do this?
+      cat(param, "<-", deparse(tunerConfig[[param]]), "\n") 
     }
   }
   cat("## end of irace configuration\n")
