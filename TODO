@@ -11,7 +11,6 @@ Calls: irace.cmdline -> irace.main -> checkConfiguration
 Execution halted
 
 
-
 TODO R package:
 
  * Read about vignette, what we need to do to convert/use the IRIDIA
@@ -20,6 +19,9 @@ TODO R package:
  * Move the README information to the TR to avoid duplication.
 
 TODO General:
+
+ * Do not print anything about timeEstimate/timeUsedSoFar if it is
+   never used (it is ever used?)
 
  * Make tune-main, tune-main-cluster, tune-main-mpi and other scripts
    use /tmp as much as possible.
@@ -35,9 +37,6 @@ TODO General:
    round(rtnorm(1, mean + (10^-d) / 2, lower, upper + 10^-d) - (10^-d)/2, d)
 
    The same applies to runif().   
-
- * Reduce the output of the race package. Only report copyright info
-   once. Do not duplicate information already given by irace.
 
  * Handle properly fixed parameters in candidatesFile (see FIXME in
    readConfigurations.R).
@@ -200,5 +199,11 @@ DONE:
 
  * Rename everything as irace instead ifrace (only after merging all
    pending branches!). [DONE]
+
+ * Reduce the output of the race package. Only report copyright info
+   once. Do not duplicate information already given by irace. 
+   [DONE by Jeremie]
+
+
 
 ------------------------------------------------------------------------------
