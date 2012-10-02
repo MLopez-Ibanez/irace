@@ -2,6 +2,8 @@
 ## READ DEFINITION OF PARAMETERS FROM A FILE
 #########################################################
 
+# FIXME: This info should go in the Rd file documenting this function.
+#
 #' Main function to read the parameters definition from a file
 #' 
 #' The datastructure used to record parameters is shown below.
@@ -15,26 +17,20 @@
 #' @param filename The name of the file containing the parameters. The fact that
 #' this file should exist and be readable should be check before.
 #' @return A list as follows.
-#' 
-#' parameters
+#'
+#  FIXME: most of these do not need to be lists (except boundary), they could be simply vectors with names.
+#' parameters --- a list with elements:
 #'        |
-#'        +---- (names) --------- a list that contains the names of the parameters
-#'        +---- (types) ----------- a list that contains the type of each parameter parameters$types = i|c|r
-#'        +---- (switches) ------ a list that contains the switches to be used for the parameters on the command line
-#'        +---- (boundary) ----- a vector that contains two values (the boundaries) for real and int parameters, and
-#'        |                              possibly more for categorical parameters
-#'        +---- (constraints) -+   
-#'        |                            |                               Example param1 depends on param2 and param3 to be activated:
-#'        |                            +-- (param1) --+
-#'        |                            |                     +-- (param2) -- a vector containing two values (the allowed boundaries) if
-#'        |                            +-- ....              |                      param2 is real or int, or all allowed values if param2 is categorical                 
-#'        |                            |                     +-- (param3) -- ...
-#'        |                           ...
-#'        +---- (isFixed) -------- a list of boolean to know if a parameter should be considered as a fixed or not.
-#'        +---- (nbParameters) --- a simple integer to know the number of parameters since we can need it often and
-#'        |                                  we should avoid to compute it every time.
-#'        +---- (nbFixed) ----- a simple integer to know the number of fixed parameters
-#'        +---- (nbVariable) ------ a simple integer to know the number of no-fixed parameters (to be sampled)
+#'        $names --------- a list that contains the names of the parameters
+#'        $types ----------- a list that contains the type of each parameter parameters$types = i|c|r
+#'        $switches ------ a list that contains the switches to be used for the parameters on the command line
+#'        $boundary ----- a list of vectors. Each vector may contain two values (the boundaries)
+#'                         for real and int parameters, or possibly more for categorical parameters
+#'        $constraints --   a list of R logical expressions, with variables corresponding to parameter names.
+#'        $isFixed -------- a list of booleans to know which parameter is fixed or needs to be tuned.
+#'        $nbParameters --- an integer, the total number of parameters
+#'        $nbFixed ----- an integer, the number of parameters with a fixed value
+#'        $nbVariable ------ an integer, the number of variable (to be tuned) parameters
 #'        
 readParameters <- function (file, digits = 4, debugLevel = 0, text)
 {
