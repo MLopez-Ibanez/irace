@@ -147,12 +147,13 @@ irace.main <- function(tunerConfig = defaultConfiguration(), output.width = 9999
 {
   op <- options(width = output.width) # Do not wrap the output.
   tunerConfig <- checkConfiguration (tunerConfig)
-  printConfiguration (tunerConfig)
+  debug.level <- tunerConfig$debugLevel
+  if (debug.level >= 1) printConfiguration (tunerConfig)
   
   # Read parameters definition
   parameters <- readParameters (file = tunerConfig$parameterFile,
                                 digits = tunerConfig$digits,
-                                debugLevel = tunerConfig$debugLevel)
+                                debugLevel = debug.level)
   if (tunerConfig$debugLevel >= 2) { cat("Parameters have been read\n") }
   
   eliteCandidates <- irace (tunerConfig = tunerConfig,

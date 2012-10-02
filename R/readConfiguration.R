@@ -239,7 +239,7 @@ checkConfiguration <- function(configuration)
 
   if (configuration$mu < configuration$firstTest) {
     if (configuration$debugLevel >= 1) {
-      cat("Warning: Assuming 'mu <- firstTest' because 'mu' cannot be lower than 'firstTest'")
+      cat("Warning: Assuming 'mu <- firstTest' because 'mu' cannot be lower than 'firstTest'\n")
     }
     configuration$mu <- configuration$firstTtest
   }
@@ -303,13 +303,11 @@ checkConfiguration <- function(configuration)
 printConfiguration <- function(tunerConfig)
 {
   cat("## irace configuration:\n")
-  for (param in names(tunerConfig)) {
-    value <- ifelse(is.character(tunerConfig[[param]]),
-                    paste("\"", tunerConfig[[param]], "\"", sep=""),
-                    tunerConfig[[param]])
-    # FIXME: This does not handle multiple values (vectors, lists)
-    # like tunerConfig$instances.
-    cat(param, "<-", value, "\n")
+  # FIXME: Now we print too much info, specially for $instances and
+  # $instances.extra.params.
+  for (param in .irace.params.names) {
+    # FIXME: Perhaps deparse() is not the right way to do this?
+    cat(param, "<-", deparse(tunerConfig[[param]]), "\n")
   }
   cat("## end of irace configuration\n")
 }
