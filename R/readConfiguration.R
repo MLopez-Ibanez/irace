@@ -303,11 +303,27 @@ checkConfiguration <- function(configuration)
 printConfiguration <- function(tunerConfig)
 {
   cat("## irace configuration:\n")
-  # FIXME: Now we print too much info, specially for $instances and
-  # $instances.extra.params.
   for (param in .irace.params.names) {
-    # FIXME: Perhaps deparse() is not the right way to do this?
-    cat(param, "<-", deparse(tunerConfig[[param]]), "\n")
+    # Special case for instances.extra.params
+    if (param == "instances.extra.params") {
+      if (is.null.or.empty(paste(tunerConfig$instances.extra.params, collapse=""))) {
+        cat (param, "<- NULL\n")
+      } else {
+        cat (param, "<-\n")
+        cat(paste(names(tunerConfig$instances.extra.params), tunerConfig$instances.extra.params, sep=" : "), sep="\n")
+      }
+    }
+    # Special case for instances
+    else if (param == "instances") {
+      cat (param, "<- \"")
+      cat (tunerConfig$instances, sep=", ")
+      cat ("\"\n")
+    }
+    # All other parameters (no vector)
+    else {
+      value <- paste("\"", tunerConfig[[param]], "\"", sep="")
+      cat(param, "<-", value, "\n")
+    }
   }
   cat("## end of irace configuration\n")
 }

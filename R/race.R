@@ -195,9 +195,13 @@ race<-function(maxExp=0,
   }
 
 
+  # Do not print precis. All information are redondant with
+  # the ones provided from irace.
+  interactive <- FALSE
   # Print out precis if interactive
   if (interactive) 
     cat(paste(precis,"\n\n"))
+  interactive <- TRUE
 
   if (maxExp && no.candidates > maxExp)
     stop("Max number of experiments is smaller than number of candidates")
