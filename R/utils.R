@@ -146,7 +146,7 @@ nbParam <- function (parameters)
 extractElites <- function(candidates, nbElites)
 {
   if (nbElites < 1) {
-    ## ??? Should this be an error or should we handle it in some other way?
+    ## FIXME: Should this be an error or should we handle it in some other way?
     stop("nbElites is lower or equal to zero.") 
   }
   # Sort by rank.

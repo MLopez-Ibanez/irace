@@ -16,7 +16,7 @@ buildCommandLine <- function(values, switches) {
 }
 
 
-## ??? This function needs a description
+## FIXME: function needs a description
 race.init <- function(candidates, parameters, config)
 {
   # FIXME: Ideally, we wouldn't do this here but dynamically as we
@@ -41,7 +41,7 @@ race.init <- function(candidates, parameters, config)
                 ))
 }
 
-## ??? This function needs a description
+## FIXME: function needs a description
 race.info <- function(data)
   return(list(race.name = data$config$expName, 
               no.candidates = data$no.candidates, 
@@ -171,7 +171,7 @@ hook.run.default <- function(instance, candidate, extra.params, config)
 # from the first stage to the second.
 .irace <- new.env()
 
-## ??? This function needs a description, what is candidate, task and data?
+## FIXME: This function needs a description, what is candidate, task and data?
 race.wrapper <- function(candidate, task, which.alive, data)
 {
   debugLevel <- data$config$debugLevel

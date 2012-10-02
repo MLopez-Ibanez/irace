@@ -9,7 +9,7 @@ sge.cluster.qsub <- function(command, debugLevel = 0)
   }
   rawOutput <- system (paste(command, " 2>&1"), intern = TRUE)
   if (debugLevel >= 1) { cat(rawOutput, sep="\n") }
-  ## ??? Can we make this more robust against different languages and
+  ## FIXME: Can we make this more robust against different languages and
   ## variants of qsub?
   # FIXME: This is a bit too complex for just parsing a number and
   # returning the number or NULL.
@@ -34,7 +34,7 @@ pbs.cluster.qsub <- function(command, debugLevel = 0)
   }
   rawOutput <- system (paste(command, " 2>&1"), intern = TRUE)
   if (debugLevel >= 1) { cat(rawOutput, sep="\n") }
-  ## ??? Can we make this more robust against different languages and
+  ## FIXME: Can we make this more robust against different languages and
   ## variants of qsub?
   jobID <- grep("\\d+\\.[a-z]+", rawOutput, perl = TRUE,value=TRUE)
   if (length(jobID) == 1) {
