@@ -2,20 +2,20 @@
 \alias{printConfiguration}
 \title{printConfiguration}
 \description{
-  'printConfiguration' print the internal configuration of 
+  'printConfiguration' prints the internal configuration of 
   \pkg{irace}.
 }
 \usage{
-  printConfiguration(tunerConfig)
+  printConfiguration(configuration)
 }
 \arguments{
-  \item{tunerConfig}{A list indexed by the \pkg{irace} parameter names,
-  containing their values. This list can be provided by
-  \code{\link{readConfiguration}}, or \code{\link{defaultConfiguration}}.}
+  \item{configuration}{A list where tagged elements correspond to configuration
+    parameters of \pkg{irace}.}
 }
 \seealso{
-  \code{\link{readConfiguration}} for reading \pkg{irace} configuration.
+  \code{\link{readConfiguration}} for reading the \pkg{irace}
+  configuration from a file.
+  \code{\link{defaultConfiguration}} to get the default configuration.
   \code{\link{checkConfiguration}} to check that the configuration is valid.
-  \code{\link{defaultConfiguration}} to set the configuration to the default.
 }
 \author{Manuel López-Ibáñez and Jérémie Dubois-Lacoste}
