@@ -2,7 +2,7 @@
 # irace: An implementation in R of Iterated Race.
 # -------------------------------------------------------------------------
 #
-#  Copyright (C) 2010
+#  Copyright (C) 2010-2012
 #  Manuel López-Ibáñez     <manuel.lopez-ibanez@ulb.ac.be> 
 #  Jérémie Dubois-Lacoste  <jeremie.dubois-lacoste@ulb.ac.be>
 #
@@ -30,7 +30,7 @@
 irace.license <-
 '-------------------------------------------------------------------------------
 | irace: An implementation in R of Iterated Race                              |
-| Copyright (C) 2010, 2011                                                    |
+| Copyright (C) 2010-2012                                                     |
 | Manuel Lopez-Ibanez     <manuel.lopez-ibanez@ulb.ac.be>                     |
 | Jeremie Dubois-Lacoste  <jeremie.dubois-lacoste@ulb.ac.be>                  |
 |                                                                             |
@@ -41,7 +41,6 @@ irace.license <-
 | irace builds upon previous code from the race package                       |
 | Copyright (C) 2003 Mauro Birattari                                          |
 -------------------------------------------------------------------------------
-
 '
 
 # Function to read command-line arguments.
@@ -134,7 +133,9 @@ readCmdLineParameter <- function (args, params.def, paramName, default)
 
 irace.usage <- function ()
 {
-  cat ("irace\tversion ", irace.version, "\n\n")
+  # FIXME: It would be nice to put the version number in the license
+  # message to avoid having this extra line.
+  cat ("irace\tversion ", irace.version, "\n")
   cat (irace.license)
   # FIXME: The output would be nicer if we used cat(sprintf()) to
   # print short and long within a fixed width field. The description
@@ -181,8 +182,10 @@ irace.cmdline <- function(args = commandArgs (trailingOnly = TRUE))
     irace.usage()
     return(invisible(NULL))
   }
-  
-  cat ("irace\tversion", irace.version, "\n\n")
+
+  # FIXME: It would be nice to put the version number in the license
+  # message to avoid having this extra line.
+  cat ("irace\tversion", irace.version, "\n")
   cat(irace.license)
   
   # Read the configuration file and the command line
