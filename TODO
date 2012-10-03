@@ -20,6 +20,20 @@ TODO R package:
 
 TODO General:
 
+ * Implement a regression testing testsuite to check that everything
+   is working as expect before making a release. See:
+
+    - tests subdirectory in http://cran.r-project.org/doc/manuals/R-exts.html#Package-subdirectories
+   - http://cran.r-project.org/web/packages/RUnit/index.html
+   - http://cran.r-project.org/web/packages/svUnit/index.html
+
+ * Fix all FIXMEs.
+
+ * Boolean command-line parameters require to provide a value
+   (1/0). It would be nice if they could be enabled just by using
+   them, that is, in addition to "--mpi 1" and "--mpi 0", accept just
+   "--mpi".
+
  * Do not print anything about timeEstimate/timeUsedSoFar if it is
    never used (it is ever used?)
 
