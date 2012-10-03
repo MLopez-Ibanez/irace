@@ -1,4 +1,13 @@
-## Functions to print error messages and\or exit
+
+
+# An internal function to reload irace and set options for debugging
+# errors.
+irace.reload.debug <- function()
+{
+  try(detach("package:irace", unload = TRUE))
+  library(irace)
+  options(error=recover)
+}
 
 .irace.bug.report <-
   paste("An unexpected condition ocurred.",
@@ -27,6 +36,9 @@ file.check <- function (file, executable = FALSE, readable = executable,
   EXEC <- 1 # See documentation of the function file.access()
   READ <- 4
 
+  if (!is.character(file) || is.null.or.empty(file)) {
+    stop (text, " ", shQuote(file), " is not a vaild filename")
+  }
   ## Remove trailing slash if present for windows OS compatibility
   if (substring(file, nchar(file), nchar(file)) %in% c("/", "\\"))
     file <- substring(file, 1, nchar(file) - 1)
@@ -87,10 +99,12 @@ path.rel2abs <- function (path)
 
 is.function.name <- function(FUN)
 {
+  # FIXME: Is there a simpler way to do this check?
   is.function(FUN) ||
   (!is.null(FUN) && !is.na(FUN) && as.character(FUN) != "" &&
    !is.null(mget(as.character(FUN), envir = as.environment(-1),
-                 mode="function", ifnotfound=list(NULL), inherits=TRUE)[[1]]))
+                 mode = "function", ifnotfound = list(NULL),
+                 inherits = TRUE)[[1]]))
 }
 
 # FIXME: Isn't a R function to do this? More portable?
