@@ -82,11 +82,8 @@ parse.output <- function(outputRaw, command, config, hook.run.command = NULL)
   
   # We check the output here to provide better error messages.
   err.msg <- NULL
-  if (length(output) < 1 || length(output) > 2 || any (is.na (output))) {
-    err.msg <- paste("The output of ", shQuote(command), " is not numeric!\n", sep = "")
-  } else if (any(is.infinite(output))) {
-    err.msg <- paste("The output of ", shQuote(command), " is not finite!\n", sep = "")
-  }
+  if (length(output) < 1 || length(output) > 2 || any (is.na (output)))
+    err.msg <- paste("The output of `", command, "' is not numeric!\n", sep = "")
   
   if (config$timeBudget > 0 && length(output) < 2)
     err.msg <- paste("When timeBudget > 0, the output of `", command,
