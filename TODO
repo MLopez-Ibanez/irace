@@ -31,6 +31,11 @@ TODO General:
    - http://cran.r-project.org/web/packages/RUnit/index.html
    - http://cran.r-project.org/web/packages/svUnit/index.html
 
+ * Implement a test mode that allows the user to check his set-up is
+   correct (checking the configuration can be read, giving the number
+   of iterations\candidates that would be used, calling hook-run
+   once...).
+   
  * Fix all FIXMEs.
 
  * Boolean command-line parameters require to provide a value
