@@ -20,6 +20,10 @@ TODO R package:
 
 TODO General:
 
+ * Implement some kind of immediate rejection handling, that is, if
+   hook.run returns +Inf, just discard the candidate immediately
+   without doing any more tests.
+
  * Implement a regression testing testsuite to check that everything
    is working as expect before making a release. See:
 
