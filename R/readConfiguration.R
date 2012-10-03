@@ -113,6 +113,8 @@ readCandidatesFile <-
 # reads configuration from filename and returns it as a list. Anything
 # not mentioned in the file is not present in the list (that is, it is
 # NULL).
+# FIXME: Does passing an initial configuration actually work? It seems
+# it gets completely overriden by the loop below.
 readConfiguration <- function(filename = "", configuration = list())
 {
   # First find out which file...
@@ -142,8 +144,14 @@ readConfiguration <- function(filename = "", configuration = list())
   return (configuration)
 }
 
-checkConfiguration <- function(configuration)
+## FIXME: This function should only do checks and return
+## TRUE/FALSE. There should be other function that does the various
+## transformations.
+checkConfiguration <- function(configuration = defaultConfiguration())
 {
+  # Fill possible unset (NULL) with default settings.
+  configuration <- defaultConfiguration (configuration)
+  
   ## Check that everything is fine with external parameters
   # Check that the files exists and are readable.
   configuration$parameterFile <- path.rel2abs(configuration$parameterFile)
@@ -300,42 +308,44 @@ checkConfiguration <- function(configuration)
   return (configuration)
 }
 
-printConfiguration <- function(tunerConfig)
+printConfiguration <- function(configuration)
 {
   cat("## irace configuration:\n")
   for (param in .irace.params.names) {
     # Special case for instances.extra.params
     if (param == "instances.extra.params") {
-      if (is.null.or.empty(paste(tunerConfig$instances.extra.params, collapse=""))) {
+      if (is.null.or.empty(paste(configuration$instances.extra.params, collapse=""))) {
         cat (param, "<- NULL\n")
       } else {
         cat (param, "<-\n")
-        cat(paste(names(tunerConfig$instances.extra.params), tunerConfig$instances.extra.params, sep=" : "), sep="\n")
+        cat(paste(names(configuration$instances.extra.params), configuration$instances.extra.params, sep=" : "), sep="\n")
       }
     } else if (param == "instances") {# Special case for instances
       cat (param, "<- \"")
-      cat (tunerConfig$instances, sep=", ")
+      cat (configuration$instances, sep=", ")
       cat ("\"\n")
     } else {# All other parameters (no vector, but can be functions)
       # FIXME: Perhaps deparse() is not the right way to do this?
-      cat(param, "<-", deparse(tunerConfig[[param]]), "\n")
+      cat(param, "<-", deparse(configuration[[param]]), "\n")
     }
   }
   cat("## end of irace configuration\n")
 }
 
-defaultConfiguration <- function(config = list())
+defaultConfiguration <- function(configuration = list())
 {
-  if (!is.null(names(config)) && !all(names(config) %in% .irace.params.names)) {
+  if (!is.null(names(configuration))
+      && !all(names(configuration) %in% .irace.params.names)) {
     stop("Unknown configuration parameters: ",
-         paste(names(config)[which(!names(config) %in% .irace.params.names)],
+         paste(names(configuration)[which(!names(configuration)
+                                          %in% .irace.params.names)],
                sep=", "))
   }
 
   for (k in .irace.params.names) {
-    if (is.null.or.na(config[[k]])) {
-      config[[k]] <- .irace.params.def[k, "default"]
+    if (is.null.or.na(configuration[[k]])) {
+      configuration[[k]] <- .irace.params.def[k, "default"]
     }
   }
-  return (config)
+  return (configuration)
 }
