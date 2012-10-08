@@ -586,9 +586,11 @@ irace <- function(tunerConfig = stop("parameter `tunerConfig' is mandatory."),
 
     ## Save to the log file
     tunerResults$allCandidates <- allCandidates
-    cwd <- setwd(tunerConfig$execDir)
-    save (tunerResults, file = tunerConfig$logFile)
-    setwd(cwd)
+    if (!is.null.or.empty(tunerConfig$logFile)) {
+      cwd <- setwd(tunerConfig$execDir)
+      save (tunerResults, file = tunerConfig$logFile)
+      setwd(cwd)
+    }
 
     indexIteration <- indexIteration + 1
   }
