@@ -29,7 +29,10 @@ install: version clean
 build : bumpdate clean
 	cd $(BINDIR) &&	R CMD build $(PACKAGEDIR)
 
-check: clean 
+cran : build
+	cd $(BINDIR) && _R_CHECK_FORCE_SUGGESTS_=false R CMD check --as-cran $(PACKAGE)_$(PACKAGEVERSION).tar.gz
+
+check: clean
 	cd $(BINDIR) && _R_CHECK_FORCE_SUGGESTS_=false R CMD check $(PACKAGEDIR)
 
 clean: 
