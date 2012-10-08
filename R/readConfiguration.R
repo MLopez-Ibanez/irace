@@ -161,6 +161,17 @@ checkConfiguration <- function(configuration = defaultConfiguration())
   configuration$execDir <- path.rel2abs(configuration$execDir)
   file.check (configuration$execDir, isdir = TRUE, text = "execution directory")
 
+  if (!is.null.or.empty(configuration$logFile)) {
+    cwd <- setwd(configuration$execDir)
+    configuration$logFile <- path.rel2abs(configuration$logFile)
+    tunerResults <- list()
+    tunerResults$tunerConfig <- configuration
+    # Try to save here and to give an earlier error if not possible.
+    # FIXME: Give a nicer error!
+    save (tunerResults, file = configuration$logFile)
+    setwd(cwd)
+  }
+  
   if (is.function.name(configuration$hookRun)) {
     .irace$hook.run <- configuration$hookRun
   } else if (is.character(configuration$hookRun)) {
