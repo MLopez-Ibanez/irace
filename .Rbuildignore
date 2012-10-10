@@ -20,4 +20,4 @@ inst/.+~
 ^web
 ^irace-Ex.R
 DEVEL-README
-tmp
+^tmp
