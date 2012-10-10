@@ -9,6 +9,7 @@ REALVERSION=$(PACKAGEVERSION).$(SVN_REV)
 DATE=$(shell date +%F)
 PACKAGEDIR=$(CURDIR)
 FTP_COMMANDS="user anonymous anonymous\nbinary\ncd incoming\nput $(PACKAGE)_$(PACKAGEVERSION).tar.gz\nquit\n"
+WINBUILD_FTP_COMMANDS="user anonymous anonymous\nbinary\ncd R-devel\nput $(PACKAGE)_$(PACKAGEVERSION).tar.gz\nquit\n"
 
 ## Do we have svnversion?
 ifeq ($(shell sh -c 'which svnversion 1> /dev/null 2>&1 && echo y'),y)
@@ -63,5 +64,11 @@ else
 endif
 
 submit: 
-	cd $(BINDIR) && echo $(FTP_COMMANDS) | ftp -e -g -i -n cran.r-project.org
+	@echo "Read http://cran.r-project.org/web/packages/policies.html"
+	cd $(BINDIR) && echo $(FTP_COMMANDS) | ftp -v -e -g -i -n cran.r-project.org
 	@echo "Don't forget to send email to cran@r-project.org !"
+
+winbuild:
+	@echo "Winbuild: http://win-builder.r-project.org/"
+	cd $(BINDIR) && echo $(WINBUILD_FTP_COMMANDS) | ftp -v -p -e -g -i -n win-builder.r-project.org
+
