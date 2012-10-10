@@ -1,6 +1,7 @@
  * More concise output.
 
- * expDescription parameter was removed.
+ * The parameters expName and expDescription are now useless and they
+   were removed.
 
  * Faster computation of similar candidates (Jeremie Dubois-Lacoste
    and Leslie Perez).

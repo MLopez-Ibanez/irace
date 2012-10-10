@@ -43,7 +43,7 @@ race.init <- function(candidates, parameters, config)
 
 ## FIXME: function needs a description
 race.info <- function(data)
-  return(list(race.name = data$config$expName, 
+  return(list(race.name = "irace",
               no.candidates = data$no.candidates, 
               no.tasks = data$no.tasks))
 
