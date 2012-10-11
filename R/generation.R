@@ -10,7 +10,7 @@ constraintsSatisfied <- function (parameters, partialCandidate, paramName)
   # If there is no constraint, do not waste time evaluating it.
   if(!length(all.vars(constraint, max.names = 1L))) return(TRUE)
 
-  v <- eval(constraint,as.list(partialCandidate))
+  v <- eval(constraint, as.list(partialCandidate))
   # Return TRUE if TRUE, FALSE if FALSE or NA
   v <- !is.na(v) && v 
   return(v)

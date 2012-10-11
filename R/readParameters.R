@@ -69,6 +69,7 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
     return (list(match = match, line = line))
   }
 
+  # FIXME: Make quotes mandatory for categorical and ordered parameters.
   string2vector <- function(str)
   {
     v <- c()
@@ -125,7 +126,7 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
       for (child in vars) {
         # The following line detects cycles
         if (child == rootParam)
-          tunerError("a cycle detected in subordinate parameters! ",
+          tunerError("A cycle detected in subordinate parameters! ",
                      "Check definition of constraints.\n",
                      "One parameter of this cycle is '", rootParam, "'")
         

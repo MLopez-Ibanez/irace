@@ -2,6 +2,24 @@
 
 BUGS
 
+#2 
+
+A parameter like:
+
+a "" c (0, 5, 10, 20)
+
+and a constraint like a > 10 will return TRUE when a is 5, because a
+is actually "5" so the comparison is lexicographic. How to solve this?
+
+ - Fix 1. Check if a can be converted to numeric, then force it before
+   evaluating constraints. However, we cannot know for sure if the user
+   actually wants to convert a to numeric or not. Imagine a = "+3", then
+   a == "+3" would fail!
+
+ - Fix 2. Force users to use quotes when defining categorical and
+   ordinal parameters. Hopefully this will make obvious that these
+   values are strings and cannot be compared with other numbers.
+ 
 #1 
 
 $ irace --debug-level
