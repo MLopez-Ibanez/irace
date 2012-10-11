@@ -28,19 +28,19 @@
 # =========================================================================
 
 irace.license <-
-'-------------------------------------------------------------------------------
-| irace: An implementation in R of Iterated Race                              |
-| Copyright (C) 2010-2012                                                     |
-| Manuel Lopez-Ibanez     <manuel.lopez-ibanez@ulb.ac.be>                     |
-| Jeremie Dubois-Lacoste  <jeremie.dubois-lacoste@ulb.ac.be>                  |
-|                                                                             |
-| This is free software, and you are welcome to redistribute it under certain |
-| conditions.  See the GNU General Public License for details. There is NO    |
-| warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. |
-|                                                                             |
-| irace builds upon previous code from the race package                       |
-| Copyright (C) 2003 Mauro Birattari                                          |
--------------------------------------------------------------------------------
+'********************************************************************************
+* irace: An implementation in R of Iterated Race                               *
+* Copyright (C) 2010-2012                                                      *
+* Manuel Lopez-Ibanez     <manuel.lopez-ibanez@ulb.ac.be>                      *
+* Jeremie Dubois-Lacoste  <jeremie.dubois-lacoste@ulb.ac.be>                   *
+*                                                                              *
+* This is free software, and you are welcome to redistribute it under certain  *
+* conditions.  See the GNU General Public License for details. There is NO     *
+* warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  *
+*                                                                              *
+* irace builds upon previous code from the race package                        *
+* Copyright (C) 2003 Mauro Birattari                                           *
+********************************************************************************
 '
 
 # Function to read command-line arguments.
