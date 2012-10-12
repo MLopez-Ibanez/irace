@@ -1,10 +1,27 @@
 README file for developers
 ===========================
 
-How to set version numbers?
----------------------------
+RELEASE:
 
-* Before a release, remove the revision number. Release.
-* After the release, bump the version number and add the revision
-  number.
+* make check passes
+
+* make cran passes
+
+* make winbuild passes: Wait for email and check logs!
+
+* Update NEWS (add version number on top)
+
+* svn ci NEWS -m * " NEWS: Close version VERSION."
+
+* svn cp https://iridia-dev.ulb.ac.be/projects/ifrace/svn/trunk https://iridia-dev.ulb.ac.be/projects/ifrace/svn/tags/VERSION -m " * Tag version VERSION."
+
+* make build
+
+* Inspect the package for strange files!
+
+* make submit
+
+* Don't forget to send email to cran@r-project.org !
+
+* After the release, bump the version number in Makefile.
 
