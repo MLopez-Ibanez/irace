@@ -22,7 +22,7 @@ endif
 SVN_REV = $(shell sh -c 'cat svn_version 2> /dev/null')
 REVNUM = $(shell sh -c 'cat svn_version | tr -d -c "[:digit:]" 2> /dev/null')
 
-.PHONY : build check clean install pdf rsync version bumpdate submit
+.PHONY : build check clean install pdf rsync version bumpdate submit cran winbuild
 
 install: version clean
 	cd $(BINDIR) && R CMD INSTALL $(INSTALL_FLAGS) $(PACKAGEDIR)
