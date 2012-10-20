@@ -36,7 +36,8 @@ exec 1> \$TMP/irace-$$.stdout
 echo \$TMP/irace-$$.stdout >&2
 $BINDIR/irace --exec-dir=\$TMP $*
 RET=\$?
-cp -R \$TMP/./ $EXECDIR/
+# Use command to avoid aliases
+command cp --force -R \$TMP/./ $EXECDIR/
 rm -rf \$TMP
 exit \$RET
 EOF
