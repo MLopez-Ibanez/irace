@@ -28,6 +28,7 @@ irace.assert <- function(exp)
   if (exp) return(invisible())
   mc <- match.call()[[2]]
   msg <- paste(deparse(mc), " is not TRUE\n", .irace.bug.report, sep = "")
+  save.image()
   stop (msg)
   invisible()
 }

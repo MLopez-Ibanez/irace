@@ -185,13 +185,13 @@ similarCandidates <- function(candidates, parameters)
     similarIds.old <- similarCandidates.old (candidates,parameters)
     
     if (!setequal(similarIds.old, similarIds.new)) {
-      tunerError("\nSimilar candidates error:\n",
-                 "Old: ", paste(similarIds.old, collapse = ", "),
-                 "\nNew: ", paste(similarIds.new, collapse = ", "),
-                 "\nIntersect:",
-                 paste(intersect(similarIds.old, similarIds.new), collapse = ", "),
-                 "\nLength: ", length(intersect(similarIds.old,similarIds.new)), "\n")
-      save.image()
+      cat("\nSimilar candidates error:\n",
+          "Old: ", paste(similarIds.old, collapse = ", "),
+          "\nNew: ", paste(similarIds.new, collapse = ", "),
+          "\nIntersect:",
+          paste(intersect(similarIds.old, similarIds.new), collapse = ", "),
+          "\nLength: ", length(intersect(similarIds.old,similarIds.new)), "\n")
+      irace.assert (setequal(similarIds.old, similarIds.new))
     }
   }
   return(similarIds.new)
