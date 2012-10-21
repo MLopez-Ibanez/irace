@@ -28,7 +28,8 @@ irace.assert <- function(exp)
   if (exp) return(invisible())
   mc <- match.call()[[2]]
   msg <- paste(deparse(mc), " is not TRUE\n", .irace.bug.report, sep = "")
-  save.image()
+  # FIXME: It would be great if we could save into a file the state of
+  # the function that called this one.
   stop (msg)
   invisible()
 }

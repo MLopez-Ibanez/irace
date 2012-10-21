@@ -191,6 +191,7 @@ similarCandidates <- function(candidates, parameters)
           "\nIntersect:",
           paste(intersect(similarIds.old, similarIds.new), collapse = ", "),
           "\nLength: ", length(intersect(similarIds.old,similarIds.new)), "\n")
+      save.image()
       irace.assert (setequal(similarIds.old, similarIds.new))
     }
   }
