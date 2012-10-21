@@ -192,7 +192,9 @@ similarCandidates <- function(candidates, parameters, execDir = getwd())
           paste(intersect(similarIds.old, similarIds.new), collapse = ", "),
           "\nLength: ", length(intersect(similarIds.old,similarIds.new)), "\n")
       cwd <- setwd(execDir)
-      save.image()
+      # save.image() does not save anything!
+      save (list = list("candidates", "parameters", "similarIds.new",
+              "similarIds.old"), file = "similarCandidates.Rdat")
       setwd(cwd)
       irace.assert (setequal(similarIds.old, similarIds.new))
     }
