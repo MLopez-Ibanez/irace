@@ -177,7 +177,7 @@ similarCandidates.new <- function(candidates, parameters)
 }
 
 
-similarCandidates <- function(candidates, parameters)
+similarCandidates <- function(candidates, parameters, execDir = getwd())
 {
   similarIds.new <- similarCandidates.new (candidates,parameters)
 
@@ -191,7 +191,9 @@ similarCandidates <- function(candidates, parameters)
           "\nIntersect:",
           paste(intersect(similarIds.old, similarIds.new), collapse = ", "),
           "\nLength: ", length(intersect(similarIds.old,similarIds.new)), "\n")
+      cwd <- setwd(execDir)
       save.image()
+      setwd(cwd)
       irace.assert (setequal(similarIds.old, similarIds.new))
     }
   }
@@ -504,7 +506,7 @@ irace <- function(tunerConfig = stop("parameter `tunerConfig' is mandatory."),
         rownames(testCandidates) <- testCandidates$.ID.
         if (!retrial && tunerConfig$softRestart) {
 #          Rprof("profile.out")
-          tmp.ids <- similarCandidates (testCandidates, parameters)
+          tmp.ids <- similarCandidates (testCandidates, parameters, tunerConfig$execDir)
 #          Rprof(NULL)
           if (is.null(tmp.ids)) break
           cat(sep="", "# ", format(Sys.time(), usetz=TRUE), ": ",
