@@ -101,7 +101,7 @@ numeric.candidates.equal <- function(x, candidates, parameters, threshold, param
 ##
 similarCandidates.new <- function(candidates, parameters)
 {
-  debug.level <- getOption(".irace.debug.level")
+  debug.level <- getOption(".irace.debug.level", 0)
   
   if (debug.level >= 1) cat ("# Computing similarity of candidates .")
 
@@ -179,11 +179,12 @@ similarCandidates.new <- function(candidates, parameters)
 
 similarCandidates <- function(candidates, parameters, execDir = getwd())
 {
-  similarIds.new <- similarCandidates.new (candidates,parameters)
+  similarIds.new <- similarCandidates.old (candidates,parameters)
+  #similarIds.new <- similarCandidates.new (candidates,parameters)
 
-  if (getOption(".irace.debug.level") >= 1) {
-    similarIds.old <- similarCandidates.old (candidates,parameters)
-    
+  if (getOption(".irace.debug.level", 0) >= 1) {
+    #similarIds.old <- similarCandidates.old (candidates,parameters)
+    similarIds.old <- similarIds.new
     if (!setequal(similarIds.old, similarIds.new)) {
       cat("\nSimilar candidates error:\n",
           "Old: ", paste(similarIds.old, collapse = ", "),
@@ -193,7 +194,7 @@ similarCandidates <- function(candidates, parameters, execDir = getwd())
           "\nLength: ", length(intersect(similarIds.old,similarIds.new)), "\n")
       cwd <- setwd(execDir)
       # save.image() does not save anything!
-      save (list = list("candidates", "parameters", "similarIds.new",
+      save (list = c("candidates", "parameters", "similarIds.new",
               "similarIds.old"), file = "similarCandidates.Rdat")
       setwd(cwd)
       irace.assert (setequal(similarIds.old, similarIds.new))
