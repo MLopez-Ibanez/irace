@@ -1,3 +1,5 @@
+ * Fix bug in computation of similar candidates.
+
 1.02
 
  * More concise output.
