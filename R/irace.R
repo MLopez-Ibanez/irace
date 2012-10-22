@@ -102,7 +102,6 @@ numeric.candidates.equal <- function(x, candidates, parameters, threshold, param
 similarCandidates.new <- function(candidates, parameters)
 {
   debug.level <- getOption(".irace.debug.level", 0)
-  
   if (debug.level >= 1) cat ("# Computing similarity of candidates .")
 
   listCater <- c()
@@ -121,7 +120,7 @@ similarCandidates.new <- function(candidates, parameters)
   
   nbCater <- length(listCater)
   nbNumer <- length(listNumer)
-  
+
   ### CATEGORICAL/ORDINAL FILTERING ####
   if (nbCater > 0) {
     ## Build an array with the categorical append together in a string
@@ -129,6 +128,7 @@ similarCandidates.new <- function(candidates, parameters)
     for (i in 1:nrow(candidates)) {
       strings[i] <- paste(candidates[i, listCater], collapse=" ; ")
     }
+
     if (nbNumer != 0) candidates <- candidates[, c(".ID.", listNumer)]
     ord.strings <- order(strings)
     candidates <- candidates[ord.strings, ]
@@ -144,7 +144,9 @@ similarCandidates.new <- function(candidates, parameters)
     
     ## filtering them out:
     candidates <- candidates [keepIdx, , drop=FALSE]
-
+    ## filtering their strings out (to use them to define blocks):
+    strings <- strings [keepIdx]
+    
     ## if everything is already filtered out, return
     if (nrow(candidates) == 0) {
       if (debug.level >= 1) cat(" DONE\n")
@@ -152,22 +154,45 @@ similarCandidates.new <- function(candidates, parameters)
     }
   }
 
-  ### NUMERICAL PARAMETERS ###
+  
+  ### NUMERICAL PARAMETERS WITHIN BLOCKS OF SAME STRING ###
   if (nbNumer > 0) {
     similar <- c()
-    num.candidates <- nrow(candidates)
-
-    ## Compare numerical candidates
-    for (i in seq_len(num.candidates - 1)) {
-      similar <- c(similar,
-                   numeric.candidates.equal(candidates[i, ], candidates[(i+1):nrow(candidates),],
-                                            parameters, threshold = 0.00000001, param.names = listNumer))
-      if (debug.level >= 1) cat(".")
+    if (nbCater > 0) {
+      ## In this case the object "string" is available to define blocks
+      ## Loop over blocks:
+      beginBlock <- 1
+      while (beginBlock < nrow(candidates)) {
+        ## The current block is made of all candidates that have same categorical
+        ## string as the one of candidate[beginBlock, ]
+        blockIds <- which(strings == strings[beginBlock])
+        endBlock <- blockIds[length(blockIds)]
+        
+        if (endBlock > beginBlock) {    # At least two candidates in the block
+          ## Loop inside blocks:
+          for (i in seq(beginBlock, endBlock-1)) {
+            ## Compare candidate i with all the one that are after in the block
+            similar <- c(similar,
+                         numeric.candidates.equal(candidates[i, ], candidates[(i+1):endBlock,],
+                                                  parameters, threshold = 0.00000001, param.names = listNumer))
+            if (debug.level >= 1) cat(".")
+          }
+          beginBlock <- endBlock + 1 # Next block starts after the end of the current one
+        }
+      }
+    } else {
+      ## No categorical, so no blocks, just do the basic check without blocks
+      for (i in seq_len(nrow(candidates) - 1)) {
+        similar <- c(similar,
+                     numeric.candidates.equal(candidates[i, ], candidates[(i+1):nrow(candidates),],
+                                              parameters, threshold = 0.00000001, param.names = listNumer))
+        if (debug.level >= 1) cat(".")
+      }
+      
     }
     similar <- unique(similar)
-    candidates <- candidates[candidates[, ".ID."] %in% similar,]
+    candidates <- candidates[candidates[, ".ID."] %in% similar,]   
   }
-
   if (debug.level >= 1) cat(" DONE\n")
   if (nrow(candidates) == 0) {
     return (NULL)
@@ -180,11 +205,11 @@ similarCandidates.new <- function(candidates, parameters)
 similarCandidates <- function(candidates, parameters, execDir = getwd())
 {
   similarIds.new <- similarCandidates.old (candidates,parameters)
-  #similarIds.new <- similarCandidates.new (candidates,parameters)
+  similarIds.new <- similarCandidates.new (candidates,parameters)
 
   if (getOption(".irace.debug.level", 0) >= 1) {
-    #similarIds.old <- similarCandidates.old (candidates,parameters)
-    similarIds.old <- similarIds.new
+    similarIds.old <- similarCandidates.old (candidates,parameters)
+
     if (!setequal(similarIds.old, similarIds.new)) {
       cat("\nSimilar candidates error:\n",
           "Old: ", paste(similarIds.old, collapse = ", "),
