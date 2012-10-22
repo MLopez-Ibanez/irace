@@ -37,7 +37,8 @@ check: clean
 	cd $(BINDIR) && _R_CHECK_FORCE_SUGGESTS_=false R CMD check $(PACKAGEDIR)
 
 clean: 
-	cd $(BINDIR) && $(RM) $(PACKAGEDIR)/src/*.o $(PACKAGEDIR)/src/*.so
+	cd $(PACKAGEDIR) && ($(RM) ./$(PACKAGE)-Ex.R ./src/*.o ./src/*.so; \
+		find . -name '*.orig' | xargs $(RM) )
 
 pdf:
 	$(RM) $(BINDIR)/$(PACKAGE).pdf
@@ -45,12 +46,12 @@ pdf:
 
 bumpdate: version
 	@sed -i 's/Date: .*/Date: $(DATE)/' $(PACKAGEDIR)/DESCRIPTION
-	@sed -i 's/Date: .*$$/Date: \\tab $(DATE) \\cr/' $(PACKAGEDIR)/man/irace-package.Rd
+	@sed -i 's/Date: .*$$/Date: \\tab $(DATE) \\cr/' $(PACKAGEDIR)/man/$(PACKAGE)-package.Rd
 
 version :
 	echo 'irace.version <- "$(REALVERSION)"' > $(PACKAGEDIR)/R/version.R
 	@sed -i 's/Version:.*$$/Version: $(PACKAGEVERSION)/' $(PACKAGEDIR)/DESCRIPTION
-	@sed -i 's/Version:.*$$/Version: \\tab $(PACKAGEVERSION) \\cr/' $(PACKAGEDIR)/man/irace-package.Rd
+	@sed -i 's/Version:.*$$/Version: \\tab $(PACKAGEVERSION) \\cr/' $(PACKAGEDIR)/man/$(PACKAGE)-package.Rd
 
 rsync : version
 ifdef RNODE
