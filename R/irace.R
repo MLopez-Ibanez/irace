@@ -163,22 +163,21 @@ similarCandidates.new <- function(candidates, parameters)
       ## Loop over blocks:
       beginBlock <- 1
       while (beginBlock < nrow(candidates)) {
-        ## The current block is made of all candidates that have same categorical
-        ## string as the one of candidate[beginBlock, ]
+        ## The current block is made of all candidates that have same
+        ## categorical string as the one of candidate[beginBlock, ]
         blockIds <- which(strings == strings[beginBlock])
         endBlock <- blockIds[length(blockIds)]
-        
-        if (endBlock > beginBlock) {    # At least two candidates in the block
-          ## Loop inside blocks:
-          for (i in seq(beginBlock, endBlock-1)) {
-            ## Compare candidate i with all the one that are after in the block
-            similar <- c(similar,
-                         numeric.candidates.equal(candidates[i, ], candidates[(i+1):endBlock,],
-                                                  parameters, threshold = 0.00000001, param.names = listNumer))
-            if (debug.level >= 1) cat(".")
-          }
-          beginBlock <- endBlock + 1 # Next block starts after the end of the current one
+
+        irace.assert (endBlock > beginBlock)
+        ## Loop inside blocks:
+        for (i in seq(beginBlock, endBlock-1)) {
+          ## Compare candidate i with all the one that are after in the block
+          similar <- c(similar,
+                       numeric.candidates.equal(candidates[i, ], candidates[(i+1):endBlock,],
+                                                parameters, threshold = 0.00000001, param.names = listNumer))
+          if (debug.level >= 1) cat(".")
         }
+        beginBlock <- endBlock + 1 # Next block starts after the end of the current one
       }
     } else {
       ## No categorical, so no blocks, just do the basic check without blocks
@@ -188,11 +187,11 @@ similarCandidates.new <- function(candidates, parameters)
                                               parameters, threshold = 0.00000001, param.names = listNumer))
         if (debug.level >= 1) cat(".")
       }
-      
     }
     similar <- unique(similar)
     candidates <- candidates[candidates[, ".ID."] %in% similar,]   
   }
+  
   if (debug.level >= 1) cat(" DONE\n")
   if (nrow(candidates) == 0) {
     return (NULL)
