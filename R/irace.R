@@ -203,10 +203,9 @@ similarCandidates.new <- function(candidates, parameters)
 
 similarCandidates <- function(candidates, parameters, execDir = getwd())
 {
-  similarIds.new <- similarCandidates.old (candidates,parameters)
   similarIds.new <- similarCandidates.new (candidates,parameters)
 
-  if (getOption(".irace.debug.level", 0) >= 1) {
+  if (getOption(".irace.debug.level", 0) >= 0) {
     similarIds.old <- similarCandidates.old (candidates,parameters)
 
     if (!setequal(similarIds.old, similarIds.new)) {
