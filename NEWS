@@ -1,3 +1,5 @@
+ * Add hypervolume (multi-objective) example.
+
  * Fix bug in computation of similar candidates.
 
 1.02
