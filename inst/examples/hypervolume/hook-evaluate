@@ -34,7 +34,11 @@ error_sleep() {
 }
 
 calc_measure() {
-    ## Assuming _dat is nondominated and normalized within [0, 1]
+    # A program that normalizes all _dat files to [0, 1] (optional,
+    # not included).
+    ~/bin/normalize *_dat || error "normalizing failed"
+    # A program for computing the hypervolume. Download hypervolume
+    # code from http://iridia.ulb.ac.be/~manuel/hypervolume
     ~/bin/hv --quiet -r "1.1 1.1" *_dat -s "_hv" || error "calculating hypervolume failed"
 }
 
@@ -61,6 +65,7 @@ done
 
 if [ -s "${STDOUT}_dat_hv" ]; then
     COST=$(cat "${STDOUT}_dat_hv" | grep -e '^[0-9]' | cut -f1)
+    # Negative because hypervolume is maximised but irace minimises.
     echo "-$COST"
     rm -f c${CANDIDATE}.*
     exit 0

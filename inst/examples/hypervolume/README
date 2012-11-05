@@ -1,0 +1,14 @@
+These are example hooks to tune a multi-objective algorithm (using the
+hypervolume indicator). You need to set hookRun and hookEvaluate,
+either in the configuration file of irace (usually tune-conf), or in
+the command-line (see irace --help), so irace is able to find these
+scripts.
+
+Update hook-run with the path, name and fixed parameters of your
+program.
+
+Update hook-evaluate with the path and parameters for computing the
+hypervolume. The example uses the hypervolume code from
+< http://iridia.ulb.ac.be/~manuel/hypervolume >. Additional
+transformations of the input data may be applied before computing the
+hypervolume, such as normalization.
