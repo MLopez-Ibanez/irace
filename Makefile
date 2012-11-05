@@ -55,7 +55,7 @@ version :
 
 rsync : version
 ifdef RNODE
-	rsync -rlp -CIzc -L --delete --copy-unsafe-links --exclude=.svn --progress --relative \
+	rsync -rlp -CIzc -L --delete --copy-unsafe-links --exclude=.svn --exclude=examples --progress --relative \
 	.     \
 	$(RNODE):$(RDIR)/
 	ssh $(RNODE) "cd $(RDIR)/ && make install"
