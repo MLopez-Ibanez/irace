@@ -114,8 +114,7 @@ hook.evaluate.default <- function(instance, candidate, num.candidates, extra.par
   debugLevel <- config$debugLevel
   hookEvaluate <- config$hookEvaluate
   if (as.logical(file.access(hookEvaluate, mode = 1))) {
-    stop ("hookEvaluate `", hookEvaluate,
-          "' cannot be found or is not executable!\n")
+    tunerError ("hookEvaluate", shQuote(hookEvaluate), "cannot be found or is not executable!\n")
   }
 
   ## Redirects STDERR so outputRaw captures the whole output.
@@ -148,7 +147,7 @@ hook.run.default <- function(instance, candidate, extra.params, config)
 
   hookRun <- config$hookRun
   if (as.logical(file.access(hookRun, mode = 1))) {
-    stop ("hookRun `", hookRun, "' cannot be found or is not executable!\n")
+    tunerError ("hookRun `", hookRun, "' cannot be found or is not executable!\n")
   }
   command <- paste (hookRun, instance, candidate$index, extra.params,
                     buildCommandLine(candidate$values, candidate$labels))
@@ -182,14 +181,13 @@ race.wrapper <- function(candidate, task, which.alive, data)
 {
   debugLevel <- data$config$debugLevel
   execDir <- data$config$execDir
-  digits <- data$config$digits
   sgeCluster <- data$config$sgeCluster
   parallel <- data$config$parallel
   mpi <- data$config$mpi
   timeBudget <- data$config$timeBudget
 
   if (!isTRUE (file.info(execDir)$isdir)) {
-    stop("Execution directory '", execDir, "' is not found or not a directory\n")
+    tunerError ("Execution directory '", execDir, "' is not found or not a directory\n")
   }
 
   if (debugLevel >= 4) { print(data$candidates) }
