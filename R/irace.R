@@ -525,17 +525,18 @@ irace <- function(tunerConfig = stop("parameter `tunerConfig' is mandatory."),
       testCandidates <- rbind(eliteCandidates[, 1:ncol(allCandidates)],
                               newCandidates)
       rownames(testCandidates) <- testCandidates$.ID.
+      tunerResults$softRestart[indexIteration] <- FALSE
       if (tunerConfig$softRestart) {
         #          Rprof("profile.out")
         tmp.ids <- similarCandidates (testCandidates, parameters, tunerConfig$execDir)
         #          Rprof(NULL)
         if (!is.null(tmp.ids)) {
-          tunerResults$softRestart[indexIteration] <- 0
-          cat(sep="", "# ", format(Sys.time(), usetz=TRUE), ": ",
-              "Soft restart: ", paste(collapse = " ", tmp.ids), " !\n")
+          if (debugLevel >= 1)
+            cat(sep="", "# ", format(Sys.time(), usetz=TRUE), ": ",
+                "Soft restart: ", paste(collapse = " ", tmp.ids), " !\n")
           model <- restartCandidates (testCandidates, tmp.ids, model,
                                       parameters, nbNewCandidates)
-          tunerResults$softRestart[indexIteration] <- tunerResults$softRestart[indexIteration] + 1
+          tunerResults$softRestart[indexIteration] <- TRUE
           tunerResults$model$afterSR[[indexIteration]] <- model
           if (debugLevel >= 2) { printModel (model) }
           # Re-sample after restart like above
