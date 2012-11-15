@@ -515,35 +515,40 @@ irace <- function(tunerConfig = stop("parameter `tunerConfig' is mandatory."),
         cat(sep="", "# ", format(Sys.time(), usetz=TRUE), ": ",
             "Sample ", nbNewCandidates, " candidates from model\n") }
 
-      retrial <- FALSE
-
-      tunerResults$softRestart[indexIteration] <- 0
-
-      while (TRUE) {
-        #cat("# ", format(Sys.time(), usetz=TRUE), " sampleModel()\n")
-        newCandidates <- sampleModel(tunerConfig, parameters, eliteCandidates,
-                                     model, nbNewCandidates)
-        #cat("# ", format(Sys.time(), usetz=TRUE), " sampleModel() DONE\n")
-        # Set ID of the new candidates.
-        newCandidates <-
-          cbind (.ID. = max(0, allCandidates$.ID.) + 1:nrow(newCandidates),
-                 newCandidates)
-        testCandidates <- rbind(eliteCandidates[, 1:ncol(allCandidates)], newCandidates)
-        rownames(testCandidates) <- testCandidates$.ID.
-        if (!retrial && tunerConfig$softRestart) {
-#          Rprof("profile.out")
-          tmp.ids <- similarCandidates (testCandidates, parameters, tunerConfig$execDir)
-#          Rprof(NULL)
-          if (is.null(tmp.ids)) break
+      #cat("# ", format(Sys.time(), usetz=TRUE), " sampleModel()\n")
+      newCandidates <- sampleModel(tunerConfig, parameters, eliteCandidates,
+                                   model, nbNewCandidates)
+      #cat("# ", format(Sys.time(), usetz=TRUE), " sampleModel() DONE\n")
+      # Set ID of the new candidates.
+      newCandidates <- cbind (.ID. = max(0, allCandidates$.ID.) +
+                              1:nrow(newCandidates), newCandidates)
+      testCandidates <- rbind(eliteCandidates[, 1:ncol(allCandidates)],
+                              newCandidates)
+      rownames(testCandidates) <- testCandidates$.ID.
+      if (tunerConfig$softRestart) {
+        #          Rprof("profile.out")
+        tmp.ids <- similarCandidates (testCandidates, parameters, tunerConfig$execDir)
+        #          Rprof(NULL)
+        if (!is.null(tmp.ids)) {
+          tunerResults$softRestart[indexIteration] <- 0
           cat(sep="", "# ", format(Sys.time(), usetz=TRUE), ": ",
               "Soft restart: ", paste(collapse = " ", tmp.ids), " !\n")
-          model <- restartCandidates (testCandidates, tmp.ids, model, parameters, nbNewCandidates)
+          model <- restartCandidates (testCandidates, tmp.ids, model,
+                                      parameters, nbNewCandidates)
           tunerResults$softRestart[indexIteration] <- tunerResults$softRestart[indexIteration] + 1
           tunerResults$model$afterSR[[indexIteration]] <- model
           if (debugLevel >= 2) { printModel (model) }
-          retrial <- TRUE
-        } else {
-          break
+          # Re-sample after restart like above
+          #cat("# ", format(Sys.time(), usetz=TRUE), " sampleModel()\n")
+          newCandidates <- sampleModel(tunerConfig, parameters, eliteCandidates,
+                                       model, nbNewCandidates)
+          #cat("# ", format(Sys.time(), usetz=TRUE), " sampleModel() DONE\n")
+          # Set ID of the new candidates.
+          newCandidates <- cbind (.ID. = max(0, allCandidates$.ID.) + 
+                                  1:nrow(newCandidates), newCandidates)
+          testCandidates <- rbind(eliteCandidates[, 1:ncol(allCandidates)],
+                                  newCandidates)
+          rownames(testCandidates) <- testCandidates$.ID.
         }
       }
 
