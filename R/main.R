@@ -111,10 +111,10 @@ hookEvaluate  ""  --hook-evaluate  "" "Optional script that provides a numeric v
 "minNbSurvival"  ""  "--min-survival"  0   "The minimum number of candidates that should survive to continue one iteration." 
 "nbCandidates"  ""  "--num-candidates"  0   "The number of candidates that should be sampled and evaluated at each iteration." 
 "mu"  ""  "--mu"  5   "This value is used to determine the number of candidates to be sampled and evaluated at each iteration." 
-"seed"  ""  "--seed"  NA    "Seed of the random number generator (must be a positive integer NA means use a random seed)." 
+"seed"  ""  "--seed"  NA    "Seed of the random number generator (must be a positive integer, NA means use a random seed)." 
 "parallel"  ""  "--parallel"  0    "Number of calls to hookRun to execute in parallel. 0 or 1 mean disabled." 
+"mpi"  ""  "--mpi"  0    "Enable/disable MPI. Use Rmpi to execute hookRun in parallel (parameter parallel is the number of slaves)." 
 "sgeCluster"  ""  "--sge-cluster"  0    "Enable/disable SGE cluster mode. Use qstat to wait for cluster jobs to finish (hookRun must invoke qsub)." 
-"mpi"  ""  "--mpi"  0    "Enable/disable mpi. Use MPI to execute hookRun in parallel (parameter parallel is the number of slaves)." 
 "softRestart"  ""  "--soft-restart"  1    "Enable/disable the soft restart strategy that avoids premature convergence of the probabilistic model." 
 ')
 rownames (.irace.params.def) <- .irace.params.def[,"name"]
