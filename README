@@ -180,6 +180,30 @@ parallel. There are three ways to parallelize a single run of irace.
    See the examples in `$IRACE_HOME/examples/cluster-mode/`.
 
 
+Frequently Asked Questions
+--------------------------
+
+###### Is it possible to configure a MATLAB algorithm with irace?  ######
+
+Definitely. There are two main ways to achieve this:
+
+1. Edit the hook-run script to call MATLAB in a non-interactive
+   way. See the MATLAB documentation, or the following links:
+   http://stackoverflow.com/questions/1518072/suppress-start-message-of-matlab/
+   http://stackoverflow.com/questions/4611195/how-to-call-matlab-from-command-line-and-print-to-stdout-before-exiting
+   
+   You would need to pass the parameter received by hook-run to your
+   MATLAB script:
+   http://www.mathworks.nl/support/solutions/en/data/1-1BS5S/?solution=1-1BS5S
+   
+2. Call MATLAB code directly from R using
+   [R.matlab package](http://cran.r-project.org/package=R.matlab). This
+   is a better option if you are experienced in R. Define hookRun as
+   an R function instead of a path to a script. The function should
+   call your MATLAB code with appropriate parameters.
+
+
+
 Contact
 --------
    
