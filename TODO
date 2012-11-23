@@ -40,6 +40,12 @@ TODO R package:
 
 TODO General:
 
+ * Add errors for stupid parameter files. For example:
+   
+      x "" r (1e-4, 5e-4) # with digits=2 this is equal to (0, 0)
+      y "" i (-1, -2) # the first value should be strictly smaller
+      z "" c ("a", "a") # Two times the same value!
+
  * race package has some recent updates. Check with Mauro what he
    changed.
 
