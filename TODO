@@ -35,8 +35,13 @@ TODO R package:
    TR as the vignette.
 
  * Move the README information to the TR to avoid duplication.
+ 
+ * Add inst/COPYRIGHTS. See race package.
 
 TODO General:
+
+ * race package has some recent updates. Check with Mauro what he
+   changed.
 
  * Implement some kind of immediate rejection handling, that is, if
    hook.run returns +Inf, just discard the candidate immediately
