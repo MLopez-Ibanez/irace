@@ -35,7 +35,7 @@
 readParameters <- function (file, digits = 4, debugLevel = 0, text)
 {
   if (missing(file) && !missing(text)) {
-    filename <- "text="
+    filename <- strcat("text=", deparse(substitute(text)))
     file <- textConnection(text)
     on.exit(close(file))
   } else if (is.character(file)) {
@@ -98,7 +98,7 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
     type <- as.character(type)
     if (type == "i") {
       return (boundaries[[1]] == boundaries[[2]])
-    } else if ((type == "c") || (type == "o")) {
+    } else if (type == "c" || type == "o") {
       return (length(boundaries) == 1)
     } else if (type == "r") {
       return (round (as.numeric(boundaries[[1]]), digits)
@@ -228,13 +228,23 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
       errReadParameters (filename, nbLines, NULL,
                          "duplicated parameter name '", param.name, "'")
     }
- 
+    param.value <- string2vector(param.value)
+    if (param.type == "r" || param.type == "i") {
+      param.value <- suppressWarnings(as.numeric(param.value))
+      if (any(is.na(param.value)) || length(param.value) != 2) {
+        errReadParameters (filename, nbLines, NULL,
+                           "incorrect numeric range '", result$match,
+                           "' for parameter '", param.name, "'")
+      }
+    }
+
     count <- count + 1
     param.names <- c(param.names, param.name)
     parameters$names[[count]] <- param.name
     parameters$switches[[count]] <- param.switch
     parameters$types[[count]] <- param.type
-    parameters$boundary[[count]] <- string2vector(param.value)
+    parameters$boundary[[count]] <- param.value
+
     parameters$isFixed[[count]] <-
       isFixed (type = param.type,
                boundaries = parameters$boundary[[count]],
