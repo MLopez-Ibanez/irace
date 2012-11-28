@@ -69,6 +69,7 @@ sampleUniform <- function (tunerConfig, parameters, nbCandidates)
       } else if (currentType == "i") {
         lowerBound <- as.integer(parameters$boundary[[currentParameter]][1])
         upperBound <- as.integer(parameters$boundary[[currentParameter]][2])
+        # FIXME: replace with sample.int!
         newVal <- sample(lowerBound:upperBound, 1)
       } else if (currentType == "r") {
         lowerBound <- parameters$boundary[[currentParameter]][1]
