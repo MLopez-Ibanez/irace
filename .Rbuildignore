@@ -3,6 +3,7 @@
 \.orig$
 \.svn$
 \.Rhistory$
+\.rej$
 Instances$
 Makefile
 Program
