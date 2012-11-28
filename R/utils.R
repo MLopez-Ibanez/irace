@@ -119,7 +119,7 @@ canonical.dirname <- function(dirname = stop("required parameter"))
 
 # FIXME: This is paste0 in R >= 2.15
 strcat <- function(..., sep = "", collapse = NULL)
-  .Internal(paste(list(...), sep, collapse))
+  paste(list(...), sep, collapse)
 
 trim.leading <- function(str)
 {
