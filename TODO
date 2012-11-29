@@ -39,7 +39,12 @@ TODO R package:
  * Add inst/COPYRIGHTS. See race package.
 
 TODO General:
-
+ * Make the output at beginning of iteration conditional on what is
+   the tuning goal (time or nb evaluation). For instance it can be
+   confusing for a newbie user to see "timeUsedSoFar" and
+   "timeEstimate" always equal to zero, without knowing that they have
+   no meaning for him (if he's tuning for nb evaluation).
+   
  * Add errors for stupid parameter files. For example:
    
       x "" r (1e-4, 5e-4) # with digits=2 this is equal to (0, 0)
