@@ -29,7 +29,6 @@ fi
 
 QUEUE=long
 JOBNAME=irace-$$
-#MACHINE=opteron244
 #MACHINE=opteron2216
 #MACHINE=xeon5410
 #MACHINE=opteron6128
