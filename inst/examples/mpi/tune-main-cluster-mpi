@@ -32,6 +32,7 @@ JOBNAME=irace-$$
 #MACHINE=opteron244
 #MACHINE=opteron2216
 #MACHINE=xeon5410
+#MACHINE=opteron6128
 MACHINE=opteron6272
 
 MPIRUN=/opt/openmpi/bin/mpirun
