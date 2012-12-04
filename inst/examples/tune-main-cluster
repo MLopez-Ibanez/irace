@@ -9,9 +9,9 @@ BINDIR=$1
 EXECDIR=$2
 shift 2
 
-#MACHINE=opteron244
 #MACHINE=opteron2216
 #MACHINE=xeon5410
+#MACHINE=opteron6128
 MACHINE=opteron6272
 
 
