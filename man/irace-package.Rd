@@ -13,7 +13,7 @@ Iterated racing for Automatic Algorithm Configuration
 Package: \tab irace\cr
 Type: \tab Package\cr
 Version: \tab 1.03 \cr
-Date: \tab 2012-10-23 \cr
+Date: \tab 2012-12-05 \cr
 License: \tab GPL (>= 2)\cr
 LazyLoad: \tab yes\cr
 }
@@ -81,29 +81,29 @@ temp "" r (0, 100)
 '
 
 ## We use the irace function readParameters to read this table:
-parameters <- readParameters(text=parameters.table)
+parameters <- readParameters(text = parameters.table)
 
 ## Next, we define the function that will evaluate each candidate
 ## configuration on a single instance. For simplicity, we restrict to
 ## three-dimensional functions and we set the maximum number of
 ## iterations of SANN to 5000.
 hook.run <- function(instance, candidate, extra.params = NULL, config = list())
-  {
-    D <- 3
-    par <- runif(D, min=-1, max=1)
-    fn <- function(x) {
-      weight <- instance
-      return(weight * f_rastrigin(x) + (1 - weight) * f_rosenbrock(x))
-    }
-    res <- optim(par,fn, method="SANN",
-                 control=list(maxit=5000
-                   , tmax = as.numeric(candidate$values[["tmax"]])
-                   , temp = as.numeric(candidate$values[["temp"]])
-                   ))
-    return(res$value)
+{
+  D <- 3
+  par <- runif(D, min=-1, max=1)
+  fn <- function(x) {
+    weight <- instance
+    return(weight * f_rastrigin(x) + (1 - weight) * f_rosenbrock(x))
   }
+  res <- optim(par,fn, method="SANN",
+               control=list(maxit=5000
+                 , tmax = as.numeric(candidate$values[["tmax"]])
+                 , temp = as.numeric(candidate$values[["temp"]])
+                 ))
+  return(res$value)
+}
 
-\dontrun{
+%\dontrun{
 ## We are now ready to launch irace. We do it by means of the irace
 ## function by setting hookRun to the function define above, instances to
 ## the first 100 random weights, and a maximum budget of 1000 calls to
@@ -136,5 +136,5 @@ tuned <- sapply(weights[101:200], hook.run, candidate=list(values=result.list))
 ## default parametrization of SANN and the quality obtained with the
 ## best configuration found by irace.
 boxplot(list(default=default, tuned=tuned))
-}
+%}
 }
