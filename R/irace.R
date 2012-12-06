@@ -4,7 +4,7 @@ candidates.equal <- function(x, y, parameters, threshold)
   # FIXME: If the distance used anything different than the
   # maximum, then fixed parameters should be ignored.
   for (i in seq_along(parameters$names)) {
-#  for (param in parameters$names) {
+    if (parameters$isFixed[[i]]) next
     type <- parameters$types[[i]]
     param <- parameters$names[[i]]
     X <- x[[param]]
@@ -205,7 +205,7 @@ similarCandidates <- function(candidates, parameters, execDir = getwd())
 {
   similarIds.new <- similarCandidates.new (candidates,parameters)
 
-  if (getOption(".irace.debug.level", 0) >= 0) {
+  if (getOption(".irace.debug.level", 0) >= 1) {
     similarIds.old <- similarCandidates.old (candidates,parameters)
 
     if (!setequal(similarIds.old, similarIds.new)) {
@@ -434,16 +434,14 @@ irace <- function(tunerConfig = stop("parameter `tunerConfig' is mandatory."),
       cat("# ", format(Sys.time(), usetz=TRUE), ": Stopped because ",
           "there is no enough budget to sample new candidates\n",
           #(number of elites  + 1) * (mu + min(5, indexIteration)) > remainingBudget\n",
-          "# number of elites: ", nrow(eliteCandidates), "\n",
-          "# indexIteration: ", indexIteration, "\n",
-          "# mu: ", max(tunerConfig$mu, tunerConfig$firstTest), "\n",
-          "# nbIterations: ", nbIterations, "\n",
+          "# remainingBudget: ", remainingBudget, "\n",
           "# experimentsUsedSoFar: ", experimentsUsedSoFar, "\n",
           "# timeUsedSoFar: ", timeUsedSoFar, "\n",
           "# timeEstimate: ", timeEstimate, "\n",
-          "# remainingBudget: ", remainingBudget, "\n",
           "# currentBudget: ", currentBudget, "\n",
+          "# number of elites: ", nrow(eliteCandidates), "\n",
           "# nbCandidates: ", nbCandidates, "\n",
+          "# mu: ", max(tunerConfig$mu, tunerConfig$firstTest), "\n",
           sep="")
       return (eliteCandidates)
     }
