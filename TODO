@@ -190,6 +190,11 @@ TODO General:
    the parameters.txt file.  It should require very few
    modifications, only in the sampling (generation uniform and normal)
 
+ * Add a hook that after sampling post-processes the candidates.
+
+ * Make the update model convergence take into account the hierarchy
+   of parameters.
+
 ------------------------------------------------------------------------------
 
 DONE:
