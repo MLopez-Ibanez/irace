@@ -39,6 +39,13 @@ TODO R package:
  * Add inst/COPYRIGHTS. See race package.
 
 TODO General:
+
+ * Pass to hook-run/hook-evaluate an instance index that uniquely
+   identifies each instance. This has two main advantages: 1) we can
+   schedule jobs in parallel for different instances, e.g., execute
+   all jobs for the first-test instances in parallel; 2) hook-run can
+   use the index to assign a unique seed to each instance.
+
  * Make the output at beginning of iteration conditional on what is
    the tuning goal (time or nb evaluation). For instance it can be
    confusing for a newbie user to see "timeUsedSoFar" and
