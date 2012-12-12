@@ -1,8 +1,6 @@
 candidates.equal <- function(x, y, parameters, threshold)
 {
   d <- 0.0
-  # FIXME: If the distance used anything different than the
-  # maximum, then fixed parameters should be ignored.
   for (i in seq_along(parameters$names)) {
     if (parameters$isFixed[[i]]) next
     type <- parameters$types[[i]]
