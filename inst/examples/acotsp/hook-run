@@ -5,7 +5,7 @@
 # PARAMETERS:
 # $1 is the instance name  
 # $2 is the candidate number
-# The rest ($* after `shift 2') are parameters to the run of ACOTSP
+# The rest ($* after `shift 2') are parameters to run ACOTSP
 #
 # RETURN VALUE:
 # This hook should print a single numerical value (the value to be minimized)
