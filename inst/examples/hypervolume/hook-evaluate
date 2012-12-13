@@ -34,8 +34,8 @@ error_sleep() {
 }
 
 calc_measure() {
-    # A program that normalizes all _dat files to [0, 1] (optional,
-    # not included).
+    # A program that normalizes all _dat files to [0, 1]
+    # (optional, not included).
     ~/bin/normalize *_dat || error "normalizing failed"
     # A program for computing the hypervolume. Download hypervolume
     # code from http://iridia.ulb.ac.be/~manuel/hypervolume
