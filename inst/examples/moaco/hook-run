@@ -1,0 +1,45 @@
+#!/bin/bash
+###############################################################################
+#
+# PARAMETERS:
+# $1 is the instance name  
+# $2 is the candidate number
+# The rest ($* after `shift 2') are parameters to run the program
+#
+# RETURN VALUE:
+# This hook should print a single numerical value (the value to be minimized)
+###############################################################################
+EXE=~/bin/moaco_btsp
+
+FIXED_PARAMS=" --trials 1 --wls 0 --aco mmas --time 60 "
+
+# The instance name and the candidate id are the first parameters
+INSTANCE=$1
+CANDIDATE=$2
+
+# All other parameters are the candidate parameters to be passed to ACOTSP
+shift 2 || exit 1
+CAND_PARAMS=$*
+
+STDOUT="c${CANDIDATE}.stdout"
+STDERR="c${CANDIDATE}.stderr"
+
+mkdir -p arena
+cd arena
+
+# Here we transform some parameters.
+PARAMS=
+while [ $# -gt 0 ]
+do
+  case "$1" in
+      --Mants) shift; MANTS="$1"; shift;;
+      *) PARAMS="$PARAMS $1"; shift;;# terminate case
+  esac
+done
+let "ANTS = (10  * 3 * 2 * $MANTS)"
+
+exec 2> $STDERR
+$EXE ${FIXED_PARAMS} --input $INSTANCE $PARAMS --ants $ANTS 1> $STDOUT
+RET=$?
+echo "OK" >& 2
+exit $RET
