@@ -141,10 +141,12 @@ hook.run.default <- function(instance, candidate, extra.params, config)
     e <- tryCatch(output <- system(command, intern=TRUE), warning = function(w){w})
     # If e is a warning, the command failed.
     if (!is.null(attributes(e))) {
-      if (debugLevel >= 1) cat (format(Sys.time(), usetz=TRUE), ": ERROR:", e$message,"\n")
+      if (debugLevel >= 1) cat (format(Sys.time(), usetz=TRUE), ": ERROR (",
+            candidate$index, "):", e$message,"\n")
       return(list(output = output, error = e$message))
     }
-    if (debugLevel >= 1) cat (format(Sys.time(), usetz=TRUE), ": DONE\n")
+    if (debugLevel >= 1) cat (format(Sys.time(), usetz=TRUE), ": DONE (",
+          candidate$index, ")\n")
     return(list(output = output, error = NULL))
   }
 
