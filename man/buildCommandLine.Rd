@@ -30,5 +30,16 @@
 switches <- c("--switch1 ", "--switch2 ")
 values <- c("value_1", "value_2")
 buildCommandLine (values, switches)
+
+%\dontrun{
+## Build commandlines from the results produced by a previous run of
+## irace.
+
+# First, load the data produced by irace.
+load("irace.Rdata")
+attach(tunerResults)
+apply(allCandidates[1:10, unlist(parameters$names)], 1, buildCommandLine,
+      unlist(parameters$switches))
+%}
 }
 \author{Manuel López-Ibáñez and Jérémie Dubois-Lacoste}
