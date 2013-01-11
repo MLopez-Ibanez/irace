@@ -74,7 +74,7 @@ sampleUniform <- function (tunerConfig, parameters, nbCandidates)
       } else if (currentType == "r") {
         lowerBound <- parameters$boundary[[currentParameter]][1]
         upperBound <- parameters$boundary[[currentParameter]][2]
-        newVal <- runif(1, as.real(lowerBound), as.real(upperBound))
+        newVal <- runif(1, as.double(lowerBound), as.double(upperBound))
         newVal <- round(newVal, tunerConfig$digits)
       } else if (currentType == "c" || currentType == "o") {
         possibleValues <- parameters$boundary[[currentParameter]]
