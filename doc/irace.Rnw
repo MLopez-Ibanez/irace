@@ -1,0 +1,8 @@
+% \VignetteIndexEntry{Introduction and tutorial on irace}
+% \VignetteKeyword{Iterated Race, tutorial, intro}
+\documentclass[a4paper]{article}
+\usepackage{hyperref}
+\usepackage{pdfpages}
+\begin{document}
+\includepdf[fitpaper=true,pages=-]{../../doc/IridiaTr2011-004r003.pdf}
+\end{document}
