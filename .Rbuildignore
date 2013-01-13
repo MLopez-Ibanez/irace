@@ -16,6 +16,7 @@ dist\.sh
 ^hooks/hook-run
 ^hooks/tune-main
 inst/.+~
+inst/doc/auto
 ^parameters\.txt
 ^tune-conf$
 ^web
