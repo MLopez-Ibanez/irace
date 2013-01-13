@@ -209,28 +209,27 @@ candidates.print.command <- function(cand, parameters)
 
 
 # FIXME: This may not work when working interactively. For example,
-# one cannot change the number of slaves. Using .Last is dangerous
-# because other package or the user may override it.
+# one cannot change the number of slaves.  A more robust function
+# would try to close any open slaves, and then re-spawn a different
+# number.
 mpiInit <- function(nslaves, debugLevel = 0)
 {
-  # Load the R MPI package if it is not already loaded. 
+  # Load the Rmpi package if it is not already loaded.
   if (!is.loaded("mpi_initialize")) {
     if (! require("Rmpi", quietly = TRUE))
       stop("The `Rmpi' package is required for using MPI.")
 
     # When R exits, finalize MPI.
-    # FIXME: This is equivalent to .Last <<- function()
-    # Is there a better way to do this?
-    assign(".Last", function() {
-      if (is.loaded("mpi_initialize")) {
-        cat("# Finalize MPI...\n")
-        if (Rmpi::mpi.comm.size(1) > 0)
-          Rmpi::mpi.close.Rslaves()
-        # FIXME: How to avoid the message?
-        # "Rmpi cannot be used unless relaunching R."
-        Rmpi::mpi.finalize()
-      }
-    }, .GlobalEnv)
+    reg.finalizer(environment(Rmpi::mpi.exit), function(e) {
+      # Rmpi already prints a message, so we don't need this.
+      # cat("# Finalize MPI...\n")
+      if (Rmpi::mpi.comm.size(1) > 0)
+        Rmpi::mpi.close.Rslaves()
+      # FIXME: How to avoid the message
+      # "Rmpi cannot be used unless relaunching R" ?
+      Rmpi::mpi.exit()
+    }, onexit = TRUE)
+
     # Create slaves
     Rmpi::mpi.spawn.Rslaves(nslaves = nslaves, quiet = (debugLevel == 0))
   }

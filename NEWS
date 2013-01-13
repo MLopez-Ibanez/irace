@@ -1,3 +1,8 @@
+ * Use reg.finalizer to finish Rmpi properly without clobbering
+   .Last().
+
+ * Remove uses of deprecated as.real().
+
  * Nicer error handling in readParameters.
 
  * Add hypervolume (multi-objective) example.
