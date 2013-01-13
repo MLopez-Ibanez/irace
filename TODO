@@ -31,8 +31,12 @@ Execution halted
 
 TODO R package:
 
- * Read about vignette, what we need to do to convert/use the IRIDIA
-   TR as the vignette.
+ * Read about vignette here: http://cran.r-project.org/doc/manuals/R-exts.html#Writing-package-vignettes
+
+   What we need to do to convert/use the IRIDIA TR as the vignette?
+   Move doc/irace.Rnw to inst/doc/. However, the problem is that R
+   will try to recreate it in CRAN, so we have to include all the
+   sources. That would mean also the sources for the IRIDIA TR covers.
 
  * Move the README information to the TR to avoid duplication.
  
