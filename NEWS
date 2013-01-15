@@ -1,3 +1,5 @@
+1.03
+
  * Use reg.finalizer to finish Rmpi properly without clobbering
    .Last().
 
