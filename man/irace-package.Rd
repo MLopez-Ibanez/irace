@@ -13,7 +13,7 @@ Iterated racing for Automatic Algorithm Configuration
 Package: \tab irace\cr
 Type: \tab Package\cr
 Version: \tab 1.03 \cr
-Date: \tab 2012-12-05 \cr
+Date: \tab 2013-01-15 \cr
 License: \tab GPL (>= 2)\cr
 LazyLoad: \tab yes\cr
 }
@@ -103,7 +103,7 @@ hook.run <- function(instance, candidate, extra.params = NULL, config = list())
   return(res$value)
 }
 
-%\dontrun{
+\dontrun{
 ## We are now ready to launch irace. We do it by means of the irace
 ## function by setting hookRun to the function define above, instances to
 ## the first 100 random weights, and a maximum budget of 1000 calls to
@@ -136,5 +136,5 @@ tuned <- sapply(weights[101:200], hook.run, candidate=list(values=result.list))
 ## default parametrization of SANN and the quality obtained with the
 ## best configuration found by irace.
 boxplot(list(default=default, tuned=tuned))
-%}
+}
 }
