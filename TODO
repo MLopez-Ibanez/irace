@@ -2,6 +2,12 @@
 
 BUGS
 
+#3
+
+$ irace --version (or any other unknown parameter)
+
+It should say "unknown parameter" or something like that.
+
 #2 
 
 A parameter like:
