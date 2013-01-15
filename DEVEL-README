@@ -11,9 +11,9 @@ RELEASE:
 
 * Update NEWS (add version number on top)
 
-* svn ci NEWS -m * " NEWS: Close version VERSION."
+* svn ci NEWS -m * " NEWS: Close version VERSION
 
-* svn cp https://iridia-dev.ulb.ac.be/projects/ifrace/svn/trunk https://iridia-dev.ulb.ac.be/projects/ifrace/svn/tags/VERSION -m " * Tag version VERSION."
+* svn cp https://iridia-dev.ulb.ac.be/projects/ifrace/svn/trunk https://iridia-dev.ulb.ac.be/projects/ifrace/svn/tags/VERSION -m " * Tag version VERSION
 
 * make build
 
@@ -24,4 +24,7 @@ RELEASE:
 * Don't forget to send email to cran@r-project.org !
 
 * After the release, bump the version number in Makefile.
+
+* svn ci Makefile -m " * Makefile: Bump version to NEW_VERSION
+
 
