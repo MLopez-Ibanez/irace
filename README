@@ -203,6 +203,13 @@ Definitely. There are two main ways to achieve this:
    call your MATLAB code with appropriate parameters.
 
 
+###### My program may be buggy and run into an infinite loop. Is it
+       possible to set a maximum timeout?  ######
+
+We are not aware of any way to achieve this using R. However, in
+GNU/Linux, it is easy to implement by using the `timeout` command in
+`hook-run` when invoking your program.
+
 
 Contact
 --------
