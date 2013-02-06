@@ -56,6 +56,9 @@ TODO General:
    all jobs for the first-test instances in parallel; 2) hook-run can
    use the index to assign a unique seed to each instance.
 
+ * When parallel > 1, schedule jobs until all CPUs are full. This
+   is likely hard to implement.
+
  * Make the output at beginning of iteration conditional on what is
    the tuning goal (time or nb evaluation). For instance it can be
    confusing for a newbie user to see "timeUsedSoFar" and
