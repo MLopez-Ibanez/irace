@@ -239,9 +239,18 @@ race.wrapper <- function(candidate, task, which.alive, data)
       } else {
         library("multicore", quietly = TRUE)
         .irace$hook.output <-
-          multicore::mclapply(candidates, .irace$hook.run, mc.cores = parallel,
+          multicore::mclapply(candidates, .irace$hook.run,
+                              # FALSE means load-balancing.
+                              mc.preschedule = FALSE, mc.cores = parallel,
                               instance = instance, extra.params = extra.params,
                               config = data$config)
+        # FIXME: if stop() is called from mclapply, it does not
+        # terminate the execution of the parent process, so it will
+        # continue and give more errors later. We have to terminate
+        # here, but is there a nicer way to detect this and terminate?
+        if (any(sapply(.irace$hook.output, inherits, "try-error"))) {
+          tunerError("A child process triggered a fatal error")
+        }
       }
     } else if (sgeCluster) {
       .irace$hook.output <-
