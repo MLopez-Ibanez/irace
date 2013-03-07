@@ -16,8 +16,8 @@ initialiseModel <- function (parameters, candidates)
   nbCandidates <- nrow(candidates)
   
   for (currentParameter in parameters$names) {
-    type <- parameters$types[[currentParameter]]
     if (isFixed(currentParameter, parameters)) next
+    type <- parameters$types[[currentParameter]]
     nbValues <- length(parameters$boundary[[currentParameter]])
     oneParam <- list()
     if (type == "c") {
