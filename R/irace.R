@@ -68,7 +68,7 @@ numeric.candidates.equal <- function(x, candidates, parameters, threshold, param
     upper <- oneParamUpperBound(param, parameters)
  
     X <- x[[param]]
-    y <- candidates[,param]
+    y <- candidates[, param]
     for (j in seq_len(nrow(bmat))) { # Candidates loop
       Y <- y[selected[j]]
       if (is.na (X) && is.na(Y)) { # Both NA, just ignore this param
