@@ -133,17 +133,25 @@ hook.run.default <- function(instance, candidate, extra.params, config)
 {
   debugLevel <- config$debugLevel
   
-  runcommand <- function(command) {
+  runcommand <- function(command, args) {
     if (debugLevel >= 1) {
       cat (format(Sys.time(), usetz=TRUE), ":", command, "\n")
     }
-    output <- NULL
-    e <- tryCatch(output <- system(command, intern=TRUE), warning = function(w){w})
+    err <- NULL
+    output <-  withCallingHandlers(
+      tryCatch(system2(command, args, stdout = TRUE, stderr = TRUE),
+               error=function(e) {
+                 err <<- paste(err, conditionMessage(e), sep ="\n")
+                 NULL
+               }), warning=function(w) {
+                 err <<- paste(err, conditionMessage(w), sep ="\n")
+                 invokeRestart("muffleWarning")
+               })
     # If e is a warning, the command failed.
-    if (!is.null(attributes(e))) {
+    if (!is.null(err)) {
       if (debugLevel >= 1) cat (format(Sys.time(), usetz=TRUE), ": ERROR (",
-            candidate$index, "):", e$message,"\n")
-      return(list(output = output, error = e$message))
+            candidate$index, "):", err,"\n")
+      return(list(output = output, error = err))
     }
     if (debugLevel >= 1) cat (format(Sys.time(), usetz=TRUE), ": DONE (",
           candidate$index, ")\n")
@@ -154,9 +162,9 @@ hook.run.default <- function(instance, candidate, extra.params, config)
   if (as.logical(file.access(hookRun, mode = 1))) {
     tunerError ("hookRun `", hookRun, "' cannot be found or is not executable!\n")
   }
-  command <- paste (hookRun, instance, candidate$index, extra.params,
-                    buildCommandLine(candidate$values, candidate$labels))
-  output <- runcommand(command)
+  args <- paste(instance, candidate$index, extra.params,
+                buildCommandLine(candidate$values, candidate$labels))
+  output <- runcommand(hookRun, args)
 
   if (!is.null(output$error)) {
     tunerError(output$error, "\n",
@@ -169,10 +177,10 @@ hook.run.default <- function(instance, candidate, extra.params, config)
 
   if (!is.null(config$hookEvaluate)) {
     # FIXME: We should also check that the output is empty.
-    return(command)
+    return(paste(hookRun, args))
   }
   # hookEvalute is NULL, so parse the output just here.
-  return(parse.output (output$output, command, config))
+  return(parse.output (output$output, paste(hookRun, args), config))
 }
 
 
