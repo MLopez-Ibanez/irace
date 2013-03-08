@@ -49,6 +49,9 @@ TODO R package:
  * Add inst/COPYRIGHTS. See race package.
 
 TODO General:
+ 
+ * Make more use of /tmp in 'inst/examples/mpi/tune-main-cluster-mpi'
+   to avoid overloading the shared filesystem.
 
  * Pass to hook-run/hook-evaluate an instance index that uniquely
    identifies each instance. This has two main advantages: 1) we can
