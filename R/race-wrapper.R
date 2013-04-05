@@ -135,7 +135,7 @@ hook.run.default <- function(instance, candidate, extra.params, config)
   
   runcommand <- function(command, args) {
     if (debugLevel >= 1) {
-      cat (format(Sys.time(), usetz=TRUE), ":", command, "\n")
+      cat (format(Sys.time(), usetz=TRUE), ":", command, args, "\n")
     }
     err <- NULL
     output <-  withCallingHandlers(
@@ -257,6 +257,12 @@ race.wrapper <- function(candidate, task, which.alive, data)
         # continue and give more errors later. We have to terminate
         # here, but is there a nicer way to detect this and terminate?
         if (any(sapply(.irace$hook.output, inherits, "try-error"))) {
+          # FIXME: mclapply has some bugs in case of error. In that
+          # case, each element of the list does not keep the output of
+          # each candidate and repetitions may occur.
+          cat(unique(unlist(
+            .irace$hook.output[sapply(
+              .irace$hook.output, inherits, "try-error")])), file = stderr())
           tunerError("A child process triggered a fatal error")
         }
       }
