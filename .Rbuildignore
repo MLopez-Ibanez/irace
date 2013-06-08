@@ -23,3 +23,4 @@ inst/doc/auto
 ^irace-Ex.R
 DEVEL-README
 ^tmp
+irace\.Rdata
