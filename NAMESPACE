@@ -3,6 +3,5 @@ export(irace.cmdline,irace.usage,irace.main,irace)
 export(defaultConfiguration,checkConfiguration, printConfiguration,
        readConfiguration, buildCommandLine, readParameters,
        candidates.print.command, candidates.print, removeCandidatesMetaData)
-#import(multicore)
 # Commented out because of "Error : package 'Rmpi' does not have a name space"
 # import(Rmpi)

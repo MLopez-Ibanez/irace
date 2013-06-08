@@ -153,7 +153,7 @@ to `hookRun` (the runs of the algorithm being tuned) in
 parallel. There are three ways to parallelize a single run of irace.
   
 1. Parallel processes: The option `--parallel N` will use the
-   multicore package to launch *locally* up to N calls of `hookRun` in
+   `parallel` package to launch *locally* up to N calls of `hookRun` in
    parallel.
   
 2. MPI: The option `--mpi 1 --parallel N` will use the Rmpi package to

@@ -245,9 +245,9 @@ race.wrapper <- function(candidate, task, which.alive, data)
                             instance = instance, extra.params = extra.params,
                             config = data$config)
       } else {
-        library("multicore", quietly = TRUE)
+        library("parallel", quietly = TRUE)
         .irace$hook.output <-
-          multicore::mclapply(candidates, .irace$hook.run,
+          parallel::mclapply(candidates, .irace$hook.run,
                               # FALSE means load-balancing.
                               mc.preschedule = FALSE, mc.cores = parallel,
                               instance = instance, extra.params = extra.params,
