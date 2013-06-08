@@ -1,3 +1,6 @@
+ * Replace obsolete package multicore by package parallel
+   (requires R >= 2.14.0)
+
  * Use load-balancing (mc.preschedule = FALSE) in mclapply.
 
 1.03
