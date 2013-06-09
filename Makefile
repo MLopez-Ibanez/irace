@@ -1,10 +1,10 @@
+PACKAGEVERSION=1.05
 PACKAGE=$(shell sh -c 'grep -F "Package: " DESCRIPTION | cut -f2 -d" "')
 # FIXME: This Makefile only works with this BINDIR!
 BINDIR=$(CURDIR)/..
 RNODE=iridiacluster
 RDIR=~/$(PACKAGE)
 INSTALL_FLAGS=
-PACKAGEVERSION=1.04
 REALVERSION=$(PACKAGEVERSION).$(SVN_REV)
 DATE=$(shell date +%F)
 PACKAGEDIR=$(CURDIR)
