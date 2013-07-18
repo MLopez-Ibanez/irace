@@ -136,6 +136,7 @@ hook.run.default <- function(instance, candidate, extra.params, config)
   runcommand <- function(command, args) {
     if (debugLevel >= 1) {
       cat (format(Sys.time(), usetz=TRUE), ":", command, args, "\n")
+      elapsed <- proc.time()["elapsed"]
     }
     err <- NULL
     output <-  withCallingHandlers(
@@ -153,8 +154,10 @@ hook.run.default <- function(instance, candidate, extra.params, config)
             candidate$index, "):", err,"\n")
       return(list(output = output, error = err))
     }
-    if (debugLevel >= 1) cat (format(Sys.time(), usetz=TRUE), ": DONE (",
-          candidate$index, ")\n")
+    if (debugLevel >= 1) {
+      cat (format(Sys.time(), usetz=TRUE), ": DONE (", candidate$index,
+           ") Elapsed: ", proc.time()["elapsed"] - elapsed, "\n")
+    }
     return(list(output = output, error = NULL))
   }
 
