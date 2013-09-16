@@ -14,12 +14,14 @@ shift 2
 #MACHINE=opteron6128
 MACHINE=opteron6272
 
+QUEUE="long"
+#QUEUE="short"
 
 exec qsub -v PATH <<EOF
 #!/bin/bash
-#$ -N irace-$$
+#$ -N irace-${EXECDIR#execdir/}-$$
 #$ -l $MACHINE
-#$ -l long
+#$ -l $QUEUE
 #$ -S /bin/bash
 #$ -m as
 #      b     Mail is sent at the beginning of the job.
@@ -32,6 +34,11 @@ exec qsub -v PATH <<EOF
 
 # Working on /tmp should be faster
 TMP=\$(mktemp -d -t \${HOSTNAME}-XXXXXXXXXX)
+if [ ! -d "\$TMP" ]; then
+  echo "cannot create temporary directory" >&2
+  exit 1
+fi
+echo \$TMP/irace-$$.stdout >&2
 exec 1> \$TMP/irace-$$.stdout
 echo \$TMP/irace-$$.stdout >&2
 $BINDIR/irace --exec-dir=\$TMP $*
