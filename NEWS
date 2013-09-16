@@ -1,3 +1,5 @@
+ * Print elapsed time for calls to hook-run if debugLevel >=1.
+
 1.04
 
  * Replace obsolete package multicore by package parallel
