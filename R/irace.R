@@ -373,6 +373,7 @@ irace <- function(tunerConfig = stop("parameter `tunerConfig' is mandatory."),
   # To save the logs
   tunerResults <- list()
   tunerResults$tunerConfig <- tunerConfig
+  tunerResults$irace.version <- irace.version
   tunerResults$parameters <- parameters
   tunerResults$iterationElites <- NULL
   tunerResults$experiments <- as.data.frame(matrix(ncol=2, nrow=0))

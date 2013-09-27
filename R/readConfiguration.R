@@ -166,6 +166,7 @@ checkConfiguration <- function(configuration = defaultConfiguration())
     configuration$logFile <- path.rel2abs(configuration$logFile)
     tunerResults <- list()
     tunerResults$tunerConfig <- configuration
+    tunerResults$irace.version <- irace.version
     # Try to save here and to give an earlier error if not possible.
     # FIXME: Give a nicer error!
     save (tunerResults, file = configuration$logFile)
