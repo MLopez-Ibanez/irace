@@ -17,6 +17,11 @@ TODO R package:
 
 TODO General:
  
+ * A way to continue a previous irace run.
+
+ * A new parameter "--hook-run-retries". Number of times to retry a
+   hook-run call if the output is not ok. Default 0. Inf allowed.
+
  * Make more use of /tmp in 'inst/examples/mpi/tune-main-cluster-mpi'
    to avoid overloading the shared filesystem.
 
@@ -40,7 +45,10 @@ TODO General:
       x "" r (1e-4, 5e-4) # with digits=2 this is equal to (0, 0)
       y "" i (-1, -2) # the first value should be strictly smaller
       z "" c ("a", "a") # Two times the same value!
-
+      u "" i/r (0, 0) # This is actually a fixed parameter. Fixed
+      parameters should be represented with a categorical parameter
+      with exactly one value. This avoids accidental typos.
+      
  * race package has some recent updates. Check with Mauro what he
    changed.
 
@@ -51,7 +59,7 @@ TODO General:
  * Implement a regression testing testsuite to check that everything
    is working as expect before making a release. See:
 
-    - tests subdirectory in http://cran.r-project.org/doc/manuals/R-exts.html#Package-subdirectories
+   - tests subdirectory in http://cran.r-project.org/doc/manuals/R-exts.html#Package-subdirectories
    - http://cran.r-project.org/web/packages/RUnit/index.html
    - http://cran.r-project.org/web/packages/svUnit/index.html
 
