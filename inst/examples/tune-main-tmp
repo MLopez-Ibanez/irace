@@ -7,11 +7,16 @@
 # the tune-main invoked by paralle-irace. This example shows how to
 # carry out the tuning in /tmp/ but move back the results to the
 # execution directory.
+DESTMAIL=""
 BINDIR=$1
 EXECDIR=$2
-shift 2
+shift 2 || exit 1
 # Working on /tmp could be faster
 tmpdir=$(mktemp -d -t ${HOSTNAME}-XXXXXXXXXX)
+if [ ! -d "$tmpdir" ]; then
+  echo "cannot create temporary directory" >&2
+  exit 1
+fi
 # STDOUT goes to /tmp
 exec 1> $tmpdir/irace-$$.stdout 
 # STDERR goes to execution directory
@@ -23,3 +28,8 @@ RET=$?
 command cp --force -R $tmpdir/./ $EXECDIR/
 rm -rf $tmpdir
 exit $RET
+
+if [ "${DESTMAIL}" ]; then
+    cat "$EXECDIR/irace-$$.stderr" \
+        | mail -s "[irace] $EXECDIR/irace-$$ $*" $DESTMAIL
+fi
