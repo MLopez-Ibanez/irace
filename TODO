@@ -17,6 +17,14 @@ TODO R package:
 
 TODO General:
  
+ * Forbidden parameter combinations (following ParamILS/SMAC).
+
+   We could simply read a list of configurations with some NA values,
+   and if any configuration sampled matches those (minus the NA
+   values), then it is discarded and we resample. If we execute the
+   restart mechanism before this check, then resampling the same
+   forbidden configuration will trigger a restart.
+
  * A way to continue a previous irace run.
 
  * A new parameter "--hook-run-retries". Number of times to retry a
@@ -159,8 +167,6 @@ TODO General:
       return (as.numeric(parameters[["boundary"]][[paramName]]))
    then the user can use directly [1] or [2] to select whatever they
    want. [Jeremie]
-
- * Forbidden parameter combinations (following ParamILS).
 
  * Error/Warn about unknown parameters.
 
