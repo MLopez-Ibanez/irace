@@ -40,15 +40,6 @@ TODO General:
    "timeEstimate" always equal to zero, without knowing that they have
    no meaning for him (if he's tuning for nb evaluation).
    
- * Add errors for stupid parameter files. For example:
-   
-      x "" r (1e-4, 5e-4) # with digits=2 this is equal to (0, 0)
-      y "" i (-1, -2) # the first value should be strictly smaller
-      z "" c ("a", "a") # Two times the same value!
-      u "" i/r (0, 0) # This is actually a fixed parameter. Fixed
-      parameters should be represented with a categorical parameter
-      with exactly one value. This avoids accidental typos.
-      
  * race package has some recent updates. Check with Mauro what he
    changed.
 
@@ -76,7 +67,7 @@ TODO General:
    "--mpi".
 
  * Do not print anything about timeEstimate/timeUsedSoFar if it is
-   never used (it is ever used?)
+   never used (is it ever used?)
 
  * Make tune-main, tune-main-cluster, tune-main-mpi and other scripts
    use /tmp as much as possible.
@@ -196,6 +187,16 @@ TODO General:
 ------------------------------------------------------------------------------
 
 DONE:
+
+ * [DONE] Add errors for stupid parameter files. For example:
+   
+      x "" r (1e-4, 5e-4) # with digits=2 this is equal to (0, 0)
+      y "" i (-1, -2) # the first value should be strictly smaller
+      z "" c ("a", "a") # Two times the same value!
+      u "" i/r (0, 0) # This is actually a fixed parameter. Fixed
+      parameters should be represented with a categorical parameter
+      with exactly one value. This avoids accidental typos.
+      
 
  * [DONE] We should use list$element instead of list[["element"]] for
    indexing elements that must exist. This way if we do a typo, the

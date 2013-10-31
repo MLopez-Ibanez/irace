@@ -196,7 +196,12 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
       errReadParameters (filename, nbLines, line,
                          "parameter name must be alphanumeric")
     }
-    
+
+    if (param.name %in% param.names) {
+      errReadParameters (filename, nbLines, NULL,
+                         "duplicated parameter name '", param.name, "'")
+    }
+
     ## Match param.switch (quoted string)
     result <- field.match (line, "\"[^\"]*\"", delimited = TRUE)
     param.switch <- result$match
@@ -224,17 +229,25 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
                          "Allowed values must be a list within parenthesis")
     }
 
-    if (param.name %in% param.names) {
-      errReadParameters (filename, nbLines, NULL,
-                         "duplicated parameter name '", param.name, "'")
-    }
     param.value <- string2vector(param.value)
     if (param.type == "r" || param.type == "i") {
       param.value <- suppressWarnings(as.numeric(param.value))
       if (any(is.na(param.value)) || length(param.value) != 2) {
         errReadParameters (filename, nbLines, NULL,
-                           "incorrect numeric range '", result$match,
-                           "' for parameter '", param.name, "'")
+                           "incorrect numeric range (", result$match,
+                           ") for parameter '", param.name, "'")
+      } else if (param.value[1] > param.value[2]) {
+        errReadParameters (filename, nbLines, NULL,
+                           "lower bound must be smaller than upper bound in numeric range (",
+                           result$match, ") for parameter '", param.name, "'")
+      }
+    } else {
+      dups <- duplicated(param.value)
+      if (any(dups)) {
+        errReadParameters (filename, nbLines, NULL,
+                           "duplicated values (",
+                           paste('\"', param.value[dups], "\"", collapse=', ', sep=""),
+                           ") for parameter '", param.name, "'")
       }
     }
 
@@ -249,7 +262,23 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
       isFixed (type = param.type,
                boundaries = parameters$boundary[[count]],
                digits = digits)
-    
+    # Reject non-categorical fixed parameters. They are often the
+    # result of a user error.
+    if (parameters$isFixed[[count]]) {
+      if (param.type == "i") {
+        errReadParameters (filename, nbLines, NULL,
+                           "lower and upper bounds are the same in numeric range (",
+                           param.value[1], ", ", param.value[2],
+                           ") for parameter '", param.name, "'")
+      } else if (param.type == "r") {
+        errReadParameters (filename, nbLines, NULL,
+                           "given digits=", digits,
+                           ", lower and upper bounds are the same in numeric range (",
+                           param.value[1], ", ", param.value[2],
+                           ") for parameter '", param.name, "'")
+      }
+    }
+
     ## Match start of constraints 
     result <- field.match (line, "\\|", sep="")
     line <- result$line

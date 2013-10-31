@@ -1,3 +1,12 @@
+ * Provide better error messages for incorrect parameter
+   descriptions. Examples:
+
+   x "" i (0, 0)       # lower and upper bounds are the same
+   x "" r (1e-4, 5e-4) # given digits=2, ditto
+   x "" i (-1, -2)     # lower bound must be smaller than upper bound
+   x "" c ("a", "a")   # duplicated values
+   
+ 
  * Print elapsed time for calls to hook-run if debugLevel >=1.
 
 1.04
