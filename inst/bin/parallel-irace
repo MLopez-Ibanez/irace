@@ -1,6 +1,6 @@
 #!/bin/bash
 ###############################################################################
-# This wrapper is used to run several irace in parallel.
+# This wrapper is used to run several runs of irace in parallel.
 ###############################################################################
 
 SEED=1234567
@@ -12,13 +12,14 @@ error () {
 
 usage() {
     cat <<EOF
-usage: $0.sh N[-M] [EXECDIR] [IRACE PARAMS]
+Usage: $0 N[-M] [EXECDIR] [IRACE PARAMS]
 
 Parameters:
- N                  an integer giving the number of repetitions of Race
-                    or a sequence N-M giving which repetitions to redo.
- EXECDIR            job M will use EXECDIR-M directory (default: TUNE-).
- IRACE PARAMS       (optional) parameters for IRACE.
+ N             an integer giving the number of repetitions of Race
+               or a sequence N-M giving which repetitions to redo.
+ EXECDIR       job M will use EXECDIR-M directory (default: TUNE-)
+               as the execDir (--exec-dir) parameter of irace.
+ IRACE PARAMS  additional parameters for irace.
 EOF
     exit 1
 }
@@ -26,7 +27,6 @@ EOF
 # Issue usage if no parameters are given.
 test $# -ge 1 || usage
 
-## BEGIN configuration
 # Number of repetitions of Race
 REPETITIONS=$1
 shift
@@ -44,13 +44,12 @@ EXECDIR=${1:-TUNE}
 shift
 
 IRACE_MAIN="tune-main"
+
 test -e ./${IRACE_MAIN} || error "${IRACE_MAIN} not found"
 test -x ./${IRACE_MAIN} || error "${IRACE_MAIN} must be executable"
 
 # Find our own location.
 BINDIR=$(dirname "$(readlink -f "$(type -P $0 || echo $0)")")
-
-## END of configuration (you should not need to touch what is below)
 
 for i in $(seq $START $REPETITIONS); do
     TRY=$(printf '%s-%002d' $EXECDIR $i)
