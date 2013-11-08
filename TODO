@@ -17,6 +17,11 @@ TODO R package:
 
 TODO General:
  
+ * Maybe separate scenario setup from irace parameters? We should have two
+   files: scenario.txt and irace-conf.txt. This will make clear what
+   the user really has to change to define a scenario versus other
+   parameters for irace.
+
  * Forbidden parameter combinations (following ParamILS/SMAC).
 
    We could simply read a list of configurations with some NA values,
