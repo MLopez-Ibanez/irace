@@ -89,15 +89,16 @@ is.null.or.empty <- function(x)
   is.null(x) || (length(x) == 1 && x == "")
 }
 
-# Function to convert a relative to an absolute path
-path.rel2abs <- function (path)
+# Function to convert a relative to an absolute path. CWD is the
+# working directory to complete relative paths.
+path.rel2abs <- function (path, cwd = getwd())
 {
   if (is.null.or.na(path)) {
     return (NULL)
   } else if (path == "") {
     return ("")
   } else {
-    return (sub ('^(\\.)', paste (getwd(), '/\\1', sep=''), path))
+    return (sub ('^(\\.)', paste (cwd, '/\\1', sep=''), path))
   }
 }
 
