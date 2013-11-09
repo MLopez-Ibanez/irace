@@ -1,5 +1,12 @@
 ------------------------------------------------------------*- mode: text -*-
 
+#6 ------------------------------------------------------------
+
+Sometimes system2 does not say what exactly failed or what command was
+run when something failed, it just prints: "error in running command".
+Can we provide more details?
+
+
 #5 ------------------------------------------------------------
 
 Paths in the command-line should be relative to the current working
