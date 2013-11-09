@@ -240,6 +240,8 @@ race.wrapper <- function(candidate, task, which.alive, data)
     # Execute commands
     .irace$hook.output <- vector("list", length(which.alive))
     cwd <- setwd (execDir)
+    on.exit(setwd(cwd), add = TRUE)
+    
     if (parallel > 1) {
       if (mpi) {
         mpiInit(parallel, data$config$debugLevel)
@@ -283,8 +285,6 @@ race.wrapper <- function(candidate, task, which.alive, data)
                           config = data$config)
       }
     }
-    setwd (cwd)
-
     # hook.evaluate may be NULL. If so, .irace$hook.output must
     # contain the right output already.
     if (!is.null(.irace$hook.evaluate)) {
