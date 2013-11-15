@@ -278,10 +278,10 @@ oneIterationRace <-
   # Create two columns for instances and iteration
   expResults <- as.data.frame(matrix(ncol = 2, nrow = nrow(result$results)))
   colnames(expResults) <- c("instance", "iteration")
-  # Fill instances (Iter will be outside this function)
   expResults$instance <- result$race.data$race.instances[1:result$no.tasks]
   # Add two new columns to the matrix of results
   expResults <- cbind(expResults, result$results)
+
   candidates$.ALIVE. <- as.logical(result$alive)
   # Assign the proper ranks in the candidates data.frame
   candidates$.RANK. <- Inf
