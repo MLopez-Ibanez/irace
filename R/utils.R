@@ -12,7 +12,7 @@ irace.reload.debug <- function(package = "irace")
 }
 
 .irace.bug.report <-
-  paste("An unexpected condition ocurred.",
+  paste("An unexpected condition occurred.",
         "Please report this bug to the authors of the irace package <http://iridia.ulb.ac.be/irace>")
 
 # Print a user-level fatal error message, when the calling context
