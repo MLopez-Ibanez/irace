@@ -17,6 +17,13 @@ TODO R package:
 
 TODO General:
  
+ * The Friedman test here uses the F distribution instead of the
+   Chi-square:
+   http://www.itl.nist.gov/div898/software/dataplot/refman1/auxillar/friedman.htm
+   (See also function friedman in package agricolae)
+
+ * Compute and report the heterogeneity of the instances seen so far.
+
  * Maybe separate scenario setup from irace parameters? We should have two
    files: scenario.txt and irace-conf.txt. This will make clear what
    the user really has to change to define a scenario versus other
