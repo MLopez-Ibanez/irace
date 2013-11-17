@@ -104,7 +104,7 @@ race<-function(maxExp=0,
     if(!is.list(race.data))
       stop(paste("Error while running",.slave.init.function))
     precis.init<-TRUE
-  }else{
+  } else {
     race.data<-list()
     precis.init<-FALSE
   }
@@ -256,15 +256,16 @@ race<-function(maxExp=0,
 	      race.data=race.data,
               ranks = race.ranks)
 
-    if (end)
+    if (end) {
       log<-c(log,list(timestamp.end=timestamp.current,
                       description.best=description.best,
                       alive.inTime=ifelse(no.subtasks.sofar>1,
 		      	apply(Results[1:no.subtasks.sofar,],
                         	1,function(u){sum(!(is.na(u)))}),
 			sum(!is.na(Results[1,])))))
-    else
+    } else {
       log<-c(log,list(timestamp.current=timestamp.current))
+    }
     return(log)
   }
   
@@ -289,12 +290,14 @@ race<-function(maxExp=0,
       t<-qt(1-alpha/2,(n-1)*(k-1))*(2*(n*A-sum(R^2))/((n-1)*(k-1)))^(1/2)
       o<-order(R)
       J<-I[o[1]]
-      for (j in 2:k) 
-        if (abs(R[o[j]]-R[o[1]])>t) 
+      for (j in 2:k) {
+        if (abs(R[o[j]]-R[o[1]])>t) {
           break
-        else
+        } else {
           J<-c(J,I[o[j]])
-    }else{
+        }
+      }
+    } else {
       if (interactive)
         cat("|=|")
     }
@@ -374,10 +377,11 @@ race<-function(maxExp=0,
         dropped.any<-TRUE
       }
     if (interactive){
-      if (dropped.any) 
+      if (dropped.any) {
         cat("|-|")
-      else
+      } else {
         cat("|=|")
+      }
     }
   }
 
@@ -408,12 +412,13 @@ race<-function(maxExp=0,
                                 no.subtasks,
                                 no.subtasks[current.task])
     
-    if(length(no.subtasks)==1)
+    if (length(no.subtasks)==1) {
       subtasks.range<-
         (current.task-1)*no.subtasks+1:no.subtasks
-    else
+    } else {
       subtasks.range<-
         cumsum(c(0,no.subtasks))[current.task]+1:no.subtasks[current.task]
+    }
     
     for (current.candidate in which.alive){
       result <- do.call (.slave.wrapper.function,
@@ -480,10 +485,11 @@ race<-function(maxExp=0,
    }
   }
 
-  if (exists(.slave.describe.function,inherits=TRUE,mode="function"))
+  if (exists(.slave.describe.function,inherits=TRUE,mode="function")) {
     description.best<-do.call(.slave.describe.function,list(best,race.data))
-  else
+  } else {
     description.best<-NULL
+  }
   
   if (interactive) {
    cat(paste("+-+-----------+-----------+-----------+-----------+-----------+",

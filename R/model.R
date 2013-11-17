@@ -22,13 +22,11 @@ initialiseModel <- function (parameters, candidates)
     oneParam <- list()
     if (type == "c") {
       value <- rep((1 / nbValues), nbValues)
-    }
-    else if (type == "i" || type == "r") {
+    } else if (type == "i" || type == "r") {
       lowerBound <- oneParamLowerBound(currentParameter, parameters)
       upperBound <- oneParamUpperBound(currentParameter, parameters)
       value <- (upperBound - lowerBound) / 2
-    }
-    else {
+    } else {
       stopifnot(type == "o")
       value <- (length(oneParamBoundary(currentParameter, parameters)) - 1) / 2
     }
