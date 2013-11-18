@@ -388,8 +388,9 @@ irace <- function(tunerConfig = stop("parameter `tunerConfig' is mandatory."),
 
   while (TRUE) {
     if (remainingBudget <= 0) {
-      cat("# ", format(Sys.time(), usetz=TRUE), ": Stopped because ",
-          "budget is exhausted\n",
+      cat("# ", format(Sys.time(), usetz=TRUE),
+          ": Stopped because budget is exhausted\n",
+          "# Iteration: ", indexIteration, "\n",
           "# nbIterations: ", nbIterations, "\n",
           "# experimentsUsedSoFar: ", experimentsUsedSoFar, "\n",
           "# timeUsedSoFar: ", timeUsedSoFar, "\n",
@@ -397,7 +398,9 @@ irace <- function(tunerConfig = stop("parameter `tunerConfig' is mandatory."),
           "# remainingBudget: ", remainingBudget, "\n",
           "# currentBudget: ", currentBudget, "\n",
           "# number of elites: ", nrow(eliteCandidates), "\n",
-          "# nbCandidates: ", nbCandidates, "\n", sep="")
+          "# nbCandidates: ", nbCandidates, "\n",
+          "# mu: ", max(tunerConfig$mu, tunerConfig$firstTest), "\n",
+          sep="")
       return (eliteCandidates)
     }
 
@@ -409,7 +412,7 @@ irace <- function(tunerConfig = stop("parameter `tunerConfig' is mandatory."),
         return (eliteCandidates)
       }
     }
-
+    
     # Compute the current budget (nb of experiments for this iteration)
     # or take the value given as parameter.
     currentBudget <-
@@ -431,12 +434,14 @@ irace <- function(tunerConfig = stop("parameter `tunerConfig' is mandatory."),
     # the number of elites...
     if (nbCandidates <= nrow(eliteCandidates)) {
       cat("# ", format(Sys.time(), usetz=TRUE), ": Stopped because ",
-          "there is no enough budget to sample new candidates\n",
-          #(number of elites  + 1) * (mu + min(5, indexIteration)) > remainingBudget\n",
-          "# remainingBudget: ", remainingBudget, "\n",
+          "there is no enough budget to race newly sampled configurations\n",
+          #(number of elites  + 1) * (mu + min(5, indexIteration)) > remainingBudget\n", 
+          "# Iteration: ", indexIteration, "\n",
+          "# nbIterations: ", nbIterations, "\n",
           "# experimentsUsedSoFar: ", experimentsUsedSoFar, "\n",
           "# timeUsedSoFar: ", timeUsedSoFar, "\n",
           "# timeEstimate: ", timeEstimate, "\n",
+          "# remainingBudget: ", remainingBudget, "\n",
           "# currentBudget: ", currentBudget, "\n",
           "# number of elites: ", nrow(eliteCandidates), "\n",
           "# nbCandidates: ", nbCandidates, "\n",
@@ -446,28 +451,28 @@ irace <- function(tunerConfig = stop("parameter `tunerConfig' is mandatory."),
     }
     # ... or the number of candidates to test is NOT larger than the minimum.
     if (nbCandidates <= minSurvival) {
-      cat("# ", format(Sys.time(), usetz=TRUE), ": Stopped because ",
-          "the number of candidates (", nbCandidates,
+      cat("# ", format(Sys.time(), usetz=TRUE),
+          ": Stopped because the number of candidates (", nbCandidates,
           ") is smaller than the minimum (", minSurvival,")\n",
           "# You may either increase the budget or set 'minNbSurvival' to a lower value\n",
           # FIXME: Create a helper function to report all this info
           # and avoid repetition.
-          "# number of elites: ", nrow(eliteCandidates), "\n",
-          "# indexIteration: ", indexIteration, "\n",
-          "# mu: ", max(tunerConfig$mu, tunerConfig$firstTest), "\n",
+          "# Iteration: ", indexIteration, "\n",
           "# nbIterations: ", nbIterations, "\n",
           "# experimentsUsedSoFar: ", experimentsUsedSoFar, "\n",
           "# timeUsedSoFar: ", timeUsedSoFar, "\n",
           "# timeEstimate: ", timeEstimate, "\n",
           "# remainingBudget: ", remainingBudget, "\n",
           "# currentBudget: ", currentBudget, "\n",
+          "# number of elites: ", nrow(eliteCandidates), "\n",
           "# nbCandidates: ", nbCandidates, "\n",
+          "# mu: ", max(tunerConfig$mu, tunerConfig$firstTest), "\n",
           sep="")
       return (eliteCandidates)
     }
 
     cat("# ", format(Sys.time(), usetz=TRUE),
-        ": ITERATION ", indexIteration, " of ", nbIterations, "\n",
+        ": Iteration ", indexIteration, " of ", nbIterations, "\n",
         "# experimentsUsedSoFar: ", experimentsUsedSoFar, "\n",
         "# timeUsedSoFar: ", timeUsedSoFar, "\n",
         "# timeEstimate: ", timeEstimate, "\n",
@@ -561,7 +566,8 @@ irace <- function(tunerConfig = stop("parameter `tunerConfig' is mandatory."),
     }
 
     if (debugLevel >= 1) {
-      cat(sep="", "# ", format(Sys.time(), usetz=TRUE), ": ", "Launch race\n")}
+      cat(sep="", "# ", format(Sys.time(), usetz=TRUE), ": ", "Launch race\n")
+    }
     raceResults <- oneIterationRace (tunerConfig = tunerConfig,
                                      parameters = parameters, 
                                      candidates = testCandidates,
@@ -629,15 +635,6 @@ irace <- function(tunerConfig = stop("parameter `tunerConfig' is mandatory."),
 
     indexIteration <- indexIteration + 1
   }
-
-  cat("# ", format(Sys.time(), usetz=TRUE), ": Limit of iterations reached\n",
-      "# nbIterations: ", nbIterations, "\n",
-      "# experimentsUsedSoFar: ", experimentsUsedSoFar, "\n",
-      "# timeUsedSoFar: ", timeUsedSoFar, "\n",
-      "# timeEstimate: ", timeEstimate, "\n",
-      "# remainingBudget: ", remainingBudget, "\n",
-      "# currentBudget: ", currentBudget, "\n",
-      "# nbCandidates: ", nbCandidates, "\n", sep="")
-
+  # This code is actually never executed.
   return (eliteCandidates)
 }
