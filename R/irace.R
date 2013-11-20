@@ -255,13 +255,8 @@ computeTerminationOfRace <- function(nbParameters)
 # race, it calls race, and then conversely converts the resulting data
 # into the proper data structures for irace.
 oneIterationRace <-
-  function(tunerConfig = NULL,
-           parameters = NULL,
-           candidates = NULL, 
-           budget = NULL,
-           minSurvival = NULL)
+  function(tunerConfig, candidates, parameters, budget, minSurvival)
 {
-  # Call to Race:
   result <- race (maxExp = budget,
                   first.test = tunerConfig$firstTest,
                   each.test = tunerConfig$eachTest,
@@ -379,7 +374,7 @@ irace <- function(tunerConfig = stop("parameter `tunerConfig' is mandatory."),
   tunerResults$experiments <- as.data.frame(matrix(ncol=2, nrow=0))
   colnames(tunerResults$experiments) <- c("instance", "iteration")
   
-  cat("# ", format(Sys.time(), usetz=TRUE), ": INITIALIZATION \n",
+  cat("# ", format(Sys.time(), usetz=TRUE), ": Initialization\n",
       "# nbIterations: ", nbIterations, "\n",
       "# minSurvival: ", minSurvival, "\n",
       "# nbParameters: ", parameters$nbVariable, "\n",
@@ -566,11 +561,11 @@ irace <- function(tunerConfig = stop("parameter `tunerConfig' is mandatory."),
     }
 
     if (debugLevel >= 1) {
-      cat(sep="", "# ", format(Sys.time(), usetz=TRUE), ": ", "Launch race\n")
+      cat(sep="", "# ", format(Sys.time(), usetz=TRUE), ": Launch race\n")
     }
     raceResults <- oneIterationRace (tunerConfig = tunerConfig,
-                                     parameters = parameters, 
                                      candidates = testCandidates,
+                                     parameters = parameters, 
                                      budget = currentBudget, 
                                      minSurvival = minSurvival)
     

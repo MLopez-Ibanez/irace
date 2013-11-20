@@ -134,7 +134,7 @@ irace.usage <- function ()
 {
   # FIXME: It would be nice to put the version number in the license
   # message to avoid having this extra line.
-  cat ("irace\tversion ", irace.version, "\n")
+  cat ("irace\tversion: ", irace.version, "\n", sep="")
   cat (irace.license)
   # FIXME: The output would be nicer if we used cat(sprintf()) to
   # print short and long within a fixed width field. The description
@@ -151,6 +151,8 @@ irace.usage <- function ()
 irace.main <- function(tunerConfig = defaultConfiguration(), output.width = 9999)
 {
   op <- options(width = output.width) # Do not wrap the output.
+  on.exit(options(op), add = TRUE)
+
   tunerConfig <- checkConfiguration (tunerConfig)
   debug.level <- tunerConfig$debugLevel
   if (debug.level >= 1) printConfiguration (tunerConfig)
@@ -170,22 +172,21 @@ irace.main <- function(tunerConfig = defaultConfiguration(), output.width = 9999
   cat("# Best candidates (as commandlines)\n")
   candidates.print.command (eliteCandidates, parameters)
   
-  options(op)
   invisible(eliteCandidates)
 }
 
 
 irace.cmdline <- function(args = commandArgs (trailingOnly = TRUE))
 {
-  if (!is.null(readArgOrDefault (args, short = "-h", long="--help"))) {
+  if (!is.null(readArgOrDefault (args, short = "-h", long = "--help"))) {
     irace.usage()
     return(invisible(NULL))
   }
 
   # FIXME: It would be nice to put the version number in the license
   # message to avoid having this extra line.
-  cat ("irace\tversion", irace.version, "\n")
-  cat(irace.license)
+  cat ("irace\tversion: ", irace.version, "\n", sep="")
+  cat (irace.license)
   
   # Read the configuration file and the command line
   configurationFile <-

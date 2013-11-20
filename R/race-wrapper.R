@@ -190,6 +190,10 @@ hook.run.default <- function(instance, candidate, extra.params, config)
 # FIXME: This is needed because race.R is not divided in two-stages
 # run/evaluate like irace is, so there is no way to communicate data
 # from the first stage to the second.
+#
+# FIXME: In fact, we should use this trick also in irace.R to avoid
+# pass-by-copy-on-write of huge matrices and data.frames and instead
+# pass-by-reference an environment containing those.
 .irace <- new.env()
 
 ## FIXME: This function needs a description, what is candidate, task and data?
@@ -244,12 +248,14 @@ race.wrapper <- function(candidate, task, which.alive, data)
     
     if (parallel > 1) {
       if (mpi) {
+        # FIXME: We should do this at a higher level, to avoid the overhead.
         mpiInit(parallel, data$config$debugLevel)
         .irace$hook.output <-
           Rmpi::mpi.applyLB(candidates, .irace$hook.run,
                             instance = instance, extra.params = extra.params,
                             config = data$config)
       } else {
+        # FIXME: We should do this at a higher level, to avoid the overhead.
         library("parallel", quietly = TRUE)
         .irace$hook.output <-
           parallel::mclapply(candidates, .irace$hook.run,
