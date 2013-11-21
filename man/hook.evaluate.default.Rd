@@ -6,11 +6,11 @@
   \code{hook.evaluate.default} is the default \code{hookEvaluate} function that is
   invoked if \code{hookEvaluate} is a string (by default
   \code{hookEvaluate} is \code{NULL} and this function is not invoked). You can use it as
-  an advanced example of how to create your own hooEvaluate function.
+  an advanced example of how to create your own \code{hookEvaluate} function.
 }
 \usage{
 hook.evaluate.default(instance, candidate, num.candidates, extra.params,
-config, hook.run.command)
+config, hook.run.call)
 }
 \arguments{
   \item{instance}{A string containing the name of the instance (or
@@ -21,11 +21,10 @@ config, hook.run.command)
   \item{extra.params}{Extra parameters (like instance-specific ones) to
     be passed when evaluating this candidate.}
   \item{config}{options passed when invoking \pkg{irace}.}
-  \item{hook.run.command}{a string describing the call to hook-run that
-    corresponds to this call to hook-evaluate. This is used only for
+  \item{hook.run.call}{a string describing the call to hookRun that
+    corresponds to this call to hookEvaluate. This is used only for
     providing extra information to the user, for example, in case
-    hook-evaluate fails.}
-
+    hookEvaluate fails.}
 }
 \value{
   This function returns the
