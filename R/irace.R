@@ -602,6 +602,9 @@ irace <- function(tunerConfig = stop("parameter `tunerConfig' is mandatory."),
     }
 
     if (debugLevel >= 1) { cat("# Extract elites\n") }
+    # FIXME: Since we only actually keep the alive ones, we don't need
+    # to carry around rejected ones in raceResults$candidates. This
+    # would reduce overhead.
     eliteCandidates <- extractElites(raceResults$candidates,
                                      min(raceResults$nbAlive, minSurvival))
     cat("# Elite candidates:\n")

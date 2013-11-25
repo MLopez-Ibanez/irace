@@ -348,22 +348,27 @@ race<-function(maxExp=0,
   
   aux.ttest<-function(adjust=c("none","bonferroni","holm")){
     adjust<-match.arg(adjust)
+    # FIXME why c()?
     mean.all<-array(0,c(ncol(Results)))
     for (j in 1:ncol(Results))
+      # FIXME: why not just mean() ?
       mean.all[j]<-sum(Results[1:no.subtasks.sofar,j]/no.subtasks.sofar)
+    # FIXME: which.min?
     best<<-match(min(mean.all[alive]),mean.all)
     race.ranks <<- mean.all[alive]
 
     PJ<-array(0,dim=c(2,0))
     for (j in which.alive) {
+      # FIXME: This doesn't seem to change so it could be outside the for()
       Vb<-Results[1:no.subtasks.sofar,best]
       Vj<-Results[1:no.subtasks.sofar,j]
       #cat("Vb:", Vb, "\n")
       #cat("Vj:", Vj, "\n")
       # t.test may fail if the data in each group is almost
-      # constant. Hence, we sourround the call in a try() and we
+      # constant. Hence, we surround the call in a try() and we
       # initialize p with 1 if the means are equal or zero if they are
       # different.
+      # FIXME: mean(Vb) doesn't seem to change either.
       p <- as.integer(isTRUE(all.equal(mean(Vb),mean(Vj))))
       try(p <- t.test(Vb,Vj,paired=TRUE)$p.value)
       if (!is.nan(p) & !is.na(p))
@@ -441,12 +446,14 @@ race<-function(maxExp=0,
       switch(stat.test,
              friedman=aux.friedman(),
              t.none=aux.ttest("none"),
+             # FIXME: These two need to be exposed as options to irace's testType parameter.
              t.holm=aux.ttest("holm"),
              t.bonferroni=aux.ttest("bonferroni"))
     } else {
       if (interactive)
         cat("|x|")
       if (no.subtasks.sofar==1)  {
+        # FIXME: Shouldn't these be ranks when stat.test == "friedman" ?
         race.ranks <- Results[1,]
         best <- order(race.ranks)[1]
       } else  {
