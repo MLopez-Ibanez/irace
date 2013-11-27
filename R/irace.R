@@ -274,7 +274,7 @@ oneIterationRace <-
   expResults <- as.data.frame(matrix(ncol = 2, nrow = nrow(result$results)))
   colnames(expResults) <- c("instance", "iteration")
   expResults$instance <- result$race.data$race.instances[1:result$no.tasks]
-  # Add two new columns to the matrix of results
+  # Add the results for each configuration as additional columns.
   expResults <- cbind(expResults, result$results)
 
   candidates$.ALIVE. <- as.logical(result$alive)
