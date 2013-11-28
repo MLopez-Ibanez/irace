@@ -257,6 +257,11 @@ checkConfiguration <- function(configuration = defaultConfiguration())
       tunerError ("'", param, "' must be an integer.")
   }
 
+  if (configuration$firstTest %% configuration$eachTest != 0) {
+    tunerError("firstTest (", params["firstTest", "long"],
+               ") must be a multiple of eachTest (", params["eachTest", "long"], ")")
+  }
+  
   if (configuration$mu < configuration$firstTest) {
     if (configuration$debugLevel >= 1) {
       cat("Warning: Assuming 'mu <- firstTest' because 'mu' cannot be lower than 'firstTest'\n")
