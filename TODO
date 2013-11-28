@@ -17,6 +17,11 @@ TODO R package:
 
 TODO General:
  
+ * Weighted sampling of instances. Use the instance parameters to
+   provide a biased sampling. Note that one can currently achieve this
+   simply by repeating the instances in instances.txt and increasing
+   the number of those that should be sampled more.
+
  * The Friedman test here uses the F distribution instead of the
    Chi-square:
    http://www.itl.nist.gov/div898/software/dataplot/refman1/auxillar/friedman.htm
@@ -51,8 +56,18 @@ TODO General:
    all jobs for the first-test instances in parallel; 2) hook-run can
    use the index to assign a unique seed to each instance.
 
- * When parallel > 1, schedule jobs until all CPUs are full. This
-   is likely hard to implement.
+ * When parallel > 1, schedule jobs until all CPUs are full. This is
+   likely hard to implement. People have done this already with their
+   own implementation of F-race:
+   https://bitbucket.org/tunnuz/json2run, so the algorithm is
+   available.
+
+   The difficult part is that one would need to handle manually the
+   concurrency (launching, balancing, watching processes, collecting
+   output, etc.) for both a single multi-core machine and a MPI
+   cluster using the low-level primitives of the parallel and Rmpi
+   packages. Currently we just call high-level functions that do all
+   the work for us.
 
  * Make the output at beginning of iteration conditional on what is
    the tuning goal (time or nb evaluation). For instance it can be
@@ -142,7 +157,7 @@ TODO General:
    easily allows to hot-start a tuning with the results of a previous
    one. I have a real need for this.
 
- * JEREMIE: AFAK, there are very few (no?) state-of-the-art algorithms
+ * JEREMIE: AFAIK, there are very few (no?) state-of-the-art algorithms
    in optimization that do not use local search. I am not aware of any
    GA, for instance, that cannot be outperformed by its memetic
    counter-part. This is a strong motivation to try to include a
