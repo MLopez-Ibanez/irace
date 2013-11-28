@@ -408,6 +408,10 @@ race<-function(maxExp=0,
   for (current.task in 1:no.tasks) {
     which.alive<-which(alive)
     no.alive<-length(which.alive)
+    # FIXME: This should take into account each.test. It doesn't make
+    # much sense to see an additional instance if there is no budget
+    # to do a test. The point of each.test is to see instances in
+    # groups and this defeats its purpose.
     if (maxExp && no.experiments.sofar+no.alive>maxExp)
       break
     if (no.alive==1)
@@ -441,7 +445,10 @@ race<-function(maxExp=0,
     no.tasks.sofar<-no.tasks.sofar+1
     no.subtasks.sofar<-no.subtasks.sofar+current.no.subtasks
     
-    # Drop bad candidates
+    ## Drop bad candidates.
+    # We assume that first.test is a multiple of each.test.  In any
+    # case, this will only do the first test after the first multiple
+    # of each.test that is larger than first.test.
     if ( (no.tasks.sofar>=first.test) && ((no.tasks.sofar %% each.test) == 0)) {
       switch(stat.test,
              friedman=aux.friedman(),
