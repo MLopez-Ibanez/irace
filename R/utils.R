@@ -89,17 +89,136 @@ is.null.or.empty <- function(x)
   is.null(x) || (length(x) == 1 && x == "")
 }
 
+strcat <- function(..., collapse = NULL)
+  do.call(paste, args=list(..., sep="", collapse = collapse))
+
+# FIXME: Isn't a R function to do this? More portable?
+canonical.dirname <- function(dirname = stop("required parameter"))
+{
+  return (sub ("([^/])$", "\\1/", dirname))
+}
+
 # Function to convert a relative to an absolute path. CWD is the
-# working directory to complete relative paths.
+# working directory to complete relative paths. It tries really hard
+# to create canonical paths.
+## FIXME: This needs to be tested on Windows.
+# The following code can be used to test this function.
+## test <- function(testcases) {
+##   cwd <- getwd()
+##   on.exit(setwd(cwd))
+##   setwd("/tmp")
+##   testcases <- read.table(text='
+## "."                          "/tmp"
+## ".."                         "/"
+## "../"                        "/"
+## "../."                       "/"
+## "../.."                     "/"
+## "../../"                     "/"
+## "../../x.r"                  "/x.r"
+## "../leslie/"                 "/leslie"
+## "../leslie/x.r"              "/leslie/x.r"
+## "../x.r"                     "/x.r"
+## "..irace"                    "/tmp/..irace"
+## "./"                         "/tmp"
+## "./."                        "/tmp"
+## "././x.r"                    "/tmp/x.r"
+## "./irace/../x.r"             "/tmp/x.r"
+## "./x.r"                      "/tmp/x.r"
+## ".x.R"                       "/tmp/.x.R"
+## "/./x.r"                     "/x.r"
+## "/home"                      "/home"
+## "/home/leslie/././x.r"       "/home/leslie/x.r"
+## "/home/leslie/~/x.r"         "/home/leslie/~/x.r"
+## "/~/x.r"                     "/~/x.r"
+## "e:/home/leslie/x.r"         "e:/home/leslie/x.r"
+## "leslie/leslie/../../irace"  "/tmp/irace"
+## "x.r"                        "/tmp/x.r"
+## "~/../x.r"                   "/home/x.r"
+## "~/irace/../../x.r"          "/home/x.r"
+## "~/x.r"                      "~/x.r"
+## ', stringsAsFactors=FALSE)
+##   for(i in 1:nrow(testcases)) {
+##     orig <- testcases[i,1]
+##     res <- path.rel2abs(testcases[i,1])
+##     exp <- path.expand(testcases[i,2])
+##     if (res == exp) {
+##       cat("[OK] ", orig, " -> ", res, "\n", sep="")
+##     } else {
+##       stop("[FAILED] ", orig, " -> ", res, " but expected: ", exp, "\n")
+##     }
+##   }
+## }
+## options(error=dump.frames)
+## test(testcases)
 path.rel2abs <- function (path, cwd = getwd())
 {
   if (is.null.or.na(path)) {
     return (NULL)
   } else if (path == "") {
     return ("")
-  } else {
-    return (sub ('^(\\.)', paste (cwd, '/\\1', sep=''), path))
   }
+
+  # Possibly expand ~/path to /home/user/path.
+  path <- path.expand(path)
+
+  filename <- basename(path)
+  path <- dirname(path)
+  s <- .Platform$file.sep
+  if (path == ".") {
+    if (filename == ".") { # This is the current directory
+      return (cwd)
+      # We handle the case ".." later.
+    } else if (filename != "..") { # This is a file in the current directory
+      return(strcat(cwd, s, filename))
+    }
+  }
+  # else
+  
+  # Prefix the current cwd to the path if it doesn't start with "c:\" or /
+  reg.exp <- strcat("^", s, "|^[A-Za-z]:", s)
+  if (!grepl(reg.exp, path))
+    path <- strcat(cwd, s, path)
+
+  # Change "/./" to "/" to get a canonical form 
+  path <- gsub(strcat(s, ".", s), s, path, fixed = TRUE)
+
+  # Change "/.$" to "/" to get a canonical form 
+  path <- sub(strcat(s, "\\.$"), s, path)
+
+  # Change "/x/../" to "/" to get a canonical form 
+  prevdir.regex <- strcat(s, "[^", s,"]+", s, "\\.\\.")
+  repeat {
+    # We need to do it one by one so "a/b/c/../../../" is not converted to "a/b/../"
+    tmp <- sub(strcat(prevdir.regex, s), s, path)
+    if (tmp == path) break
+    path <- tmp
+  }
+  # Handle "/something/..$" to "/" that is, when ".." is the last thing in the path.
+  path <- sub(strcat(prevdir.regex, "$"), s, path)
+
+  # Handle "^/../../.." to "/" that is, going up at the root just returns the root.
+  repeat {
+    # We need to do it one by one so "a/b/c/../../../" is not converted to "a/b/../"
+    tmp <- sub(strcat("^", s, "\\.\\.", s), s, path)
+    if (tmp == path) break
+    path <- tmp
+  }
+  # Handle "^/..$" to "/" that is, when ".." is the last thing in the path.
+  path <- sub(strcat("^", s, "\\.\\.$"), s, path)
+
+  # It may happen that path ends in "/", for example, for "/x". Do
+  # not add another "/"
+  if (filename != ".") {
+    last <- substr(path, nchar(path), nchar(path))
+    if (last == s) {
+      path <- strcat(path, filename)
+    } else {
+      path <- strcat(path, s, filename)
+    }
+  }
+  # We use normalizePath, which will further simplify the path if
+  # the path exists.
+  return (suppressWarnings(normalizePath(path, mustWork = NA)))
 }
 
 is.function.name <- function(FUN)
@@ -111,16 +230,6 @@ is.function.name <- function(FUN)
                  mode = "function", ifnotfound = list(NULL),
                  inherits = TRUE)[[1]]))
 }
-
-# FIXME: Isn't a R function to do this? More portable?
-canonical.dirname <- function(dirname = stop("required parameter"))
-{
-  return (sub ("([^/])$", "\\1/", dirname))
-}
-
-# FIXME: This is paste0 in R >= 2.15
-strcat <- function(..., sep = "", collapse = NULL)
-  paste(list(...), sep, collapse)
 
 trim.leading <- function(str)
 {
