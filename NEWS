@@ -1,3 +1,6 @@
+ * Much more robust handling of relative/absolute paths. Improved support
+   for Windows. (Leslie Perez, Manuel López-Ibáñez)
+
  * Provide better error messages for incorrect parameter
    descriptions. Examples:
 
