@@ -29,12 +29,6 @@ Error in file.check(configuration$hookRun, executable = TRUE, text = "run progra
 Calls: irace.cmdline -> irace.main -> checkConfiguration -> file.check
 
 
-#4 ------------------------------------------------------------
-
-$ irace --hook-run my-hook-run
-
-doesn't work. One needs to use ./my-hook-run
-
 #3 ------------------------------------------------------------
 
 $ irace --version (or any other unknown parameter)
@@ -68,3 +62,10 @@ Calls: irace.cmdline -> irace.main -> checkConfiguration
 Execution halted
 
 
+## FIXED bugs
+
+#4 -- fixed at revision 827
+
+$ irace --hook-run my-hook-run
+
+doesn't work. One needs to use ./my-hook-run
