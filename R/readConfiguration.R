@@ -258,8 +258,9 @@ checkConfiguration <- function(configuration = defaultConfiguration())
   }
 
   if (configuration$firstTest %% configuration$eachTest != 0) {
-    tunerError("firstTest (", params["firstTest", "long"],
-               ") must be a multiple of eachTest (", params["eachTest", "long"], ")")
+    tunerError("firstTest (", .irace.params.def["firstTest", "long"],
+               ") must be a multiple of eachTest (",
+               .irace.params.def["eachTest", "long"], ")")
   }
   
   if (configuration$mu < configuration$firstTest) {
@@ -288,28 +289,30 @@ checkConfiguration <- function(configuration = defaultConfiguration())
   }
 
   if (configuration$sgeCluster && configuration$mpi) {
-    tunerError("'mpi' (", .irace.params.def["mpi","long"], ") and ",
-               "'sgeCluster' (", .irace.params.def["sgeCluster","long"], ") ",
+    tunerError("'mpi' (", .irace.params.def["mpi", "long"], ") and ",
+               "'sgeCluster' (", .irace.params.def["sgeCluster", "long"], ") ",
                "cannot be enabled at the same time")
   }
 
   if (configuration$sgeCluster && configuration$parallel > 1) {
     tunerError("It does not make sense to use ",
-               "'parallel' (", .irace.params.def["parallel","long"], ") and ",
-               "'sgeCluster' (", .irace.params.def["sgeCluster","long"], ") ",
+               "'parallel' (", .irace.params.def["parallel", "long"], ") and ",
+               "'sgeCluster' (", .irace.params.def["sgeCluster", "long"], ") ",
                "at the same time")
   }
   
   if (configuration$timeBudget > 0 && configuration$timeEstimate <= 0) {
-    tunerError ("When using 'timeBudget' (", .irace.params.def["timeBudget","long"],
-                "), 'timeEstimate' (",
-                .irace.params.def["timeEstimate","long"], ") must be larger than zero")
+    tunerError ("When using 'timeBudget' (",
+                .irace.params.def["timeBudget", "long"], "), 'timeEstimate' (",
+                .irace.params.def["timeEstimate", "long"],
+                ") must be larger than zero")
   }
 
   if (configuration$timeBudget <= 0 && configuration$timeEstimate > 0) {
-    tunerError ("When using 'timeEstimate' (", .irace.params.def["timeEstimate","long"],
-                "), 'timeBudget' (",
-                .irace.params.def["timeBudget","long"], ") must be larger than zero")
+    tunerError ("When using 'timeEstimate' (",
+                .irace.params.def["timeEstimate", "long"], "), 'timeBudget' (",
+                .irace.params.def["timeBudget", "long"],
+                ") must be larger than zero")
   }
 
   if (tolower(configuration$testType) %in% c("f-test", "friedman")) {
@@ -318,7 +321,7 @@ checkConfiguration <- function(configuration = defaultConfiguration())
     configuration$testType <- "t.none"
   } else {
     tunerError ("invalid setting '", configuration$testType,
-                "' of 'testType' (", .irace.params.def["testType","long"],
+                "' of 'testType' (", .irace.params.def["testType", "long"],
                 "), valid values are: F-test, t-test")
   }
   
