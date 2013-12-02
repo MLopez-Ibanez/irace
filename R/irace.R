@@ -261,6 +261,7 @@ oneIterationRace <-
                   first.test = tunerConfig$firstTest,
                   each.test = tunerConfig$eachTest,
                   stat.test = tunerConfig$testType,
+                  conf.level = tunerConfig$confidence,
                   stop.min.cand = minSurvival,
                   # Parameters for race-wrapper.R
                   candidates = removeCandidatesMetaData(candidates),
@@ -379,6 +380,7 @@ irace <- function(tunerConfig = stop("parameter `tunerConfig' is mandatory."),
       "# minSurvival: ", minSurvival, "\n",
       "# nbParameters: ", parameters$nbVariable, "\n",
       "# seed: ", tunerConfig$seed, "\n",
+      "# confidence level: ", tunerConfig$confidence, "\n",
       sep = "")
 
   while (TRUE) {

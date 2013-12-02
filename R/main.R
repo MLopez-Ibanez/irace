@@ -111,6 +111,7 @@ hookEvaluate  ""  --hook-evaluate  "" "Optional script that provides a numeric v
 "minNbSurvival"  ""  "--min-survival"  0   "The minimum number of candidates that should survive to continue one iteration." 
 "nbCandidates"  ""  "--num-candidates"  0   "The number of candidates that should be sampled and evaluated at each iteration." 
 "mu"  ""  "--mu"  5   "This value is used to determine the number of candidates to be sampled and evaluated at each iteration." 
+"confidence"  ""  "--confidence"  0.95  "Confidence level for the elimination test."
 "seed"  ""  "--seed"  NA    "Seed of the random number generator (must be a positive integer, NA means use a random seed)." 
 "parallel"  ""  "--parallel"  0    "Number of calls to hookRun to execute in parallel. 0 or 1 mean disabled." 
 "mpi"  ""  "--mpi"  0    "Enable/disable MPI. Use Rmpi to execute hookRun in parallel (parameter parallel is the number of slaves)." 

@@ -1,3 +1,6 @@
+ * The confidence level for the elimination test is now
+   configurable with parameter --confidence. (Leslie Perez)
+
  * Much more robust handling of relative/absolute paths. Improved support
    for Windows. (Leslie Perez, Manuel López-Ibáñez)
 
@@ -8,7 +11,6 @@
    x "" r (1e-4, 5e-4) # given digits=2, ditto
    x "" i (-1, -2)     # lower bound must be smaller than upper bound
    x "" c ("a", "a")   # duplicated values
-   
  
  * Print elapsed time for calls to hook-run if debugLevel >=1.
 

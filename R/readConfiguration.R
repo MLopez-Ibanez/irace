@@ -153,11 +153,10 @@ checkConfiguration <- function(configuration = defaultConfiguration())
   configuration <- defaultConfiguration (configuration)
   
   ## Check that everything is fine with external parameters
-  # Check that the files exists and are readable.
+  # Check that the files exist and are readable.
   configuration$parameterFile <- path.rel2abs(configuration$parameterFile)
   # We don't check this file here because the user may give the
   # parameters explicitly. And it is checked in readParameters anyway.
-
   configuration$execDir <- path.rel2abs(configuration$execDir)
   file.check (configuration$execDir, isdir = TRUE, text = "execution directory")
 
@@ -256,6 +255,13 @@ checkConfiguration <- function(configuration = defaultConfiguration())
         || !is.wholenumber(configuration[[param]]))
       tunerError ("'", param, "' must be an integer.")
   }
+
+  configuration$confidence <- suppressWarnings(as.numeric(configuration$confidence))
+  if (is.null(configuration$confidence)
+      || is.na (configuration$confidence)
+      || configuration$confidence < 0.0 || configuration$confidence > 1.0)
+    tunerError ("'confidence' must be a real value within [0, 1].")
+
 
   if (configuration$firstTest %% configuration$eachTest != 0) {
     tunerError("firstTest (", .irace.params.def["firstTest", "long"],
