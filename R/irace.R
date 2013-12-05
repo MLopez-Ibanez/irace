@@ -314,7 +314,7 @@ irace <- function(tunerConfig = stop("parameter `tunerConfig' is mandatory."),
                   parameters = stop("parameter `parameters' is mandatory."))
 {
   tunerConfig <- checkConfiguration(defaultConfiguration(tunerConfig))
-  
+  # We need to do this here to use/recover .Random.seed later.  
   if (is.na(tunerConfig$seed)) {
     tunerConfig$seed <- runif(1, 1, .Machine$integer.max)
   }

@@ -119,7 +119,7 @@ readConfiguration <- function(filename = "", configuration = list())
 {
   # First find out which file...
   if (filename == ""
-      && file.exists(.irace.params.def["configurationFile","default"])) {
+      && file.exists(.irace.params.def["configurationFile", "default"])) {
     filename <- .irace.params.def["configurationFile","default"]
     cat("Warning: A default configuration file", shQuote(filename),
         "has been found and will be read\n")

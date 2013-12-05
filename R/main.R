@@ -83,6 +83,9 @@ read.table.text <- function(text, header = TRUE, stringsAsFactors = FALSE, ...)
   return(x)
 }
 
+# FIXME: Add more columns with the type of the parameter: b(oolean),
+# i(nteger), p(ath), r(eal), c(ategorical). For i, r, and c, add their
+# range.
 .irace.params.def <- read.table.text('
 name               short  long             default            description
 ""               "-h"   "--help"         NA                 "show this help." 
