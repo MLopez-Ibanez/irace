@@ -3,27 +3,21 @@
 ## Christopher Jackson <chris.jackson at mrc-bsu.cam.ac.uk>
 # 
 # Package: msm
-# Version: 0.9.6
-# Date: 2010-02-09
+# Version: 1.2
+# Date: 2013-05-14
 # Title: Multi-state Markov and hidden Markov models in continuous time
 # Author: Christopher Jackson <chris.jackson@mrc-bsu.cam.ac.uk>
 # Maintainer: Christopher Jackson <chris.jackson@mrc-bsu.cam.ac.uk>
 # Description: Functions for fitting general continuous-time Markov and
-#         hidden Markov multi-state models to longitudinal data.  Both
+#         hidden Markov multi-state models to longitudinal data.  A
+#         variety of observation schemes are supported, including
+#         processes observed at arbitrary times (panel data),
+#         continuously-observed processes, and censored states. Both
 #         Markov transition rates and the hidden Markov output process
-#         can be modelled in terms of covariates.  A variety of
-#         observation schemes are supported, including processes observed
-#         at arbitrary times, completely-observed processes, and censored
-#         states.
+#         can be modelled in terms of covariates, which may be constant
+#         or piecewise-constant in time.
 # License: GPL (>= 2)
-# Imports: survival,mvtnorm
-# Packaged: 2010-02-09 11:11:36 UTC; chris
 # Repository: CRAN
-# Date/Publication: 2010-02-11 18:33:21
-
-
-
-
 
 ## Rejection sampling algorithm by Robert (Stat. Comp (1995), 5, 121-5)
 ## for simulating from the truncated normal distribution.
@@ -57,7 +51,6 @@ rtnorm <- function (n, mean = 0, sd = 1, lower = -Inf, upper = Inf) {
                                        (-upper + sqrt(upper^2 + 4)) * exp((upper*2 - -upper*sqrt(upper^2 + 4)) / 4)),
                                        2, # rejection sampling with exponential proposal. Use if upper << mean.
                                        3)))) # rejection sampling with uniform proposal. Use if bounds are narrow and central.
-
     
     ind.nan <- ind[alg==-1]; ind.no <- ind[alg==0]; ind.expl <- ind[alg==1]; ind.expu <- ind[alg==2]; ind.u <- ind[alg==3]
     ret[ind.nan] <- NaN
