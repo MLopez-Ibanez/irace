@@ -88,7 +88,7 @@ read.table.text <- function(text, header = TRUE, stringsAsFactors = FALSE, ...)
 # range.
 .irace.params.def <- read.table.text('
 name               short  long             default            description
-""               "-h"   "--help"         NA                 "show this help." 
+""                 "-h"   "--help"         NA                 "Show this help." 
 configurationFile  "-c"   "--config-file"  "./tune-conf"      "File that contains the configuration for irace." 
 parameterFile      "-p"   "--param-file"   "./parameters.txt" "File that contains the description of the parameters to be tuned. See the template." 
 execDir            ""     "--exec-dir"     "./"           "Directory where the programs will be run." 
