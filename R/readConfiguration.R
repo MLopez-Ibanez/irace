@@ -160,16 +160,17 @@ checkConfiguration <- function(configuration = defaultConfiguration())
   configuration$execDir <- path.rel2abs(configuration$execDir)
   file.check (configuration$execDir, isdir = TRUE, text = "execution directory")
 
+  if (configuration$recoveryFile == "")
+    configuration$recoveryFile  <- NULL
+  if (!is.null(configuration$recoveryFile)) {
+    configuration$recoveryFile <- path.rel2abs(configuration$recoveryFile)
+    file.check(configuration$recoveryFile, readable = TRUE,
+               text = "recovery file")
+  }
+
   if (!is.null.or.empty(configuration$logFile)) {
-    cwd <- setwd(configuration$execDir)
-    configuration$logFile <- path.rel2abs(configuration$logFile)
-    tunerResults <- list()
-    tunerResults$tunerConfig <- configuration
-    tunerResults$irace.version <- irace.version
-    # Try to save here and to give an earlier error if not possible.
-    # FIXME: Give a nicer error!
-    save (tunerResults, file = configuration$logFile)
-    setwd(cwd)
+    configuration$logFile <- path.rel2abs(configuration$logFile,
+                                          cwd = configuration$execDir)
   }
   
   if (is.function.name(configuration$hookRun)) {

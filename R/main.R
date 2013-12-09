@@ -93,6 +93,7 @@ configurationFile            "-c"   "--config-file"  "./tune-conf"      "File th
 parameterFile                "-p"   "--param-file"   "./parameters.txt" "File that contains the description of the parameters to be tuned. See the template." 
 execDir                      ""     "--exec-dir"     "./"               "Directory where the programs will be run." 
 "logFile"                    "-l"   "--log-file"     "./irace.Rdata"    "File to save tuning results as an R dataset, either absolute path or relative to execDir." 
+"recoveryFile"               ""     "--recovery-file"  ""               "Recover from a previously saved log file, either absolute path or relative to the current directory."
 "instances"                  ""     ""               ""                 ""
 "instances.extra.params"     ""     ""               ""                 ""
 "instanceDir"                ""     "--instance-dir"  "./Instances"  "Folder where tuning instances are located  either absolute or relative to working directory." 

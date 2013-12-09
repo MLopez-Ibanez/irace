@@ -1,3 +1,24 @@
+
+# Sets irace variables from a recovery file.  It is executed in the
+# parent environment.
+recoverFromFile <- function(filename)
+{
+  # substitute() is needed to evaluate filename here.
+  eval.parent(substitute({
+    # This restores tunerResults, so that doesn't need restoring.
+    load (filename)
+    # .Random.seed is special
+    for (name in setdiff(names(tunerResults$state), ".Random.seed"))
+      assign(name, tunerResults$state[[name]])
+    assign(".Random.seed", tunerResults$state$.Random.seed, .GlobalEnv)
+    # These variables are not state, but they are used directly by irace.
+    for (name in c("tunerConfig", "parameters", "allCandidates"))
+      assign(name, tunerResults[[name]])
+    options(.race.debug.level = tunerConfig$debugLevel)
+    options(.irace.debug.level = tunerConfig$debugLevel)
+  }))
+}
+
 candidates.equal <- function(x, y, parameters, threshold)
 {
   d <- 0.0
@@ -314,67 +335,85 @@ irace <- function(tunerConfig = stop("parameter `tunerConfig' is mandatory."),
                   parameters = stop("parameter `parameters' is mandatory."))
 {
   tunerConfig <- checkConfiguration(defaultConfiguration(tunerConfig))
-  # We need to do this here to use/recover .Random.seed later.  
+  # We need to do this here to use/recover .Random.seed later.
   if (is.na(tunerConfig$seed)) {
     tunerConfig$seed <- runif(1, 1, .Machine$integer.max)
   }
   set.seed(tunerConfig$seed)
-  debugLevel <- tunerConfig$debugLevel
-  # Set options controlling debug level.
-  # FIXME: This should be the other way around, the options set the debugLevel.
-  options(.race.debug.level = debugLevel)
-  options(.irace.debug.level = debugLevel)
+  str(.Random.seed)
   
-  # Create a data frame of all candidates ever generated.
-  namesParameters <- names(parameters$constraints)
-  if (!is.null(tunerConfig$candidatesFile)
-      && tunerConfig$candidatesFile != "") {
-    allCandidates <- readCandidatesFile(tunerConfig$candidatesFile,
-                                        parameters, debugLevel)
-    allCandidates <- cbind(.ID. = 1:nrow(allCandidates),
-                           allCandidates,
-                           .PARENT. = NA)
-    rownames(allCandidates) <- allCandidates$.ID.
+  # Recover state from file?
+  if (!is.null(tunerConfig$recoveryFile)){
+    cat ("# ", format(Sys.time(), usetz=TRUE), ": Resuming from file: '",
+         tunerConfig$recoveryFile,"'\n", sep="")
+    recoverFromFile(tunerConfig$recoveryFile)
   } else {
-    candidates.colnames <- c(".ID.", namesParameters, ".PARENT.")
-    allCandidates <-
-      as.data.frame(matrix(ncol = length(candidates.colnames),
-                           nrow = 0))
-    colnames(allCandidates) <- candidates.colnames
+    debugLevel <- tunerConfig$debugLevel
+    # Set options controlling debug level.
+    # FIXME: This should be the other way around, the options set the debugLevel.
+    options(.race.debug.level = debugLevel)
+    options(.irace.debug.level = debugLevel)
+    
+    # Create a data frame of all candidates ever generated.
+    namesParameters <- names(parameters$constraints)
+    if (!is.null(tunerConfig$candidatesFile)
+        && tunerConfig$candidatesFile != "") {
+      allCandidates <- readCandidatesFile(tunerConfig$candidatesFile,
+                                          parameters, debugLevel)
+      allCandidates <- cbind(.ID. = 1:nrow(allCandidates),
+                             allCandidates,
+                             .PARENT. = NA)
+      rownames(allCandidates) <- allCandidates$.ID.
+    } else {
+      candidates.colnames <- c(".ID.", namesParameters, ".PARENT.")
+      allCandidates <-
+        as.data.frame(matrix(ncol = length(candidates.colnames),
+                             nrow = 0))
+      colnames(allCandidates) <- candidates.colnames
+    }
+    eliteCandidates <- data.frame()
+    
+    timeBudget <- tunerConfig$timeBudget
+    timeEstimate <- tunerConfig$timeEstimate
+    
+    nbIterations <- ifelse (tunerConfig$nbIterations == 0,
+                            computeNbIterations(parameters$nbVariable),
+                            tunerConfig$nbIterations)
+    nbIterations <- floor(nbIterations)
+    
+    minSurvival <- ifelse (tunerConfig$minNbSurvival == 0,
+                           computeTerminationOfRace(parameters$nbVariable),
+                           tunerConfig$minNbSurvival)
+    minSurvival <- floor(minSurvival)
+    
+    indexIteration <- 1
+    # Compute the total initial budget, that is, the maximum number of
+    # experiments that we can perform.
+    remainingBudget <- ifelse (timeBudget > 0,
+                               timeBudget / timeEstimate,
+                               tunerConfig$maxExperiments)
+    experimentsUsedSoFar <- 0
+    timeUsedSoFar <- 0
+    currentBudget <-
+      ifelse (tunerConfig$nbExperimentsPerIteration == 0,
+              computeComputationalBudget(remainingBudget, indexIteration,
+                                         nbIterations),
+              tunerConfig$nbExperimentsPerIteration)
+    currentBudget <- floor (currentBudget)
+    
+    
+    # To save the logs
+    tunerResults <- list()
+    tunerResults$tunerConfig <- tunerConfig
+    tunerResults$irace.version <- irace.version
+    tunerResults$parameters <- parameters
+    tunerResults$iterationElites <- NULL
+    tunerResults$experiments <- as.data.frame(matrix(ncol=2, nrow=0))
+    colnames(tunerResults$experiments) <- c("instance", "iteration")
+    model <- NULL
+    nbCandidates <- 0
   }
-  eliteCandidates <- data.frame()
-  
-  timeBudget <- tunerConfig$timeBudget
-  timeEstimate <- tunerConfig$timeEstimate
 
-  nbIterations <- ifelse (tunerConfig$nbIterations == 0,
-                          computeNbIterations(parameters$nbVariable),
-                          tunerConfig$nbIterations)
-  nbIterations <- floor(nbIterations)
-
-  minSurvival <- ifelse (tunerConfig$minNbSurvival == 0,
-                         computeTerminationOfRace(parameters$nbVariable),
-                         tunerConfig$minNbSurvival)
-  minSurvival <- floor(minSurvival)
-  
-  indexIteration <- 1
-  # Compute the total initial budget, that is, the maximum number of
-  # experiments that we can perform.
-  remainingBudget <- ifelse (timeBudget > 0,
-                             timeBudget / timeEstimate,
-                             tunerConfig$maxExperiments)
-  experimentsUsedSoFar <- 0
-  timeUsedSoFar <- 0
-
-  # To save the logs
-  tunerResults <- list()
-  tunerResults$tunerConfig <- tunerConfig
-  tunerResults$irace.version <- irace.version
-  tunerResults$parameters <- parameters
-  tunerResults$iterationElites <- NULL
-  tunerResults$experiments <- as.data.frame(matrix(ncol=2, nrow=0))
-  colnames(tunerResults$experiments) <- c("instance", "iteration")
-  
   cat("# ", format(Sys.time(), usetz=TRUE), ": Initialization\n",
       "# nbIterations: ", nbIterations, "\n",
       "# minSurvival: ", minSurvival, "\n",
@@ -384,6 +423,29 @@ irace <- function(tunerConfig = stop("parameter `tunerConfig' is mandatory."),
       sep = "")
 
   while (TRUE) {
+    # Recovery info 
+    tunerResults$state <- list(.Random.seed = .Random.seed, 
+                               currentBudget = currentBudget,
+                               debugLevel = debugLevel,
+                               eliteCandidates = eliteCandidates,
+                               experimentsUsedSoFar = experimentsUsedSoFar,
+                               indexIteration = indexIteration,
+                               minSurvival = minSurvival,
+                               model = model,
+                               nbCandidates = nbCandidates,
+                               nbIterations = nbIterations,
+                               remainingBudget = remainingBudget,
+                               timeBudget = timeBudget,
+                               timeEstimate = timeEstimate,
+                               timeUsedSoFar = timeUsedSoFar)
+    ## Save to the log file
+    tunerResults$allCandidates <- allCandidates
+    if (!is.null.or.empty(tunerConfig$logFile)) {
+      cwd <- setwd(tunerConfig$execDir)
+      save (tunerResults, file = tunerConfig$logFile)
+      setwd(cwd)
+    }
+
     if (remainingBudget <= 0) {
       cat("# ", format(Sys.time(), usetz=TRUE),
           ": Stopped because budget is exhausted\n",
@@ -623,14 +685,6 @@ irace <- function(tunerConfig = stop("parameter `tunerConfig' is mandatory."),
     if (debugLevel >= 3) {
       cat("# All candidates:\n")
       candidates.print(allCandidates, metadata = TRUE)
-    }
-
-    ## Save to the log file
-    tunerResults$allCandidates <- allCandidates
-    if (!is.null.or.empty(tunerConfig$logFile)) {
-      cwd <- setwd(tunerConfig$execDir)
-      save (tunerResults, file = tunerConfig$logFile)
-      setwd(cwd)
     }
 
     indexIteration <- indexIteration + 1
