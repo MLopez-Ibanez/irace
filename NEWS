@@ -1,3 +1,6 @@
+ * New option --recovery-file (recoveryFile) allows resuming a
+   previous irace run. (Leslie Perez)
+
  * The confidence level for the elimination test is now
    configurable with parameter --confidence. (Leslie Perez)
 
