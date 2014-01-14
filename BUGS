@@ -10,11 +10,67 @@ The output was:
 Error : running command '/home/mascia/tuning_paradiseo/experiments/PFSPWT/tuning_2/./hook-run /home/mascia/tuning_paradiseo/experiments/PFSPWT/tuning_2/./Instances//90x20_5 402   --sa-code_definition%ps-initialisation=1 --sa-code_definition%sa-algo_choice@0=7 --sa-code_definition%sa-algo_choice@0%7%sa-perturbation=0 --sa-code_definition%sa-algo_choice@0%7%sa-acceptance=3 --sa-code_definition%sa-algo_choice@0%7%sa-acceptance%3%sa-cooling_schedule=0 --sa-code_definition%sa-algo_choice@0%7%sa-acceptance%3%sa-cooling_schedule%0%sa-sa_r_initial_temp=1.0607 --sa-code_definition%sa-algo_choice@0%7%sa-acceptance%3%sa-cooling_schedule%0%sa-sa_r_factor=0.6901 --sa-code_definition%sa-algo_choice@0%7%sa-acceptance%3%sa-cooling_schedule%0%sa-sa_r_max_step=562 --sa-code_definition%sa-algo_choice@0%7%sa-acceptance%3%sa-cooling_schedule%0%sa-sa_r_final_temp=825 --sa-code_definition%sa-algo_choice@0%7%sa-time_ratio=7 --sa-code_definition%s
 Execution halted
 Warning message:
-running command 'ls *.26602+1.*.log 2>/dev/null' had status 2 
+running command 'ls *.26602+1.*.log 2>/dev/null' had status 2
 
 which looks like the master code continued execution even after the
 slave died and the error output from the master was lost. The
 truncation is also a problem.
+
+In theory, the following program should reproduce the issue, but it
+doesn't:
+
+#!/usr/bin/Rscript
+# Load the R MPI package if it is not already loaded.
+if (!is.loaded("mpi_initialize")) { library("Rmpi") }
+# Spawn as many slaves as possible
+mpi.spawn.Rslaves(nslaves=5)
+
+# In case R exits unexpectedly, have it automatically clean up
+# resources taken up by Rmpi (slaves, memory, etc...) .
+Last <- function(){
+  if (is.loaded("mpi_initialize")){
+    if (mpi.comm.size(1) > 0){
+      print("Please use mpi.close.Rslaves() to close slaves.")
+      mpi.close.Rslaves()
+    }
+    print("Please use mpi.quit() to quit R")
+    .Call("mpi_finalize") }
+}
+
+  runcommand <- function(command, args) {
+      cat (format(Sys.time(), usetz=TRUE), ":", command, args, "\n")
+      elapsed <- proc.time()["elapsed"]
+    err <- NULL
+    output <-  withCallingHandlers(
+      tryCatch(system2(command, args, stdout = TRUE, stderr = TRUE),
+               error=function(e) {
+                 err <<- paste(err, conditionMessage(e), sep ="\n")
+                 NULL
+               }), warning=function(w) {
+                 err <<- paste(err, conditionMessage(w), sep ="\n")
+                 invokeRestart("muffleWarning")
+               })
+    # If e is a warning, the command failed.
+    if (!is.null(err)) {
+      stop (call. = FALSE,
+            format(Sys.time(), usetz=TRUE), ": ERROR (", paste(output, sep="\n"), "):", err,"\n")
+    }
+      cat (format(Sys.time(), usetz=TRUE), ": DONE (",
+           ") Elapsed: ", proc.time()["elapsed"] - elapsed, "\n")
+      return(list(output = output, error = NULL))
+  }
+
+candidates <- list("x", "--xx /home/mascia/tuning_paradiseo/experiments/PFSPWT/tuning_2/./hook-run /home/mascia/tuning_paradiseo/experiments/PFSPWT/tuning_2/./Instances//90x20_5 402   --sa-code_definition%ps-initialisation=1 --sa-code_definition%sa-algo_choice\
+@0=7 --sa-code_definition%sa-algo_choice@0%7%sa-perturbation=0 --sa-code_definition%sa-algo_choice@0%7%sa-acceptance=3 --sa-code_definition%sa-algo_choice@0%7%sa-acceptance%3%sa-cooling_schedule=0 --sa-code_definition%sa-algo_choice@0%7%sa-acceptance%3%sa-cool\
+ing_schedule%0%sa-sa_r_initial_temp=1.0607 --sa-code_definition%sa-algo_choice@0%7%sa-acceptance%3%sa-cooling_schedule%0%sa-sa_r_factor=0.6901 --sa-code_definition%sa-algo_choice@0%7%sa-acceptance%3%sa-cooling_schedule%0%sa-sa_r_max_step=562 --sa-code_definiti\
+on%sa-algo_choice@0%7%sa-acceptance%3%sa-cooling_schedule%0%sa-sa_r_final_temp=825 --sa-code_definition%sa-algo_choice@0%7%sa-time_ratio=7 --sa-code_definition%something-else and")
+# Tell all slaves to return a message identifying themselves
+output <- Rmpi::mpi.applyLB(candidates, runcommand, command = "ls")
+cat(paste(output, sep="\n"))
+#mpi.remote.exec(stop("error", mpi.comm.rank(),"of",mpi.comm.size()))
+# Tell all slaves to close down, and exit the program
+mpi.close.Rslaves()
+#mpi.quit()
 
 #6 ------------------------------------------------------------
 
@@ -28,7 +84,7 @@ Can we provide more details?
 Paths in the command-line should be relative to the current working
 directory. Paths in tune-conf should be relative to
 tune-conf. However, currently the latter are also relative to the working
-directory of irace. Example: 
+directory of irace. Example:
 
 $ ls test
 test/hook-run
@@ -40,7 +96,7 @@ hookRun <- "./hook-run"
 #######################
 
 $ irace -c test/tune-conf
-Error in file.check(configuration$hookRun, executable = TRUE, text = "run program hook") : 
+Error in file.check(configuration$hookRun, executable = TRUE, text = "run program hook") :
   run program hook '/home/manu/./hook-run' does not exist
 Calls: irace.cmdline -> irace.main -> checkConfiguration -> file.check
 
@@ -68,11 +124,11 @@ is actually "5" so the comparison is lexicographic. How to solve this?
  - Fix 2. Force users to use quotes when defining categorical and
    ordinal parameters. Hopefully this will make obvious that these
    values are strings and cannot be compared with other numbers.
- 
+
 #1 ------------------------------------------------------------
 
 $ irace --debug-level
-Error in if (configuration$debugLevel >= 1) { : 
+Error in if (configuration$debugLevel >= 1) { :
   missing value where TRUE/FALSE needed
 Calls: irace.cmdline -> irace.main -> checkConfiguration
 Execution halted
