@@ -340,7 +340,6 @@ irace <- function(tunerConfig = stop("parameter `tunerConfig' is mandatory."),
     tunerConfig$seed <- runif(1, 1, .Machine$integer.max)
   }
   set.seed(tunerConfig$seed)
-  str(.Random.seed)
   
   # Recover state from file?
   if (!is.null(tunerConfig$recoveryFile)){
