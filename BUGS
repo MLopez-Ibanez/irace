@@ -1,4 +1,20 @@
 ------------------------------------------------------------*- mode: text -*-
+#7 ------------------------------------------------------------
+
+When using MPI, if hook-run exits with status 1, the error-handling
+does not work correctly. It should print the hookRun call, but it
+doesn't. It prints:
+
+Error: The output of `hookRun' is not numeric!
+The output was:
+Error : running command '/home/mascia/tuning_paradiseo/experiments/PFSPWT/tuning_2/./hook-run /home/mascia/tuning_paradiseo/experiments/PFSPWT/tuning_2/./Instances//90x20_5 402   --sa-code_definition%ps-initialisation=1 --sa-code_definition%sa-algo_choice@0=7 --sa-code_definition%sa-algo_choice@0%7%sa-perturbation=0 --sa-code_definition%sa-algo_choice@0%7%sa-acceptance=3 --sa-code_definition%sa-algo_choice@0%7%sa-acceptance%3%sa-cooling_schedule=0 --sa-code_definition%sa-algo_choice@0%7%sa-acceptance%3%sa-cooling_schedule%0%sa-sa_r_initial_temp=1.0607 --sa-code_definition%sa-algo_choice@0%7%sa-acceptance%3%sa-cooling_schedule%0%sa-sa_r_factor=0.6901 --sa-code_definition%sa-algo_choice@0%7%sa-acceptance%3%sa-cooling_schedule%0%sa-sa_r_max_step=562 --sa-code_definition%sa-algo_choice@0%7%sa-acceptance%3%sa-cooling_schedule%0%sa-sa_r_final_temp=825 --sa-code_definition%sa-algo_choice@0%7%sa-time_ratio=7 --sa-code_definition%s
+Execution halted
+Warning message:
+running command 'ls *.26602+1.*.log 2>/dev/null' had status 2 
+
+which looks like the master code continued execution even after the
+slave died and the error output from the master was lost. The
+truncation is also a problem.
 
 #6 ------------------------------------------------------------
 
