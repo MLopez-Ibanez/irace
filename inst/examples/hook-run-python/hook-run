@@ -202,17 +202,22 @@ class Hookrun(object):
         thread.join(timeout=self.max_time)
         self.logger.debug('joined (timeout ' + str(self.max_time) + ')')
         if thread.is_alive():
-            self.logger.debug('thread is still alive, we timed out')
-            # send a SIGTERM
-            self.logger.debug('sending SIGTERM signal')
-            thread.process.terminate()
-            thread.join(timeout=5.0)
-            self.logger.debug('done.')
-            # send a SIGKILL to be very sure
-            self.logger.debug('sending SIGKILL signal')
-            thread.process.kill()
-            thread.join(timeout=5.0)
-            self.logger.debug('done')
+            # this part here is delicate we keep it in a try catch block
+            try:
+                self.logger.debug('thread is still alive, we timed out')
+                # send a SIGTERM
+                self.logger.debug('sending SIGTERM signal')
+                thread.process.terminate()
+                thread.join(timeout=5.0)
+                self.logger.debug('done.')
+                # send a SIGKILL to be very sure
+                self.logger.debug('sending SIGKILL signal')
+                thread.process.kill()
+                thread.join(timeout=5.0)
+                self.logger.debug('done')
+            except Exception as e:
+                self.logger.warning('exception when killing job: \n' + \
+                                    str(e))
         status = thread.process.returncode
         out = str(thread.out)
         err = str(thread.err)
@@ -348,7 +353,7 @@ if __name__=='__main__':
     # execute through temporary files with timeout
     # after 2 minutes of *CPU time* if we do not get the results we kill
     # the subprocess and try another time...
-    hr.exec_mode(hr.exectute_threaded_timeout, 120)
+    hr.exec_mode(hr.exectute_threaded_timeout, 180)
 
     # environment variables that should be set for testing each configuration
     hr.source_env('../../../../configuration')
