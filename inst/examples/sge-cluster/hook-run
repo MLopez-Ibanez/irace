@@ -27,9 +27,6 @@ CAND_PARAMS=$*
 STDOUT=c${CANDIDATE}.stdout
 STDERR=c${CANDIDATE}.stderr
 
-mkdir -p arena
-cd arena
-
 # We use 'exec' to avoid creating another process. There can be no
 # other commands after exec.
 exec qsub <<EOF
@@ -49,5 +46,21 @@ RET=\$?
 echo "OK" >& 2
 mv \$TMP/* ./
 rmdir -p \$TMP &> /dev/null
-exit \$RET
+
+error() {
+    echo "`TZ=UTC date`: error: \$@"
+    exit 1
+}
+
+# This is an example of reading a number from the output. It assumes
+# that the objective value is the first number in the first column of
+# the only line starting with a digit.
+if [ -s "\${STDOUT}" ]; then
+    COST=\$(cat \${STDOUT} | grep -e '^[0-9]' | cut -f1)
+    echo "\$COST"
+    rm -f "\${STDOUT}" "\${STDERR}"
+    exit 0
+else
+    error "\${STDOUT}: No such file or directory"
+fi
 EOF
