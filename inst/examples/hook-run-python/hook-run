@@ -1,14 +1,34 @@
 #!/bin/env python
-#
-# With this hook-run, you can:
-#
-# - set environment variables
-# - run your jobs read the standard output / standard err, and check the return code 
-# - you can choose between 5 different ways of running your job and reading the standard out (yes I had to try several ones until I found one robust enough for the experiments I’m running) among the 5 different ways there are various combinations of spawining subprocesses, using pipes or temporary files, and different methods to set a timeout after which the job you are running is killed
-# - you can choose how many times a job should be run before giving up (if you have some heisenbug, irace does will not crash but you’ll give to your configuration another chance)
-# - if the job fails for several times in a row, it writes in your execution directory a c${configuration}.stdout and stderr as the normal hook-run
-# - set a debug level, and have a detailed output to track what happens (one file per hook-run, use sparely)
+
 ##############################################################################
+#                                                                            #
+# With this hook-run, you can:                                               #
+#                                                                            #
+# - set environment variables                                                #
+# - run your jobs read the standard output / standard err, and check the     #
+#   return code                                                              #
+# - you can choose between 5 different ways of running your job and reading  #
+#   the standard out (you might have to try several ones until you find one  #
+#   that is robust enough for your experiments); among the 5 different ways  #
+#   there are various combinations of spawining subprocesses, using pipes or #
+#   temporary files, and different methods to set a timeout after which the  #
+#   job you are running is killed                                            #
+# - you can choose how many times a job should be run before giving up (if   #
+#   you have some heisenbugs, irace will not crash! :) but it will give the  #
+#   configuration further chances)                                           #
+# - if the job fails for several times in a row, it writes in your execution #
+#   directory a c${configuration}.stdout and stderr as the normal hook-run   #
+# - set a debug level, and have a detailed output to track what happens (one #
+#   file per hook-run, use sparely)                                          #
+#                                                                            #
+##############################################################################
+
+
+# ---------------------------- DO NOT CHANGE HERE ----------------------------
+#                     (unless you know what you are doing)
+# ---------------------- GO TO THE BOTTOM OF THIS FILE -----------------------
+
+
 import os
 import sys
 import time
@@ -320,7 +340,7 @@ class Hookrun(object):
             sys.exit(status)
 
 
-# ------------------------------- CHANGE HERE -------------------------------
+# ------------------------------ CHANGE HERE! ------------------------------ #
 
 
 # parse here directly the stdout of your job (the 'out' parameter)
@@ -334,7 +354,7 @@ def parse_output(out):
 if __name__=='__main__':
     # reading parameters and setting problem specific stuff
     executable = '../../../../generate_parameters.py'
-    fixed_params = 'grammars/PFSPWT.xml 30 0'
+    fixed_params = 'grammars/PFSPWT.xml None 30 0'
     instance = sys.argv[1]
     candidate = sys.argv[2]
     parameters = sys.argv[3:]
@@ -377,4 +397,4 @@ if __name__=='__main__':
     hr.run()
 
 
-# ---------------------------------------------------------------------------
+# -------------------------------------------------------------------------- #
