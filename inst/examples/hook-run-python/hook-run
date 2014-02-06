@@ -47,8 +47,8 @@ class Hookrun(object):
 
 
     # when returning the cost multiply by -1 if maximizing
-    def maximize(self, maximize=False):
-        self.maximize = maximize
+    def set_maximize(self):
+        self.maximize = True
 
 
     # changes the log level
@@ -346,7 +346,7 @@ if __name__=='__main__':
                  candidate, parameters, max_tests)
 
     # maximizing instead of minimizing
-    # hr.maximize(True)
+    # hr.set_maximize()
 
     # write debug information (1 log per hook-run use sparely)
     # hr.log_level(logging.DEBUG)
