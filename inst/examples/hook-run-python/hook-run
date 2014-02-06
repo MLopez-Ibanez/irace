@@ -34,6 +34,8 @@ class Hookrun(object):
         # default exec function
         self.execute = self.execute1
 
+        self.maximize = False
+
         # logging (by default only errors are logged)
         filename = socket.gethostname() + '_' + str(os.getpid())
         self.logger = logging.getLogger('hook-run')
@@ -42,6 +44,11 @@ class Hookrun(object):
         hdlr.setFormatter(formatter)
         self.logger.addHandler(hdlr)
         self.logger.setLevel(logging.ERROR)
+
+
+    # when returning the cost multiply by -1 if maximizing
+    def maximize(self, maximize=False):
+        self.maximize = maximize
 
 
     # changes the log level
@@ -279,6 +286,11 @@ class Hookrun(object):
                 continue
             break
 
+            # convert to float and multiply by -1 if maximizing
+            cost = float(cost)
+            if self.maximize:
+                cost *= -1
+
         # printing the result
         if test < self.max_tests:
             self.logger.debug('returning cost: ' + str(cost))
@@ -322,16 +334,19 @@ def parse_output(out):
 if __name__=='__main__':
     # reading parameters and setting problem specific stuff
     executable = '../../../../generate_parameters.py'
-    fixed_params = 'problems/PFSPWT.xml 2 30 0'
+    fixed_params = 'grammars/PFSPWT.xml 30 0'
     instance = sys.argv[1]
     candidate = sys.argv[2]
     parameters = sys.argv[3:]
 
     # maximum number of trials before giving up with the configuration
-    max_tests = 10
+    max_tests = 100
 
     hr = Hookrun(executable, fixed_params, instance, parse_output,
                  candidate, parameters, max_tests)
+
+    # maximizing instead of minimizing
+    # hr.maximize(True)
 
     # write debug information (1 log per hook-run use sparely)
     # hr.log_level(logging.DEBUG)
