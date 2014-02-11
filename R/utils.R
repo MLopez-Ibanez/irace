@@ -20,8 +20,9 @@ irace.reload.debug <- function(package = "irace")
 ## FIXME: rename this function to irace.error
 tunerError <- function(...)
 {
-  # The default is only 1000, which is too small.
-  op <- options(warning.length = 2^16)
+  # The default is only 1000, which is too small. 8170 was the maximum
+  # value allowed in R 2.14.1
+  op <- options(warning.length = 8170)
   on.exit(options(op))
   stop (..., call. = FALSE)
 }
