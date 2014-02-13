@@ -304,12 +304,13 @@ class Hookrun(object):
                 self.logger.warning('cost was not a number *RETRYING* ' + \
                                     str(test) + ' of ' + str(self.max_tests))
                 continue
-            break
 
             # convert to float and multiply by -1 if maximizing
             cost = float(cost)
             if self.maximize:
                 cost *= -1
+
+            break
 
         # printing the result
         if test < self.max_tests:
