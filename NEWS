@@ -17,6 +17,9 @@
  
  * Print elapsed time for calls to hook-run if debugLevel >=1.
 
+ * examples/hook-run-python/hook-run: A multi-purpose hook-run written
+   in Python. (Franco Mascia)
+
 1.04
 
  * Replace obsolete package multicore by package parallel
