@@ -17,6 +17,10 @@ TODO R package:
 
 TODO General:
  
+ * Add a --verify option that checks whether all files are in place,
+   all options are valid, and it runs hook-run on a random
+   configuration on a random instance.
+
  * Weighted sampling of instances. Use the instance parameters to
    provide a biased sampling. Note that one can currently achieve this
    simply by repeating the instances in instances.txt and increasing
@@ -41,8 +45,6 @@ TODO General:
    values), then it is discarded and we resample. If we execute the
    restart mechanism before this check, then resampling the same
    forbidden configuration will trigger a restart.
-
- * A way to continue a previous irace run.
 
  * A new parameter "--hook-run-retries". Number of times to retry a
    hook-run call if the output is not ok. Default 0. Inf allowed.
@@ -227,6 +229,8 @@ TODO General:
 ------------------------------------------------------------------------------
 
 DONE:
+
+ * [DONE by Leslie] A way to continue a previous irace run.
 
  * [DONE] Add errors for stupid parameter files. For example:
    
