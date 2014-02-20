@@ -137,7 +137,7 @@ TODO General:
    exit code is != 0, then complain. The option --cluster only chooses
    which type of qstat command is invoked. This will leave parsing the
    jobID to the user, since it is very fragile. We should put examples
-   for PBS and SGE in examples/cluster-mode/.
+   for PBS and SGE in examples/.
 
  * generateCandidatesNormal() takes too much time with >800 candidates
    and >20 parameters (SPEAR testcase).
