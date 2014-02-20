@@ -46,21 +46,5 @@ RET=\$?
 echo "OK" >& 2
 mv \$TMP/* ./
 rmdir -p \$TMP &> /dev/null
-
-error() {
-    echo "`TZ=UTC date`: error: \$@"
-    exit 1
-}
-
-# This is an example of reading a number from the output. It assumes
-# that the objective value is the first number in the first column of
-# the only line starting with a digit.
-if [ -s "\${STDOUT}" ]; then
-    COST=\$(cat \${STDOUT} | grep -e '^[0-9]' | cut -f1)
-    echo "\$COST"
-    rm -f "\${STDOUT}" "\${STDERR}"
-    exit 0
-else
-    error "\${STDOUT}: No such file or directory"
-fi
+exit \$RET
 EOF

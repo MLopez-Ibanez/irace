@@ -1,0 +1,18 @@
+SGE cluster:
+
+This mode requires Grid Engine commands qsub and qstat. The comand
+qsub should return a message that contains the string: `Your job
+JOBID`. The command `qstat -j JOBID` should return nonzero if JOBID
+has finished, otherwise it should return zero.
+
+The option `--sge-cluster 1` will launch as many calls of `hookRun` as
+possible and use `qstat` to wait for cluster jobs. The user *must*
+call `qsub` from `hookRun` with the appropriate configuration for
+their cluster, otherwise `hookRun` will not submit jobs to the
+cluster. In this mode, irace must run in the submission node, and
+hence, qsub should not be used to invoke irace (either directly or
+through tune-main).  You also need to create a separate hook-evaluate
+script to parse the results of the hookRun and return them to irace,
+and set hookEvaluate in tune-conf or use the command-line option
+--hook-evaluate so irace can find the hook-evaluate program.
+
