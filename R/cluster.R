@@ -44,12 +44,16 @@ pbs.cluster.qsub <- function(command, debugLevel = 0)
 
 sge.job.status <- function(jobid)
 {
-  return(system (paste("qstat -j", jobid, "&> /dev/null")))
+  return(system (paste("qstat -j", jobid),
+                 ignore.stdout = TRUE, ignore.stderr = TRUE,
+                 intern = FALSE, wait = TRUE))
 }
 
 pbs.job.status <- function(jobid)
 {
-  return(system (paste("qstat ", jobid, "&> /dev/null")))
+  return(system (paste("qstat", jobid),
+                 ignore.stdout = TRUE, ignore.stderr = TRUE,
+                 intern = FALSE, wait = TRUE))
 }
 
 hook.run.qsub <- function(instance, candidate, extra.params, config, cluster.qsub)
@@ -69,7 +73,7 @@ hook.run.qsub <- function(instance, candidate, extra.params, config, cluster.qsu
   if (exit.code) {
     tunerError("Command `", command, "' returned non-zero exit status (",
                exit.code / 256, ")!\n",
-               "This is not a bug in crace, ",
+               "This is not a bug in irace, ",
                "but means that something failed when running your program ",
                "or it was terminated before completion. ",
                "Try to run the command above from the execution directory '",
@@ -88,7 +92,7 @@ cluster.lapply <- function(X, ..., config,
   output <- lapply(X, hook.run.qsub, ..., config = config, cluster.qsub = cluster.qsub)
   jobIDs <- sapply(output, "[[", "jobID")
   
-  ## Wait for SGE Cluster jobs to finish.
+  ## Wait for cluster jobs to finish.
   poll.time <- 2
   if (length(jobIDs) > 0 && debugLevel >= 1) {
     cat(format(Sys.time(), usetz=TRUE), ": Waiting for jobs ('.' ==",
@@ -99,9 +103,9 @@ cluster.lapply <- function(X, ..., config,
       if (debugLevel >= 1) { cat(".") }
       Sys.sleep(poll.time)
     }
-  }
-  if (length(jobIDs) > 0 && debugLevel >= 1) {
-    cat ("\n", format(Sys.time(), usetz=TRUE), ": DONE\n")
+    if (debugLevel >= 1) {
+      cat ("\n", format(Sys.time(), usetz=TRUE), ": DONE (", jobID, ")\n")
+    }
   }
   return(lapply(output, "[[", "command"))
 }
