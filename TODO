@@ -16,6 +16,8 @@ TODO R package:
  * Add inst/COPYRIGHTS. See race package.
 
 TODO General:
+
+ * Add '--version'
  
  * Add a --verify option that checks whether all files are in place,
    all options are valid, and it runs hook-run on a random

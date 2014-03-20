@@ -20,6 +20,8 @@
  * examples/hook-run-python/hook-run: A multi-purpose hook-run written
    in Python. (Franco Mascia)
 
+ * Parallel mode in an SGE cluster (--sge-cluster) is more robust.
+
 1.04
 
  * Replace obsolete package multicore by package parallel

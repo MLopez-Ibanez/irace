@@ -1,10 +1,10 @@
-############################################################################
-## Configuration for Iterated Race.
+###################################################### -*- mode: r -*- #####
+## Configuration for Iterated Race (iRace).
 ############################################################################
 
-## To use a default value for one of the parameter of I-Race, you
-## should simply not specify this parameter (comment it in this file,
-## and do not give any value on the command line).
+## To use the default value of a parameter of iRace, simply do not set
+## the parameter (comment it out in this file, and do not give any
+## value on the command line).
 
 ## The maximum computation time that should be used for tuning in
 ## seconds. This only works when tuning for time. 0 means no time
