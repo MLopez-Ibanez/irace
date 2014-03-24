@@ -548,8 +548,8 @@ irace <- function(tunerConfig = stop("parameter `tunerConfig' is mandatory."),
               "Sample ", nbNewCandidates,
               " candidates from uniform distribution\n")
         }
-        newCandidates <- sampleUniform(tunerConfig = tunerConfig,
-                                       parameters, nbNewCandidates)        
+        newCandidates <- sampleUniform(parameters, nbNewCandidates,
+                                       digits = tunerConfig$digits)
         newCandidates <-
           cbind (.ID. = max(0, allCandidates$.ID.) + 1:nrow(newCandidates),
                  newCandidates)

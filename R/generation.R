@@ -40,7 +40,9 @@ get.fixed.value <- function(param, parameters)
 }
 
 ### Uniform sampling for the initial generation
-sampleUniform <- function (tunerConfig, parameters, nbCandidates)
+sampleUniform <- function (parameters,
+                           nbCandidates = stop("parameter 'nbCandidates' is required"),
+                           digits = stop("parameter 'digits' is required"))
 {
   namesParameters <- names(parameters$constraints)
   newCandidatesColnames <- c(namesParameters, ".PARENT.")
@@ -75,7 +77,7 @@ sampleUniform <- function (tunerConfig, parameters, nbCandidates)
         lowerBound <- parameters$boundary[[currentParameter]][1]
         upperBound <- parameters$boundary[[currentParameter]][2]
         newVal <- runif(1, as.double(lowerBound), as.double(upperBound))
-        newVal <- round(newVal, tunerConfig$digits)
+        newVal <- round(newVal, digits)
       } else if (currentType == "c" || currentType == "o") {
         possibleValues <- parameters$boundary[[currentParameter]]
         newVal <- sample(possibleValues, 1)

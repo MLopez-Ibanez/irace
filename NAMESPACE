@@ -1,5 +1,6 @@
 export(irace.version,irace.license)
 export(irace.cmdline,irace.usage,irace.main,irace)
+# FIXME: export sampleUniform, sampleModel and other useful functions.
 export(defaultConfiguration,checkConfiguration, printConfiguration,
        readConfiguration, buildCommandLine, readParameters,
        candidates.print.command, candidates.print, removeCandidatesMetaData, hook.run.default, hook.evaluate.default)
