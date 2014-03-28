@@ -355,9 +355,9 @@ def parse_output(out):
 if __name__=='__main__':
     # reading parameters and setting problem specific stuff
     executable = '../../../../generate_parameters.py'
-    fixed_params = 'grammars/PFSPWCT.xml None 20 0 ' + sys.argv[2]
+    fixed_params = 'grammars/PFSPWCT.xml None 20 0 ' + sys.argv[3]
     instance = sys.argv[1]
-    candidate = sys.argv[3]
+    candidate = sys.argv[2]
     parameters = sys.argv[4:]
 
     # maximum number of trials before giving up with the configuration
