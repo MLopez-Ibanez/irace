@@ -9,12 +9,13 @@ Contact email: irace@iridia.ulb.ac.be
 Requisites
 -------------
 
- * R (http://www.r-project.org/).
-   Versions that work: >= 2.9.2
-   Versions that do not work: 2.4 and earlier.
+ * R (http://www.r-project.org/) is required for running irace, but
+   you don't need to know the R language to use it.
+   Versions that work: >= 2.14.0
 
- * The wrappers `irace` and `parallel-irace` require GNU Bash.
-
+ * If you wish to use the command-line wrappers `irace` and
+   `parallel-irace`, they require GNU Bash.
+   
 
 Installation
 ------------
