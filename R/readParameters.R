@@ -329,6 +329,8 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
 
   stopifnot(length(constraints) == length(parameters$names))
 
+  # FIXME: Check that the parameter names that appear in the
+  # constraints all appear in names to catch typos.
   parameters$constraints <- constraints
   names(parameters$names) <-
     names(parameters$types) <- 
