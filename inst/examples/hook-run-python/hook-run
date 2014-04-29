@@ -335,10 +335,11 @@ class Hookrun(object):
                              self.candidate + '\n')
             if status != 0:
                 sys.stdout.write('exit status: ' + str(status) + '\n')
+                sys.exit(status)
             else:
                 sys.stdout.write('could not cast to float the result: \'' + \
                                  str(cost) + '\n')
-            sys.exit(status)
+                sys.exit(1)
 
 
 # ------------------------------ CHANGE HERE! ------------------------------ #
