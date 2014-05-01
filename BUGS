@@ -1,5 +1,78 @@
 ------------------------------------------------------------*- mode: text -*-
-#7 ------------------------------------------------------------
+
+#6 ------------------------------------------------------------
+
+Sometimes system2 does not say what exactly failed or what command was
+run when something failed, it just prints: "error in running command".
+Can we provide more details?
+
+
+#5 ------------------------------------------------------------
+
+Paths in the command-line should be relative to the current working
+directory. Paths in tune-conf should be relative to
+tune-conf. However, currently the latter are also relative to the working
+directory of irace. Example:
+
+$ ls test
+test/hook-run
+test/tune-conf
+
+$ cat test/tune-conf
+########################
+hookRun <- "./hook-run"
+#######################
+
+$ irace -c test/tune-conf
+Error in file.check(configuration$hookRun, executable = TRUE, text = "run program hook") :
+  run program hook '/home/manu/./hook-run' does not exist
+Calls: irace.cmdline -> irace.main -> checkConfiguration -> file.check
+
+
+#3 ------------------------------------------------------------
+
+$ irace --version (or any other unknown parameter)
+
+It should say "unknown parameter" or something like that.
+
+#2 ------------------------------------------------------------
+
+A parameter like:
+
+a "" c (0, 5, 10, 20)
+
+and a condition like a > 10 will return TRUE when a is 5, because a
+is actually "5" so the comparison is lexicographic. How to solve this?
+
+ - Fix 1. Check if a can be converted to numeric, then force it before
+   evaluating conditions. However, we cannot know for sure if the user
+   actually wants to convert a to numeric or not. Imagine a = "+3", then
+   a == "+3" would fail!
+
+ - Fix 2. Force users to use quotes when defining categorical and
+   ordinal parameters. Hopefully this will make obvious that these
+   values are strings and cannot be compared with other numbers.
+
+#1 ------------------------------------------------------------
+
+$ irace --debug-level
+Error in if (configuration$debugLevel >= 1) { :
+  missing value where TRUE/FALSE needed
+Calls: irace.cmdline -> irace.main -> checkConfiguration
+Execution halted
+
+
+###############################################################
+# FIXED bugs 
+###############################################################
+
+#4 -- fixed at revision 827
+
+$ irace --hook-run my-hook-run
+
+doesn't work. One needs to use ./my-hook-run
+
+#7 -- fixed at revision r882 ------------------------------
 
 When using MPI, if hook-run exits with status 1, the error-handling
 does not work correctly. It should print the hookRun call, but it
@@ -72,72 +145,3 @@ cat(paste(output, sep="\n"))
 mpi.close.Rslaves()
 #mpi.quit()
 
-#6 ------------------------------------------------------------
-
-Sometimes system2 does not say what exactly failed or what command was
-run when something failed, it just prints: "error in running command".
-Can we provide more details?
-
-
-#5 ------------------------------------------------------------
-
-Paths in the command-line should be relative to the current working
-directory. Paths in tune-conf should be relative to
-tune-conf. However, currently the latter are also relative to the working
-directory of irace. Example:
-
-$ ls test
-test/hook-run
-test/tune-conf
-
-$ cat test/tune-conf
-########################
-hookRun <- "./hook-run"
-#######################
-
-$ irace -c test/tune-conf
-Error in file.check(configuration$hookRun, executable = TRUE, text = "run program hook") :
-  run program hook '/home/manu/./hook-run' does not exist
-Calls: irace.cmdline -> irace.main -> checkConfiguration -> file.check
-
-
-#3 ------------------------------------------------------------
-
-$ irace --version (or any other unknown parameter)
-
-It should say "unknown parameter" or something like that.
-
-#2 ------------------------------------------------------------
-
-A parameter like:
-
-a "" c (0, 5, 10, 20)
-
-and a condition like a > 10 will return TRUE when a is 5, because a
-is actually "5" so the comparison is lexicographic. How to solve this?
-
- - Fix 1. Check if a can be converted to numeric, then force it before
-   evaluating conditions. However, we cannot know for sure if the user
-   actually wants to convert a to numeric or not. Imagine a = "+3", then
-   a == "+3" would fail!
-
- - Fix 2. Force users to use quotes when defining categorical and
-   ordinal parameters. Hopefully this will make obvious that these
-   values are strings and cannot be compared with other numbers.
-
-#1 ------------------------------------------------------------
-
-$ irace --debug-level
-Error in if (configuration$debugLevel >= 1) { :
-  missing value where TRUE/FALSE needed
-Calls: irace.cmdline -> irace.main -> checkConfiguration
-Execution halted
-
-
-## FIXED bugs
-
-#4 -- fixed at revision 827
-
-$ irace --hook-run my-hook-run
-
-doesn't work. One needs to use ./my-hook-run
