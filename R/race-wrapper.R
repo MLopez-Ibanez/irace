@@ -68,13 +68,13 @@ check.output <- function(output, command, config, hook.run.call = NULL, outputRa
     # FIXME: This duplication is annoying but it provides better error messages.
     if (is.null(outputRaw)) {
       tunerError(err.msg,
-                 "The output was:\n", paste(output, sep="\n"),
+                 "The output was:\n", paste(output, collapse = "\n"),
                  "\nThis is not a bug in irace, but means that something failed in",
                  " a call to the hookRun or hookEvaluate functions provided by the user.",
                  " Please check those functions carefully.")
     } else {
       tunerError(err.msg,
-                 "The output was:\n", paste(outputRaw, sep="\n"),
+                 "The output was:\n", paste(outputRaw, collapse = "\n"),
                  "\nThis is not a bug in irace, but means that something failed when",
                  " running the command above or it was terminated before completion.",
                  " Try to run the command above from the execution directory '",
@@ -136,16 +136,18 @@ hook.run.default <- function(instance, candidate, extra.params, config)
     output <-  withCallingHandlers(
       tryCatch(system2(command, args, stdout = TRUE, stderr = TRUE),
                error=function(e) {
-                 err <<- paste(err, conditionMessage(e), sep ="\n")
+                 err <<- c(err, paste(conditionMessage(e), collapse="\n"))
                  NULL
                }), warning=function(w) {
-                 err <<- paste(err, conditionMessage(w), sep ="\n")
+                 err <<- c(err, paste(conditionMessage(w), collapse="\n"))
                  invokeRestart("muffleWarning")
                })
     # If e is a warning, the command failed.
     if (!is.null(err)) {
-      if (debugLevel >= 1) cat (format(Sys.time(), usetz=TRUE), ": ERROR (",
-            candidate$index, "):", err,"\n")
+      err <- paste(err, collapse ="\n")
+      if (debugLevel >= 1)
+        cat (format(Sys.time(), usetz=TRUE), ": ERROR (", candidate$index,
+             ") :", err, "\n")
       return(list(output = output, error = err))
     }
     if (debugLevel >= 1) {
@@ -164,10 +166,11 @@ hook.run.default <- function(instance, candidate, extra.params, config)
   output <- runcommand(hookRun, args)
 
   if (!is.null(output$error)) {
-    tunerError(output$error, "\n",
-               "The call to hookRun was:\n", hookRun, " ", args, "\n",
-               "The output was:\n", paste(output$output, sep="\n"),
-               "\nThis is not a bug in irace, but means that something failed when",
+    tunerError(output$error, "\n", .irace.prefix,
+               "The call to hookRun was:\n", hookRun, " ", args, "\n", .irace.prefix,
+               "The output was:\n", paste(output$output, collapse = "\n"),
+               "\n", .irace.prefix,
+               "This is not a bug in irace, but means that something failed when",
                " running the command above or it was terminated before completion.",
                " Try to run the command above from the execution directory '",
                config$execDir, "' to investigate the issue.")
@@ -249,6 +252,19 @@ race.wrapper <- function(candidate, task, which.alive, data)
           Rmpi::mpi.applyLB(candidates, .irace$hook.run,
                             instance = instance, extra.params = extra.params,
                             config = data$config)
+        # FIXME: if stop() is called from mpi.applyLB, it does not
+        # terminate the execution of the parent process, so it will
+        # continue and give more errors later. We have to terminate
+        # here, but is there a nicer way to detect this and terminate?
+        if (any(sapply(.irace$hook.output, inherits, "try-error"))) {
+          # FIXME: mclapply has some bugs in case of error. In that
+          # case, each element of the list does not keep the output of
+          # each candidate and repetitions may occur.
+          cat(unique(unlist(
+            .irace$hook.output[sapply(
+              .irace$hook.output, inherits, "try-error")])), file = stderr(), sep="")
+          tunerError("A slave process terminated with a fatal error")
+        }
       } else {
         # FIXME: We should do this at a higher level, to avoid the overhead.
         library("parallel", quietly = TRUE)

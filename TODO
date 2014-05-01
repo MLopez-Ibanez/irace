@@ -147,13 +147,6 @@ TODO General:
  * Use the options() mechanism of R, that is, 
    options(irace.debug.level = 1) and getOption("irace.debug.level").
 
- * Implement constraints on values that allow the user to specify
-   restrictions on the values that parameters may take, such as all
-   candidates must satisfy that a < b. Such constraints would be
-   specified in a different file "constraints.txt". One way to handle
-   them would be by sampling and rejection but perhaps more effective
-   methods could be implemented.
-
  * JEREMIE: I would like to try a version of I-Race with a kind of
    bounding in the probability vectors, something equivalent somehow
    to MaxMin AS for ACO.  This could be a better way to avoid
@@ -231,6 +224,14 @@ TODO General:
 ------------------------------------------------------------------------------
 
 DONE:
+
+ * [DONE by Manuel] 
+   Implement constraints on values that allow the user to specify
+   restrictions on the values that parameters may take, such as all
+   candidates must satisfy that a < b. Such constraints would be
+   specified in a different file "constraints.txt". One way to handle
+   them would be by sampling and rejection but perhaps more effective
+   methods could be implemented.
 
  * [DONE by Leslie] A way to continue a previous irace run.
 

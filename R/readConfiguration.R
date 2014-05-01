@@ -17,7 +17,7 @@ readCandidatesFile <-
            parameters = stop("'parameters' is mandatory"), 
            debugLevel = 0)
 {
-  namesParameters <- names(parameters$constraints)
+  namesParameters <- names(parameters$conditions)
 
   # Read the file.
   candidateTable <- read.table(fileName, header = TRUE,
@@ -45,14 +45,14 @@ readCandidatesFile <-
 
   # Loop over all candidates in candidateTable
   for (k in seq_len(nbCandidates)) {
-    # Loop over all parameters, in an order taken from the constraints
+    # Loop over all parameters, in an order taken from the conditions
     for (currentParameter in namesParameters) {
       currentValue <- candidateTable[k, currentParameter]
       type <- parameters$types[[currentParameter]]
       
-      # Check the status of the constraints for this parameter to know
+      # Check the status of the conditions for this parameter to know
       # if it must be enabled or not.
-      if (constraintsSatisfied(parameters, candidateTable[k, ], 
+      if (conditionsSatisfied(parameters, candidateTable[k, ], 
                                currentParameter)) {
         # Check that the value is among the valid ones.
         if (type == "i" || type == "r") {
@@ -236,6 +236,28 @@ checkConfiguration <- function(configuration = defaultConfiguration())
     file.check (configuration$candidatesFile, readable = TRUE,
                 text = "candidates file")
   }
+
+  if (!is.null.or.empty(configuration$forbiddenFile)) {
+    configuration$forbiddenFile <- path.rel2abs(configuration$forbiddenFile)
+    file.check (configuration$forbiddenFile, readable = TRUE,
+                text = "forbidden candidates file")
+    # FIXME: Using && or || instead of & and | will not work. Detect
+    # this and give an error to the user.
+    configuration$forbiddenExps <- parse(file=configuration$forbiddenFile)
+    # When a is NA and we check a == 5, we would get NA, which is
+    # always FALSE, when we actually want to be TRUE, so we test
+    # is.na() first below.
+    configuration$forbiddenExps <-
+      sapply(configuration$forbiddenExps,
+             function(x) substitute(is.na(x) | !(x), list(x = x)))
+    # FIXME: Check that the parameter names that appear in forbidden
+    # all appear in parameters$names to catch typos.
+  }
+
+  # Make it NULL if it is "" or NA
+  # FIXME: If it is a non-empty vector of strings, parse them as above.
+  if (is.null.or.empty(configuration$forbiddenExps) || is.null.or.na(configuration$forbiddenExps))
+    configuration$forbiddenExps <- NULL
 
   # We have characters everywhere, set to the right types to avoid
   # problem later.

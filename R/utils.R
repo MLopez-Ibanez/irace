@@ -11,6 +11,8 @@ irace.reload.debug <- function(package = "irace")
   options(error=recover)
 }
 
+.irace.prefix <- "== irace == "
+
 .irace.bug.report <-
   paste("An unexpected condition occurred.",
         "Please report this bug to the authors of the irace package <http://iridia.ulb.ac.be/irace>")
@@ -24,7 +26,7 @@ tunerError <- function(...)
   # value allowed in R 2.14.1
   op <- options(warning.length = 8170)
   on.exit(options(op))
-  stop (..., call. = FALSE)
+  stop (.irace.prefix, ..., call. = FALSE)
 }
 
 irace.assert <- function(exp)
@@ -338,7 +340,11 @@ mpiInit <- function(nslaves, debugLevel = 0)
       # Rmpi already prints a message, so we don't need this.
       # cat("# Finalize MPI...\n")
       if (Rmpi::mpi.comm.size(1) > 0)
-        Rmpi::mpi.close.Rslaves()
+        # FIXME: dellog == TRUE tries to delete log files, but it does
+        # not take into account that we may have change directory and
+        # it does not fails gracefully but produces an annoying:
+        # Warning message: running command 'ls *.30577+1.*.log 2>/dev/null' had status 2
+        Rmpi::mpi.close.Rslaves(dellog = FALSE)
       # FIXME: How to avoid the message
       # "Rmpi cannot be used unless relaunching R" ?
       Rmpi::mpi.exit()

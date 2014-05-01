@@ -26,7 +26,7 @@
 #'        $switches ------ a list that contains the switches to be used for the parameters on the command line
 #'        $boundary ----- a list of vectors. Each vector may contain two values (the boundaries)
 #'                         for real and int parameters, or possibly more for categorical parameters
-#'        $constraints --   a list of R logical expressions, with variables corresponding to parameter names.
+#'        $conditions --   a list of R logical expressions, with variables corresponding to parameter names.
 #'        $isFixed -------- a list of booleans to know which parameter is fixed or needs to be tuned.
 #'        $nbParameters --- an integer, the total number of parameters
 #'        $nbFixed ----- an integer, the number of parameters with a fixed value
@@ -107,37 +107,37 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
   }
   # *************************************************************************
   # Subordinate parameter: ordering of the parameters according to
-  # constraints hierarchy
-  # *  The constraints hierarchy is an acyclic directed graph.
+  # conditions hierarchy
+  # *  The conditions hierarchy is an acyclic directed graph.
   #    Functions treeLevel() and treeLevelAux() compute an order on vertex s.t:
   #    level(A) > level(B)  <=>  There is an arc A ---> B
   #    (A depends on B to be activated)
   # *  If a cycle is detected, execution is stopped
   # *  If a parameter depends on another one not defined, execution is stopped
-  treeLevelAux <- function(paramName, constraintsTree, rootParam)
+  treeLevelAux <- function(paramName, conditionsTree, rootParam)
   {
-    vars <- all.vars (constraintsTree[[paramName]])
+    vars <- all.vars (conditionsTree[[paramName]])
     if (length(vars) == 0) {
-      return (1) # This parameter does not have constraints
+      return (1) # This parameter does not have conditions
     } else {
-      # This parameter has some constraints
+      # This parameter has some conditions
       # Recursive call: level <- MAX( level(m) : m in children )
       maxChildLevel <- 0
       for (child in vars) {
         # The following line detects cycles
         if (child == rootParam)
           tunerError("A cycle detected in subordinate parameters! ",
-                     "Check definition of constraints.\n",
+                     "Check definition of conditions.\n",
                      "One parameter of this cycle is '", rootParam, "'")
         
         # The following line detects a missing definition
-        if (!child %in% names(constraintsTree))
+        if (!child %in% names(conditionsTree))
           tunerError("A parameter definition is missing! ",
                      "Check definition of parameters.\n",
                      "Parameter '", paramName,
                      "' depends on '", child, "' which is not defined.")
         
-        level <- treeLevelAux(child, constraintsTree, rootParam)
+        level <- treeLevelAux(child, conditionsTree, rootParam)
         if (level > maxChildLevel)
           maxChildLevel <- level
       }
@@ -146,11 +146,11 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
     return (level)
   }
 
-  treeLevel <- function(paramName, constraintsTree)
+  treeLevel <- function(paramName, conditionsTree)
   {
     # The last parameter is used to record the root parameter of the
     # recursive call in order to detect the presence of cycles.
-    return (treeLevelAux(paramName, constraintsTree, paramName))
+    return (treeLevelAux(paramName, conditionsTree, paramName))
   }
 
   errReadParameters <- function(filename, line, context, ...)
@@ -169,11 +169,11 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
                      types = list(),
                      switches = list(),
                      boundary = list(),
-                     constraints = list(),
+                     conditions = list(),
                      isFixed = list())
 
   param.names <- c()
-  constraints <- list()
+  conditions <- list()
   lines <- readLines(con = file)
   nbLines <- 0
   count <- 0
@@ -279,26 +279,26 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
       }
     }
 
-    ## Match start of constraints 
+    ## Match start of conditions 
     result <- field.match (line, "\\|", sep="")
     line <- result$line
     if (!is.null(result$match) && nchar(result$match)) {
       result <- field.match (line, ".*$", sep="")
       if (is.null(result$match) || !nchar(result$match))
         errReadParameters (filename, nbLines, line,
-                           "expected constraint after '|'")
-      # FIXME: Provide a better error for invalid constraints like "a 2 0"
-      constraints[[param.name]] <- NA
-      try(constraints[[param.name]] <- parse(text=result$match))
-      if (!is.expression (constraints[[param.name]]))
+                           "expected condition after '|'")
+      # FIXME: Provide a better error for invalid conditions like "a 2 0"
+      conditions[[param.name]] <- NA
+      try(conditions[[param.name]] <- parse(text=result$match))
+      if (!is.expression (conditions[[param.name]]))
         errReadParameters (filename, nbLines, line,
-                           "invalid constraint after '|'")
+                           "invalid condition after '|'")
       line <- result$line
     } else if (!is.null(result$line) && nchar(result$line)) {
       errReadParameters (filename, nbLines, line,
-                         "expected '|' before constraint")
+                         "expected '|' before condition")
     } else {
-      constraints[[param.name]] <- expression(TRUE)
+      conditions[[param.name]] <- expression(TRUE)
     }
     # *****************************************************************
   } # end loop on lines
@@ -308,12 +308,12 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
     tunerError("no parameter definition found: ",
                "check that the parameter file is not empty")
   }
-  # Sort parameters in 'constraints' in the proper order according to
-  # constraints
+  # Sort parameters in 'conditions' in the proper order according to
+  # conditions
   hierarchyLevel <- c()
   for (paramName in param.names)
-    hierarchyLevel <- c(hierarchyLevel, treeLevel(paramName, constraints))
-  constraints <- constraints[order(hierarchyLevel)]
+    hierarchyLevel <- c(hierarchyLevel, treeLevel(paramName, conditions))
+  conditions <- conditions[order(hierarchyLevel)]
 
   # Print the hierarchy vector:
   if (debugLevel >= 1) {
@@ -327,11 +327,11 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
     cat ("------------------------\n")
   }
 
-  stopifnot(length(constraints) == length(parameters$names))
+  stopifnot(length(conditions) == length(parameters$names))
 
   # FIXME: Check that the parameter names that appear in the
-  # constraints all appear in names to catch typos.
-  parameters$constraints <- constraints
+  # conditions all appear in names to catch typos.
+  parameters$conditions <- conditions
   names(parameters$names) <-
     names(parameters$types) <- 
       names(parameters$switches) <- 

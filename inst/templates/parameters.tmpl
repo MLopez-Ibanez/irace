@@ -19,11 +19,11 @@
 ##    For i,r: a pair of unquoted numbers representing minimum and
 ##    maximum values. 
 
-## 5: A conditional parameter can be defined according to constraints
-##    on one or several other parameters.  This is done by adding a
+## 5: A conditional parameter can be defined according to the values of
+##    one or several other parameters.  This is done by adding a
 ##    character '|' followed by an R expression involving the names of
 ##    other parameters. This expression must return TRUE if the 
-##    constraint is satisfied, FALSE otherwise.
+##    condition is satisfied, FALSE otherwise.
 
 # 1:            2:                   3: 4:      5:
 param1          "--param1 "          i  (1, 10) | mode %in% c("x1", "x2")

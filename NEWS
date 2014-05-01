@@ -1,3 +1,15 @@
+ * Improved error handling when running under Rmpi. Now irace will
+   terminate as soon as the master node detects at least one failed slave
+   node. This avoids irace reporting two times the same error.
+   Also, irace will print all the unique errors returned by all slaves and not
+   just the first one.
+   (Manuel López-Ibáñez)
+
+ * Forbidden configurations may be specified in terms of constraints
+   on their values. Forbidden configurations will never be evaluated by irace. 
+   See --forbidden-file and inst/templates/forbidden.tmpl.
+   (Manuel López-Ibáñez)
+
  * New option --recovery-file (recoveryFile) allows resuming a
    previous irace run. (Leslie Perez)
 
@@ -8,7 +20,8 @@
    for Windows. (Leslie Perez, Manuel López-Ibáñez)
 
  * Provide better error messages for incorrect parameter
-   descriptions. Examples:
+   descriptions. (Manuel López-Ibáñez)
+    Examples:
 
    x "" i (0, 0)       # lower and upper bounds are the same
    x "" r (1e-4, 5e-4) # given digits=2, ditto
@@ -16,11 +29,13 @@
    x "" c ("a", "a")   # duplicated values
  
  * Print elapsed time for calls to hook-run if debugLevel >=1.
+   (Manuel López-Ibáñez)
 
  * examples/hook-run-python/hook-run: A multi-purpose hook-run written
    in Python. (Franco Mascia)
 
- * Parallel mode in an SGE cluster (--sge-cluster) is more robust.
+ * Parallel mode in an SGE cluster (--sge-cluster) is more
+   robust. (Manuel López-Ibáñez)
 
 1.04
 

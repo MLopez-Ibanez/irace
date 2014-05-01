@@ -1,3 +1,16 @@
+checkForbidden <- function(configurations, forbidden)
+{
+  # We have to use a variable name that will never appear in
+  # configurations, so .FORBIDDEN .
+  for (.FORBIDDEN in forbidden) {
+    print(.FORBIDDEN)
+    configurations <- subset(configurations, eval(.FORBIDDEN))
+    #print(configurations)
+    #print(str(configurations))
+  }
+  #print(nrow(configurations))
+  return(configurations)
+}
 
 # Sets irace variables from a recovery file.  It is executed in the
 # parent environment.
@@ -17,62 +30,6 @@ recoverFromFile <- function(filename)
     options(.race.debug.level = tunerConfig$debugLevel)
     options(.irace.debug.level = tunerConfig$debugLevel)
   }))
-}
-
-candidates.equal <- function(x, y, parameters, threshold)
-{
-  d <- 0.0
-  for (i in seq_along(parameters$names)) {
-    if (parameters$isFixed[[i]]) next
-    type <- parameters$types[[i]]
-    param <- parameters$names[[i]]
-    X <- x[[param]]
-    Y <- y[[param]]
-    if (is.na (X) && is.na(Y)) {
-      # Both NA, just ignore this param
-      next
-    } else if (xor(is.na (X), is.na(Y))) {
-      # Distance is 1.0, so not equal
-      return(FALSE)
-    } else if (type == "i" || type == "r") {
-      lower <- oneParamLowerBound(param, parameters)
-      upper <- oneParamUpperBound(param, parameters)
-      d <- max(d, abs((as.numeric(X) - as.numeric(Y)) / (upper - lower)))
-      if (d > threshold) return(FALSE)
-    } else {
-      irace.assert(type == "c" || type == "o")
-      # Distance is 1.0, so definitely not equal.
-      if (X != Y) return(FALSE)
-    }
-  }
-  ## cat ("X:\n")
-  ## print (x)
-  ## cat ("Y:\n")
-  ## print (y)
-  ## cat ("D = ", d, "\n")
-  return(TRUE)
-}
-
-similarCandidates.old <- function(candidates, parameters)
-{
-  similar <- c()
-  num.candidates <- nrow(candidates)
-  #cat("# ", format(Sys.time(), usetz=TRUE), " similarCandidates()\n")
-  #cat ("# Computing similarity of candidates ")
-  for (i in seq_len(num.candidates - 1)) {
-    for (j in ((i+1):num.candidates)) {
-      if (i == j) next
-      if (candidates.equal (candidates[i,],
-                            candidates[j,],
-                            parameters, threshold = 0.00000001)) {
-        similar <- c(similar, candidates[i,".ID."], candidates[j,".ID."])
-      }
-    }
-    #cat(".")
-  }
-  #cat(" DONE\n")
-  #cat("# ", format(Sys.time(), usetz=TRUE), " similarCandidates() DONE\n")
-  return(unique(similar))
 }
 
 ##
@@ -116,9 +73,9 @@ numeric.candidates.equal <- function(x, candidates, parameters, threshold, param
 }
 
 ##
-## New similar candidates function categorical+numerical
+## Identify which configurations are similar.
 ##
-similarCandidates.new <- function(candidates, parameters)
+similarCandidates <- function(candidates, parameters)
 {
   debug.level <- getOption(".irace.debug.level", 0)
   if (debug.level >= 1) cat ("# Computing similarity of candidates .")
@@ -140,12 +97,12 @@ similarCandidates.new <- function(candidates, parameters)
   nbCater <- length(listCater)
   nbNumer <- length(listNumer)
 
-  ### CATEGORICAL/ORDINAL FILTERING ####
+  ### Categorical/Ordinal filtering ####
   if (nbCater > 0) {
-    ## Build an array with the categorical append together in a string
+    ## Build an array with the categorical appended together in a string
     strings <- c()
     for (i in 1:nrow(candidates)) {
-      strings[i] <- paste(candidates[i, listCater], collapse=" ; ")
+      strings[i] <- paste(candidates[i, listCater], collapse = " ; ")
     }
 
     if (nbNumer != 0) candidates <- candidates[, c(".ID.", listNumer)]
@@ -172,9 +129,8 @@ similarCandidates.new <- function(candidates, parameters)
       return(NULL)
     }
   }
-
   
-  ### NUMERICAL PARAMETERS WITHIN BLOCKS OF SAME STRING ###
+  ### Numerical parameters within blocks of the same string ###
   if (nbNumer > 0) {
     similar <- c()
     if (nbCater > 0) {
@@ -219,31 +175,6 @@ similarCandidates.new <- function(candidates, parameters)
   }
 }
 
-
-similarCandidates <- function(candidates, parameters, execDir = getwd())
-{
-  similarIds.new <- similarCandidates.new (candidates,parameters)
-
-  if (getOption(".irace.debug.level", 0) >= 1) {
-    similarIds.old <- similarCandidates.old (candidates,parameters)
-
-    if (!setequal(similarIds.old, similarIds.new)) {
-      cat("\nSimilar candidates error:\n",
-          "Old: ", paste(similarIds.old, collapse = ", "),
-          "\nNew: ", paste(similarIds.new, collapse = ", "),
-          "\nIntersect:",
-          paste(intersect(similarIds.old, similarIds.new), collapse = ", "),
-          "\nLength: ", length(intersect(similarIds.old,similarIds.new)), "\n")
-      cwd <- setwd(execDir)
-      # save.image() does not save anything!
-      save (list = c("candidates", "parameters", "similarIds.new",
-              "similarIds.old"), file = "similarCandidates.Rdat")
-      setwd(cwd)
-      irace.assert (setequal(similarIds.old, similarIds.new))
-    }
-  }
-  return(similarIds.new)
-}
 
 ## Number of iterations.
 computeNbIterations <- function(nbParameters)
@@ -354,7 +285,8 @@ irace <- function(tunerConfig = stop("parameter `tunerConfig' is mandatory."),
     options(.irace.debug.level = debugLevel)
     
     # Create a data frame of all candidates ever generated.
-    namesParameters <- names(parameters$constraints)
+    namesParameters <- names(parameters$conditions)
+
     if (!is.null(tunerConfig$candidatesFile)
         && tunerConfig$candidatesFile != "") {
       allCandidates <- readCandidatesFile(tunerConfig$candidatesFile,
@@ -363,6 +295,12 @@ irace <- function(tunerConfig = stop("parameter `tunerConfig' is mandatory."),
                              allCandidates,
                              .PARENT. = NA)
       rownames(allCandidates) <- allCandidates$.ID.
+      num <- nrow(allCandidates)
+      allCandidates <- checkForbidden(allCandidates, tunerConfig$forbiddenExps)
+      if (nrow(allCandidates) < num) {
+        cat("# warning: some of the configurations in the candidates file were forbidden and, thus, discarded\n")
+      }
+      
     } else {
       candidates.colnames <- c(".ID.", namesParameters, ".PARENT.")
       allCandidates <-
@@ -549,7 +487,8 @@ irace <- function(tunerConfig = stop("parameter `tunerConfig' is mandatory."),
               " candidates from uniform distribution\n")
         }
         newCandidates <- sampleUniform(parameters, nbNewCandidates,
-                                       digits = tunerConfig$digits)
+                                       digits = tunerConfig$digits,
+                                       forbidden = tunerConfig$forbiddenExps)
         newCandidates <-
           cbind (.ID. = max(0, allCandidates$.ID.) + 1:nrow(newCandidates),
                  newCandidates)
@@ -577,7 +516,8 @@ irace <- function(tunerConfig = stop("parameter `tunerConfig' is mandatory."),
 
       #cat("# ", format(Sys.time(), usetz=TRUE), " sampleModel()\n")
       newCandidates <- sampleModel(tunerConfig, parameters, eliteCandidates,
-                                   model, nbNewCandidates)
+                                   model, nbNewCandidates,
+                                   forbidden = tunerConfig$forbiddenExps)
       #cat("# ", format(Sys.time(), usetz=TRUE), " sampleModel() DONE\n")
       # Set ID of the new candidates.
       newCandidates <- cbind (.ID. = max(0, allCandidates$.ID.) +
@@ -588,7 +528,7 @@ irace <- function(tunerConfig = stop("parameter `tunerConfig' is mandatory."),
       tunerResults$softRestart[indexIteration] <- FALSE
       if (tunerConfig$softRestart) {
         #          Rprof("profile.out")
-        tmp.ids <- similarCandidates (testCandidates, parameters, tunerConfig$execDir)
+        tmp.ids <- similarCandidates (testCandidates, parameters)
         #          Rprof(NULL)
         if (!is.null(tmp.ids)) {
           if (debugLevel >= 1)
@@ -602,7 +542,8 @@ irace <- function(tunerConfig = stop("parameter `tunerConfig' is mandatory."),
           # Re-sample after restart like above
           #cat("# ", format(Sys.time(), usetz=TRUE), " sampleModel()\n")
           newCandidates <- sampleModel(tunerConfig, parameters, eliteCandidates,
-                                       model, nbNewCandidates)
+                                       model, nbNewCandidates,
+                                       forbidden = tunerConfig$forbiddenExps)
           #cat("# ", format(Sys.time(), usetz=TRUE), " sampleModel() DONE\n")
           # Set ID of the new candidates.
           newCandidates <- cbind (.ID. = max(0, allCandidates$.ID.) + 
