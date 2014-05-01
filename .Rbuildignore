@@ -24,3 +24,5 @@ inst/doc/auto
 DEVEL-README
 ^tmp
 irace\.Rdata
+^.*\.data
+^R/.*\.data
