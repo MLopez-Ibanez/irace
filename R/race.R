@@ -491,7 +491,7 @@ race<-function(maxExp=0,
                 formatC(no.experiments.sofar,width=11),"|\n",
                 sep=""))
 
-    # stop race if we have less than the minimum number of candidates
+    # stop race if we have less or equal than the minimum number of candidates
     if (no.tasks.sofar>=first.test) {
         which.alive<-which(alive)
     	if(length(which.alive) <= stop.min.cand)
