@@ -400,30 +400,32 @@ irace <- function(tunerConfig = stop("parameter `tunerConfig' is mandatory."),
           "# mu: ", max(tunerConfig$mu, tunerConfig$firstTest), "\n",
           verbose = FALSE)
 
-  ## Compute the minimum budget required to exit early in case it
-  ## proves insufficient.
+  ## Compute the minimum budget required, and exits early in case the
+  ## budget given by the user is insufficient.
   # This is computed from the default formulas as follows:
-  # B_1 = B / I
-  # B_2 = B -  (B/I) / (I - 1) = B / I
-  # B_3 = B - 2(B/I) / (I - 2) = B / I
-  # thus B_i = B / I and
-  # C_i = B_i / (mu + min(5,i)) = B / (I * (mu + min(5,i))).
+  #  B_1 = B / I
+  #  B_2 = B -  (B/I) / (I - 1) = B / I
+  #  B_3 = B - 2(B/I) / (I - 2) = B / I
+  # thus
+  #  B_i = B / I
+  # and
+  #  C_i = B_i / (mu + min(5,i)) = B / (I * (mu + min(5,i))).
   # We want to enforce that C_i >= min_surv + 1, thus
-  # B / (I * (mu + min(5,i))) >= min_surv + 1        (1)
+  #  B / (I * (mu + min(5,i))) >= min_surv + 1        (1)
   # becomes
-  # B >= (min_surv + 1) * I * (mu + min(5,i))
+  #  B >= (min_surv + 1) * I * (mu + min(5,i))
   # and the most strict value is for i >= 5, thus
-  # B >= (min_surv + 1) * I * (mu + 5)
+  #  B >= (min_surv + 1) * I * (mu + 5)
   #
   # This is an over-estimation, since actually B_1 = floor(B/I) and if
   # floor(B/I) < B/I, then B_i < B/I, and we could still satisfy Eq. (1)
   # with a smaller budget. However, the exact formula requires computing B_i
-  # into account the floor() function, which is not obvious.
+  # taking into account the floor() function, which is not obvious.
   minimumBudget <- (minSurvival + 1) * nbIterations *
     (max(tunerConfig$mu, tunerConfig$firstTest) + 5)
      
   if (remainingBudget < minimumBudget) {
-    catInfo("Insufficient budget: ",
+    tunerError("Insufficient budget: ",
                "With the current settings, irace will require a value of ",
                "'maxExperiments' of at least '",  minimumBudget, "'. ",
                "You can either increase the budget, ",
