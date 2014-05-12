@@ -296,7 +296,7 @@ checkConfiguration <- function(configuration = defaultConfiguration())
     if (configuration$debugLevel >= 1) {
       cat("Warning: Assuming 'mu <- firstTest' because 'mu' cannot be lower than 'firstTest'\n")
     }
-    configuration$mu <- configuration$firstTtest
+    configuration$mu <- configuration$firstTest
   }
   
   as.boolean.param <- function(x, name, params)

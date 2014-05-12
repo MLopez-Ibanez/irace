@@ -335,6 +335,7 @@ mpiInit <- function(nslaves, debugLevel = 0)
     if (! require("Rmpi", quietly = TRUE))
       stop("The `Rmpi' package is required for using MPI.")
 
+    # FIXME: We should do this when irace finalizes.
     # When R exits, finalize MPI.
     reg.finalizer(environment(Rmpi::mpi.exit), function(e) {
       # Rmpi already prints a message, so we don't need this.

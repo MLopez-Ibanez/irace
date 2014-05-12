@@ -52,30 +52,32 @@ check.output <- function(output, command, config, hook.run.call = NULL, outputRa
   # We check the output here to provide better error messages.
   err.msg <- NULL
   if (length(output) < 1 || length(output) > 2 || any (is.na (output)) || any (!is.numeric(output))) {
-    err.msg <- paste("The output of '", command, "' is not numeric!\n", sep = "")
+    err.msg <- paste("The output of '", command, "' is not numeric!", sep = "")
   } else if (any(is.infinite(output))) {
-    err.msg <- paste("The output of '", command, "' is not finite!\n", sep = "")
+    err.msg <- paste("The output of '", command, "' is not finite!", sep = "")
   }
 
   if (config$timeBudget > 0 && length(output) < 2)
     err.msg <- paste("When timeBudget > 0, the output of `", command,
-                     "' must be two numbers 'cost time'!\n", sep = "")
+                     "' must be two numbers 'cost time'!", sep = "")
 
   if (!is.null(err.msg)) {
     if (!is.null(hook.run.call)) {
-      err.msg <- paste(err.msg, "The call to hookRun was:\n", hook.run.call, "\n", sep="")
+      err.msg <- paste(err.msg, "The call to hookRun was:\n", hook.run.call, sep="")
     }
     # FIXME: This duplication is annoying but it provides better error messages.
     if (is.null(outputRaw)) {
-      tunerError(err.msg,
+      tunerError(err.msg, "\n", .irace.prefix,
                  "The output was:\n", paste(output, collapse = "\n"),
-                 "\nThis is not a bug in irace, but means that something failed in",
+                 "\n", .irace.prefix,
+                 "This is not a bug in irace, but means that something failed in",
                  " a call to the hookRun or hookEvaluate functions provided by the user.",
                  " Please check those functions carefully.")
     } else {
       tunerError(err.msg,
                  "The output was:\n", paste(outputRaw, collapse = "\n"),
-                 "\nThis is not a bug in irace, but means that something failed when",
+                 "\n", .irace.prefix,
+                 "This is not a bug in irace, but means that something failed when",
                  " running the command above or it was terminated before completion.",
                  " Try to run the command above from the execution directory '",
                  config$execDir, "' to investigate the issue.")
@@ -246,8 +248,6 @@ race.wrapper <- function(candidate, task, which.alive, data)
     
     if (parallel > 1) {
       if (mpi) {
-        # FIXME: We should do this at a higher level, to avoid the overhead.
-        mpiInit(parallel, data$config$debugLevel)
         .irace$hook.output <-
           Rmpi::mpi.applyLB(candidates, .irace$hook.run,
                             instance = instance, extra.params = extra.params,
@@ -266,26 +266,36 @@ race.wrapper <- function(candidate, task, which.alive, data)
           tunerError("A slave process terminated with a fatal error")
         }
       } else {
-        # FIXME: We should do this at a higher level, to avoid the overhead.
-        library("parallel", quietly = TRUE)
-        .irace$hook.output <-
-          parallel::mclapply(candidates, .irace$hook.run,
-                              # FALSE means load-balancing.
-                              mc.preschedule = FALSE, mc.cores = parallel,
-                              instance = instance, extra.params = extra.params,
-                              config = data$config)
-        # FIXME: if stop() is called from mclapply, it does not
-        # terminate the execution of the parent process, so it will
-        # continue and give more errors later. We have to terminate
-        # here, but is there a nicer way to detect this and terminate?
-        if (any(sapply(.irace$hook.output, inherits, "try-error"))) {
-          # FIXME: mclapply has some bugs in case of error. In that
-          # case, each element of the list does not keep the output of
-          # each candidate and repetitions may occur.
-          cat(unique(unlist(
-            .irace$hook.output[sapply(
-              .irace$hook.output, inherits, "try-error")])), file = stderr())
-          tunerError("A child process triggered a fatal error")
+        if (.Platform$OS.type == 'windows') {
+          irace.assert(!is.null(.irace$cluster))
+          # FIXME: How to do load-balancing?
+          .irace$hook.output <-
+            parallel::parLapply(.irace$cluster, candidates, .irace$hook.run,
+                                instance = instance,
+                                extra.params = extra.params,
+                                config = data$config)
+          # FIXME: if stop() is called from parLapply, then the parent
+          # process also terminates, and we cannot give further errors.
+        } else {
+          .irace$hook.output <-
+            parallel::mclapply(candidates, .irace$hook.run,
+                               # FALSE means load-balancing.
+                               mc.preschedule = FALSE, mc.cores = parallel,
+                               instance = instance, extra.params = extra.params,
+                               config = data$config)
+          # FIXME: if stop() is called from mclapply, it does not
+          # terminate the execution of the parent process, so it will
+          # continue and give more errors later. We have to terminate
+          # here, but is there a nicer way to detect this and terminate?
+          if (any(sapply(.irace$hook.output, inherits, "try-error"))) {
+            # FIXME: mclapply has some bugs in case of error. In that
+            # case, each element of the list does not keep the output of
+            # each candidate and repetitions may occur.
+            cat(unique(unlist(
+              .irace$hook.output[sapply(
+                .irace$hook.output, inherits, "try-error")])), file = stderr())
+            tunerError("A child process triggered a fatal error")
+          }
         }
       }
     } else if (sgeCluster) {

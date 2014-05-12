@@ -1,8 +1,15 @@
+ * Terminate early if there is no sufficient budget to run irace with
+   the given settings. (Manuel López-Ibáñez)
+
+ * The option --parallel (without --mpi) now works under Windows.
+   (Manuel López-Ibáñez, thanks to Pablo Valledor Pellicer for testing
+   it)
+
  * Improved error handling when running under Rmpi. Now irace will
-   terminate as soon as the master node detects at least one failed slave
-   node. This avoids irace reporting two times the same error.
-   Also, irace will print all the unique errors returned by all slaves and not
-   just the first one.
+   terminate as soon as the master node detects at least one failed
+   slave node. This avoids irace reporting two times the same error.
+   Also, irace will print all the unique errors returned by all slaves
+   and not just the first one.
    (Manuel López-Ibáñez)
 
  * Forbidden configurations may be specified in terms of constraints
@@ -23,10 +30,10 @@
    descriptions. (Manuel López-Ibáñez)
     Examples:
 
-   x "" i (0, 0)       # lower and upper bounds are the same
-   x "" r (1e-4, 5e-4) # given digits=2, ditto
-   x "" i (-1, -2)     # lower bound must be smaller than upper bound
-   x "" c ("a", "a")   # duplicated values
+    x "" i (0, 0)       # lower and upper bounds are the same
+    x "" r (1e-4, 5e-4) # given digits=2, ditto
+    x "" i (-1, -2)     # lower bound must be smaller than upper bound
+    x "" c ("a", "a")   # duplicated values
  
  * Print elapsed time for calls to hook-run if debugLevel >=1.
    (Manuel López-Ibáñez)

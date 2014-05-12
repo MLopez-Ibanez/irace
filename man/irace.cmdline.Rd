@@ -9,9 +9,11 @@
   irace.cmdline(args = commandArgs(trailingOnly = TRUE))
 }
 \arguments{
-  \item{args}{The arguments provided on the R command line. Using the
-    default value (not providing the parameter) is the easiest way to
-    call 'irace.cmdline'.}
+  \item{args}{The arguments provided on the R command line as a character
+    vector, e.g., \code{c("--config-file", "tune-conf", "-p",
+      "parameters.txt")}.
+    Using the  default value (not providing the parameter) is the easiest way to
+    call \code{irace.cmdline}.}
 }
 \value{
   None.
