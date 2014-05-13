@@ -3,7 +3,7 @@ checkForbidden <- function(configurations, forbidden)
   # We have to use a variable name that will never appear in
   # configurations, so .FORBIDDEN .
   for (.FORBIDDEN in forbidden) {
-    print(.FORBIDDEN)
+    #print(.FORBIDDEN)
     configurations <- subset(configurations, eval(.FORBIDDEN))
     #print(configurations)
     #print(str(configurations))
