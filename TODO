@@ -17,6 +17,8 @@ TODO R package:
 
 TODO General:
 
+ * Print some info about the forbidden rules read.
+
  * Add '--version'
  
  * Add a --verify option that checks whether all files are in place,

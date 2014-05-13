@@ -2,7 +2,7 @@ Package: irace
 Type: Package
 Title: Iterated Racing Procedures
 Version: 1.05
-Date: 2014-05-12
+Date: 2014-05-13
 Maintainer: Manuel López-Ibáñez <manuel.lopez-ibanez@ulb.ac.be>
 Author: Manuel López-Ibáñez, Jérémie Dubois-Lacoste,
         Thomas Stützle, Mauro Birattari, Eric Yuan and Prasanna Balaprakash
