@@ -251,6 +251,9 @@ oneIterationRace <-
 
 startParallel <- function(config)
 {
+  cwd <- setwd (config$execDir)
+  on.exit(setwd(cwd), add = TRUE)
+
   parallel <- config$parallel
   if (parallel > 1) {
     if (config$mpi) {
