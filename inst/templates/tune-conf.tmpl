@@ -120,9 +120,14 @@
 ## Confidence level for the elimination test.
 # confidence <- 0.95
 
-## File to recover the execution of irace
-## if is empty or NULL recovery is not performed. 
+## Previously saved log file to recover the execution of irace, either
+## absolute path or relative to the current directory. If empty or
+## NULL, recovery is not performed.
 # recoveryFile <- ""
+
+## File containing a list of logical expressions that cannot be true
+## for any evaluated candidate. If empty or NULL, do not use a file.
+# forbiddenFile <- ""
 
 ## END of configuration file
 ############################################################################
