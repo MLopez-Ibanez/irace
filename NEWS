@@ -1,3 +1,5 @@
+ * New option --version. (Manuel López-Ibáñez)
+
  * Terminate early if there is no sufficient budget to run irace with
    the given settings. (Manuel López-Ibáñez)
 
