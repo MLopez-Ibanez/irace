@@ -19,11 +19,13 @@ TODO General:
 
  * Print some info about the forbidden rules read.
 
- * Add '--version'
- 
  * Add a --verify option that checks whether all files are in place,
    all options are valid, and it runs hook-run on a random
    configuration on a random instance.
+   Implement a test mode that allows the user to check his set-up is
+   correct (checking the configuration can be read, giving the number
+   of iterations\candidates that would be used, calling hook-run
+   once...).
 
  * Weighted sampling of instances. Use the instance parameters to
    provide a biased sampling. Note that one can currently achieve this
@@ -42,9 +44,7 @@ TODO General:
    the user really has to change to define a scenario versus other
    parameters for irace.
 
- * Forbidden parameter combinations (following ParamILS/SMAC).
-
-   We could simply read a list of configurations with some NA values,
+ * We could simply read a list of configurations with some NA values,
    and if any configuration sampled matches those (minus the NA
    values), then it is discarded and we resample. If we execute the
    restart mechanism before this check, then resampling the same
@@ -102,11 +102,6 @@ TODO General:
    - http://cran.r-project.org/web/packages/RUnit/index.html
    - http://cran.r-project.org/web/packages/svUnit/index.html
 
- * Implement a test mode that allows the user to check his set-up is
-   correct (checking the configuration can be read, giving the number
-   of iterations\candidates that would be used, calling hook-run
-   once...).
-   
  * Fix all FIXMEs.
 
  * Boolean command-line parameters require to provide a value
@@ -227,6 +222,11 @@ TODO General:
 
 DONE:
 
+ * [DONE by Manuel] Add '--version'.
+ 
+ * [DONE by Manuel]
+   Forbidden parameter combinations (following ParamILS/SMAC).
+
  * [DONE by Manuel] 
    Implement constraints on values that allow the user to specify
    restrictions on the values that parameters may take, such as all
@@ -254,11 +254,10 @@ DONE:
    __element__ is not a valid R variable name, so I suggest .ID.,
    which is valid.
 
- * [DONE] We should produce at least the ouput files in R data format
+ * [DONE by Manuel] We should produce at least the ouput files in R data format
    using save()
     * A data.frame/matrix with all experiments performed.
     * A data.frame/matrix with all candidate results.
-   [Manuel]
 
  * [FIXED] Use the remaining budget always. But how? 
 
