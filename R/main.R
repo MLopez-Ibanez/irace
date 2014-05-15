@@ -2,7 +2,7 @@
 # irace: An implementation in R of Iterated Race.
 # -------------------------------------------------------------------------
 #
-#  Copyright (C) 2010-2013
+#  Copyright (C) 2010-2014
 #  Manuel López-Ibáñez     <manuel.lopez-ibanez@ulb.ac.be> 
 #  Jérémie Dubois-Lacoste  <jeremie.dubois-lacoste@ulb.ac.be>
 #
@@ -30,7 +30,7 @@
 irace.license <-
 '********************************************************************************
 * irace: An implementation in R of Iterated Race                               *
-* Copyright (C) 2010-2013                                                      *
+* Copyright (C) 2010-2014                                                      *
 * Manuel Lopez-Ibanez     <manuel.lopez-ibanez@ulb.ac.be>                      *
 * Jeremie Dubois-Lacoste  <jeremie.dubois-lacoste@ulb.ac.be>                   *
 *                                                                              *
@@ -83,13 +83,16 @@ read.table.text <- function(text, header = TRUE, stringsAsFactors = FALSE, ...)
   return(x)
 }
 
+# Non-variable options (such as --help and --version) have names starting with '.'
+# Variables that do not have an option have description == ""
 # FIXME: Add more columns with the type of the parameter: b(oolean),
 # i(nteger), p(ath), r(eal), c(ategorical). For i, r, and c, add their
 # range.
 # FIXME: Align columns.
 .irace.params.def <- read.table.text('
 name                         short  long                 default            description
-""                           "-h"   "--help"             NA                 "Show this help." 
+.help                        "-h"   "--help"             NA                 "Show this help." 
+.version                     "-v"   "--version"          NA                 "Show irace package version." 
 configurationFile            "-c"   "--config-file"      "./tune-conf"      "File that contains the configuration for irace." 
 parameterFile                "-p"   "--param-file"       "./parameters.txt" "File that contains the description of the parameters to be tuned. See the template." 
 execDir                      ""     "--exec-dir"         "./"               "Directory where the programs will be run." 
@@ -126,7 +129,7 @@ hookEvaluate                 ""     "--hook-evaluate"    ""                 "Opt
 "softRestart"                ""     "--soft-restart"  1    "Enable/disable the soft restart strategy that avoids premature convergence of the probabilistic model." 
 ')
 rownames (.irace.params.def) <- .irace.params.def[,"name"]
-.irace.params.names <- rownames(.irace.params.def)[rownames(.irace.params.def) != ""]
+.irace.params.names <- rownames(.irace.params.def)[substring(rownames(.irace.params.def), 1, 1) != "."]
   
 ## read commandline parameters
 readCmdLineParameter <- function (args, params.def, paramName, default)
@@ -188,6 +191,14 @@ irace.cmdline <- function(args = commandArgs (trailingOnly = TRUE))
 {
   if (!is.null(readArgOrDefault (args, short = "-h", long = "--help"))) {
     irace.usage()
+    return(invisible(NULL))
+  }
+
+  if (!is.null(readArgOrDefault (args, short = "-v", long = "--version"))) {
+    # FIXME: It would be nice to put the version number in the license
+    # message to avoid having this extra line.
+    cat ("irace\tversion: ", irace.version, "\n", sep="")
+    cat (irace.license)
     return(invisible(NULL))
   }
 
