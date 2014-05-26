@@ -43,17 +43,27 @@ readCandidatesFile <-
     return(NULL)
   }
 
+  # Reorder columns.
+  candidateTable <- candidateTable[, namesParameters, drop = FALSE]
+  # Fix up numeric columns.
+  for (currentParameter in namesParameters) {
+    type <- parameters$types[[currentParameter]]
+    if (type == "i" || type == "r") {
+      candidateTable[, currentParameter] <- suppressWarnings(as.numeric(candidateTable[, currentParameter]))
+    }
+  }
+
   # Loop over all candidates in candidateTable
   for (k in seq_len(nbCandidates)) {
     # Loop over all parameters, in an order taken from the conditions
     for (currentParameter in namesParameters) {
       currentValue <- candidateTable[k, currentParameter]
       type <- parameters$types[[currentParameter]]
-      
+
       # Check the status of the conditions for this parameter to know
       # if it must be enabled or not.
       if (conditionsSatisfied(parameters, candidateTable[k, ], 
-                               currentParameter)) {
+                              currentParameter)) {
         # Check that the value is among the valid ones.
         if (type == "i" || type == "r") {
           currentValue <- as.numeric(currentValue)
@@ -92,19 +102,12 @@ readCandidatesFile <-
       } else if (!is.na(currentValue)) {
         tunerError ("Candidate n. ", k, " from file ", fileName,
                     " is invalid because parameter \"", currentParameter,
-                    "\" is not enabled but its value is \"",
+                    "\" is not enabled because of condition \"",
+                    parameters$conditions[[currentParameter]],
+                    "\" but its value is \"",
                     currentValue, "\" instead of NA")
         return(NULL)
       }
-    }
-  }
-  # Reorder columns.
-  candidateTable <- candidateTable[, namesParameters, drop = FALSE]
-  # Fix up numeric columns.
-  for (currentParameter in namesParameters) {
-    type <- parameters$types[[currentParameter]]
-    if (type == "i" || type == "r") {
-      candidateTable[, currentParameter] <- as.numeric(candidateTable[, currentParameter])
     }
   }
   return (candidateTable)
