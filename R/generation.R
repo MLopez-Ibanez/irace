@@ -120,7 +120,8 @@ sampleModel <- function (tunerConfig, parameters, eliteCandidates, model,
                          ncol = length(newCandidatesColnames)))
   colnames(newCandidates) <- newCandidatesColnames
   empty.candidate <- new.empty.candidate(parameters)
-
+  digits <- tunerConfig$digits
+  
   for (idxCandidate in seq_len(nbNewCandidates)) {
     forbidden.retries <- 0
     while (forbidden.retries < 100) {
@@ -165,7 +166,7 @@ sampleModel <- function (tunerConfig, parameters, eliteCandidates, model,
                              rtnorm(1, mean, stdDev, lowerBound, upperBound))
           }
           newVal <- ifelse(currentType == "i", round(newVal),
-                           round(newVal, tunerConfig$digits))
+                           round(newVal, digits))
           
         } else if (currentType == "o") {
           possibleValues <- oneParamBoundary(currentParameter, parameters)  
