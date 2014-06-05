@@ -63,25 +63,29 @@ check.output <- function(output, command, config, hook.run.call = NULL, outputRa
 
   if (!is.null(err.msg)) {
     if (!is.null(hook.run.call)) {
-      err.msg <- paste(err.msg, "The call to hookRun was:\n", hook.run.call, sep="")
+      err.msg <- paste(err.msg, "\n", .irace.prefix,
+                       "The call to hookRun was:\n", hook.run.call, sep="")
     }
-    # FIXME: This duplication is annoying but it provides better error messages.
+
     if (is.null(outputRaw)) {
-      tunerError(err.msg, "\n", .irace.prefix,
-                 "The output was:\n", paste(output, collapse = "\n"),
-                 "\n", .irace.prefix,
-                 "This is not a bug in irace, but means that something failed in",
-                 " a call to the hookRun or hookEvaluate functions provided by the user.",
-                 " Please check those functions carefully.")
+      # Message for a function call.
+      outputRaw <- output
+      advice.txt <- paste(
+        "This is not a bug in irace, but means that something failed in",
+        "a call to the hookRun or hookEvaluate functions provided by the user.",
+        "Please check those functions carefully.")
     } else {
-      tunerError(err.msg,
-                 "The output was:\n", paste(outputRaw, collapse = "\n"),
-                 "\n", .irace.prefix,
-                 "This is not a bug in irace, but means that something failed when",
-                 " running the command above or it was terminated before completion.",
-                 " Try to run the command above from the execution directory '",
-                 config$execDir, "' to investigate the issue.")
+      # Message for an external script.
+      advice.txt <- paste(
+        sep="",
+        "This is not a bug in irace, but means that something failed when",
+        " running the command above or it was terminated before completion.",
+        " Try to run the command above from the execution directory '",
+        config$execDir, "' to investigate the issue.")
     }
+    tunerError(err.msg, "\n", .irace.prefix,
+               "The output was:\n", paste(outputRaw, collapse = "\n"),
+               "\n", .irace.prefix, advice.txt)
   }
 }
 
