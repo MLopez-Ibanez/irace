@@ -1,0 +1,4 @@
+These are based in SMAC files and they were tested in CPLEX 12.
+
+There are some parameters that are only valid for MIP problems and
+others that are only valid for QCP (???) problems.

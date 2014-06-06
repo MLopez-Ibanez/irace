@@ -1,0 +1,232 @@
+# PARAMETERS FILE OF CPLEX 
+# BASED ON THE CPLEX EXAMPLE OF SMAC VERSION 2.06 RELEASED ON AUGUST 2013
+# name 	switch 	type	values	[conditions (using R syntax)]
+
+# barrier growth limit. Allegedly called bargrowth. in R, >= 1.0. Now that I check results numerically this can be optimized. Default=1e+12 ONLY exponent!!!
+barrier_limits_growth	"barrier_limits_growth "	i	(6,14) 
+
+# barrier algorithm. Default=0
+barrier_algorithm	"barrier_algorithm "	c	(0,1,2,3)
+
+# barrier crossover algorithm. Default=0
+barrier_crossover	"barrier_crossover "	c	(-1,0)
+
+# barrier maximum correction limit. Default=-1
+barrier_limits_corrections	"barrier_limits_corrections "	i	(-1,64) 
+
+# barrier ordering algorithm. Default=0
+barrier_ordering	"barrier_ordering "	c	(0,1,2,3) 
+
+# barrier starting point algorithm. Default=1
+barrier_startalg	"barrier_startalg "	c	(1,2,3,4)
+
+#MEMORYEMPHASIS. No auto. Binary. Disallow emphasis_memory yes. Default=no
+emphasis_memory	"emphasis_memory "	c	(no) 
+
+# MIP emphasis switch. Default=0
+emphasis_mip	"emphasis_mip "	c	(0,1,2,3,4)
+
+# numerical precision emphasis. No auto, cat. Since I penalize (too) poor numerical precision this is an optimization parameter. Default=no
+emphasis_numerical	"emphasis_numerical "	c	(yes,no)
+
+# mode of FeasOpt. Default=0
+feasopt_mode	"feasopt_mode "	c	(0,1,2,3,4,5)
+
+# algorithm for continuous problems. Default=0
+lpmethod	"lpmethod "	c	(0,1,2,3,4,5,6)
+
+# MIP cliques switch. Default=0
+mip_cuts_cliques	"mip_cuts_cliques "	c	(-1,0,1,2,3)
+
+# MIP covers switch. Default=0
+mip_cuts_covers	"mip_cuts_covers "	c	(-1,0,1,2,3)
+
+# MIP disjunctive cuts switch. Default=0
+mip_cuts_disjunctive	"mip_cuts_disjunctive "	c	(-1,0,1,2,3)
+
+# MIP flow cover cuts switch. Default=0
+mip_cuts_flowcovers	"mip_cuts_flowcovers "	c	(-1,0,1,2)
+
+# MIP Gomory fractional cuts switch. Default=0
+mip_cuts_gomory	"mip_cuts_gomory "	c	 (-1,0,1,2)
+
+ # MIP GUB cuts switch. Default=0
+mip_cuts_gubcovers	"mip_cuts_gubcovers "	c	(-1,0,1,2)
+
+# MIP implied bound cuts switch. Default=0
+mip_cuts_implied	"mip_cuts_implied "	c	(-1,0,1,2)
+
+# MCF cut switch. Default=0
+mip_cuts_mcfcut	"mip_cuts_mcfcut "	c	(-1,0,1,2)
+
+# MIP MIR (mixed integer rounding) cut switch. Default=0
+mip_cuts_mircut	"mip_cuts_mircut "	c	(-1,0,1,2)
+
+# MIP flow path cut switch. Default=0
+mip_cuts_pathcut	"mip_cuts_pathcut "	c	(-1,0,1,2)
+
+# MIP zero-half cuts switch. Default=0
+mip_cuts_zerohalfcut	"mip_cuts_zerohalfcut "	c	(-1,0,1,2)
+
+ # constraint aggregation limit for cut generation. Default=3
+mip_limits_aggforcut	"mip_limits_aggforcut "	i	(0,10)
+
+# row multiplier factor for cuts. in R+ Default=4
+mip_limits_cutsfactor	"mip_limits_cutsfactor "	i	(1,16)
+
+# number of cutting plane passes. Default=0, in N+, poorly informed
+mip_limits_cutpasses	"mip_limits_cutpasses "	i	(-1,64)
+
+# candidate limit for generating Gomory fractional cuts. Default=200
+mip_limits_gomorycand	"mip_limits_gomorycand "	i	(50,800)
+
+ # pass limit for generating Gomory fractional cuts. Default=0
+mip_limits_gomorypass	"mip_limits_gomorypass "	i	(0,64)
+
+#time spent probing. No auto. R+. Setting this fairly low should allow us to use aggressive probing up to a cutoff time.
+mip_limit_probetime	"mip_limit_probetime "	c	(2,5,10,100,1e+75)
+
+# MIP strong branching candidate list limit. Default=10
+mip_limits_strongcand	"mip_limits_strongcand "	i	(2,40) 	| mip_strategy_variableselect %in% c(3)
+
+# MIP strong branching iterations limit. Default=0, in N+ , poorly informed
+mip_limits_strongit	"mip_limits_strongit "	i	(0,64) 	| mip_strategy_variableselect %in% c(3)
+
+# limit on nodes explored when a subMIP is being solved. Default=500
+mip_limits_submipnodelim	"mip_limits_submipnodelim "	i	(125,2000)
+
+# MIP priority order generation. Default=0
+mip_ordertype	"mip_ordertype "	c	(0,1,2,3)
+
+# backtracking tolerance. No auto, any number from 0.0 to 1.0. Despite the name this is not a tolerance parameter. Default=0.9999
+mip_strategy_backtrack	"mip_strategy_backtrack "	r	(0.900000,0.999999)
+
+# MIP strategy best bound interval. Dfeault=7, in N+_0. 0 is equivalent to infinity
+mip_strategy_bbinterval	"mip_strategy_bbinterval "	i	(0,30) 
+
+# MIP branching direction. Default=0
+mip_strategy_branch	"mip_strategy_branch "	c	(-1,0,1)
+
+# MIP dive strategy. Default=0
+mip_strategy_dive	"mip_strategy_dive "	c	(0,1,2,3)
+
+#node storage file switch. No auto. Cat.  DISALLOW values 2 and 3 => they write files to disk (stuff will break and we run out of space). Default=1
+mip_strategy_file	"mip_strategy_file "	c	(0,1)
+
+# MIP heuristic frequency. Default=0, in N+. 20 is an example used in the manual. It may be totally off...
+mip_strategy_heuristicfreq	"mip_strategy_heuristicfreq "	i	(-1,80)
+
+# local branching heuristic. Default=no
+mip_strategy_lbheur	"mip_strategy_lbheur "	c	(yes,no)
+
+#MIQCP strategy switch. Auto, cat. Only important for MIQCPs, otherwise useless parameter
+mip_strategy_miqcpstrat	"mip_strategy_miqcpstrat "	c	(0,1,2)
+
+# MIP node selection strategy. Default=1
+mip_strategy_nodeselect	"mip_strategy_nodeselect "	c	(0,1,2,3)
+
+# MIP priority order switch. Default=yes
+mip_strategy_order	"mip_strategy_order "	c	(yes,no)	| mip_ordertype %in% c(1,2,3)
+
+ # node presolve switch. Default=0
+mip_strategy_presolvenode	"mip_strategy_presolvenode "	c	(-1,0,1,2)
+
+# MIP probing level. Default=0
+mip_strategy_probe	"mip_strategy_probe "	c	(-1,0,1,2,3)
+
+# RINS heuristic frequency. Default=0, 20 is an example from the CPLEX parameter reference; could be totally off
+mip_strategy_rinsheur	"mip_strategy_rinsheur "	i	(-1,80)
+
+# MIP dynamic search switch. Default=0  NOT compatible with callbacks (fine in our case, where we don't use those)
+mip_strategy_search	"mip_strategy_search "	c	(0,1,2)
+
+# MIP starting algorithm. Default=0. SPECIAL CASES: MIQCP and MIQP only allow some of these
+mip_strategy_startalgorithm	"mip_strategy_startalgorithm "	c	(0)
+
+# MIP subproblem algorithm. Default=0
+mip_strategy_subalgorithm	"mip_strategy_subalgorithm "	c	(0)
+
+# MIP variable selection strategy. Default=0
+mip_strategy_variableselect	"mip_strategy_variableselect "	c	(-1,0,1,2,3,4)
+
+# simplex network extraction level. Default=2
+network_netfind	"network_netfind "	c	(1,2,3)
+
+# network simplex pricing algorithm. Default=0. The CPLEX parameter reference says the default (0) is identical to option 3, which I thus disabled.
+network_pricing	"network_pricing "	c	(0,1,2)
+
+ # part 2 of parameter "simplex_perturbation", conditional on part1=1. Default=1e-6 ONLY EXPONENT
+perturbation_constant	"perturbation_constant "	i	(-8,-4)	| simplex_perturbation_switch %in% c("yes")
+
+# preprocessing aggregator application limit. Default=-1
+preprocessing_aggregator	"preprocessing_aggregator "	i	(-1,64)
+
+ # bound strengthening switch. Default=-1
+preprocessing_boundstrength	"preprocessing_boundstrength "	c	(-1,0,1)
+
+# coefficient reduction setting. Default=2
+preprocessing_coeffreduce	"preprocessing_coeffreduce "	c	(0,1,2)
+
+# dependency switch. Default=-1
+preprocessing_dependency	"preprocessing_dependency "	c	(-1,0,1,2,3)
+
+# presolve dual setting. Default=0
+preprocessing_dual	"preprocessing_dual "	c	(-1,0,1)
+
+ # preprocessing aggregator fill. Default=10, in N+
+preprocessing_fill	"preprocessing_fill "	i	(2,40)
+
+# linear reduction switch. Default=1
+preprocessing_linear	"preprocessing_linear "	c	(0,1)
+
+# indefinite MIQP switch. No auto, cat.
+preprocessing_qpmakepsd	"preprocessing_qpmakepsd "	c	(no, yes)
+
+# limit on the number of presolve passes made. Default=-1, in N+, poorly informed
+preprocessing_numpass	"preprocessing_numpass "	i	(-1,64)
+
+# primal and dual reduction type. Default=3
+preprocessing_reduce	"preprocessing_reduce "	c	(0,1,2,3)
+
+# relaxed LP presolve switch. Default=-1
+preprocessing_relax	"preprocessing_relax "	c	(-1,0,1)
+
+# MIP repeat presolve switch. Default=-1
+preprocessing_repeatpresolve	"preprocessing_repeatpresolve "	c	(-1,0,1,2,3)
+
+# symmetry breaking. Default=-1
+preprocessing_symmetry	"preprocessing_symmetry "	c	(-1,0,1,2,3,4,5)
+
+# scale parameter. Default=0
+read_scale	"read_scale "	c	(-1,0,1)
+
+ # sifting subproblem algorithm. Default=0
+sifting_algorithm	"sifting_algorithm "	c	(0,1,2,3,4)
+
+# simplex crash ordering. Default=1
+simplex_crash	"simplex_crash "	c	(-1,0,1)
+
+# dual simplex pricing algorithm. Default=0
+simplex_dgradient	"simplex_dgradient "	c	(0,1,2,3,4,5) 
+
+# simplex perturbation limit. Default=0, in N+, poorly informed
+simplex_limits_perturbation	"simplex_limits_perturbation "	i	(0,64)
+
+# simplex singularity repair limit. Default=10, in N_0+
+simplex_limits_singularity	"simplex_limits_singularity "	i	(2,40)
+
+# part 1 of parameter "simplex_perturbation". Default=no
+simplex_perturbation_switch	"simplex_perturbation_switch "	c	(no,yes)
+
+# primal simplex pricing algorithm. Default=0
+simplex_pgradient	"simplex_pgradient "	c	(-1,0,1,2,3,4)
+
+# simplex pricing candidate list size. Default=0, in N+, poorly informed
+simplex_pricing	"simplex_pricing "	i	(0,64) 
+
+ #simplex refactoring frequency. Default=0. N+. Simplex refactorization interval. Hoyt's LP notes say Chvtal suggests an optimal refactorization interval of 16. 
+simplex_refactor	"simplex_refactor "	i	(0,256)
+
+# Markowitz tolerance. 0.0001 to 0.99999. Default=0.01
+simplex_tolerances_markowitz	"simplex_tolerances_markowitz "	r	(0.0001, 0.5000)
+
