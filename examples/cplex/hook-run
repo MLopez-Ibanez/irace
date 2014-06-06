@@ -65,23 +65,22 @@ for ELEMENT in $CAND_PARAMS; do
       fi
 
       if [ "$PNAME" == "simplex perturbation switch" ]; then
-         SIMPLEX_PER_S=$ELEMENT
+          SIMPLEX_PER_S=$ELEMENT
+      elif [ "$PNAME" == "perturbation constant" ]; then
+          PERTURB_CONS=$ELEMENT
       else
-        if [ "$PNAME" == "perturbation constant" ]; then
-           PERTURB_CONS=$ELEMENT
-        else
-           echo "set $PNAME $ELEMENT" >> $STDPAR
-        fi
+          echo "set $PNAME $ELEMENT" >> $STDPAR
       fi
     fi
     i=$(( $i + 1))
 done
 
-echo "set simplex perturbation ${SIMPLEX_PER_S} ${PERTURB_CONS}" >> $STDPAR
-
-echo "display settings all" >> $STDPAR
-echo "opt" >> $STDPAR
-echo "quit" >> $STDPAR
+cat <<EOF >> $STDPAR
+set simplex perturbation ${SIMPLEX_PER_S} ${PERTURB_CONS}
+display settings all
+opt
+quit
+EOF
 
 #echo "./hook-run ${INSTANCE} ${CANDIDATE} ${RUNTIME_LIMIT} ${CAND_PARAMS}" >> "check.txt"
 
@@ -102,6 +101,7 @@ fi
 
 SOLVED="CRASHED"
 
+# FIXME: This could use case and avoid read STDOUT so many times.
 TMP=$(cat ${STDOUT} | grep "Error termination")
 if [ "$TMP" != "" ]; then
     SOLVED="TIMEOUT"
@@ -143,17 +143,15 @@ if [ "$TMP" != "" ] ; then
 fi
 
 if [ "$SOLVED" == "TIMEOUT" ]; then
-   COST=$RUNTIME_LIMIT
+    COST=$RUNTIME_LIMIT
+elif [ "$SOLVED" == "CRASHED" ]; then
+    COST=$PENALTY
 else
-   if [ "$SOLVED" == "CRASHED" ]; then
-      COST=$PENALTY
-   else
-      #runtime objective
-      COST=$(cat ${STDOUT} | grep "Solution time" | gawk -F " " '{print $4}')
-      if ! [[ "$COST" =~ ^[-+0-9.e]+$ ]] ; then
+    # runtime objective
+    COST=$(cat ${STDOUT} | grep "Solution time" | gawk -F " " '{print $4}')
+    if ! [[ "$COST" =~ ^[-+0-9.e]+$ ]] ; then
         error "${STDOUT}: Output is not a number"
-      fi
-   fi
+    fi
 fi
 
 echo "$COST $COST"
@@ -161,5 +159,5 @@ echo "$COST $COST"
 #echo "SCOST: $COST ECOST ./hook-run ${INSTANCE} ${CANDIDATE} ${CAND_PARAMS}" >> "check.txt"
 
 # We are done with our duty. Clean files and exit with 0 (no error).
-rm -rf "${STDOUT}" "${STDERR}" "${STDPAR}"
+rm -rf "$WORK_DIR" "${STDOUT}" "${STDERR}" "${STDPAR}"
 exit 0

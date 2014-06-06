@@ -176,7 +176,7 @@ preprocessing_dependency	"preprocessing_dependency "	c	(-1,0,1,2,3)
 # presolve dual setting. Default=0
 preprocessing_dual	"preprocessing_dual "	c	(-1,0,1)
 
- # preprocessing aggregator fill. Default=10, in N+
+# preprocessing aggregator fill. Default=10, in N+
 preprocessing_fill	"preprocessing_fill "	c	(2,5,10,20,40)
 
 # linear reduction switch. Default=1
