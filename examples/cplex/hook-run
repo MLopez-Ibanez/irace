@@ -55,23 +55,37 @@ IFS=" "
 
 for ELEMENT in $CAND_PARAMS; do
     mod=$(( $i % 2 ))
+# FIXME: Leslie comments:
+# So the code does for every element of the parameters, that should be in the format
+# --parameter_name value
+# if is the parameter name (so the mod is 0) we change the _ to - because thats how irace need the names.. (maybe there is no reason, the files were using the _ character and i didnt change it there I dont remember why...) :s
+
+# Manuel: we should simply use the correct labels without _ in parameters.txt
     if [ "$mod" -eq "0" ]; then
       PNAME=${ELEMENT//'_'/' '}
-    else
-      if [ "$PNAME" == "mip strategy bbinterval" ]; then
-         if [ "$ELEMENT" -eq "0" ]; then
-            ELEMENT=1000
-         fi
-      fi
 
-      if [ "$PNAME" == "simplex perturbation switch" ]; then
-          SIMPLEX_PER_S=$ELEMENT
-      elif [ "$PNAME" == "perturbation constant" ]; then
-          PERTURB_CONS=$ELEMENT
-      else
-          echo "set $PNAME $ELEMENT" >> $STDPAR
-      fi
+# FIXME: Leslie: The "mip strategy bbinterval" is something i just copy from the wrapper of smac, they do this with this parameter for the cat instances... dont really know why.. thet say:
+# #== Deal with bbinterval: only allow 1+
+# and in the parameter files the values for that parameter start from 2, so this never happens. It says that 0 is infinity... :P i dont know is infinity is possible for this param...
+# anyway decided to add it also in the hook run just in case... so i handled it the same way as them...
+# MANUEL: This can never happen, the value zero is not in parameters.txt
+    elif [ "$PNAME" == "mip strategy bbinterval" ]; then
+        if [ "$ELEMENT" -eq "0" ]; then
+            ELEMENT=1000
+        fi
+# FIXME: Leslie: the other thing is to assemble the parameters  "simplex perturbation switch" and "perturbation constant" they need to go together, so down in the code i must be putting them in the parameters file (STDPAR). 
+# Manuel: we can say:
+# simple_perturbation_switch "simplex perturbation " c (no, yes)
+# simple_perturbation_constant_yes " " c (...) | simple_perturbation_switch == "yes"
+# simple_perturbation_constant_no " " c (1e-6) | simple_perturbation_switch == "no"
+    elif [ "$PNAME" == "simplex perturbation switch" ]; then
+        SIMPLEX_PER_S=$ELEMENT
+    elif [ "$PNAME" == "perturbation constant" ]; then
+        PERTURB_CONS=$ELEMENT
+    else
+        echo "set $PNAME $ELEMENT" >> $STDPAR
     fi
+
     i=$(( $i + 1))
 done
 
