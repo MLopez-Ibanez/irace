@@ -104,8 +104,9 @@ cluster.lapply <- function(X, ..., config,
       Sys.sleep(poll.time)
     }
     if (debugLevel >= 1) {
-      cat ("\n", format(Sys.time(), usetz=TRUE), ": DONE (", jobID, ")\n")
+      cat ("\n", format(Sys.time(), usetz=TRUE), ": DONE (", jobID, ")")
     }
   }
+  cat ("\n")
   return(lapply(output, "[[", "command"))
 }
