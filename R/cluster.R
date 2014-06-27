@@ -93,7 +93,6 @@ cluster.lapply <- function(X, ..., config,
   jobIDs <- sapply(output, "[[", "jobID")
   
   ## Wait for cluster jobs to finish.
-  poll.time <- 2
   if (length(jobIDs) > 0 && debugLevel >= 1) {
     cat(format(Sys.time(), usetz=TRUE), ": Waiting for jobs ('.' ==",
         poll.time, "s) ")
