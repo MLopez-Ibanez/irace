@@ -33,6 +33,8 @@ STDERR=c${CANDIDATE}.stderr
 # exit 1
 # 
 # Otherwise, save the output to a file, and parse the result from it.
+# (If you wish to ignore segmentation faults you can use '{}' around
+# the command.)
 $EXE ${FIXED_PARAMS} -i $INSTANCE ${CAND_PARAMS} 1> ${STDOUT} 2> ${STDERR}
 
 error() {
