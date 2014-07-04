@@ -47,36 +47,36 @@ file.check <- function (file, executable = FALSE, readable = executable,
   READ <- 4
 
   if (!is.character(file) || is.null.or.empty(file)) {
-    stop (text, " ", shQuote(file), " is not a vaild filename")
+    tunerError (text, " ", shQuote(file), " is not a vaild filename")
   }
   ## Remove trailing slash if present for windows OS compatibility
   if (substring(file, nchar(file), nchar(file)) %in% c("/", "\\"))
     file <- substring(file, 1, nchar(file) - 1)
   
   if (!file.exists(file)) {
-    stop (text, " '", file, "' does not exist")
+    tunerError (text, " '", file, "' does not exist")
     return(FALSE)
   }
   if (readable && (file.access(file, mode = READ) != 0)) {
-    stop(text, " '", file, "' is not readable")
+    tunerError(text, " '", file, "' is not readable")
     return (FALSE)
   }
   if (executable && file.access(file, mode = EXEC) != 0) {
-    stop(text, " '", file, "' is not executable")
+    tunerError(text, " '", file, "' is not executable")
     return (FALSE)
   }
 
   if (isdir) {
     if (!file.info(file)$isdir) {
-      stop(text, " '", file, "' is not a directory")
+      tunerError(text, " '", file, "' is not a directory")
       return (FALSE)
     }
     if (notempty && length(list.files (file, recursive=TRUE)) == 0) {
-      stop(text, " '", file, "' does not contain any file")
+      tunerError(text, " '", file, "' does not contain any file")
       return (FALSE)
     }
   } else if (file.info(file)$isdir) {
-    stop(text, " '", file, "' is a directory, not a file")
+    tunerError(text, " '", file, "' is a directory, not a file")
     return (FALSE)
   }
   return (TRUE)
@@ -333,7 +333,7 @@ mpiInit <- function(nslaves, debugLevel = 0)
   # Load the Rmpi package if it is not already loaded.
   if (!is.loaded("mpi_initialize")) {
     if (! require("Rmpi", quietly = TRUE))
-      stop("The `Rmpi' package is required for using MPI.")
+      tunerError("The `Rmpi' package is required for using MPI.")
 
     # FIXME: We should do this when irace finalizes.
     # When R exits, finalize MPI.
