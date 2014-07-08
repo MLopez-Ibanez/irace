@@ -26,3 +26,4 @@ DEVEL-README
 irace\.Rdata
 ^.*\.data
 ^R/.*\.data
+^testing
