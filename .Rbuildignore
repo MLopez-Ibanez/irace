@@ -27,3 +27,4 @@ irace\.Rdata
 ^.*\.data
 ^R/.*\.data
 ^testing
+^svn_version
