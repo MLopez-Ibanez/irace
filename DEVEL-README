@@ -3,19 +3,23 @@ README file for developers
 
 RELEASE:
 
+* svn up
+
 * "make check" passes
 
 * "make cran" passes
-
-* "make winbuild" passes. Wait for email and check logs!
-
-* Update NEWS (add version number on top)
 
 * make build
 
 * Inspect the package for strange files!
 
-* svn ci NEWS -m " * NEWS: Close version VERSION
+* "make winbuild" passes. Wait for email and check logs!
+
+* Update NEWS (add version number on top)
+
+* svn ci -m " * NEWS: Close version VERSION
+
+* make build again to update version.R and svn_version
 
 * svn cp https://iridia-dev.ulb.ac.be/projects/ifrace/svn/trunk https://iridia-dev.ulb.ac.be/projects/ifrace/svn/tags/VERSION -m " * Tag version VERSION
 
@@ -28,5 +32,4 @@ RELEASE:
 * make build # To update DESCRIPTION and other files with the new version."
 
 * svn ci -m " * Bump version to NEW_VERSION
-
 
