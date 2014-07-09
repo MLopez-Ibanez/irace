@@ -44,12 +44,6 @@ TODO General:
    the user really has to change to define a scenario versus other
    parameters for irace.
 
- * We could simply read a list of configurations with some NA values,
-   and if any configuration sampled matches those (minus the NA
-   values), then it is discarded and we resample. If we execute the
-   restart mechanism before this check, then resampling the same
-   forbidden configuration will trigger a restart.
-
  * A new parameter "--hook-run-retries". Number of times to retry a
    hook-run call if the output is not ok. Default 0. Inf allowed.
 
@@ -221,6 +215,13 @@ TODO General:
 ------------------------------------------------------------------------------
 
 DONE:
+
+ * [DONE by implementing forbidden configurations as conditions (Manuel)] 
+   We could simply read a list of configurations with some NA values,
+   and if any configuration sampled matches those (minus the NA
+   values), then it is discarded and we resample. If we execute the
+   restart mechanism before this check, then resampling the same
+   forbidden configuration will trigger a restart.
 
  * [DONE by Manuel] Add '--version'.
  
