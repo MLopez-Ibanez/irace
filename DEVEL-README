@@ -1,7 +1,7 @@
 README file for developers
 ===========================
 
-RELEASE:
+RELEASE Process:
 
 * svn up
 
@@ -17,11 +17,11 @@ RELEASE:
 
 * Update NEWS (add version number on top)
 
-* svn ci -m " * NEWS: Close version VERSION
+* svn ci -m " * NEWS: Close version $VERSION
 
-* make build again to update version.R and svn_version
+* svn cp https://iridia-dev.ulb.ac.be/projects/ifrace/svn/trunk https://iridia-dev.ulb.ac.be/projects/ifrace/svn/tags/$VERSION -m " * Tag version $VERSION
 
-* svn cp https://iridia-dev.ulb.ac.be/projects/ifrace/svn/trunk https://iridia-dev.ulb.ac.be/projects/ifrace/svn/tags/VERSION -m " * Tag version VERSION
+* make build # again to update version.R and svn_version
 
 * make submit
 
@@ -31,5 +31,27 @@ RELEASE:
 
 * make build # To update DESCRIPTION and other files with the new version."
 
-* svn ci -m " * Bump version to NEW_VERSION
+* svn ci -m " * Bump version to $NEW_VERSION
 
+
+
+Submission email
+================
+To: cran@R-project.org
+Subject: CRAN submission irace $VERSION
+
+Dear CRAN maintainers,
+
+I would like to submit version $VERSION of the irace package to CRAN.
+
+(I know the leading zero in the version number does not have any effect, but it helps me to sort filenames.)
+
+The NEWS section corresponding to this version is:
+
+More information about irace may be found at:
+
+    http://iridia.ulb.ac.be/irace
+
+Thanks in advance,
+
+    Manuel López-Ibáñez.
