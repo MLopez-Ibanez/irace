@@ -31,7 +31,7 @@ RELEASE Process:
 
 * make build # To update DESCRIPTION and other files with the new version."
 
-* svn ci -m " * Bump version to $NEW_VERSION
+* svn ci -m " * Bump development version to $NEW_VERSION
 
 
 
