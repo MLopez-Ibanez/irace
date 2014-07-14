@@ -106,6 +106,8 @@ execDir                      ""     "--exec-dir"         "./"               "Dir
 "forbiddenExps"              ""     ""                   ""                 ""
 "forbiddenFile"              ""     "--forbidden-file"   ""                 "File containing a list of logical expressions that cannot be true for any evaluated candidate. If empty or NULL, do not use a file."
 "hookRun"                    ""     "--hook-run"         "./hook-run"       "The script called for each candidate that launches the program to be tuned. See templates/." 
+hookRunData                  ""     ""                   ""                 ""
+hookRunParallel              ""     ""                   ""                 ""
 hookEvaluate                 ""     "--hook-evaluate"    ""                 "Optional script that provides a numeric value for each candidate. See templates/hook-evaluate.tmpl" 
 "maxExperiments"             ""     "--max-experiments"  1000               "The maximum number of runs (invocations of hookRun) that will be performed. It determines the maximum budget of experiments for the tuning unless timeBudget is positive."
 "timeBudget"                 ""     "--time-budget"      0                  "The maximum computation time that should be used for tuning. This only works when tuning for time. 0 means no time limit (then it uses maxExperiments)."

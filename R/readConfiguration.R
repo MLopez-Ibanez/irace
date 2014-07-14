@@ -175,16 +175,24 @@ checkConfiguration <- function(configuration = defaultConfiguration())
     configuration$logFile <- path.rel2abs(configuration$logFile,
                                           cwd = configuration$execDir)
   }
-  
+
+  if (is.null.or.empty(configuration$hookRunParallel)) {
+    configuration$hookRunParallel <- NULL
+  } else if (!is.function.name(configuration$hookRunParallel)) {
+    tunerError("hookRunParallel must be a function")
+  }
+
   if (is.function.name(configuration$hookRun)) {
     .irace$hook.run <- configuration$hookRun
-  } else if (is.character(configuration$hookRun)) {
-    configuration$hookRun <- path.rel2abs(configuration$hookRun)
-    file.check (configuration$hookRun, executable = TRUE,
-                text = "run program hook")
-    .irace$hook.run <- hook.run.default
-  } else {
-    stop("hookRun must be a function or an executable program")
+  } else if (is.null(configuration$hookRunParallel)) {
+    if (is.character(configuration$hookRun)) {
+      configuration$hookRun <- path.rel2abs(configuration$hookRun)
+      file.check (configuration$hookRun, executable = TRUE,
+                  text = "run program hook")
+      .irace$hook.run <- hook.run.default
+    } else {
+      tunerError("hookRun must be a function or an executable program")
+    }
   }
   
   if (configuration$hookEvaluate == "") configuration$hookEvaluate <- NULL
@@ -198,7 +206,7 @@ checkConfiguration <- function(configuration = defaultConfiguration())
                 text = "evaluate hook")
     .irace$hook.evaluate <- hook.evaluate.default
   } else {
-    stop("hookEvaluate must be a function or an executable program")
+    tunerError("hookEvaluate must be a function or an executable program")
   }
 
   if (is.null.or.empty(configuration$instances.extra.params)) {

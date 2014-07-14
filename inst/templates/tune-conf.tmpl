@@ -32,6 +32,13 @@
 ## See templates/hook-run.tmpl
 # hookRun <- "./hook-run"
 
+## Optional R function to provide custom parallelization of hook.run.
+## The signature of this function should be 'function(candidates,
+## hook.run, instance, extra.params, config)' where 'candidates' is a
+## list of candidates, hook.run is an R function and the rest are
+## parameters to hook.run (see hook.run.default)
+# hookRunParallel <- NULL
+
 ## Optional script that provides a numeric value for each candidate.
 ## See templates/hook-evaluate.tmpl
 # hookEvaluate <- ""

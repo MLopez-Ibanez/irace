@@ -249,8 +249,14 @@ race.wrapper <- function(candidate, task, which.alive, data)
     .irace$hook.output <- vector("list", length(which.alive))
     cwd <- setwd (execDir)
     on.exit(setwd(cwd), add = TRUE)
-    
-    if (parallel > 1) {
+
+    if (!is.null(data$config$hookRunParallel)) {
+      # User-defined parallelization
+      .irace$hook.output <-
+        data$config$hookRunParallel(candidates, .irace$hook.run,
+                                    instance = instance, extra.params = extra.params,
+                                    config = data$config)
+    } else if (parallel > 1) {
       if (mpi) {
         .irace$hook.output <-
           Rmpi::mpi.applyLB(candidates, .irace$hook.run,

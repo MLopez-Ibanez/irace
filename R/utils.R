@@ -92,7 +92,7 @@ is.null.or.na <- function(x)
 
 is.null.or.empty <- function(x)
 {
-  is.null(x) || (length(x) == 1 && x == "")
+  is.null(x) || (length(x) == 1 && is.character(x) && x == "")
 }
 
 strcat <- function(..., collapse = NULL)
