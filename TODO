@@ -15,6 +15,14 @@ TODO R package:
  
  * Add inst/COPYRIGHTS. See race package.
 
+ * Improve R documentation. 
+
+   - Properly document all input/output of exported R functions.
+   
+   - Document tunerConfig and its variables (some of them are not
+     visible in the command-line, but they should be documented here).
+  
+
 TODO General:
 
  * Print some info about the forbidden rules read.

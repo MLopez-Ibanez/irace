@@ -1,3 +1,13 @@
+
+ * New configuration options (mainly for R users):
+                    
+   - hookRunParallel: Optional R function to provide custom
+     parallelization of hook.run.
+
+   - hookRunData: Optional data passed to hookRun. This is ignored by
+     the default hookRun function, but it may be used by custom hookRun R
+     functions to pass persistent data around.
+
 1.05
 
  * New option --version. (Manuel López-Ibáñez)
