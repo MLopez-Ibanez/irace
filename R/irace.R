@@ -536,10 +536,15 @@ irace <- function(tunerConfig = stop("parameter `tunerConfig' is mandatory."),
                  newCandidates)
         allCandidates <- rbind(allCandidates, newCandidates)
         rownames(allCandidates) <- allCandidates$.ID.
+      } else if (nbNewCandidates < 0) {
+        # We also truncate allCandidates in case there were too many
+        # initial candidates.
+        catInfo("Only ", nbCandidates,
+                " from candidates file will be used, the rest are discarded",
+                verbose = FALSE)
+        allCandidates <- allCandidates[1:nbCandidates,]
       }
-      # FIXME: We should probably also truncate allCandidates like this:
-      # testCandidates <- allCandidates <- allCandidates[1:nbCandidates,]
-      testCandidates <- allCandidates[1:nbCandidates,]
+      testCandidates <- allCandidates
     } else {
       # How many new candidates should be sampled?
       nbNewCandidates <- nbCandidates - nrow(eliteCandidates)
