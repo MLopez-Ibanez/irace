@@ -1,5 +1,7 @@
+ * Fix bug if there are more initial candidates than needed for the
+   first race. (Leslie Perez, Manuel López-Ibáñez)
 
- * New configuration options (mainly for R users):
+ * New configuration options, mainly for R users:
                     
    - hookRunParallel: Optional R function to provide custom
      parallelization of hook.run.
@@ -7,6 +9,7 @@
    - hookRunData: Optional data passed to hookRun. This is ignored by
      the default hookRun function, but it may be used by custom hookRun R
      functions to pass persistent data around.
+   (Manuel López-Ibáñez)
 
 1.05
 
