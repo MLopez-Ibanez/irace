@@ -3,7 +3,7 @@ PACKAGE=$(shell sh -c 'grep -F "Package: " DESCRIPTION | cut -f2 -d" "')
 # FIXME: This Makefile only works with this BINDIR!
 BINDIR=$(CURDIR)/..
 RNODE=iridiacluster
-RDIR=~/$(PACKAGE)
+RDIR=~/
 INSTALL_FLAGS=
 REALVERSION=$(PACKAGEVERSION).$(SVN_REV)
 DATE=$(shell date +%F)
@@ -55,11 +55,14 @@ version :
 	@sed -i 's/Version:.*$$/Version: \\tab $(PACKAGEVERSION) \\cr/' $(PACKAGEDIR)/man/$(PACKAGE)-package.Rd
 
 rsync : version
+ifndef RDIR
+	@echo "ERROR: You must specify a remote dir (e.g., RDIR=~/)"
+endif
 ifdef RNODE
 	rsync -rlp -CIzc -L --delete --copy-unsafe-links --exclude=.svn --exclude=/examples/ --progress --relative \
 	.     \
-	$(RNODE):$(RDIR)/
-	ssh $(RNODE) "cd $(RDIR)/ && make install"
+	$(RNODE):$(RDIR)/$(PACKAGE)/
+	ssh $(RNODE) "cd $(RDIR)/$(PACKAGE) && make install"
 else
 	@echo "ERROR: You must specify a remote node (e.g., RNODE=majorana)"
 	@exit 1
