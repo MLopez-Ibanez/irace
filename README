@@ -204,6 +204,23 @@ Definitely. There are two main ways to achieve this:
    call your MATLAB code with appropriate parameters.
 
 
+###### My program works perfectly on its own, but not when running under
+       irace. Is irace broken?  ######
+
+Every time this was reported, it was a difficult-to-reproduce bug in
+the program, not in irace.  We recommend that in hook-run, you use
+`valgrind` to run your program. That is, if you program is called like:
+
+    $EXE ${FIXED_PARAMS} -i $INSTANCE ${CAND_PARAMS} 1> ${STDOUT} 2> ${STDERR}
+
+then replace that line with:
+
+    valgrind --error-exitcode=1 $EXE ${FIXED_PARAMS} -i $INSTANCE ${CAND_PARAMS} 1> ${STDOUT} 2> ${STDERR}
+
+If there are bugs in your program, they will appear in `${STDERR}`,
+thus do not delete those files.
+
+
 ###### My program may be buggy and run into an infinite loop. Is it
        possible to set a maximum timeout?  ######
 
