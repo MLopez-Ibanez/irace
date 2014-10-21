@@ -8,7 +8,7 @@ dir.create(libpath)
 pkg = read.dcf("DESCRIPTION")[[1,"Package"]]
 deps = revdep(pkg)
 
-install.packages(deps, lib = libpath)
+install.packages(deps, lib = libpath, repos = 'http://cran.rstudio.com/')
 ok = check_cran(deps, libpath = libpath)
 
 if(!all(sapply(ok, is.null))) {
