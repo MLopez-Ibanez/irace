@@ -17,9 +17,6 @@ RELEASE Process:
 
 * "make cran" passes
 
-  (This runs check-reverse, which check every reverse dependency. This
-  may take some time to download all packages and check them.)
-
 * make build
 
 * Inspect the package for strange files!
