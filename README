@@ -105,6 +105,8 @@ Once installed, test that it is working by doing:
     > system.file(package="irace")
     [1] "~/R/irace"
 
+### GNU/Linux and OS X ###
+
 The last command tells you the installation directory of `irace`. Save
 that path to a variable, and add it to your `.bash_profile`, `.bashrc`
 or `.profile`:
@@ -117,6 +119,14 @@ After adding this and opening a new terminal, you should be able to
 invoke `irace` as follows:
 
     $ irace --help
+
+### Windows ###
+
+Unfortunately, the command-line wrapper does not work in Windows. To
+launch irace, you need to open the R console and execute:
+
+    R> library(irace)
+    R> irace.cmdline("--help")
 
 
  [1]: http://iridia.ulb.ac.be/irace
@@ -175,7 +185,7 @@ Usage
    override the configuration specified in the tune-conf file.
 
 
-Many tunings in parallel
+Many tuning runs in parallel
 ------------------------
 
 For executing several repetitions of irace in parallel, call the
@@ -213,7 +223,7 @@ parallel. There are three ways to parallelize a single run of irace.
    `$IRACE_HOME/examples/mpi/`.
 
 3. SGE cluster: This mode requires Grid Engine commands qsub and
-   qstat. The comand qsub should return a message that contains the
+   qstat. The command qsub should return a message that contains the
    string: `Your job JOBID`. The command `qstat -j JOBID` should return
    nonzero if JOBID has finished, otherwise it should return zero.
 
@@ -277,7 +287,7 @@ GNU/Linux, it is easy to implement by using the `timeout` command in
 
 
 Contact
---------
+-------
 
 If you find that you need to modify anything else, something is not
 clear or if you have problems, please contact irace@iridia.ulb.ac.be
