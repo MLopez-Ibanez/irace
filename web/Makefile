@@ -1,5 +1,5 @@
 HOST=iridia
-REMOTEDIR=/home/httpd/html/irace/
+REMOTEDIR=/var/www/iridia.ulb.ac.be/irace/
 RSYNC_FLAGS =  -rlczCI --copy-links --stats --progress  \
 --exclude=.svn --exclude=.checksum-ignore 
 
