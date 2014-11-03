@@ -403,7 +403,7 @@ irace <- function(tunerConfig = stop("parameter `tunerConfig' is mandatory."),
           "# mu: ", max(tunerConfig$mu, tunerConfig$firstTest), "\n",
           verbose = FALSE)
 
-  ## Compute the minimum budget required, and exits early in case the
+  ## Compute the minimum budget required, and exit early in case the
   ## budget given by the user is insufficient.
   # This is computed from the default formulas as follows:
   #  B_1 = B / I
@@ -469,7 +469,14 @@ irace <- function(tunerConfig = stop("parameter `tunerConfig' is mandatory."),
     }
 
     if (indexIteration > nbIterations) {
-      catInfo("Limit of iterations reached", verbose = FALSE)
+        if (debugLevel >= 3) {
+            # This message is more confusing than useful, since this
+            # is not really a limit. First, since we require a minimum
+            # budget, this number of iterations should always be
+            # reached. Second, as long as there is enough budget, we
+            # always do more iterations.
+            catInfo("Limit of iterations reached", verbose = FALSE)
+        }
       if (tunerConfig$nbIterations == 0) {
         nbIterations <- indexIteration
       } else {
@@ -524,7 +531,7 @@ irace <- function(tunerConfig = stop("parameter `tunerConfig' is mandatory."),
       nbNewCandidates <- nbCandidates - nrow(allCandidates)
       if (nbNewCandidates > 0) {
         # Sample new candidates.
-        if (debugLevel>= 1) {
+        if (debugLevel >= 1) {
           catInfo("Sample ", nbNewCandidates,
                   " candidates from uniform distribution", verbose = FALSE)
         }
