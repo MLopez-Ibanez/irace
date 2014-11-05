@@ -14,11 +14,26 @@ checkForbidden <- function(configurations, forbidden)
 
 # Sets irace variables from a recovery file.  It is executed in the
 # parent environment.
+#
+# FIXME: Restoring occurs after reading the command-line/configuration
+# file. At least for the irace command-line parameters (tunerConfig),
+# it should occur before. We
+# would need to:
+#
+# 1) Read recovery file settings from command-line/config file
+#
+# 2) if set, then recover irace configuration
+
+# 3) then read other configuration from command-line/config file being
+# careful to not override whatever the recovery has set.
+#
+# A work-around is to modify the recovery file (you can load it in R,
+# modify tunerConfig then save it again).
 recoverFromFile <- function(filename)
 {
   # substitute() is needed to evaluate filename here.
   eval.parent(substitute({
-    # This restores tunerResults, so that doesn't need restoring.
+    # This restores tunerResults, thus it doesn't need restoring.
     load (filename)
     # .Random.seed is special
     for (name in setdiff(names(tunerResults$state), ".Random.seed"))
