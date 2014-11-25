@@ -1,3 +1,6 @@
+ * Fix bug that could introduce spurious whitespace when printing the
+   final configurations. (Manuel López-Ibáñez)
+
  * Fix bug if there are more initial candidates than needed for the
    first race. (Leslie Perez, Manuel López-Ibáñez)
 
