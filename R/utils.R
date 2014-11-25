@@ -1,5 +1,3 @@
-
-
 # An internal function to reload irace and set options for debugging
 # errors. It may also be used to reload other packages.
 # FIXME: Reload dynamic libraries? See ?dyn.load
@@ -317,10 +315,13 @@ candidates.print.command <- function(cand, parameters)
   if (nrow(cand) <= 0) return(invisible())
   rownames(cand) <- cand$.ID.
   cand <- removeCandidatesMetaData(cand)
-  print(data.frame(command =
-                   apply(cand[,unlist(parameters$names), drop = FALSE],
-                         1, buildCommandLine, switches = parameters$switches),
-                   stringsAsFactors = FALSE))
+  cand <- cand[, unlist(parameters$names), drop = FALSE]
+  # A better way to do this? We cannot use apply() because the coerces
+  # to a character matrix thus messing up numerical values.
+  for(i in 1:nrow(cand)) {
+    cat(sprintf("%-*d %s\n", nchar(nrow(cand)), i,
+                buildCommandLine(cand[i, , drop=FALSE], parameters$switches)))
+  }
 }
 
 
