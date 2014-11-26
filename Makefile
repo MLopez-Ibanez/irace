@@ -30,6 +30,9 @@ install: version clean
 build : bumpdate clean
 	cd $(BINDIR) &&	R CMD build $(PACKAGEDIR)
 
+releasebuild:
+	cd $(BINDIR) &&	R CMD build $(PACKAGEDIR) && tar -atvf $(PACKAGE)_$(PACKAGEVERSION).tar.gz
+
 cran : build
 	cd $(BINDIR) && _R_CHECK_FORCE_SUGGESTS_=false R CMD check --as-cran $(PACKAGE)_$(PACKAGEVERSION).tar.gz
 

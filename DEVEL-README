@@ -17,9 +17,7 @@ RELEASE Process:
 
 * "make cran" passes
 
-* make build
-
-* Inspect the package for strange files!
+* make releasebuild # Inspect the output for strange files!
 
 * "make winbuild" passes. Wait for email and check logs!
 
