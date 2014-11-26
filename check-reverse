@@ -1,4 +1,11 @@
 #!/usr/bin/env Rscript
+## require("tools")
+
+## options(repos = 'http://cran.rstudio.com/')
+## pdb <- available.packages()
+## deps <- package_dependencies(packages = "irace", pdb, reverse = TRUE)
+## tools::check_packages_in_dir(dir = "/tmp", reverse = deps)
+
 # Check reverse dependencies
 require("devtools")
 
