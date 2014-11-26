@@ -1,4 +1,4 @@
-PACKAGEVERSION=1.06
+PACKAGEVERSION=1.07
 PACKAGE=$(shell sh -c 'grep -F "Package: " DESCRIPTION | cut -f2 -d" "')
 # FIXME: This Makefile only works with this BINDIR!
 BINDIR=$(CURDIR)/..
@@ -29,6 +29,13 @@ install: version clean
 
 build : bumpdate clean
 	cd $(BINDIR) &&	R CMD build $(PACKAGEDIR)
+
+closeversion:
+	svn ci NEWS -m " * NEWS: Close version $(PACKAGEVERSION)"
+	svn cp ^/trunk ^/tags/$(PACKAGEVERSION) -m " * Tag version $(PACKAGEVERSION)"
+	svn up
+	make build # again to update version.R and svn_version
+
 
 releasebuild:
 	cd $(BINDIR) &&	R CMD build $(PACKAGEDIR) && tar -atvf $(PACKAGE)_$(PACKAGEVERSION).tar.gz

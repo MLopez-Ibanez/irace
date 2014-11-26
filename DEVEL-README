@@ -11,33 +11,44 @@ CHECKING:
 
 RELEASE Process:
 
-* svn up
+1. svn up
 
-* "make check" passes
+2. "make check" passes
 
-* "make cran" passes
+3. "make cran" passes
 
-* make releasebuild # Inspect the output for strange files!
+4. make releasebuild # Inspect the output for strange files!
 
-* "make winbuild" passes. Wait for email and check logs!
+5. "make winbuild" passes. Wait for email and check logs!
 
-* Update NEWS (add version number on top)
+6. Update NEWS (add version number on top)
 
-* svn ci -m " * NEWS: Close version $VERSION
+7. make closeversion
 
-* svn cp https://iridia-dev.ulb.ac.be/projects/ifrace/svn/trunk https://iridia-dev.ulb.ac.be/projects/ifrace/svn/tags/$VERSION -m " * Tag version $VERSION
+9. Use http://cran.r-project.org/submit.html to submit
+   Read http://cran.r-project.org/web/packages/policies.html
 
-* make build # again to update version.R and svn_version
 
-* make submit
+9. Don't forget to send email to cran@r-project.org !
+   TODO: draft email automatically.
 
-* Don't forget to send email to cran@r-project.org !
 
-* After the release, bump the version number in Makefile.
+* IF the package requires further changes:
 
-* make build # To update DESCRIPTION and other files with the new version."
+  * Make the changes.
 
-* svn ci -m " * Bump development version to $NEW_VERSION
+  * Repeat the whole RELEASE process above without changing bumping
+    the version number.
+
+
+* IF the package is released in CRAN:
+
+  * Bump the version number in Makefile.
+
+  * make build # To update DESCRIPTION and other files with the new version."
+
+  * svn ci -m " * Bump development version to $NEW_VERSION
+
 
 
 
