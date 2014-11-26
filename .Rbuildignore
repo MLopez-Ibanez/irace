@@ -4,6 +4,7 @@
 \.svn$
 \.Rhistory$
 \.rej$
+^BUGS$
 Instances$
 Makefile
 Program
