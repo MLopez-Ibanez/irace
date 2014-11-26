@@ -25,12 +25,8 @@ RELEASE Process:
 
 7. make closeversion
 
-9. Use http://cran.r-project.org/submit.html to submit
+8. Use http://cran.r-project.org/submit.html to submit
    Read http://cran.r-project.org/web/packages/policies.html
-
-
-9. Don't forget to send email to cran@r-project.org !
-   TODO: draft email automatically.
 
 
 * IF the package requires further changes:
