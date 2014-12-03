@@ -31,6 +31,8 @@ TODO R package:
 
 TODO General:
 
+ * Convert README to README.md (markdown) so CRAN renders it as HTML.
+
  * Print some info about the forbidden rules read.
 
  * Add a --verify option that checks whether all files are in place,
