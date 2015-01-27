@@ -274,7 +274,7 @@ startParallel <- function(config)
     if (config$mpi) {
       mpiInit(parallel, config$debugLevel)
     } else {
-      library("parallel", quietly = TRUE)
+      requireNamespace("parallel", quietly = TRUE)
       if (.Platform$OS.type == 'windows') {
         .irace$cluster <- parallel::makeCluster(parallel)
       }

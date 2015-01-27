@@ -333,7 +333,7 @@ mpiInit <- function(nslaves, debugLevel = 0)
 {
   # Load the Rmpi package if it is not already loaded.
   if (!is.loaded("mpi_initialize")) {
-    if (! require("Rmpi", quietly = TRUE))
+    if (! requireNamespace("Rmpi", quietly = TRUE))
       tunerError("The `Rmpi' package is required for using MPI.")
 
     # FIXME: We should do this when irace finalizes.
