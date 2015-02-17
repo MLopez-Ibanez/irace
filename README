@@ -160,8 +160,11 @@ Usage
  * `tune-main.tmpl` should be adjusted depending on your usage
    (local, cluster, etc).
 
- * The scripts `hook-run`, `hook-evaluate` and `tune-main` should be
-   executable.
+ * The scripts `hook-run`, `hook-evaluate` (if you need it at all) and
+   `tune-main` should be executable. The output of `hook-run` (or
+   `hook-evaluate` if you use a separate evaluation step) is minimized by
+   default. If you wish to maximize it, just multiply the value by `-1` within
+   the script.
 
  * In `tune-conf`, uncomment and assign only the parameters for which
    you need a value different than the default one.
@@ -240,6 +243,15 @@ parallel. There are three ways to parallelize a single run of irace.
 
 Frequently Asked Questions
 --------------------------
+
+###### Is irace minimizing or maximizing the output of my algorithm? ######
+
+By default, irace considers that the value returned by `hook-run` (or by
+`hook-evaluate`, if used) should be minimized. In case of a maximization
+problem, one can simply multiply the value by `-1` before returning it to
+irace. This is done, for example, when maximizing the hypervolume (see the last
+lines in `$IRACE_HOME/examples/hypervolume/hook-evaluate`).
+
 
 ###### Is it possible to configure a MATLAB algorithm with irace?  ######
 

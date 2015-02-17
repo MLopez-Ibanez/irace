@@ -51,10 +51,10 @@ race<-function(maxExp=0,
                stop.min.cand=1,
                ...){
 
-  timestamp.start<-date()
+  timestamp.start <- date()
 
   # Change warning behavior
-  .race.warn.save<-getOption("warn")
+  .race.warn.save <- getOption("warn")
   on.exit(options(warn=.race.warn.save))
   options(warn=.race.warn.level)
   
@@ -72,11 +72,11 @@ race<-function(maxExp=0,
        length(maxExp)!=1 ||
        !is.finite(maxExp)))
     stop("maxExp must be an single number")
-  maxExp<-ifelse(maxExp>0,maxExp,0)
-  maxExp<-floor(maxExp)
+  maxExp <- ifelse(maxExp>0,maxExp,0)
+  maxExp <- floor(maxExp)
 
   # Check argument: stat.test
-  stat.test<-match.arg(stat.test)
+  stat.test <- match.arg(stat.test)
 
   # Check argument: conf.level
   if (!missing(conf.level) &&
@@ -90,8 +90,8 @@ race<-function(maxExp=0,
        length(first.test)!=1 ||
        !is.finite(first.test)))
     stop("first.test must be an single number")
-  first.test<-ifelse(first.test>0,first.test,0)
-  first.test<-floor(first.test)
+  first.test <- ifelse(first.test>0,first.test,0)
+  first.test <- floor(first.test)
 
   # Check argument: interactive
   if (!missing(interactive) &&
@@ -100,17 +100,17 @@ race<-function(maxExp=0,
 
   # Run init function
   if (exists(.slave.init.function,inherits=TRUE,mode="function")){
-    race.data<-do.call(.slave.init.function,list(...))
-    if(!is.list(race.data))
+    race.data <- do.call(.slave.init.function,list(...))
+    if (!is.list(race.data))
       stop(paste("Error while running",.slave.init.function))
-    precis.init<-TRUE
+    precis.init <- TRUE
   } else {
-    race.data<-list()
-    precis.init<-FALSE
+    race.data <- list()
+    precis.init <- FALSE
   }
 
   # Collect info on race from wrapper
-  race.info<-do.call(.slave.info.function,list(race.data))
+  race.info <- do.call(.slave.info.function,list(race.data))
   # Check race.info
   if (# race.info$race.name must be a string
       is.na(match("race.name",names(race.info)))||
