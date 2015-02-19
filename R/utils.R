@@ -341,6 +341,8 @@ mpiInit <- function(nslaves, debugLevel = 0)
 {
   # Load the Rmpi package if it is not already loaded.
   if (!is.loaded("mpi_initialize")) {
+    ## FIXME: requireNamespace produces some strange errors on exit:
+    # Error in detach(package:Rmpi) : invalid 'name' argumentCalls: <Anonymous> -> <Anonymous> -> detach
     ## if (! suppressPackageStartupMessages(
     ##       requireNamespace("Rmpi", quietly = TRUE)))
     if (! require("Rmpi", quietly = TRUE))
