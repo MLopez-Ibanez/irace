@@ -56,16 +56,21 @@ pbs.job.status <- function(jobid)
                  intern = FALSE, wait = TRUE))
 }
 
-hook.run.qsub <- function(instance, candidate, extra.params, config, cluster.qsub)
+hook.run.qsub <- function(experiment, config, cluster.qsub)
 {
-  debugLevel <- config$debugLevel
+  debugLevel   <- config$debugLevel
+  id           <- experiment$id
+  candidate    <- experiment$candidate
+  instance     <- experiment$instance
+  extra.params <- experiment$extra.params 
+  switches     <- experiment$switches
   
   hookRun <- config$hookRun
   if (as.logical(file.access(hookRun, mode = 1))) {
     stop ("hookRun `", hookRun, "' cannot be found or is not executable!\n")
   }
-  command <- paste (hookRun, instance, candidate$index, extra.params,
-                    buildCommandLine(candidate$values, candidate$labels))
+  command <- paste (hookRun, instance, id, extra.params,
+                    buildCommandLine(candidate, switches))
 
   jobID <- cluster.qsub (command, debugLevel)
   exit.code <- is.null(jobID)

@@ -16,12 +16,12 @@
 ## or relative to execDir.
 # logFile <- "./irace.Rdata"
 
-## Folder where tuning instances are located, either absolute or
-## relative to working directory.
+## Directory where tuning instances are located, either absolute path or
+## relative to current directory.
 # instanceDir <- "./Instances"
 
 ## File with a list of instances and (optionally) parameters.
-## If empty or NULL, does not use a file.
+## If empty or NULL, do not use a file.
 # instanceFile <- ""
 
 ## A file containing a list of initial candidates. 
@@ -56,6 +56,20 @@
 ## An estimation of the average time in seconds required for one
 ## experiment. Only required if timeBudget is positive.
 # timeEstimate <- 0
+
+## Directory where testing instances are located, either absolute or relative
+## to current directory.
+# testInstanceDir <- ""
+
+## File containing a list of test instances and optionally additional parameters for them.
+## If empty or NULL, do not use a file.
+# testInstanceFile <- ""
+
+## Number of elite candidates returned by irace that will be tested.
+# testNbElites <- 0
+
+## Enable/disable testing the elite candidates found at each iteration.
+# testIterationElites <- 0
 
 ## Indicates the number of decimal places to be considered for the
 ## real parameters.

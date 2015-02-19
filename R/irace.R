@@ -224,6 +224,7 @@ computeTerminationOfRace <- function(nbParameters)
 oneIterationRace <-
   function(tunerConfig, candidates, parameters, budget, minSurvival)
 {
+
   result <- race (maxExp = budget,
                   first.test = tunerConfig$firstTest,
                   each.test = tunerConfig$eachTest,
@@ -231,7 +232,8 @@ oneIterationRace <-
                   conf.level = tunerConfig$confidence,
                   stop.min.cand = minSurvival,
                   # Parameters for race-wrapper.R
-                  candidates = removeCandidatesMetaData(candidates),
+                  #candidates = removeCandidatesMetaData(candidates),
+                  candidates = candidates,
                   parameters = parameters,
                   config = tunerConfig)
 
@@ -289,6 +291,20 @@ stopParallel <- function()
     .irace$cluster <- NULL
   }
 }
+
+irace.init <- function(configuration)
+{
+  # Generate instance + seed list 
+  configuration$instancesList <- generateInstances(configuration)
+  .irace$next.instance <- 1
+  # We need to do this here to use/recover .Random.seed later.
+  if (is.na(configuration$seed)) {
+    configuration$seed <- runif(1, 1, .Machine$integer.max)
+  }
+  set.seed(configuration$seed)
+  return(configuration)
+}
+
 #' High-level function to use iterated Race
 #' 
 #' This function implement iterated Race. It receives some parameters to be tuned and returns the best
@@ -306,8 +322,7 @@ irace <- function(tunerConfig = stop("parameter `tunerConfig' is mandatory."),
                   parameters = stop("parameter `parameters' is mandatory."))
 {
   catInfo <- function(..., verbose = TRUE) {
-    cat ("# ", format(Sys.time(), usetz=TRUE), ": ",
-         paste(..., sep = "", collapse = ""), "\n", sep = "")
+    irace.note (..., "\n")
     if (verbose)
       cat ("# Iteration: ", indexIteration, "\n",
            "# nbIterations: ", nbIterations, "\n",
@@ -323,11 +338,7 @@ irace <- function(tunerConfig = stop("parameter `tunerConfig' is mandatory."),
   }
   
   tunerConfig <- checkConfiguration(defaultConfiguration(tunerConfig))
-  # We need to do this here to use/recover .Random.seed later.
-  if (is.na(tunerConfig$seed)) {
-    tunerConfig$seed <- runif(1, 1, .Machine$integer.max)
-  }
-  set.seed(tunerConfig$seed)
+  tunerConfig <- irace.init (tunerConfig)
   
   # Recover state from file?
   if (!is.null(tunerConfig$recoveryFile)){
@@ -402,6 +413,7 @@ irace <- function(tunerConfig = stop("parameter `tunerConfig' is mandatory."),
     tunerResults$irace.version <- irace.version
     tunerResults$parameters <- parameters
     tunerResults$iterationElites <- NULL
+    tunerResults$allElites <- list()
     tunerResults$experiments <- as.data.frame(matrix(ncol=2, nrow=0))
     colnames(tunerResults$experiments) <- c("instance", "iteration")
     model <- NULL
@@ -636,6 +648,8 @@ irace <- function(tunerConfig = stop("parameter `tunerConfig' is mandatory."),
     if (debugLevel >= 1) {
       cat(sep="", "# ", format(Sys.time(), usetz=TRUE), ": Launch race\n")
     }
+#prevExperiments =  tunerResults$experiments[tunerResults$experiments[,"iteration"] %in% c(indexIteration), 
+#                                                             c("instance",as.character(testCandidates$.ID.))],
     raceResults <- oneIterationRace (tunerConfig = tunerConfig,
                                      candidates = testCandidates,
                                      parameters = parameters, 
@@ -683,6 +697,7 @@ irace <- function(tunerConfig = stop("parameter `tunerConfig' is mandatory."),
     cat("# Elite candidates:\n")
     candidates.print(eliteCandidates, metadata = debugLevel >= 1)
     tunerResults$iterationElites <- c(tunerResults$iterationElites, eliteCandidates$.ID.[1])
+    tunerResults$allElites[[indexIteration]] <- eliteCandidates$.ID.
     
     if (indexIteration == 1) {
       if (debugLevel >= 1)  { cat("# Initialise model\n") }

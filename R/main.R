@@ -99,8 +99,9 @@ execDir                      ""     "--exec-dir"         "./"               "Dir
 "logFile"                    "-l"   "--log-file"         "./irace.Rdata"    "File to save tuning results as an R dataset, either absolute path or relative to execDir." 
 "recoveryFile"               ""     "--recovery-file"      ""               "Previously saved log file to recover the execution of irace, either absolute path or relative to the current directory.  If empty or NULL, recovery is not performed."
 "instances"                  ""     ""                   ""                 ""
+"instancesList"              ""     ""                   ""                 "List of instances + seed."
 "instances.extra.params"     ""     ""                   ""                 ""
-"instanceDir"                ""     "--instance-dir"     "./Instances"      "Folder where tuning instances are located  either absolute or relative to working directory." 
+"instanceDir"                ""     "--instance-dir"     "./Instances"      "Directory where tuning instances are located; either absolute path or relative to current directory." 
 "instanceFile"               ""     "--instance-file"    ""                 "File containing a list of instances and optionally additional parameters for them." 
 "candidatesFile"             ""     "--candidates-file"  ""                 "File containing a list of initial candidates. If empty or NULL  do not use a file." 
 "forbiddenExps"              ""     ""                   ""                 ""
@@ -112,9 +113,9 @@ hookEvaluate                 ""     "--hook-evaluate"    ""                 "Opt
 "maxExperiments"             ""     "--max-experiments"  1000               "The maximum number of runs (invocations of hookRun) that will be performed. It determines the maximum budget of experiments for the tuning unless timeBudget is positive."
 "timeBudget"                 ""     "--time-budget"      0                  "The maximum computation time that should be used for tuning. This only works when tuning for time. 0 means no time limit (then it uses maxExperiments)."
 "timeEstimate"               ""     "--time-estimate"    0                  "An estimation of the average time required for one experiment. Only required if timeBudget is positive."
-"digits"                     ""     "--digits"  4 "Indicates the number of decimal places to be considered for the real parameters." 
-"debugLevel"                 ""     "--debug-level"  0 "A value of 0 silences all debug messages. Higher values provide more verbose debug messages." 
-"nbIterations"               ""     "--iterations"  0  "Number of iterations." 
+"digits"                     ""     "--digits"           4 "Indicates the number of decimal places to be considered for the real parameters." 
+"debugLevel"                 ""     "--debug-level"      0 "A value of 0 silences all debug messages. Higher values provide more verbose debug messages." 
+"nbIterations"               ""     "--iterations"       0  "Number of iterations." 
 "nbExperimentsPerIteration"  ""     "--experiments-per-iteration"  0  "Number of experiments per iteration." 
 "sampleInstances"            ""     "--sample-instances"  1  "Sample the instances or take them always in the same order." 
 "testType"                   ""     "--test-type"  "F-test"  "Specifies the statistical test type: F-test or t-test." 
@@ -128,7 +129,13 @@ hookEvaluate                 ""     "--hook-evaluate"    ""                 "Opt
 "parallel"                   ""     "--parallel"  0    "Number of calls to hookRun to execute in parallel. 0 or 1 mean disabled." 
 "mpi"                        ""     "--mpi"  0    "Enable/disable MPI. Use Rmpi to execute hookRun in parallel (parameter parallel is the number of slaves)." 
 "sgeCluster"                 ""     "--sge-cluster"  0    "Enable/disable SGE cluster mode. Use qstat to wait for cluster jobs to finish (hookRun must invoke qsub)." 
-"softRestart"                ""     "--soft-restart"  1    "Enable/disable the soft restart strategy that avoids premature convergence of the probabilistic model." 
+"softRestart"                ""     "--soft-restart"  1    "Enable/disable the soft restart strategy that avoids premature convergence of the probabilistic model."
+testInstanceDir              ""     "--test-instance-dir"  ""  "Directory where testing instances are located, either absolute or relative to current directory."
+testInstanceFile             ""     "--test-instance-file" ""  "File containing a list of test instances and optionally additional parameters for them."
+testInstances                ""     ""          ""  ""
+testInstances.extra.params   ""     ""          ""  ""
+testNbElites                 ""     "--test-num-elites"        0  "Number of elite candidates returned by irace that will be tested."
+testIterationElites          ""     "--test-iteration-elites"    0  "Enable/disable testing the elite candidates found at each iteration."
 ')
 rownames (.irace.params.def) <- .irace.params.def[,"name"]
 .irace.params.names <- rownames(.irace.params.def)[substring(rownames(.irace.params.def), 1, 1) != "."]
@@ -168,12 +175,16 @@ irace.main <- function(tunerConfig = defaultConfiguration(), output.width = 9999
 
   tunerConfig <- checkConfiguration (tunerConfig)
   debug.level <- tunerConfig$debugLevel
-  if (debug.level >= 1) printConfiguration (tunerConfig)
+  if (debug.level >= 1) {
+    printConfiguration (tunerConfig)
+    options(error = utils::recover)
+  }
   
   # Read parameters definition
   parameters <- readParameters (file = tunerConfig$parameterFile,
                                 digits = tunerConfig$digits,
                                 debugLevel = debug.level)
+						
   if (tunerConfig$debugLevel >= 2) { cat("Parameters have been read\n") }
   
   eliteCandidates <- irace (tunerConfig = tunerConfig,
@@ -185,9 +196,58 @@ irace.main <- function(tunerConfig = defaultConfiguration(), output.width = 9999
   cat("# Best candidates (as commandlines)\n")
   candidates.print.command (eliteCandidates, parameters)
   
+  if (length(eliteCandidates) > 0 &&
+      (tunerConfig$testIterationElites != 0 || tunerConfig$testNbElites != 0))
+    testing.main(tunerConfig = tunerConfig, parameters = parameters)
+  
   invisible(eliteCandidates)
 }
 
+testing.main <- function(tunerConfig, parameters)
+{
+  if (is.null.or.empty(tunerConfig$testInstances)) {
+    return (FALSE)
+  }
+  
+  if (is.null.or.empty(tunerConfig$logFile)) {
+    cat("\n#", format(Sys.time(), usetz=TRUE),": ",
+        " No logFile provided to perform the testing of candidates. Skipping testing.\n")
+    return(FALSE)
+  }
+  
+  cwd <- setwd(tunerConfig$execDir)
+  load (tunerConfig$logFile)
+  setwd (cwd)
+  
+  # Get candidate configurations
+  testing.id <- c()
+  if (tunerConfig$testIterationElites)
+    testing.id <- c(testing.id, tunerResults$iterationElites)
+  if (tunerConfig$testNbElites > 0) {
+    tmp <- tunerResults$allElites[[length(tunerResults$allElites)]]
+    testing.id <- c(testing.id, tmp[1:min(length(tmp), tunerConfig$testNbElites)])
+  }
+  testing.id <- unique(testing.id)
+  candidates  <- tunerResults$allCandidates[tunerResults$allCandidates$.ID. %in% testing.id, , drop=FALSE]
+
+  irace.note ("Testing candidates: ", paste(testing.id, collapse=" "), "\n")
+  candidates.print(candidates)  
+
+  testResults <- testCandidates(candidates, tunerConfig, parameters)
+
+  irace.note ("Testing results:\n")
+  print(testResults)
+  
+  tunerResults$testResults <- testResults
+  
+  cwd <- setwd(tunerConfig$execDir)
+  save (tunerResults, file = tunerConfig$logFile)
+  setwd (cwd)
+
+  irace.note ("Finished testing\n")
+  
+  return(TRUE)
+}
 
 irace.cmdline <- function(args = commandArgs (trailingOnly = TRUE))
 {

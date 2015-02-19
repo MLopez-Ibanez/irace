@@ -19,21 +19,10 @@ buildCommandLine <- function(values, switches) {
 ## FIXME: function needs a description
 race.init <- function(candidates, parameters, config)
 {
-  # FIXME: Ideally, we wouldn't do this here but dynamically as we
-  # need more instances to avoid the artificial limit of 1000
-  # instances per race.
-  if (config$sampleInstances) {
-    # ??? This sould be sample.int(length(config$instances)) but R 2.9
-    # has a bug in sample.int.
-    race.instances <- rep(sample.int(length(config$instances),
-                                     size = length(config$instances)),
-                          length.out = 1000)
-  } else {
-    race.instances <- rep(1:length(config$instances), length.out = 1000)
-  }
+  race.instances <- seq(.irace$next.instance, nrow(config$instancesList))
   # Return init list
   return (list (no.candidates = nrow(candidates), 
-                no.tasks = 1000, # the same artificial limit as above.
+                no.tasks = length(race.instances),
                 race.instances = race.instances,
                 candidates = candidates, 
                 parameters = parameters,
@@ -108,7 +97,7 @@ parse.output <- function(outputRaw, command, config, hook.run.call = NULL)
   return(output)
 }
 
-hook.evaluate.default <- function(instance, candidate, num.candidates, extra.params, config, hook.run.call)
+hook.evaluate.default <- function(experiment, num.candidates, config, hook.run.call)
 {
   execDir <- config$execDir
   debugLevel <- config$debugLevel
@@ -118,7 +107,7 @@ hook.evaluate.default <- function(instance, candidate, num.candidates, extra.par
   }
 
   ## Redirects STDERR so outputRaw captures the whole output.
-  command <- paste (hookEvaluate, instance, candidate$index, num.candidates, "2>&1")
+  command <- paste (hookEvaluate, experiment$instance, experiment$id, num.candidates, "2>&1")
   if (debugLevel >= 1) {
     cat (format(Sys.time(), usetz=TRUE), ":", command, "\n")
   }
@@ -126,12 +115,25 @@ hook.evaluate.default <- function(instance, candidate, num.candidates, extra.par
   # FIXME: This should use runcommand like hook.run.default
   outputRaw <- system (command, intern = TRUE)
   setwd (cwd)
-  return(parse.output (outputRaw, command, config, hook.run.call = hook.run.call))
+
+  p.output <- parse.output (outputRaw, command, config, hook.run.call = hook.run.call)
+   
+  # FIXME: Pass the call to hook.run as hook.run.call if hook.evaluate was used.
+  check.output(p.output, command = "hookEvaluate", config = config)
+
+  return(p.output)
 }
 
-hook.run.default <- function(instance, candidate, extra.params, config)
+hook.run.default <- function(experiment, config)
 {
-  debugLevel <- config$debugLevel
+  debugLevel    <- config$debugLevel
+  id            <- experiment$id
+  candidate     <- experiment$candidate
+  instance      <- experiment$instance
+  # FIXME: Not used for now
+  instance.seed <- experiment$seed
+  extra.params  <- experiment$extra.params 
+  switches      <- experiment$switches
   
   runcommand <- function(command, args) {
     if (debugLevel >= 1) {
@@ -152,12 +154,12 @@ hook.run.default <- function(instance, candidate, extra.params, config)
     if (!is.null(err)) {
       err <- paste(err, collapse ="\n")
       if (debugLevel >= 1)
-        cat (format(Sys.time(), usetz=TRUE), ": ERROR (", candidate$index,
+        cat (format(Sys.time(), usetz=TRUE), ": ERROR (", id,
              ") :", err, "\n")
       return(list(output = output, error = err))
     }
     if (debugLevel >= 1) {
-      cat (format(Sys.time(), usetz=TRUE), ": DONE (", candidate$index,
+      cat (format(Sys.time(), usetz=TRUE), ": DONE (", id,
            ") Elapsed: ", proc.time()["elapsed"] - elapsed, "\n")
     }
     return(list(output = output, error = NULL))
@@ -167,8 +169,8 @@ hook.run.default <- function(instance, candidate, extra.params, config)
   if (as.logical(file.access(hookRun, mode = 1))) {
     tunerError ("hookRun `", hookRun, "' cannot be found or is not executable!\n")
   }
-  args <- paste(instance, candidate$index, extra.params,
-                buildCommandLine(candidate$values, candidate$labels))
+
+  args <- paste(instance, id, extra.params, buildCommandLine(candidate, switches))
   output <- runcommand(hookRun, args)
 
   if (!is.null(output$error)) {
@@ -186,8 +188,15 @@ hook.run.default <- function(instance, candidate, extra.params, config)
     # FIXME: We should also check that the output is empty.
     return(paste(hookRun, args))
   }
+
+  # Parse output
+  p.output <- parse.output(output$output, paste(hookRun, args), config)
+
+  # Check if the output is correct
+  check.output(p.output, command = "hookRun", config = config)
+
   # hookEvaluate is NULL, so parse the output just here.
-  return(parse.output (output$output, paste(hookRun, args), config))
+  return(p.output)
 }
 
 
@@ -201,148 +210,137 @@ hook.run.default <- function(instance, candidate, extra.params, config)
 .irace <- new.env()
 
 ## FIXME: This function needs a description, what is candidate, task and data?
-race.wrapper <- function(candidate, task, which.alive, data)
+## Executes a list of candidates in a particular instance
+## candidates: description having the id of the candidate
+## instance.id: index of the instance that can be found in data$instances
+## which.alive: index of the candidates that are still alive
+## data: other info? tunerConfig + parameters
+# LESLIE: should we replace data for the direct things? using enviroments would be better
+race.wrapper <- function(candidates, instance.id, which.alive, data)
 {
   debugLevel <- data$config$debugLevel
-  execDir <- data$config$execDir
-  sgeCluster <- data$config$sgeCluster
-  parallel <- data$config$parallel
-  mpi <- data$config$mpi
-  timeBudget <- data$config$timeBudget
 
-  if (!isTRUE (file.info(execDir)$isdir)) {
-    tunerError ("Execution directory '", execDir, "' is not found or not a directory\n")
-  }
-
-  if (debugLevel >= 4) { print(data$candidates) }
+  if (debugLevel >= 4) { print(candidates) }
   stopifnot (data$parameters$nbParameters > 0)
   stopifnot (length(data$parameters$names) == data$parameters$nbParameters)
   
-  instance.idx <- data$race.instances[task]
-  instance <- data$config$instances[[instance.idx]]
+  instance.seed <- data$config$instancesList[instance.id, "seed"]
+  real.id  <- data$config$instancesList[instance.id, "instance"]
+  instance <- data$config$instances[[real.id]]
   extra.params <- NULL
   if (!is.null (data$config$instances.extra.params)
-      && !is.na (data$config$instances.extra.params[[instance.idx]]))
-    extra.params <- data$config$instances.extra.params[[instance.idx]]
+      && !is.na (data$config$instances.extra.params[[real.id]]))
+    extra.params <- data$config$instances.extra.params[[real.id]]
 
-  ## FIXME: This is testing if this is the first candidate. If so, run
-  ## and evaluate all candidates. Otherwise, just print the output for
-  ## the corresponding candidate.  This is an awful historical
-  ## artifact because of the way the first irace was developed on top
-  ## of race.
-  if (candidate == which.alive[1]) {
-    candidates <- vector("list", length(which.alive))
-    for (k in seq_along(which.alive)) {
-      candi <- which.alive[k]
-      values <- data$parameters$names
-      cnd <- data$candidates[candi, , drop = FALSE]
-      for (i in seq_len (data$parameters$nbParameters)) {
-        name <- data$parameters$names[[i]]
-        values[[name]] <- cnd[[name]]
-      }
-      candidates[[k]] <- list(index = candi, values = values,
-                              # Command-line switches
-                              labels = data$parameters$switches)
-    }
-
-    # Execute commands
-    .irace$hook.output <- vector("list", length(which.alive))
-    cwd <- setwd (execDir)
-    on.exit(setwd(cwd), add = TRUE)
-
-    if (!is.null(data$config$hookRunParallel)) {
-      # User-defined parallelization
-      .irace$hook.output <-
-        data$config$hookRunParallel(candidates, .irace$hook.run,
-                                    instance = instance, extra.params = extra.params,
-                                    config = data$config)
-    } else if (parallel > 1) {
-      if (mpi) {
-        .irace$hook.output <-
-          Rmpi::mpi.applyLB(candidates, .irace$hook.run,
-                            instance = instance, extra.params = extra.params,
-                            config = data$config)
-        # FIXME: if stop() is called from mpi.applyLB, it does not
-        # terminate the execution of the parent process, so it will
-        # continue and give more errors later. We have to terminate
-        # here, but is there a nicer way to detect this and terminate?
-        if (any(sapply(.irace$hook.output, inherits, "try-error"))) {
-          # FIXME: mclapply has some bugs in case of error. In that
-          # case, each element of the list does not keep the output of
-          # each candidate and repetitions may occur.
-          cat(unique(unlist(
-            .irace$hook.output[sapply(
-              .irace$hook.output, inherits, "try-error")])), file = stderr(), sep="")
-          tunerError("A slave process terminated with a fatal error")
-        }
-      } else {
-        if (.Platform$OS.type == 'windows') {
-          irace.assert(!is.null(.irace$cluster))
-          # FIXME: How to do load-balancing?
-          .irace$hook.output <-
-            parallel::parLapply(.irace$cluster, candidates, .irace$hook.run,
-                                instance = instance,
-                                extra.params = extra.params,
-                                config = data$config)
-          # FIXME: if stop() is called from parLapply, then the parent
-          # process also terminates, and we cannot give further errors.
-        } else {
-          .irace$hook.output <-
-            parallel::mclapply(candidates, .irace$hook.run,
-                               # FALSE means load-balancing.
-                               mc.preschedule = FALSE, mc.cores = parallel,
-                               instance = instance, extra.params = extra.params,
-                               config = data$config)
-          # FIXME: if stop() is called from mclapply, it does not
-          # terminate the execution of the parent process, so it will
-          # continue and give more errors later. We have to terminate
-          # here, but is there a nicer way to detect this and terminate?
-          if (any(sapply(.irace$hook.output, inherits, "try-error"))) {
-            # FIXME: mclapply has some bugs in case of error. In that
-            # case, each element of the list does not keep the output of
-            # each candidate and repetitions may occur.
-            cat(unique(unlist(
-              .irace$hook.output[sapply(
-                .irace$hook.output, inherits, "try-error")])), file = stderr())
-            tunerError("A child process triggered a fatal error")
-          }
-        }
-      }
-    } else if (sgeCluster) {
-      .irace$hook.output <-
-        cluster.lapply (candidates,
-                        instance = instance, extra.params = extra.params,
-                        config = data$config)
-    } else {
-      # One process, all sequential
-      for (k in seq_along(candidates)) {
-        .irace$hook.output[[k]] <-
-          .irace$hook.run(candidates[[k]],
-                          instance = instance, extra.params = extra.params,
-                          config = data$config)
-      }
-    }
-    # hook.evaluate may be NULL. If so, .irace$hook.output must
-    # contain the right output already.
-    if (!is.null(.irace$hook.evaluate)) {
-      ## Evaluate candidates sequentially
-      for (k in seq_along(candidates)) {
-        .irace$hook.output[[k]] <-
-          .irace$hook.evaluate(candidate = candidates[[k]], length(candidates),
-                               instance = instance, extra.params = extra.params,
-                               config = data$config, hook.run.call = .irace$hook.output[[k]])
-      }
-    }
+  values <- removeCandidatesMetaData(candidates)
+  parameters.names <- names(data$parameters$names)
+  values <- values[parameters.names]
+  switches <- data$parameters$switches[parameters.names]
+  
+  # Experiment list to execute 
+  # LESLIE: we can also execute only when hookRunParallel is defined or 
+  # if parallel > 0
+  experiments <- list()
+  ntest <- 1
+  for (current.candidate in which.alive) {
+    experiments[[ntest]] <- list (id = candidates[current.candidate, ".ID."],
+                                  candidate = values[current.candidate,],
+                                  instance = instance, extra.params = extra.params,
+                                  switches = switches, seed = instance.seed)
+    ntest <- ntest + 1
   }
 
-  output <- .irace$hook.output[[match(candidate, which.alive)]]
-  # FIXME: Pass the call to hook.run as hook.run.call if hook.evaluate was used.
-  check.output(output, command = if (is.null(.irace$hook.evaluate)) "hookRun" else "hookEvaluate",
-               config = data$config)
-  return(output)
+  # Execute commands
+  return (execute.experiments (experiments, length (experiments), data$config))
 }
 
 race.describe <- function(candidates, data)
 {
   return (data$candidates[candidates, , drop = FALSE])
+}
+
+execute.experiments <- function(experiments, numcandidates, configuration)
+{
+  sgeCluster <- configuration$sgeCluster
+  parallel <- configuration$parallel
+  mpi <- configuration$mpi
+
+  execDir <- configuration$execDir
+  if (!isTRUE (file.info(execDir)$isdir)) {
+    tunerError ("Execution directory '", execDir, "' is not found or not a directory\n")
+  }
+
+  hook.output <- vector("list", length(experiments))
+  cwd <- setwd (execDir)
+  on.exit(setwd(cwd), add = TRUE)
+
+  if (!is.null(configuration$hookRunParallel)) {
+    # User-defined parallelization
+    hook.output <-
+      configuration$hookRunParallel(experiments, .irace$hook.run, config = configuration)
+  } else if (parallel > 1) {
+    if (mpi) {
+      hook.output <- Rmpi::mpi.applyLB(experiments, .irace$hook.run, config = configuration)
+      # FIXME: if stop() is called from mpi.applyLB, it does not
+      # terminate the execution of the parent process, so it will
+      # continue and give more errors later. We have to terminate
+      # here, but is there a nicer way to detect this and terminate?
+      if (any(sapply(hook.output, inherits, "try-error"))) {
+        # FIXME: mclapply has some bugs in case of error. In that
+        # case, each element of the list does not keep the output of
+        # each candidate and repetitions may occur.
+        cat(unique(unlist( hook.output[sapply(
+            hook.output, inherits, "try-error")])), file = stderr(), sep="")
+        tunerError("A slave process terminated with a fatal error")
+      }
+    } else {
+      if (.Platform$OS.type == 'windows') {
+        irace.assert(!is.null(.irace$cluster))
+        # FIXME: How to do load-balancing?
+        hook.output <-
+          parallel::parLapply(.irace$cluster, experiments, .irace$hook.run,
+                              config = configuration)
+        # FIXME: if stop() is called from parLapply, then the parent
+        # process also terminates, and we cannot give further errors.
+      } else {
+        hook.output <-
+          parallel::mclapply(experiments, .irace$hook.run,
+                             # FALSE means load-balancing.
+                             mc.preschedule = FALSE, mc.cores = parallel,
+                             config = configuration)
+        # FIXME: if stop() is called from mclapply, it does not
+        # terminate the execution of the parent process, so it will
+        # continue and give more errors later. We have to terminate
+        # here, but is there a nicer way to detect this and terminate?
+        if (any(sapply( hook.output, inherits, "try-error"))) {
+          # FIXME: mclapply has some bugs in case of error. In that
+          # case, each element of the list does not keep the output of
+          # each candidate and repetitions may occur.
+          cat(unique(unlist(
+            hook.output[sapply(
+              hook.output, inherits, "try-error")])), file = stderr())
+          tunerError("A child process triggered a fatal error")
+        }
+      }
+    }
+  } else if (sgeCluster) {
+    hook.output <- cluster.lapply (experiments, config = configuration)
+  } else {
+    # One process, all sequential
+    for (k in seq_along(experiments)) {
+      hook.output[[k]] <-.irace$hook.run(experiments[[k]], config = configuration)
+    }
+  }
+  
+  # hook.evaluate may be NULL. If so, hook.output must
+  # contain the right output already.
+  if (!is.null(.irace$hook.evaluate)) {
+    ## Evaluate candidates sequentially
+    for (k in seq_along(experiments)) {
+      hook.output[[k]] <-
+        .irace$hook.evaluate(experiment = experiments[[k]], numcandidates,
+                             config = configuration, hook.run.call = hook.output[[k]])
+    }
+  }
+  return(hook.output)
 }

@@ -18,7 +18,7 @@ readCandidatesFile <-
            debugLevel = 0)
 {
   namesParameters <- names(parameters$conditions)
-
+  
   # Read the file.
   candidateTable <- read.table(fileName, header = TRUE,
                                colClasses = "character",
@@ -162,7 +162,7 @@ checkConfiguration <- function(configuration = defaultConfiguration())
   # parameters explicitly. And it is checked in readParameters anyway.
   configuration$execDir <- path.rel2abs(configuration$execDir)
   file.check (configuration$execDir, isdir = TRUE, text = "execution directory")
-
+  
   if (configuration$recoveryFile == "")
     configuration$recoveryFile  <- NULL
   if (!is.null(configuration$recoveryFile)) {
@@ -208,40 +208,40 @@ checkConfiguration <- function(configuration = defaultConfiguration())
   } else {
     tunerError("hookEvaluate must be a function or an executable program")
   }
-
+  
+  # Training instances
   if (is.null.or.empty(configuration$instances.extra.params)) {
     configuration$instances.extra.params <- NULL
   }
-  
   if (is.null.or.empty(configuration$instances)) {
     configuration$instanceDir <- path.rel2abs(configuration$instanceDir)
-    instance.dir <- canonical.dirname (configuration$instanceDir)
-    if (!is.null(configuration$instanceFile) && configuration$instanceFile != "") {
+    if (!is.null.or.empty(configuration$instanceFile)) {
       configuration$instanceFile <- path.rel2abs(configuration$instanceFile)
-      file.check (configuration$instanceFile, readable = TRUE,
-                  text = "instance file")
-      lines <- readLines (configuration$instanceFile)
-      lines <- sub("#.*$", "", lines) # Remove comments
-      lines <- sub("^[[:space:]]+", "", lines) # Remove extra spaces
-      lines <- lines[lines != ""] # Delete empty lines
-      instances <- sub("^([^[:space:]]+).*$", "\\1", lines)
-      instances <- paste (instance.dir, instances, sep="")
-      instances.extra.params <- sub("^[^[:space:]]+(.*)$", "\\1", lines)
-      names (instances.extra.params) <- instances
-      configuration$instances.extra.params <- instances.extra.params
-    } else {
-      file.check (configuration$instanceDir, isdir = TRUE, notempty = TRUE,
-                  text = "instances directory")
-      # The files are sorted in alphabetical order, on the full path if
-      # 'full.names = TRUE'.
-      instances <- list.files (path = instance.dir, full.names = TRUE,
-                               recursive = TRUE)
-      if (length (instances) == 0)
-        tunerError("No instances found in `", instance.dir, "' !\n")
     }
-    configuration$instances <- instances
+    configuration[c("instances", "instances.extra.params")] <-
+      readInstances(instanceDir = canonical.dirname (configuration$instanceDir),
+                    instanceFile = configuration$instanceFile)
   }
   
+  # Testing instances
+  if (is.null.or.empty(configuration$testInstances.extra.params)) {
+    configuration$testInstances.extra.params <- NULL
+  }
+  if (is.null.or.empty(configuration$testInstances) && 
+     (!is.null.or.empty(configuration$testInstanceDir) || 
+      !is.null.or.empty(configuration$testInstanceFile))) {
+    configuration$testInstanceDir <- path.rel2abs(configuration$testInstanceDir)
+    if (!is.null.or.empty(configuration$testInstanceFile)) {
+      configuration$testInstanceFile <- path.rel2abs(configuration$testInstanceFile)
+    }
+    configuration[c("testInstances", "testInstances.extra.params")] <-
+      readInstances(instanceDir = canonical.dirname (configuration$testInstanceDir),
+                    instanceFile = configuration$testInstanceFile)
+  } else {
+    configuration$testInstances <- NULL
+  }
+  
+  # Candidate file
   if (!is.null.or.empty(configuration$candidatesFile)) {
     configuration$candidatesFile <- path.rel2abs(configuration$candidatesFile)
     file.check (configuration$candidatesFile, readable = TRUE,
@@ -276,7 +276,7 @@ checkConfiguration <- function(configuration = defaultConfiguration())
                  "nbIterations", "nbExperimentsPerIteration",
                  "firstTest", "eachTest", "minNbSurvival", "nbCandidates",
                  "mu", "timeBudget", "timeEstimate", "seed",
-                 "parallel")
+                 "parallel", "testNbElites")
 
   # TODO: Avoid the for-loop using lapply and configuration[intParams]
   for (param in intParams) {
@@ -319,7 +319,9 @@ checkConfiguration <- function(configuration = defaultConfiguration())
     }
     return(as.logical(tmp))
   }
-  for (p in c("sampleInstances", "sgeCluster", "softRestart", "mpi")) {
+  # Boolean params
+  for (p in c("sampleInstances", "sgeCluster", "softRestart", "mpi",
+              "testIterationElites")) {
     configuration[[p]] <- as.boolean.param (configuration[[p]], p, .irace.params.def)
   }
 
@@ -364,26 +366,39 @@ checkConfiguration <- function(configuration = defaultConfiguration())
                 "' of 'testType' (", .irace.params.def["testType", "long"],
                 "), valid values are: F-test, t-test")
   }
-  
+
   return (configuration)
+}
+
+print.instances.extra.params <- function(param, value)
+{
+  if (is.null.or.empty(paste(value, collapse=""))) {
+    cat (param, "<- NULL\n")
+  } else {
+    cat (param, "<-\n")
+    cat(paste(names(value), value, sep=" : "), sep="\n")
+  }
+}
+
+print.instances <- function(param, value)
+{
+  cat (param, "<- \"")
+  cat (value, sep=", ")
+  cat ("\"\n")
 }
 
 printConfiguration <- function(configuration)
 {
   cat("## irace configuration:\n")
   for (param in .irace.params.names) {
+    
     # Special case for instances.extra.params
-    if (param == "instances.extra.params") {
-      if (is.null.or.empty(paste(configuration$instances.extra.params, collapse=""))) {
-        cat (param, "<- NULL\n")
-      } else {
-        cat (param, "<-\n")
-        cat(paste(names(configuration$instances.extra.params), configuration$instances.extra.params, sep=" : "), sep="\n")
-      }
-    } else if (param == "instances") {# Special case for instances
-      cat (param, "<- \"")
-      cat (configuration$instances, sep=", ")
-      cat ("\"\n")
+    if (param == "instances.extra.params"
+        || param == "testInstances.extra.params") {
+      print.instances.extra.params (param, configuration[[param]])
+    } else if (param == "instances" || param == "testInstances") {
+      # Special case for instances
+      print.instances (param, configuration[[param]])
     } else {# All other parameters (no vector, but can be functions)
       # FIXME: Perhaps deparse() is not the right way to do this?
       cat(param, "<-", deparse(configuration[[param]]), "\n")
@@ -409,3 +424,62 @@ defaultConfiguration <- function(configuration = list())
   }
   return (configuration)
 }
+
+readInstances <- function(instanceDir = NULL, instanceFile = NULL)
+{
+  if (is.null.or.empty(instanceDir) && is.null.or.empty(instanceFile))
+    tunerError("No instances information provided!")
+  
+  instances <- instances.extra.params <- NULL
+  
+  if (!is.null.or.empty(instanceFile)) {
+    file.check (instanceFile, readable = TRUE, text = "instance file")
+    lines <- readLines (instanceFile)
+    lines <- sub("#.*$", "", lines) # Remove comments
+    lines <- sub("^[[:space:]]+", "", lines) # Remove extra spaces
+    lines <- lines[lines != ""] # Delete empty lines
+    instances <- sub("^([^[:space:]]+).*$", "\\1", lines)
+    instances <- paste (instanceDir, instances, sep="")
+    instances.extra.params <- sub("^[^[:space:]]+(.*)$", "\\1", lines)
+    names (instances.extra.params) <- instances
+  } else {
+    file.check (instanceDir, isdir = TRUE, notempty = TRUE,
+                text = "instances directory")
+    # The files are sorted in alphabetical order, on the full path if
+    # 'full.names = TRUE'.
+    instances <- list.files (path = instanceDir, full.names = TRUE,
+                             recursive = TRUE)
+    if (length (instances) == 0)
+      tunerError("No instances found in `", instanceDir, "'!")
+  }
+  
+  return(list(instances = instances,
+              instances.extra.params = instances.extra.params))
+}
+
+
+## Generate instances + seed.
+generateInstances <- function(configuration)
+{
+  instances <- configuration$instances
+  sampleInstances <- configuration$sampleInstances
+    
+  # "Upper bound"" of instances needed
+  # FIXME: We could bound it even further if maxExperiments >> nInstances
+  ntimes <- ceiling (configuration$maxExperiments / length(instances))
+
+  # Get instances order
+  if (sampleInstances) {
+    # Sample instances index in groups (ntimes)
+    sindex <- as.vector(sapply(rep(length(instances), ntimes), sample.int, replace = FALSE))
+  } else {
+    sindex <- rep(1:length(instances), ntimes)
+  }
+  # Sample seeds.
+  # 2147483647 is the maximum value for a 32-bit signed integer.
+  # We use replace = TRUE, because replace = FALSE allocates memory for each possible number.
+  tmp <- data.frame (instance = sindex,
+                     seed = sample.int(2147483647, size = ntimes * length(instances), replace = TRUE))
+  return(tmp)
+}
+

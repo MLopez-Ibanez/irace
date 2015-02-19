@@ -7,14 +7,22 @@
   an advanced example of how to create your own hooRun function.
 }
 \usage{
-hook.run.default(instance, candidate, extra.params, config)
+hook.run.default(experiment, config)
 }
 \arguments{
+    \item{experiment}{A list describing the experiment. It should contain
+  at least:
+\itemize{
   \item{instance}{A string containing the name of the instance (or
     filename and full path in case the instance is a file).}
+  \item{id}{A numeric identifier for the candidate that is
+    evaluated.}
   \item{candidate}{The candidate configuration that must be run.}
+  \item{seed}{A random seed}
   \item{extra.params}{Extra parameters (like instance-specific ones) to
     be passed when evaluating this candidate.}
+  \item{switches}{Command-line switches that correspond to each parameter}
+}}
   \item{config}{options passed when invoking \pkg{irace}.}
 }
 \value{
