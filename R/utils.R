@@ -22,7 +22,7 @@ tunerError <- function(...)
 {
   # The default is only 1000, which is too small. 8170 was the maximum
   # value allowed in R 2.14.1
-  op <- options(warning.length = 8170, error = NULL)
+  op <- options(warning.length = 8170)
   on.exit(options(op))
   stop (.irace.prefix, ..., call. = FALSE)
 }
@@ -34,7 +34,8 @@ irace.assert <- function(exp)
   msg <- paste(deparse(mc), " is not TRUE\n", .irace.bug.report, sep = "")
   # FIXME: It would be great if we could save into a file the state of
   # the function that called this one.
-  op <- options(warning.length = 8170, error = recover)
+  print(traceback())
+  op <- options(warning.length = 8170, error = utils::recover)
   on.exit(options(op))
   stop (msg)
   invisible()
