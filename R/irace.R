@@ -299,7 +299,7 @@ irace.init <- function(configuration)
   .irace$next.instance <- 1
   # We need to do this here to use/recover .Random.seed later.
   if (is.na(configuration$seed)) {
-    configuration$seed <- runif(1, 1, .Machine$integer.max)
+    configuration$seed <- trunc(runif(1, 1, .Machine$integer.max))
   }
   set.seed(configuration$seed)
   return(configuration)
