@@ -175,10 +175,7 @@ irace.main <- function(tunerConfig = defaultConfiguration(), output.width = 9999
 
   tunerConfig <- checkConfiguration (tunerConfig)
   debug.level <- tunerConfig$debugLevel
-  if (debug.level >= 1) {
-    printConfiguration (tunerConfig)
-    options(error = utils::recover)
-  }
+  if (debug.level >= 1) printConfiguration (tunerConfig)
   
   # Read parameters definition
   parameters <- readParameters (file = tunerConfig$parameterFile,
@@ -251,6 +248,12 @@ testing.main <- function(tunerConfig, parameters)
 
 irace.cmdline <- function(args = commandArgs (trailingOnly = TRUE))
 {
+  # Handle the case where we are given a single character string like a
+  # command-line.
+  if (!missing(args) && length(args) == 1) {
+    args <- strsplit(trim(args), " +")[[1]]
+  }
+
   if (!is.null(readArgOrDefault (args, short = "-h", long = "--help"))) {
     irace.usage()
     return(invisible(NULL))
