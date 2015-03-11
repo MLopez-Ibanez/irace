@@ -356,13 +356,14 @@ mpiInit <- function(nslaves, debugLevel = 0)
       # cat("# Finalize MPI...\n")
       if (Rmpi::mpi.comm.size(1) > 0)
         # FIXME: dellog == TRUE tries to delete log files, but it does
-        # not take into account that we may have change directory and
-        # it does not fails gracefully but produces an annoying:
+        # not take into account that we may have changed directory and
+        # it does not fail gracefully but produces an annoying:
         # Warning message: running command 'ls *.30577+1.*.log 2>/dev/null' had status 2
         Rmpi::mpi.close.Rslaves(dellog = FALSE)
-      # FIXME: How to avoid the message
-      # "Rmpi cannot be used unless relaunching R" ?
-      Rmpi::mpi.exit()
+      # This is what mpi.finalize does, minus the annoying message: "Exiting
+      # Rmpi. Rmpi cannot be used unless relaunching R", which we do not care
+      # about because this finalizer should only be called when exiting R.
+      .Call("mpi_finalize", PACKAGE = "Rmpi")
     }, onexit = TRUE)
 
     # Create slaves
