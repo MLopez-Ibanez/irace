@@ -54,6 +54,10 @@ exec qsub -v PATH <<EOF
 #$ -o $EXECDIR/irace-$$.stdout 
 #$ -e $EXECDIR/irace-$$.stderr 
 #$ -cwd
+#$ -binding linear:256
+#  The cluster that we use in IRIDIA seems to require the option above
+#  for MPI jobs. It is probably not useful for other clusters.
+#
 export OMPI_MCA_plm_rsh_disable_qrsh=1
 $MPIRUN -x OMPI_MCA_plm_rsh_disable_qrsh \
         -np 1 \
