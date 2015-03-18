@@ -127,7 +127,7 @@ hook.evaluate.default <- function(experiment, num.candidates, config, hook.run.c
 hook.run.default <- function(experiment, config)
 {
   debugLevel    <- config$debugLevel
-  id            <- experiment$id
+  candidate.id  <- experiment$id
   candidate     <- experiment$candidate
   instance      <- experiment$instance
   # FIXME: Not used for now
@@ -154,12 +154,12 @@ hook.run.default <- function(experiment, config)
     if (!is.null(err)) {
       err <- paste(err, collapse ="\n")
       if (debugLevel >= 1)
-        cat (format(Sys.time(), usetz=TRUE), ": ERROR (", id,
+        cat (format(Sys.time(), usetz=TRUE), ": ERROR (", candidate.id,
              ") :", err, "\n")
       return(list(output = output, error = err))
     }
     if (debugLevel >= 1) {
-      cat (format(Sys.time(), usetz=TRUE), ": DONE (", id,
+      cat (format(Sys.time(), usetz=TRUE), ": DONE (", candidate.id,
            ") Elapsed: ", proc.time()["elapsed"] - elapsed, "\n")
     }
     return(list(output = output, error = NULL))
@@ -170,7 +170,7 @@ hook.run.default <- function(experiment, config)
     tunerError ("hookRun `", hookRun, "' cannot be found or is not executable!\n")
   }
 
-  args <- paste(instance, id, extra.params, buildCommandLine(candidate, switches))
+  args <- paste(instance, candidate.id, extra.params, buildCommandLine(candidate, switches))
   output <- runcommand(hookRun, args)
 
   if (!is.null(output$error)) {
@@ -238,8 +238,6 @@ race.wrapper <- function(candidates, instance.id, which.alive, data)
   switches <- data$parameters$switches[parameters.names]
   
   # Experiment list to execute 
-  # LESLIE: we can also execute only when hookRunParallel is defined or 
-  # if parallel > 0
   experiments <- list()
   ntest <- 1
   for (current.candidate in which.alive) {
