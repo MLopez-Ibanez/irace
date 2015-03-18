@@ -31,6 +31,10 @@ TODO R package:
 
 TODO General:
 
+ * Add an option "deterministic": when the algorithm is deterministic, it does
+   not make sense to test one configuration more than one time on the same
+   instance.
+
  * Convert README to README.md (markdown) so CRAN renders it as HTML.
 
  * Print some info about the forbidden rules read.
