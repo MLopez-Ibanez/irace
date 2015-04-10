@@ -37,9 +37,19 @@ readCandidatesFile <-
   # are given with a different value.
   if (ncol(candidateTable) != length(namesParameters)
       || !setequal (colnames(candidateTable), namesParameters)) {
-    tunerError("The parameter names given in the first row of file ", fileName,
-               " do not match the parameter names: ",
-               paste(namesParameters, collapse=", "))
+    missing <- setdiff (colnames(candidateTable), namesParameters)
+    if (length(missing) > 0) {
+      tunerError("The parameter names (",
+                 paste(missing, collapse=", "),
+                 ") given in the first row of file ", fileName,
+                 " do not match the parameter names: ",
+                 paste(namesParameters, collapse=", "))
+    } else {
+      missing <- setdiff (namesParameters, colnames(candidateTable))
+      tunerError("The parameter names (",
+                 paste(missing, collapse=", "),
+                 ") are missing from the first row of file ", fileName)
+    }
     return(NULL)
   }
 
