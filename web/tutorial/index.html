@@ -1,0 +1,307 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+
+<html>
+<head>
+ <!-- head.htm -->
+ <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+ <meta name="generator" content="Emacs">
+ <meta name="author" content="Manuel López-Ibáñez">
+ <link rel="icon" href="http://iridia.ulb.ac.be/~leonardo/irace/irace-link/img/favicon.png" type="image/png">
+ <link rel="stylesheet" type="text/css" media="screen,projection" href=
+ "simple.css">
+ <link href=
+ 'http://fonts.googleapis.com/css?family=Open+Sans:400italic,600italic,400,300,600'
+ rel='stylesheet' type='text/css'>
+ <link href='http://fonts.googleapis.com/css?family=Inconsolata' rel=
+ 'stylesheet' type='text/css'>
+ <script type="text/javascript" src="http://iridia.ulb.ac.be/~leonardo/irace/irace-link/files/ga.js">
+</script><!--[if IE]>
+  <style type="text/css">
+
+div#logos img {
+    filter: alpha(opacity=75); /* IE8 and earlier */
+}
+
+  </style>
+<![endif]-->
+
+ <title>A practical introduction to irace</title>
+</head>
+
+<body>
+ <div id="contenedor">
+  <!-- header.htm -->
+  <!-- menu.htm -->
+
+  <div id="contenido">
+   <h1>A practical introduction to irace</h1>
+
+   <div id="navlist">
+    <h2 id="overview">Contents</h2>
+
+    <ul>
+     <li><a href="index.html#details">Introduction</a></li>
+     
+     <li><a href="index.html#installation">Installation</a></li>
+
+     <li><a href="index.html#acotsp">Using irace to tune ACOTSP</a></li>
+
+     <li><a href="index.html#nsgaii">Using irace to tune NSGA-II</a></li>
+    </ul>
+   </div>
+
+   <div id="logos">
+    <a href="http://code.ulb.ac.be/iridia.home.php"><img src="./imgs/iridia.png"
+    alt="IRIDIA"></a>
+   </div>
+   <hr id="afterlogos">
+
+   <h2 id="details">Introduction</h2>
+
+<p class="beforeul">
+
+   The irace package is an R implementation of the <em>iterated racing</em> procedure for automatic algorithm configuration. This tutorial will help you install and run it on two well-known optimization software: 
+
+   <ul>
+    <li><a href="http://www.aco-metaheuristic.org/aco-code/public-software.html">ACOTSP</a>, a C framework that implements several ACO algorithms for the Traveling Salesman Problem (TSP)</li>
+
+    <li><a href="http://www.iitk.ac.in/kangal/codes.shtml">NSGA-II</a>, a C implementation of the NSGA-II algorithm provided by the KanGAL research group</li>
+   </ul>
+<br/>
+        More information on irace can be found on its official webpage: <a href="https://iridia.ulb.ac.be/irace/" alt="irace Official Webpage">http://iridia.ulb.ac.be/irace/</a>
+   </p>
+<hr>
+
+  <h2 id="installation">Installation</h2>
+
+   <div class="warning">
+      <p><img style="width: 40px; height: 33px;" alt="Warning" src="./imgs/Icon_warning.png" height="33"
+          width="40"> The irace package requires the R language for statistical computation.
+      </p>
+   </div>
+
+  <h4 id="installR">Installing R</h4>
+
+   <p><a href=
+   "http://cran.r-project.org/doc/manuals/r-release/R-admin.html">There are
+   official instructions available</a>. We give below a quick installation
+   guide that will work in most cases.</p>
+
+   <h5>GNU/Linux</h5>
+
+   <p class="beforepre">You should install R from your package manager. On a
+   Debian/Ubuntu system it will be something like:</p>
+   <pre>
+$ sudo apt-get install r-base
+</pre>
+
+   <p>Once R is installed, you can launch R from the terminal and from the R
+   prompt install the irace package. <a href="index.html#installirace">See instructions
+   below.</a></p>
+
+   <h5>OS X</h5>
+
+   <p class="beforepre">You can install R directly from a CRAN mirror (the link
+   is of the Belgian one):</p><code><a href=
+   "http://cran.freestatistics.org/bin/macosx/">http://cran.freestatistics.org/bin/macosx/</a></code>
+
+   <p class="beforepre">Alternatively, if you use homebrew, you can just brew
+   the R formula from the science tap (unfortunately it does not come already
+   bottled so you need to have Xcode installed to compile it):</p>
+   <pre>
+$ brew tap homebrew/science
+$ brew install r
+</pre>
+
+   <p>Once R is installed, you can launch R from the Terminal (or from your
+   Applications), and from the R prompt install the irace package. <a href=
+   "index.html#installirace">See instructions below.</a></p>
+
+   <h5>Windows</h5>
+
+   <p class="beforepre">You can install R from a CRAN mirror (the link is of
+   the Belgian one):</p><code><a href=
+   "http://cran.freestatistics.org/bin/windows/">http://cran.freestatistics.org/bin/windows/</a></code>
+
+   <p>Once R is installed, you can launch the R console and install the irace
+   package from it. <a href="index.html#installirace">See instructions below.</a></p>
+
+   <h4 id="installirace">Installing the irace package</h4>
+
+   <p>There are two methods to install the <a href=
+   "http://iridia.ulb.ac.be/irace">irace</a> R package on your computer:</p>
+
+   <ol>
+    <li>Install within R (automatic download):
+     <pre>
+$ R
+&gt; install.packages("irace")
+</pre>select a mirror close to you, and test the installation with
+     <pre>
+&gt; library(irace)
+&gt; CTRL+d
+</pre>
+    </li>
+
+    <li>Manually <a href="http://cran.r-project.org/package=irace">download the
+    package from CRAN</a> and invoke at the command-line:
+     <pre>
+$ R CMD INSTALL &lt;package&gt;
+</pre>where <code>&lt;package&gt;</code> is one of the three versions
+available: <code>.tar.gz</code> (Unix/BSD/GNU/Linux), <code>.tgz</code> (MacOS
+X), or <code>.zip</code> (Windows).
+    </li>
+   </ol>
+
+   <p class="beforepre">If the package fails to install because of insufficient
+   permissions, you need to force a <em>local installation</em> by doing:</p>
+   <pre>
+$ mkdir ~/R
+$ R CMD INSTALL --library=~/R irace.tar.gz
+$ export R_LIBS=~/R:${R_LIBS}
+</pre>
+
+   <p class="beforepre">Once installed, test that it is working by doing:</p>
+   <pre>
+$ R
+&gt; library(irace)
+&gt; system.file(package="irace")
+[1] "~/R/irace"
+</pre>
+
+   <h5>GNU/Linux and Mac OS X</h5>
+
+   <p>The previous command tells you the installation directory
+   of <code>irace</code>. The last step is to add this directory to the PATH environment variable so it can locate the irace <em>wrapper</em>.</p>
+
+   <div class="info">
+      <p><img style="width: 40px; height: 40px;" alt="Warning" src="./imgs/Icon_info.png" height="33"
+          width="40"> The <em>wrapper</em> invokes the R interpreter in command-line mode and launches irace on your current dir.
+      </p>
+   </div>
+
+   <p class="beforepre">Save that path to a variable, and add it to your
+   <code>.bash_profile</code>, <code>.bashrc</code> or
+   <code>.profile</code>:</p>
+   <pre>
+export IRACE_HOME=~/R/irace/ # Path given by system.file(package="irace")
+export PATH=${IRACE_HOME}/bin/:$PATH
+# export R_LIBS=~/R:${R_LIBS} # Only if local installation was forced
+</pre>
+
+   <p class="beforepre">Now you need only to reload the file you just edited, or open a new terminal, and you
+   should be able to incoke <code>irace</code>:</p>
+   <pre>
+$ source ~/.bash_profile
+$ irace --help
+</pre>
+
+   <h5>Windows</h5>
+
+   <p class="beforepre">Unfortunately, the command-line wrapper does not work
+   in Windows. To launch irace, you need to open the R console and execute:</p>
+   <pre>
+R&gt; library(irace)
+R&gt; irace.cmdline("--help")
+</pre>
+   <hr>
+
+   <h2 id="acotsp">Using irace to tune ACOTSP</h2>
+
+   <div class="info">
+      <p><img style="width: 40px; height: 40px;" alt="Info" src="./imgs/Icon_info.png" height="40"
+          width="40"> To download the material required for this exercise, <a href="./downloads/acotsp-example.tar.gz">click here</a>.
+      </p>
+   </div>
+
+   <p class="beforepre">
+   After uncompressing the <code>acotsp-example.tar.gz</code> file, go to the <code>ACOTSP-1.04-tuning</code> directory and compile ACOTSP using the <code>make</code> command:</p>
+   <pre>
+     $ tar xzvf acotsp-example.tar.gz
+     $ cd acotsp-example
+     $ cd ACOTSP-1.04-tuning
+     $ make</pre>
+
+   <p class="beforepre">
+     Go back to the directory where you uncompressed <code>acotsp-example.tar.gz</code> and run irace.</p>
+     <pre>
+     $ cd ..
+     $ irace --parallel 4</pre>
+<br>
+   <div class="info">
+      <p><img style="width: 40px; height: 40px;" alt="Info" src="./imgs/Icon_info.png" height="40"
+          width="40"> The <code>--parallel</code> option makes irace use multiple cores. In case you have a dual core processor, use <code>--parallel 2</code>.
+      </p>
+   </div>
+
+   Watch irace run and analyze the configurations selected at the end of each iteration. When irace finishes, compare the candidates selected and try to understand the logic behind those parameter settings.
+   <hr>
+
+   <h2 id="nsgaii">Using irace to tune NSGA-II</h2>
+
+   <div class="info">
+      <p><img style="width: 40px; height: 40px;" alt="Info" src="./imgs/Icon_info.png" height="40"
+          width="40"> To download the material required for this exercise, <a href="./downloads/nsga2-example.tar.gz">click here</a>.
+      </p>
+   </div>
+
+   <p class="beforepre">
+   After uncompressing the <code>nsga2-example.tar.gz</code> file, go to the <code>nsga2-gnuplot-v1.1.6</code> directory and compile NSGA-II using the <code>make</code> command:</p>
+   <pre>
+     $ tar xzvf nsga2-example.tar.gz
+     $ cd nsga2-example
+     $ cd nsga2-gnuplot-v1.1.6
+     $ make</pre>
+
+   <p class="beforepre">
+     Go back to the directory where you uncompressed <code>nsga2-example.tar.gz</code>. You will now need to compile the performance assessment tools for computing the hypervolume. First, compile the <code>nondominated</code> program, used to normalize and filter the approximation sets.</p>
+     <pre>
+     $ cd ..
+     $ cd mo-tools-1.0svn100-src
+     $ make nondominated</pre>
+   <br>
+   <div class="info">
+      <p><img style="width: 40px; height: 40px;" alt="Info" src="./imgs/Icon_info.png" height="40"
+          width="40"> The <code>march=native</code> option in the mo-tools Makefile asks the compiler to detect your architecture so it can generate optimized code. In case your compiler does not support this option (triggering an error), we recommend you manually specify your archicture, e.g., <code>march=i386</code> or <code>march=x86-64</code>.
+      </p>
+   </div>
+
+   <p class="beforepre">
+     The second tool to be compiled is the hypervolume program:</p>
+     <pre>
+     $ cd ..
+     $ cd hv-2.0rc1-src
+     $ make</pre>
+   <br>
+
+   <p class="beforepre">
+     Go back to the directory where you uncompressed <code>nsga2-example.tar.gz</code> and run irace.</p>
+     <pre>
+     $ cd ..
+     $ irace --parallel 4</pre>
+   <br>
+
+   <div class="info">
+      <p><img style="width: 40px; height: 40px;" alt="Info" src="./imgs/Icon_info.png" height="40"
+          width="40"> The <code>--parallel</code> option makes irace use multiple cores. In case you have a dual core processor, use <code>--parallel 2</code>.
+      </p>
+   </div>
+   
+   <p>Watch irace run and analyze the configurations selected at the end of each iteration. When irace finishes, compare the candidates selected and try to understand the logic behind those parameter settings.</p>
+
+   <h4>Tuning irace using a different hypervolume computation method</h4>
+
+   <p class="beforepre">
+    Now that you have tested irace using the normalized hypervolume, the next step is to test it without normalization. Edit the <code>tune-conf</code>, locate at the directory where you uncompressed <code>nsga2-example.tar.gz</code>, and edit the two lines below:</p>
+     <pre>
+     #hookRun <- "./hook-run2"		# uncomment this line
+     hookEvaluate <- "./hook-evaluate"  # comment this line</pre>
+   <p class="beforepre">
+     Run irace again and compare results.</p>
+   <br>
+  <hr>
+ </div>
+</body>
+</html>
+
