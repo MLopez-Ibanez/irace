@@ -31,6 +31,11 @@ TODO R package:
 
 TODO General:
 
+ * Give an error if the user tries to change certain settings when recovering
+   (maxExperiments, elite, etc.). Other settings such as hookRun, instanceDir,
+   instanceFile, etc. are ok to change but we have to be careful to not
+   override them when recovering.
+
  * Add an option "deterministic": when the algorithm is deterministic, it does
    not make sense to test one configuration more than one time on the same
    instance.
