@@ -92,17 +92,13 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
 
   # Determine if a parameter is fixed.
   isFixed <- function (type = stop("type is mandatory."),
-                       boundaries = stop("boundaries is mandatory."),
-                       digits)
+                       boundaries = stop("boundaries is mandatory."))
   {
     type <- as.character(type)
-    if (type == "i") {
+    if (type == "i" || type == "r") {
       return (boundaries[[1]] == boundaries[[2]])
     } else if (type == "c" || type == "o") {
       return (length(boundaries) == 1)
-    } else if (type == "r") {
-      return (round (as.numeric(boundaries[[1]]), digits)
-              == round (as.numeric(boundaries[[2]]), digits))
     }
   }
   # *************************************************************************
@@ -241,6 +237,14 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
                            "lower bound must be smaller than upper bound in numeric range (",
                            result$match, ") for parameter '", param.name, "'")
       }
+
+      if (param.type == "r") {
+        param.value <- round(param.value, digits = digits)
+      } else if (param.type == "i" && !all(is.wholenumber(param.value))) {
+        errReadParameters (filename, nbLines, NULL,
+                           "for parameter type 'i' values must be integers (",
+                           result$match, ") for parameter '", param.name, "'")
+      }
     } else {
       dups <- duplicated(param.value)
       if (any(dups)) {
@@ -260,8 +264,7 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
 
     parameters$isFixed[[count]] <-
       isFixed (type = param.type,
-               boundaries = parameters$boundary[[count]],
-               digits = digits)
+               boundaries = parameters$boundary[[count]])
     # Reject non-categorical fixed parameters. They are often the
     # result of a user error.
     if (parameters$isFixed[[count]]) {
