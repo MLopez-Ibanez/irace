@@ -31,6 +31,11 @@ TODO R package:
 
 TODO General:
 
+ * Detect cases where all possible parameter configurations can be sampled and
+   there is still enough budget to do at least one test. In that case, it is
+   not worth it to sample configurations and do several iterations. It is
+   better to generate all possible configurations and do a single F/t-race.
+
  * Give an error if the user tries to change certain settings when recovering
    (maxExperiments, elite, etc.). Other settings such as hookRun, instanceDir,
    instanceFile, etc. are ok to change but we have to be careful to not
