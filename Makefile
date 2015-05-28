@@ -14,7 +14,7 @@ WINBUILD_FTP_COMMANDS="user anonymous anonymous\nbinary\ncd R-devel\nput $(PACKA
 ## Do we have svnversion?
 ifeq ($(shell sh -c 'which svnversion 1> /dev/null 2>&1 && echo y'),y)
   ## Is this a working copy?
-  ifneq ($(shell sh -c 'LC_ALL=C svnversion -n .'),exported)
+  ifeq ($(shell sh -c 'LC_ALL=C svnversion -n . | grep -q ^[0-9] && echo y'),y)
     $(shell sh -c 'svnversion -n . > svn_version')
   endif
 endif
