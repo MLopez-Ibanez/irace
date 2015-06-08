@@ -14,9 +14,9 @@
 # Path to the ACOTSP software:
 EXE=~/bin/acotsp
 
-# What "fixed" parameters should be always passed to ACOTSP?
+# Fixed parameters that should be always passed to ACOTSP.
 # The time to be used is always 5 seconds, and we want only one run:
-FIXED_PARAMS=" --time 20 --tries 1 "
+FIXED_PARAMS=" --time 20 --tries 1 --quiet "
 
 # The instance name and the candidate id are the first parameters
 INSTANCE=$1
@@ -29,14 +29,18 @@ CAND_PARAMS=$*
 STDOUT="c${CANDIDATE}.stdout"
 STDERR="c${CANDIDATE}.stderr"
 
-# Now we can call ACOTSP by building a command line with all parameters for it
-$EXE ${FIXED_PARAMS} -i $INSTANCE ${CAND_PARAMS} 1> $STDOUT 2> $STDERR
-
 # In case of error, we print the current time:
 error() {
     echo "`TZ=UTC date`: error: $@" >&2
     exit 1
 }
+
+if [ ! -x "${EXE}" ]; then
+    error "${EXE}: not found or not executable (pwd: $(pwd))"
+fi
+
+# Now we can call ACOTSP by building a command line with all parameters for it
+$EXE ${FIXED_PARAMS} -i $INSTANCE ${CAND_PARAMS} 1> $STDOUT 2> $STDERR
 
 # The output of the candidate $CANDIDATE should be written in the file 
 # c${CANDIDATE}.stdout (see hook run for ACOTSP). Does this file exist?
