@@ -365,9 +365,10 @@ irace <- function(tunerConfig = stop("parameter `tunerConfig' is mandatory."),
       num <- nrow(allCandidates)
       allCandidates <- checkForbidden(allCandidates, tunerConfig$forbiddenExps)
       if (nrow(allCandidates) < num) {
-        cat("# warning: some of the configurations in the candidates file were forbidden and, thus, discarded\n")
+        cat("# Warning: some of the configurations in the candidates file were forbidden and, thus, discarded\n")
       }
-      
+      cat("# ", num, " initial configuration(s) read from '",
+          tunerConfig$candidatesFile, "'\n", sep="")
     } else {
       candidates.colnames <- c(".ID.", namesParameters, ".PARENT.")
       allCandidates <-
