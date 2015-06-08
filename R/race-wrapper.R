@@ -36,6 +36,8 @@ race.info <- function(data)
               no.candidates = data$no.candidates, 
               no.tasks = data$no.tasks))
 
+# FIXME: This should be called in race-wrapper for cases where hook.run.default
+# is overriden
 check.output <- function(output, command, config, hook.run.call = NULL, outputRaw = NULL)
 {
   # We check the output here to provide better error messages.
@@ -49,6 +51,10 @@ check.output <- function(output, command, config, hook.run.call = NULL, outputRa
   if (config$timeBudget > 0 && length(output) < 2)
     err.msg <- paste("When timeBudget > 0, the output of `", command,
                      "' must be two numbers 'cost time'!", sep = "")
+
+  if (config$timeBudget == 0 && length(output) > 1)
+    err.msg <- paste("When timeBudget == 0, the output of `", command,
+                     "' must be one number 'cost'!", sep = "")
 
   if (!is.null(err.msg)) {
     if (!is.null(hook.run.call)) {
@@ -82,13 +88,13 @@ check.output <- function(output, command, config, hook.run.call = NULL, outputRa
 # overridden, check.output will be called again later.
 parse.output <- function(outputRaw, command, config, hook.run.call = NULL)
 {
-  if (config$debugLevel >= 1) { cat (outputRaw, sep="\n") }
+  if (config$debugLevel >= 1) { cat (outputRaw, sep = "\n") }
 
   output <- NULL
   # strsplit crashes if outputRaw == character(0)
   if (length(outputRaw) > 0) {
     output <- strsplit(trim(outputRaw), "[[:space:]]+")[[1]]
-    # suppressWarnings to avoid NAs introduced by coercion
+    # suppressWarnings to avoid messages about NAs introduced by coercion
     output <- suppressWarnings (as.numeric (output))
   }
   # We check the output here to provide better error messages.
@@ -119,6 +125,8 @@ hook.evaluate.default <- function(experiment, num.candidates, config, hook.run.c
   p.output <- parse.output (outputRaw, command, config, hook.run.call = hook.run.call)
    
   # FIXME: Pass the call to hook.run as hook.run.call if hook.evaluate was used.
+  # FIXME: check.output is also called in parse.output and race.wrapper, that
+  # is, three times!
   check.output(p.output, command = "hookEvaluate", config = config)
 
   return(p.output)
@@ -193,6 +201,8 @@ hook.run.default <- function(experiment, config)
   p.output <- parse.output(output$output, paste(hookRun, args), config)
 
   # Check if the output is correct
+  # FIXME: check.output is also called in parse.output and race.wrapper, that
+  # is, three times!
   check.output(p.output, command = "hookRun", config = config)
 
   # hookEvaluate is NULL, so parse the output just here.
