@@ -258,7 +258,14 @@ checkConfiguration <- function(configuration = defaultConfiguration())
                 text = "candidates file")
   }
 
-  if (!is.null.or.empty(configuration$forbiddenFile)) {
+  if (is.null.or.empty(configuration$forbiddenExps)) {
+    configuration$forbiddenExps <- NULL
+  }
+
+  # This prevents loading the file two times and overriding forbiddenExps if
+  # the user specified them explicitly.
+  if (is.null(configuration$forbiddenExps)
+      && !is.null.or.empty(configuration$forbiddenFile)) {
     configuration$forbiddenFile <- path.rel2abs(configuration$forbiddenFile)
     file.check (configuration$forbiddenFile, readable = TRUE,
                 text = "forbidden candidates file")
@@ -273,6 +280,9 @@ checkConfiguration <- function(configuration = defaultConfiguration())
              function(x) substitute(is.na(x) | !(x), list(x = x)))
     # FIXME: Check that the parameter names that appear in forbidden
     # all appear in parameters$names to catch typos.
+    cat("# ", length(configuration$forbiddenExps),
+        " expression(s) specifying forbidden configurations read from '",
+        configuration$forbiddenFile, "'\n", sep="")
   }
 
   # Make it NULL if it is "" or NA
