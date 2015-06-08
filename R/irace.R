@@ -296,7 +296,6 @@ irace.init <- function(configuration)
 {
   # Generate instance + seed list 
   configuration$instancesList <- generateInstances(configuration)
-  .irace$next.instance <- 1
   # We need to do this here to use/recover .Random.seed later.
   if (is.na(configuration$seed)) {
     configuration$seed <- trunc(runif(1, 1, .Machine$integer.max))
@@ -338,7 +337,6 @@ irace <- function(tunerConfig = stop("parameter `tunerConfig' is mandatory."),
   }
   
   tunerConfig <- checkConfiguration(defaultConfiguration(tunerConfig))
-  tunerConfig <- irace.init (tunerConfig)
   
   # Recover state from file?
   if (!is.null(tunerConfig$recoveryFile)){
@@ -346,6 +344,7 @@ irace <- function(tunerConfig = stop("parameter `tunerConfig' is mandatory."),
          tunerConfig$recoveryFile,"'\n", sep="")
     recoverFromFile(tunerConfig$recoveryFile)
   } else {
+    tunerConfig <- irace.init (tunerConfig)
     debugLevel <- tunerConfig$debugLevel
     # Set options controlling debug level.
     # FIXME: This should be the other way around, the options set the debugLevel.
@@ -465,7 +464,7 @@ irace <- function(tunerConfig = stop("parameter `tunerConfig' is mandatory."),
 
   startParallel(tunerConfig)
   on.exit(stopParallel())
-  
+
   while (TRUE) {
     # Recovery info 
     tunerResults$state <- list(.Random.seed = .Random.seed, 
@@ -648,8 +647,8 @@ irace <- function(tunerConfig = stop("parameter `tunerConfig' is mandatory."),
     if (debugLevel >= 1) {
       cat(sep="", "# ", format(Sys.time(), usetz=TRUE), ": Launch race\n")
     }
-#prevExperiments =  tunerResults$experiments[tunerResults$experiments[,"iteration"] %in% c(indexIteration), 
-#                                                             c("instance",as.character(testCandidates$.ID.))],
+
+    .irace$next.instance <- max(tunerResults$experiments$instance, 0) + 1
     raceResults <- oneIterationRace (tunerConfig = tunerConfig,
                                      candidates = testCandidates,
                                      parameters = parameters, 
