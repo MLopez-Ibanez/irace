@@ -115,7 +115,7 @@ hook.evaluate.default <- function(experiment, num.candidates, config, hook.run.c
   ## Redirects STDERR so outputRaw captures the whole output.
   command <- paste (hookEvaluate, experiment$instance, experiment$id, num.candidates, "2>&1")
   if (debugLevel >= 1) {
-    cat (format(Sys.time(), usetz=TRUE), ":", command, "\n")
+    irace.note (command, "\n")
   }
   cwd <- setwd (execDir)
   # FIXME: This should use runcommand like hook.run.default
@@ -145,7 +145,7 @@ hook.run.default <- function(experiment, config)
   
   runcommand <- function(command, args) {
     if (debugLevel >= 1) {
-      cat (format(Sys.time(), usetz=TRUE), ":", command, args, "\n")
+      irace.note (command, " ", args, "\n")
       elapsed <- proc.time()["elapsed"]
     }
     err <- NULL
@@ -162,13 +162,12 @@ hook.run.default <- function(experiment, config)
     if (!is.null(err)) {
       err <- paste(err, collapse ="\n")
       if (debugLevel >= 1)
-        cat (format(Sys.time(), usetz=TRUE), ": ERROR (", candidate.id,
-             ") :", err, "\n")
+        irace.note ("ERROR (", candidate.id, ") :", err, "\n")
       return(list(output = output, error = err))
     }
     if (debugLevel >= 1) {
-      cat (format(Sys.time(), usetz=TRUE), ": DONE (", candidate.id,
-           ") Elapsed: ", proc.time()["elapsed"] - elapsed, "\n")
+      irace.note ("DONE (", candidate.id, ") Elapsed: ",
+                  proc.time()["elapsed"] - elapsed, "\n")
     }
     return(list(output = output, error = NULL))
   }
