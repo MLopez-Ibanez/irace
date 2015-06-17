@@ -22,10 +22,20 @@ endif
 SVN_REV = $(shell sh -c 'cat svn_version 2> /dev/null')
 REVNUM = $(shell sh -c 'cat svn_version | tr -d -c "[:digit:]" 2> /dev/null')
 
-.PHONY : build check clean install pdf rsync version bumpdate submit cran winbuild
+.PHONY : help build check clean install pdf rsync version bumpdate submit cran winbuild
+
 
 install: version clean
 	cd $(BINDIR) && R CMD INSTALL $(INSTALL_FLAGS) $(PACKAGEDIR)
+
+help:
+	@echo "install    install the package"
+	@echo "build      build the package as a tar.gz file"
+	@echo "check      build the package and run 'R CMD check'"
+	@echo "rsync      copy the package and install it on $(RNODE)"
+	@echo "cran       build the package and run 'R CMD check --as-cran'"
+	@echo "winbuild   submit the package to the windows builder service"
+	@echo "submit     submit the package to CRAN (read DEVEL-README first)"
 
 build : bumpdate clean
 	cd $(BINDIR) &&	R CMD build $(PACKAGEDIR)
