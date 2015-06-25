@@ -510,7 +510,7 @@ irace <- function(tunerConfig = stop("parameter `tunerConfig' is mandatory."),
         return (eliteCandidates)
       }
     }
-    # Compute the current budget (nb of experiments for this iteration)
+    # Compute the current budget (nb of experiments for this iteration),
     # or take the value given as parameter.
     currentBudget <-
       ifelse (tunerConfig$nbExperimentsPerIteration == 0,
@@ -519,13 +519,27 @@ irace <- function(tunerConfig = stop("parameter `tunerConfig' is mandatory."),
               tunerConfig$nbExperimentsPerIteration)
     currentBudget <- floor (currentBudget)
     
-    # Compute the number of candidate configurations for this race or
-    # take the value given as a parameter.
-    nbCandidates <- ifelse (tunerConfig$nbCandidates == 0,
-                            computeNbCandidates(currentBudget, indexIteration,
-                                                max(tunerConfig$mu,
-                                                    tunerConfig$firstTest)),
-                            tunerConfig$nbCandidates)
+    # Compute the number of candidate configurations for this race.
+    nbCandidates <- computeNbCandidates(currentBudget, indexIteration,
+                                        max(tunerConfig$mu,
+                                            tunerConfig$firstTest))
+
+    # If a value was given as a parameter, then this value limits the maximum,
+    # but if we have budget only for less than this, then we have run out of
+    # budget.
+    if (tunerConfig$nbCandidates > 0) {
+      if (tunerConfig$nbCandidates < nbCandidates) {
+        nbCandidates <- tunerConfig$nbCandidates
+      } else if (currentBudget < remainingBudget) {
+        # We skip one iteration
+        indexIteration <- indexIteration + 1
+        next
+      } else {
+        catInfo("Stopped because ",
+                "there is no enough budget to enforce the value of nbCandidates")
+        return (eliteCandidates)
+      }
+    }
 
     # Stop if  the number of candidates to produce is not greater than
     # the number of elites...
@@ -646,7 +660,7 @@ irace <- function(tunerConfig = stop("parameter `tunerConfig' is mandatory."),
     }
 
     if (debugLevel >= 1) {
-      cat(sep="", "# ", format(Sys.time(), usetz=TRUE), ": Launch race\n")
+      irace.note("Launch race\n")
     }
 
     .irace$next.instance <- max(tunerResults$experiments$instance, 0) + 1
