@@ -1,3 +1,5 @@
+import("stats")
+import("utils")
 export(irace.version,irace.license)
 export(irace.cmdline,irace.usage,irace.main,irace)
 # FIXME: export sampleUniform, sampleModel and other useful functions.
