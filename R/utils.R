@@ -20,8 +20,8 @@ irace.reload.debug <- function(package = "irace")
 ## FIXME: rename this function to irace.error
 tunerError <- function(...)
 {
-  # The default is only 1000, which is too small. 8170 was the maximum
-  # value allowed in R 2.14.1
+  # The default is only 1000, which is too small. 8170 is the maximum
+  # value allowed up to R 3.0.2
   op <- options(warning.length = 8170)
   on.exit(options(op))
   stop (.irace.prefix, ..., call. = FALSE)
@@ -90,7 +90,9 @@ file.check <- function (file, executable = FALSE, readable = executable,
 }
 
 is.wholenumber <- function(x, tol = .Machine$double.eps^0.5)
-  { abs(x - round(x)) < tol }
+{
+  abs(x - round(x)) < tol
+}
 
 is.null.or.na <- function(x)
 {
@@ -103,7 +105,9 @@ is.null.or.empty <- function(x)
 }
 
 strcat <- function(..., collapse = NULL)
+{
   do.call(paste, args=list(..., sep="", collapse = collapse))
+}
 
 # FIXME: Isn't a R function to do this? More portable?
 canonical.dirname <- function(dirname = stop("required parameter"))
@@ -325,7 +329,7 @@ candidates.print.command <- function(cand, parameters)
   rownames(cand) <- cand$.ID.
   cand <- removeCandidatesMetaData(cand)
   cand <- cand[, unlist(parameters$names), drop = FALSE]
-  # A better way to do this? We cannot use apply() because the coerces
+  # A better way to do this? We cannot use apply() because that coerces
   # to a character matrix thus messing up numerical values.
   for(i in 1:nrow(cand)) {
     cat(sprintf("%-*d %s\n", nchar(nrow(cand)), i,
@@ -347,7 +351,7 @@ mpiInit <- function(nslaves, debugLevel = 0)
     ## if (! suppressPackageStartupMessages(
     ##       requireNamespace("Rmpi", quietly = TRUE)))
     if (! require("Rmpi", quietly = TRUE))
-      tunerError("The `Rmpi' package is required for using MPI.")
+      tunerError("The 'Rmpi' package is required for using MPI")
     
     # FIXME: We should do this when irace finalizes.
     # When R exits, finalize MPI.
@@ -360,13 +364,21 @@ mpiInit <- function(nslaves, debugLevel = 0)
         # it does not fail gracefully but produces an annoying:
         # Warning message: running command 'ls *.30577+1.*.log 2>/dev/null' had status 2
         Rmpi::mpi.close.Rslaves(dellog = FALSE)
-      # This is what mpi.finalize does, minus the annoying message: "Exiting
-      # Rmpi. Rmpi cannot be used unless relaunching R", which we do not care
-      # about because this finalizer should only be called when exiting R.
-      .Call("mpi_finalize", PACKAGE = "Rmpi")
+      # We would like to use .Call("mpi_finalize", PACKAGE = "Rmpi"), which is
+      # what mpi.finalize does, minus the annoying message: "Exiting Rmpi. Rmpi
+      # cannot be used unless relaunching R", which we do not care about
+      # because this finalizer should only be called when exiting R.
+      capture.output(Rmpi::mpi.finalize(),
+                     file = if (.Platform$OS.type == 'windows') 'NUL' else '/dev/null')
     }, onexit = TRUE)
 
     # Create slaves
-    Rmpi::mpi.spawn.Rslaves(nslaves = nslaves, quiet = (debugLevel == 0))
+    #  needlog: a logical. If TRUE, R BATCH outputs will be saved in log
+    #           files.  If FALSE, the outputs will send to /dev/null.
+    #  quiet: a logical. If TRUE, do not print anything unless an error occurs.
+    #         If FALSE, prints to stdio how many slaves are successfully
+    #         spawned and where they are running.
+    Rmpi::mpi.spawn.Rslaves(nslaves = nslaves, quiet = (debugLevel < 2),
+                            needlog = (debugLevel > 0))
   }
 }
