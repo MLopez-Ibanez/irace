@@ -1,8 +1,9 @@
+1.07
+
  * The best configurations found, either at the end or at each iteration of an
    irace run, can now be applied to a set of test instances different from the
    training instances. See options testInstanceDir, testInstanceFile,
    testNbElites, and testIterationElites. (Leslie Perez, Manuel López-Ibáñez)
-
 
 1.06
 
