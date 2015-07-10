@@ -6,7 +6,7 @@ Date: 2015-07-10
 Maintainer: Manuel López-Ibáñez <manuel.lopez-ibanez@ulb.ac.be>
 Author: Manuel López-Ibáñez, Jérémie Dubois-Lacoste, Leslie Pérez Cáceres,
         Thomas Stützle, Mauro Birattari, Eric Yuan and Prasanna Balaprakash
-Description: Iterated racing for automatic algorithm configuration
+Description: Iterated racing for automatic algorithm configuration.
 Depends: R (>= 2.14.0)
 Imports: stats, utils
 Suggests: Rmpi (>= 0.6.0), parallel
