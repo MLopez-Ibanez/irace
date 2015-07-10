@@ -1,15 +1,15 @@
-irace: An implementation in R of Iterated Race.
+irace: An implementation in R of Iterated Race
 ===============================================
 
-Manuel López-Ibáñez
-Jérémie Dubois-Lacoste
-Contact email: irace@iridia.ulb.ac.be
+Manuel López-Ibáñez   
+Jérémie Dubois-Lacoste  
+Contact email: irace@iridia.ulb.ac.be  
 
 
 Requisites
 ----------
 
- * R (http://www.r-project.org/) is required for running irace, but
+ * R (<http://www.r-project.org>) is required for running irace, but
    you don't need to know the R language to use it.
    Versions that work: >= 2.14.0
    (See Installing R below for a quick install guide)
@@ -21,9 +21,8 @@ Requisites
 Installing R
 ------------
 
-The official instructions are available here:
-
-    http://cran.r-project.org/doc/manuals/r-release/R-admin.html
+The official instructions are available at
+<http://cran.r-project.org/doc/manuals/r-release/R-admin.html>
 
 We give below a quick installation guide that will work in most cases.
 
@@ -40,9 +39,8 @@ prompt install the irace package. See instructions below.
 
 ### OS X ###
 
-You can install R directly from a CRAN mirror (the link is of the Belgian one):
-
-    http://cran.freestatistics.org/bin/macosx/
+You can install R directly from a CRAN mirror (the link of the Belgian one is
+<http://cran.freestatistics.org/bin/macosx/>)
 
 Alternatively, if you use homebrew, you can just brew the R formula
 from the science tap (unfortunately it does not come already bottled
@@ -57,9 +55,8 @@ instructions below.
 
 ### Windows ###
 
-You can install R from a CRAN mirror (the link is of the Belgian one):
-
-    http://cran.freestatistics.org/bin/windows/
+You can install R from a CRAN mirror (the link for the Belgian one is
+<http://cran.freestatistics.org/bin/windows/>)
 
 Once R is installed, you can launch the R console and install the
 irace package from it. See instructions below.
@@ -68,8 +65,8 @@ irace package from it. See instructions below.
 Installing the irace package
 ----------------------------
 
-Install the [irace][1] R package on your computer. There are two
-methods:
+Install the [irace](http://iridia.ulb.ac.be/irace) R package on your
+computer. There are two methods:
 
 1. Install within R (automatic download):
 
@@ -81,8 +78,9 @@ methods:
         > library(irace)
         > CTRL+d
 
-2. Manually [download the package from CRAN][2] and invoke at the
-   command-line:
+2. Manually
+   [download the package from CRAN](http://cran.r-project.org/package=irace)
+   and invoke at the command-line:
 
         $ R CMD INSTALL <package>
 
@@ -104,6 +102,7 @@ Once installed, test that it is working by doing:
     > library(irace)
     > system.file(package="irace")
     [1] "~/R/irace"
+
 
 ### GNU/Linux and OS X ###
 
@@ -129,10 +128,6 @@ launch irace, you need to open the R console and execute:
     R> irace.cmdline("--help")
 
 
- [1]: http://iridia.ulb.ac.be/irace
- [2]: http://cran.r-project.org/package=irace
-
-
 Usage
 -------
 
@@ -144,31 +139,26 @@ Usage
 2. Copy the template and example files to the tuning directory
 
         $ cp $IRACE_HOME/templates/*.tmpl .
-
-   where `$IRACE_HOME` is the path to the installation directory of
-   `irace`. It can be obtained by doing:
+    where `$IRACE_HOME` is the path to the installation directory of
+    `irace`. It can be obtained by doing:
 
         $ R
         > library(irace)
         > system.file(package="irace")
 
-
 3. For each template in your tuning directory, remove the `.tmpl`
    suffix, and modify them following the instructions in each file. In
    particular,
-
- * `tune-main.tmpl` should be adjusted depending on your usage
-   (local, cluster, etc).
-
- * The scripts `hook-run`, `hook-evaluate` (if you need it at all) and
-   `tune-main` should be executable. The output of `hook-run` (or
-   `hook-evaluate` if you use a separate evaluation step) is minimized by
-   default. If you wish to maximize it, just multiply the value by `-1` within
-   the script.
-
- * In `tune-conf`, uncomment and assign only the parameters for which
-   you need a value different than the default one.
-
+   *  `tune-main.tmpl` should be adjusted depending on your usage
+       (local, cluster, etc).
+   *  The scripts `hook-run`, `hook-evaluate` (if you need it at all) and
+      `tune-main` should be executable. The output of `hook-run` (or
+      `hook-evaluate` if you use a separate evaluation step) is minimized by
+      default. If you wish to maximize it, just multiply the value by `-1`
+      within the script.
+   *  In `tune-conf`, uncomment and assign only the parameters for which
+      you need a value different than the default one.
+   
    There are examples in `$IRACE_HOME/examples/`.
 
 4. Put the instances in `~/tuning/Instances/`. In addition, you can
@@ -183,9 +173,9 @@ Usage
 
         $ cd ~/tuning/ && $IRACE_HOME/bin/irace
 
-   performs one run of Iterated Race. See the output of `irace --help`
-   for additional configuration parameters. Command-line parameters
-   override the configuration specified in the tune-conf file.
+    performs one run of Iterated Race. See the output of `irace --help` for
+    additional configuration parameters. Command-line parameters override the
+    configuration specified in the tune-conf file.
 
 
 Many tuning runs in parallel
@@ -222,29 +212,29 @@ parallel. There are three ways to parallelize a single run of irace.
    `hookRun` in parallel. The user is responsible to set up MPI
    correctly.
 
-   An example script for using MPI mode in an SGE cluster is given at
-   `$IRACE_HOME/examples/mpi/`.
+    An example script for using MPI mode in an SGE cluster is given at
+    `$IRACE_HOME/examples/mpi/`.
 
 3. SGE cluster: This mode requires Grid Engine commands qsub and
    qstat. The command qsub should return a message that contains the
    string: `Your job JOBID`. The command `qstat -j JOBID` should return
    nonzero if JOBID has finished, otherwise it should return zero.
 
-   The option `--sge-cluster 1` will launch as many calls
-   of `hookRun` as possible and use `qstat` to wait for cluster
-   jobs. The user *must* call `qsub` from `hookRun` with the appropriate
-   configuration for their cluster, otherwise `hookRun` will not submit
-   jobs to the cluster. In this mode, irace must run in the submission
-   node, and hence, qsub should not be used to invoke irace (either
-   directly or through tune-main).  You also need to create a separate
-   hookEvaluate script to parse the results of the hookRun and return
-   them to irace. See the examples in `$IRACE_HOME/examples/sge-cluster/`.
+    The option `--sge-cluster 1` will launch as many calls of `hookRun` as
+    possible and use `qstat` to wait for cluster jobs. The user *must* call
+    `qsub` from `hookRun` with the appropriate configuration for their cluster,
+    otherwise `hookRun` will not submit jobs to the cluster. In this mode,
+    irace must run in the submission node, and hence, qsub should not be used
+    to invoke irace (either directly or through tune-main).  You also need to
+    create a separate hookEvaluate script to parse the results of the hookRun
+    and return them to irace. See the examples in
+    `$IRACE_HOME/examples/sge-cluster/`.
 
 
 Frequently Asked Questions
 --------------------------
 
-###### Is irace minimizing or maximizing the output of my algorithm? ######
+#### Is irace minimizing or maximizing the output of my algorithm? ####
 
 By default, irace considers that the value returned by `hook-run` (or by
 `hook-evaluate`, if used) should be minimized. In case of a maximization
@@ -253,18 +243,18 @@ irace. This is done, for example, when maximizing the hypervolume (see the last
 lines in `$IRACE_HOME/examples/hypervolume/hook-evaluate`).
 
 
-###### Is it possible to configure a MATLAB algorithm with irace?  ######
+#### Is it possible to configure a MATLAB algorithm with irace?  ####
 
 Definitely. There are two main ways to achieve this:
 
 1. Edit the hook-run script to call MATLAB in a non-interactive
    way. See the MATLAB documentation, or the following links:
-   http://stackoverflow.com/questions/1518072/suppress-start-message-of-matlab/
-   http://stackoverflow.com/questions/4611195/how-to-call-matlab-from-command-line-and-print-to-stdout-before-exiting
+   <http://stackoverflow.com/questions/1518072/suppress-start-message-of-matlab/>
+   <http://stackoverflow.com/questions/4611195/how-to-call-matlab-from-command-line-and-print-to-stdout-before-exiting>
 
-   You would need to pass the parameter received by hook-run to your
-   MATLAB script:
-   http://www.mathworks.nl/support/solutions/en/data/1-1BS5S/?solution=1-1BS5S
+    You would need to pass the parameter received by hook-run to your MATLAB
+    script:
+    <http://www.mathworks.nl/support/solutions/en/data/1-1BS5S/?solution=1-1BS5S>
 
 2. Call MATLAB code directly from R using
    [R.matlab package](http://cran.r-project.org/package=R.matlab). This
@@ -273,11 +263,10 @@ Definitely. There are two main ways to achieve this:
    call your MATLAB code with appropriate parameters.
 
 
-###### My program works perfectly on its own, but not when running under
-       irace. Is irace broken?  ######
+##### My program works perfectly on its own, but not when running under irace. Is irace broken?  ####
 
 Every time this was reported, it was a difficult-to-reproduce bug in
-the program, not in irace.  We recommend that in hook-run, you use
+the program, not in irace.  We recommend that in `hook-run`, you use
 `valgrind` to run your program. That is, if you program is called like:
 
     $EXE ${FIXED_PARAMS} -i $INSTANCE ${CAND_PARAMS} 1> ${STDOUT} 2> ${STDERR}
@@ -290,8 +279,7 @@ If there are bugs in your program, they will appear in `${STDERR}`,
 thus do not delete those files.
 
 
-###### My program may be buggy and run into an infinite loop. Is it
-       possible to set a maximum timeout?  ######
+#### My program may be buggy and run into an infinite loop. Is it possible to set a maximum timeout?  ####
 
 We are not aware of any way to achieve this using R. However, in
 GNU/Linux, it is easy to implement by using the `timeout` command in
