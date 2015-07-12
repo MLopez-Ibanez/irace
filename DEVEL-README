@@ -56,11 +56,17 @@ RELEASE Process:
 
 5. "make winbuild" passes. Wait for email and check logs!
 
-6. Update NEWS (add version number on top)
+6. Send package to the maintainers of the packages listed in
+   "Reverse suggests" or "Reverse depend" at
+   http://cran.r-project.org/web/packages/irace/ so they can check we do not
+   break their packages (this step would be automatic once ./check-reverse
+   above works). If everything is OK, continue, otherwise fix and goto 1.
 
-7. make closeversion
+7. Update NEWS (add version number on top)
 
-8. Use http://cran.r-project.org/submit.html to submit
+8. make closeversion
+
+9. Use http://cran.r-project.org/submit.html to submit
    Read http://cran.r-project.org/web/packages/policies.html
 
 
