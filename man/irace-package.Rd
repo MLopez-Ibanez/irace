@@ -13,7 +13,7 @@ Iterated racing for Automatic Algorithm Configuration
 Package: \tab irace\cr
 Type: \tab Package\cr
 Version: \tab 1.07 \cr
-Date: \tab 2015-07-10 \cr
+Date: \tab 2015-07-12 \cr
 License: \tab GPL (>= 2)\cr
 LazyLoad: \tab yes\cr
 }
@@ -87,8 +87,11 @@ parameters <- readParameters(text = parameters.table)
 ## configuration on a single instance. For simplicity, we restrict to
 ## three-dimensional functions and we set the maximum number of
 ## iterations of SANN to 5000.
-hook.run <- function(instance, candidate, extra.params = NULL, config = list())
+hook.run <- function(experiment, config = list())
 {
+  instance <- experiment$instance
+  candidate <- experiment$candidate
+
   D <- 3
   par <- runif(D, min=-1, max=1)
   fn <- function(x) {
@@ -97,8 +100,8 @@ hook.run <- function(instance, candidate, extra.params = NULL, config = list())
   }
   res <- optim(par,fn, method="SANN",
                control=list(maxit=5000
-                 , tmax = as.numeric(candidate$values[["tmax"]])
-                 , temp = as.numeric(candidate$values[["temp"]])
+                 , tmax = as.numeric(candidate[["tmax"]])
+                 , temp = as.numeric(candidate[["temp"]])
                  ))
   return(res$value)
 }
