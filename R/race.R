@@ -128,29 +128,17 @@ race<-function(maxExp=0,
       length(race.info$no.tasks)!=1 ||
       !is.finite(race.info$no.tasks) ||
       race.info$no.tasks!=as.integer(race.info$no.tasks)||
-      # race.info$no.subtasks is a non-compulsory integer.
-      (!is.na(match("no.subtasks",names(race.info)))&&
-      (!is.numeric(race.info$no.subtasks) ||
-       (length(race.info$no.subtasks)!=1 &&
-        length(race.info$no.subtasks)!=race.info$no.tasks) ||
-       any(!is.finite(race.info$no.subtasks)) ||
-       any(race.info$no.subtasks!=as.integer(race.info$no.subtasks))))||
       # race.info$extra is a non-compulsory string or paragraph.
       (!is.na(match("extra",names(race.info)))&&
        !is.character(race.info$extra)))
     stop(paste("Function \"",.slave.info.function,
                "\" returned an invalid object",sep=""))
 
-  # Default for no.subtasks
-  if (is.na(match("no.subtasks",names(race.info))))
-    race.info$no.subtasks <- 1
-
   # copy race.info contents to workspace for convenience
   # LESLIE: Why is it used this race.info variable?
   race.name     <- race.info$race.name
   no.candidates <- race.info$no.candidates
   no.tasks      <- race.info$no.tasks
-  no.subtasks   <- race.info$no.subtasks   
 
   # Prepare a precis for documentation
   format.precis <- function(title, value) {
@@ -167,11 +155,6 @@ race<-function(maxExp=0,
                 format.precis("Race name",race.name),
                 format.precis("Number of candidates",no.candidates),
                 format.precis("Number of available tasks",no.tasks),
-                ifelse(length(no.subtasks)>1,
-                       format.precis("Subtasks per task","task-dependent"),
-                       ifelse(no.subtasks>1,
-                              format.precis("Subtasks per task",no.subtasks),
-                              "")),
                 format.precis("Max number of experiments",
                               ifelse(maxExp,maxExp,"unlimited")),
                 format.precis("Statistical test",
@@ -215,42 +198,34 @@ race<-function(maxExp=0,
   }
   
   check.result <- function(result){
-    expected.length <- ifelse(length(no.subtasks)==1,
-                            no.subtasks,
-                            no.subtasks[current.task])
+    expected.length <- 1
     if (length(result)!=expected.length)
       stop(paste("Bad output returned by \"",
                  .slave.wrapper.function,"\"",sep=""))
   }
   
   # Initialize some variables...
-  Tasks   <- 1:no.tasks
   Results <- matrix(data=NA,
-                    nrow=ifelse(length(no.subtasks)==1,
-                    no.tasks*no.subtasks,sum(no.subtasks)),
-                    ncol=no.candidates)
+                    nrow = first.test,
+                    ncol = no.candidates)
   Time <- matrix(data = NA,
-                 nrow = ifelse(length(no.subtasks) == 1,
-                 no.tasks * no.subtasks, sum(no.subtasks)),
+                 nrow = first.test,
                  ncol = no.candidates)
   alive <- array(TRUE,no.candidates)
   no.experiments.sofar <- 0
-  no.subexperiments.sofar <- 0
   best <- 0
   race.ranks <- c()
   no.tasks.sofar <- 0
-  no.subtasks.sofar <- 0
   
   # Define some functions...
   # FIXME: Keep only what we need!
   log.list <- function(end=FALSE){
     timestamp.current <- date()
     log <- list(precis=precis,
-              results=Results[1:no.subtasks.sofar,],
-              time = Time[1:no.subtasks.sofar, ],
+              results=Results[1:no.tasks.sofar,],
+              time = Time[1:no.tasks.sofar, ],
               no.candidates=no.candidates,
               no.tasks=no.tasks.sofar,
-              no.subtasks=no.subtasks,
               no.experiments=no.experiments.sofar,
               no.alive=sum(alive),
               alive=alive,
@@ -263,8 +238,8 @@ race<-function(maxExp=0,
     if (end) {
       log <- c(log,list(timestamp.end=timestamp.current,
                       description.best=description.best,
-                      alive.inTime=ifelse(no.subtasks.sofar>1,
-		      	apply(Results[1:no.subtasks.sofar,],
+                      alive.inTime=ifelse(no.tasks.sofar > 1,
+		      	apply(Results[1:no.tasks.sofar,],
                         	1,function(u){sum(!(is.na(u)))}),
 			sum(!is.na(Results[1,])))))
     } else {
@@ -313,8 +288,8 @@ race<-function(maxExp=0,
   aux.friedman <- function(){
     if (no.alive==2) {
       # If only 2 candidates are left, switch to Wilcoxon
-      V1 <- Results[1:(no.subtasks.sofar),which.alive[1]]
-      V2 <- Results[1:(no.subtasks.sofar),which.alive[2]]
+      V1 <- Results[1:no.tasks.sofar,which.alive[1]]
+      V2 <- Results[1:no.tasks.sofar,which.alive[2]]
       PVAL <- wilcox.test(V1,V2,paired=TRUE,exact=FALSE)$p.value
       if (!is.nan(PVAL)&&!is.na(PVAL)&&(PVAL<1-conf.level)){
         if (interactive)
@@ -341,7 +316,7 @@ race<-function(maxExp=0,
       }
     }else{
       # If more then 2 candidates are left, use Friedman
-      J <- aux2.friedman(Results[1:(no.subtasks.sofar),],which.alive,
+      J <- aux2.friedman(Results[1:no.tasks.sofar,],which.alive,
                        conf.level=conf.level)
       alive[-J] <<- FALSE
       best <<- J[1]
@@ -356,7 +331,7 @@ race<-function(maxExp=0,
     mean.all <- array(0,c(ncol(Results)))
     for (j in 1:ncol(Results))
       # FIXME: why not just mean() ?
-      mean.all[j] <- sum(Results[1:no.subtasks.sofar,j]/no.subtasks.sofar)
+      mean.all[j] <- sum(Results[1:no.tasks.sofar,j]/no.tasks.sofar)
     # FIXME: which.min?
     best<<-match(min(mean.all[alive]),mean.all)
     race.ranks <<- mean.all[alive]
@@ -364,8 +339,8 @@ race<-function(maxExp=0,
     PJ<-array(0,dim=c(2,0))
     for (j in which.alive) {
       # FIXME: This doesn't seem to change so it could be outside the for()
-      Vb <- Results[1:no.subtasks.sofar,best]
-      Vj <- Results[1:no.subtasks.sofar,j]
+      Vb <- Results[1:no.tasks.sofar,best]
+      Vj <- Results[1:no.tasks.sofar,j]
       #cat("Vb:", Vb, "\n")
       #cat("Vj:", Vj, "\n")
       # t.test may fail if the data in each group is almost
@@ -421,38 +396,30 @@ race<-function(maxExp=0,
     if (no.alive==1)
       break
 
-    current.no.subtasks <- ifelse(length(no.subtasks)==1,
-                                no.subtasks,
-                                no.subtasks[current.task])
-    
-    if (length(no.subtasks)==1) {
-      subtasks.range<-
-        (current.task-1)*no.subtasks+1:no.subtasks
-    } else {
-      subtasks.range<-
-        cumsum(c(0,no.subtasks))[current.task]+1:no.subtasks[current.task]
-    }
-
     # Execute test  
     output <- do.call (.slave.wrapper.function,
                        list(race.data$candidates, race.data$race.instances[current.task],
                        which.alive, race.data))
+
     # Extract results
     for (i in 1:length(which.alive)){
       current.candidate <- which.alive[i]
       result <- output[[i]]
       check.result(result[1])
-      Results[subtasks.range, current.candidate] <- result[1]
-      if(length(result)>1)
-        Time[subtasks.range, current.candidate] <- result[2]
+      if (nrow(Results) < current.task) {
+        Results <- rbind(Results,
+                         matrix(data=NA, nrow = each.test,
+                                ncol = no.candidates))
+        Time <- rbind(Time, matrix(data=NA, nrow = each.test,
+                                   ncol = no.candidates))
+      }
+      Results[current.task, current.candidate] <- result[1]
+      if (length(result)>1)
+        Time[current.task, current.candidate] <- result[2]
     }
 
-    no.experiments.sofar<-no.experiments.sofar+no.alive
-    no.subexperiments.sofar<-no.subexperiments.sofar+
-      current.no.subtasks*no.alive
-    
-    no.tasks.sofar<-no.tasks.sofar+1
-    no.subtasks.sofar<-no.subtasks.sofar+current.no.subtasks
+    no.experiments.sofar<-no.experiments.sofar + no.alive
+    no.tasks.sofar <- no.tasks.sofar + 1
 
     # Update next instance
     .irace$next.instance <- max(.irace$next.instance, race.data$race.instances[current.task]+1)
@@ -471,12 +438,12 @@ race<-function(maxExp=0,
     } else {
       if (interactive)
         cat("|x|")
-      if (no.subtasks.sofar==1)  {
+      if (no.tasks.sofar == 1)  {
         # FIXME: Shouldn't these be ranks when stat.test == "friedman" ?
         race.ranks <- Results[1,]
         best <- order(race.ranks)[1]
       } else  {
-        tmpResults <- Results[1:no.subtasks.sofar, which.alive]
+        tmpResults <- Results[1:no.tasks.sofar, which.alive]
         irace.assert(!any(is.na(tmpResults)))
         if (stat.test == "friedman") {
           race.ranks <- colSums(t(apply(tmpResults, 1, rank)))
@@ -493,7 +460,7 @@ race<-function(maxExp=0,
     irace.assert(length(race.ranks) == sum(alive))
     # FIXME: This is the mean of the best, but perhaps it should be
     # the sum of ranks in the case of test == friedman?
-    mean.best <- mean(Results[1:no.subtasks.sofar, best])
+    mean.best <- mean(Results[1:no.tasks.sofar, best])
 
     if (interactive) 
       cat(paste(formatC(no.tasks.sofar,width=11),"|",
