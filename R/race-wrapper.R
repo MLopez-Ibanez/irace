@@ -19,6 +19,8 @@ buildCommandLine <- function(values, switches) {
 ## FIXME: function needs a description
 race.init <- function(candidates, parameters, config)
 {
+  # FIXME: This is quite a waste of time. It will be better to pass the index
+  # around.
   race.instances <- seq(.irace$next.instance, nrow(config$instancesList))
   # Return init list
   return (list (no.candidates = nrow(candidates), 
