@@ -294,13 +294,16 @@ stopParallel <- function()
 
 irace.init <- function(configuration)
 {
-  # Generate instance + seed list 
-  configuration$instancesList <- generateInstances(configuration)
   # We need to do this here to use/recover .Random.seed later.
   if (is.na(configuration$seed)) {
     configuration$seed <- trunc(runif(1, 1, .Machine$integer.max))
   }
   set.seed(configuration$seed)
+  
+  ## FIXME: It would be much better to generate instances at the start of each
+  ## race if we need them at all.
+  # Generate instance + seed list 
+  configuration$instancesList <- generateInstances(configuration)
   return(configuration)
 }
 
