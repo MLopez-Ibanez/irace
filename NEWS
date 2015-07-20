@@ -9,6 +9,10 @@
    See help(hook.run.default) and help(hook.evaluate.default) for examples of
    the new interfaces.
 
+ * Reduce memory use for very large values of maxExperiments.  
+   (Manuel López-Ibáñez, thanks to Federico Caselli for identifying the issue)
+
+
 1.06
 
  * Fix bug that could introduce spurious whitespace when printing the
