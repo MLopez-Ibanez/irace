@@ -51,8 +51,6 @@ race<-function(maxExp=0,
                stop.min.cand=1,
                ...){
 
-  timestamp.start <- date()
-
   # Change warning behavior
   .race.warn.save <- getOption("warn")
   on.exit(options(warn=.race.warn.save))
@@ -220,7 +218,6 @@ race<-function(maxExp=0,
   # Define some functions...
   # FIXME: Keep only what we need!
   log.list <- function(end=FALSE){
-    timestamp.current <- date()
     log <- list(precis=precis,
               results=Results[1:no.tasks.sofar,],
               time = Time[1:no.tasks.sofar, ],
@@ -231,19 +228,17 @@ race<-function(maxExp=0,
               alive=alive,
               best=best,
               mean.best=mean.best,
-              timestamp.start=timestamp.start,
 	      race.data=race.data,
               ranks = race.ranks)
 
     if (end) {
-      log <- c(log,list(timestamp.end=timestamp.current,
-                      description.best=description.best,
+      log <- c(log,list(description.best=description.best,
                       alive.inTime=ifelse(no.tasks.sofar > 1,
 		      	apply(Results[1:no.tasks.sofar,],
                         	1,function(u){sum(!(is.na(u)))}),
 			sum(!is.na(Results[1,])))))
     } else {
-      log <- c(log,list(timestamp.current=timestamp.current))
+      log <- log
     }
     return(log)
   }
