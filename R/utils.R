@@ -15,6 +15,20 @@ irace.reload.debug <- function(package = "irace")
   paste("An unexpected condition occurred.",
         "Please report this bug to the authors of the irace package <http://iridia.ulb.ac.be/irace>")
 
+irace.print.memUsed <- function(objects)
+{
+  envir <- parent.frame()
+  if (missing(objects)) {
+    objects <- ls(envir = envir, all.names = TRUE)
+  }
+  x <- sapply(objects, function(name)
+              object.size(get(name, envir = envir)) / 1024)
+  # Do not print anything that is smaller than 10 Kb
+  x <- x[x > 10]
+  cat(sep="", sprintf("%30s : %17.1f Kb\n", names(x), x))
+  cat(sep="", sprintf("%30s : %17.1f Mb\n", "Total", sum(x) / 1024))
+}
+
 # Print a user-level fatal error message, when the calling context
 # cannot help the user to understand why the program failed.
 ## FIXME: rename this function to irace.error

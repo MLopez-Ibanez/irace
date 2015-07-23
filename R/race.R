@@ -491,6 +491,11 @@ race<-function(maxExp=0,
       cat("\n\n")
     }
   }
+
+  if (race.data$config$debugLevel >= 3) {
+    irace.note ("Memory used in race():\n")
+    irace.print.memUsed()
+  }
   
   # Build the return variable with everything inside: 
   invisible(log.list(end=TRUE))

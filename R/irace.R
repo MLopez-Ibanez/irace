@@ -259,6 +259,11 @@ oneIterationRace <-
   if (result$no.alive < nrow(candidates))
     irace.assert(!any(as.logical(candidates[(result$no.alive + 1):nrow(candidates) , ".ALIVE."])))
 
+  if (tunerConfig$debugLevel >= 3) {
+    irace.note ("Memory used in oneIterationRace():\n")
+    irace.print.memUsed()
+  }
+  
   return (list (nbAlive = result$no.alive,
                 experimentsUsed = result$no.experiments,
                 timeUsed = sum(result$time, na.rm = TRUE),
@@ -729,6 +734,10 @@ irace <- function(tunerConfig = stop("parameter `tunerConfig' is mandatory."),
     }
 
     indexIteration <- indexIteration + 1
+    if (tunerConfig$debugLevel >= 3) {
+      irace.note ("Memory used in irace():\n")
+      irace.print.memUsed()
+    }
   }
   # This code is actually never executed.
   return (eliteCandidates)
