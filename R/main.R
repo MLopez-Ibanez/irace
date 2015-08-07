@@ -136,6 +136,7 @@ testInstances                ""     ""          ""  ""
 testInstances.extra.params   ""     ""          ""  ""
 testNbElites                 ""     "--test-num-elites"        0  "Number of elite candidates returned by irace that will be tested."
 testIterationElites          ""     "--test-iteration-elites"    0  "Enable/disable testing the elite candidates found at each iteration."
+loadBalancing                ""     "--load-balancing"         1  "Enable/disable load-balancing when executing experiments in parallel. Load-balancing makes better use of computing resources, but increases communication overhead. If this overhead is large, disabling load-balancing may be faster."
 ')
 rownames (.irace.params.def) <- .irace.params.def[,"name"]
 .irace.params.names <- rownames(.irace.params.def)[substring(rownames(.irace.params.def), 1, 1) != "."]

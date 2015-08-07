@@ -341,7 +341,7 @@ checkConfiguration <- function(configuration = defaultConfiguration())
   }
   # Boolean params
   for (p in c("sampleInstances", "sgeCluster", "softRestart", "mpi",
-              "testIterationElites")) {
+              "testIterationElites", "loadBalancing")) {
     configuration[[p]] <- as.boolean.param (configuration[[p]], p, .irace.params.def)
   }
 

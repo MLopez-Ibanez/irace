@@ -365,17 +365,18 @@ race<-function(maxExp=0,
   }
 
   if (interactive)
-    cat("                            Markers:                           \n",
-        "                               x No test is performed.         \n",
-        "                               - The test is performed and     \n",
-        "                                 some candidates are discarded.\n", 
-        "                               = The test is performed but     \n",
-        "                                 no candidate is discarded.    \n",
-        "                                                               \n",
-        "                                                               \n",
-        "+-+-----------+-----------+-----------+-----------+-----------+\n",
-        "| |       Task|      Alive|       Best|  Mean best| Exp so far|\n",
-        "+-+-----------+-----------+-----------+-----------+-----------+\n",
+    cat("
+                            Markers:
+                               x No test is performed.
+                               - The test is performed and
+                                 some candidates are discarded.
+                               = The test is performed but
+                                 no candidate is discarded.
+
++-+-----------+-----------+-----------+-----------+-----------+--------+
+| |       Task|      Alive|       Best|  Mean best| Exp so far|Run Time|
++-+-----------+-----------+-----------+-----------+-----------+--------+
+",
         sep="")
   
   # Start main loop
@@ -391,6 +392,7 @@ race<-function(maxExp=0,
     if (no.alive==1)
       break
 
+    start.time <- Sys.time()
     # Execute test  
     output <- do.call (.slave.wrapper.function,
                        list(race.data$candidates, race.data$race.instances[current.task],
@@ -457,13 +459,17 @@ race<-function(maxExp=0,
     # the sum of ranks in the case of test == friedman?
     mean.best <- mean(Results[1:no.tasks.sofar, best])
 
-    if (interactive) 
+    if (interactive) {
+      time.diff <- difftime(Sys.time(), start.time, units="secs")
       cat(paste(formatC(no.tasks.sofar,width=11),"|",
                 formatC(sum(alive),width=11),"|",
                 formatC(best,width=11),"|",
                 formatC(mean.best,width=11),"|",
-                formatC(no.experiments.sofar,width=11),"|\n",
+                formatC(no.experiments.sofar,width=11),"|",
+                # FIXME: Maybe faster with as.numeric(z, units = "secs")
+                format(.POSIXct(time.diff, tz="GMT"), "%H:%M:%S"),"|\n",
                 sep=""))
+    }
 
     # stop race if we have less or equal than the minimum number of candidates
     if (no.tasks.sofar>=first.test) {
@@ -480,7 +486,7 @@ race<-function(maxExp=0,
   }
   
   if (interactive) {
-   cat(paste("+-+-----------+-----------+-----------+-----------+-----------+",
+   cat(paste("+-+-----------+-----------+-----------+-----------+-----------+--------+",
               "\n\n",
               "Selected candidate:",formatC(best,width=12),
               "\tmean value:",formatC(mean.best,width=11),

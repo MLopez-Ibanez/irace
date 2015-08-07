@@ -127,6 +127,12 @@
 # means calls to hookRun are sequentially executed.
 # parallel = 0
 
+## Enable/disable load-balancing when executing experiments in
+## parallel. Load-balancing makes better use of computing resources, but
+## increases communication overhead. If this overhead is large, disabling
+## load-balancing may be faster.
+# loadBalancing = 1
+
 ## Enable/disable SGE cluster mode. Use qstat to wait for
 ## cluster jobs to finish (hookRun must invoke qsub).
 # sgeCluster = 0
@@ -135,7 +141,7 @@
 ## (parameter parallel is the number of slaves).
 # mpi = 0
 
-## Enable/disable a soft restart strategy to avoid premature convergence 
+## Enable/disable the soft restart strategy that avoids premature convergence
 ## of the probabilistic model.
 # softRestart = 1
 

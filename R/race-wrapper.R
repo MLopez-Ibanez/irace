@@ -289,7 +289,17 @@ execute.experiments <- function(experiments, numcandidates, configuration)
       configuration$hookRunParallel(experiments, .irace$hook.run, config = configuration)
   } else if (parallel > 1) {
     if (mpi) {
-      hook.output <- Rmpi::mpi.applyLB(experiments, .irace$hook.run, config = configuration)
+      if (configuration$loadBalancing) {
+        hook.output <- Rmpi::mpi.applyLB(experiments, .irace$hook.run, config = configuration)
+      } else {
+        # Without load-balancing, we need to split the experiments into chunks
+        # of size parallel.
+        hook.output <- unlist(use.names=FALSE,
+                              tapply(experiments,
+                                     ceiling(1:length(experiments) / parallel),
+                                     Rmpi::mpi.apply, .irace$hook.run,
+                                     config = configuration)) 
+      }
       # FIXME: if stop() is called from mpi.applyLB, it does not
       # terminate the execution of the parent process, so it will
       # continue and give more errors later. We have to terminate
@@ -305,17 +315,23 @@ execute.experiments <- function(experiments, numcandidates, configuration)
     } else {
       if (.Platform$OS.type == 'windows') {
         irace.assert(!is.null(.irace$cluster))
-        # FIXME: How to do load-balancing?
-        hook.output <-
-          parallel::parLapply(.irace$cluster, experiments, .irace$hook.run,
-                              config = configuration)
+        if (configuration$loadBalancing) {
+          hook.output <-
+            parallel::parLapplyLB(.irace$cluster, experiments, .irace$hook.run,
+                                  config = configuration)
+        } else {
+          hook.output <-
+            parallel::parLapply(.irace$cluster, experiments, .irace$hook.run,
+                                config = configuration)
+        }
         # FIXME: if stop() is called from parLapply, then the parent
         # process also terminates, and we cannot give further errors.
       } else {
         hook.output <-
           parallel::mclapply(experiments, .irace$hook.run,
                              # FALSE means load-balancing.
-                             mc.preschedule = FALSE, mc.cores = parallel,
+                             mc.preschedule = !configuration$loadBalancing,
+                             mc.cores = parallel,
                              config = configuration)
         # FIXME: if stop() is called from mclapply, it does not
         # terminate the execution of the parent process, so it will
