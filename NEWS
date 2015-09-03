@@ -15,7 +15,7 @@
  * New option --load-balancing (loadBalancing) for disabling load-balancing
    when executing jobs in parallel. Load-balancing makes better use of
    computing resources, but increases communication overhead. If this overhead
-   is large, disabling load-balancing ma be faster.
+   is large, disabling load-balancing may be faster.
    (Manuel López-Ibáñez, thanks to Federico Caselli for identifying the issue)
 
  * The option --parallel in Windows now uses load-balancing by default.
