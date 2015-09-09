@@ -74,8 +74,7 @@ RELEASE Process:
 
   * Make the changes.
 
-  * Repeat the whole RELEASE process above without changing bumping
-    the version number.
+  * Repeat the whole RELEASE process above without bumping the version number.
 
 
 * IF the package is released in CRAN:
