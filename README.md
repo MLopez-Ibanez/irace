@@ -1,9 +1,14 @@
-irace: An implementation in R of Iterated Race
-===============================================
+---
+title: "irace: An implementation in R of Iterated Race"
+output:
+  html_document:
+    toc: true
+    toc_depth: 4
+---
 
-Manuel López-Ibáñez   
-Jérémie Dubois-Lacoste  
-Contact email: irace@iridia.ulb.ac.be  
+Manuel López-Ibáñez
+Jérémie Dubois-Lacoste
+Contact email: irace@iridia.ulb.ac.be
 
 
 Requisites
@@ -71,12 +76,14 @@ computer. There are two methods:
 1. Install within R (automatic download):
 
         $ R
-        > install.packages("irace")
+        R> install.packages("irace")
 
    select a mirror close to you, and test the installation with
 
-        > library(irace)
-        > CTRL+d
+```R
+        R> library(irace)
+        R> CTRL+d
+```
 
 2. Manually
    [download the package from CRAN](http://cran.r-project.org/package=irace)
@@ -99,8 +106,8 @@ you need to force a *local installation* by doing:
 Once installed, test that it is working by doing:
 
     $ R
-    > library(irace)
-    > system.file(package="irace")
+    R> library(irace)
+    R> system.file(package="irace")
     [1] "~/R/irace"
 
 
@@ -124,9 +131,10 @@ invoke `irace` as follows:
 Unfortunately, the command-line wrapper does not work in Windows. To
 launch irace, you need to open the R console and execute:
 
+```R
     R> library(irace)
     R> irace.cmdline("--help")
-
+```
 
 Usage
 -------
@@ -149,17 +157,18 @@ Usage
 3. For each template in your tuning directory, remove the `.tmpl`
    suffix, and modify them following the instructions in each file. In
    particular,
-   *  `tune-main.tmpl` should be adjusted depending on your usage
-       (local, cluster, etc).
-   *  The scripts `hook-run`, `hook-evaluate` (if you need it at all) and
-      `tune-main` should be executable. The output of `hook-run` (or
-      `hook-evaluate` if you use a separate evaluation step) is minimized by
-      default. If you wish to maximize it, just multiply the value by `-1`
-      within the script.
-   *  In `tune-conf`, uncomment and assign only the parameters for which
-      you need a value different than the default one.
-   
-   There are examples in `$IRACE_HOME/examples/`.
+
+    * `tune-main.tmpl` should be adjusted depending on your usage
+        (local, cluster, etc).
+    * The scripts `hook-run`, `hook-evaluate` (if you need it at all) and
+       `tune-main` should be executable. The output of `hook-run` (or
+       `hook-evaluate` if you use a separate evaluation step) is minimized by
+       default. If you wish to maximize it, just multiply the value by `-1`
+       within the script.
+    * In `tune-conf`, uncomment and assign only the parameters for which
+       you need a value different than the default one.
+
+    There are examples in `$IRACE_HOME/examples/`.
 
 4. Put the instances in `~/tuning/Instances/`. In addition, you can
    create a file that specifies which instances from that directory
@@ -263,7 +272,7 @@ Definitely. There are two main ways to achieve this:
    call your MATLAB code with appropriate parameters.
 
 
-##### My program works perfectly on its own, but not when running under irace. Is irace broken?  ####
+#### My program works perfectly on its own, but not when running under irace. Is irace broken?  ####
 
 Every time this was reported, it was a difficult-to-reproduce bug in
 the program, not in irace.  We recommend that in `hook-run`, you use
