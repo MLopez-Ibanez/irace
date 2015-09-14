@@ -4,27 +4,27 @@
 ############################################################################
 
 ## File that contains the description of the parameters.
-parameterFile <- "./parameters-acotsp.txt"
+parameterFile = "./parameters-acotsp.txt"
 
 ## Directory where the programs will be run.
-execDir <- "./acotsp-arena"
+execDir = "./acotsp-arena"
 
 ## Folder where tuning instances are located, either absolute or
 ## relative to working directory.
-instanceDir <- "./Instances"
+instanceDir = "./Instances"
 
 ## The maximum number of runs (invocations of hookRun) that will performed. It
 ## determines the (maximum) budget of experiments for the tuning, unless
 ## timeBudget is positive.
-maxExperiments <- 1000
+maxExperiments = 1000
 
 ## Indicates the number of decimal places to be considered for the
 ## real parameters.
-digits <- 2
+digits = 2
 
 ## A value of 0 silences all debug messages. Higher values provide
 ## more verbose debug messages.
-# debugLevel <- 0
+# debugLevel = 0
 
 ## END of configuration file
 ############################################################################

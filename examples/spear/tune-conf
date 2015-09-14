@@ -9,15 +9,15 @@
 ## The maximum computation time that should be used for tuning in
 ## seconds. This only works when tuning for time. 0 means no time
 ## limit (use maxExperiments).
-timeBudget <- 259200
+timeBudget = 259200
 
 ## An estimation of the average time in seconds required for one
 ## experiment. Only required if timeBudget is positive.
-timeEstimate <- 30
+timeEstimate = 30
 
 ## A value of 0 silences all debug messages. Higher values provide
 ## more verbose debug messages.
-# debugLevel <- 0
+# debugLevel = 0
 
 ## END of configuration file
 ############################################################################
