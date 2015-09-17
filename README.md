@@ -6,8 +6,9 @@ output:
     toc_depth: 4
 ---
 
-Manuel López-Ibáñez
-Jérémie Dubois-Lacoste
+[Manuel López-Ibáñez](http://iridia.ulb.ac.be/~manuel/),
+ Jérémie Dubois-Lacoste
+
 Contact email: irace@iridia.ulb.ac.be
 
 
@@ -75,8 +76,11 @@ computer. There are two methods:
 
 1. Install within R (automatic download):
 
+        
+```R
         $ R
         R> install.packages("irace")
+```
 
    select a mirror close to you, and test the installation with
 
@@ -98,18 +102,20 @@ computer. There are two methods:
 If the package fails to install because of insufficient permissions,
 you need to force a *local installation* by doing:
 
+```bash
     $ mkdir ~/R
     $ R CMD INSTALL --library=~/R irace.tar.gz
     $ export R_LIBS=~/R:${R_LIBS}
-
+```
 
 Once installed, test that it is working by doing:
 
+```R
     $ R
     R> library(irace)
     R> system.file(package="irace")
     [1] "~/R/irace"
-
+```
 
 ### GNU/Linux and OS X ###
 
@@ -117,14 +123,19 @@ The last command tells you the installation directory of `irace`. Save
 that path to a variable, and add it to your `.bash_profile`, `.bashrc`
 or `.profile`:
 
+```bash
     export IRACE_HOME=~/R/irace/ # Path given by system.file(package="irace")
     export PATH=${IRACE_HOME}/bin/:$PATH
     # export R_LIBS=~/R:${R_LIBS} # Only if local installation was forced
+```
 
 After adding this and opening a new terminal, you should be able to
 invoke `irace` as follows:
 
+```bash
     $ irace --help
+```
+
 
 ### Windows ###
 
@@ -141,8 +152,10 @@ Usage
 
 1. Create a directory for storing the configuration of the tuning
 
+```bash
         $ mkdir ~/tuning
         $ cd ~/tuning
+```
 
 2. Copy the template and example files to the tuning directory
 
@@ -150,9 +163,11 @@ Usage
     where `$IRACE_HOME` is the path to the installation directory of
     `irace`. It can be obtained by doing:
 
+```R
         $ R
         > library(irace)
         > system.file(package="irace")
+```
 
 3. For each template in your tuning directory, remove the `.tmpl`
    suffix, and modify them following the instructions in each file. In
@@ -180,7 +195,9 @@ Usage
 
 5. Calling the command:
 
+```bash
         $ cd ~/tuning/ && $IRACE_HOME/bin/irace
+```
 
     performs one run of Iterated Race. See the output of `irace --help` for
     additional configuration parameters. Command-line parameters override the
@@ -193,7 +210,9 @@ Many tuning runs in parallel
 For executing several repetitions of irace in parallel, call the
 program
 
+```bash
     $ cd ~/tuning/ && $IRACE_HOME/bin/parallel-irace N
+```
 
 where N is the number of repetitions. By default, the execution
 directory of each run of irace will be set to `./TUNE-dd`, where dd is a
@@ -278,11 +297,15 @@ Every time this was reported, it was a difficult-to-reproduce bug in
 the program, not in irace.  We recommend that in `hook-run`, you use
 `valgrind` to run your program. That is, if you program is called like:
 
+```bash
     $EXE ${FIXED_PARAMS} -i $INSTANCE ${CAND_PARAMS} 1> ${STDOUT} 2> ${STDERR}
+```
 
 then replace that line with:
 
+```bash
     valgrind --error-exitcode=1 $EXE ${FIXED_PARAMS} -i $INSTANCE ${CAND_PARAMS} 1> ${STDOUT} 2> ${STDERR}
+```
 
 If there are bugs in your program, they will appear in `${STDERR}`,
 thus do not delete those files.

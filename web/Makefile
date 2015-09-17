@@ -6,7 +6,7 @@ RSYNC_FLAGS =  -rlczCI --copy-links --stats --progress  \
 default:
 	@echo "make [ get | put | testget | testput ]"
 
-testput: 
+testput: files/README.html
 	rsync $(RSYNC_FLAGS) --dry-run --delete --delete-excluded . $(HOST):$(REMOTEDIR)
 
 testget:
@@ -15,5 +15,9 @@ testget:
 get:
 	rsync $(RSYNC_FLAGS) $(HOST):$(REMOTEDIR) .
 
-put: 
+put: files/README.html
 	rsync $(RSYNC_FLAGS)  --delete --delete-excluded . $(HOST):$(REMOTEDIR)
+
+files/README.html : ../README.md
+	pandoc -s --toc --toc-depth=4  --ascii ../README.md > files/README.html
+
