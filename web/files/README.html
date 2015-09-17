@@ -120,7 +120,7 @@ $ brew install r</code></pre>
         $ <span class="kw">cd</span> ~/tuning</code></pre>
 <ol start="2" style="list-style-type: decimal">
 <li><p>Copy the template and example files to the tuning directory</p>
-<pre><code>$ cp $IRACE_HOME/templates/*.tmpl .</code></pre>
+<pre class="sourceCode bash"><code class="sourceCode bash">    $ <span class="kw">cp</span> <span class="ot">$IRACE_HOME</span>/templates/*.tmpl .</code></pre>
 <p>where <code>$IRACE_HOME</code> is the path to the installation directory of <code>irace</code>. It can be obtained by doing:</p></li>
 </ol>
 <pre class="sourceCode r"><code class="sourceCode r">        $<span class="st"> </span>R
@@ -135,12 +135,10 @@ $ brew install r</code></pre>
 </ul>
 <p>There are examples in <code>$IRACE_HOME/examples/</code>.</p></li>
 <li><p>Put the instances in <code>~/tuning/Instances/</code>. In addition, you can create a file that specifies which instances from that directory should be run and which instance-specific parameters to use. See <code>tune-conf.tmpl</code> and <code>instances-list.tmpl</code> for examples. The command irace will not attempt to create the execution directory (execDir), so it must exist before calling irace. The default execDir is the current directory.</p></li>
-<li><p>Calling the command:</p></li>
+<li><p>Calling the command:</p>
+<pre class="sourceCode bash"><code class="sourceCode bash">    $ <span class="kw">cd</span> ~/tuning/ <span class="kw">&amp;&amp;</span> <span class="ot">$IRACE_HOME</span><span class="kw">/bin/irace</span></code></pre>
+<p>performs one run of Iterated Race. See the output of <code>irace --help</code> for additional configuration parameters. Command-line parameters override the configuration specified in the tune-conf file.</p></li>
 </ol>
-<pre class="sourceCode bash"><code class="sourceCode bash">        $ <span class="kw">cd</span> ~/tuning/ <span class="kw">&amp;&amp;</span> <span class="ot">$IRACE_HOME</span><span class="kw">/bin/irace</span></code></pre>
-<pre><code>performs one run of Iterated Race. See the output of `irace --help` for
-additional configuration parameters. Command-line parameters override the
-configuration specified in the tune-conf file.</code></pre>
 <h2 id="many-tuning-runs-in-parallel">Many tuning runs in parallel</h2>
 <p>For executing several repetitions of irace in parallel, call the program</p>
 <pre class="sourceCode bash"><code class="sourceCode bash">    $ <span class="kw">cd</span> ~/tuning/ <span class="kw">&amp;&amp;</span> <span class="ot">$IRACE_HOME</span><span class="kw">/bin/parallel-irace</span> N</code></pre>

@@ -76,7 +76,7 @@ computer. There are two methods:
 
 1. Install within R (automatic download):
 
-        
+
 ```R
         $ R
         R> install.packages("irace")
@@ -158,8 +158,9 @@ Usage
 ```
 
 2. Copy the template and example files to the tuning directory
-
+```bash
         $ cp $IRACE_HOME/templates/*.tmpl .
+```
     where `$IRACE_HOME` is the path to the installation directory of
     `irace`. It can be obtained by doing:
 
@@ -194,11 +195,9 @@ Usage
    current directory.
 
 5. Calling the command:
-
 ```bash
         $ cd ~/tuning/ && $IRACE_HOME/bin/irace
 ```
-
     performs one run of Iterated Race. See the output of `irace --help` for
     additional configuration parameters. Command-line parameters override the
     configuration specified in the tune-conf file.
