@@ -201,11 +201,6 @@ hook.run.default <- function(experiment, config)
   # Parse output
   p.output <- parse.output(output$output, paste(hookRun, args), config)
 
-  # Check if the output is correct
-  # FIXME: check.output is also called in parse.output and race.wrapper, that
-  # is, three times!
-  check.output(p.output, command = "hookRun", config = config)
-
   # hookEvaluate is NULL, so parse the output just here.
   return(p.output)
 }
@@ -367,5 +362,6 @@ execute.experiments <- function(experiments, numcandidates, configuration)
                              config = configuration, hook.run.call = hook.output[[k]])
     }
   }
+  # FIXME: We are missing a check.output() here.
   return(hook.output)
 }
