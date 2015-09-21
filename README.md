@@ -5,9 +5,10 @@ output:
     toc: true
     toc_depth: 4
 ---
+[![CRAN Downloads](http://cranlogs.r-pkg.org/badges/grand-total/irace)](http://cran.rstudio.com/web/packages/irace/index.html)
 
 [Manuel López-Ibáñez](http://iridia.ulb.ac.be/~manuel/),
- Jérémie Dubois-Lacoste
+ Jérémie Dubois-Lacoste, Leslie Pérez
 
 Contact email: irace@iridia.ulb.ac.be
 
