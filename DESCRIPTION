@@ -1,17 +1,20 @@
 Package: irace
 Type: Package
-Title: Iterated Racing Procedures
+Title: Iterated Racing for Automatic Algorithm Configuration
+Description: Iterated race is an extension of the Iterated F-race method for
+             the automatic configuration of optimization algorithms, that is,
+             (offline) tuning their parameters by finding the most appropriate
+             settings given a set of instances of an optimization problem.
 Version: 1.08
 Date: 2015-09-11
 Maintainer: Manuel López-Ibáñez <manuel.lopez-ibanez@ulb.ac.be>
 Author: Manuel López-Ibáñez, Jérémie Dubois-Lacoste, Leslie Pérez Cáceres,
         Thomas Stützle, Mauro Birattari, Eric Yuan and Prasanna Balaprakash
-Description: Iterated racing for automatic algorithm configuration.
 Depends: R (>= 2.14.0)
 Imports: stats, utils
 Suggests: Rmpi (>= 0.6.0), parallel
 License: GPL (>= 2)
 URL: http://iridia.ulb.ac.be/irace
 ByteCompile: yes
-LazyData: true
+LazyData: yes
 Encoding: UTF-8
