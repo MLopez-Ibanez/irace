@@ -2,15 +2,35 @@
 title: "irace: An implementation in R of Iterated Race"
 output:
   html_document:
+    theme: journal
     toc: true
     toc_depth: 4
 ---
 [![CRAN Downloads](http://cranlogs.r-pkg.org/badges/grand-total/irace)](http://cran.rstudio.com/web/packages/irace/index.html)
 
-[Manuel López-Ibáñez](http://iridia.ulb.ac.be/~manuel/),
- Jérémie Dubois-Lacoste, Leslie Pérez
+**Maintainers:** [Manuel López-Ibáñez](http://iridia.ulb.ac.be/~manuel/), Jérémie Dubois-Lacoste, Leslie Pérez
 
-Contact email: irace@iridia.ulb.ac.be
+**Contact email:** irace@iridia.ulb.ac.be
+
+Introduction
+------------
+
+The irace package implements the Iterated Race method, which is a
+generalization of the Iterated F-race method for the automatic configuration of
+optimization algorithms, that is, the tuning of their parameters by finding the
+most appropriate settings given a set of instances of an optimization problem.
+It builds upon the race package by Birattari and it is implemented in R.
+
+**Keywords**: automatic configuration, offline tuning, parameter tuning, racing, F-race.
+
+Relevant literature:
+
+ 1. Manuel López-Ibáñez, Jérémie Dubois-Lacoste, Thomas Stützle, and Mauro
+    Birattari. [**The irace package, Iterated Race for Automatic Algorithm Configuration**](http://iridia.ulb.ac.be/IridiaTrSeries/IridiaTr2011-004.pdf).
+    Technical Report TR/IRIDIA/2011-004, IRIDIA, Université libre de Bruxelles,
+    Belgium, 2011.<br>
+    [ [bibtex](http://iridia.ulb.ac.be/~manuel/LopezIbanez_bib.html#LopDubStu2011irace)
+    | [PDF](http://iridia.ulb.ac.be/IridiaTrSeries/IridiaTr2011-004.pdf) ]
 
 
 Requisites
@@ -53,8 +73,10 @@ Alternatively, if you use homebrew, you can just brew the R formula
 from the science tap (unfortunately it does not come already bottled
 so you need to have Xcode installed to compile it):
 
+```bash
     $ brew tap homebrew/science
     $ brew install r
+```
 
 Once R is installed, you can launch R from the Terminal (or from your
 Applications), and from the R prompt install the irace package. See
@@ -204,8 +226,7 @@ Usage
     configuration specified in the tune-conf file.
 
 
-Many tuning runs in parallel
-------------------------
+### Many tuning runs in parallel ###
 
 For executing several repetitions of irace in parallel, call the
 program
@@ -224,8 +245,8 @@ scratch, deleting them first if they already exist.
 Check the help of `parallel-irace` by running it without parameters.
 
 
-Parallelize one tuning
-------------------------
+### Parallelize one tuning ###
+
 
 A single run of irace can be done much faster by executing the calls
 to `hookRun` (the runs of the algorithm being tuned) in
@@ -265,8 +286,8 @@ Frequently Asked Questions
 #### Is irace minimizing or maximizing the output of my algorithm? ####
 
 By default, irace considers that the value returned by `hook-run` (or by
-`hook-evaluate`, if used) should be minimized. In case of a maximization
-problem, one can simply multiply the value by `-1` before returning it to
+`hook-evaluate`, if used) should be *minimized*. In case of a maximization
+problem, one can simply multiply the value by -1 before returning it to
 irace. This is done, for example, when maximizing the hypervolume (see the last
 lines in `$IRACE_HOME/examples/hypervolume/hook-evaluate`).
 
@@ -276,15 +297,15 @@ lines in `$IRACE_HOME/examples/hypervolume/hook-evaluate`).
 Definitely. There are two main ways to achieve this:
 
 1. Edit the hook-run script to call MATLAB in a non-interactive
-   way. See the MATLAB documentation, or the following links:
-   <http://stackoverflow.com/questions/1518072/suppress-start-message-of-matlab/>
+   way. See the MATLAB documentation, or the following links:<br>
+   <http://stackoverflow.com/questions/1518072/suppress-start-message-of-matlab/><br>
    <http://stackoverflow.com/questions/4611195/how-to-call-matlab-from-command-line-and-print-to-stdout-before-exiting>
 
     You would need to pass the parameter received by hook-run to your MATLAB
     script:
     <http://www.mathworks.nl/support/solutions/en/data/1-1BS5S/?solution=1-1BS5S>
 
-2. Call MATLAB code directly from R using
+2. Call MATLAB code directly from R using the
    [R.matlab package](http://cran.r-project.org/package=R.matlab). This
    is a better option if you are experienced in R. Define hookRun as
    an R function instead of a path to a script. The function should

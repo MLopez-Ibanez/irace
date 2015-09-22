@@ -32,6 +32,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 </div>
 <div id="TOC">
 <ul>
+<li><a href="#introduction">Introduction</a></li>
 <li><a href="#requisites">Requisites</a></li>
 <li><a href="#installing-r">Installing R</a><ul>
 <li><a href="#gnulinux">GNU/Linux</a></li>
@@ -42,9 +43,10 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <li><a href="#gnulinux-and-os-x">GNU/Linux and OS X</a></li>
 <li><a href="#windows-1">Windows</a></li>
 </ul></li>
-<li><a href="#usage">Usage</a></li>
+<li><a href="#usage">Usage</a><ul>
 <li><a href="#many-tuning-runs-in-parallel">Many tuning runs in parallel</a></li>
 <li><a href="#parallelize-one-tuning">Parallelize one tuning</a></li>
+</ul></li>
 <li><a href="#frequently-asked-questions">Frequently Asked Questions</a><ul>
 <li><a href="#is-irace-minimizing-or-maximizing-the-output-of-my-algorithm">Is irace minimizing or maximizing the output of my algorithm?</a></li>
 <li><a href="#is-it-possible-to-configure-a-matlab-algorithm-with-irace">Is it possible to configure a MATLAB algorithm with irace?</a></li>
@@ -54,9 +56,16 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <li><a href="#contact">Contact</a></li>
 </ul>
 </div>
-<p><a href="http://cran.rstudio.com/web/packages/irace/index.html"><img src="http://cranlogs.r-pkg.org/badges/irace" alt="CRAN Downloads" /></a></p>
-<p><a href="http://iridia.ulb.ac.be/~manuel/">Manuel L&#243;pez-Ib&#225;&#241;ez</a>, J&#233;r&#233;mie Dubois-Lacoste, Leslie P&#233;rez</p>
-<p>Contact email: irace@iridia.ulb.ac.be</p>
+<p><a href="http://cran.rstudio.com/web/packages/irace/index.html"><img src="http://cranlogs.r-pkg.org/badges/grand-total/irace" alt="CRAN Downloads" /></a></p>
+<p><strong>Maintainers:</strong> <a href="http://iridia.ulb.ac.be/~manuel/">Manuel L&#243;pez-Ib&#225;&#241;ez</a>, J&#233;r&#233;mie Dubois-Lacoste, Leslie P&#233;rez</p>
+<p><strong>Contact email:</strong> irace@iridia.ulb.ac.be</p>
+<h2 id="introduction">Introduction</h2>
+<p>The irace package implements the Iterated Race method, which is a generalization of the Iterated F-race method for the automatic configuration of optimization algorithms, that is, the tuning of their parameters by finding the most appropriate settings given a set of instances of an optimization problem. It builds upon the race package by Birattari and it is implemented in R.</p>
+<p><strong>Keywords</strong>: automatic configuration, offline tuning, parameter tuning, racing, F-race.</p>
+<p>Relevant literature:</p>
+<ol style="list-style-type: decimal">
+<li>Manuel L&#243;pez-Ib&#225;&#241;ez, J&#233;r&#233;mie Dubois-Lacoste, Thomas St&#252;tzle, and Mauro Birattari. <a href="http://iridia.ulb.ac.be/IridiaTrSeries/IridiaTr2011-004.pdf"><strong>The irace package, Iterated Race for Automatic Algorithm Configuration</strong></a>. Technical Report TR/IRIDIA/2011-004, IRIDIA, Universit&#233; libre de Bruxelles, Belgium, 2011.<br> [ <a href="http://iridia.ulb.ac.be/~manuel/LopezIbanez_bib.html#LopDubStu2011irace">bibtex</a> | <a href="http://iridia.ulb.ac.be/IridiaTrSeries/IridiaTr2011-004.pdf">PDF</a> ]</li>
+</ol>
 <h2 id="requisites">Requisites</h2>
 <ul>
 <li><p>R (<a href="http://www.r-project.org" class="uri">http://www.r-project.org</a>) is required for running irace, but you don't need to know the R language to use it. Versions that work: &gt;= 2.14.0 (See Installing R below for a quick install guide)</p></li>
@@ -72,8 +81,8 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <h3 id="os-x">OS X</h3>
 <p>You can install R directly from a CRAN mirror (the link of the Belgian one is <a href="http://cran.freestatistics.org/bin/macosx/" class="uri">http://cran.freestatistics.org/bin/macosx/</a>)</p>
 <p>Alternatively, if you use homebrew, you can just brew the R formula from the science tap (unfortunately it does not come already bottled so you need to have Xcode installed to compile it):</p>
-<pre><code>$ brew tap homebrew/science
-$ brew install r</code></pre>
+<pre class="sourceCode bash"><code class="sourceCode bash">    $ <span class="kw">brew</span> tap homebrew/science
+    $ <span class="kw">brew</span> install r</code></pre>
 <p>Once R is installed, you can launch R from the Terminal (or from your Applications), and from the R prompt install the irace package. See instructions below.</p>
 <h3 id="windows">Windows</h3>
 <p>You can install R from a CRAN mirror (the link for the Belgian one is <a href="http://cran.freestatistics.org/bin/windows/" class="uri">http://cran.freestatistics.org/bin/windows/</a>)</p>
@@ -140,13 +149,13 @@ $ brew install r</code></pre>
 <pre class="sourceCode bash"><code class="sourceCode bash">    $ <span class="kw">cd</span> ~/tuning/ <span class="kw">&amp;&amp;</span> <span class="ot">$IRACE_HOME</span><span class="kw">/bin/irace</span></code></pre>
 <p>performs one run of Iterated Race. See the output of <code>irace --help</code> for additional configuration parameters. Command-line parameters override the configuration specified in the tune-conf file.</p></li>
 </ol>
-<h2 id="many-tuning-runs-in-parallel">Many tuning runs in parallel</h2>
+<h3 id="many-tuning-runs-in-parallel">Many tuning runs in parallel</h3>
 <p>For executing several repetitions of irace in parallel, call the program</p>
 <pre class="sourceCode bash"><code class="sourceCode bash">    $ <span class="kw">cd</span> ~/tuning/ <span class="kw">&amp;&amp;</span> <span class="ot">$IRACE_HOME</span><span class="kw">/bin/parallel-irace</span> N</code></pre>
 <p>where N is the number of repetitions. By default, the execution directory of each run of irace will be set to <code>./TUNE-dd</code>, where dd is a number padded with zeroes.</p>
 <p><strong>Be careful</strong>, <code>parallel-irace</code> will create these directories from scratch, deleting them first if they already exist.</p>
 <p>Check the help of <code>parallel-irace</code> by running it without parameters.</p>
-<h2 id="parallelize-one-tuning">Parallelize one tuning</h2>
+<h3 id="parallelize-one-tuning">Parallelize one tuning</h3>
 <p>A single run of irace can be done much faster by executing the calls to <code>hookRun</code> (the runs of the algorithm being tuned) in parallel. There are three ways to parallelize a single run of irace.</p>
 <ol style="list-style-type: decimal">
 <li><p>Parallel processes: The option <code>--parallel N</code> will use the <code>parallel</code> package to launch <em>locally</em> up to N calls of <code>hookRun</code> in parallel.</p></li>
@@ -157,13 +166,13 @@ $ brew install r</code></pre>
 </ol>
 <h2 id="frequently-asked-questions">Frequently Asked Questions</h2>
 <h4 id="is-irace-minimizing-or-maximizing-the-output-of-my-algorithm">Is irace minimizing or maximizing the output of my algorithm?</h4>
-<p>By default, irace considers that the value returned by <code>hook-run</code> (or by <code>hook-evaluate</code>, if used) should be minimized. In case of a maximization problem, one can simply multiply the value by <code>-1</code> before returning it to irace. This is done, for example, when maximizing the hypervolume (see the last lines in <code>$IRACE_HOME/examples/hypervolume/hook-evaluate</code>).</p>
+<p>By default, irace considers that the value returned by <code>hook-run</code> (or by <code>hook-evaluate</code>, if used) should be <em>minimized</em>. In case of a maximization problem, one can simply multiply the value by -1 before returning it to irace. This is done, for example, when maximizing the hypervolume (see the last lines in <code>$IRACE_HOME/examples/hypervolume/hook-evaluate</code>).</p>
 <h4 id="is-it-possible-to-configure-a-matlab-algorithm-with-irace">Is it possible to configure a MATLAB algorithm with irace?</h4>
 <p>Definitely. There are two main ways to achieve this:</p>
 <ol style="list-style-type: decimal">
-<li><p>Edit the hook-run script to call MATLAB in a non-interactive way. See the MATLAB documentation, or the following links: <a href="http://stackoverflow.com/questions/1518072/suppress-start-message-of-matlab/" class="uri">http://stackoverflow.com/questions/1518072/suppress-start-message-of-matlab/</a> <a href="http://stackoverflow.com/questions/4611195/how-to-call-matlab-from-command-line-and-print-to-stdout-before-exiting" class="uri">http://stackoverflow.com/questions/4611195/how-to-call-matlab-from-command-line-and-print-to-stdout-before-exiting</a></p>
+<li><p>Edit the hook-run script to call MATLAB in a non-interactive way. See the MATLAB documentation, or the following links:<br> <a href="http://stackoverflow.com/questions/1518072/suppress-start-message-of-matlab/" class="uri">http://stackoverflow.com/questions/1518072/suppress-start-message-of-matlab/</a><br> <a href="http://stackoverflow.com/questions/4611195/how-to-call-matlab-from-command-line-and-print-to-stdout-before-exiting" class="uri">http://stackoverflow.com/questions/4611195/how-to-call-matlab-from-command-line-and-print-to-stdout-before-exiting</a></p>
 <p>You would need to pass the parameter received by hook-run to your MATLAB script: <a href="http://www.mathworks.nl/support/solutions/en/data/1-1BS5S/?solution=1-1BS5S" class="uri">http://www.mathworks.nl/support/solutions/en/data/1-1BS5S/?solution=1-1BS5S</a></p></li>
-<li><p>Call MATLAB code directly from R using <a href="http://cran.r-project.org/package=R.matlab">R.matlab package</a>. This is a better option if you are experienced in R. Define hookRun as an R function instead of a path to a script. The function should call your MATLAB code with appropriate parameters.</p></li>
+<li><p>Call MATLAB code directly from R using the <a href="http://cran.r-project.org/package=R.matlab">R.matlab package</a>. This is a better option if you are experienced in R. Define hookRun as an R function instead of a path to a script. The function should call your MATLAB code with appropriate parameters.</p></li>
 </ol>
 <h4 id="my-program-works-perfectly-on-its-own-but-not-when-running-under-irace.-is-irace-broken">My program works perfectly on its own, but not when running under irace. Is irace broken?</h4>
 <p>Every time this was reported, it was a difficult-to-reproduce bug in the program, not in irace. We recommend that in <code>hook-run</code>, you use <code>valgrind</code> to run your program. That is, if you program is called like:</p>
