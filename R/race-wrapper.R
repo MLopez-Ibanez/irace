@@ -240,7 +240,7 @@ race.wrapper <- function(candidates, instance.id, which.alive, data)
 
   values <- removeCandidatesMetaData(candidates)
   parameters.names <- names(data$parameters$names)
-  values <- values[parameters.names]
+  values <- values[, parameters.names, drop = FALSE]
   switches <- data$parameters$switches[parameters.names]
   
   # Experiment list to execute 
@@ -248,7 +248,7 @@ race.wrapper <- function(candidates, instance.id, which.alive, data)
   ntest <- 1
   for (current.candidate in which.alive) {
     experiments[[ntest]] <- list (id = candidates[current.candidate, ".ID."],
-                                  candidate = values[current.candidate,],
+                                  candidate = values[current.candidate, , drop = FALSE],
                                   instance = instance, extra.params = extra.params,
                                   switches = switches, seed = instance.seed)
     ntest <- ntest + 1
