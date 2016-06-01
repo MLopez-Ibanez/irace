@@ -59,11 +59,15 @@
 %% How to use the command:
 % Parameter with one short switch: \defparameter[short]{paramName}{long}{default}
 % Parameter without short switch:  \defparameter{paramName}{long}{default}
+% Parameter without switch:  \defparameter{paramName}{}{default}
 \newcommand{\defparameter}[4][]{%
-\item\hypertarget{opt:#2}{}\code{#2} ~~ flag: %
-\ifthenelse{\equal{#1}{}}{%
-\code{#1} or }{}%
-\code{#3} ~~ default:~\textit{#4} \\
+\item\hypertarget{opt:#2}{}\code{#2} ~~ %
+\ifthenelse{\equal{#3}{}}{}{%
+  flag: %
+  \ifthenelse{\equal{#1}{}}{}{%
+    \code{#1} or }%
+  \code{#3} ~~ }%
+default:~\texttt{#4} \\
 }
 \newcommand{\parameter}[1]{\hyperlink{opt:#1}{\code{#1}}}
 
@@ -2128,19 +2132,19 @@ the \irace options that can be specified by the user:\\
 \item \code{targetRunnerRetries} ~~ flag: \code{--target-runner-retries} ~~ default: \textit{0} \\
   Number of times to retry a call to \code{targetRunner} if the call failed.
   
-\item \code{targetRunnerData} 
+\defparameter{targetRunnerData}{}{NULL} %
+Optional data passed to \code{targetRunner}. This is ignored by the default \code{targetRunner} function, but it may be used by custom \code{targetRunner} functions to pass persistent data around.
 
-\item \code{targetRunnerParallel} ~~ default: \code{""} \\
+\item \code{targetRunnerParallel} ~~ default: \code{NULL} \\
  Optional \aR function to provide custom parallelization of \code{targetRunner}. See Section~\ref{sec:parallel} 
  for more information.
 
-\defparameter{targetEvaluator}{--target-evaluator}{""} \\
+\defparameter{targetEvaluator}{--target-evaluator}{""} %
   Optional script or \aR function that evaluates an experiment (configuration + instance), that is. 
   The evaluation must consist of a numeric value. See Section~\ref{sec:evaluator} for details.
-  
-\item \code{deterministic} ~~ flag: \code{--deterministic} ~~ default: \textit{0} \\
-  Enable/disable deterministic algorithm mode, if enabled \irace will not use an instance more 
-  than once in each race. See Section~\ref{sec:training} for more information.
+
+\defparameter{deterministic}{--deterministic}{0} %
+  Enable/disable deterministic algorithm mode. If the target algorithm is deterministic, configurations will be evaluated only once per instance. See Section~\ref{sec:training} for more information.
   \begin{importantnote}
   Note that if the number of instances provided is less than the value
   specified for the option \code{firstTest}, no statistical test will be performed. 
@@ -2449,7 +2453,7 @@ script must be only one number.
 
 
 \item Check that your \code{targetRunner} script is actually returning one number as 
-output. If you see an error as follwing this is your problem:\\
+output. If you see an error as following this is your problem:\\
 
 \code{
 Error: == irace == The output of '~/tuning/target-runner \\

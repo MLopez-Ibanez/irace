@@ -35,6 +35,11 @@
 ## Number of times to retry a call to target-runner if the call failed.
 # targetRunnerRetries = 0
 
+## Optional data passed to targetRunner. This is ignored by the default
+## targetRunner function, but it may be used by custom
+## targetRunner functions to pass persistent data around.
+# targetRunnerData = NULL
+
 ## Optional R function to provide custom parallelization of target.runner.  The
 ## signature of this function should be 'function(experiments, target.runner,
 ## scenario)', where target.runner is an R function, 'experiments' is a list such that

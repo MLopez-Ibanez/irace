@@ -55,10 +55,10 @@
   \itemize{
      \item targetRunner: Path to the script called for each configuration that launches the algorithm to be tuned. See templates. (Default: "./target-runner")
      \item targetRunnerRetries: Number of times to retry a call to \code{targetRunner} if the call failed. (Default: 0)
-     \item targetRunnerData: MANUEL
-     \item targetRunnerParallel: MANUEL
+     \item targetRunnerData: Optional data passed to \code{targetRunner}. This is ignored by the default \code{targetRunner} function, but it may be used by custom \code{targetRunner} functions to pass persistent data around.
+     \item targetRunnerParallel: Optional R function to provide custom parallelization of \code{targetRunner}.
      \item targetEvaluator: Path to the script that provides a numeric value for each configuration. See templates. (Default: "")
-     \item deterministic: Enable/disable deterministic algorithm mode, if enabled irace will not use an instance more that once in each race. Note that if the number of instances provided is less than firstTest, no statistical test will be performed.
+     \item deterministic: If the target algorithm is deterministic, configurations will be evaluated only once per instance. (Default: 0)
      \item parallel: Number of calls to \code{targetRunner} to execute in parallel. 0 or 1 mean disabled. (Default: 0) 
      \item loadBalancing: Enable/disable load-balancing when executing experiments in parallel. Load-balancing makes better use of computing resources, but increases communication overhead. If this overhead is large, disabling load-balancing may be faster. (Default: 1)
      \item mpi: Enable/disable MPI. Use Rmpi to execute targetRunner in parallel (parameter parallel is the number of slaves). (Default 0)
