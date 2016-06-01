@@ -503,19 +503,13 @@ readInstances <- function(instancesDir = NULL, instancesFile = NULL)
 generateInstances <- function(scenario)
 {
   instances <- scenario$instances
-  sampleInstances <- scenario$sampleInstances
-  
-  if (scenario$deterministic){
-    ntimes <- 1
-  }else{
-    # "Upper bound"" of instances needed
-    # FIXME: We could bound it even further if maxExperiments >> nInstances
-    ntimes <- ceiling (scenario$maxExperiments / length(instances))
-  }
-  
+  ntimes <- if (scenario$deterministic) 1 else
+            # "Upper bound"" of instances needed
+            # FIXME: We could bound it even further if maxExperiments >> nInstances
+            ceiling (scenario$maxExperiments / length(instances))
 
   # Get instances order
-  if (sampleInstances) {
+  if (scenario$sampleInstances) {
     # Sample instances index in groups (ntimes)
     sindex <- as.vector(sapply(rep(length(instances), ntimes), sample.int, replace = FALSE))
   } else {
