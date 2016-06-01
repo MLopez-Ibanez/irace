@@ -4,7 +4,6 @@
 \.svn$
 \.Rhistory$
 \.rej$
-^BUGS$
 Instances$
 Makefile
 Program
@@ -15,11 +14,13 @@ dist\.sh
 ^examples
 ^hooks/hook-evaluate
 ^hooks/hook-run
-^hooks/tune-main
 inst/.+~
 inst/doc/auto
+^\.auctex-auto
+inst/doc/\.auctex-auto
 ^parameters\.txt
 ^tune-conf$
+^scenario\.txt$
 ^web
 ^irace-Ex.R
 DEVEL-README
@@ -30,4 +31,6 @@ irace\.Rdata
 ^testing
 ^svn_version
 ^check-reverse
-
+^devel-tests
+^vignettes
+.+~

@@ -1,5 +1,5 @@
 ---
-title: "irace: An implementation in R of Iterated Race"
+title: "irace: Iterated Race for Automatic Algorithm Configuration
 output:
   html_document:
     theme: journal
@@ -31,6 +31,12 @@ Relevant literature:
     Belgium, 2011.<br>
     [ [bibtex](http://iridia.ulb.ac.be/~manuel/LopezIbanez_bib.html#LopDubStu2011irace)
     | [PDF](http://iridia.ulb.ac.be/IridiaTrSeries/IridiaTr2011-004.pdf) ]
+
+
+ 2. Manuel López-Ibáñez. [**The irace
+    software package: A tutorial**](http://iridia.ulb.ac.be/irace/files/irace-comex-tutorial.pdf). COMEX Workshop on Practical Automatic Algorithm Configuration, 2014.<br>
+    [ [workshop webpage](http://iridia.ulb.ac.be/~manuel/comex_workshop/)
+    | [PDF](http://iridia.ulb.ac.be/irace/files/irace-comex-tutorial.pdf) ]
 
 
 Requisites
@@ -173,14 +179,14 @@ launch irace, you need to open the R console and execute:
 Usage
 -------
 
-1. Create a directory for storing the configuration of the tuning
+1. Create a directory for storing the tuning scenario setup
 
 ```bash
         $ mkdir ~/tuning
         $ cd ~/tuning
 ```
 
-2. Copy the template and example files to the tuning directory
+2. Copy the template and example files to the scenario directory
 ```bash
         $ cp $IRACE_HOME/templates/*.tmpl .
 ```
@@ -196,23 +202,20 @@ Usage
 3. For each template in your tuning directory, remove the `.tmpl`
    suffix, and modify them following the instructions in each file. In
    particular,
-
-    * `tune-main.tmpl` should be adjusted depending on your usage
-        (local, cluster, etc).
-    * The scripts `hook-run`, `hook-evaluate` (if you need it at all) and
-       `tune-main` should be executable. The output of `hook-run` (or
-       `hook-evaluate` if you use a separate evaluation step) is minimized by
-       default. If you wish to maximize it, just multiply the value by `-1`
-       within the script.
-    * In `tune-conf`, uncomment and assign only the parameters for which
-       you need a value different than the default one.
-
+    * The scripts `target-runner` and `targetEvaluator` (if you need it at all)
+      should be executable. The output of `target-runner` (or
+      `targetEvaluator` if you use a separate evaluation step) is minimized by
+      default. If you wish to maximize it, just multiply the value by `-1`
+      within the script.
+    * In `scenario.txt`, uncomment and assign only the parameters for which
+      you need a value different than the default one.
+   
     There are examples in `$IRACE_HOME/examples/`.
 
 4. Put the instances in `~/tuning/Instances/`. In addition, you can
    create a file that specifies which instances from that directory
    should be run and which instance-specific parameters to use. See
-   `tune-conf.tmpl` and `instances-list.tmpl` for examples. The command
+   `scenario.txt.tmpl` and `instances-list.tmpl` for examples. The command
    irace will not attempt to create the execution directory (execDir),
    so it must exist before calling irace. The default execDir is the
    current directory.
@@ -222,8 +225,8 @@ Usage
         $ cd ~/tuning/ && $IRACE_HOME/bin/irace
 ```
     performs one run of Iterated Race. See the output of `irace --help` for
-    additional configuration parameters. Command-line parameters override the
-    configuration specified in the tune-conf file.
+    additional irace parameters. Command-line parameters override the
+    scenario setup specified in the scenario.txt file.
 
 
 ### Many tuning runs in parallel ###
@@ -236,7 +239,7 @@ program
 ```
 
 where N is the number of repetitions. By default, the execution
-directory of each run of irace will be set to `./TUNE-dd`, where dd is a
+directory of each run of irace will be set to `./execdir-dd`, where dd is a
 number padded with zeroes.
 
 **Be careful**, `parallel-irace` will create these directories from
@@ -249,16 +252,16 @@ Check the help of `parallel-irace` by running it without parameters.
 
 
 A single run of irace can be done much faster by executing the calls
-to `hookRun` (the runs of the algorithm being tuned) in
+to `targetRunner` (the runs of the algorithm being tuned) in
 parallel. There are three ways to parallelize a single run of irace.
 
 1. Parallel processes: The option `--parallel N` will use the
-   `parallel` package to launch *locally* up to N calls of `hookRun` in
+   `parallel` package to launch *locally* up to N calls of `targetRunner` in
    parallel.
 
 2. MPI: The option `--mpi 1 --parallel N` will use the Rmpi package to
    launch N slaves + 1 master, in order to execute N calls of
-   `hookRun` in parallel. The user is responsible to set up MPI
+   `targetRunner` in parallel. The user is responsible to set up MPI
    correctly.
 
     An example script for using MPI mode in an SGE cluster is given at
@@ -269,15 +272,14 @@ parallel. There are three ways to parallelize a single run of irace.
    string: `Your job JOBID`. The command `qstat -j JOBID` should return
    nonzero if JOBID has finished, otherwise it should return zero.
 
-    The option `--sge-cluster 1` will launch as many calls of `hookRun` as
+    The option `--sge-cluster 1` will launch as many calls of `targetRunner` as
     possible and use `qstat` to wait for cluster jobs. The user *must* call
-    `qsub` from `hookRun` with the appropriate configuration for their cluster,
-    otherwise `hookRun` will not submit jobs to the cluster. In this mode,
+    `qsub` from `targetRunner` with the appropriate settings for their cluster,
+    otherwise `targetRunner` will not submit jobs to the cluster. In this mode,
     irace must run in the submission node, and hence, qsub should not be used
-    to invoke irace (either directly or through tune-main).  You also need to
-    create a separate hookEvaluate script to parse the results of the hookRun
-    and return them to irace. See the examples in
-    `$IRACE_HOME/examples/sge-cluster/`.
+    to invoke irace.  You also need to create a separate targetEvaluator script
+    to parse the results of the targetRunner and return them to irace. See the
+    examples in `$IRACE_HOME/examples/sge-cluster/`.
 
 
 Frequently Asked Questions
@@ -285,29 +287,30 @@ Frequently Asked Questions
 
 #### Is irace minimizing or maximizing the output of my algorithm? ####
 
-By default, irace considers that the value returned by `hook-run` (or by
-`hook-evaluate`, if used) should be *minimized*. In case of a maximization
+By default, irace considers that the value returned by `target-runner` (or by
+`targetEvaluator`, if used) should be *minimized*. In case of a maximization
 problem, one can simply multiply the value by -1 before returning it to
 irace. This is done, for example, when maximizing the hypervolume (see the last
-lines in `$IRACE_HOME/examples/hypervolume/hook-evaluate`).
+lines in `$IRACE_HOME/examples/hypervolume/target-evaluator`).
 
 
 #### Is it possible to configure a MATLAB algorithm with irace?  ####
 
 Definitely. There are two main ways to achieve this:
 
-1. Edit the hook-run script to call MATLAB in a non-interactive
+1. Edit the target-runner script to call MATLAB in a non-interactive
    way. See the MATLAB documentation, or the following links:<br>
    <http://stackoverflow.com/questions/1518072/suppress-start-message-of-matlab/><br>
    <http://stackoverflow.com/questions/4611195/how-to-call-matlab-from-command-line-and-print-to-stdout-before-exiting>
 
-    You would need to pass the parameter received by hook-run to your MATLAB
+    You would need to pass the parameter received by target-runner to your MATLAB
     script:
     <http://www.mathworks.nl/support/solutions/en/data/1-1BS5S/?solution=1-1BS5S>
+    There is a minimal example in `$IRACE_HOME/examples/matlab/`.
 
 2. Call MATLAB code directly from R using the
    [R.matlab package](http://cran.r-project.org/package=R.matlab). This
-   is a better option if you are experienced in R. Define hookRun as
+   is a better option if you are experienced in R. Define targetRunner as
    an R function instead of a path to a script. The function should
    call your MATLAB code with appropriate parameters.
 
@@ -315,7 +318,7 @@ Definitely. There are two main ways to achieve this:
 #### My program works perfectly on its own, but not when running under irace. Is irace broken?  ####
 
 Every time this was reported, it was a difficult-to-reproduce bug in
-the program, not in irace.  We recommend that in `hook-run`, you use
+the program, not in irace.  We recommend that in `target-runner`, you use
 `valgrind` to run your program. That is, if you program is called like:
 
 ```bash
@@ -336,7 +339,7 @@ thus do not delete those files.
 
 We are not aware of any way to achieve this using R. However, in
 GNU/Linux, it is easy to implement by using the `timeout` command in
-`hook-run` when invoking your program.
+`target-runner` when invoking your program.
 
 
 Contact

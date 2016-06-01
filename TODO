@@ -11,14 +11,14 @@ TODO R package:
    will try to recreate it in CRAN, so we have to include all the
    sources. That would mean also the sources for the IRIDIA TR covers.
 
- * Move the README information to the TR to avoid duplication.
- 
+ * Move the README information to the TR (vignette) to avoid duplication.
+
  * Add inst/COPYRIGHTS. See race package.
 
- * Improve R documentation. 
+ * Improve R documentation.
 
    - Properly document all input/output of exported R functions.
-   
+
    - Document tunerConfig and its variables (some of them are not
      visible in the command-line, but they should be documented here).
 
@@ -29,25 +29,14 @@ TODO R package:
   may take some time to download all packages and check them.)
 
 
-TODO General:
+TODO General (in order of importance):
 
- * Detect cases where all possible parameter configurations can be sampled and
-   there is still enough budget to do at least one test. In that case, it is
-   not worth it to sample configurations and do several iterations. It is
-   better to generate all possible configurations and do a single F/t-race.
+ * Fix all FIXMEs.
 
- * Give an error if the user tries to change certain settings when recovering
-   (maxExperiments, elite, etc.). Other settings such as hookRun, instanceDir,
-   instanceFile, etc. are ok to change but we have to be careful to not
-   override them when recovering.
+ * Fix bugs in BUGS file.
 
- * Add an option "deterministic": when the algorithm is deterministic, it does
-   not make sense to test one configuration more than one time on the same
-   instance.
-
- * Convert README to README.md (markdown) so CRAN renders it as HTML.
-
- * Print some info about the forbidden rules read.
+ * Various initialization modes Latin Hyper-cube, random, exhaustive,
+   Hammersley point set, etc.
 
  * Add a --verify option that checks whether all files are in place,
    all options are valid, and it runs hook-run on a random
@@ -56,6 +45,46 @@ TODO General:
    correct (checking the configuration can be read, giving the number
    of iterations\candidates that would be used, calling hook-run
    once...).
+
+ * The truncated normal distribution actually gives more probability to the
+   side further away from the mean (that is, the integral of the PDF is larger
+   on the side where the distance is larger from the mean). This is not really
+   what we want when optimizing, since the fact that we have moved from the
+   center of the interval suggests that moving closer to the extreme may be
+   desirable. A better approach may be to adjust the PDF such that the integral
+   of the truncated PDF is symmetric with respect to the mean. This is possible
+   for the non-truncated normal:
+   https://en.wikipedia.org/wiki/Skew_normal_distribution but less clear for
+   the truncated case:
+   https://en.wikipedia.org/wiki/Truncated_normal_distribution It is also not
+   clear how to set the parameters of the PDF, such that the desired symmetry
+   is achieved.  Actually, this may be as simple as linearly mapping the actual
+   range to a symmetric range. That is. If the mean is 0.75 within [0,1], then
+   use the truncated normal to sample from [0, 1.5], then linearly map any
+   value from [0.75,1.5] to [0.75,1].
+
+ * It could be nice to be able to set a different nb of rounding
+   digits for each real parameters This number thus would be given in
+   the parameters.txt file.  It should require very few
+   modifications, only in the sampling (generation uniform and normal)
+
+   real            "--paramreal="       r  (1.5, 4.5) digits(5) | condition
+
+ * Compute how many possible parameter configurations (w.r.t. discrete
+   values) can be sampled.
+
+ * Detect the case where all possible parameter configurations can be sampled
+   and there is still enough budget to do at least one test. In that case, it
+   is not worth it to sample configurations and do several iterations. It is
+   better to generate all possible configurations (using expand.grid) and do a
+   single F/t-race.
+
+ * Give an error if the user tries to change certain settings when recovering
+   (maxExperiments, elite, etc.). Other settings such as hookRun, trainingInstancesDir,
+   instanceFile, etc. are ok to change but we have to be careful to not
+   override them when recovering.
+
+ * Print some info about the forbidden rules read.
 
  * Weighted sampling of instances. Use the instance parameters to
    provide a biased sampling. Note that one can currently achieve this
@@ -67,24 +96,19 @@ TODO General:
    http://www.itl.nist.gov/div898/software/dataplot/refman1/auxillar/friedman.htm
    (See also function friedman in package agricolae)
 
- * Compute and report the heterogeneity of the instances seen so far.
-
  * Maybe separate scenario setup from irace parameters? We should have two
    files: scenario.txt and irace-conf.txt. This will make clear what
    the user really has to change to define a scenario versus other
    parameters for irace.
 
- * A new parameter "--hook-run-retries". Number of times to retry a
-   hook-run call if the output is not ok. Default 0. Inf allowed.
-
  * A new parameter "--hook-error-mode [exit | stop | retry ]" to
    control what to do when a call to hook-run fails. Exit is
-   exit irace with an error; stop is call something like 
+   exit irace with an error; stop is call something like
    pskill(Sys.getpid(), signal=SIGSTOP) to put irace to sleep until
    the user send a SIGCONT signal, then retry; and retry is retry
    without sleeping before.
 
- * Make more use of /tmp in 'inst/examples/mpi/tune-main-cluster-mpi'
+ * Make more use of /tmp in 'inst/bin/parallel-irace-mpi'
    to avoid overloading the shared filesystem.
 
  * Pass to hook-run/hook-evaluate an instance index that uniquely
@@ -111,7 +135,7 @@ TODO General:
    confusing for a newbie user to see "timeUsedSoFar" and
    "timeEstimate" always equal to zero, without knowing that they have
    no meaning for him (if he's tuning for nb evaluation).
-   
+
  * race package has some recent updates. Check with Mauro what he
    changed.
 
@@ -126,8 +150,6 @@ TODO General:
    - http://cran.r-project.org/web/packages/RUnit/index.html
    - http://cran.r-project.org/web/packages/svUnit/index.html
 
- * Fix all FIXMEs.
-
  * Boolean command-line parameters require to provide a value
    (1/0). It would be nice if they could be enabled just by using
    them, that is, in addition to "--mpi 1" and "--mpi 0", accept just
@@ -135,11 +157,6 @@ TODO General:
 
  * Do not print anything about timeEstimate/timeUsedSoFar if it is
    never used (is it ever used?)
-
- * Make tune-main, tune-main-cluster, tune-main-mpi and other scripts
-   use /tmp as much as possible.
-
- * How to avoid that MPI creates so many log files?
 
  * irace.Rdata should keep a list with the all the eliteCandidates after each
    race. Right now we only keep the best one.
@@ -149,10 +166,7 @@ TODO General:
 
    round(rtnorm(1, mean + (10^-d) / 2, lower, upper + 10^-d) - (10^-d)/2, d)
 
-   The same applies to runif().   
-
- * Handle properly fixed parameters in candidatesFile (see FIXME in
-   readConfigurations.R).
+   The same applies to runif().
 
  * Add command-line option --cluster=[sge|pbs] to choose the type of
    cluster. Then, hook-run calls qsub and prints a jobID. jobID must
@@ -164,9 +178,12 @@ TODO General:
 
  * generateCandidatesNormal() takes too much time with >800 candidates
    and >20 parameters (SPEAR testcase).
- 
- * Use the options() mechanism of R, that is, 
+
+ * Use the options() mechanism of R, that is,
    options(irace.debug.level = 1) and getOption("irace.debug.level").
+
+ * It may be possible to byte-compile the conditions as they are read.
+   This may speed-up conditionsSatisfied().
 
  * JEREMIE: I would like to try a version of I-Race with a kind of
    bounding in the probability vectors, something equivalent somehow
@@ -191,7 +208,7 @@ TODO General:
    improvement of the winner at the end, testing values slightly
    smaller/bigger, parameter by parameter (at least 'r', 'i' and 'o'
    ones). Should not requires much evaluations.
-  
+
  * Somehow adapt how many instances should be seen.  Maybe such
    choices should be done based on the perceived heterogeneity of the
    instances; I think this is an issue we also could discuss. I also
@@ -199,84 +216,109 @@ TODO General:
    variability of the results of same configurations or by some
    measure of variation of ranks on instances for each configuration.
 
- * Various initialization modes Latin Hyper-cube, random, exhaustive,
-   etc.
-
  * If we have too many elites, remove some of them. Add a parameter
    --max-elites.
- 
+
  * Add example of logarithmic/parameter conversions in hook-run.
 
- * Resample / Randomize only the instances one has seen. When a race
-   stops, the instances already seen are randomized but the elite
-   configurations are not reevaluated on them.
-
- * Parameters should be printed and put in the commandline in exactly
-   the same order given in the parameter file.
+ * Make the update model convergence take into account the hierarchy
+   of parameters.
 
  * oneParamUpperBound and oneParamLowerBound are too much. We can
-   have a single function: paramBound that returns 
-      return (as.numeric(parameters[["boundary"]][[paramName]]))
+   have a single function: paramBound that returns
+      return (as.numeric(parameters[["domain"]][[paramName]]))
    then the user can use directly [1] or [2] to select whatever they
    want. [Jeremie]
 
- * Error/Warn about unknown parameters.
+ * Error/Warn about unknown irace parameters.
 
  * Error messages start in uppercase and finish with a period.
-
- * Use tunerError() for user-level errors and irace.assert() for
-   internal assertions. All stopfinot() should be irace.assert(). Some
-   stop() should be tunerError(), a few should be irace.assert(). None
-   of these functions nor cat() require pasting their arguments.
 
  * Do not add extra parenthesis around simple expressions. Example:
       if ( (!file.exists(installDir)) ) has too many parenthesis.
 
- * It could be nice to be able to set a different nb of rounding
-   digits for each real parameters This number thus would be given in
-   the parameters.txt file.  It should require very few
-   modifications, only in the sampling (generation uniform and normal)
-
  * Add a hook that after sampling post-processes the candidates.
 
- * Make the update model convergence take into account the hierarchy
-   of parameters.
+ * Many of our "objects" could be defined as S4 classes. For example:
+   setClass("Parameters", slots=c(names="character", types="character",
+                                  switches = "character", domain = "list",
+                                  conditions = "expression",
+                                  isFixed = "logical", nbParameters ="numeric",
+                                  nbFixed ="numeric", nbVariable = "numeric"))
+
 
 ------------------------------------------------------------------------------
 
 DONE:
 
- * [DONE by implementing forbidden configurations as conditions (Manuel)] 
-   We could simply read a list of configurations with some NA values,
+ * A new parameter "--hook-run-retries". Number of times to retry a
+   hook-run call if the output is not ok. Default 0. Inf allowed.
+   [DONE by Manuel]
+
+ * Handle properly fixed parameters in candidatesFile (see FIXME in
+   readConfigurations.R).
+   [DONE by Manuel]
+
+ * Use irace.error() for user-level errors and irace.assert() for
+   internal assertions. All stopfinot() should be irace.assert(). Some
+   stop() should be irace.error(), a few should be irace.assert(). None
+   of these functions nor cat() require pasting their arguments.
+   [DONE by Manuel]
+
+ * Parameters should be printed and put in the commandline in exactly
+   the same order given in the parameter file.
+   [DONE by Manuel]
+
+ * Compute and report the heterogeneity of the instances seen so far.
+   [DONE by Leslie]
+
+ * Resample / Randomize only the instances one has seen. When a race
+   stops, the instances already seen are randomized but the elite
+   configurations are not reevaluated on them.
+   [DONE by Leslie]
+
+ * Simplify race.R. We do not need most of what is done there.
+   [DONE by Leslie]
+
+ * Convert README to README.md (markdown) so CRAN renders it as HTML.
+   [DONE by Manuel]
+
+ * How to avoid that MPI creates so many log files?
+   [FIXED in new versions of Rmpi]
+
+ * We could simply read a list of configurations with some NA values,
    and if any configuration sampled matches those (minus the NA
    values), then it is discarded and we resample. If we execute the
    restart mechanism before this check, then resampling the same
    forbidden configuration will trigger a restart.
+   [DONE by implementing forbidden configurations as conditions (Manuel)]
 
- * [DONE by Manuel] Add '--version'.
- 
- * [DONE by Manuel]
-   Forbidden parameter combinations (following ParamILS/SMAC).
+ * Add '--version'.
+   [DONE by Manuel] 
 
- * [DONE by Manuel] 
-   Implement constraints on values that allow the user to specify
+ * Forbidden parameter combinations (following ParamILS/SMAC).
+   [DONE by Manuel]
+
+ * Implement constraints on values that allow the user to specify
    restrictions on the values that parameters may take, such as all
    candidates must satisfy that a < b. Such constraints would be
    specified in a different file "constraints.txt". One way to handle
    them would be by sampling and rejection but perhaps more effective
    methods could be implemented.
-
- * [DONE by Leslie] A way to continue a previous irace run.
+   [DONE by Manuel]
+   
+ * A way to continue a previous irace run.
+   [DONE by Leslie] 
 
  * [DONE] Add errors for stupid parameter files. For example:
-   
+
       x "" r (1e-4, 5e-4) # with digits=2 this is equal to (0, 0)
       y "" i (-1, -2) # the first value should be strictly smaller
       z "" c ("a", "a") # Two times the same value!
       u "" i/r (0, 0) # This is actually a fixed parameter. Fixed
       parameters should be represented with a categorical parameter
       with exactly one value. This avoids accidental typos.
-      
+
 
  * [DONE] We should use list$element instead of list[["element"]] for
    indexing elements that must exist. This way if we do a typo, the
@@ -290,7 +332,7 @@ DONE:
     * A data.frame/matrix with all experiments performed.
     * A data.frame/matrix with all candidate results.
 
- * [FIXED] Use the remaining budget always. But how? 
+ * [FIXED] Use the remaining budget always. But how?
 
  * [DONE] Allow to specify candidate configurations. Perhaps from an extra
    input file --candidates=candidates.txt, which gives one candidate
@@ -316,7 +358,7 @@ DONE:
  * [DONE] Replace the constraints specifications by an R expression
    using: eval(parse(text=constraint), list(a=4, b=3))
 
- * In race.R: 
+ * In race.R:
 
   - [DONE] I wonder why first.test should be a single number? It seems
     reasonable to choose 10 or more, no? I changed it in the check of
@@ -341,7 +383,7 @@ DONE:
    pending branches!). [DONE]
 
  * Reduce the output of the race package. Only report copyright info
-   once. Do not duplicate information already given by irace. 
+   once. Do not duplicate information already given by irace.
    [DONE by Jeremie]
 
 

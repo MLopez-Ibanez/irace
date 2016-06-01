@@ -1,4 +1,4 @@
-## Template for parameter configuration file for Iterated F-Race.
+## Template for parameter description file for Iterated F-Race.
 ##
 ## The format is one parameter per line. Each line contains:
 ##

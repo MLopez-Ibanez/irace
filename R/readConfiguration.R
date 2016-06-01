@@ -1,4 +1,4 @@
-## Read some candidates from a file.
+## Read some configurations from a file.
 ## Example of an input file,
 ## it should be readable with read.table( , header=TRUE).
 ## -------------------------------
@@ -12,129 +12,142 @@
 ## as in the file containing the definition of the parameters.
 ##
 ## FIXME: What about digits?
-readCandidatesFile <-
-  function(fileName = stop("'fileName' is mandatory"), 
+readConfigurationsFile <-
+  function(filename = stop("'filename' is mandatory"), 
            parameters = stop("'parameters' is mandatory"), 
            debugLevel = 0)
 {
   namesParameters <- names(parameters$conditions)
   
   # Read the file.
-  candidateTable <- read.table(fileName, header = TRUE,
+  configurationTable <- read.table(filename, header = TRUE,
                                colClasses = "character",
                                stringsAsFactors = FALSE)
-  stopifnot(is.data.frame(candidateTable))
-  nbCandidates <- nrow(candidateTable)
+  irace.assert(is.data.frame(configurationTable))
+  nbConfigurations <- nrow(configurationTable)
   # Print the table that has been read.
-  if (debugLevel >= 1) {
-    cat("# Read ", nbCandidates, " candidates from file '", fileName, "'\n", sep="")
-    if (debugLevel >= 2) {
-      print(as.data.frame(candidateTable, stringAsFactor = FALSE))
-    }
+  if (debugLevel >= 2) {
+    cat("# Read ", nbConfigurations, " configurations from file '", filename, "'\n", sep="")
+    print(as.data.frame(configurationTable, stringAsFactor = FALSE))
   }
 
-  # FIXME: This should ignore fixed parameters. Only error out if they
-  # are given with a different value.
-  if (ncol(candidateTable) != length(namesParameters)
-      || !setequal (colnames(candidateTable), namesParameters)) {
-    missing <- setdiff (colnames(candidateTable), namesParameters)
+  # This ignores fixed parameters unless they are given with a different value.
+  if (ncol(configurationTable) != length(namesParameters)
+      || !setequal (colnames(configurationTable), namesParameters)) {
+    # Column names must match a parameter, including fixed ones.
+    missing <- setdiff (colnames(configurationTable), namesParameters)
     if (length(missing) > 0) {
-      tunerError("The parameter names (",
-                 paste(missing, collapse=", "),
-                 ") given in the first row of file ", fileName,
-                 " do not match the parameter names: ",
-                 paste(namesParameters, collapse=", "))
-    } else {
-      missing <- setdiff (namesParameters, colnames(candidateTable))
-      tunerError("The parameter names (",
-                 paste(missing, collapse=", "),
-                 ") are missing from the first row of file ", fileName)
+      irace.error("The parameter names (",
+                  strlimit(paste(missing, collapse=", ")),
+                  ") given in the first row of file ", filename,
+                  " do not match the parameter names: ",
+                  paste(namesParameters, collapse=", "))
+      return(NULL)
     }
-    return(NULL)
+
+    # All non-fixed parameters must appear in column names.
+    # FIXME: varParameters <- parameters$names[!parameters$isFixed]
+    varParameters <- parameters$names[!unlist(parameters$isFixed)]
+    missing <- setdiff (varParameters, colnames(configurationTable))
+    if (length(missing) > 0) {
+      irace.error("The parameter names (",
+                  strlimit(paste(missing, collapse=", ")),
+                  ") are missing from the first row of file ", filename)
+      return(NULL)
+    }
+    # Add any missing fixed parameters.
+    missing <- setdiff (namesParameters, colnames(configurationTable))
+    if (length(missing) > 0) {
+      irace.assert (all(parameters$isFixed[missing]))
+      tmp <- lapply(missing, function(x) get.fixed.value(x, parameters))
+      names(tmp) <- missing
+      configurationTable <- cbind.data.frame(configurationTable, tmp,
+                                         stringsAsFactors = FALSE)
+    }
   }
 
   # Reorder columns.
-  candidateTable <- candidateTable[, namesParameters, drop = FALSE]
+  configurationTable <- configurationTable[, namesParameters, drop = FALSE]
   # Fix up numeric columns.
   for (currentParameter in namesParameters) {
     type <- parameters$types[[currentParameter]]
     if (type == "i" || type == "r") {
-      candidateTable[, currentParameter] <- suppressWarnings(as.numeric(candidateTable[, currentParameter]))
+      configurationTable[, currentParameter] <- suppressWarnings(as.numeric(configurationTable[, currentParameter]))
     }
   }
 
-  # Loop over all candidates in candidateTable
-  for (k in seq_len(nbCandidates)) {
+  # Loop over all configurations in configurationTable
+  for (k in seq_len(nbConfigurations)) {
     # Loop over all parameters, in an order taken from the conditions
     for (currentParameter in namesParameters) {
-      currentValue <- candidateTable[k, currentParameter]
+      currentValue <- configurationTable[k, currentParameter]
       type <- parameters$types[[currentParameter]]
 
       # Check the status of the conditions for this parameter to know
-      # if it must be enabled or not.
-      if (conditionsSatisfied(parameters, candidateTable[k, ], 
+      # whether it must be enabled.
+      if (conditionsSatisfied(parameters, configurationTable[k, ], 
                               currentParameter)) {
         # Check that the value is among the valid ones.
         if (type == "i" || type == "r") {
           currentValue <- as.numeric(currentValue)
-          lower <- oneParamLowerBound(currentParameter, parameters)
-          upper <- oneParamUpperBound(currentParameter, parameters)
+          lower <- paramLowerBound(currentParameter, parameters)
+          upper <- paramUpperBound(currentParameter, parameters)
           if (is.na(currentValue)
               || currentValue < lower || currentValue > upper) {
-            tunerError ("Candidate n. ", k, " from file ", fileName,
-                        " is invalid because the value \"",
-                        candidateTable[k, currentParameter],
-                        "\" for the parameter ",
-                        currentParameter, " is not within the valid range [",
-                        lower,", ", upper,"]")
+            irace.error ("Configuration number ", k, " from file ", filename,
+                         " is invalid because the value \"",
+                         configurationTable[k, currentParameter],
+                         "\" for the parameter ",
+                         currentParameter, " is not within the valid range [",
+                         lower,", ", upper,"]")
             return(NULL)
           }
           # For integers, only accept an integer.
           if (type == "i" && as.integer(currentValue) != currentValue) {
-            tunerError ("Candidate n. ", k, " from file ", fileName,
-                        " is invalid because parameter ", currentParameter,
-                        " is of type integer but its value ",
-                        currentValue, " is not an integer")
+            irace.error ("Configuration number ", k, " from file ", filename,
+                         " is invalid because parameter ", currentParameter,
+                         " is of type integer but its value ",
+                         currentValue, " is not an integer")
             return(NULL)
           }
           # type == "o" or "c"
-        } else if (!(currentValue %in% oneParamBoundary(currentParameter, parameters))) {
-          tunerError ("Candidate n. ", k, " from file ", fileName,
-                      " is invalid because the value \"",
-                      currentValue, "\" for the parameter \"",
-                      currentParameter, "\" is not among the valid values: (\"",
-                      paste(oneParamBoundary(currentParameter, parameters),
-                            collapse="\", \""),
-                      "\")")
+        } else if (!(currentValue %in% paramDomain(currentParameter, parameters))) {
+          irace.error ("Configuration number ", k, " from file ", filename,
+                       " is invalid because the value \"",
+                       currentValue, "\" for the parameter \"",
+                       currentParameter, "\" is not among the valid values: (\"",
+                       paste(paramDomain(currentParameter, parameters),
+                             collapse="\", \""),
+                       "\")")
           return(NULL)
         }
         
       } else if (!is.na(currentValue)) {
-        tunerError ("Candidate n. ", k, " from file ", fileName,
-                    " is invalid because parameter \"", currentParameter,
-                    "\" is not enabled because of condition \"",
-                    parameters$conditions[[currentParameter]],
-                    "\" but its value is \"",
+        irace.error ("Configuration number ", k, " from file ", filename,
+                     " is invalid because parameter \"", currentParameter,
+                     "\" is not enabled because of condition \"",
+                     parameters$conditions[[currentParameter]],
+                     "\" but its value is \"",
                     currentValue, "\" instead of NA")
         return(NULL)
       }
     }
   }
-  return (candidateTable)
+  return (configurationTable)
 }
 
-# reads configuration from filename and returns it as a list. Anything
+# reads scenario setup from filename and returns it as a list. Anything
 # not mentioned in the file is not present in the list (that is, it is
 # NULL).
-# FIXME: Does passing an initial configuration actually work? It seems
+# FIXME: Does passing an initial control actually work? It seems
 # it gets completely overriden by the loop below.
-readConfiguration <- function(filename = "", configuration = list())
+readScenario <- function(filename = "", scenario = list())
 {
   # First find out which file...
   if (filename == ""
-      && file.exists(.irace.params.def["configurationFile", "default"])) {
-    filename <- .irace.params.def["configurationFile","default"]
-    cat("Warning: A default configuration file", shQuote(filename),
+      && file.exists(.irace.params.def["scenarioFile", "default"])) {
+    filename <- .irace.params.def["scenarioFile","default"]
+    cat("Warning: A default scenario file", shQuote(filename),
         "has been found and will be read\n")
   }
 
@@ -142,335 +155,343 @@ readConfiguration <- function(filename = "", configuration = list())
     if (file.exists (filename)) {
       debug.level <- getOption(".irace.debug.level", default = 0)
       if (debug.level >= 1)
-        cat ("# Reading configuration file", shQuote(filename), ".......")
+        cat ("# Reading scenario file", shQuote(filename), ".......")
       source(filename, local = TRUE)
       if (debug.level >= 1) cat (" done!\n")
     } else {
-      stop ("The configuration file ", shQuote(filename), " does not exist.")
+      irace.error ("The scenario file ", shQuote(filename), " does not exist.")
+    }
+    ## read scenario file variables
+
+    # If these are given and relative, they should be relative to the
+    # scenario file (except logFile, which is relative to execDir).
+    pathParams <- setdiff(.irace.params.def[.irace.params.def[, "type"] == "p",
+                                            "name"], "logFile")
+    for (param in .irace.params.names) {
+      if (exists (param, inherits = FALSE)) {
+        value <- get(param, inherits = FALSE)
+        if (!is.null.or.empty(value) && is.character(value)
+            && (param %in% pathParams)) {
+          value <- path.rel2abs(value, cwd = dirname(filename))
+        }
+        scenario[[param]] <- value
+      }
     }
   }
-  ## read configuration file variables
-  for (param in .irace.params.names) {
-    configuration[[param]] <- if (exists (param, inherits = FALSE))
-      get(param, inherits = FALSE) else NULL
-  }
-  return (configuration)
+  return (scenario)
 }
 
 ## FIXME: This function should only do checks and return
 ## TRUE/FALSE. There should be other function that does the various
 ## transformations.
-checkConfiguration <- function(configuration = defaultConfiguration())
+checkScenario <- function(scenario = defaultScenario())
 {
   # Fill possible unset (NULL) with default settings.
-  configuration <- defaultConfiguration (configuration)
+  scenario <- defaultScenario (scenario)
   
   ## Check that everything is fine with external parameters
   # Check that the files exist and are readable.
-  configuration$parameterFile <- path.rel2abs(configuration$parameterFile)
+  scenario$parameterFile <- path.rel2abs(scenario$parameterFile)
   # We don't check this file here because the user may give the
   # parameters explicitly. And it is checked in readParameters anyway.
-  configuration$execDir <- path.rel2abs(configuration$execDir)
-  file.check (configuration$execDir, isdir = TRUE, text = "execution directory")
+  scenario$execDir <- path.rel2abs(scenario$execDir)
+  file.check (scenario$execDir, isdir = TRUE, text = "execution directory")
   
-  if (configuration$recoveryFile == "")
-    configuration$recoveryFile  <- NULL
-  if (!is.null(configuration$recoveryFile)) {
-    configuration$recoveryFile <- path.rel2abs(configuration$recoveryFile)
-    file.check(configuration$recoveryFile, readable = TRUE,
+  if (!is.null.or.empty(scenario$logFile)) {
+    scenario$logFile <- path.rel2abs(scenario$logFile, cwd = scenario$execDir)
+  }
+
+  if (scenario$recoveryFile == "")
+    scenario$recoveryFile  <- NULL
+  if (!is.null(scenario$recoveryFile)) {
+    scenario$recoveryFile <- path.rel2abs(scenario$recoveryFile)
+    file.check(scenario$recoveryFile, readable = TRUE,
                text = "recovery file")
+    if (scenario$recoveryFile == scenario$logFile) {
+      irace.error("log file and recovery file should be different ('",
+                  scenario$logFile, "'")
+    }
   }
 
-  if (!is.null.or.empty(configuration$logFile)) {
-    configuration$logFile <- path.rel2abs(configuration$logFile,
-                                          cwd = configuration$execDir)
+
+  if (is.null.or.empty(scenario$targetRunnerParallel)) {
+    scenario$targetRunnerParallel <- NULL
+  } else if (!is.function.name(scenario$targetRunnerParallel)) {
+    irace.error("targetRunnerParallel must be a function")
   }
 
-  if (is.null.or.empty(configuration$hookRunParallel)) {
-    configuration$hookRunParallel <- NULL
-  } else if (!is.function.name(configuration$hookRunParallel)) {
-    tunerError("hookRunParallel must be a function")
-  }
-
-  if (is.function.name(configuration$hookRun)) {
-    .irace$hook.run <- configuration$hookRun
-  } else if (is.null(configuration$hookRunParallel)) {
-    if (is.character(configuration$hookRun)) {
-      configuration$hookRun <- path.rel2abs(configuration$hookRun)
-      file.check (configuration$hookRun, executable = TRUE,
-                  text = "run program hook")
-      .irace$hook.run <- hook.run.default
+  if (is.function.name(scenario$targetRunner)) {
+    .irace$target.runner <- scenario$targetRunner
+  } else if (is.null(scenario$targetRunnerParallel)) {
+    if (is.character(scenario$targetRunner)) {
+      scenario$targetRunner <- path.rel2abs(scenario$targetRunner)
+      file.check (scenario$targetRunner, executable = TRUE,
+                  text = "run program runner")
+      .irace$target.runner <- target.runner.default
     } else {
-      tunerError("hookRun must be a function or an executable program")
+      irace.error("targetRunner must be a function or an executable program")
     }
   }
   
-  if (configuration$hookEvaluate == "") configuration$hookEvaluate <- NULL
-  if (is.null(configuration$hookEvaluate)) {
-    .irace$hook.evaluate <- NULL
-  } else if (is.function.name(configuration$hookEvaluate)) {
-    .irace$hook.evaluate <- configuration$hookEvaluate
-  } else if (is.character(configuration$hookEvaluate)) {
-    configuration$hookEvaluate <- path.rel2abs(configuration$hookEvaluate)
-    file.check (configuration$hookEvaluate, executable = TRUE,
-                text = "evaluate hook")
-    .irace$hook.evaluate <- hook.evaluate.default
+  if (scenario$targetEvaluator == "") scenario$targetEvaluator <- NULL
+  if (is.null(scenario$targetEvaluator)) {
+    .irace$target.evaluator <- NULL
+  } else if (is.function.name(scenario$targetEvaluator)) {
+    .irace$target.evaluator <- scenario$targetEvaluator
+  } else if (is.character(scenario$targetEvaluator)) {
+    scenario$targetEvaluator <- path.rel2abs(scenario$targetEvaluator)
+    file.check (scenario$targetEvaluator, executable = TRUE,
+                text = "target evaluator")
+    .irace$target.evaluator <- target.evaluator.default
   } else {
-    tunerError("hookEvaluate must be a function or an executable program")
+    irace.error("targetEvaluator must be a function or an executable program")
   }
   
   # Training instances
-  if (is.null.or.empty(configuration$instances.extra.params)) {
-    configuration$instances.extra.params <- NULL
+  if (is.null.or.empty(scenario$instances.extra.params)) {
+    scenario$instances.extra.params <- NULL
   }
-  if (is.null.or.empty(configuration$instances)) {
-    configuration$instanceDir <- path.rel2abs(configuration$instanceDir)
-    if (!is.null.or.empty(configuration$instanceFile)) {
-      configuration$instanceFile <- path.rel2abs(configuration$instanceFile)
+  if (is.null.or.empty(scenario$instances)) {
+    scenario$trainInstancesDir <- path.rel2abs(scenario$trainInstancesDir)
+    if (!is.null.or.empty(scenario$trainInstancesFile)) {
+      scenario$trainInstancesFile <- path.rel2abs(scenario$trainInstancesFile)
     }
-    configuration[c("instances", "instances.extra.params")] <-
-      readInstances(instanceDir = canonical.dirname (configuration$instanceDir),
-                    instanceFile = configuration$instanceFile)
+    scenario[c("instances", "instances.extra.params")] <-
+      readInstances(instancesDir = canonical.dirname (scenario$trainInstancesDir),
+                    instancesFile = scenario$trainInstancesFile)
   }
   
   # Testing instances
-  if (is.null.or.empty(configuration$testInstances.extra.params)) {
-    configuration$testInstances.extra.params <- NULL
-  }
-  if (is.null.or.empty(configuration$testInstances) && 
-     (!is.null.or.empty(configuration$testInstanceDir) || 
-      !is.null.or.empty(configuration$testInstanceFile))) {
-    configuration$testInstanceDir <- path.rel2abs(configuration$testInstanceDir)
-    if (!is.null.or.empty(configuration$testInstanceFile)) {
-      configuration$testInstanceFile <- path.rel2abs(configuration$testInstanceFile)
-    }
-    configuration[c("testInstances", "testInstances.extra.params")] <-
-      readInstances(instanceDir = canonical.dirname (configuration$testInstanceDir),
-                    instanceFile = configuration$testInstanceFile)
-  } else {
-    configuration$testInstances <- NULL
-  }
-  
-  # Candidate file
-  if (!is.null.or.empty(configuration$candidatesFile)) {
-    configuration$candidatesFile <- path.rel2abs(configuration$candidatesFile)
-    file.check (configuration$candidatesFile, readable = TRUE,
-                text = "candidates file")
+  if (is.null.or.empty(scenario$testInstances.extra.params)) {
+    scenario$testInstances.extra.params <- NULL
   }
 
-  if (is.null.or.empty(configuration$forbiddenExps)) {
-    configuration$forbiddenExps <- NULL
+  if (is.null.or.empty(scenario$testInstances)) {
+    if (!is.null.or.empty(scenario$testInstancesDir) || 
+        !is.null.or.empty(scenario$testInstancesFile)) {
+      scenario$testInstancesDir <- path.rel2abs(scenario$testInstancesDir)
+      if (!is.null.or.empty(scenario$testInstancesFile)) {
+        scenario$testInstancesFile <- path.rel2abs(scenario$testInstancesFile)
+      }
+      scenario[c("testInstances", "testInstances.extra.params")] <-
+        readInstances(instancesDir = canonical.dirname (scenario$testInstancesDir),
+                      instancesFile = scenario$testInstancesFile)
+    } else {
+      scenario$testInstances <- NULL
+    }
+  }
+  
+  # Configurations file
+  if (!is.null.or.empty(scenario$configurationsFile)) {
+    scenario$configurationsFile <- path.rel2abs(scenario$configurationsFile)
+    file.check (scenario$configurationsFile, readable = TRUE,
+                text = "configurations file")
   }
 
   # This prevents loading the file two times and overriding forbiddenExps if
   # the user specified them explicitly.
-  if (is.null(configuration$forbiddenExps)
-      && !is.null.or.empty(configuration$forbiddenFile)) {
-    configuration$forbiddenFile <- path.rel2abs(configuration$forbiddenFile)
-    file.check (configuration$forbiddenFile, readable = TRUE,
-                text = "forbidden candidates file")
+  if (is.null.or.empty(scenario$forbiddenExps)
+      && !is.null.or.empty(scenario$forbiddenFile)) {
+    scenario$forbiddenFile <- path.rel2abs(scenario$forbiddenFile)
+    file.check (scenario$forbiddenFile, readable = TRUE,
+                text = "forbidden configurations file")
     # FIXME: Using && or || instead of & and | will not work. Detect
     # this and give an error to the user.
-    configuration$forbiddenExps <- parse(file=configuration$forbiddenFile)
+    scenario$forbiddenExps <- parse(file=scenario$forbiddenFile)
     # When a is NA and we check a == 5, we would get NA, which is
     # always FALSE, when we actually want to be TRUE, so we test
     # is.na() first below.
-    configuration$forbiddenExps <-
-      sapply(configuration$forbiddenExps,
+    scenario$forbiddenExps <-
+      sapply(scenario$forbiddenExps,
              function(x) substitute(is.na(x) | !(x), list(x = x)))
     # FIXME: Check that the parameter names that appear in forbidden
     # all appear in parameters$names to catch typos.
-    cat("# ", length(configuration$forbiddenExps),
-        " expression(s) specifying forbidden configurations read from '",
-        configuration$forbiddenFile, "'\n", sep="")
+    cat("# ", length(scenario$forbiddenExps),
+        " expression(s) specifying forbidden scenarios read from '",
+        scenario$forbiddenFile, "'\n", sep="")
   }
 
   # Make it NULL if it is "" or NA
   # FIXME: If it is a non-empty vector of strings, parse them as above.
-  if (is.null.or.empty(configuration$forbiddenExps) || is.null.or.na(configuration$forbiddenExps))
-    configuration$forbiddenExps <- NULL
+  if (is.null.or.empty(scenario$forbiddenExps) || is.null.or.na(scenario$forbiddenExps))
+    scenario$forbiddenExps <- NULL
 
   # We have characters everywhere, set to the right types to avoid
   # problem later.
-  intParams <- c("maxExperiments", "digits", "debugLevel",
-                 "nbIterations", "nbExperimentsPerIteration",
-                 "firstTest", "eachTest", "minNbSurvival", "nbCandidates",
-                 "mu", "timeBudget", "timeEstimate", "seed",
-                 "parallel", "testNbElites")
 
-  # TODO: Avoid the for-loop using lapply and configuration[intParams]
+  # Integer control parameters
+  intParams <- .irace.params.def[.irace.params.def[, "type"] == "i", "name"]
   for (param in intParams) {
-    if (is.na(configuration[[param]]))
+    if (is.na(scenario[[param]]))
       next # Allow NA default values
-    if (!is.null(configuration[[param]]))
-      configuration[[param]] <- suppressWarnings(as.numeric(configuration[[param]]))
-    if (is.null(configuration[[param]])
-        || is.na (configuration[[param]])
-        || !is.wholenumber(configuration[[param]]))
-      tunerError ("'", param, "' must be an integer.")
+    if (!is.null(scenario[[param]]))
+      scenario[[param]] <- suppressWarnings(as.numeric(scenario[[param]]))
+    if (is.null(scenario[[param]])
+        || is.na (scenario[[param]])
+        || !is.wholenumber(scenario[[param]]))
+      irace.error ("'", param, "' must be an integer.")
   }
-
-  configuration$confidence <- suppressWarnings(as.numeric(configuration$confidence))
-  if (is.null(configuration$confidence)
-      || is.na (configuration$confidence)
-      || configuration$confidence < 0.0 || configuration$confidence > 1.0)
-    tunerError ("'confidence' must be a real value within [0, 1].")
-
-
-  if (configuration$firstTest %% configuration$eachTest != 0) {
-    tunerError("firstTest (", .irace.params.def["firstTest", "long"],
+  
+  if (scenario$firstTest %% scenario$eachTest != 0) {
+    irace.error("firstTest (", .irace.params.def["firstTest", "long"],
                ") must be a multiple of eachTest (",
                .irace.params.def["eachTest", "long"], ")")
   }
   
-  if (configuration$mu < configuration$firstTest) {
-    if (configuration$debugLevel >= 1) {
-      cat("Warning: Assuming 'mu <- firstTest' because 'mu' cannot be lower than 'firstTest'\n")
+  if (scenario$mu < scenario$firstTest) {
+    if (scenario$debugLevel >= 1) {
+      cat("Warning: Assuming 'mu = firstTest' because 'mu' cannot be lower than 'firstTest'\n")
     }
-    configuration$mu <- configuration$firstTest
+    scenario$mu <- scenario$firstTest
+  }
+
+  # Real [0, 1] control parameters
+  realParams <- .irace.params.def[.irace.params.def[, "type"] == "r", "name"]
+  for (param in realParams) {
+    if (is.na(scenario[[param]]))
+      next # Allow NA default values
+    if (!is.null(scenario[[param]]))
+      scenario[[param]] <- suppressWarnings(as.numeric(scenario[[param]]))
+    if (is.null(scenario[[param]])
+        || is.na (scenario[[param]])
+        || scenario[[param]] < 0.0 || scenario[[param]] > 1.0)
+      irace.error ("'", param, "' must be a real value within [0, 1].")
   }
   
+  if (is.na (scenario$softRestartThreshold)) {
+    scenario$softRestartThreshold <- 10^(- scenario$digits)
+  }
+  
+  # Boolean control parameters
   as.boolean.param <- function(x, name, params)
   {
     tmp <- as.integer(x)
     if (is.na (tmp) || (tmp != 0 && tmp != 1)) {
-      tunerError ("'", name, "' (", params[name, "long"],
-                  ") must be either 0 or 1")
+      irace.error ("'", name, "' (", params[name, "long"],
+                   ") must be either 0 or 1")
     }
     return(as.logical(tmp))
   }
-  # Boolean params
-  for (p in c("sampleInstances", "sgeCluster", "softRestart", "mpi",
-              "testIterationElites", "loadBalancing")) {
-    configuration[[p]] <- as.boolean.param (configuration[[p]], p, .irace.params.def)
+  boolParams <- .irace.params.def[.irace.params.def[, "type"] == "b", "name"]
+  for (p in boolParams) {
+    scenario[[p]] <- as.boolean.param (scenario[[p]], p, .irace.params.def)
   }
 
-  if (configuration$mpi && configuration$parallel < 2) {
-    tunerError ("'parallel' (", .irace.params.def["parallel","long"],
-                ") must be larger than 1 when mpi is enabled")
+  if (scenario$mpi && scenario$parallel < 2) {
+    irace.error ("'parallel' (", .irace.params.def["parallel","long"],
+                 ") must be larger than 1 when mpi is enabled")
   }
 
-  if (configuration$sgeCluster && configuration$mpi) {
-    tunerError("'mpi' (", .irace.params.def["mpi", "long"], ") and ",
-               "'sgeCluster' (", .irace.params.def["sgeCluster", "long"], ") ",
-               "cannot be enabled at the same time")
+  if (scenario$sgeCluster && scenario$mpi) {
+    irace.error("'mpi' (", .irace.params.def["mpi", "long"], ") and ",
+                "'sgeCluster' (", .irace.params.def["sgeCluster", "long"], ") ",
+                "cannot be enabled at the same time")
   }
 
-  if (configuration$sgeCluster && configuration$parallel > 1) {
-    tunerError("It does not make sense to use ",
-               "'parallel' (", .irace.params.def["parallel", "long"], ") and ",
-               "'sgeCluster' (", .irace.params.def["sgeCluster", "long"], ") ",
-               "at the same time")
+  if (scenario$sgeCluster && scenario$parallel > 1) {
+    irace.error("It does not make sense to use ",
+                "'parallel' (", .irace.params.def["parallel", "long"], ") and ",
+                "'sgeCluster' (", .irace.params.def["sgeCluster", "long"], ") ",
+                "at the same time")
   }
   
-  if (configuration$timeBudget > 0 && configuration$timeEstimate <= 0) {
-    tunerError ("When using 'timeBudget' (",
-                .irace.params.def["timeBudget", "long"], "), 'timeEstimate' (",
-                .irace.params.def["timeEstimate", "long"],
-                ") must be larger than zero")
-  }
-
-  if (configuration$timeBudget <= 0 && configuration$timeEstimate > 0) {
-    tunerError ("When using 'timeEstimate' (",
-                .irace.params.def["timeEstimate", "long"], "), 'timeBudget' (",
-                .irace.params.def["timeBudget", "long"],
-                ") must be larger than zero")
-  }
-
-  if (tolower(configuration$testType) %in% c("f-test", "friedman")) {
-    configuration$testType <- "friedman"
-  } else if (tolower(configuration$testType) %in% c("t-test", "t.none")) {
-    configuration$testType <- "t.none"
-  } else {
-    tunerError ("invalid setting '", configuration$testType,
-                "' of 'testType' (", .irace.params.def["testType", "long"],
-                "), valid values are: F-test, t-test")
-  }
-
-  return (configuration)
+  scenario$testType <- switch(tolower(scenario$testType),
+                                   "f-test" =, # Fall-through
+                                   "friedman" = "friedman",
+                                   "t-test" =, # Fall-through
+                                   "t.none" = "t.none",
+                                   "t-test-holm" =, # Fall-through,
+                                   "t.holm" = "t.holm",
+                                   "t-test-bonferroni" =, # Fall-through,
+                                   "t.bonferroni" = "t.bonferroni",
+                                   irace.error ("invalid setting '", scenario$testType,
+                                                "' of 'testType' (", .irace.params.def["testType", "long"],
+                                                "), valid values are: ",
+                                                "F-test, t-test, t-test-holm, t-test-bonferroni"))
+  return (scenario)
 }
 
 print.instances.extra.params <- function(param, value)
 {
   if (is.null.or.empty(paste(value, collapse=""))) {
-    cat (param, "<- NULL\n")
+    cat (param, "= NULL\n")
   } else {
-    cat (param, "<-\n")
+    cat (param, "=\n")
     cat(paste(names(value), value, sep=" : "), sep="\n")
   }
 }
 
 print.instances <- function(param, value)
 {
-  cat (param, "<- \"")
+  cat (param, "= \"")
   cat (value, sep=", ")
   cat ("\"\n")
 }
 
-printConfiguration <- function(configuration)
+printScenario <- function(scenario)
 {
-  cat("## irace configuration:\n")
+  cat("## irace scenario:\n")
   for (param in .irace.params.names) {
     
     # Special case for instances.extra.params
     if (param == "instances.extra.params"
         || param == "testInstances.extra.params") {
-      print.instances.extra.params (param, configuration[[param]])
+      print.instances.extra.params (param, scenario[[param]])
     } else if (param == "instances" || param == "testInstances") {
       # Special case for instances
-      print.instances (param, configuration[[param]])
+      print.instances (param, scenario[[param]])
     } else {# All other parameters (no vector, but can be functions)
       # FIXME: Perhaps deparse() is not the right way to do this?
-      cat(param, "<-", deparse(configuration[[param]]), "\n")
+      cat(param, "=", deparse(scenario[[param]]), "\n")
     }
   }
-  cat("## end of irace configuration\n")
+  cat("## end of irace scenario\n")
 }
 
-defaultConfiguration <- function(configuration = list())
+defaultScenario <- function(scenario = list())
 {
-  if (!is.null(names(configuration))
-      && !all(names(configuration) %in% .irace.params.names)) {
-    stop("Unknown configuration parameters: ",
-         paste(names(configuration)[which(!names(configuration)
-                                          %in% .irace.params.names)],
-               sep=", "))
+  if (!is.null(names(scenario))
+      && !all(names(scenario) %in% .irace.params.names)) {
+    irace.error("Unknown scenario parameters: ",
+                paste(names(scenario)[which(!names(scenario)
+                                                 %in% .irace.params.names)],
+                      sep=", "))
   }
 
   for (k in .irace.params.names) {
-    if (is.null.or.na(configuration[[k]])) {
-      configuration[[k]] <- .irace.params.def[k, "default"]
+    if (is.null.or.na(scenario[[k]])) {
+      scenario[[k]] <- .irace.params.def[k, "default"]
     }
   }
-  return (configuration)
+  return (scenario)
 }
 
-readInstances <- function(instanceDir = NULL, instanceFile = NULL)
+readInstances <- function(instancesDir = NULL, instancesFile = NULL)
 {
-  if (is.null.or.empty(instanceDir) && is.null.or.empty(instanceFile))
-    tunerError("No instances information provided!")
+  if (is.null.or.empty(instancesDir) && is.null.or.empty(instancesFile))
+    irace.error("Both instancesDir and instancesFile are empty: No instances provided")
   
   instances <- instances.extra.params <- NULL
   
-  if (!is.null.or.empty(instanceFile)) {
-    file.check (instanceFile, readable = TRUE, text = "instance file")
-    lines <- readLines (instanceFile)
+  if (!is.null.or.empty(instancesFile)) {
+    file.check (instancesFile, readable = TRUE, text = "instance file")
+    lines <- readLines (instancesFile)
     lines <- sub("#.*$", "", lines) # Remove comments
     lines <- sub("^[[:space:]]+", "", lines) # Remove extra spaces
     lines <- lines[lines != ""] # Delete empty lines
     instances <- sub("^([^[:space:]]+).*$", "\\1", lines)
-    instances <- paste (instanceDir, instances, sep="")
+    instances <- paste (instancesDir, instances, sep="")
     instances.extra.params <- sub("^[^[:space:]]+(.*)$", "\\1", lines)
     names (instances.extra.params) <- instances
   } else {
-    file.check (instanceDir, isdir = TRUE, notempty = TRUE,
+    file.check (instancesDir, isdir = TRUE, notempty = TRUE,
                 text = "instances directory")
     # The files are sorted in alphabetical order, on the full path if
     # 'full.names = TRUE'.
-    instances <- list.files (path = instanceDir, full.names = TRUE,
+    instances <- list.files (path = instancesDir, full.names = TRUE,
                              recursive = TRUE)
     if (length (instances) == 0)
-      tunerError("No instances found in `", instanceDir, "'!")
+      irace.error("No instances found in `", instancesDir, "'")
   }
   
   return(list(instances = instances,
@@ -479,14 +500,19 @@ readInstances <- function(instanceDir = NULL, instanceFile = NULL)
 
 
 ## Generate instances + seed.
-generateInstances <- function(configuration)
+generateInstances <- function(scenario)
 {
-  instances <- configuration$instances
-  sampleInstances <- configuration$sampleInstances
-    
-  # "Upper bound"" of instances needed
-  # FIXME: We could bound it even further if maxExperiments >> nInstances
-  ntimes <- ceiling (configuration$maxExperiments / length(instances))
+  instances <- scenario$instances
+  sampleInstances <- scenario$sampleInstances
+  
+  if (scenario$deterministic){
+    ntimes <- 1
+  }else{
+    # "Upper bound"" of instances needed
+    # FIXME: We could bound it even further if maxExperiments >> nInstances
+    ntimes <- ceiling (scenario$maxExperiments / length(instances))
+  }
+  
 
   # Get instances order
   if (sampleInstances) {
@@ -502,4 +528,64 @@ generateInstances <- function(configuration)
                      seed = sample.int(2147483647, size = ntimes * length(instances), replace = TRUE))
   return(tmp)
 }
+
+## Check targetRunner execution
+checkTargetFiles <- function(scenario, parameters){
+  result <- TRUE
+  # Create two random configurations
+  configurations <- sampleUniform(parameters, 2,
+                                     digits = scenario$digits,
+                                     forbidden = scenario$forbiddenExps)
+  configurations <- cbind (.ID. = c("testConfig1","testConfig2") , configurations)
+  
+  # Get info of the configuration
+  values <- removeConfigurationsMetaData(configurations)
+  values <- values[, parameters$names, drop = FALSE]
+  switches <- parameters$switches[parameters$names]
+  
+  # Create the experiment using the first instance
+  experiments <- list()
+  for(i in 1:nrow(configurations))
+       experiments[[i]] <- list (id.configuration = configurations[i, ".ID."],
+                            id.instance  = "instance1",
+                            seed = 1234567,
+                            configuration = values[i, , drop = FALSE],
+                            instance = scenario$instances[1],
+                            extra.params = scenario$instances.extra.params[[1]],
+                            switches = switches)
+  # Executing targetRunner
+  cat("# Executing targetRunner...\n")
+  output <-  withCallingHandlers(
+               tryCatch(execute.experiments(experiments, scenario),
+                        error = function(e) {
+                           cat("\n# Error ocurred while executing targetRunner:\n\n",
+                                 paste(conditionMessage(e), collapse="\n"))
+                           result <<- FALSE
+                           }), 
+                        warning = function(w) {
+                              cat("\n# Warning ocurred while executing targetRunner:\n\n",
+                                  paste(conditionMessage(w), collapse="\n"))
+                               invokeRestart("muffleWarning")})
+  
+  if(!is.null.or.empty(scenario$targetEvaluator)){
+    output <- list()
+    cat("# Executing targetEvaluator...\n")
+    for (i in seq_along(experiments)) {
+      output[[i]] <- withCallingHandlers(
+                        tryCatch(target.evaluator.default(experiment = experiments[[i]], length(experiments),
+                        c("testConfig1","testConfig2"), scenario = scenario, target.runner.call = "check target runner"),
+                        error = function(e) {
+                           cat("\n# Error ocurred while executing targetEvaluator:\n\n",
+                                 paste(conditionMessage(e), collapse="\n"))
+                           result <<- FALSE
+                        }), 
+                     warning = function(w) {
+                              cat("\n# Warning ocurred while executing targetEvaluator:\n\n",
+                                  paste(conditionMessage(w), collapse="\n"))
+                               invokeRestart("muffleWarning")})   
+    }
+  }
+  return(result)
+}
+
 

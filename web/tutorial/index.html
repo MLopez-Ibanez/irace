@@ -291,10 +291,10 @@ R&gt; irace.cmdline("--help")
    <h4>Tuning irace using a different hypervolume computation method</h4>
 
    <p class="beforepre">
-    Now that you have tested irace using the normalized hypervolume, the next step is to test it without normalization. Edit the <code>tune-conf</code>, locate at the directory where you uncompressed <code>nsga2-example.tar.gz</code>, and edit the two lines below:</p>
+    Now that you have tested irace using the normalized hypervolume, the next step is to test it without normalization. Edit the <code>scenario.txt</code>, locate at the directory where you uncompressed <code>nsga2-example.tar.gz</code>, and edit the two lines below:</p>
      <pre>
-     #hookRun <- "./hook-run2"		# uncomment this line
-     hookEvaluate <- "./hook-evaluate"  # comment this line</pre>
+     #hookRun = "./hook-run2"		# uncomment this line
+     hookEvaluate = "./hook-evaluate"  # comment this line</pre>
    <p class="beforepre">
      Run irace again and compare results.</p>
    <br>

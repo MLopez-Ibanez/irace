@@ -1,0 +1,2 @@
+#!/bin/bash
+echo $(perl -e "print $5*$6*0.$RANDOM")

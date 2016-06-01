@@ -1,0 +1,3 @@
+instancesFile = "instances.txt"
+maxExperiments = 1000
+nbConfigurations = 9

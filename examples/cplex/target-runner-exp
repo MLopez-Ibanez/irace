@@ -1,0 +1,167 @@
+#!/bin/bash
+###############################################################################
+# This script is to tune the CPLEX software.
+#
+# PARAMETERS:
+# $1 is the instance name  
+# $2 is the candidate configuration number
+# The rest ($* after `shift 2') are parameters to the run of CPLEX
+#
+# RETURN VALUE:
+# This script should print a single numerical value (the value to be minimized)
+###############################################################################
+
+EXE=/opt/ibm/ILOG/CPLEX_Studio124/cplex/bin/x86-64_sles10_4.1/cplex 
+
+#check units for this
+MEMORY_LIMIT=900
+#MEMORY_LIMIT=400
+
+CANDIDATE=$1
+INSTANCEID=$2
+SEED=$3
+INSTANCE=$4
+shift 4 || exit 1
+CAND_PARAMS=$*
+
+RUNTIME_LIMIT=10000
+PENALTY=$(( $RUNTIME_LIMIT ))
+
+STDOUT="c${CANDIDATE}-${INSTANCEID}.stdout"
+STDERR="c${CANDIDATE}-${INSTANCEID}.stderr"
+STDPAR="c${CANDIDATE}-${INSTANCEID}.stdpar"
+
+WORK_DIR="c${CANDIDATE}-${RANDOM}"
+
+echo "set logfile *" >> $STDPAR
+echo "read $INSTANCE" >> $STDPAR
+echo "set clocktype 1" >> $STDPAR
+echo "set threads 1" >> $STDPAR
+echo "set timelimit $RUNTIME_LIMIT" >> $STDPAR
+echo "set mip limits treememory $MEMORY_LIMIT" >> $STDPAR
+echo "set workdir $WORK_DIR" >> $STDPAR
+echo "set mip tolerances mipgap 0" >> $STDPAR
+
+i=0
+SIMPLEX_PER_S="no"
+PERTURB_CONS="1e-6" #default value for option simple perturbation switch no
+
+IFS=" "
+
+for ELEMENT in $CAND_PARAMS
+do
+    mod=$(( $i % 2 ))
+    if [ "$mod" -eq "0" ]; then
+      PNAME=${ELEMENT//'_'/' '}
+    else
+
+      #mip strategy bbinterval
+      if [ "$PNAME" == "mip strategy bbinterval" ]; then
+         if [ "$ELEMENT" -eq "0" ]; then
+            ELEMENT=1000
+         fi
+      fi
+
+      #barrier limits growth
+      if [ "$PNAME" == "barrier limits growth" ]; then
+	 ELEMENT="1e+${ELEMENT}"
+      fi
+
+      #simplex perturbation switch check if not write!
+      if [ "$PNAME" == "simplex perturbation switch" ]; then
+         SIMPLEX_PER_S=$ELEMENT
+      else
+        if [ "$PNAME" == "perturbation constant" ]; then
+           PERTURB_CONS="1e${ELEMENT}"
+        else
+           echo "set $PNAME $ELEMENT" >> $STDPAR
+        fi
+      fi
+
+    fi
+    i=$(( $i + 1))
+done
+
+echo "set simplex perturbation ${SIMPLEX_PER_S} ${PERTURB_CONS}" >> $STDPAR
+
+echo "display settings all" >> $STDPAR
+echo "opt" >> $STDPAR
+echo "quit" >> $STDPAR
+
+$EXE < ${STDPAR} 1> ${STDOUT} 2> ${STDERR}
+
+# In case of error, we print the current time:
+error() {
+    echo "`TZ=UTC date`: error: $@" >&2
+    exit 1
+}
+
+# The output of the candidate $CANDIDATE should be written in the file 
+if [ ! -s "${STDOUT}" ]; then
+    # In this case, the file does not exist. Let's exit with a value 
+    # different from 0. In this case irace will stop with an error.
+    error "${STDOUT}: No such file or directory"
+fi
+
+SOLVED="CRASHED"
+
+TMP=$(cat ${STDOUT} | grep "Error termination")
+if [ "$TMP" != "" ]; then
+    SOLVED="TIMEOUT"
+fi
+
+TMP=$(cat ${STDOUT} | grep "MIP - Time limit exceeded")
+if [ "$TMP" != "" ]; then
+    SOLVED="TIMEOUT"
+fi
+
+TMP=$(cat ${STDOUT} | grep "MIP - Aborted")
+if [ "$TMP" != "" ]; then
+    SOLVED="TIMEOUT"
+fi
+
+TMP=$(cat ${STDOUT} | grep "MIP - Memory limit exceeded")
+if [ "$TMP" != "" ]; then
+    SOLVED="TIMEOUT"
+fi
+
+TMP=$(cat ${STDOUT} | grep "runsolver_max_cpu_time_exceeded")
+if [ "$TMP" != "" ] ; then
+    SOLVED="TIMEOUT"
+fi
+
+TMP=$(cat ${STDOUT} | grep "runsolver_max_memory_limit_exceeded")
+if [ "$TMP" != "" ] ; then
+    SOLVED="TIMEOUT"
+fi
+
+TMP=$(cat ${STDOUT} | grep "MIP - Integer optimal")
+if [ "$TMP" != "" ] ; then
+    SOLVED="SOLVED"
+fi
+
+TMP=$(cat ${STDOUT} | grep "MIP - Optimal")
+if [ "$TMP" != "" ] ; then
+    SOLVED="SOLVED"
+fi
+
+if [ "$SOLVED" == "TIMEOUT" ]; then
+   COST=$RUNTIME_LIMIT
+else
+   if [ "$SOLVED" == "CRASHED" ]; then
+      COST=$PENALTY
+   else
+      #runtime objective
+      COST=$(cat ${STDOUT} | grep "Solution time" | gawk -F " " '{print $4}')
+      if ! [[ "$COST" =~ ^[-+0-9.e]+$ ]] ; then
+        error "${STDOUT}: Output is not a number"
+      fi
+   fi
+fi
+
+echo "$COST $COST"
+
+
+# We are done with our duty. Clean files and exit with 0 (no error).
+rm -rf "${STDOUT}" "${STDERR}" "${STDPAR}"
+exit 0

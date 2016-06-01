@@ -1,9 +1,26 @@
 #!/bin/bash
 ###############################################################################
-# This wrapper is used to run several runs of irace in parallel.
+# This script launches several runs of irace in parallel.
+# Execute without parameters to see usage.
 ###############################################################################
+set -e
+set -o pipefail
 
-SEED=1234567
+# Find our own location.
+BINDIR=$(dirname "$(readlink -f "$(type -P $0 || echo $0)")")
+IRACE="$BINDIR/irace"
+
+# You may want to customize this function.
+irace_main() {
+    # We would like to use $BASHPID here, but OS X version of bash does not
+    # support it.
+    THISPID=$(exec sh -c 'echo $PPID')
+    # It may be faster to use /tmp.
+    exec 1> $EXECDIR/irace-$THISPID.stdout 
+    exec 2> $EXECDIR/irace-$THISPID.stderr
+    exec $IRACE --exec-dir=$EXECDIR --seed $RUNSEED $PARAMS
+}
+## End of customization
 
 error () {
     echo "$0: error: $@" >&2
@@ -15,9 +32,9 @@ usage() {
 Usage: $0 N[-M] [EXECDIR] [IRACE PARAMS]
 
 Parameters:
- N             an integer giving the number of repetitions of Race
+ N             an integer giving the number of repetitions of irace
                or a sequence N-M giving which repetitions to redo.
- EXECDIR       job M will use EXECDIR-M directory (default: TUNE-)
+ EXECDIR       job M will use EXECDIR-M directory (default: execdir)
                as the execDir (--exec-dir) parameter of irace.
  IRACE PARAMS  additional parameters for irace.
 EOF
@@ -27,7 +44,7 @@ EOF
 # Issue usage if no parameters are given.
 test $# -ge 1 || usage
 
-# Number of repetitions of Race
+# Number of repetitions of iRace
 REPETITIONS=$1
 shift
 START=1
@@ -40,25 +57,25 @@ elif ! [[ "$REPETITIONS" =~ ^[0-9]+$ ]] ; then
 fi
 
 # execDir (--exec-dir) directory
-EXECDIR=${1:-TUNE}
+EXECDIR_PREFIX=${1:-execdir}
 shift
 
-IRACE_MAIN="tune-main"
+SEED=1234567
+PARAMS=
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --seed) shift; SEED="$1"; shift;;
+        *) PARAMS="$PARAMS $1"; shift;;# terminate case
 
-test -e ./${IRACE_MAIN} || error "${IRACE_MAIN} not found"
-test -x ./${IRACE_MAIN} || error "${IRACE_MAIN} must be executable"
-
-# Find our own location.
-BINDIR=$(dirname "$(readlink -f "$(type -P $0 || echo $0)")")
+    esac
+done
 
 for i in $(seq $START $REPETITIONS); do
-    TRY=$(printf '%s-%002d' $EXECDIR $i)
-    echo "execution directory = ./$TRY"
-    rm -rf $TRY
-    mkdir -p $TRY
-    # FIXME: In fact there is a problem with the output files being
-    # overwritten, specially when using qsub.
-    let s=SEED+i-1 
-    ./${IRACE_MAIN} $BINDIR $TRY --seed $s $* &
+    EXECDIR=$(printf '%s-%002d' ${EXECDIR_PREFIX} $i)
+    echo "execution directory: $EXECDIR"
+    rm -rf $EXECDIR
+    mkdir -p $EXECDIR
+    let RUNSEED=SEED+i-1 
+    irace_main $(printf '%002d' $i) &
     sleep 1
 done

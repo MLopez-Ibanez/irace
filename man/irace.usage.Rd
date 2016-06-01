@@ -2,9 +2,8 @@
 \alias{irace.usage}
 \title{irace.usage}
 \description{
-  This function prints all possible arguments for the configuration
-  to be used by \pkg{irace}, with the corresponding switches and
-  a short description.
+  This function prints all command-line options of \pkg{irace},
+  with the corresponding switches and a short description.
 }
 \usage{
   irace.usage()

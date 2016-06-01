@@ -1,0 +1,27 @@
+#!/bin/bash
+###############################################################################
+# This script is the command that is executed every run.
+#
+# PARAMETERS:
+# $1 is the candidate configuration number
+# $2 is the instance ID
+# $3 is the seed
+# $4 is the instance name
+# The rest ($* after `shift 4') are parameters to the run
+#
+# RETURN VALUE:
+# This script should print nothing.
+# Exit with 0 if no error, with 1 in case of error
+###############################################################################
+
+EXE=~/bin/beamaco_tsptw
+CANDIDATE=$1
+INSTANCEID=$2
+SEED=$3
+INSTANCE=$4
+shift 4 || exit 1
+CAND_PARAMS=$*
+
+exec $EXE -S 1 --time 1 -r 1 -i $INSTANCE $* 1> ${CANDIDATE}.run.output 2> ${CANDIDATE}.run.stderr
+
+

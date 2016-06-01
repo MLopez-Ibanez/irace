@@ -37,8 +37,8 @@ buildCommandLine (values, switches)
 
 # First, load the data produced by irace.
 load("irace.Rdata")
-attach(tunerResults)
-apply(allCandidates[1:10, unlist(parameters$names)], 1, buildCommandLine,
+attach(iraceResults)
+apply(allConfigurations[1:10, unlist(parameters$names)], 1, buildCommandLine,
       unlist(parameters$switches))
 }
 }

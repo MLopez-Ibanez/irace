@@ -6,7 +6,8 @@ irace.reload.debug <- function(package = "irace")
   pkg <- paste("package:", package, sep ="")
   try(detach(pkg, character.only = TRUE, unload = TRUE))
   library(package, character.only = TRUE)
-  options(error=recover)
+  options(error = if (interactive()) utils::recover else
+          quote(utils::dump.frames("iracedump", TRUE)))
 }
 
 .irace.prefix <- "== irace == "
@@ -31,8 +32,7 @@ irace.print.memUsed <- function(objects)
 
 # Print a user-level fatal error message, when the calling context
 # cannot help the user to understand why the program failed.
-## FIXME: rename this function to irace.error
-tunerError <- function(...)
+irace.error <- function(...)
 {
   # The default is only 1000, which is too small. 8170 is the maximum
   # value allowed up to R 3.0.2
@@ -49,7 +49,9 @@ irace.assert <- function(exp)
   # FIXME: It would be great if we could save into a file the state of
   # the function that called this one.
   print(traceback())
-  op <- options(warning.length = 8170, error = utils::recover)
+  op <- options(warning.length = 8170,
+                error = if (interactive()) utils::recover else
+                quote(utils::dump.frames("iracedump", TRUE)))
   on.exit(options(op))
   stop (msg)
   invisible()
@@ -68,40 +70,44 @@ file.check <- function (file, executable = FALSE, readable = executable,
   READ <- 4
 
   if (!is.character(file) || is.null.or.empty(file)) {
-    tunerError (text, " ", shQuote(file), " is not a vaild filename")
+    irace.error (text, " ", shQuote(file), " is not a vaild filename")
   }
   ## Remove trailing slash if present for windows OS compatibility
   if (substring(file, nchar(file), nchar(file)) %in% c("/", "\\"))
     file <- substring(file, 1, nchar(file) - 1)
   
   if (!file.exists(file)) {
-    tunerError (text, " '", file, "' does not exist")
+    irace.error (text, " '", file, "' does not exist")
     return(FALSE)
   }
   if (readable && (file.access(file, mode = READ) != 0)) {
-    tunerError(text, " '", file, "' is not readable")
+    irace.error(text, " '", file, "' is not readable")
     return (FALSE)
   }
   if (executable && file.access(file, mode = EXEC) != 0) {
-    tunerError(text, " '", file, "' is not executable")
+    irace.error(text, " '", file, "' is not executable")
     return (FALSE)
   }
 
   if (isdir) {
     if (!file.info(file)$isdir) {
-      tunerError(text, " '", file, "' is not a directory")
+      irace.error(text, " '", file, "' is not a directory")
       return (FALSE)
     }
     if (notempty && length(list.files (file, recursive=TRUE)) == 0) {
-      tunerError(text, " '", file, "' does not contain any file")
+      irace.error(text, " '", file, "' does not contain any file")
       return (FALSE)
     }
   } else if (file.info(file)$isdir) {
-    tunerError(text, " '", file, "' is a directory, not a file")
+    irace.error(text, " '", file, "' is a directory, not a file")
     return (FALSE)
   }
   return (TRUE)
 }
+
+# Returns the smallest multiple of d that is higher than or equal to x.
+round.to.next.multiple <- function(x, d)
+  return(x + d - 1 - (x - 1) %% d)
 
 is.wholenumber <- function(x, tol = .Machine$double.eps^0.5)
 {
@@ -262,6 +268,16 @@ is.function.name <- function(FUN)
                  inherits = TRUE)[[1]]))
 }
 
+# This function is used to trim potentially large strings for printing, since
+# the maximum error/warning length is 8170 characters (R 3.0.2)
+strlimit <- function(str, limit = 5000)
+{
+  if (nchar(str) > limit) {
+    return(paste0(substr(str, 1, limit - 3), "..."))
+  }
+  return(str)
+}
+
 trim.leading <- function(str)
 {
   return (sub('^[[:space:]]+', '', str)) ## white space, POSIX-style
@@ -281,19 +297,19 @@ isFixed <- function (paramName, parameters)
   return (as.logical(parameters$isFixed[paramName]))
 }
 
-oneParamBoundary <- function (paramName, parameters)
+paramDomain <- function (paramName, parameters)
 {
-  return (parameters$boundary[[paramName]])
+  return (parameters$domain[[paramName]])
 }
 
-oneParamLowerBound <- function (paramName, parameters)
+paramLowerBound <- function (paramName, parameters)
 {
-  return (as.numeric(parameters$boundary[[paramName]][1]))
+  return (as.numeric(parameters$domain[[paramName]][1]))
 }
 
-oneParamUpperBound <- function (paramName, parameters)
+paramUpperBound <- function (paramName, parameters)
 {
-  return (as.numeric(parameters$boundary[[paramName]][2]))
+  return (as.numeric(parameters$domain[[paramName]][2]))
 }
 
 nbParam <- function (parameters)
@@ -301,19 +317,48 @@ nbParam <- function (parameters)
   return (length(parameters$names))
 }
 
+## This function takes two matrices x and y and merges them such that the
+## resulting matrix z has:
+# rownames(z) <- setunion(rownames(x), rownames(y)) and 
+# rownames(z) <- setunion(rownames(x), rownames(y)) and
+# z[rownames(x), colnames(x)] <- x and z[rownames(y), colnames(y)] <- y, and
+# z[i, j] <- NA for all i,j not in x nor y.
+merge.matrix <- function(x, y)
+{
+  new.cols <- setdiff(colnames(y), colnames(x))
+  new.rows <- setdiff(rownames(y), rownames(x))
+
+  if (is.null(rownames(x)) || is.null(colnames(x)))
+    return(y)
+
+  if (is.null(rownames(y)) || is.null(colnames(y)))
+    return(x)
+
+  # Add columns
+  x <- cbind(x,
+             matrix(NA, ncol = length(new.cols), nrow = nrow(x),
+                    dimnames = list(rownames(x), new.cols)))
+  # Add rows
+  x <- rbind(x,
+             matrix(NA, ncol = ncol(x), nrow = length(new.rows),
+                    dimnames = list(new.rows, colnames(x))))
+  # Update
+  x[rownames(y), colnames(y)] <- y
+  return(x)
+}
 
 ## extractElites
-# Input: the candidates with the .RANK. field filled.
+# Input: the configurations with the .RANK. field filled.
 #        the number of elites wished
 # Output: nbElites elites, sorted by ranks, with the weights assigned.
-extractElites <- function(candidates, nbElites)
+extractElites <- function(configurations, nbElites)
 {
   if (nbElites < 1) {
     ## FIXME: Should this be an error or should we handle it in some other way?
-    stop("nbElites is lower or equal to zero.") 
+    irace.error("nbElites is lower or equal to zero.") 
   }
   # Sort by rank.
-  elites <- candidates[order(as.numeric(candidates$.RANK.)), , drop = FALSE]
+  elites <- configurations[order(as.numeric(configurations$.RANK.)), , drop = FALSE]
   elites <- elites[1:nbElites, , drop = FALSE]
   elites[, ".WEIGHT."] <- ((nbElites - (1:nbElites) + 1)
                            / (nbElites * (nbElites + 1) / 2))
@@ -321,33 +366,35 @@ extractElites <- function(candidates, nbElites)
 }
 
 ## Keep only parameters values
-removeCandidatesMetaData <- function(candidates)
+removeConfigurationsMetaData <- function(configurations)
 {
   # Meta-data colnames begin with "."
-  return (candidates[, grep("^\\.", colnames(candidates), invert=TRUE),
+  return (configurations[, grep("^\\.", colnames(configurations), invert = TRUE),
                      drop = FALSE])
 }
 
-candidates.print <- function(cand, metadata = FALSE)
+configurations.print <- function(configuration, metadata = FALSE)
 {
-  rownames(cand) <- cand$.ID.
+  rownames(configuration) <- configuration$.ID.
   if (!metadata) {
-    cand <- removeCandidatesMetaData(cand)
+    configuration <- removeConfigurationsMetaData(configuration)
   } 
-  print(as.data.frame(cand, stringsAsFactors = FALSE))
+  print(as.data.frame(configuration, stringsAsFactors = FALSE))
 }
 
-candidates.print.command <- function(cand, parameters)
+configurations.print.command <- function(configuration, parameters)
 {
-  if (nrow(cand) <= 0) return(invisible())
-  rownames(cand) <- cand$.ID.
-  cand <- removeCandidatesMetaData(cand)
-  cand <- cand[, unlist(parameters$names), drop = FALSE]
+  if (nrow(configuration) <= 0) return(invisible())
+  ids <- as.numeric(configuration$.ID.)
+  configuration <- removeConfigurationsMetaData(configuration)
+  # Re-sort the columns
+  configuration <- configuration[, parameters$names, drop = FALSE]
   # A better way to do this? We cannot use apply() because that coerces
   # to a character matrix thus messing up numerical values.
-  for(i in 1:nrow(cand)) {
-    cat(sprintf("%-*d %s\n", nchar(nrow(cand)), i,
-                buildCommandLine(cand[i, , drop=FALSE], parameters$switches)))
+  len <- nchar(max(ids))
+  for (i in seq_len (nrow(configuration))) {
+    cat(sprintf("%-*d %s\n", len, ids[i],
+                buildCommandLine(configuration[i, , drop=FALSE], parameters$switches)))
   }
 }
 
@@ -362,7 +409,7 @@ mpiInit <- function(nslaves, debugLevel = 0)
   if (! ("Rmpi" %in% loadedNamespaces())) {
     if (! suppressPackageStartupMessages
         (requireNamespace("Rmpi", quietly = TRUE)))
-      tunerError("The 'Rmpi' package is required for using MPI")
+      irace.error("The 'Rmpi' package is required for using MPI")
     
     # When R exits, finalize MPI.
     reg.finalizer(environment(Rmpi::mpi.exit), function(e) {
@@ -391,4 +438,84 @@ mpiInit <- function(nslaves, debugLevel = 0)
     Rmpi::mpi.spawn.Rslaves(nslaves = nslaves, quiet = (debugLevel < 2),
                             needlog = (debugLevel > 0))
   }
+}
+
+## FIXME: Move this to the manual page.
+# Computes:
+# * Kendall's W (also known as Kendall's coefficient of concordance)
+#   If 1, all configurations have ranked in the same order in all instances.
+#   If 0, the ranking of each configuration on each instance is essentially random.
+#   W = Friedman / (m * (k-1))
+#
+# * Spearman's rho: average (Spearman) correlation coefficient computed on the
+#   ranks of all pairs of raters. If there are no repeated data values, a
+#   perfect Spearman correlation of +1 or −1 occurs when each of the variables
+#   is a perfect monotone function of the other.
+
+# data: matrix with the data, instances in rows (judges), configurations in
+# columns.
+concordance <- function(data)
+{
+  n <- nrow(data) #judges
+  k <- ncol(data) #objects
+  if (is.null(n) || is.null(k) || n <= 1 || k <= 1)
+    return(list(kendall.w = NA, spearman.rho = NA))
+
+  # Get rankings by rows (per instance)
+  r <- t(apply(data, 1L, rank))
+  R <- colSums(r)
+  TIES <- tapply(r, row(r), table)
+  # If everything is tied, then W=1, perfect homogeneity.
+  if (all(unlist(TIES) == ncol(data))) {
+    W <- 1
+  } else {
+    # FIXME: This formula seems slightly different from the one in
+    # friedman.test. Why?
+    T <- sum(unlist(lapply(TIES, function (u) {u^3 - u})))
+    W <- ((12 * sum((R - n * (k + 1) / 2)^2)) /
+          ((n^2 * (k^3 - k)) - (n * T)))
+  }
+  
+  # Spearman's rho
+  rho <- (n * W - 1) / (n - 1)
+
+  ## Same as in friedman test
+  #STATISTIC <- n * (k - 1) * W
+  #PARAMETER <- k - 1
+  #pvalue <- pchisq(PARAMETER, df = PARAMETER, lower.tail = FALSE)
+  return(list(kendall.w = W, spearman.rho = rho))
+} 
+
+## FIXME: Move this to the manual page.
+## FIXME: Reference! Explain a bit what is computed!
+# Calculates Performance similarity of instances  
+#       data: matrix with the data, instances in rows (judges), configurations
+#             in columns.
+# Returns: variance value [0,1], where 0 is a homogeneous set of instances and 
+#          1 is a heterogeneous set. 
+dataVariance <- function(data)
+{
+  # LESLIE: should we rank data??
+  # MANUEL: Why?
+  if (nrow(data) <= 1 || ncol(data) <= 1) return(NA)
+  
+  # Normalize
+  #datamin <- apply(data,1,min,na.rm=TRUE)
+  #datamax <- apply(data,1,max,na.rm=TRUE)
+  #normdata <- (data - datamin) / (datamax-datamin) 
+  
+  #standardize
+  meandata <- rowMeans(data)
+  stddata  <- apply(data, 1L, sd)
+  # If stddata == 0, then data is constant and it doesn't matter as long as it
+  # is non-zero.
+  stddata[stddata == 0] <- 1
+  zscoredata <- (data - meandata) / stddata 
+  
+  # We could log-tranform if needed
+
+  # Variance of configurations
+  qvar <- mean(apply(zscoredata, 2L, var))
+ 
+  return(qvar) 
 }

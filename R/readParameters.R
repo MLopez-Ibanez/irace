@@ -2,36 +2,7 @@
 ## READ DEFINITION OF PARAMETERS FROM A FILE
 #########################################################
 
-# FIXME: This info should go in the Rd file documenting this function.
-#
-#' Main function to read the parameters definition from a file
-#' 
-#' The datastructure used to record parameters is shown below.
-#' A fixed parameter is a parameter that should not be sampled but instead should
-#' be always set to the first values in the vector of boundaries. In this function we
-#' set isFixed to TRUE if either the parameter is a categorical and has only one possible value,
-#' or it is an integer and the two boundaries are equal, or it is a real and the two boundaries 
-#' satisfy the following test: round(boundary1, digits) == round(boundary2, digits)
-#' 
-#' @param digits The number of decimal digits wished (used to know if parameters are fixed or not).
-#' @param filename The name of the file containing the parameters. The fact that
-#' this file should exist and be readable should be check before.
-#' @return A list as follows.
-#'
-#  FIXME: most of these do not need to be lists (except boundary), they could be simply vectors with names.
-#' parameters --- a list with elements:
-#'        |
-#'        $names --------- a list that contains the names of the parameters
-#'        $types ----------- a list that contains the type of each parameter parameters$types = i|c|r
-#'        $switches ------ a list that contains the switches to be used for the parameters on the command line
-#'        $boundary ----- a list of vectors. Each vector may contain two values (the boundaries)
-#'                         for real and int parameters, or possibly more for categorical parameters
-#'        $conditions --   a list of R logical expressions, with variables corresponding to parameter names.
-#'        $isFixed -------- a list of booleans to know which parameter is fixed or needs to be tuned.
-#'        $nbParameters --- an integer, the total number of parameters
-#'        $nbFixed ----- an integer, the number of parameters with a fixed value
-#'        $nbVariable ------ an integer, the number of variable (to be tuned) parameters
-#'        
+# Main function to read the parameters definition from a file
 readParameters <- function (file, digits = 4, debugLevel = 0, text)
 {
   if (missing(file) && !missing(text)) {
@@ -40,9 +11,9 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
     on.exit(close(file))
   } else if (is.character(file)) {
     filename <- file
-    file.check (file, readable= TRUE, text = "readParameter: parameter file")
+    file.check (file, readable = TRUE, text = "readParameter: parameter file")
   } else {
-    stop("'file' must be a character string")
+    irace.error("'file' must be a character string")
   }
 
   field.match <- function (line, pattern, delimited = FALSE, sep = "[[:space:]]")
@@ -92,13 +63,13 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
 
   # Determine if a parameter is fixed.
   isFixed <- function (type = stop("type is mandatory."),
-                       boundaries = stop("boundaries is mandatory."))
+                       domain = stop("domain is mandatory."))
   {
     type <- as.character(type)
     if (type == "i" || type == "r") {
-      return (boundaries[[1]] == boundaries[[2]])
+      return (domain[[1]] == domain[[2]])
     } else if (type == "c" || type == "o") {
-      return (length(boundaries) == 1)
+      return (length(domain) == 1)
     }
   }
   # *************************************************************************
@@ -122,16 +93,16 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
       for (child in vars) {
         # The following line detects cycles
         if (child == rootParam)
-          tunerError("A cycle detected in subordinate parameters! ",
-                     "Check definition of conditions.\n",
-                     "One parameter of this cycle is '", rootParam, "'")
+          irace.error("A cycle detected in subordinate parameters! ",
+                      "Check definition of conditions.\n",
+                      "One parameter of this cycle is '", rootParam, "'")
         
         # The following line detects a missing definition
         if (!child %in% names(conditionsTree))
-          tunerError("A parameter definition is missing! ",
-                     "Check definition of parameters.\n",
-                     "Parameter '", paramName,
-                     "' depends on '", child, "' which is not defined.")
+          irace.error("A parameter definition is missing! ",
+                      "Check definition of parameters.\n",
+                      "Parameter '", paramName,
+                      "' depends on '", child, "' which is not defined.")
         
         level <- treeLevelAux(child, conditionsTree, rootParam)
         if (level > maxChildLevel)
@@ -152,23 +123,22 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
   errReadParameters <- function(filename, line, context, ...)
   {
     if (!is.null (context)) {
-      context <- paste(sep="", " when reading: \"", context, "\"")
+      context <- paste0(" when reading: \"", context, "\"")
     }
-    tunerError (paste (sep="", ...),
-                " at ", filename, ", line ", line, context)
+    irace.error (paste0 (...),
+                 " at ", filename, ", line ", line, context)
   }
   
   # *************************************************************************
-  # FIXME: Only boundary needs to be a list, the rest should be
+  # FIXME: Only domain needs to be a list, the rest should be
   # vectors, which will make many operations way faster.
-  parameters <- list(names = list(),
-                     types = list(),
-                     switches = list(),
-                     boundary = list(),
+  parameters <- list(names = c(),
+                     types = c(),
+                     switches = c(),
+                     domain = list(),
                      conditions = list(),
-                     isFixed = list())
+                     isFixed = c())
 
-  param.names <- c()
   conditions <- list()
   lines <- readLines(con = file)
   nbLines <- 0
@@ -181,9 +151,6 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
     if (nchar(line) == 0) {
       next
     }
-    ## FIXME: real and integer must provide exactly 2 values and not a
-    ## list. We should check this here rather than fail badly later.
-    
     ## Match param.name (unquoted alphanumeric string)
     result <- field.match (line, "[._[:alnum:]]+")
     param.name <- result$match
@@ -193,7 +160,7 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
                          "parameter name must be alphanumeric")
     }
 
-    if (param.name %in% param.names) {
+    if (param.name %in% parameters$names) {
       errReadParameters (filename, nbLines, NULL,
                          "duplicated parameter name '", param.name, "'")
     }
@@ -256,15 +223,14 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
     }
 
     count <- count + 1
-    param.names <- c(param.names, param.name)
     parameters$names[[count]] <- param.name
     parameters$switches[[count]] <- param.switch
     parameters$types[[count]] <- param.type
-    parameters$boundary[[count]] <- param.value
+    parameters$domain[[count]] <- param.value
 
     parameters$isFixed[[count]] <-
       isFixed (type = param.type,
-               boundaries = parameters$boundary[[count]])
+               domain = parameters$domain[[count]])
     # Reject non-categorical fixed parameters. They are often the
     # result of a user error.
     if (parameters$isFixed[[count]]) {
@@ -308,38 +274,36 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
 
   # Check that we have read at least one parameter
   if (count == 0) {
-    tunerError("no parameter definition found: ",
-               "check that the parameter file is not empty")
+    irace.error("No parameter definition found: ",
+                "check that the parameter file is not empty")
   }
   # Sort parameters in 'conditions' in the proper order according to
   # conditions
   hierarchyLevel <- c()
-  for (paramName in param.names)
+  for (paramName in parameters$names)
     hierarchyLevel <- c(hierarchyLevel, treeLevel(paramName, conditions))
-  conditions <- conditions[order(hierarchyLevel)]
-
-  # Print the hierarchy vector:
-  if (debugLevel >= 1) {
-    count <- 1
-    cat ("--- Hierarchy vector ---\n")
-    cat("Param : Level\n")
-    for (paramName in param.names) {
-      cat(paramName," : ", hierarchyLevel[count], "\n")
-      count <- count + 1
-    }
-    cat ("------------------------\n")
-  }
-
-  stopifnot(length(conditions) == length(parameters$names))
 
   # FIXME: Check that the parameter names that appear in the
   # conditions all appear in names to catch typos.
-  parameters$conditions <- conditions
-  names(parameters$names) <-
-    names(parameters$types) <- 
-      names(parameters$switches) <- 
-        names(parameters$boundary) <- 
-          names(parameters$isFixed) <- param.names
+  parameters$conditions <- conditions[order(hierarchyLevel)]
+  parameters$hierarchy <- hierarchyLevel
+
+  names(parameters$types) <- 
+    names(parameters$switches) <- 
+      names(parameters$domain) <- 
+        names(parameters$isFixed) <-
+          names(parameters$hierarchy) <- parameters$names
+
+  # Print the hierarchy vector:
+  if (debugLevel >= 1) {
+    cat ("# --- Hierarchy vector ---\n",
+         "# Param : Level\n",
+         paste(names(parameters$hierarchy), ":",
+               parameters$hierarchy, collapse = "\n"),
+         "\n# ------------------------\n", sep = "")
+  }
+
+  irace.assert(length(conditions) == length(parameters$names))
 
   parameters$nbParameters <- length(parameters$names)
   parameters$nbFixed <- sum(parameters$isFixed == TRUE)

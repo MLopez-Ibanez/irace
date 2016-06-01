@@ -1,0 +1,46 @@
+#!/bin/bash
+###############################################################################
+#
+# PARAMETERS:
+# $1 is the candidate number
+# $2 is the instance id
+# $3 is the seed
+# $4 is the instance name
+# The rest ($* after `shift 4') are parameters to the run
+#
+# RETURN VALUE:
+# This script should print a single numerical value (the value to be minimized)
+###############################################################################
+EXE=~/bin/moaco_btsp
+
+FIXED_PARAMS=" --trials 1 --wls 0 --aco mmas --time 60 "
+
+CANDIDATE=$1
+INSTANCEID=$2
+SEED=$3
+INSTANCE=$4
+shift 4 || exit 1
+CAND_PARAMS=$*
+
+STDOUT=c${CANDIDATE}-${INSTANCEID}.stdout
+STDERR=c${CANDIDATE}-${INSTANCEID}.stderr
+
+mkdir -p arena
+cd arena
+
+# Here we transform some parameters.
+PARAMS=
+while [ $# -gt 0 ]
+do
+  case "$1" in
+      --Mants) shift; MANTS="$1"; shift;;
+      *) PARAMS="$PARAMS $1"; shift;;# terminate case
+  esac
+done
+let "ANTS = (10  * 3 * 2 * $MANTS)"
+
+exec 2> $STDERR
+$EXE ${FIXED_PARAMS} --input $INSTANCE --seed $SEED $PARAMS --ants $ANTS 1> $STDOUT
+RET=$?
+echo "OK" >& 2
+exit $RET

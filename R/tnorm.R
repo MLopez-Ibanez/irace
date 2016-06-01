@@ -1,3 +1,21 @@
+## The naive method would be:
+##
+## rtnorm.naive <- function(n, mean = 0, sd = 1, lower, upper)
+## {
+##   lower <- (lower - mean) / sd ## Algorithm works on mean 0, sd 1 scale
+##   upper <- (upper - mean) / sd
+
+##   x <- rnorm(n)
+##   repeat {
+##     w <- which( x > upper | x < lower)
+##     if (length(w) == 0) break
+##     x[w] <- rnorm(length(w))
+##   }
+##   return(x * sd + mean)
+## }
+##
+## There is also https://cran.r-project.org/web/packages/truncnorm/
+
 ## Function to sample according to a truncated normal distribution 
 ## This function comes from the R package 'msm' maintained by 
 ## Christopher Jackson <chris.jackson at mrc-bsu.cam.ac.uk>

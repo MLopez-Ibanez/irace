@@ -139,7 +139,7 @@
 
   E-mail: 
 \begin{align*}
-  &\email{manuel.lopez-ibanez@ulb.ac.be}\\
+  &\email{manuel.lopez-ibanez@manchester.ac.uk}\\
   &\email{jeremie.dubois-lacoste@ulb.ac.be}\\
   &\email{stuetzle@ulb.ac.be}\\
   &\email{mbiro@ulb.ac.be}\\
@@ -877,7 +877,7 @@ three main inputs:
 \end{enumerate}
 
 In addition, \irace requires a function (or an auxiliary program)
-called \parameter{hookRun}, which is responsible of applying a
+called \parameter{targetRunner}, which is responsible of applying a
 particular configuration to an instance and returning the
 corresponding cost value, which must be minimized.
 
@@ -889,7 +889,7 @@ Section~\ref{sec:applications}.
 % An initial set of configurations may be provided by means of an
 % optional candidates file (option \parameter{candidatesFile}). The
 % evaluation of candidate configurations is performed in two phases by
-% means of two auxiliary programs called ``hooks''. \parameter{hookRun}
+% means of two auxiliary programs called ``hooks''. \parameter{targetRunner}
 % applies a particular configuration to an instance. Once all candidate
 % have been applied to the current instance, \parameter{hookEvaluate}
 % returns their corresponding cost value. These hooks are described in
@@ -923,7 +923,7 @@ Section~\ref{sec:applications}.
     \midrule
 %    \Budget     & either \parameter{maxNbExperiments} or \parameter{timeBudget}\\
     \Budget     & \parameter{maxExperiments}\\
-    $\mathcal{C}$ (cost measure) & \parameter{hookRun}\\ 
+    $\mathcal{C}$ (cost measure) & \parameter{targetRunner}\\ 
 % and \parameter{hookEvaluate}, see also Section~\ref{sec:hooks}\\
 %    $\Niter$    & \parameter{nbIterations}\\
     $\mu$       & \parameter{mu}\\
@@ -984,13 +984,13 @@ where each field is defined as follows:
     for instance: `\code{ants}'.\\
     \code{<label>}& A \emph{label} for this parameter. This is a
     string that will be passed together with the parameter
-    to \parameter{hookRun}. In the default \parameter{hookRun}
+    to \parameter{targetRunner}. In the default \parameter{targetRunner}
     provided with the package (Section~\ref{sec:hooks}), this is the
     command-line switch used to pass the value of this parameter, for
     instance `\code{"-{}-ants "}'.\\
     % The value of the parameter is concatenated \emph{without
     % separator} to the switch string when
-    % invoking \parameter{hookRun}.\\
+    % invoking \parameter{targetRunner}.\\
 
     \code{{<type>}} &The type of the parameter, either
     \textit{integer},
@@ -1001,7 +1001,7 @@ where each field is defined as follows:
     parameter subordinate. If the condition evaluates to false, then
     no value is assigned to this parameter, and neither the parameter
     value nor the corresponding label are passed
-    to \parameter{hookRun}. The condition must be a valid \aR logical
+    to \parameter{targetRunner}. The condition must be a valid \aR logical
     expression. The condition may contain the name of other parameters
     as long as the dependency graph does not contain any
     cycle. Otherwise, \irace will detect the cycle and stop with an error.\\
@@ -1044,9 +1044,9 @@ parameters table either from a string literal or from a file.
 
 % The parameters of the algorithm to be tuned are described in a
 % \emph{parameter file}.  These parameters are passed as command-line
-% options to the program \parameter{hookRun}. This setup is designed to
+% options to the program \parameter{targetRunner}. This setup is designed to
 % be straightforward for the common case of configuring a
-% command-line-driven program. Nonetheless, since \parameter{hookRun} is
+% command-line-driven program. Nonetheless, since \parameter{targetRunner} is
 % under the control of the user, it may transform its command-line
 % parameters into a file and pass this file to another program, or
 % perform other more complex steps.
@@ -1064,15 +1064,15 @@ parameters table either from a string literal or from a file.
 % \code{\%in\%}, which returns \code{TRUE} if its left operand matches any
 % element of its right operand. See the example below.
 
-\subsection{hookRun}\label{sec:hooks}
+\subsection{targetRunner}\label{sec:hooks}
 
-The evaluation of a candidate configuration is done by means of a user-given function or, alternatively, a user-given auxiliary program. The function (or program name) is specified by the option \parameter{hookRun}.
+The evaluation of a candidate configuration is done by means of a user-given function or, alternatively, a user-given auxiliary program. The function (or program name) is specified by the option \parameter{targetRunner}.
 
-When \parameter{hookRun} is an \aR function, then it is invoked for each candidate configuration as:
+When \parameter{targetRunner} is an \aR function, then it is invoked for each candidate configuration as:
 %
 \begin{center}
   \begin{CodeInput}
-    hookRun(instance, candidate, extra.params, config)
+    targetRunner(instance, candidate, extra.params, config)
   \end{CodeInput}
 \end{center}
 %
@@ -1083,10 +1083,10 @@ components: \emph{(1)} \code{\$index}, which is a numeric value
 identifying this candidate; \emph{(2)} \code{\$values}, which is a
 one-row data frame with one column per parameter value; and \emph{(3)}
 \code{\$labels}, which is a list of the labels of each parameter. The
-function \code{hookRun} must return a numerical value corresponding to
+function \code{targetRunner} must return a numerical value corresponding to
 the cost measure of the candidate configuration on the given instance, which must be minimized.
 
-When \parameter{hookRun} is an auxiliary executable program, then it
+When \parameter{targetRunner} is an auxiliary executable program, then it
 is invoked for each candidate configuration, passing as arguments: the
 instance, a numeric identifier, and the command-line parameters of the
 candidate configuration. The numeric identifier uniquely identifies a
@@ -1094,9 +1094,9 @@ configuration within a race (but not across the races in a single
 iterated race). The command line is constructed by appending to each
 parameter label (switch), \emph{without separator}, the value of the
 parameter, following the order given in the parameter table. The
-program \parameter{hookRun} must print (only) a real number, which
+program \parameter{targetRunner} must print (only) a real number, which
 corresponds to the cost measure of the candidate configuration for the
-given instance, which must be minimized. The working directory of \parameter{hookRun} is set to
+given instance, which must be minimized. The working directory of \parameter{targetRunner} is set to
 the execution directory specified by the
 option \parameter{execDir}. This allows the user to execute several
 runs of \irace in parallel without the runs interfering with each
@@ -1114,10 +1114,10 @@ other.
 % parameter, following the order given in the parameter file. 
 % % If the options \parameter{parallel}, \parameter{mpi}
 % % or \parameter{sgeCluster} are enabled, the calls
-% % to \parameter{hookRun} happen in parallel.
-% The program \parameter{hookRun} should not have any output and it
+% % to \parameter{targetRunner} happen in parallel.
+% The program \parameter{targetRunner} should not have any output and it
 % should exit with a value of zero.  Once all calls
-% to \parameter{hookRun} for the current instance have finished, the
+% to \parameter{targetRunner} for the current instance have finished, the
 % results are evaluated using the program specified by
 % option \parameter{hookEvaluate}.
 
@@ -1202,7 +1202,7 @@ three-dimensional functions and we set the maximum number of
 iterations of SANN to $5000$.
 
 \begin{CodeInput}
-hook.run <- function(instance, candidate, extra.params = NULL, config = list())
+target.runner <- function(instance, candidate, extra.params = NULL, config = list())
 {
   D <- 3
   par <- runif(D, min=-1, max=1)
@@ -1220,14 +1220,14 @@ hook.run <- function(instance, candidate, extra.params = NULL, config = list())
 \end{CodeInput}
 
 We are now ready to launch \irace. We do it by means of the
-\code{irace} function by setting \code{hookRun} to the function define
+\code{irace} function by setting \code{targetRunner} to the function define
 above, \code{instances} to the first $100$ random weights, and a
-maximum budget of $1000$ calls to \code{hookRun}.
+maximum budget of $1000$ calls to \code{targetRunner}.
 
 \begin{CodeChunk}
 \begin{CodeInput}
 R> result <- irace(tunerConfig = list(
-                    hookRun = hook.run,
+                    targetRunner = target.runner,
                     instances = weights[1:100],
                     maxExperiments = 1000),
                   parameters = parameters)
@@ -1254,11 +1254,11 @@ instances previously generated and not used during training.
 
 \begin{CodeChunk}
 \begin{CodeInput}
-R> default <- sapply(weights[101:200], hook.run,
+R> default <- sapply(weights[101:200], target.runner,
                   candidate=list(values=list(tmax=10,temp=10)))
 
-R> result.list <- as.list(removeCandidatesMetaData(result[1,]))
-R> tuned <- sapply(weights[101:200], hook.run, candidate=list(values=result.list))
+R> result.list <- as.list(removeConfigurationsMetaData(result[1,]))
+R> tuned <- sapply(weights[101:200], target.runner, candidate=list(values=result.list))
 
 R> boxplot(list(default=default, tuned=tuned))
 \end{CodeInput}
@@ -1334,10 +1334,10 @@ In particular, we set an execution directory (e.g., \code{./tuning/})
 where temporary files are stored, and we set the tuning budget to
 $1\,000$ runs of \ACOTSP. Next, we place the tuning instances in the
 subdirectory \code{./Instances/}, which is the default value of the
-option \parameter{instanceDir}. We create a basic \code{hook-run}
+option \parameter{instanceDir}. We create a basic \code{target-runner}
 script that simply runs the \ACOTSP software for 20 seconds and prints
 the objective value of the best solution found.\footnote{The package
-  includes an example of this \code{hook-run} script for Unix
+  includes an example of this \code{target-runner} script for Unix
   environments, which can be found at
   \code{file.path(system.file(package="irace"), "examples","acotsp")}.}
 We can now launch the tuning procedure as follows:
@@ -1362,12 +1362,12 @@ parameters:
 \begin{footnotesize}
 %\begin{verbatim}
 \begin{CodeOutput}
-# Best candidates
+# Best configurations
     algorithm localsearch alpha   beta    rho ants nnls     q0 dlb rasrank elitistants
 189       acs           3 1.268 6.0930 0.6846   20   17 0.2812   1      NA          NA
 332       acs           3 3.100 0.7011 0.4789   55   11 0.2630   1      NA          NA
 320      mmas           3 1.361 9.0390 0.6852   64   25     NA   1      NA          NA
-# Best candidates (as commandlines)
+# Best configurations (as commandlines)
                                                                                   command
 189  --acs --localsearch 3 --alpha 1.268 --beta 6.0930 --rho  0.6846 --ants 20 --nnls 17  \
     --q0 0.2812 --dlb 1
@@ -1395,10 +1395,10 @@ by means of the function \code{load()}. This dataset contains a list \code{tuner
   which the experiments in the same row where performed. The remainder
   of the columns represent configurations, and their column names
   correspond to their IDs. Finally, `\code{NA}' represents that for some
-  reason the candidate was not evaluated on a particular instance at
+  reason the candidate configuration was not evaluated on a particular instance at
   that iteration, either because it did not exist yet or it was removed
   earlier.
-\item \code{allCandidates}: a data frame with all candidate
+\item \code{allConfigurations}: a data frame with all candidate
   configurations tested during the execution of \irace.
 \end{itemize}
 

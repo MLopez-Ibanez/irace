@@ -56,45 +56,45 @@ pbs.job.status <- function(jobid)
                  intern = FALSE, wait = TRUE))
 }
 
-hook.run.qsub <- function(experiment, config, cluster.qsub)
+target.runner.qsub <- function(experiment, scenario, cluster.qsub)
 {
-  debugLevel   <- config$debugLevel
+  debugLevel   <- scenario$debugLevel
   id           <- experiment$id
-  candidate    <- experiment$candidate
+  configuration<- experiment$configuration
   instance     <- experiment$instance
   extra.params <- experiment$extra.params 
   switches     <- experiment$switches
   
-  hookRun <- config$hookRun
-  if (as.logical(file.access(hookRun, mode = 1))) {
-    stop ("hookRun `", hookRun, "' cannot be found or is not executable!\n")
+  targetRunner <- scenario$targetRunner
+  if (as.logical(file.access(targetRunner, mode = 1))) {
+    irace.error ("targetRunner '", targetRunner, "' cannot be found or is not executable!\n")
   }
-  command <- paste (hookRun, instance, id, extra.params,
-                    buildCommandLine(candidate, switches))
+  command <- paste (targetRunner, instance, id, extra.params,
+                    buildCommandLine(configuration, switches))
 
   jobID <- cluster.qsub (command, debugLevel)
   exit.code <- is.null(jobID)
 
   if (exit.code) {
-    tunerError("Command `", command, "' returned non-zero exit status (",
-               exit.code / 256, ")!\n",
-               "This is not a bug in irace, ",
-               "but means that something failed when running your program ",
-               "or it was terminated before completion. ",
-               "Try to run the command above from the execution directory '",
-               config$execDir, "' to investigate the issue.")
+    irace.error("Command `", command, "' returned non-zero exit status (",
+                exit.code / 256, ")!\n",
+                "This is not a bug in irace, ",
+                "it means that something failed when running your program ",
+                "or it was terminated before completion. ",
+                "Try to run the command above from the execution directory '",
+                scenario$execDir, "' to investigate the issue.")
   }
   
   return(list(command = command, jobID = jobID))
 }
 
-cluster.lapply <- function(X, ..., config,
+cluster.lapply <- function(X, ..., scenario,
                            cluster.qsub = sge.cluster.qsub,
                            cluster.job.status = sge.job.status,
                            poll.time = 2)
 {
-  debugLevel <- config$debugLevel
-  output <- lapply(X, hook.run.qsub, ..., config = config, cluster.qsub = cluster.qsub)
+  debugLevel <- scenario$debugLevel
+  output <- lapply(X, target.runner.qsub, ..., scenario = scenario, cluster.qsub = cluster.qsub)
   jobIDs <- sapply(output, "[[", "jobID")
   
   ## Wait for cluster jobs to finish.

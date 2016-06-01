@@ -1,0 +1,116 @@
+#!/bin/bash
+###############################################################################
+# This script launches several runs of irace in parallel on a SGE cluster using
+# qsub. Execute without parameters to see usage.
+###############################################################################
+set -e
+set -o pipefail
+
+# Find our own location.
+BINDIR=$(dirname "$(readlink -f "$(type -P $0 || echo $0)")")
+IRACE="$BINDIR/irace"
+
+# You may need to customize this part according to the setup of your own
+# cluster.
+QUEUE="long"
+#QUEUE="short"
+#MACHINE=opteron2216
+#MACHINE=xeon5410
+#MACHINE=opteron6128
+MACHINE=opteron6272
+
+# This function launches one run of irace.
+irace_main() {
+    # We would like to use $BASHPID here, but OS X version of bash does not
+    # support it.
+    JOBNAME="irace-$$-$1"
+    exec qsub -v PATH <<EOF
+#!/bin/bash
+#$ -N $JOBNAME
+#$ -l $MACHINE
+#$ -l $QUEUE
+#$ -m as
+#      b     Mail is sent at the beginning of the job.
+#      e     Mail is sent at the end of the job.
+#      a     Mail is sent when the job is aborted or rescheduled.
+#      s     Mail is sent when the job is suspended.
+#$ -o /dev/null
+#$ -e $EXECDIR/irace.stderr
+#$ -cwd
+
+# Working on /tmp should be faster
+TMP=\$(mktemp -d -t \${HOSTNAME}-XXXXXXXXXX)
+if [ ! -d "\$TMP" ]; then
+  echo "cannot create temporary directory" >&2
+  exit 1
+fi
+echo \$TMP/irace.stdout >&2
+exec 1> \$TMP/irace.stdout
+echo \$TMP/irace.stdout >&2
+$IRACE --exec-dir=\$TMP --seed $RUNSEED $PARAMS
+RET=\$?
+# Use command to avoid aliases
+command cp --force -R \$TMP/./ $EXECDIR/
+rm -rf \$TMP
+exit \$RET
+EOF
+}
+## End of customization
+
+error () {
+    echo "$0: error: $@" >&2
+    exit 1
+}
+
+usage() {
+    cat <<EOF
+Usage: $0 N[-M] [EXECDIR] [IRACE PARAMS]
+
+Parameters:
+ N             an integer giving the number of repetitions of irace
+               or a sequence N-M giving which repetitions to redo.
+ EXECDIR       job M will use EXECDIR-M directory (default: execdir)
+               as the execDir (--exec-dir) parameter of irace.
+ IRACE PARAMS  additional parameters for irace.
+EOF
+    exit 1
+}
+
+# Issue usage if no parameters are given.
+test $# -ge 1 || usage
+
+# Number of repetitions of iRace
+REPETITIONS=$1
+shift
+START=1
+
+if [[ "$REPETITIONS" =~ ^([0-9]+)-([0-9]+)$ ]] ; then
+    START=${BASH_REMATCH[1]}
+    REPETITIONS=${BASH_REMATCH[2]}
+elif ! [[ "$REPETITIONS" =~ ^[0-9]+$ ]] ; then
+    error "number of repetitions must be an integer"
+fi
+
+# execDir (--exec-dir) directory
+EXECDIR_PREFIX=${1:-execdir}
+shift
+
+SEED=1234567
+PARAMS=
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --seed) shift; SEED="$1"; shift;;
+        *) PARAMS="$PARAMS $1"; shift;;# terminate case
+
+    esac
+done
+
+for i in $(seq $START $REPETITIONS); do
+    EXECDIR=$(printf '%s-%002d' ${EXECDIR_PREFIX} $i)
+    echo "execution directory: $EXECDIR"
+    rm -rf $EXECDIR
+    mkdir -p $EXECDIR
+    let RUNSEED=SEED+i-1 
+    irace_main $(printf '%002d' $i) &
+    sleep 1
+done

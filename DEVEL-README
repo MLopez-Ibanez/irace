@@ -69,15 +69,14 @@ RELEASE Process:
 9. Use http://cran.r-project.org/submit.html to submit
    Read http://cran.r-project.org/web/packages/policies.html
 
-
-* IF the package requires further changes:
+10.a IF the package requires further changes:
 
   * Make the changes.
 
   * Repeat the whole RELEASE process above without bumping the version number.
 
 
-* IF the package is released in CRAN:
+10.b IF the package is released in CRAN:
 
   * Bump the version number in Makefile.
 

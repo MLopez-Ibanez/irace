@@ -1,146 +1,145 @@
 #######################################
-## GENERATE CANDIDATES 
+## GENERATE CONFIGURATIONS
 #######################################
 
 ## When called with an unconditional parameter, it
 ## must return TRUE
-conditionsSatisfied <- function (parameters, partialCandidate, paramName)
+conditionsSatisfied <- function (parameters, partialConfiguration, paramName)
 {
   condition <- parameters$conditions[[paramName]]
   # If there is no condition, do not waste time evaluating it.
-  if(!length(all.vars(condition, max.names = 1L))) return(TRUE)
+  if (!length(all.vars(condition, max.names = 1L))) return(TRUE)
 
-  v <- eval(condition, as.list(partialCandidate))
+  v <- eval(condition, as.list(partialConfiguration))
   # Return TRUE if TRUE, FALSE if FALSE or NA
   v <- !is.na(v) && v 
   return(v)
 }
 
-new.empty.candidate <- function(parameters)
+new.empty.configuration <- function(parameters)
 {
   namesParameters <- names(parameters$conditions)
-  newCandidatesColnames <- c(namesParameters, ".PARENT.")
-  empty.candidate <- as.list(rep(NA, length(newCandidatesColnames)))
-  names(empty.candidate) <- newCandidatesColnames
-  return(empty.candidate)
+  newConfigurationsColnames <- c(namesParameters, ".PARENT.")
+  empty.configuration <- as.list(rep(NA, length(newConfigurationsColnames)))
+  names(empty.configuration) <- newConfigurationsColnames
+  return(empty.configuration)
 }
 
 get.fixed.value <- function(param, parameters)
 {
-  value <- parameters$boundary[[param]][1]
+  value <- parameters$domain[[param]][1]
   type <- parameters$types[[param]]
   if (type == "i") {
     return (as.integer(value))
   } else if (type == "c" || type == "o") {
     return (value)
-  } else if (type == "r") {
+  } else {
+    irace.assert (type == "r")
     return (as.double(value))
-  } 
-  stop (.irace.bug.report)
+  }
 }
 
 ### Uniform sampling for the initial generation
 sampleUniform <- function (parameters,
-                           nbCandidates = stop("parameter 'nbCandidates' is required"),
+                           nbConfigurations = stop("parameter 'nbConfigurations' is required"),
                            digits = stop("parameter 'digits' is required"),
                            forbidden = NULL)
 {
   namesParameters <- names(parameters$conditions)
-  newCandidatesColnames <- c(namesParameters, ".PARENT.")
-  newCandidates  <-
-    as.data.frame(matrix(nrow = nbCandidates,
-                         ncol = length(newCandidatesColnames)))
-  colnames(newCandidates) <- newCandidatesColnames
-  empty.candidate <- new.empty.candidate(parameters)
+  newConfigurations  <-
+    as.data.frame(matrix(nrow = nbConfigurations,
+                         ncol = length(namesParameters) + 1,
+                         dimnames = list(NULL, c(namesParameters, ".PARENT."))
+                         ))
+  empty.configuration <- new.empty.configuration(parameters)
 
-  for (idxCandidate in seq_len(nbCandidates)) {
+  for (idxConfiguration in seq_len(nbConfigurations)) {
     forbidden.retries <- 0
     while (forbidden.retries < 100) {
-      candidate <- empty.candidate
+      configuration <- empty.configuration
       for (p in seq_along(namesParameters)) {
-        # FIXME: We must be careful because parameters$types does not
-        # have the same order as parameters$conditions. Ideally, we
-        # should fix this or make it impossible to confuse them.
         currentParameter <- namesParameters[p]
-        currentType <- parameters$types[[currentParameter]]
-        if (!conditionsSatisfied(parameters, candidate, currentParameter)) {
-          candidate[[p]] <- NA
+        if (!conditionsSatisfied(parameters, configuration, currentParameter)) {
+          configuration[[p]] <- NA
           next
         }
+        # FIXME: We must be careful because parameters$types does not have the
+        # same order as namesParameters, because we sample in the order of the
+        # conditions.
+        currentType <- parameters$types[[currentParameter]]
         if (isFixed(currentParameter, parameters)) {
           # We don't even need to sample, there is only one possible value !
           newVal <- get.fixed.value (currentParameter, parameters)
           # The parameter is not a fixed and should be sampled          
         } else if (currentType == "i") {
-          lowerBound <- as.integer(parameters$boundary[[currentParameter]][1])
-          upperBound <- as.integer(parameters$boundary[[currentParameter]][2])
+          lowerBound <- as.integer(parameters$domain[[currentParameter]][1])
+          upperBound <- as.integer(parameters$domain[[currentParameter]][2])
           # FIXME: replace with sample.int!
           newVal <- sample(lowerBound:upperBound, 1)
         } else if (currentType == "r") {
-          lowerBound <- parameters$boundary[[currentParameter]][1]
-          upperBound <- parameters$boundary[[currentParameter]][2]
+          lowerBound <- parameters$domain[[currentParameter]][1]
+          upperBound <- parameters$domain[[currentParameter]][2]
           newVal <- runif(1, as.double(lowerBound), as.double(upperBound))
           newVal <- round(newVal, digits)
         } else if (currentType == "c" || currentType == "o") {
-          possibleValues <- parameters$boundary[[currentParameter]]
+          possibleValues <- parameters$domain[[currentParameter]]
           newVal <- sample(possibleValues, 1)
         } else {
           stop (.irace.bug.report);
         }
-        candidate[[p]] <- newVal
+        configuration[[p]] <- newVal
       }
-      candidate <- as.data.frame(candidate, stringsAsFactors=FALSE)
+      configuration <- as.data.frame(configuration, stringsAsFactors=FALSE)
       if (is.null(forbidden)
-          || nrow(checkForbidden(candidate, forbidden)) == 1) {
-        newCandidates[idxCandidate,] <- candidate
+          || nrow(checkForbidden(configuration, forbidden)) == 1) {
+        newConfigurations[idxConfiguration,] <- configuration
         break
       }
       forbidden.retries <- forbidden.retries + 1
     }
     if (forbidden.retries >= 100) {
-      tunerError("irace tried 100 times to sample uniformly a configuration not forbidden, perhaps your constraints are too strict?")
+      irace.error("irace tried 100 times to sample from the model a configuration not forbidden without success, perhaps your constraints are too strict?")
     }
   }
-  return (newCandidates)
+  return (newConfigurations)
 }
 
 # To be called the first time before the second race (with indexIter =
-# 2) Nb candidates is the number of candidates at the end
+# 2) Nb configurations is the number of configurations at the end
 # included the elite ones obtained from the previous iteration
-sampleModel <- function (tunerConfig, parameters, eliteCandidates, model,
-                         nbNewCandidates, forbidden = NULL)
+sampleModel <- function (parameters, eliteConfigurations, model,
+                         nbNewConfigurations, digits, forbidden = NULL)
 {
-  if (nbNewCandidates <= 0) {
-    stop ("The number of candidates to generate appears to be negative or zero.")
+  if (nbNewConfigurations <= 0) {
+    irace.error ("The number of configurations to generate appears to be negative or zero.")
   }
   namesParameters <- names(parameters$conditions)
-  newCandidatesColnames <- c(namesParameters, ".PARENT.")
-  newCandidates  <-
-    as.data.frame(matrix(nrow = nbNewCandidates,
-                         ncol = length(newCandidatesColnames)))
-  colnames(newCandidates) <- newCandidatesColnames
-  empty.candidate <- new.empty.candidate(parameters)
-  digits <- tunerConfig$digits
+  newConfigurations  <-
+    as.data.frame(matrix(nrow = nbNewConfigurations,
+                         ncol = length(namesParameters) + 1,
+                         dimnames = list(NULL, c(namesParameters, ".PARENT."))
+                         ))
+  empty.configuration <- new.empty.configuration(parameters)
   
-  for (idxCandidate in seq_len(nbNewCandidates)) {
+  for (idxConfiguration in seq_len(nbNewConfigurations)) {
     forbidden.retries <- 0
     while (forbidden.retries < 100) {
       # Choose the elite which will be the parent.
-      indexEliteParent <- sample.int (n = nrow(eliteCandidates), size = 1,
-                                      prob = eliteCandidates[[".WEIGHT."]])
-      eliteParent <- eliteCandidates[indexEliteParent, ]
+      indexEliteParent <- sample.int (n = nrow(eliteConfigurations), size = 1,
+                                      prob = eliteConfigurations[[".WEIGHT."]])
+      eliteParent <- eliteConfigurations[indexEliteParent, ]
       idEliteParent <- eliteParent[[".ID."]]
-      candidate <- empty.candidate
-      candidate[[".PARENT."]] <- idEliteParent
+      configuration <- empty.configuration
+      configuration[[".PARENT."]] <- idEliteParent
       
-      # Sample a value for every parameter of the new candidate.
+      # Sample a value for every parameter of the new configuration.
       for (p in seq_along(namesParameters)) {
         # FIXME: We must be careful because parameters$types does not
         # have the same order as parameters$conditions. Ideally, we
         # should fix this or make it impossible to confuse them.
         currentParameter <- namesParameters[p]
         currentType <- parameters$types[[currentParameter]]
-        if (!conditionsSatisfied(parameters, candidate, currentParameter)) {
+        if (!conditionsSatisfied(parameters, configuration, currentParameter)) {
           # Some conditions are unsatisfied.
           # Should be useless, NA is ?always? assigned when matrix created
           newVal <- NA
@@ -150,8 +149,8 @@ sampleModel <- function (tunerConfig, parameters, eliteCandidates, model,
           newVal <- get.fixed.value (currentParameter, parameters)
           # The parameter is not a fixed and should be sampled
         } else if (currentType == "i" || currentType == "r") {
-          lowerBound <- oneParamLowerBound(currentParameter, parameters)
-          upperBound <- oneParamUpperBound(currentParameter, parameters)
+          lowerBound <- paramLowerBound(currentParameter, parameters)
+          upperBound <- paramUpperBound(currentParameter, parameters)
           mean <- as.numeric(eliteParent[currentParameter])
           if (is.na(mean)) {
             # The elite parent does not have any value for this
@@ -169,7 +168,7 @@ sampleModel <- function (tunerConfig, parameters, eliteCandidates, model,
                            round(newVal, digits))
           
         } else if (currentType == "o") {
-          possibleValues <- oneParamBoundary(currentParameter, parameters)  
+          possibleValues <- paramDomain(currentParameter, parameters)  
           value <- eliteParent[currentParameter]
           
           if (is.na(value)) {
@@ -194,25 +193,25 @@ sampleModel <- function (tunerConfig, parameters, eliteCandidates, model,
           # FIXME: Why is idEliteParent character?
           # FIXME: Why the model is <parameter><Parent>? It makes more sense to be <Parent><parameter>.
           probVector <- model[[currentParameter]][[as.character(idEliteParent)]]
-          possibleValues <- oneParamBoundary(currentParameter, parameters)
+          possibleValues <- paramDomain(currentParameter, parameters)
           newVal <- sample(x = possibleValues, size = 1, prob = probVector)
         } else {
           stop (.irace.bug.report)
         }
-        candidate[[p]] <- newVal
+        configuration[[p]] <- newVal
       }
       
-      candidate <- as.data.frame(candidate, stringsAsFactors=FALSE)
+      configuration <- as.data.frame(configuration, stringsAsFactors=FALSE)
       if (is.null(forbidden)
-          || nrow(checkForbidden(candidate, forbidden)) == 1) {
-        newCandidates[idxCandidate,] <- candidate
+          || nrow(checkForbidden(configuration, forbidden)) == 1) {
+        newConfigurations[idxConfiguration,] <- configuration
         break
       }
       forbidden.retries <- forbidden.retries + 1
     }
     if (forbidden.retries >= 100) {
-      tunerError("irace tried 100 times to sample from the model a configuration not forbidden, perhaps your constraints are too strict?")
+      irace.error("irace tried 100 times to sample from the model a configuration not forbidden without success, perhaps your constraints are too strict?")
     }
   }
-  return (newCandidates)
+  return (newConfigurations)
 }

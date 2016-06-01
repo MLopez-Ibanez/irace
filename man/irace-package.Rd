@@ -1,6 +1,5 @@
 \name{irace-package}
 \alias{irace-package}
-\alias{irace}
 \docType{package}
 \title{
 The irace package
@@ -12,8 +11,8 @@ Iterated racing for Automatic Algorithm Configuration
 \tabular{ll}{
 Package: \tab irace\cr
 Type: \tab Package\cr
-Version: \tab 1.08 \cr
-Date: \tab 2016-01-15 \cr
+Version: \tab 2.0 \cr
+Date: \tab 2016-05-20 \cr
 License: \tab GPL (>= 2)\cr
 LazyLoad: \tab yes\cr
 }
@@ -87,10 +86,10 @@ parameters <- readParameters(text = parameters.table)
 ## configuration on a single instance. For simplicity, we restrict to
 ## three-dimensional functions and we set the maximum number of
 ## iterations of SANN to 5000.
-hook.run <- function(experiment, config = list())
+target.runner <- function(experiment, scenario = list())
 {
   instance <- experiment$instance
-  candidate <- experiment$candidate
+  configuration <- experiment$configuration
 
   D <- 3
   par <- runif(D, min=-1, max=1)
@@ -100,40 +99,40 @@ hook.run <- function(experiment, config = list())
   }
   res <- optim(par,fn, method="SANN",
                control=list(maxit=5000
-                 , tmax = as.numeric(candidate[["tmax"]])
-                 , temp = as.numeric(candidate[["temp"]])
+                 , tmax = as.numeric(configuration[["tmax"]])
+                 , temp = as.numeric(configuration[["temp"]])
                  ))
   return(res$value)
 }
 
 \dontrun{
 ## We are now ready to launch irace. We do it by means of the irace
-## function by setting hookRun to the function define above, instances to
+## function by setting targetRunner to the function define above, instances to
 ## the first 100 random weights, and a maximum budget of 1000 calls to
-## hookRun. The function irace will print information about its
+## targetRunner. The function irace will print information about its
 ## progress. This may require a few minutes, so it is not run by default.
-result <- irace(tunerConfig = list(
-                  hookRun = hook.run,
+result <- irace(scenario = list(
+                  targetRunner = target.runner,
                   instances = weights[1:100],
                   maxExperiments = 1000,
                   logFile = ""),
                 parameters = parameters)
 
 ## We can print the best configurations found by irace as follows:
-candidates.print(result)
+configurations.print(result)
 
 ## We can evaluate the quality of the best configuration found by
 ## irace versus the default configuration of the SANN algorithm on
 ## the other 100 instances previously generated.
 ## To do so, first we apply the default configuration of the SANN
 ## algorithm to these instances:
-default <- sapply(weights[101:200], hook.run,
-                  candidate=list(values=list(tmax=10,temp=10)))
+default <- sapply(weights[101:200], target.runner,
+                  configuration=list(values=list(tmax=10,temp=10)))
 
 ## We extract and apply the winning configuration found by irace
 ## to these instances:
-result.list <- as.list(removeCandidatesMetaData(result[1,]))
-tuned <- sapply(weights[101:200], hook.run, candidate=list(values=result.list))
+result.list <- as.list(removeConfigurationsMetaData(result[1,]))
+tuned <- sapply(weights[101:200], target.runner, configuration=list(values=result.list))
 
 ## Finally, we can compare using a boxplot the quality obtained with the
 ## default parametrization of SANN and the quality obtained with the

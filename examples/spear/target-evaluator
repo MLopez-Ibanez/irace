@@ -1,0 +1,59 @@
+#!/bin/bash
+###############################################################################
+# This script is run for each candidate after all candidate
+# configurations have been run on a single instance.
+#
+# Check the examples in examples/
+#
+# PARAMETERS:
+# $1 is the candidate number
+# $2 is the instance id
+# $3 is the seed
+# $4 is the instance name
+# $5 is the number of candidates alive in this iteration
+#
+# ONLY FOR ELITIST RACE: The rest ($* after `shift 5') are the ids of the 
+# candidates alive in this iteration. This list can be used to calculate the 
+# hypervolume using previous execution results.
+#
+# RETURN VALUE:
+# This script should print a single numerical value
+###############################################################################
+CANDIDATE="$1"
+INSTANCEID="$2"
+SEED="$3"
+INSTANCE="$4"
+TOTALCANDIDATES="$5"
+shift 5 || error "Not enough parameters to $0"
+ALLIDS=$*
+
+STDOUT=c${CANDIDATE}-${INSTANCEID}.stdout
+STDERR=c${CANDIDATE}-${INSTANCEID}.stderr
+
+TIMEOUT=30
+
+#####################################################################
+# Evaluate a floating point number subordinate expression.
+function float_cond()
+{
+    local cond=0
+    if [[ $# -gt 0 ]]; then
+        cond=$(echo "$*" | bc -q 2>/dev/null)
+        if [[ -z "$cond" ]]; then cond=0; fi
+        if [[ "$cond" != 0  &&  "$cond" != 1 ]]; then cond=0; fi
+    fi
+    local stat=$((cond == 0))
+    return $stat
+}
+
+
+if COST=$(cat ${STDOUT} | grep -e '^c runtime [0-9]' | cut -f3 -d ' '); then
+    if float_cond "$COST > $TIMEOUT"; then
+        echo "$TIMEOUT"
+    else
+        echo "$COST"
+    fi
+    rm -f ${STDOUT} ${STDERR}
+    exit 0
+fi
+exit 1

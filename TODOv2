@@ -1,0 +1,153 @@
+Some notes about refactoring:
+
+- Be sure to exclude .svn/* *.tex from any changes
+
+- Some files may need to be renamed. Use  'svn mv' for that.
+
+* License doesnt get printed beautiful...
+
+* [BOTH] Update templates, examples, web, tutorial, and man regarding the new
+  interfaces.
+
+* Other things that change user interfaces?
+
+* [LESLIE] Test MO testing...
+
+* [LESLIE] Implement check parameters and target runner...
+
+* Check the makefile for mac, the sed command does not work.
+
+* Create a better output for the --check option.
+
+* Add the threshold for similarity as part of the definition of parameters. (one per parameter)
+
+main.R:
+
+* irace.params.def:  For integer (i) and real (r) parameters add their range. Align columns.
+* .irace.params.recover: Add this parameters to iraceResults$state
+* irace.usage: The output would be nicer if we used cat(sprintf()) to
+  print short and long within a fixed width field. The description
+  can be wrapped with strwrap to the remainder space up to 80
+  columns. We can calculate the field width from the largest string
+  for each of short and long.
+* testing.main: Print the seeds when printing the results. As an additional column?
+  
+irace.R:
+
+* recoverFromFile: Restoring occurs after reading the command-line/scenario file. At
+  least for the irace command-line parameters (scenario), it should occur
+  before. We would need to:
+
+  1) Read recovery file settings from command-line/scenario file
+  2) if set, then recover irace scenario
+  3) then read other settings from command-line/scenario file being
+  careful to not override whatever the recovery has set.
+ 
+  A work-around is to modify the recovery file (you can load it in R,
+  modify scenario then save it again).
+  > I think we should define which parameters can be override from the recovery, 
+    the ones that deal with execution they can be modified (parallel, target runner, etc.)
+* similarConfigurations: Print minimum similarity 
+* computeNbConfigurations: The function is slightly incorrect, because we may have elites that have not been executed on all nOldInstances. Thus, we need to pass explicitly the budget that we save (that is, number of entries that are not NA).
+* oneIterationRace: Remove comment (LESLIE) change already done.
+* irace.init: Generate instances at the start of each race if we need them at all.
+* irace: Remove documentation FIXME, info already added.
+* irace: This should be the other way around, the options set the debugLevel. Leslie: I don't understand..
+* irace:  Since we only actually keep the alive ones, we don't need to carry around rejected ones in raceResults$configurations. This would reduce overhead. Leslie: I think this is related to how we pass information.. we should reengineer a bit this..
+* irace: We should have maybe an environment containing the experiments, elite candidates and information about the state, this variable could be passed to race and will save passing the elite candidates and their executions...
+
+cluster.R:
+* sge.cluster.qsub: Implement this using Rsge package
+* sge.cluster.qsub: Can we make this more robust against different languages and variants of qsub?
+* sge.cluster.qsub: This is a bit too complex for just parsing a number and returning the number or NULL.
+* pbs.cluster.qsub: Can we make this more robust against different languages and variants of qsub?
+
+generation.R
+* sampleUniform, sampleModel: Parameters$types does not have the same order as namesParameters, because we sample in the order of the conditions. Make all parameters in the same order.
+* sampleModel: Why is idEliteParent character? Change this
+* sampleModel: Why the model is <parameter><Parent>? It makes more sense to be <Parent><parameter>.
+
+model.R
+* updateModel: Describe function
+* updateModel: Make character IDs as numeric!
+* updateModel: Improve code in FIXME: This could simply be something like
+
+parameterAnalysis.R
+* parameterFrequency: Change slightly background of conditional parameters
+* parameterFrequency: Accept a configuration (e.g, best one) and mark its values of the best configuration somehow (bold?)
+* parameterFrequency: Print number of NAs in numerical parameters within the plot "# NA = Total (Percentage%)"
+* parameterFrequency: How to resize the Window when filename == NULL to have a rows/cols aspect ratio.
+* Add function described in the file.
+* parallelCoordinatesPlot: Add color scheme.
+
+irace-wrapper.R: 
+* This is needed because race.R is not divided in two-stages run/evaluate like irace is, so there is no way to communicate data from the first stage to the second. Leslie: Maybe this comment is not relevant anymore?
+* buildCommandLine: This probably can be implemented faster with apply() and paste(collapse=" "). But how to get the index i in that case? Leslie: mapply?
+* check.output: This should be called in race-wrapper for cases where target.runner.default is overriden
+* target.evaluator.default: Use runcommand like target.runner.default
+* target.evaluator.default: Pass the call to target.runner as target.runner.call if target.evaluator was used.
+* target.evaluator.default: check.output is also called in parse.output and race.wrapper, that is, three times!
+* target.runner.default: We should also check that the output is empty.
+* execute.experiments: if stop() is called from mpi.applyLB, it does not terminate the execution of the parent process, so it will continue and give more errors later. We have to terminate here, but is there a nicer way to detect this and terminate?
+* execute.experiments: mclapply has some bugs in case of error. In that case, each element of the list does not keep the output of each configuration and repetitions may occur.
+* execute.experiments: if stop() is called from parLapply, then the parent process also terminates, and we cannot give further errors.
+* execute.experiments: if stop() is called from mclapply, it does not terminate the execution of the parent process, so it will continue and give more errors later. We have to terminate here, but is there a nicer way to detect this and terminate?
+* execute.experiments: Add check.output() here.
+
+race.R
+* race.wrapper: There is another copy of the loop of target evaluation in testing.R, merge them into a single function. target.evaluator may be NULL. If so, target.output must contain the right output already.
+* aux2.friedman: Recheck this in Conover's book.
+* aux.text: check file for small fixes.
+* race: Remove argument checking. This must have been done by the caller.
+* race: Shouldn't these be ranks when stat.test == "friedman" ?
+* race: Should we report the sum of ranks in the case of test == friedman instead of the mean?
+
+
+readConfiguration.R
+* readConfigurationFile: Add digits option to the argument¿
+* readScenario: Does passing an initial control actually work? It seems it gets completely overriden by the loop below. Leslie: I execute it and works..
+* checkScenario: This function should only do checks and return TRUE/FALSE. There should be other function that does the various transformations.
+* checkScenario: forbiddenExps, Using && or || instead of & and | will not work. Detect this and give an error to the user.
+* checkScenario: Check that the parameter names that appear in forbidden all appear in parameters$names to catch typos.
+* generateInstances: Define a better upper bound or generate them only when needed.
+
+readParameters.R
+readParameters: Make quotes mandatory for categorical and ordered parameters.
+readParameters: Only domain needs to be a list, the rest should be vectors, which will make many operations way faster. Leslie: I think this is done no?
+readParameters: Provide a better error for invalid conditions.
+readParameters: Check that the parameter names that appear in the conditions all appear in names to catch typos.
+
+utils.R
+* mpiInit: This may not work when working interactively. For example, one cannot change the number of slaves.  A more robust function would try to close any open slaves, and then re-spawn a different number.
+* mpiInit:  dellog == TRUE tries to delete log files, but it does not take into account that we may have changed directory and it does not fail gracefully but produces an annoying: Warning message: running command 'ls *.30577+1.*.log 2>/dev/null' had status 2
+* Document better dataVariance and concordance.
+
+
+DONE
+====
+
+* [MANUEL] boundary -> domain
+
+* [MANUEL] Rename tunerConfig and config to "control", following R's optim()
+  function. I used 'scenario' to avoid further confusion. If in the future we
+  separate scenario setup from irace options, it may make sense to use control
+  for the latter.
+
+* [MANUEL] -c, --config -> -s, --scenario "scenario.txt"
+
+* [LESLIE] Rename all "candidate" to "configuration".\
+  including inst/templates/candidates.tmpl -> inst/templates/configurations.tmpl
+  
+* [LESLIE] Rename hook-run to target-runner and hook-evaluate to target-evaluator.
+
+* instanceFile -> instancesFile
+  instanceDir -> instancesDir
+  testInstanceDir -> testInstancesDir
+  testInstanceFile -> testInstancesFile
+  tunerResults -> iraceResults
+  
+* [LESLIE] Added version to license
+
+* [LESLIE] Moving fix me to TODO LIST
+
+* [LESLIE] Check scenario option

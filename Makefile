@@ -1,4 +1,4 @@
-PACKAGEVERSION=1.08
+PACKAGEVERSION=2.0
 PACKAGE=$(shell sh -c 'grep -F "Package: " DESCRIPTION | cut -f2 -d" "')
 # FIXME: This Makefile only works with this BINDIR!
 BINDIR=$(CURDIR)/..
@@ -22,7 +22,7 @@ endif
 SVN_REV = $(shell sh -c 'cat svn_version 2> /dev/null')
 REVNUM = $(shell sh -c 'cat svn_version | tr -d -c "[:digit:]" 2> /dev/null')
 
-.PHONY : help build check clean install pdf rsync version bumpdate submit cran winbuild
+.PHONY : help build check clean install pdf rsync version bumpdate submit cran winbuild vignettes
 
 
 install: version clean
@@ -60,9 +60,17 @@ clean:
 	cd $(PACKAGEDIR) && ($(RM) ./$(PACKAGE)-Ex.R ./src/*.o ./src/*.so; \
 		find . -name '*.orig' | xargs $(RM) )
 
-pdf:
+vignettes: vignettes/irace-package.Rnw
+# FIXME: How to do all this on a temporary directory to avoid people editing the .tex file directly?
+	cd vignettes && \
+	Rscript -e "library(knitr); knit('irace-package.Rnw', output='irace-package.tex', quiet = TRUE)" && \
+	pdflatex irace-package.tex && pdflatex irace-package.tex && $(RM) irace-package.tex && cp irace-package.pdf ../inst/doc/
+
+pdf: vignettes 
 	$(RM) $(BINDIR)/$(PACKAGE).pdf
 	cd $(BINDIR) &&	R CMD Rd2pdf --no-preview --batch --output=$(PACKAGE).pdf $(PACKAGEDIR) 
+
+
 
 bumpdate: version
 	@sed -i 's/Date: .*/Date: $(DATE)/' $(PACKAGEDIR)/DESCRIPTION
@@ -70,6 +78,7 @@ bumpdate: version
 
 version :
 	echo 'irace.version <- "$(REALVERSION)"' > $(PACKAGEDIR)/R/version.R
+	@sed -i 's/Version:.*$$/Version: $(REALVERSION)/' $(PACKAGEDIR)/R/license.R
 	@sed -i 's/Version:.*$$/Version: $(PACKAGEVERSION)/' $(PACKAGEDIR)/DESCRIPTION
 	@sed -i 's/Version:.*$$/Version: \\tab $(PACKAGEVERSION) \\cr/' $(PACKAGEDIR)/man/$(PACKAGE)-package.Rd
 

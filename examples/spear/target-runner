@@ -1,0 +1,43 @@
+#!/bin/bash
+###############################################################################
+# This script is the command that is executed every run.
+# Check the examples in examples/
+#
+# This script is run in the execution directory (execDir, --exec-dir),
+# the same directory where target-evaluator is executed. Hence, you may
+# need to copy extra files needed by the executable to this directory.
+#
+# PARAMETERS:
+# $1 is the candidate number
+# $2 is the instance ID
+# $3 is the seed
+# $4 is the instance name
+# The rest ($* after `shift 4') are parameters to the run
+#
+# RETURN VALUE:
+# This script should print nothing.
+# Exit with 0 if no error, with 1 in case of error
+###############################################################################
+
+EXE=~/bin/Spear-32_1.2.1
+TIMEOUT=30
+FIXED_PARAMS="--nosplash --time --tmout $TIMEOUT"
+
+CANDIDATE=$1
+INSTANCEID=$2
+SEED=$3
+INSTANCE=$4
+shift 4 || exit 1
+CAND_PARAMS=$*
+
+
+$EXE ${FIXED_PARAMS} --dimacs $INSTANCE ${CAND_PARAMS} 1> c${CANDIDATE}-${INSTANCEID}.stdout 2> c${CANDIDATE}-${INSTANCEID}.stderr
+if [ $? -ne 0 ]; then
+    (cat <<EOF
+c ERROR
+c runtime 30
+EOF
+    ) > c${CANDIDATE}-${INSTANCEID}.stdout
+fi
+
+exit 0

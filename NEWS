@@ -1,3 +1,78 @@
+ * Minimum R version is 2.15. 
+
+ * Elitist irace by default, it can be disabled with parameter --elitist 0. 
+   (Leslie Perez, Manuel López-Ibáñez)
+
+ * The parameter --test-type gains two additional values:
+
+     t-test-bonferroni (t-test with Bonferroni's correction for multiple
+                        comparisons), 
+     t-test-holm (t-test with Holm's correction for multiple comparisons)
+
+   (Manuel López-Ibáñez)
+
+ * MPI does not create log files with --debug-level 0.
+   (Manuel López-Ibáñez)
+
+ * For simplicity, the parallel-irace-* scripts do not use an auxiliary
+   `tune-main` script.  For customizing them, make a copy and edit them
+   directly.
+   (Manuel López-Ibáñez)
+
+ * New parameters:
+   
+   --target-runner-retries : Retry target-runner this many times in case
+                             of error. 
+                                                   (Manuel López-Ibáñez)
+
+ * We print diversity measures after evaluating on each instance:
+   (Leslie Perez)
+
+   - Kendall's W (also known as Kendall's coefficient of concordance) If 1,
+     all candidates have ranked in the same order in all instances.  If 0, the
+     ranking of each candidate on each instance is essentially random.  
+
+             W = Friedman / (m * (k-1))
+   
+   - Spearman's rho: average (Spearman) correlation coefficient computed on the
+     ranks of all pairs of raters. If there are no repeated data values, a
+     perfect Spearman correlation of +1 or -1 occurs when each of the variables
+     is a perfect monotone function of the other.
+
+ * Many internal and external interfaces have changed. For example, now we
+   consistently use 'scenario' to denote the settings passed to irace and
+   'configuration' instead of 'candidate' to denote the parameter settings
+   passed to the target algorithm. Other changes are:
+
+   parameters$boundary -> parameters$domain
+   hookRun             -> targetRunner
+   hookEvaluate        -> targetEvaluator
+   tune-conf           -> scenario.txt
+   instanceDir         -> trainInstancesDir
+   instanceFile        -> trainInstancesFile
+   testInstanceDir     -> testInstancesDir
+   testInstanceFile    -> testInstancesFile
+
+ * Minimal example of configuring a MATLAB program
+   (thanks to Esteban Diaz Leiva)
+
+ * Paths to files or directories given in the scenario file are relative to the
+   scenario file (except for --log-file, which is an output file and it is
+   relative to --exec-dir). Paths given in the command-line are relative to the
+   current working directory. Given
+
+      $ cat scenario/scenario.txt
+      targetRunner <- "./target-runner"
+      $ /bin/irace -s scenario/scenario.txt
+
+   irace will search for "./scenario/target-runner", but given
+
+      $ /bin/irace -s scenario/scenario.txt --target-runner ./target-runner
+   
+   irace will search for "./target-runner".      (Manuel López-Ibáñez)
+
+
+
 1.07
 
  * The best configurations found, either at the end or at each iteration of an
@@ -8,6 +83,10 @@
  * The R interfaces of hookRun, hookEvaluate and hookRunParallel have changed.
    See help(hook.run.default) and help(hook.evaluate.default) for examples of
    the new interfaces.
+
+ * Printing of race progress now reports the actual configuration and instance
+   IDs, and numbers are printed in a more human-readable format.
+   (Leslie Perez, Manuel López-Ibáñez)
 
  * Reduce memory use for very large values of maxExperiments.  
    (Manuel López-Ibáñez, thanks to Federico Caselli for identifying the issue)

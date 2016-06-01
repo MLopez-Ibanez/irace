@@ -1,0 +1,124 @@
+#!/bin/bash
+###############################################################################
+# This script launches several runs of irace in parallel in a SGE Cluster, and
+# each run is parallelized using MPI.  Execute without parameters to see usage.
+###############################################################################
+set -e
+set -o pipefail
+
+# Find our own location.
+BINDIR=$(dirname "$(readlink -f "$(type -P $0 || echo $0)")")
+IRACE="$BINDIR/irace"
+
+# You may need to customize this part according to the setup of your own
+# cluster.
+QUEUE=long
+#MACHINE=opteron2216
+#MACHINE=xeon5410
+#MACHINE=opteron6128
+MACHINE=opteron6272
+
+MPIRUN=/opt/openmpi/bin/mpirun
+#PARALLEL_ENV=mpich_fu
+PARALLEL_ENV=mpich_rr
+
+# This function launches one run of irace.
+irace_main() {
+    # We would like to use $BASHPID here, but OS X version of bash does not
+    # support it.
+    JOBNAME=irace-$$-$1
+    exec qsub -v PATH <<EOF
+#!/bin/bash
+#$ -N $JOBNAME
+#$ -l $MACHINE 
+#$ -l $QUEUE
+#$ -pe $PARALLEL_ENV $NB_PARALLEL_PROCESS 
+#$ -m ase
+#      b     Mail is sent at the beginning of the job.
+#      e     Mail is sent at the end of the job.
+#      a     Mail is sent when the job is aborted or rescheduled.
+#      s     Mail is sent when the job is suspended.
+#
+#$ -o $EXECDIR/irace.stdout 
+#$ -e $EXECDIR/irace.stderr 
+#$ -cwd
+#$ -binding linear:256
+#  The cluster that we use in IRIDIA seems to require the option above
+#  for MPI jobs. It is probably not useful for other clusters.
+#
+export OMPI_MCA_plm_rsh_disable_qrsh=1
+$MPIRUN -x OMPI_MCA_plm_rsh_disable_qrsh -np 1 \
+        $IRACE --exec-dir=$EXECDIR --parallel $NB_SLAVES --seed $RUNSEED --mpi 1 $PARAMS
+EOF
+}
+## End of customization
+
+error () {
+    echo "$0: error: $@" >&2
+    exit 1
+}
+
+usage() {
+    cat <<EOF
+Usage: $0 N[-M] [EXECDIR] --parallel <NUM> [IRACE PARAMS]
+
+Parameters:
+ N                 an integer giving the number of repetitions of irace
+                   or a sequence N-M giving which repetitions to redo.
+ EXECDIR           job M will use EXECDIR-M directory (default: execdir-)
+                   as the execDir (--exec-dir) parameter of irace.
+ --parallel <NUM>  number of parallel jobs
+ IRACE PARAMS      additional parameters for irace.
+EOF
+    exit 1
+}
+
+# Issue usage if no parameters are given.
+test $# -ge 1 || usage
+
+# Number of repetitions of iRace
+REPETITIONS=$1
+shift
+START=1
+
+if [[ "$REPETITIONS" =~ ^([0-9]+)-([0-9]+)$ ]] ; then
+    START=${BASH_REMATCH[1]}
+    REPETITIONS=${BASH_REMATCH[2]}
+elif ! [[ "$REPETITIONS" =~ ^[0-9]+$ ]] ; then
+    error "number of repetitions must be an integer"
+fi
+
+# execDir (--exec-dir) directory
+EXECDIR_PREFIX=${1:-execdir}
+shift
+
+SEED=1234567
+PARAMS=
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --parallel) shift; NB_SLAVES="$1"; shift;;
+        --seed) shift; SEED="$1"; shift;;
+        *) PARAMS="$PARAMS $1"; shift;;# terminate case
+
+    esac
+done
+
+if [ $NB_SLAVES -lt 2 ]; then
+    error "--parallel must be larger than 1"
+    exit 1
+fi
+
+let NB_PARALLEL_PROCESS=NB_SLAVES+1
+
+# Find our own location.
+BINDIR=$(dirname "$(readlink -f "$(type -P $0 || echo $0)")")
+
+for i in $(seq $START $REPETITIONS); do
+    EXECDIR=$(printf '%s-%002d' ${EXECDIR_PREFIX} $i)
+    echo "execution directory: $EXECDIR"
+    rm -rf $EXECDIR
+    mkdir -p $EXECDIR
+    let RUNSEED=SEED+i-1 
+    irace_main $(printf '%002d' $i) &
+    sleep 1
+done
