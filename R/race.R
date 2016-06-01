@@ -270,8 +270,8 @@ race <- function(maxExp = 0,
   if (elitist && .irace$next.instance != 1) {
       last.new <- .irace$next.instance + elitistInstances - 1
       cat("Instances row:", nrow(scenario$instancesList))
-      if (scenario$determinist && last.new > nrow(scenario$instancesList)){
-        #The scenario is determinist and do not have more instances
+      if (scenario$deterministic && last.new > nrow(scenario$instancesList)){
+        # The scenario is deterministic and does not have more instances
         elitistInstances <- 0
         race.instances   <- sample(1 : nrow(scenario$instancesList))
                          
@@ -283,7 +283,7 @@ race <- function(maxExp = 0,
       }
   } else {
     #Check if the instances are finished
-    if(scenario$determinist && .irace$next.instance > nrow(scenario$instancesList))
+    if(scenario$deterministic && .irace$next.instance > nrow(scenario$instancesList))
       #Since the instances are finished, we sample then  if needed
       if(scenario$sampleInstances)
          race.instances <- sample(seq(1,nrow(scenario$instancesList)))
