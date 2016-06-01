@@ -5,6 +5,7 @@ RSYNC_FLAGS =  -rlczCI --copy-links --stats --progress  \
 
 default:
 	@echo "make [ get | put | testget | testput ]"
+	@echo "You need to have 'rsync' and 'pandoc' installed"	
 
 testput: files/README.html
 	rsync $(RSYNC_FLAGS) --dry-run --delete --delete-excluded . $(HOST):$(REMOTEDIR)
