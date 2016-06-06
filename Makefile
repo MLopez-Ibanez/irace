@@ -78,7 +78,6 @@ bumpdate: version
 
 version :
 	echo 'irace.version <- "$(REALVERSION)"' > $(PACKAGEDIR)/R/version.R
-	@sed -i 's/Version:.*$$/Version: $(REALVERSION)/' $(PACKAGEDIR)/R/license.R
 	@sed -i 's/Version:.*$$/Version: $(PACKAGEVERSION)/' $(PACKAGEDIR)/DESCRIPTION
 	@sed -i 's/Version:.*$$/Version: \\tab $(PACKAGEVERSION) \\cr/' $(PACKAGEDIR)/man/$(PACKAGE)-package.Rd
 

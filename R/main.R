@@ -28,6 +28,32 @@
 # $Revision$
 # =========================================================================
 
+## __VERSION__ below will be replaced by the version defined in R/version.R
+## This avoids constant conflicts within this file.
+irace.license <- 
+'*******************************************************************************
+* irace: An implementation in R of Iterated Race                                
+* Version: __VERSION__
+* Copyright (C) 2010-2016                                                       
+* Manuel Lopez-Ibanez     <manuel.lopez-ibanez@manchester.ac.uk>                
+* Jeremie Dubois-Lacoste  <jeremie.dubois-lacoste@ulb.ac.be>                    
+* Leslie Perez Caceres    <leslie.perez.caceres@ulb.ac.be>                      
+*                                                                                 
+* This is free software, and you are welcome to redistribute it under certain
+* conditions.  See the GNU General Public License for details. There is NO
+* WARRANTY; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+*
+* irace builds upon previous code from the race package:
+*
+* race: Racing methods for the selection of the best
+* Copyright (C) 2003 Mauro Birattari
+*******************************************************************************
+'
+cat.irace.license <- function()
+{
+  cat(sub("__VERSION__", irace.version, irace.license, fixed=TRUE))
+}
+  
 read.table.text <- function(text, header = TRUE, stringsAsFactors = FALSE, ...)
 {
   con <- textConnection(text)
@@ -108,10 +134,7 @@ rownames (.irace.params.def) <- .irace.params.def[,"name"]
 
 irace.usage <- function ()
 {
-  # FIXME: It would be nice to put the version number in the license
-  # message to avoid having this extra line.
-  #cat ("irace\tversion: ", irace.version, "\n", sep="")
-  cat (irace.license)
+  cat.irace.license()
 
   # FIXME: The output would be nicer if we used cat(sprintf()) to
   # print short and long within a fixed width field. The description
@@ -294,23 +317,16 @@ irace.cmdline <- function(args = commandArgs (trailingOnly = TRUE))
   }
 
   if (!is.null(readArg (short = "-v", long = "--version"))) {
-    # FIXME: It would be nice to put the version number in the license
-    # message to avoid having this extra line.
-    # cat ("irace\tversion: ", irace.version, "\n", sep="")
+    cat.irace.license()
     cat ("\tinstalled at: ", system.file(package="irace"), "\n", sep="")
-    cat (irace.license)
     return(invisible(NULL))
   }
 
-  # FIXME: It would be nice to put the version number in the license
-  # message to avoid having this extra line.
-  # cat ("irace\tversion: ", irace.version, "\n", sep="")
+  cat.irace.license()
   cat ("\tinstalled at: ", system.file(package="irace"), "\n", sep="")
-  cat (irace.license)
   
   # Read the scenario file and the command line
-  scenarioFile <-
-    readCmdLineParameter ("scenarioFile", default = "")
+  scenarioFile <- readCmdLineParameter ("scenarioFile", default = "")
   scenario <- readScenario(scenarioFile)
   for (param in .irace.params.names) {
     scenario[[param]] <-
