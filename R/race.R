@@ -134,14 +134,14 @@ aux2.friedman <- function(y, I, alive, conf.level = 0.95)
   return(list(best = J[1], ranks = R, alive = alive, dropped.any = dropped.any, p.value = PVAL))
 }
 
-aux.friedman <- function(results, no.tasks.sofar, alive, which.alive, no.alive, conf.level)
+aux.friedman <- function(results, alive, which.alive, no.alive, conf.level)
 {
   if (no.alive == 2) {
     best <- NULL
     ranks <- NULL
     # If only 2 configurations are left, switch to Wilcoxon
-    V1   <- results[1:no.tasks.sofar, which.alive[1]]
-    V2   <- results[1:no.tasks.sofar, which.alive[2]]
+    V1   <- results[, which.alive[1]]
+    V2   <- results[, which.alive[2]]
     PVAL <- wilcox.test(V1, V2, paired = TRUE, exact = FALSE)$p.value
     if (!is.nan(PVAL) && !is.na(PVAL) && PVAL < 1 - conf.level) {
       dropped.any <- TRUE
@@ -170,7 +170,7 @@ aux.friedman <- function(results, no.tasks.sofar, alive, which.alive, no.alive, 
     # If more then 2 configurations are left, use Friedman
     # LESLIE: is there a better way to extract info??
     # MANUEL: Which info?
-    return (aux2.friedman(results[1:no.tasks.sofar,], which.alive, alive, conf.level = conf.level))
+    return (aux2.friedman(results, which.alive, alive, conf.level = conf.level))
   }
 }
 
@@ -182,16 +182,16 @@ aux.ttest <- function(results, no.tasks.sofar, alive, which.alive, no.alive, con
   mean.all <- array(0, c(ncol(results)))
   for (j in 1:ncol(results)) {
     # FIXME: why not just mean() ?
-    mean.all[j] <- sum(results[1:no.tasks.sofar,j] / no.tasks.sofar)
+    mean.all[j] <- sum(results[,j] / no.tasks.sofar)
   }
   # FIXME: which.min?
   best <- match(min(mean.all[alive]), mean.all)
   ranks <- mean.all[alive]
   
   PJ <- array(0, dim=c(2,0))
-  Vb <- results[1:no.tasks.sofar, best]
+  Vb <- results[, best]
   for (j in which.alive) {
-    Vj <- results[1:no.tasks.sofar, j]
+    Vj <- results[, j]
     #cat("Vb:", Vb, "\n")
     #cat("Vj:", Vj, "\n")
     # t.test may fail if the data in each group is almost
@@ -484,10 +484,10 @@ race <- function(maxExp = 0,
         && length(which.alive) > 1) {
       test.res <-
         switch(stat.test,
-               friedman = aux.friedman(Results, no.tasks.sofar, alive, which.alive, no.alive, conf.level),
-               t.none = aux.ttest(Results, no.tasks.sofar, alive, which.alive, no.alive, conf.level, adjust = "none"),
-               t.holm = aux.ttest(Results, no.tasks.sofar, alive, which.alive, no.alive, conf.level, adjust = "holm"),
-               t.bonferroni = aux.ttest(Results, no.tasks.sofar, alive, which.alive, no.alive, conf.level, adjust = "bonferroni"))
+               friedman = aux.friedman(Results[1:no.tasks.sofar, ], alive, which.alive, no.alive, conf.level),
+               t.none = aux.ttest(Results[1:no.tasks.sofar, ], no.tasks.sofar, alive, which.alive, no.alive, conf.level, adjust = "none"),
+               t.holm = aux.ttest(Results[1:no.tasks.sofar, ], no.tasks.sofar, alive, which.alive, no.alive, conf.level, adjust = "holm"),
+               t.bonferroni = aux.ttest(Results[1:no.tasks.sofar, ], no.tasks.sofar, alive, which.alive, no.alive, conf.level, adjust = "bonferroni"))
 
       best <- test.res$best
       race.ranks <- test.res$ranks
