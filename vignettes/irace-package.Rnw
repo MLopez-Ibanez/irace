@@ -1331,11 +1331,11 @@ not executed completely. \irace saves at the end of each iteration an \aR data f
 not only contains the information of the tuning progress (See Section~\ref{sec:output r}) 
 but also internal information that allows to recover an incomplete execution.
 
-To recover an \irace execution use the \code{recoveryFile} option and specify the \aR data log
+To recover an \irace execution use the \parameter{recoveryFile} option and specify the \aR data log
 file to be used. \irace will continue the execution from the last saved iteration. The state 
 of the random generator is saved and loaded, therefore, as long as the execution is continued
 in the same machine, the obtained results will be exactly as executing \irace in one go.
-You can specify the \code{recoveryFile} from the command-line or from the scenario file, 
+You can specify the \parameter{recoveryFile} from the command-line or from the scenario file, 
 and execute \irace as described in Section~\ref{sec:execution}. For example from the command-line use:
 
 <<lauch_reco, engine="bash", eval=FALSE>>=
@@ -2234,7 +2234,7 @@ Optional data passed to \code{targetRunner}. This is ignored by the default \cod
 \label{sec:recovery}
 
 \begin{itemize}     
-\item \code{recoveryFile} ~~ flag: \code{--recovery-file}  
+\defparameter{recoveryFile}{--recovery-file}{""}  %
   Previously saved \irace log file that should be used to recover the execution of irace, 
   either absolute path or relative to the current directory. If empty or \code{NULL}, recovery is not performed. 
   For more details about recovery see Section~\ref{sec:recovery}.\\
