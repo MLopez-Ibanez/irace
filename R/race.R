@@ -268,8 +268,8 @@ race <- function(maxExp = 0,
   # Create the instance list according to the algorithm selected
   # if next.instance == 1 then is the first iteration.
   if (elitist && .irace$next.instance != 1) {
-      last.new <- .irace$next.instance + elitistInstances - 1
-      cat("Instances row:", nrow(scenario$instancesList))
+    last.new <- .irace$next.instance + elitistInstances - 1
+    # cat("Instances row:", nrow(scenario$instancesList))
       if (scenario$deterministic && last.new > nrow(scenario$instancesList)){
         # The scenario is deterministic and does not have more instances
         elitistInstances <- 0
@@ -538,7 +538,7 @@ race <- function(maxExp = 0,
     mean.best <- mean(Results[1:no.tasks.sofar, best])
 
     if (interactive) {
-      time.diff <- difftime(Sys.time(), start.time, units="secs")
+      time.diff <- difftime(Sys.time(), start.time, units = "secs")
       cat(sprintf("%11d|%11d|%11d|%#15.10g|%11d|%s",
                   race.instances[current.task],
                   sum(alive),
@@ -547,10 +547,10 @@ race <- function(maxExp = 0,
                   no.experiments.sofar,
                   # FIXME: Maybe better and faster if we only print seconds?
                   format(.POSIXct(time.diff, tz="GMT"), "%H:%M:%S")))
-      if (no.tasks.sofar > 1) {
+      if (no.tasks.sofar > 1 && length(alive) > 1) {
         conc <- concordance(Results[1:no.tasks.sofar, alive])
-        qvar <- dataVariance(Results[1:no.tasks.sofar, alive, drop=FALSE])
-        cat(sprintf("|%+#4.2f|%.2f|%.4f|\n", conc$spearman.rho, conc$kendall.w, 
+        qvar <- dataVariance(Results[1:no.tasks.sofar, alive])
+        cat(sprintf("|%+#4.2f|%.2f|%.4f|\n", conc$spearman.rho, conc$kendall.w,
                     qvar))
       } else {
         cat("|   NA|  NA|    NA|\n")
