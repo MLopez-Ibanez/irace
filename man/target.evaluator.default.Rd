@@ -9,7 +9,8 @@
   an advanced example of how to create your own \code{targetEvaluator} function.
 }
 \usage{
-target.evaluator.default(experiment, num.configurations, all.conf.id, scenario, target.runner.call)
+target.evaluator.default(experiment, num.configurations, all.conf.id,
+                         scenario, target.runner.call)
 }
 \arguments{
   \item{experiment}{A list describing the experiment. It should contain

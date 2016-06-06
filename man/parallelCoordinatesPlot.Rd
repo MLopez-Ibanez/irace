@@ -5,7 +5,9 @@
   'parallelCoordinatesPlot' plots a set of parameter configurations in parallel coordinates.
 }
 \usage{
-  parallelCoordinatesPlot(configurations, parameters, param_names=parameters$names, hierarchy=TRUE, filename=NULL, pdf.width=14 , mar=c(8,1,4,1))
+parallelCoordinatesPlot(configurations, parameters,
+                        param_names = parameters$names, hierarchy = TRUE,
+                        filename = NULL, pdf.width = 14, mar = c(8,1,4,1))
 }
 \arguments{
   \item{configurations}{Data frame containing target algorithms configurations in the format used by \pkg{irace}.}
@@ -29,7 +31,7 @@
 # First, load the data produced by irace.
 load("irace.Rdata")
 attach(iraceResults)
-parallelCoordinatesPlot(allConfigurations, parameters, hierarchy=FALSE)
+parallelCoordinatesPlot(allConfigurations, parameters, hierarchy = FALSE)
 }
 }
 

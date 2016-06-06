@@ -5,7 +5,8 @@
   'parameterFrequency' plots the frequency of the parameters values of a set of target algorithm configurations.
 }
 \usage{
-  parameterFrequency(configurations, parameters, rows = 4, cols = 3, filename = NULL, pdf.width = 12, col = "gray")
+parameterFrequency(configurations, parameters, rows = 4, cols = 3,
+                   filename = NULL, pdf.width = 12, col = "gray")
 }
 \arguments{
   \item{configurations}{Data frame containing target algorithms configurations in the format used by \pkg{irace}.}
