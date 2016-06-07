@@ -28,16 +28,16 @@
 ## If empty or NULL, do not use a file.
 # configurationsFile = ""
 
-## The script called for each configuration that launches the program to be tuned.
-## See templates/target-runner.tmpl
+## The script called for each configuration that launches the program to be
+## tuned.  See templates/target-runner.tmpl
 # targetRunner = "./target-runner"
 
 ## Number of times to retry a call to target-runner if the call failed.
 # targetRunnerRetries = 0
 
 ## Optional data passed to targetRunner. This is ignored by the default
-## targetRunner function, but it may be used by custom
-## targetRunner functions to pass persistent data around.
+## targetRunner function, but it may be used by custom targetRunner functions
+## to pass persistent data around.
 # targetRunnerData = NULL
 
 ## Optional R function to provide custom parallelization of target.runner.  The
@@ -52,8 +52,8 @@
 ## See templates/target-evaluator.tmpl
 # targetEvaluator = ""
 
-## The maximum number of runs (invocations of targetRunner) that will performed. It
-## determines the (maximum) budget of experiments for the tuning.
+## The maximum number of runs (invocations of targetRunner) that will
+## performed. It determines the (maximum) budget of experiments for the tuning.
 # maxExperiments = 1000
 
 ## Directory where testing instances are located, either absolute or relative

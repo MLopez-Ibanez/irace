@@ -1,7 +1,9 @@
+###################################################### -*- mode: r -*- #####
+## Scenario setup for Iterated Race (iRace).
 ############################################################################
-## Configuration for Iterated Race,
-## to tune the ACOTSP software.
-############################################################################
+## To use the default value of a parameter of iRace, simply do not set
+## the parameter (comment it out in this file, and do not give any
+## value on the command line).
 
 ## File that contains the description of the parameters.
 parameterFile = "./parameters-acotsp.txt"
@@ -9,8 +11,8 @@ parameterFile = "./parameters-acotsp.txt"
 ## Directory where the programs will be run.
 execDir = "./acotsp-arena"
 
-## Folder where tuning instances are located, either absolute or
-## relative to working directory.
+## Directory where tuning instances are located, either absolute path or
+## relative to current directory.
 trainInstancesDir = "./Instances"
 
 ## The maximum number of runs (invocations of targetRunner) that will performed. It
@@ -25,5 +27,6 @@ digits = 2
 ## more verbose debug messages.
 # debugLevel = 0
 
-## END of configuration file
+## END of scenario file
 ############################################################################
+
