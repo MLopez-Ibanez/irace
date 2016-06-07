@@ -147,7 +147,7 @@ target.runner.default <- function(experiment, scenario)
     # If the command could not be run an R error is generated.  If ‘command’
     # runs but gives a non-zero exit status this will be reported with a
     # warning and in the attribute ‘"status"’ of the result: an attribute
-    # ‘"errmsg"’ may also be available
+    # ‘"errmsg"’ may also be available.
     if (!is.null(err)) {
       err <- paste(err, collapse ="\n")
       if (!is.null(attr(output, "errmsg")))

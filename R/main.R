@@ -117,7 +117,7 @@ testInstancesDir             p    ""     "--test-instances-dir"         ""      
 testInstancesFile            p    ""     "--test-instances-file"        ""                 "File containing a list of test instances and optionally additional parameters for them."
 testInstances                x    ""     ""                             ""                 ""
 testInstances.extra.params   x    ""     ""                             ""                 ""
-testNbElites                 i    ""     "--test-num-elites"            0                  "Number of elite configurations returned by irace that will be tested."
+testNbElites                 i    ""     "--test-num-elites"            1                  "Number of elite configurations returned by irace that will be tested if test instances are provided."
 testIterationElites          b    ""     "--test-iteration-elites"      0                  "Enable/disable testing the elite configurations found at each iteration."
 elitist                      b    "-e"   "--elitist"                    1                  "Enable/disable elitist irace."
 ## MANUEL: These comments are not so clear.

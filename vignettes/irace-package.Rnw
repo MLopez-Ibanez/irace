@@ -1289,7 +1289,7 @@ of this configurations \irace offers the possibility of executing the testing of
 configurations on a test instance set at the end of the execution. Even more, the testing can also be
 performed including the best configuration of each iteration. 
 
-The options \code{testNbElites} and \code{testIterationElites} allow to set 
+The options \parameter{testNbElites} and \parameter{testIterationElites} allow to set 
 a testing of the best configurations found after the \irace execution has been completed.
 The test instance set can be specified by the options \code{testInstancesDir} and \code{testInstancesFile} 
 if using a directory or text file, or by setting the variable \code{scenario$testInstances} directly from the \aR console. 
@@ -1298,9 +1298,9 @@ To set the testing instances follow the same guidelines as for the training inst
 
 There are two types of testing:
 \begin{itemize}
-\item \textbf{Final elite configurations testing}: \code{testNbElites} 
+\item \textbf{Final elite configurations testing}: \parameter{testNbElites} 
 indicates the number of elite configurations to be tested, if 
-the number of elite configurations is less than the value provided for \code{testNbElites}, 
+the number of elite configurations is less than the value provided for \parameter{testNbElites}, 
 then the number of elite configurations is used as \code{testNbElites}.
 
 \item \textbf{Iteration elite configurations testing}: \code{testIterationElites} 
@@ -1365,7 +1365,7 @@ from the scenario file.
 \item \code{sgeCluster}
 \end{itemize}
 
-It is not possible (and in most cases not correct) to change the scenario options , given that the 
+It is not possible (and in most cases not correct) to change the scenario options, given that the 
 previous results can become invalid. However there are some cases in which this options must be changed, 
 for example, if you have instances that are files, it might be the case that the instances are not 
 available in the same location. To change the location of them you should modify directly the \aR data file, 
@@ -2243,9 +2243,9 @@ Optional data passed to \code{targetRunner}. This is ignored by the default \cod
 
 \subsection{Testing}
 \begin{itemize}  
-\item \code{testNbElites} ~~ flag: \code{--test-num-elites} ~~ default: \textit{0} \\
-  Number of elite configurations returned by irace that will be tested. For more information
-  about the testing see Section~\ref{sec:testing}.
+\defparameter{testNbElites}{--test-num-elites}{1} %
+  Number of elite configurations returned by irace that will be tested if test instances are provided. For more information
+  about the testing, see Section~\ref{sec:testing}.
   
 \item \code{testIterationElites} ~~ flag: \code{--test-iteration-elites} ~~ default: \textit{0} \\
   Enable/disable testing the elite configurations found at each iteration.

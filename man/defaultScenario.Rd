@@ -97,7 +97,8 @@
   }
   Testing: 
   \itemize{
-     \item testNbElites: Number of elite configurations returned by irace to be tested. (Default: 0)
+     \item testNbElites: Number of elite configurations returned by
+  irace to be tested if test instances are provided. (Default: 1)
      \item testIterationElites: Enable/disable testing the elite configurations found at each iteration. (Default: 0)
      \item testInstancesDir: Directory where testing instances are located, either absolute or relative to current directory. (Default: "")
      \item testInstancesFile: Path to a file containing a list of test instances and optionally additional parameters for them. (Default: "")
