@@ -524,12 +524,13 @@ generateInstances <- function(scenario)
 }
 
 ## Check targetRunner execution
-checkTargetFiles <- function(scenario, parameters){
+checkTargetFiles <- function(scenario, parameters)
+{
   result <- TRUE
   # Create two random configurations
   configurations <- sampleUniform(parameters, 2,
-                                     digits = scenario$digits,
-                                     forbidden = scenario$forbiddenExps)
+                                  digits = scenario$digits,
+                                  forbidden = scenario$forbiddenExps)
   configurations <- cbind (.ID. = c("testConfig1","testConfig2") , configurations)
   
   # Get info of the configuration
@@ -539,14 +540,14 @@ checkTargetFiles <- function(scenario, parameters){
   
   # Create the experiment using the first instance
   experiments <- list()
-  for(i in 1:nrow(configurations))
-       experiments[[i]] <- list (id.configuration = configurations[i, ".ID."],
-                            id.instance  = "instance1",
-                            seed = 1234567,
-                            configuration = values[i, , drop = FALSE],
-                            instance = scenario$instances[1],
-                            extra.params = scenario$instances.extra.params[[1]],
-                            switches = switches)
+  for (i in 1:nrow(configurations))
+    experiments[[i]] <- list (id.configuration = configurations[i, ".ID."],
+                              id.instance  = "instance1",
+                              seed = 1234567,
+                              configuration = values[i, , drop = FALSE],
+                              instance = scenario$instances[1],
+                              extra.params = scenario$instances.extra.params[[1]],
+                              switches = switches)
   # Executing targetRunner
   cat("# Executing targetRunner...\n")
   output <-  withCallingHandlers(
@@ -561,7 +562,7 @@ checkTargetFiles <- function(scenario, parameters){
                                   paste(conditionMessage(w), collapse="\n"))
                                invokeRestart("muffleWarning")})
   
-  if(!is.null.or.empty(scenario$targetEvaluator)){
+  if(!is.null.or.empty(scenario$targetEvaluator)) {
     output <- list()
     cat("# Executing targetEvaluator...\n")
     for (i in seq_along(experiments)) {

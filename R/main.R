@@ -237,24 +237,25 @@ testing.main <- function(logFile){
   return(TRUE)
 }
 
-checkIraceScenario <- function(scenario, parameters=NULL){
+checkIraceScenario <- function(scenario, parameters=NULL)
+{
   irace.note ("Checking scenario\n")
   scenario$debugLevel <- 2 
   scenario <- checkScenario(scenario)
   printScenario(scenario)
  
-  if(is.null(parameters)){
+  if (is.null(parameters)) {
     cat("# Reading parameter file [",scenario$parameterFile,"].\n")
     parameters <- readParameters (file = scenario$parameterFile,
                                   digits = scenario$digits,
                                   debugLevel = 2)
-  }else if(!is.null.or.empty(scenario$parameterFile)){
+  } else if(!is.null.or.empty(scenario$parameterFile)) {
     cat("# Parameters provided by user.\n",
         "# Parameter file [",scenario$parameterFile,"] will be ignored\n", sep="")
-  }  
+  }
 
   cat("# Checking target execution.\n")
-  if(checkTargetFiles(scenario=scenario, parameters=scenario))
+  if (checkTargetFiles(scenario = scenario, parameters = parameters))
     cat("\n# Check succesful.\n")
   else
     cat("\n# Check unsuccesful.\n") 
