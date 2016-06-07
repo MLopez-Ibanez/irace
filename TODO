@@ -4,23 +4,9 @@ BUGS: see BUGS file
 
 TODO R package:
 
- * Read about vignette here: http://cran.r-project.org/doc/manuals/R-exts.html#Writing-package-vignettes
-
-   What we need to do to convert/use the IRIDIA TR as the vignette?
-   Move doc/irace.Rnw to inst/doc/. However, the problem is that R
-   will try to recreate it in CRAN, so we have to include all the
-   sources. That would mean also the sources for the IRIDIA TR covers.
-
  * Move the README information to the TR (vignette) to avoid duplication.
 
  * Add inst/COPYRIGHTS. See race package.
-
- * Improve R documentation.
-
-   - Properly document all input/output of exported R functions.
-
-   - Document tunerConfig and its variables (some of them are not
-     visible in the command-line, but they should be documented here).
 
  * Fix check-reverse so we can check reverse dependencies before
    uploading to CRAN.
@@ -37,14 +23,6 @@ TODO General (in order of importance):
 
  * Various initialization modes Latin Hyper-cube, random, exhaustive,
    Hammersley point set, etc.
-
- * Add a --verify option that checks whether all files are in place,
-   all options are valid, and it runs hook-run on a random
-   configuration on a random instance.
-   Implement a test mode that allows the user to check his set-up is
-   correct (checking the configuration can be read, giving the number
-   of iterations\candidates that would be used, calling hook-run
-   once...).
 
  * The truncated normal distribution actually gives more probability to the
    side further away from the mean (that is, the integral of the PDF is larger
@@ -111,12 +89,6 @@ TODO General (in order of importance):
  * Make more use of /tmp in 'inst/bin/parallel-irace-mpi'
    to avoid overloading the shared filesystem.
 
- * Pass to hook-run/hook-evaluate an instance index that uniquely
-   identifies each instance. This has two main advantages: 1) we can
-   schedule jobs in parallel for different instances, e.g., execute
-   all jobs for the first-test instances in parallel; 2) hook-run can
-   use the index to assign a unique seed to each instance.
-
  * When parallel > 1, schedule jobs until all CPUs are full. This is
    likely hard to implement. People have done this already with their
    own implementation of F-race:
@@ -154,9 +126,6 @@ TODO General (in order of importance):
    (1/0). It would be nice if they could be enabled just by using
    them, that is, in addition to "--mpi 1" and "--mpi 0", accept just
    "--mpi".
-
- * Do not print anything about timeEstimate/timeUsedSoFar if it is
-   never used (is it ever used?)
 
  * irace.Rdata should keep a list with the all the eliteCandidates after each
    race. Right now we only keep the best one.
@@ -250,6 +219,42 @@ TODO General (in order of importance):
 ------------------------------------------------------------------------------
 
 DONE:
+
+ * Pass to hook-run/hook-evaluate an instance index that uniquely
+   identifies each instance. This has two main advantages: 1) we can
+   schedule jobs in parallel for different instances, e.g., execute
+   all jobs for the first-test instances in parallel; 2) hook-run can
+   use the index to assign a unique seed to each instance.
+   [DONE by Manuel, Leslie]
+   
+ * Do not print anything about timeEstimate/timeUsedSoFar if it is
+   never used (is it ever used?)
+   [DONE by Leslie]
+
+ * Add a --verify option that checks whether all files are in place,
+   all options are valid, and it runs hook-run on a random
+   configuration on a random instance.
+   Implement a test mode that allows the user to check his set-up is
+   correct (checking the configuration can be read, giving the number
+   of iterations\candidates that would be used, calling hook-run
+   once...).
+   [DONE by Leslie]
+   
+ * Improve R documentation. [DONE by Leslie]
+
+   - Properly document all input/output of exported R functions.
+
+   - Document tunerConfig and its variables (some of them are not
+     visible in the command-line, but they should be documented here).
+
+
+ * Read about vignette here: http://cran.r-project.org/doc/manuals/R-exts.html#Writing-package-vignettes
+
+   What we need to do to convert/use the IRIDIA TR as the vignette?
+   Move doc/irace.Rnw to inst/doc/. However, the problem is that R
+   will try to recreate it in CRAN, so we have to include all the
+   sources. That would mean also the sources for the IRIDIA TR covers.
+   [DONE by Leslie]
 
  * A new parameter "--hook-run-retries". Number of times to retry a
    hook-run call if the output is not ok. Default 0. Inf allowed.
