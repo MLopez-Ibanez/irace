@@ -153,7 +153,7 @@ target.runner.default <- function(experiment, scenario)
       if (!is.null(attr(output, "errmsg")))
         output <- paste(sep = "\n", attr(output, "errmsg"))
       if (debugLevel >= 2)
-        irace.note ("ERROR (", configuration.id, ") :", err, "\n")
+        irace.note ("ERROR (", configuration.id, "): ", err, "\n")
       return(list(output = output, error = err))
     }
     if (debugLevel >= 2) {

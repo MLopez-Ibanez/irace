@@ -551,33 +551,33 @@ checkTargetFiles <- function(scenario, parameters)
   # Executing targetRunner
   cat("# Executing targetRunner...\n")
   output <-  withCallingHandlers(
-               tryCatch(execute.experiments(experiments, scenario),
-                        error = function(e) {
-                           cat("\n# Error ocurred while executing targetRunner:\n\n",
-                                 paste(conditionMessage(e), collapse="\n"))
-                           result <<- FALSE
-                           }), 
-                        warning = function(w) {
-                              cat("\n# Warning ocurred while executing targetRunner:\n\n",
-                                  paste(conditionMessage(w), collapse="\n"))
-                               invokeRestart("muffleWarning")})
+    tryCatch(execute.experiments(experiments, scenario),
+             error = function(e) {
+               cat("\n# Error occurred while executing targetRunner:\n",
+                   paste0(conditionMessage(e), collapse="\n"))
+               result <<- FALSE
+               NULL
+             }), warning = function(w) {
+      cat("\n# Warning occurred while executing targetRunner:\n",
+          paste0(conditionMessage(w), collapse="\n"))
+      invokeRestart("muffleWarning")})
   
-  if(!is.null.or.empty(scenario$targetEvaluator)) {
+  if (!is.null.or.empty(scenario$targetEvaluator)) {
     output <- list()
     cat("# Executing targetEvaluator...\n")
     for (i in seq_along(experiments)) {
       output[[i]] <- withCallingHandlers(
-                        tryCatch(target.evaluator.default(experiment = experiments[[i]], length(experiments),
+        tryCatch(target.evaluator.default(experiment = experiments[[i]], length(experiments),
                         c("testConfig1","testConfig2"), scenario = scenario, target.runner.call = "check target runner"),
-                        error = function(e) {
-                           cat("\n# Error ocurred while executing targetEvaluator:\n\n",
-                                 paste(conditionMessage(e), collapse="\n"))
-                           result <<- FALSE
-                        }), 
-                     warning = function(w) {
-                              cat("\n# Warning ocurred while executing targetEvaluator:\n\n",
-                                  paste(conditionMessage(w), collapse="\n"))
-                               invokeRestart("muffleWarning")})   
+                 error = function(e) {
+                   cat("\n# Error ocurred while executing targetEvaluator:\n",
+                       paste0(conditionMessage(e), collapse="\n"))
+                   result <<- FALSE
+                   NULL
+                 }), warning = function(w) {
+                   cat("\n# Warning ocurred while executing targetEvaluator:\n",
+                       paste0(conditionMessage(w), collapse="\n"))
+                   invokeRestart("muffleWarning")})
     }
   }
   return(result)
