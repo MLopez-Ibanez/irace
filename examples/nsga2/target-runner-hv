@@ -1,0 +1,75 @@
+#!/bin/bash
+###############################################################################
+# This script is the command that is executed every run.
+# Check the examples in examples/
+#
+# This script is run in the execution directory (execDir, --exec-dir).
+#
+# PARAMETERS:
+# $1 is the candidate configuration number
+# $2 is the instance ID
+# $3 is the seed
+# $4 is the instance name
+# The rest ($* after `shift 4') are parameters to the run
+#
+# RETURN VALUE:
+# This script should print one numerical value: the cost that must be minimized.
+# Exit with 0 if no error, with 1 in case of error
+###############################################################################
+EXE=../nsga2/nsga2r
+
+HV=../hv/hv
+NONDOMINATED=../mo-tools/nondominated
+
+UBOUND="10 10"
+REFPOINT="11 11"
+
+CANDIDATE=$1
+INSTANCEID=$2
+SEED=$3
+INSTANCE=$4
+shift 4 || exit 1
+CAND_PARAMS=$*
+
+# What "fixed" parameters should be always passed to NSGA-II?
+FIXED_PARAMS=" 0.$SEED ${INSTANCE/_/ } 2 10000 "
+
+STDOUT=c${CANDIDATE}-${INSTANCEID}.stdout
+STDERR=c${CANDIDATE}-${INSTANCEID}.stderr
+
+if [ ! -x "${EXE}" ]; then
+    error "${EXE}: not found or not executable (pwd: $(pwd))"
+fi
+
+# In case of error, we print the current time:
+error() {
+    echo "`TZ=UTC date`: error: $@" >&2
+    exit 1
+}
+
+# Now we can call NSGA-II by building a command line with all parameters for it
+$EXE ${FIXED_PARAMS} ${CAND_PARAMS} 1> $STDOUT 2> $STDERR
+echo "$EXE ${FIXED_PARAMS} ${CAND_PARAMS} 1> $STDOUT 2> $STDERR" > $STDERR
+
+# The output of the candidate $CANDIDATE should be written in the file 
+# "${STDOUT}". Does this file exist?
+if [ ! -s "${STDOUT}" ]; then
+    # In this case, the file does not exist. Let's exit with an error. In this
+    # case irace will stop with an error.
+    error "${STDOUT}: No such file or directory"
+fi
+
+$NONDOMINATED -u "$UBOUND" --force-bound --filter < $STDOUT > ${STDOUT}_dat
+# echo "$NONDOMINATED -u \"$UBOUND\" --force-bound --filter < $STDOUT > ${STDOUT}_dat"
+if [ $(grep "^[0-9]" ${STDOUT}_dat | wc -l) -eq 0 ]; then
+   echo "0" > ${STDOUT}_dat_hv
+   rm ${STDOUT}_dat
+else
+  $HV --quiet -r "$REFPOINT" < ${STDOUT}_dat > ${STDOUT}_dat_hv || error "calculating hypervolume failed"
+fi
+
+COST=$(cat "${STDOUT}_dat_hv" | grep -e '^[0-9]' | cut -f1)
+rm -f ${STDOUT}* ${STDERR}
+# irace minimizes by default but hypervolume should be maximized.
+echo -$COST
+

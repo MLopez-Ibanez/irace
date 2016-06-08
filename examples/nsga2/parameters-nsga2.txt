@@ -1,0 +1,6 @@
+# name		    switch		         type	values			[conditions (using R syntax)]
+pop             ""                   o		(20,40,60,80,100)
+pcross          ""                   r  	(0.00, 1.00)
+pmut            ""                   r  	(0.00, 1.00)
+eta_c           ""                   i  	(1,50)
+eta_m           ""                   i  	(1,50)
