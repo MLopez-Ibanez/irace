@@ -52,7 +52,7 @@ int main (int argc, char **argv)
     population *mixed_pop;
     if (argc < 9)
     {
-        printf("\n Usage ./nsga2r random_seed problem nobj nvar eval pop pcross pmut eta_c eta_m\n");
+        printf("\n Usage ./nsga2r random_seed problem nvar nobj eval pop pcross pmut eta_c eta_m\n");
         exit(1);
     }
     seed = (double)atof(argv[1]);
@@ -114,13 +114,16 @@ int main (int argc, char **argv)
     {
         min_realvar = (double *)malloc(nreal*sizeof(double));
         max_realvar = (double *)malloc(nreal*sizeof(double));
-        if (!strcmp(problem, "DTLZ1") || !strcmp(problem, "DTLZ2") || !strcmp(problem, "DTLZ3") || !strcmp(problem, "DTLZ4") || 
-            !strcmp(problem, "DTLZ5") || !strcmp(problem, "DTLZ6") || !strcmp(problem, "DTLZ7")) {
+        if (!strcmp(problem, "DTLZ1") || !strcmp(problem, "DTLZ2") || !strcmp(problem, "DTLZ3") || !strcmp(problem, "DTLZ4")
+            || !strcmp(problem, "DTLZ5") || !strcmp(problem, "DTLZ6") || !strcmp(problem, "DTLZ7")
+            || !strcmp(problem, "ZDT1") || !strcmp(problem, "ZDT2") || !strcmp(problem, "ZDT3") || !strcmp(problem, "ZDT6")) {
           for (i=0; i<nreal; i++) { min_realvar[i] = 0.0; max_realvar[i] = 1.0; }
         }
         else if (!strcmp(problem, "ZDT4")) {
           min_realvar[0] = 0.0; max_realvar[0] = 1.0;
           for (i=1; i<nreal; i++) { min_realvar[i] = -5.0; max_realvar[i] = 5.0; }
+        } else {
+            fprintf(stderr, "Forgot to update min/max for this problem!\n"); abort(); 
         }
 
         pcross_real = atof(argv[7]);
