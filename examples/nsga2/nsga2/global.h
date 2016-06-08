@@ -48,6 +48,7 @@ extern double pmut_bin;
 extern double eta_c;
 extern double eta_m;
 extern int ngen;
+extern int neval;
 extern int nbinmut;
 extern int nrealmut;
 extern int nbincross;
@@ -108,7 +109,8 @@ void mutation_ind (individual *ind);
 void bin_mutate_ind (individual *ind);
 void real_mutate_ind (individual *ind);
 
-void test_problem (double *xreal, double *xbin, int **gene, double *obj, double *constr);
+extern char * problem;
+extern void (* test_problem) (double *, double *, int **, double *, double *);
 
 void assign_rank_and_crowding_distance (population *new_pop);
 

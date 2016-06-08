@@ -15,7 +15,7 @@ void report_pop (population *pop, FILE *fpt)
     {
         for (j=0; j<nobj; j++)
         {
-            fprintf(fpt,"%e\t",pop->ind[i].obj[j]);
+            fprintf(fpt,"%.3f\t",pop->ind[i].obj[j]);
         }
         if (ncon!=0)
         {
@@ -26,9 +26,10 @@ void report_pop (population *pop, FILE *fpt)
         }
         if (nreal!=0)
         {
+         // fprintf(fpt, "\t");
             for (j=0; j<nreal; j++)
             {
-                fprintf(fpt,"%e\t",pop->ind[i].xreal[j]);
+              // fprintf(fpt,"%g ",pop->ind[i].xreal[j]);
             }
         }
         if (nbin!=0)
@@ -41,9 +42,10 @@ void report_pop (population *pop, FILE *fpt)
                 }
             }
         }
-        fprintf(fpt,"%e\t",pop->ind[i].constr_violation);
-        fprintf(fpt,"%d\t",pop->ind[i].rank);
-        fprintf(fpt,"%e\n",pop->ind[i].crowd_dist);
+        //fprintf(fpt,"%e\t",pop->ind[i].constr_violation);
+        //fprintf(fpt,"%d\t",pop->ind[i].rank);
+        //fprintf(fpt,"%e\n",pop->ind[i].crowd_dist);
+        fprintf(fpt,"\n");        
     }
     return;
 }

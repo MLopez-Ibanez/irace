@@ -5,13 +5,34 @@
 # include <math.h>
 # include <string.h>
 # include <unistd.h>
+# include <stdbool.h>
 
 # include "global.h"
 # include "rand.h"
+bool reverse_x = true;
+bool reverse_y = false;
 
 /* Function to display the current population for the subsequent generation */
 void onthefly_display (population *pop, FILE *gp, int ii)
 {
+  if (choice == 3) {
+    if (!reverse_x) {
+      if (angle2 <= 180) angle2++;
+      else reverse_x = true;
+    }
+    if (reverse_x) {
+      if (angle2 > 0) angle2--;
+      else reverse_x = false;
+    }
+    if (!reverse_y) {
+      if (angle1 <= 90) angle1++;
+      else reverse_y = true;
+    }
+    if (reverse_y) {
+      if (angle1 > 30) angle1--;
+      else reverse_y = false;
+    }
+  }
     int i;
     int flag;
     FILE *fpt;
@@ -36,9 +57,10 @@ void onthefly_display (population *pop, FILE *gp, int ii)
     else
     {
         if (choice!=3)
-            fprintf(gp,"set title 'Generation #%d'\n unset key\n plot 'plot.out' w points pointtype 6 pointsize 1\n",ii);
+            fprintf(gp,"set title 'Generation #%d'\n unset key\n plot 'plot.out' w points pointtype 6 pointsize 1, 'ref.srt2' w line\n",ii);
         else
-            fprintf(gp,"set title 'Generation #%d'\n set view %d,%d\n unset key\n splot 'plot.out' w points pointtype 6 pointsize 1\n",ii,angle1,angle2);
+            fprintf(gp,"set title 'Generation #%d'; set view %d,%d; unset key; set grid; set hidden3d; splot 'plot.out' w points pointtype 6 pointsize 1, 'ref.srt2' w points\n",ii,angle1,angle2);
+            // fprintf(gp,"set title 'Generation #%d'; set view %d,%d; unset key; set multiplot layout 1,2; splot 'plot.out' w points pointtype 6 pointsize 1; set dgrid3d 30,30; set hidden3d; splot 'ref.srt2' w line\n",ii,angle1,angle2);
         fflush(gp);
     }
     fclose(fpt);
