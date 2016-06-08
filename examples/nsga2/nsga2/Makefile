@@ -11,5 +11,5 @@ $(MAIN):$(OBJS)
 %.o: %.c global.h rand.h
 	$(CC) $(CFLAGS) -c $<
 clean:
-	$(RM) $(OBJS)
+	$(RM) $(OBJS) $(MAIN)
 
