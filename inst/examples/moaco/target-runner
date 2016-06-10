@@ -11,36 +11,44 @@
 # RETURN VALUE:
 # This script should print a single numerical value (the value to be minimized)
 ###############################################################################
+# If you want to find where target-runner is.
+#BINDIR=$(dirname "$(readlink -f "$(type -P $0 || echo $0)")")
 EXE=~/bin/moaco_btsp
-
-FIXED_PARAMS=" --trials 1 --wls 0 --aco mmas --time 60 "
+RUNTIME="60"
 
 CANDIDATE=$1
 INSTANCEID=$2
 SEED=$3
 INSTANCE=$4
-shift 4 || exit 1
-CAND_PARAMS=$*
+shift 4 || error "Not enough parameters to $0"
 
 STDOUT=c${CANDIDATE}-${INSTANCEID}.stdout
 STDERR=c${CANDIDATE}-${INSTANCEID}.stderr
 
-mkdir -p arena
-cd arena
+# TODO: Use /tmp for all temporary files, i.e., put target-runner-data under /tmp
+mkdir -p target-runner-data
+cd target-runner-data
 
 # Here we transform some parameters.
 PARAMS=
 while [ $# -gt 0 ]
 do
   case "$1" in
-      --Mants) shift; MANTS="$1"; shift;;
+      --Mants) shift; MANTS="$1"; let "ANTS = (10  * 3 * 2 * $MANTS)"; shift;;
+      --Isize) shift; ISIZE="$1"; let "RUNTIME = (4 * (($ISIZE / 100) ** 2))"; shift;;
       *) PARAMS="$PARAMS $1"; shift;;# terminate case
   esac
 done
-let "ANTS = (10  * 3 * 2 * $MANTS)"
+
+FIXED_PARAMS="--trials 1 --time $RUNTIME --ants $ANTS --input $INSTANCE --seed $SEED"
 
 exec 2> $STDERR
-$EXE ${FIXED_PARAMS} --input $INSTANCE --seed $SEED $PARAMS --ants $ANTS 1> $STDOUT
+$EXE ${FIXED_PARAMS} ${PARAMS} 1> $STDOUT
 RET=$?
 echo "OK" >& 2
 exit $RET
+
+error() {
+    echo "`TZ=UTC date`: error: $@"
+    exit 1
+}
