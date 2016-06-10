@@ -61,7 +61,7 @@ calc_measure() {
     LIMITSTMP=limits-${INSTANCEID}.tmp
     if [ -s "$LIMITSFILE" ]; then
         eval "$NORMALIZE $LIMITSFILE $ALLFILES $UPDATELIMITS" > $LIMITSTMP
-        rm -f ${LIMITSFILE}_nor
+        rm -f ${LIMITSFILE}
         mv $LIMITSTMP $LIMITSFILE
     else
        eval "$NORMALIZE $ALLFILES $UPDATELIMITS" > $LIMITSFILE
@@ -69,9 +69,8 @@ calc_measure() {
 
 }
 
-target_runner_tmp="./target-runner-tmp"
-
-cd ${target_tunner_tmp} || error "cannot change to directory \'${target_tunner_tmp}\'"
+tmp="./target-runner-tmp"
+cd ${tmp} || error "cannot change to directory \'${tmp}\'"
 
 ALLFILES=
 for FILENAME in $ALLIDS; do
@@ -84,7 +83,7 @@ while ! ls ${ALLFILES}_nor &> /dev/null ; do
     # Check that all output files are there
     NUM=$(ls -1 ${ALLFILES} 2> /dev/null | wc --lines)
     if [ "$NUM" -ne "$TOTALCONFIGURATIONS" ]; then
-        error_sleep "only found $NUM files out of $TOTALCONFIGURATIONS"
+        error_sleep "only found $NUM files out of $TOTALCONFIGURATIONS: ${ALLFILES}"
         continue
     fi
     # Check every STDERR

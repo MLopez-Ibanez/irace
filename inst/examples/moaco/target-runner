@@ -2,7 +2,7 @@
 ###############################################################################
 #
 # PARAMETERS:
-# $1 is the candidate number
+# $1 is the configuration number
 # $2 is the instance id
 # $3 is the seed
 # $4 is the instance name
@@ -16,28 +16,29 @@
 EXE=~/bin/moaco_btsp
 RUNTIME="60"
 
-CANDIDATE=$1
+CONFIGURATION=$1
 INSTANCEID=$2
 SEED=$3
 INSTANCE=$4
 shift 4 || error "Not enough parameters to $0"
 
-STDOUT=c${CANDIDATE}-${INSTANCEID}.stdout
-STDERR=c${CANDIDATE}-${INSTANCEID}.stderr
+STDOUT=c${CONFIGURATION}-${INSTANCEID}.stdout
+STDERR=c${CONFIGURATION}-${INSTANCEID}.stderr
 
 # TODO: Use /tmp for all temporary files, i.e., put target-runner-data under /tmp
-mkdir -p target-runner-data
-cd target-runner-data
+tmp="./target-runner-tmp"
+mkdir -p ${tmp}
+cd ${tmp} || error "cannot change to directory \'${tmp}\'"
 
 # Here we transform some parameters.
 PARAMS=
-while [ $# -gt 0 ]
-do
-  case "$1" in
-      --Mants) shift; MANTS="$1"; let "ANTS = (10  * 3 * 2 * $MANTS)"; shift;;
-      --Isize) shift; ISIZE="$1"; let "RUNTIME = (4 * (($ISIZE / 100) ** 2))"; shift;;
-      *) PARAMS="$PARAMS $1"; shift;;# terminate case
-  esac
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --ants) shift; ANTS="$1"; shift;;
+        --Mants) shift; MANTS="$1"; let "ANTS = (10  * 3 * 2 * $MANTS)"; shift;;
+        --Isize) shift; ISIZE="$1"; let "RUNTIME = (4 * (($ISIZE / 100) ** 2))"; shift;;
+        *) PARAMS="$PARAMS $1"; shift;;# terminate case
+    esac
 done
 
 FIXED_PARAMS="--trials 1 --time $RUNTIME --ants $ANTS --input $INSTANCE --seed $SEED"
