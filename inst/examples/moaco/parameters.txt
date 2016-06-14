@@ -22,7 +22,7 @@ intervals       "--colony-weights "     c (disjoint,overlapping) | colonies %in%
 cupdate          "--colony-update "     c (origin, region) | colonies %in% c(2, 3, 5, 10)
 nupdate         "--num-update "         c (1, 2, 5, 10)
 selection       "--selection  "         c (dominance,objective,weight)
-nweights        "--weights "            c (2, 3, 0.333333, 0.5, -1)
+weights         "--weights "            c (2, 3, 0.333333, 0.5, -1)
 directions      "--directions "         c (one, all)
 ph              "--ph="                 c (single,multiple)
 heu             "--heu="                c (single,multiple)

@@ -14,7 +14,6 @@
 # If you want to find where target-runner is.
 #BINDIR=$(dirname "$(readlink -f "$(type -P $0 || echo $0)")")
 EXE=~/bin/moaco_btsp
-RUNTIME="60"
 
 CONFIGURATION=$1
 INSTANCEID=$2
@@ -35,13 +34,19 @@ PARAMS=
 while [ $# -gt 0 ]; do
     case "$1" in
         --ants) shift; ANTS="$1"; shift;;
-        --Mants) shift; MANTS="$1"; let "ANTS = (10  * 3 * 2 * $MANTS)"; shift;;
-        --Isize) shift; ISIZE="$1"; let "RUNTIME = (4 * (($ISIZE / 100) ** 2))"; shift;;
+        --Mants) shift; MANTS="$1"; let "ANTS = (3 * 2 * $MANTS)"; shift;;
         *) PARAMS="$PARAMS $1"; shift;;# terminate case
     esac
 done
 
-FIXED_PARAMS="--trials 1 --time $RUNTIME --ants $ANTS --input $INSTANCE --seed $SEED"
+ISIZE=$(basename $INSTANCE | cut -f1 -d'-')
+let "RUNTIME = (4 * (($ISIZE / 100) ** 2))"
+
+FIXED_PARAMS="--trials 1 --wls 1 --aco mmas --time $RUNTIME --ants $ANTS --input $INSTANCE --seed $SEED"
+
+if [ ! -x "${EXE}" ]; then
+    error "${EXE}: not found or not executable (pwd: $(pwd))"
+fi
 
 exec 2> $STDERR
 $EXE ${FIXED_PARAMS} ${PARAMS} 1> $STDOUT
