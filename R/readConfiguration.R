@@ -527,11 +527,12 @@ generateInstances <- function(scenario)
 checkTargetFiles <- function(scenario, parameters)
 {
   result <- TRUE
-  # Create two random configurations
-  configurations <- sampleUniform(parameters, 2,
+  ## Create two random configurations
+  conf.id <- c("testConfig1","testConfig2")
+  configurations <- sampleUniform(parameters, length(conf.id),
                                   digits = scenario$digits,
                                   forbidden = scenario$forbiddenExps)
-  configurations <- cbind (.ID. = c("testConfig1","testConfig2") , configurations)
+  configurations <- cbind (.ID. = conf.id, configurations)
   
   # Get info of the configuration
   values <- removeConfigurationsMetaData(configurations)
@@ -549,7 +550,7 @@ checkTargetFiles <- function(scenario, parameters)
                               extra.params = scenario$instances.extra.params[[1]],
                               switches = switches)
   # Executing targetRunner
-  cat("# Executing targetRunner...\n")
+  cat("# Executing targetRunner (", nrow(configurations), "times)...\n")
   output <-  withCallingHandlers(
     tryCatch(execute.experiments(experiments, scenario),
              error = function(e) {
@@ -561,14 +562,15 @@ checkTargetFiles <- function(scenario, parameters)
       cat("\n# Warning occurred while executing targetRunner:\n",
           paste0(conditionMessage(w), collapse="\n"))
       invokeRestart("muffleWarning")})
-  
-  if (!is.null.or.empty(scenario$targetEvaluator)) {
-    output <- list()
+
+  if (!is.null(.irace$target.evaluator)) {
     cat("# Executing targetEvaluator...\n")
-    for (i in seq_along(experiments)) {
-      output[[i]] <- withCallingHandlers(
-        tryCatch(target.evaluator.default(experiment = experiments[[i]], length(experiments),
-                        c("testConfig1","testConfig2"), scenario = scenario, target.runner.call = "check target runner"),
+    all.conf.id <- paste(configurations[, ".ID."], collapse = " ")
+    for (k in seq_along(experiments)) {
+      output[[k]] <- withCallingHandlers (
+        tryCatch(.irace$target.evaluator(experiment = experiments[[k]], length(experiments),
+                                         all.conf.id, scenario = scenario,
+                                         target.runner.call = output[[k]]),
                  error = function(e) {
                    cat("\n# Error ocurred while executing targetEvaluator:\n",
                        paste0(conditionMessage(e), collapse="\n"))
