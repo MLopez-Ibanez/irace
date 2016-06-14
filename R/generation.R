@@ -176,7 +176,7 @@ sampleModel <- function (parameters, eliteConfigurations, model,
             # parameter, let's sample uniformly
             newVal <- sample(possibleValues, 1)
           } else {
-            # Find the position within the array of possible
+            # Find the position within the vector of possible
             # values to determine the equivalent integer.
             mean <- match(value, possibleValues) # Return index of value in array
             stdDev <- model[[currentParameter]][[as.character(idEliteParent)]]
