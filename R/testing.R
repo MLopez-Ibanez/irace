@@ -23,9 +23,8 @@ testConfigurations <- function(configurations, scenario, parameters)
   if (! (".ID." %in% colnames(configurations))) {
     configurations$.ID. <- 1:nrow(configurations)
   }
-
   # Create experiment list
-  experiments <- list()
+  experiments <- vector("list", nrow(configurations) * length(testInstances))
   ntest <- 1
   for (i in 1:nrow(configurations)) {
     for (j in 1:length(testInstances)) {
@@ -50,20 +49,11 @@ testConfigurations <- function(configurations, scenario, parameters)
   }
 
   target.output <- execute.experiments (experiments, scenario)
-
-  # FORLESLIE: This should be per instance!
   # target.evaluator may be NULL. If so, target.output must
   # contain the right output already.
-  if (!is.null(.irace$target.evaluator)) {
-    all.conf.id <- paste(configurations[, ".ID."], collapse = " ")
-    ## Evaluate configurations sequentially
-    for (k in seq_along(experiments)) {
-      target.output[[k]] <-
-        .irace$target.evaluator(experiment = experiments[[k]],
-                             num.configurations = nrow(configurations),
-                             all.conf.id, scenario = scenario, target.runner.call = target.output[[k]])
-    }
-  }
+  if (!is.null(.irace$target.evaluator))
+    target.output <- execute.evaluator (experiments, scenario, target.output,
+                                        configurations$.ID.)
 
   testResults <- matrix(NA, ncol = nrow(configurations), nrow = length(testInstances),
                         # dimnames = list(rownames, colnames)

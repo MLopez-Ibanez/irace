@@ -65,8 +65,9 @@ check.output <- function(output, command, scenario, target.runner.call = NULL, o
   }
 }
 
-# This function is used by the target.runner.default and target.evaluator.default. If
-# overridden, check.output will be called again later.
+# This function is used by the target.runner.default and
+# target.evaluator.default. If overridden, check.output will be called again
+# later.
 parse.output <- function(outputRaw, command, scenario, target.runner.call = NULL)
 {
   if (scenario$debugLevel >= 2) { cat (outputRaw, sep = "\n") }
@@ -84,7 +85,8 @@ parse.output <- function(outputRaw, command, scenario, target.runner.call = NULL
   return(output)
 }
 
-target.evaluator.default <- function(experiment, num.configurations, all.conf.id="", scenario, target.runner.call)
+target.evaluator.default <- function(experiment, num.configurations, all.conf.id = "",
+                                     scenario, target.runner.call)
 {
   configuration.id <- experiment$id.configuration
   instance.id      <- experiment$id.instance
@@ -95,26 +97,17 @@ target.evaluator.default <- function(experiment, num.configurations, all.conf.id
   debugLevel <- scenario$debugLevel
   targetEvaluator <- scenario$targetEvaluator
   if (as.logical(file.access(targetEvaluator, mode = 1))) {
-    irace.error ("targetEvaluator", shQuote(targetEvaluator), "cannot be found or is not executable!\n")
+    irace.error ("targetEvaluator", shQuote(targetEvaluator),
+                 "cannot be found or is not executable!\n")
   }
 
-  ## Redirects STDERR so outputRaw captures the whole output.
-  command <- paste (targetEvaluator, configuration.id, instance.id, seed, instance, num.configurations, all.conf.id ,"2>&1")
-  if (debugLevel >= 2) {
-    irace.note (command, "\n")
-  }
   cwd <- setwd (execDir)
-  # FIXME: This should use runcommand like target.runner.default
-  outputRaw <- system (command, intern = TRUE)
+  args <- paste(configuration.id, instance.id, seed, instance, num.configurations, all.conf.id)
+  output <- runcommand(targetEvaluator, args, configuration.id, debugLevel)
   setwd (cwd)
 
-  p.output <- parse.output (outputRaw, command, scenario, target.runner.call = target.runner.call)
-   
-  # FIXME: Pass the call to target.runner as target.runner.call if target.evaluator was used.
-  # FIXME: check.output is also called in parse.output and race.wrapper, that
-  # is, three times!
-  check.output(p.output, command = "targetEvaluator", scenario = scenario)
-
+  p.output <- parse.output(output$output, paste(targetEvaluator, args), scenario,
+                           target.runner.call = target.runner.call)
   return(p.output)
 }
 
@@ -129,41 +122,6 @@ target.runner.default <- function(experiment, scenario)
   extra.params     <- experiment$extra.params
   switches         <- experiment$switches
   
-  runcommand <- function(command, args) {
-    if (debugLevel >= 2) {
-      irace.note (command, " ", args, "\n")
-      elapsed <- proc.time()["elapsed"]
-    }
-    err <- NULL
-    output <-  withCallingHandlers(
-      tryCatch(system2(command, args, stdout = TRUE, stderr = TRUE),
-               error = function(e) {
-                 err <<- c(err, paste(conditionMessage(e), collapse="\n"))
-                 NULL
-               }), warning = function(w) {
-                 err <<- c(err, paste(conditionMessage(w), collapse="\n"))
-                 invokeRestart("muffleWarning")
-               })
-    # If the command could not be run an R error is generated.  If ‘command’
-    # runs but gives a non-zero exit status this will be reported with a
-    # warning and in the attribute ‘"status"’ of the result: an attribute
-    # ‘"errmsg"’ may also be available.
-    if (!is.null(err)) {
-      err <- paste(err, collapse ="\n")
-      if (!is.null(attr(output, "errmsg")))
-        output <- paste(sep = "\n", attr(output, "errmsg"))
-      if (debugLevel >= 2)
-        irace.note ("ERROR (", configuration.id, "): ", err, "\n")
-      return(list(output = output, error = err))
-    }
-    if (debugLevel >= 2) {
-      irace.note ("DONE (", configuration.id, ") Elapsed: ",
-                  formatC(proc.time()["elapsed"] - elapsed,
-                          format = "f", digits = 2), "\n")
-    }
-    return(list(output = output, error = NULL))
-  }
-
   targetRunner <- scenario$targetRunner
   if (as.logical(file.access(targetRunner, mode = 1))) {
     irace.error ("targetRunner '", targetRunner, "' cannot be found or is not executable!\n")
@@ -171,12 +129,12 @@ target.runner.default <- function(experiment, scenario)
 
   args <- paste(configuration.id, instance.id, seed, instance, extra.params,
                 buildCommandLine(configuration, switches))
-  output <- runcommand(targetRunner, args)
+  output <- runcommand(targetRunner, args, configuration.id, debugLevel)
 
   retries <- scenario$targetRunnerRetries
   # Retry!
   while (!is.null(output$error) && retries > 0) {
-    output <- runcommand(targetRunner, args)
+    output <- runcommand(targetRunner, args, configuration.id, debugLevel)
     retries <- retries - 1
   }
   
@@ -196,10 +154,8 @@ target.runner.default <- function(experiment, scenario)
     return(paste(targetRunner, args))
   }
 
-  # Parse output
-  p.output <- parse.output(output$output, paste(targetRunner, args), scenario)
-
   # targetEvaluator is NULL, so parse the output just here.
+  p.output <- parse.output(output$output, paste(targetRunner, args), scenario)
   return(p.output)
 }
 
@@ -213,10 +169,10 @@ execute.experiments <- function(experiments, scenario)
   if (!isTRUE (file.info(execDir)$isdir)) {
     irace.error ("Execution directory '", execDir, "' is not found or not a directory\n")
   }
-  target.output <- vector("list", length(experiments))
   cwd <- setwd (execDir)
   on.exit(setwd(cwd), add = TRUE)
    
+  target.output <- vector("list", length(experiments))
   if (!is.null(scenario$targetRunnerParallel)) {
     # User-defined parallelization
     target.output <-
@@ -293,5 +249,19 @@ execute.experiments <- function(experiments, scenario)
   }
  
   # FIXME: We are missing a check.output() here.
+  return(target.output)
+}
+
+execute.evaluator <- function(experiments, scenario, target.output, configurations.id)
+{
+  all.conf.id <- paste(configurations.id, collapse = " ")
+  ## Evaluate configurations sequentially
+  for (k in seq_along(experiments)) {
+    target.output[[k]] <-
+      .irace$target.evaluator(experiment = experiments[[k]],
+                              num.configurations = length(configurations.id),
+                              all.conf.id, scenario = scenario,
+                              target.runner.call = target.output[[k]])
+  }
   return(target.output)
 }

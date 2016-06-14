@@ -77,19 +77,11 @@ race.wrapper <- function(configurations, instance.idx , which.alive, which.exe, 
     target.output[which.exps] <- execute.experiments (experiments[which.exps], scenario)
   }
 
-  # FIXME: There is another copy of this loop in testing.R, merge them into a single function.
   # target.evaluator may be NULL. If so, target.output must
   # contain the right output already.
-  if (!is.null(.irace$target.evaluator)) {
-    all.conf.id <- paste(configurations[which.alive, ".ID."], collapse=" ")
-    ## Evaluate configurations sequentially
-    for (k in seq_along(experiments)) {
-      target.output[[k]] <-
-        .irace$target.evaluator(experiment = experiments[[k]], length(experiments),
-                             all.conf.id, scenario = scenario, target.runner.call = target.output[[k]])
-    }
-  }
-
+  if (!is.null(.irace$target.evaluator))
+    target.output <- execute.evaluator (experiments, scenario, target.output,
+                                        configurations[which.alive, ".ID."])
   return(target.output) 
 }
 
@@ -178,17 +170,17 @@ aux.ttest <- function(results, no.tasks.sofar, alive, which.alive, no.alive, con
                       adjust = c("none","bonferroni","holm"))
 {
   adjust <- match.arg(adjust)
-  # FIXME why c()?
-  mean.all <- array(0, c(ncol(results)))
+  mean.all <- c()
   for (j in 1:ncol(results)) {
     # FIXME: why not just mean() ?
-    mean.all[j] <- sum(results[,j] / no.tasks.sofar)
+    mean.all[j] <- sum(results[,j]) / no.tasks.sofar
   }
   # FIXME: which.min?
   best <- match(min(mean.all[alive]), mean.all)
   ranks <- mean.all[alive]
-  
-  PJ <- array(0, dim=c(2,0))
+
+  # FIXME: Use matrix()
+  PJ <- array(0, dim = c(2,0))
   Vb <- results[, best]
   for (j in which.alive) {
     Vj <- results[, j]
@@ -201,8 +193,10 @@ aux.ttest <- function(results, no.tasks.sofar, alive, which.alive, no.alive, con
     # FIXME: mean(Vb) doesn't seem to change either.
     PVAL <- as.integer(isTRUE(all.equal(mean(Vb), mean(Vj))))
     try(PVAL <- t.test(Vb, Vj, paired = TRUE)$p.value)
-    if (!is.nan(PVAL) & !is.na(PVAL))
+    if (!is.nan(PVAL) & !is.na(PVAL)) {
+      # FIXME: Is this equivalent to cbind or rbind?
       PJ <- array(c(PJ, j, PVAL), dim = dim(PJ) + c(0,1))
+    }
   }
   PJ[2,] <- p.adjust(PJ[2,], method = adjust)
   dropped.any <- FALSE
@@ -320,7 +314,7 @@ race <- function(maxExp = 0,
   }
   experimentLog <- matrix(nrow = 0, ncol = 2,
                           dimnames = list(NULL, c("instance", "configuration")))
-  alive <- array(TRUE, no.configurations)
+  alive <- rep(TRUE, no.configurations)
   best <- 0
   race.ranks <- c()
   no.experiments.sofar <- 0
@@ -547,7 +541,7 @@ race <- function(maxExp = 0,
                   no.experiments.sofar,
                   # FIXME: Maybe better and faster if we only print seconds?
                   format(.POSIXct(time.diff, tz="GMT"), "%H:%M:%S")))
-      if (no.tasks.sofar > 1 && length(alive) > 1) {
+      if (no.tasks.sofar > 1 && sum(alive) > 1) {
         conc <- concordance(Results[1:no.tasks.sofar, alive])
         qvar <- dataVariance(Results[1:no.tasks.sofar, alive])
         cat(sprintf("|%+#4.2f|%.2f|%.4f|\n", conc$spearman.rho, conc$kendall.w,

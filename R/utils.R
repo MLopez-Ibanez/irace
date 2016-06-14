@@ -456,9 +456,11 @@ mpiInit <- function(nslaves, debugLevel = 0)
 # columns.
 concordance <- function(data)
 {
+  irace.assert (is.matrix(data) && is.numeric(data))
+
   n <- nrow(data) #judges
   k <- ncol(data) #objects
-  if (is.null(n) || is.null(k) || n <= 1 || k <= 1)
+  if (n <= 1 || k <= 1)
     return(list(kendall.w = NA, spearman.rho = NA))
 
   # Get rankings by rows (per instance)
@@ -495,6 +497,7 @@ concordance <- function(data)
 #          1 is a heterogeneous set. 
 dataVariance <- function(data)
 {
+  irace.assert (is.matrix(data) && is.numeric(data))
   # LESLIE: should we rank data??
   # MANUEL: Why?
   if (nrow(data) <= 1 || ncol(data) <= 1) return(NA)
@@ -519,3 +522,40 @@ dataVariance <- function(data)
  
   return(qvar) 
 }
+
+runcommand <- function(command, args, id, debugLevel)
+{
+  if (debugLevel >= 2) {
+    irace.note (command, " ", args, "\n")
+    elapsed <- proc.time()["elapsed"]
+  }
+  err <- NULL
+  output <-  withCallingHandlers(
+    tryCatch(system2(command, args, stdout = TRUE, stderr = TRUE),
+             error = function(e) {
+               err <<- c(err, paste(conditionMessage(e), collapse="\n"))
+               NULL
+             }), warning = function(w) {
+               err <<- c(err, paste(conditionMessage(w), collapse="\n"))
+               invokeRestart("muffleWarning")
+             })
+  # If the command could not be run an R error is generated.  If ‘command’
+  # runs but gives a non-zero exit status this will be reported with a
+  # warning and in the attribute ‘"status"’ of the result: an attribute
+  # ‘"errmsg"’ may also be available.
+  if (!is.null(err)) {
+    err <- paste(err, collapse ="\n")
+    if (!is.null(attr(output, "errmsg")))
+      output <- paste(sep = "\n", attr(output, "errmsg"))
+    if (debugLevel >= 2)
+      irace.note ("ERROR (", id, "): ", err, "\n")
+    return(list(output = output, error = err))
+  }
+  if (debugLevel >= 2) {
+    irace.note ("DONE (", id, ") Elapsed: ",
+                formatC(proc.time()["elapsed"] - elapsed,
+                        format = "f", digits = 2), "\n")
+  }
+  return(list(output = output, error = NULL))
+}
+
