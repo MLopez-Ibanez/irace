@@ -114,10 +114,12 @@ similarConfigurations <- function(configurations, parameters, threshold)
 
   ### Categorical/Ordinal filtering ####
   if (nbCater > 0) {
-    ## Build an array with the categorical appended together in a string
+    ## Build a vector with the categorical appended together in a string
+    ## FIXME: This would be faster as:
+    # strings <- apply(configurations[, vecCat], 1, paste0, collapse = " ; ")
     strings <- c()
     for (i in 1:nrow(configurations)) {
-      strings[i] <- paste(configurations[i, vecCat], collapse = " ; ")
+      strings[i] <- paste0(configurations[i, vecCat], collapse = " ; ")
     }
 
     if (nbNumer != 0) configurations <- configurations[, c(".ID.", vecNum)]
