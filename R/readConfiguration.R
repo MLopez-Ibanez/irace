@@ -139,7 +139,7 @@ readConfigurationsFile <-
 # reads scenario setup from filename and returns it as a list. Anything
 # not mentioned in the file is not present in the list (that is, it is
 # NULL).
-# FIXME: Does passing an initial control actually work? It seems
+# FIXME: Does passing an initial scenario actually work? It seems
 # it gets completely overriden by the loop below.
 readScenario <- function(filename = "", scenario = list())
 {
