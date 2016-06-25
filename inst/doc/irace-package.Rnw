@@ -1,5 +1,0 @@
-%%% Dummy file to avoid rebuilding.
-%\VignetteIndexEntry{The irace Package: User Guide}
-\documentclass{article}
-\begin{document}
-\end{document}
