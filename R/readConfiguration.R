@@ -143,39 +143,42 @@ readConfigurationsFile <-
 # it gets completely overriden by the loop below.
 readScenario <- function(filename = "", scenario = list())
 {
-  # First find out which file...
-  if (filename == ""
-      && file.exists(.irace.params.def["scenarioFile", "default"])) {
+    # First find out which file...
+  if (filename == "") {
     filename <- .irace.params.def["scenarioFile","default"]
-    cat("Warning: A default scenario file", shQuote(filename),
-        "has been found and will be read\n")
-  }
-
-  if (filename != "") {
-    if (file.exists (filename)) {
-      debug.level <- getOption(".irace.debug.level", default = 0)
-      if (debug.level >= 1)
-        cat ("# Reading scenario file", shQuote(filename), ".......")
-      source(filename, local = TRUE)
-      if (debug.level >= 1) cat (" done!\n")
+    if (file.exists(filename)) {
+      cat("Warning: A default scenario file", shQuote(filename),
+          "has been found and will be read\n")
     } else {
-      irace.error ("The scenario file ", shQuote(filename), " does not exist.")
+      irace.error ("Not scenario file given (use ",
+                   .irace.params.def["scenarioFile", "short"], " or ",
+                   .irace.params.def["scenarioFile", "long"],
+                   ") and no default scenario file ", shQuote(filename),
+                   " has been found.")
     }
-    ## read scenario file variables
-
-    # If these are given and relative, they should be relative to the
-    # scenario file (except logFile, which is relative to execDir).
-    pathParams <- setdiff(.irace.params.def[.irace.params.def[, "type"] == "p",
-                                            "name"], "logFile")
-    for (param in .irace.params.names) {
-      if (exists (param, inherits = FALSE)) {
-        value <- get(param, inherits = FALSE)
-        if (!is.null.or.empty(value) && is.character(value)
-            && (param %in% pathParams)) {
-          value <- path.rel2abs(value, cwd = dirname(filename))
-        }
-        scenario[[param]] <- value
+  }
+  if (file.exists (filename)) {
+    debug.level <- getOption(".irace.debug.level", default = 0)
+    if (debug.level >= 1)
+      cat ("# Reading scenario file", shQuote(filename), ".......")
+    source(filename, local = TRUE)
+    if (debug.level >= 1) cat (" done!\n")
+  } else {
+    irace.error ("The scenario file ", shQuote(filename), " does not exist.")
+  }
+  ## read scenario file variables
+  # If these are given and relative, they should be relative to the
+  # scenario file (except logFile, which is relative to execDir).
+  pathParams <- setdiff(.irace.params.def[.irace.params.def[, "type"] == "p",
+                                          "name"], "logFile")
+  for (param in .irace.params.names) {
+    if (exists (param, inherits = FALSE)) {
+      value <- get(param, inherits = FALSE)
+      if (!is.null.or.empty(value) && is.character(value)
+          && (param %in% pathParams)) {
+        value <- path.rel2abs(value, cwd = dirname(filename))
       }
+        scenario[[param]] <- value
     }
   }
   return (scenario)
