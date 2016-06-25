@@ -139,54 +139,6 @@ canonical.dirname <- function(dirname = stop("required parameter"))
 # working directory to complete relative paths. It tries really hard
 # to create canonical paths.
 ## FIXME: This needs to be tested on Windows.
-# The following code can be used to test this function.
-## test <- function(testcases) {
-##   cwd <- getwd()
-##   on.exit(setwd(cwd))
-##   setwd("/tmp")
-##   testcases <- read.table(text='
-## "."                          "/tmp"
-## ".."                         "/"
-## "../"                        "/"
-## "../."                       "/"
-## "../.."                     "/"
-## "../../"                     "/"
-## "../../x.r"                  "/x.r"
-## "../leslie/"                 "/leslie"
-## "../leslie/x.r"              "/leslie/x.r"
-## "../x.r"                     "/x.r"
-## "..irace"                    "/tmp/..irace"
-## "./"                         "/tmp"
-## "./."                        "/tmp"
-## "././x.r"                    "/tmp/x.r"
-## "./irace/../x.r"             "/tmp/x.r"
-## "./x.r"                      "/tmp/x.r"
-## ".x.R"                       "/tmp/.x.R"
-## "/./x.r"                     "/x.r"
-## "/home"                      "/home"
-## "/home/leslie/././x.r"       "/home/leslie/x.r"
-## "/home/leslie/~/x.r"         "/home/leslie/~/x.r"
-## "/~/x.r"                     "/~/x.r"
-## "e:/home/leslie/x.r"         "e:/home/leslie/x.r"
-## "leslie/leslie/../../irace"  "/tmp/irace"
-## "x.r"                        "/tmp/x.r"
-## "~/../x.r"                   "/home/x.r"
-## "~/irace/../../x.r"          "/home/x.r"
-## "~/x.r"                      "~/x.r"
-## ', stringsAsFactors=FALSE)
-##   for(i in 1:nrow(testcases)) {
-##     orig <- testcases[i,1]
-##     res <- path.rel2abs(testcases[i,1])
-##     exp <- path.expand(testcases[i,2])
-##     if (res == exp) {
-##       cat("[OK] ", orig, " -> ", res, "\n", sep="")
-##     } else {
-##       stop("[FAILED] ", orig, " -> ", res, " but expected: ", exp, "\n")
-##     }
-##   }
-## }
-## options(error=dump.frames)
-## test(testcases)
 path.rel2abs <- function (path, cwd = getwd())
 {
   if (is.null.or.na(path)) {
