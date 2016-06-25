@@ -312,7 +312,7 @@ getFinalElites <- function(iraceResults=NULL, irace.logFile=NULL, n=0, drop.inte
 }
 
 
-## Get candidate(s) by the id(s).
+## Get configuration(s) by the id(s).
 ## iraceResults: object created by irace and saved in scenario$logFile.
 ## iraceLog: log file created by irace, this file must contain the iraceResults object.
 ## ids: the id or a vector of ids of the candidates configurations to obtain.
@@ -343,7 +343,7 @@ getConfigurationById <- function(iraceResults=NULL, irace.logFile=NULL, ids, dro
 }
 
 
-## Get candidate(s) by the iteration in which they were executed.
+## Get configuration(s) by the iteration in which they were executed.
 ## iraceResults: object created by irace and saved in scenario$logFile.
 ## iraceLog: log file created by irace, this file must contain the iraceResults object.
 ## iterations: the iteration or a vector of iterations from where the configurations should be obtained.

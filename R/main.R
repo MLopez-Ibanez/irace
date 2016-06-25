@@ -221,8 +221,8 @@ testing.main <- function(logFile){
   cat(" \n\n")
   irace.note ("Testing configurations: ", paste(testing.id, collapse=" "), "\n")
   configurations.print(configurations)  
-  cat("# Testing of elite candidates:", scenario$testNbElites, 
-      "\n# Testing iteration candidates:", scenario$testIterationElites,"\n")
+  cat("# Testing of elite configurations:", scenario$testNbElites, 
+      "\n# Testing iteration configurations:", scenario$testIterationElites,"\n")
   
   iraceResults$testing <- testConfigurations(configurations, scenario, parameters)
 
@@ -238,7 +238,7 @@ testing.main <- function(logFile){
   return(TRUE)
 }
 
-checkIraceScenario <- function(scenario, parameters=NULL)
+checkIraceScenario <- function(scenario, parameters = NULL)
 {
   irace.note ("Checking scenario\n")
   scenario$debugLevel <- 2 
@@ -246,13 +246,13 @@ checkIraceScenario <- function(scenario, parameters=NULL)
   printScenario(scenario)
  
   if (is.null(parameters)) {
-    cat("# Reading parameter file [",scenario$parameterFile,"].\n")
+    cat("# Reading parameter file [", scenario$parameterFile, "].\n")
     parameters <- readParameters (file = scenario$parameterFile,
                                   digits = scenario$digits,
                                   debugLevel = 2)
-  } else if(!is.null.or.empty(scenario$parameterFile)) {
+  } else if (!is.null.or.empty(scenario$parameterFile)) {
     cat("# Parameters provided by user.\n",
-        "# Parameter file [",scenario$parameterFile,"] will be ignored\n", sep="")
+        "# Parameter file [", scenario$parameterFile, "] will be ignored\n", sep="")
   }
 
   cat("# Checking target execution.\n")
