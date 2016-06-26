@@ -74,8 +74,7 @@ sampleUniform <- function (parameters,
         } else if (currentType == "i") {
           lowerBound <- as.integer(parameters$domain[[currentParameter]][1])
           upperBound <- as.integer(parameters$domain[[currentParameter]][2])
-          # FIXME: replace with sample.int!
-          newVal <- sample(lowerBound:upperBound, 1)
+          newVal <- floor(runif(1, min = lowerBound, max = 1 + upperBound))
         } else if (currentType == "r") {
           lowerBound <- parameters$domain[[currentParameter]][1]
           upperBound <- parameters$domain[[currentParameter]][2]
@@ -156,7 +155,7 @@ sampleModel <- function (parameters, eliteConfigurations, model,
             # The elite parent does not have any value for this
             # parameter, let's sample uniformly.
             newVal <- ifelse(currentType == "i",
-                             sample(lowerBound:upperBound, 1),
+                             floor(runif(1, min = lowerBound, max = 1 + upperBound)),
                              runif(1, lowerBound, upperBound))
           } else {
             stdDev <- model[[currentParameter]][[as.character(idEliteParent)]]
