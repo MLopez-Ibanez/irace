@@ -252,7 +252,7 @@ checkIraceScenario <- function(scenario, parameters = NULL)
                                   debugLevel = 2)
   } else if (!is.null.or.empty(scenario$parameterFile)) {
     cat("# Parameters provided by user.\n",
-        "# Parameter file [", scenario$parameterFile, "] will be ignored\n", sep="")
+        "# Parameter file [ ", scenario$parameterFile, " ] will be ignored\n", sep="")
   }
 
   cat("# Checking target execution.\n")

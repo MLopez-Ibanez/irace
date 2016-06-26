@@ -483,7 +483,7 @@ readInstances <- function(instancesDir = NULL, instancesFile = NULL)
     lines <- sub("^[[:space:]]+", "", lines) # Remove extra spaces
     lines <- lines[lines != ""] # Delete empty lines
     instances <- sub("^([^[:space:]]+).*$", "\\1", lines)
-    instances <- paste (instancesDir, instances, sep="")
+    instances <- paste0 (instancesDir, instances)
     instances.extra.params <- sub("^[^[:space:]]+(.*)$", "\\1", lines)
     names (instances.extra.params) <- instances
   } else {
@@ -557,14 +557,16 @@ checkTargetFiles <- function(scenario, parameters)
   output <-  withCallingHandlers(
     tryCatch(execute.experiments(experiments, scenario),
              error = function(e) {
-               cat("\n# Error occurred while executing targetRunner:\n",
+               cat(sep = "\n",
+                   "\n# Error occurred while executing targetRunner:",
                    paste0(conditionMessage(e), collapse="\n"))
                result <<- FALSE
                NULL
              }), warning = function(w) {
-      cat("\n# Warning occurred while executing targetRunner:\n",
-          paste0(conditionMessage(w), collapse="\n"))
-      invokeRestart("muffleWarning")})
+               cat(sep = "\n",
+                   "\n# Warning occurred while executing targetRunner:",
+                   paste0(conditionMessage(w), collapse="\n"))
+               invokeRestart("muffleWarning")})
 
   if (!is.null(.irace$target.evaluator)) {
     cat("# Executing targetEvaluator...\n")
@@ -575,12 +577,14 @@ checkTargetFiles <- function(scenario, parameters)
                                          all.conf.id, scenario = scenario,
                                          target.runner.call = output[[k]]),
                  error = function(e) {
-                   cat("\n# Error ocurred while executing targetEvaluator:\n",
+                   cat(sep = "\n",
+                       "\n# Error ocurred while executing targetEvaluator:",
                        paste0(conditionMessage(e), collapse="\n"))
                    result <<- FALSE
                    NULL
                  }), warning = function(w) {
-                   cat("\n# Warning ocurred while executing targetEvaluator:\n",
+                   cat(sep = "\n",
+                       "\n# Warning ocurred while executing targetEvaluator:",
                        paste0(conditionMessage(w), collapse="\n"))
                    invokeRestart("muffleWarning")})
     }

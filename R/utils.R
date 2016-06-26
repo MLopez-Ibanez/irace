@@ -482,7 +482,7 @@ runcommand <- function(command, args, id, debugLevel)
     elapsed <- proc.time()["elapsed"]
   }
   err <- NULL
-  output <-  withCallingHandlers(
+  output <- withCallingHandlers(
     tryCatch(system2(command, args, stdout = TRUE, stderr = TRUE),
              error = function(e) {
                err <<- c(err, paste(conditionMessage(e), collapse="\n"))

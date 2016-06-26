@@ -645,8 +645,8 @@ irace <- function(scenario = stop("parameter `scenario' is mandatory."),
                   " configurations from uniform distribution", verbose = FALSE)
         }
         newConfigurations <- sampleUniform(parameters, nbNewConfigurations,
-                                       digits = scenario$digits,
-                                       forbidden = scenario$forbiddenExps)
+                                           digits = scenario$digits,
+                                           forbidden = scenario$forbiddenExps)
         newConfigurations <-
           cbind (.ID. = max(0, allConfigurations$.ID.) + 1:nrow(newConfigurations),
                  newConfigurations)
