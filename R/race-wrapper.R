@@ -16,7 +16,7 @@ buildCommandLine <- function(values, switches)
   for (i in seq_along(values)) {
     value <- values[i]
     if (!is.na(value)) {
-      command <- paste(command, " ", switches[i], value, sep="")
+      command <- paste0(command, " ", switches[i], value)
     }
   }
   return(command)
@@ -30,27 +30,27 @@ check.output <- function(output, command, scenario, target.runner.call = NULL, o
   # We check the output here to provide better error messages.
   err.msg <- NULL
   if (length(output) < 1 || length(output) > 1 || any (is.na (output)) || any (!is.numeric(output))) {
-    err.msg <- paste("The output of '", command, "' is not numeric!", sep = "")
+    err.msg <- paste0("The output of '", command, "' is not numeric!")
   } else if (any(is.infinite(output))) {
-    err.msg <- paste("The output of '", command, "' is not finite!", sep = "")
+    err.msg <- paste0("The output of '", command, "' is not finite!")
   }
 
   if (length(output) > 1)
-    err.msg <- paste("The output of `", command, "' must be one number 'cost'!", sep = "")
+    err.msg <- paste0("The output of `", command, "' must be one number 'cost'!")
 
   if (!is.null(err.msg)) {
     if (!is.null(target.runner.call)) {
-      err.msg <- paste(err.msg, "\n", .irace.prefix,
-                       "The call to targetRunner was:\n", target.runner.call, sep="")
+      err.msg <- paste0(err.msg, "\n", .irace.prefix,
+                        "The call to targetRunner was:\n", target.runner.call)
     }
 
     if (is.null(outputRaw)) {
       # Message for a function call.
       outputRaw <- output
-      advice.txt <- paste(
-        "This is not a bug in irace, but means that something failed in",
+      advice.txt <- paste0(
+        "This is not a bug in irace, but means that something failed in ",
         "a call to the targetRunner or targetEvaluator functions provided by the user.",
-        "Please check those functions carefully.")
+        " Please check those functions carefully.")
     } else {
       # Message for an external script.
       advice.txt <- paste0(
