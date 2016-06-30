@@ -12,6 +12,7 @@ DEVEL-README
 ^Makefile$
 ^Program$
 ^R/.+\.data
+^R/TAGS
 ^TODO.*
 ^TUNE.*
 ^check-reverse
