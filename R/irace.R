@@ -230,11 +230,11 @@ computeTerminationOfRace <- function(nbParameters)
 ## Compute the minimum budget required, and exit early in case the
 ## budget given by the user is insufficient.
 checkMinimumBudget <- function(remainingBudget, minSurvival, nbIterations,
-                               control)
+                               scenario)
 {
-  eachTest <- control$eachTest
-  Tnew <- control$elitistInstances
-  mu <- max(control$mu, control$firstTest)
+  eachTest <- scenario$eachTest
+  Tnew <- scenario$elitistInstances
+  mu <- max(scenario$mu, scenario$firstTest)
   
   # This is computed from the default formulas as follows:
   #  B_1 = B / I
@@ -258,7 +258,7 @@ checkMinimumBudget <- function(remainingBudget, minSurvival, nbIterations,
   minimumBudget <- (minSurvival + 1) * nbIterations 
 
   # We need to compute T_i:
-  if (control$elitist) {
+  if (scenario$elitist) {
     # T_i = max(mu + Teach * min (5, i),
     #           ceiling((T_{i-1} + Tnew) / Teach) * Teach)
     # T_1 = mu + Teach
@@ -404,8 +404,7 @@ irace.init <- function(scenario)
 #' @return Elites configurations obtained after the last iteration
 #' @callGraphPrimitives
 #' @note This is a note for the function \code{iteratedRace}
-irace <- function(scenario = stop("parameter `scenario' is mandatory."),
-                  parameters = stop("parameter `parameters' is mandatory."))
+irace <- function(scenario, parameters)
 {
   catInfo <- function(..., verbose = TRUE) {
     irace.note (..., "\n")
@@ -499,7 +498,7 @@ irace <- function(scenario = stop("parameter `scenario' is mandatory."),
               scenario$nbExperimentsPerIteration)
 
     checkMinimumBudget (remainingBudget, minSurvival, nbIterations,
-                        control = scenario)
+                        scenario = scenario)
   }
   if (scenario$elitist) {
     catInfo("Elitist race\n",
