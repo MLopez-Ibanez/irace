@@ -1905,20 +1905,20 @@ parameters in the way that is most suitable for the tuning objective. For exampl
 a branch and bound algorithm one may have the following parameters:
 
 \begin{itemize}
-\item branching (\code{b}): This parameter can take the values \code{[0,1,2,3]}, 0 indicates no branching will be used
+\item branching (\code{b}): This parameter can take the values \code{\{0,1,2,3\}}, 0 indicates no branching will be used
       and the rest are different types of branching.
-\item stabilization (\code{s}): This parameter can take the values \code{[0,1,2,3,4,5,6,7,8,9,10]}, of which for \code{b=0}
-      only \code{[0,1,2,3,4,5]} are relevant.
+\item stabilization (\code{s}): This parameter can take the values \code{\{0,1,2,3,4,5,6,7,8,9,10\}}, of which for \code{b=0}
+      only \code{\{0,1,2,3,4,5\}} are relevant.
 \end{itemize}
 
 In this case is not possible to describe the parameter space defining only two
 parameters for \irace. An extra parameter must be introduced as follows: \\
 
   \begin{CodeInput}
-<name> <label> <type> <range>                  [ | <condition>]
-b      "-b "   c      [0,1,2,3]
-s1     "-s "   c      [0,1,2,3,4,5]            | b \%in\% c("0")
-s2     "-s "   c      [0,1,2,3,4,5,6,7,8,9,10] | b != "0" 
+# <name> <label> <type> <range>                  [ | <condition>]
+b         "-b "   c      (0,1,2,3)
+s1        "-s "   c      (0,1,2,3,4,5)            | b == "0"
+s2        "-s "   c      (0,1,2,3,4,5,6,7,8,9,10) | b != "0" 
   \end{CodeInput}
 
 Parameters whose values depend on the value of other parameters also could
@@ -1936,9 +1936,9 @@ The parameter values must be processed in the \code{targetRunner}. For example i
 that \code{p=51} then \code{s=0.3} will be transformed as \code{s=15}.
 
   \begin{CodeInput}
-<name> <label> <type> <range>                  [ | <condition>]
-p      "-p "   r      [0.0,1.0]
-s      "-s "   r      [0.1,1.0]            
+# <name> <label> <type> <range>    
+p        "-p "   r      (0.0,1.0)
+s        "-s "   r      (0.1,1.0)            
   \end{CodeInput}
   
 More complex value dependencies could be also expressed by mixing extra parameters and 
@@ -1947,13 +1947,13 @@ You can also split parameters and join them in the \code{targetRunner}, for exam
 following parameters:
 
   \begin{CodeInput}
-<name> <label> <type> <range>                  [ | <condition>]
-m      "-m "   i      [1,250]
-e      "-e "   r      [0.0,2.0]            
+# <name> <label> <type> <range>  
+m        "-m "   i      (1,250)
+e        "-e "   r      (0.0,2.0)            
   \end{CodeInput}
 
-This parameters could be part of one parameters that has a multiplier and an exponent that has 
-to be passed to your target algorithm as \code{--strenght }$m*e^10$. \code{targetRunner} can
+These parameters could be part of one parameter that has a multiplier and an exponent that has 
+to be passed to your target algorithm as \code{"--strength }$m\cdot 10^{e}$\code{"}. \code{targetRunner} can
 join the extra parameters \code{e} and \code{m} and provide them in the correct format.
  
 \subsection{Unreliable target algorithms}
@@ -2102,7 +2102,7 @@ the \irace options that can be specified by the user:\\
 
   
 \item \code{softRestartThreshold} ~~ flag: \code{--soft-restart-threshold} ~~ default: \textit{NA} \\
-  Soft restart threshold value for numerical parameters. If \code{NA}, it computed as $10^-digits$, where 
+  Soft restart threshold value for numerical parameters. If \code{NA}, it computed as $10^{-digits}$, where 
   \code{digits} corresponds to the \irace option explained in this section.
 
 \end{itemize} 
@@ -2319,9 +2319,9 @@ Optional data passed to \code{targetRunner}. This is ignored by the default \cod
 More information of the package can be found on the \irace webpage:\\
 \begin{center} \url{http://iridia.ulb.ac.be/irace/}. \end{center}
 
-For questions and suggestions please contact the devolpment team through the mailing list:
+For questions and suggestions please contact the development team through the mailing list:
 \begin{center} \href{mailto:irace@iridia.ulb.ac.be}{irace@iridia.ulb.ac.be} \end{center}
-or the \irace package google group:\\
+or the \irace package Google group:\\
 \begin{center} \url{https://groups.google.com/d/forum/irace-package} \end{center}
 
 \section{Acknowledgements} 
@@ -2330,13 +2330,15 @@ We would like to thank all the people that directly or indirectly have
 colaborated in the development and improvement of \irace.
 
 \begin{itemize}
-\item Mauro Birattari
-\item Thomas St\"uzle
-\item add more people
-\item Manuel L\'opez-Ib\'a\~nez
-\item J\'er\'emie Dubois-Lacoste
+%% MANUEL: I don't think we should mention ourselves.
+%% \item Mauro Birattari
+%% \item Thomas St\"uzle
+%% \item Manuel L\'opez-Ib\'a\~nez
+%% \item J\'er\'emie Dubois-Lacoste
+%% \item Leslie P\'erez C\'aceres
+\item Prasanna Balaprakash
+\item Zhi (Eric) Yuan
 \item Franco Mascia
-\item Leslie P\'erez C\'aceres
 \item Alberto Franzin
 \item Anthony Antoun
 \end{itemize}
