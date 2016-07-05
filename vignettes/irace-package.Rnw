@@ -1,14 +1,14 @@
 %%% DO NOT EDIT the .tex file directly since it is generated from the .Rnw
 %%% sources.
-\RequirePackage{xcolor}
-\documentclass[a4paper]{article}
+\RequirePackage[dvipsnames]{xcolor}
+\documentclass[a4paper,english]{article}
 \usepackage[a4paper]{geometry}
 %\VignetteEngine{knitr::knitr}
 %\VignetteIndexEntry{irace package:user guide}
 %\VignetteDepends{knitr}
 %\VignetteCompiler{knitr}
 %\VignetteEngine{knitr::knitr}
-
+\usepackage{calc}
 \usepackage{algorithm,algorithmic}
 \usepackage{booktabs}
 \usepackage{tabularx}
@@ -16,7 +16,6 @@
 \usepackage{amsmath,amssymb}
 \usepackage{relsize}
 \usepackage{fancyvrb}
-\usepackage{notes}
 \usepackage[hyphens]{url}
 \usepackage{hyperref}
 \hypersetup{
@@ -61,7 +60,7 @@
 % Parameter without short switch:  \defparameter{paramName}{long}{default}
 % Parameter without switch:  \defparameter{paramName}{}{default}
 \newcommand{\defparameter}[4][]{%
-\item\hypertarget{opt:#2}{}\code{#2} ~~ %
+\item[\code{#2}]\hypertarget{opt:#2}{} ~~ %
 \ifthenelse{\equal{#3}{}}{}{%
   flag: %
   \ifthenelse{\equal{#1}{}}{}{%
@@ -96,6 +95,33 @@ default:~\texttt{#4} \\
 \newcommand{\LESLIE}[1]{\footnote{\noindent\textbf{[ LESLIE: #1 ]}}}
 \newcommand{\THOMAS}[1]{\footnote{\noindent\textbf{[ THOMAS: #1 ]}}}
 
+
+\usepackage{tcolorbox}
+\newcommand{\infoicon}{%
+\parbox[c]{0.75cm}{\includegraphics[keepaspectratio=true,width=0.75cm]{light-bulb-icon}}%
+\hspace{1em}}
+\newcommand{\warningicon}{%
+\parbox[c]{0.75cm}{\includegraphics[keepaspectratio=true,width=0.75cm]{Warning-icon}}%
+\hspace{1em}}
+
+\definecolor{LightGray}{RGB}{193,193,193}
+\definecolor{LightYellow}{RGB}{253,247,172}
+
+\newlength\macroiconwidth
+\newenvironment{xwarningbox}{%
+\setlength{\fboxrule}{3.0\fboxrule}%
+\setlength{\fboxsep}{0\fboxsep}%
+\begin{tcolorbox}[colback=LightYellow,colframe=LightGray,boxrule=\fboxrule,boxsep=\fboxsep]%
+\infoicon%
+\settowidth{\macroiconwidth}{\infoicon}%
+\begin{minipage}[c]{\columnwidth - \macroiconwidth - 2.0\fboxrule - 2.0\fboxsep}
+\raggedright\footnotesize
+%
+}{%
+\end{minipage}
+\end{tcolorbox}
+%
+}
 
 \begin{document}
 
@@ -151,10 +177,11 @@ versions of the package can be found in the \irace package CRAN website.
 \begin{center}
 \url{https://cran.r-project.org/web/packages/irace/}
 \end{center}
-\begin{importantnote}
+\begin{xwarningbox}
 Previous versions of \irace might not be compatible with the 
 file formats detailed in this document.
-\end{importantnote}
+\end{xwarningbox}
+
 
 \subsection{License}
 
@@ -585,9 +612,9 @@ package directory. Follow this instructions to adjust the \code{target-runner} t
                 script must return \textbf{only} one number. In the template example the result is returned with 
                 \code{echo "\$COST"} and the used files are deleted.
                 
-                \begin{importantnote}
+                \begin{xwarningbox}
                 The \code{target-runner} script must be executable.
-                \end{importantnote}
+                \end{xwarningbox}
                 
                 You can test the target runner from the \aR console by performing an scenario check:
                 
@@ -641,9 +668,9 @@ irace(scenario=scenario, parameters=parameters)
 This will perform one run of \irace. See the output of \code{irace --help} in the command-line or \code{irace.usage()} in \aR for quick information on 
 additional \irace parameters, for more information about \irace options see Section~\ref{sec:irace options}. 
 
-\begin{importantnote}
+\begin{xwarningbox}
 Command-line parameters override the scenario setup specified in the scenario.txt file.
-\end{importantnote}
+\end{xwarningbox}
 
 \subsection{Set-up example for ACOTSP}\label{sec:example}
 
@@ -906,10 +933,10 @@ program or, alternatively, a user-given \aR function. The function (or program n
 \parameter{targetRunner}. The \parameter{targetRunner} must return the 
 evaluation of the execution unless a post-execution evaluation (\eg multi objective evaluation) is required, see Section~\ref{sec:evaluator} for details. 
 
-\begin{importantnote}
+\begin{xwarningbox}
  The objective of \irace is to minimize the obtained evaluations. 
  If you wish to maximize you can multiply the evaluations by \code{-1} before returning them.
-\end{importantnote}
+\end{xwarningbox}
 
 \subsubsection{Target runner executable program}
 
@@ -955,7 +982,7 @@ for each candidate configuration as:
 targetRunner(experiment, scenario)
 @
 % 
-
+%
 where \code{experiment} is a list that contains the information of
 candidate and instance to execute one experiment and \code{scenario} is the scenario
 list. The structure of the \code{experiment} list is as follows:
@@ -1001,10 +1028,10 @@ configurations by the use of a user-defined evaluation by setting the
 auxiliary program. The \parameter{targetEvaluator} evaluations are executed 
 when all alive candidate configurations have been executed on an instance.
 
-\begin{importantnote}
+\begin{xwarningbox}
 When targetEvaluator is in use targetRunner must not return the evaluation
 of the configuration.
-\end{importantnote}
+\end{xwarningbox}
 
 As an example, \parameter{targetEvaluator} may be used to dynamically find
 normalization bounds for the output returned by an algorithm for each
@@ -1034,8 +1061,8 @@ targetEvaluator(experiment, num.configurations, all.conf.id,
 scenario, target.runner.call)
 @
 % 
-
-, where \code{experiment} is a list that contains the information of one 
+%
+where \code{experiment} is a list that contains the information of one 
 experiment (See Section~\ref{sec:runner fx}), \code{num.configurations} 
 is the number of configurations alive on the race, \code{all.conf.id} is 
 the list of the alive candidates configurations ids,  \code{scenario} is 
@@ -1130,10 +1157,10 @@ scenario$instances.extra.params <-
 The \parameter{deterministic} option activates the deterministic algorithm mode. Each instance will be
 used at most once per race. Use this mode for algorithms that do not have an stochastic behavior
 and therefore executing instances several times with different seeds does not make sense.
-\begin{importantnote}
+\begin{xwarningbox}
 If \parameter{deterministic} is active and the number of training instances provided to \irace is less than
 \parameter{firstTest} (default: 5), no statistical test will be performed on the race. 
-\end{importantnote}
+\end{xwarningbox}
 
 When \parameter{deterministic} is disabled \irace assigns each instance a seed once all the 
 \code{<instance,seed>} pairs are used new pairs are generated with different seeds. 
@@ -1142,10 +1169,10 @@ The option \parameter{sampleInstances} enables the sampling of the instances, di
 option (\code{--sample-instances 0}) if you know the order provided in the instance file is adequate 
 for the tuning. 
 
-\begin{importantnote}
+\begin{xwarningbox}
 We advise to always sample instances in order to prevent biasing the tuning due to
 the instance order. 
-\end{importantnote}
+\end{xwarningbox}
 
 
 
@@ -1212,10 +1239,10 @@ shows an example file that corresponds to the \ACOTSP scenario:
 \caption{Forbidden configurations file (\code{forbidden.txt}) for tuning \ACOTSP.}\label{fig:acotsp_forbidden}
 \end{figure}
 
-\begin{importantnote}
+\begin{xwarningbox}
 Note that if initial configuration are provided (Section~\ref{sec:initial}), they must also comply with the
 constraints defined in \parameter{forbiddenFile}.
-\end{importantnote}
+\end{xwarningbox}
 
 \section{Parallelization}\label{sec:parallel}
 A single run of \irace can be done much faster by executing the calls
@@ -1267,7 +1294,7 @@ parallel. There are three ways to parallelize a single run of \irace:
    <<targetRunnerParallel,prompt=FALSE, eval=FALSE>>=
      targetRunnerParallel(experiments, targetRunner, scenario)
    @
-
+   %
    where \code{experiments} is a list that contains elements with the
    information of configurations and instances to be executed (see
    Section~\ref{sec:runner} for a description), \parameter{targetRunner} is the
@@ -1345,10 +1372,10 @@ irace --recovery-file "./irace-backup.Rdata"
 When an execution is recovered, the \irace log will be saved on the file specified with 
 the \parameter{logFile} option. 
 
-\begin{importantnote}
+\begin{xwarningbox}
 You must define a different location for the \parameter{logFile} and the \parameter{recoveryFile}. 
 Before executing the recovery please change the name of the saved \aR data file.
-\end{importantnote}  
+\end{xwarningbox}  
 
 When recovery is done you can modify some \irace options from the command-line or 
 from the scenario file.
@@ -1383,10 +1410,10 @@ save (iraceResults, file="~/tuning/irace.Rdata")
 @
 
 This example can also can be applied to the target execution files \parameter{targetRunner} and \parameter{targetEvaluator}.
-\begin{importantnote}
+\begin{xwarningbox}
 Before changing any other option directly in the \aR data log, please consider carefully the
 effect the change will cause in the tuning. For questions contact us in the \irace group (Section\ref{sec:contact}).
-\end{importantnote}
+\end{xwarningbox}
 
 \section{Output and results}
 During the execution of \irace a text output with the progress of 
@@ -1989,7 +2016,7 @@ the \irace options that can be specified by the user:\\
 %\LESLIE{Improve this comments} 
 
 \subsection{General options}
-\begin{itemize}
+\begin{description}
 \defparameter[-s]{scenarioFile}{--scenario}{./scenario.txt} %
   File that contains the scenario setup and other irace settings. All the options listed in this section 
   can be included in this file. See \code{$IRACE_HOME/templates/} for an example.
@@ -2005,19 +2032,19 @@ the \irace options that can be specified by the user:\\
   
 \defparameter{execDir}{--exec-dir}{./} %
   Directory where the target algorithm executions will be performed. The default execDir is the current directory.
-  \begin{importantnote}
+  \begin{xwarningbox}
    \irace will not attempt to create the execution directory so it must exist before calling \irace. 
-  \end{importantnote}
+ \end{xwarningbox}
      
 \defparameter[-l]{logFile}{--log-file}{./irace.Rdata} %  
   File to save tuning results as an R dataset, the provided path must be either an absolute path 
   or a relative to \parameter{execDir}. See Section\~ref{sec:output r} for details on the format of the 
   R dataset.
   
-\end{itemize}  
+\end{description}  
 
 \subsection{Elitist \irace}
-\begin{itemize}
+\begin{description}
 \defparameter{elitist}{--elitist}{1} %
   Enable/disable elitist \irace. \\
   
@@ -2040,20 +2067,20 @@ the \irace options that can be specified by the user:\\
   
 \defparameter{elitistInstances}{--elitist-instances}{1} %
   Number of new instances to add to execution list before ``previous instances'' in elitist \irace.
-  \begin{importantnote}
+  \begin{xwarningbox}
   If \parameter{deterministic} is \code{TRUE} then the number of \parameter{elitistInstances} will be reduced or 
   set to \code{0} in case no more instances are available.
-  \end{importantnote}
+  \end{xwarningbox}
   
 \defparameter{elitistLimit}{--elitist-limit}{2} %
   Limit for the elitist race, when the number statistical test performed without successful elimination 
   reaches \parameter{elitistLimit} the race will be inmediately stopped. This limit has effect after all 
   ``previous instances'' have been executed. Use 0 for disable the limit.
-\end{itemize} 
+\end{description} 
  
 
 \subsection{Internal \irace options}
-\begin{itemize}
+\begin{description}
 \defparameter{sampleInstances}{--sample-instances}{1} %
   Enable/disable the sampleing of the the training instances. If the option \parameter{sampleInstaces} is disabled,
   the instances are used in the order provided in the \parameter{trainInstancesFile} or in the order that
@@ -2105,10 +2132,10 @@ the \irace options that can be specified by the user:\\
   Soft restart threshold value for numerical parameters. If \code{NA}, it computed as $10^{-digits}$, where 
   \parameter{digits} corresponds to the \irace option explained in this section.
 
-\end{itemize} 
+\end{description} 
 
 \subsection{Target algorithm parameters}
-\begin{itemize}
+\begin{description}
 
 \defparameter[-p]{parameterFile}{--param-file}{./parameters.txt} %
   File that contains the description of the parameters of the target algorithm. See section~\ref{sec:target parameters}.
@@ -2120,10 +2147,10 @@ the \irace options that can be specified by the user:\\
   File containing a list of logical expressions that cannot be true for any evaluated configuration. If
   empty or \code{NULL}, no forbidden rules are considered. See Section~\ref{sec:forbidden} for more information.
   
-\end{itemize} 
+\end{description} 
 
 \subsection{Target algorithm execution}
-\begin{itemize}
+\begin{description}
 
 \defparameter{targetRunner}{--target-runner}{./target-runner} %
   This option defines a script or an \aR function that launches the program to be tuned for a particular 
@@ -2145,10 +2172,10 @@ Optional data passed to \parameter{targetRunner}. This is ignored by the default
 
 \defparameter{deterministic}{--deterministic}{0} %
   Enable/disable deterministic algorithm mode. If the target algorithm is deterministic, configurations will be evaluated only once per instance. See Section~\ref{sec:training} for more information.
-  \begin{importantnote}
+  \begin{xwarningbox}
   Note that if the number of instances provided is less than the value
   specified for the option \parameter{firstTest}, no statistical test will be performed. 
-  \end{importantnote}
+  \end{xwarningbox}
 
 \defparameter{parallel}{--parallel}{0} %
   Number of calls of the \parameter{targetRunner} to execute in parallel. A value of 0 means disabled. For more information 
@@ -2169,43 +2196,43 @@ Optional data passed to \parameter{targetRunner}. This is ignored by the default
    
  %\LESLIE{I have no clue how to set up this... Manuel?}
 
-\end{itemize} 
+\end{description} 
 
 \subsection{Initial configurations}
-\begin{itemize}
+\begin{description}
 \defparameter{configurationsFile}{--configurations-file}{} %
   File containing a list of initial configurations. If empty or \code{NULL} \irace will not use initial 
   configurations. See section~\ref{sec:initial}.
   
-  \begin{importantnote}
+  \begin{xwarningbox}
     The provided configurations must not violate the constraints described in \parameter{parameterFile}
     and \parameter{forbiddenFile}.
-  \end{importantnote}
-\end{itemize} 
+  \end{xwarningbox}
+\end{description} 
 
 
 \subsection{Training instances}
-\begin{itemize}
+\begin{description}
 \defparameter{trainInstancesDir}{--train-instances-dir}{./Instances} %
   Directory where tuning instances are located; either absolute path or relative to current directory. See Section~\ref{sec:training}.
   
 \defparameter{trainInstancesFile}{--train-instances-file}{} %
   File containing a list of instances and optionally additional parameters for them. See Section~\ref{sec:training}.
-  \begin{importantnote}
+  \begin{xwarningbox}
   If \parameter{trainInstancesDir} is specified the path contained in \parameter{trainInstancesFile} must be relative to the directory. For having 
   the absolute path or for defining instances that are not files set \code{trainInstancesDir=""}.
-  \end{importantnote}
-\end{itemize} 
+\end{xwarningbox}
+\end{description} 
 
 \subsection{Tuning budget}
-\begin{itemize}
+\begin{description}
 \defparameter{maxExperiments}{--max-experiments}{1000}\\
   The maximum number of runs (invocations of \parameter{targetRunner}) that will be performed. It determines the maximum budget 
   of experiments for the tuning.
-\end{itemize}
+\end{description}
   
 \subsection{Statistical test}
-\begin{itemize}
+\begin{description}
 \defparameter{testType}{--test-type}{F-test} %
   Specifies the statistical test type: 
   \begin{itemize}
@@ -2218,9 +2245,9 @@ Optional data passed to \parameter{targetRunner}. This is ignored by the default
   
 \defparameter{firstTest}{--first-test}{5} %
   Specifies how many instances are executed before the first elimination test. 
-  \begin{importantnote}
+  \begin{xwarningbox}%
    The value of \parameter{firstTest} must be a multiple of \parameter{eachTest}.
-  \end{importantnote}
+  \end{xwarningbox}
   
 \defparameter{eachTest}{--each-test}{1} %
   Specifies how many instances are executed between elimination tests.
@@ -2228,21 +2255,21 @@ Optional data passed to \parameter{targetRunner}. This is ignored by the default
 \defparameter{confidence}{--confidence}{0.95}\\ 
   Confidence level for the elimination test.
 
-\end{itemize} 
+\end{description} 
 
 \subsection{Recovery}
 \label{sec:recovery}
 
-\begin{itemize}     
+\begin{description}     
 \defparameter{recoveryFile}{--recovery-file}{""}  %
   Previously saved \irace log file that should be used to recover the execution of irace, 
   either absolute path or relative to the current directory. If empty or \code{NULL}, recovery is not performed. 
   For more details about recovery see Section~\ref{sec:recovery}.\\
 
-\end{itemize}
+\end{description}
 
 \subsection{Testing}
-\begin{itemize}  
+\begin{description}  
 \defparameter{testNbElites}{--test-num-elites}{1} %
   Number of elite configurations returned by irace that will be tested if test instances are provided. For more information
   about the testing, see Section~\ref{sec:testing}.
@@ -2256,7 +2283,7 @@ Optional data passed to \parameter{targetRunner}. This is ignored by the default
 \defparameter{testInstancesFile}{--test-instance-file}{} %
   File containing a list of test instances and optionally additional parameters for them.
 
-\end{itemize}
+\end{description}
 
 \section{FAQ}
 
