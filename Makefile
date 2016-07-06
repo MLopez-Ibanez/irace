@@ -10,6 +10,7 @@ DATE=$(shell date +%F)
 PACKAGEDIR=$(CURDIR)
 FTP_COMMANDS="user anonymous anonymous\nbinary\ncd incoming\nput $(PACKAGE)_$(PACKAGEVERSION).tar.gz\nquit\n"
 WINBUILD_FTP_COMMANDS="user anonymous anonymous\nbinary\ncd R-devel\nput $(PACKAGE)_$(PACKAGEVERSION).tar.gz\nquit\n"
+PDFLATEX=pdflatex -shell-escape -file-line-error -halt-on-error -interaction=nonstopmode "\input"
 
 ## Do we have svnversion?
 ifeq ($(shell sh -c 'which svnversion 1> /dev/null 2>&1 && echo y'),y)
@@ -64,7 +65,7 @@ vignettes: vignettes/irace-package.Rnw
 # FIXME: How to do all this on a temporary directory to avoid people editing the .tex file directly?
 	cd vignettes && \
 	Rscript -e "library(knitr); knit('irace-package.Rnw', output='irace-package.tex', quiet = TRUE)" && \
-	pdflatex irace-package.tex && pdflatex irace-package.tex && $(RM) irace-package.tex && cp irace-package.pdf ../inst/doc/
+	$(PDFLATEX) irace-package.tex && $(PDFLATEX) irace-package.tex && $(RM) irace-package.tex && cp irace-package.pdf ../inst/doc/
 
 pdf: vignettes 
 	$(RM) $(BINDIR)/$(PACKAGE).pdf
