@@ -177,6 +177,7 @@ versions of the package can be found in the \irace package CRAN website.
 \begin{center}
 \url{https://cran.r-project.org/web/packages/irace/}
 \end{center}
+%
 \begin{xwarningbox}
 Previous versions of \irace might not be compatible with the 
 file formats detailed in this document.
@@ -205,9 +206,9 @@ of a (target) algorithm saving the effort that normally requires manual
 tuning.  
 
 Figure~\ref{fig:irace-scheme} gives a general scheme of how \irace works.
-\irace receives as input a \code{parameter space definition} corresponding to the 
-parameters of the target algorithm that will be tuned, a set of \code{instances} 
-for which the parameters must be tuned for and a set of \code{options} for \irace.
+\irace receives as input a \emph{parameter space definition} corresponding to the 
+parameters of the target algorithm that will be tuned, a set of \emph{instances} 
+for which the parameters must be tuned for and a set of \emph{options} for \irace.
 
 \begin{figure}[ht!]
   \centering
@@ -216,17 +217,18 @@ for which the parameters must be tuned for and a set of \code{options} for \irac
 \label{fig:irace-scheme}
 \end{figure}
 
-\irace moves through the parameter search space in search of good performing 
-algorithm configurations, for doing so \irace executes the target algorithm on 
-different instances and with different parameter configurations. To execute 
-the target algorithm with a specific parameter configuration ($\theta$) and instance ($i$) 
-a \parameter{targetRunner} must be provided. The \parameter{targetRunner} acts as an
-interface between the execution of the target algorithm and \irace, it receives
-the instance and configuration as argument  and must return the evaluation of
-the execution of the target algorithm.
+\irace searches in the parameter search space for good performing algorithm
+configurations by executing the target algorithm on different instances and
+with different parameter configurations. To execute the target algorithm with a
+specific parameter configuration ($\theta$) and instance ($i$)
+a \parameter{targetRunner} must be provided. The \parameter{targetRunner} acts
+as an interface between the execution of the target algorithm and \irace: It
+receives the instance and configuration as arguments and must return the
+evaluation of the execution of the target algorithm.
 
-The following user guide contains a guidelines to use \irace and define the needed 
-components to execute \irace to automatically configure an optimization algorithm.
+The following user guide contains  guidelines to use \irace and define the
+needed components to execute \irace to automatically configure an optimization
+algorithm.
 
 %%
 %%
@@ -240,17 +242,14 @@ components to execute \irace to automatically configure an optimization algorith
 
 \subsection{System requirements}
 \begin{itemize}
- \item \aR (version $\geq~2.14.0$) is required for running irace, but you don't need to know the \aR language 
- to use it.  \aR is freely available 
- and you can download it from the \aR project website:
- \begin{center}
- \url{http://www.r-project.org}
- \end{center}
-  
- See Section~\ref{sec:installation} for a quick installation guide of \aR.
+\item \aR ($\text{version} \geq 2.15.0$) is required for running irace, but you don't
+  need to know the \aR language to use it.  \aR is freely available and you can
+  download it from the \aR project website
+  (\url{http://www.r-project.org}). See Section~\ref{sec:installation} for a
+  quick installation guide of \aR.
 
- \item If you wish to use the command-line scripts \code{irace} and
-   \code{parallel-irace}, they require GNU Bash.
+ \item For GNU/Linux and OSX, the command-line executables \code{irace} and
+   \code{parallel-irace} require GNU Bash.
 \end{itemize}
    
 \subsection{\irace installation} \label{sec:irace install}
@@ -260,8 +259,8 @@ by manual download and installation. We advise to use the automatic
 installation unless particular circumstances do not allow it. The instructions
 to install \irace with the two mentioned methods are the following:
  
-\begin{enumerate}
-\item  \textbf{Install automatically within \aR}: \\
+\subsubsection[Install automatically within R]{Install automatically within \aR{}}
+
 In the \aR console execute the following line to install the package :
 <<R_irace_install, prompt=TRUE, eval=FALSE>>=
 install.packages("irace")
@@ -272,26 +271,23 @@ library("irace")
 CTRL+d
 @
 
-If your run OS X you can use the \code{Packages and data -> Package installer} menu 
-in the \aR console and on Windows you can use the \code{Packages} menu, follow the given 
-instructions for installing the \irace package.
+Alternatively, within the \aR graphical interface, you may use  
+the \code{Packages and data -> Package installer} menu on OSX or the \code{Packages} menu on Windows.
 
-\item \textbf{Manual download and installation}: \\
-Go to the \irace package CRAN website:
-  \begin{center}
-      \url{http://cran.r-project.org/package=irace}
-   \end{center}
+\subsubsection{Manual download and installation}
 
-Download one of the three versions available depending of your operating
-system: 
+From the \irace package CRAN website
+(\url{http://cran.r-project.org/package=irace}), download one of the three
+versions available depending of your operating system:
 \begin{itemize}
 \item \code{irace_\iraceversion.tar.gz} (Unix/BSD/GNU/Linux)
 \item \code{irace_\iraceversion.tgz} (OSX)
 \item \code{irace_\iraceversion.zip} (Windows)
 \end{itemize}
 
-To install the package on GNU/Linux and OSX, you must execute the following command at the command-line:
-
+To install the package on GNU/Linux and OSX, you must execute the following
+command at the shell:
+%
 <<bash_irace_install,engine='bash',eval=FALSE>>=
 # Replace <package> with the path of the downloaded file.
 R CMD INSTALL <package>
@@ -305,7 +301,50 @@ the \aR console:
 # Replace <package> with the path of the downloaded file.
 install.packages("<package>", repos = NULL)
 @
-\end{enumerate}
+
+If the previous installation instructions fail because of insufficient
+permissions and you do not have sufficient admin rights to install \irace
+system-wide, then you need to force a local installation.
+
+\subsubsection{Local installation}
+
+Let's assume you wish to install \irace on a path denoted by
+\code{<R_LIBS_USER>}, which is a filesystem path for which you have sufficient
+rights. This directory \textbf{must} exist before attempting the
+installation. Moreover, you must provide to \aR the path to this
+library when loading the package. However, the latter can be avoided by adding
+the path to the system variable \code{R_LIBS} or to the \aR internal variable
+\code{.libPaths}, as we will see below.\footnote{%
+   On Windows, see also
+   \url{https://cran.r-project.org/bin/windows/base/rw-FAQ.html\#I-don_0027t-have-permission-to-write-to-the-R_002d3_002e3_002e1_005clibrary-directory}.}
+
+
+On GNU/Linux or OSX, execute the following commands to install the 
+package on a local directory:
+
+<<R_irace_install2,engine='bash',eval=FALSE>>=
+export R_LIBS_USER="<R_LIBS_USER>"
+# Create R_LIBS_USER if it doesn't exist
+mkdir $R_LIBS_USER
+# Replace <package> with the path to the downloaded file.
+R CMD INSTALL --library=$R_LIBS_USER <package>
+# Tell R where to find R_LIBS_USER        
+export R_LIBS=${R_LIBS_USER}:${R_LIBS}
+@
+
+On Windows, you can install the package on a local directory by executing the
+following lines in the \aR console:
+
+<<install_win2,eval=FALSE, prompt=TRUE>>=
+# Replace <package> with the path to the downloaded file.
+# Replace <R_LIBS_USER>' with the path used for installation.
+install.packages("<package>", repos = NULL, lib="<R_LIBS_USER>")
+# Tell R where to find R_LIBS_USER.
+# This must be executed for every new session.
+.libPaths(c("<R_LIBS_USER>", .libPaths()))
+@
+
+\subsubsection{Testing the installation and invoking irace}
 
 Once \irace has been installed, load the package and test that the installation 
 was successful by opening an \aR console and executing:
@@ -317,100 +356,55 @@ library("irace")
 system.file(package="irace")
 @
 
-The last command must print out the path of the library where \irace is installed. 
-In the following of this document the variable \code{$IRACE_HOME} is used
-in replacement of this path. When executing any provided command that includes 
-the  \code{$IRACE_HOME} variable do not forget replace this variable with the 
-installation path of \irace. If you are using GNU/Linux or OSx you can create the 
-\code{$IRACE_HOME}  variable and add the path to your \code{.bash_profile}, 
-\code{.bashrc} or \code{.profile} by executing the commands:
+The last command must print out the filesystem path  where \irace is
+installed.  In the remainder of this guide, the variable
+\code{\$IRACE_HOME} is used to denote this path. When executing any provided
+command that includes the \code{\$IRACE_HOME} variable do not forget to replace
+this variable with the installation path of \irace. 
 
+On GNU/Linux or OSX, you can let the operating system know where to find \irace
+by defining the \code{\$IRACE_HOME} variable and adding it to the system
+\code{PATH}. Append the following commands to \path{~/.bash_profile}, \path{~/.bashrc} or
+\path{~/.profile}:
+%
 <<linux_irace_path1,engine='bash',eval=FALSE>>=
-# Replace <installation path> with the irace installation path 
-export IRACE_HOME=<installation path> 
+# Replace <IRACE_HOME> with the irace installation path 
+export IRACE_HOME=<IRACE_HOME> 
 export PATH=${IRACE_HOME}/bin/:$PATH
+# Tell R where to find R_LIBS_USER
+# Use the following line only if local installation was forced
+export R_LIBS=${R_LIBS_USER}:${R_LIBS}
 @
 
-After adding this and opening a new terminal, you should be able to
-launch \irace as follows:
+Then, open new terminal and launch \irace as follows:
 
 <<linux_irace_help,engine='bash',eval=FALSE>>=
 irace --help
 @
 
-Unfortunately, this is not possible in Windows given that the command-line 
-wrapper is not supported. To launch \irace, you need to open the \aR 
-console and execute:
+On Windows, you need to add both \aR and the installation path of \irace to the
+environment variable \code{PATH}. To edit the \code{PATH}, search for
+``Environment variables'' in the control panel, then edit \code{PATH}, then add
+a string similar to \path{C:\R_PATH\bin;C:\IRACE_HOME\bin}, where \code{R_PATH}
+is the installation path of \aR and \code{IRACE_HOME} is the installation path
+of \irace. If \irace was installed locally, you also need to edit the
+environment variable \code{R_LIBS} to add \code{R_LIBS_USER}. Then, open a new
+terminal (run program \code{cmd.exe}) and launch \irace as:
+%
+<<win_irace_help,engine='bash',eval=FALSE>>=
+irace.bat --help
+@
 
+Alternatively, you may directly invoke \irace from within the \aR 
+console by executing:
 <<windows_irace_help ,eval=FALSE, prompt=TRUE>>=
 library("irace")
 irace.cmdline("--help")
 @
 
-\subsubsection{Local installation}
-If the previous installation instructions fail to install the package because 
-of insufficient permissions, you need to force a local installation. If you 
-run GNU/Linux or OSx, execute the following commands to install the 
-package in a local directory:
 
-<<R_irace_install2,engine='bash',eval=FALSE>>=
-# Create a directory for the installation
-mkdir ~/R
-# Replace <package> with the path of the downloaded file.
-R CMD INSTALL --library=~/R <package>
-export R_LIBS=~/R:${R_LIBS}
-@
+\section{Running irace}\label{sec:execution}
 
-If you use Windows, you can install the package in a local directory by
-executing the following lines in the \aR console:
-
-<<install_win2,eval=FALSE, prompt=TRUE>>=
-# Replace <package> with the path of the downloaded file.
-# Replace <installation path>' with the path used for 
-# installation in the previous step.
-install.packages("<package>", 
-                  repos = NULL, 
-                  lib="<installation path>")
-# Set the local library, this must be executed 
-# for every new session.
-.libPaths(c("<installation path>", .libPaths()))
-@
-
-Note that in both cases the directory where \irace will be installed \textbf{must} 
-exist before attempting the installation. Since the \irace package is installed
-in a local library, you \textbf{must} provide to \aR the path to this library 
-when loading the package.
-
-Once installed, load the package and test the correct installation by opening 
-an \aR console and executing:
-
-<<R_irace_test2, prompt=TRUE, eval=FALSE>>=
-# Replace <installation path>' with the path used for 
-# installation in the previous step.
-library("irace", lib.loc="<installation path>" )
-system.file(package="irace")
-@
-
-The last line must show the installation path of \irace. In the following of this 
-document the variable \code{$IRACE_HOME} is used in replacement of this 
-path. When executing any provided command that includes 
-the  \code{$IRACE_HOME} variable do not forget replace this variable with the 
-installation path of \irace. If you are running GNU/Linux or OSx you can create 
-the \code{$IRACE_HOME}  variable and add permanently the local library path 
-to your \code{.bash_profile}, \code{.bashrc} or \code{.profile} by executing the 
-following commands:
-
-<<linux_irace_path2,engine='bash',eval=FALSE>>=
-# Replace <installation path> with the path used for 
-# installation in the previous step.
-export IRACE_HOME=<installation path> 
-export PATH=${IRACE_HOME}/bin/:$PATH
-# Use the following line only if local installation was forced
-export R_LIBS=~/R:${R_LIBS} 
-@
-
-
-\section{Executing irace}\label{sec:execution}
 Before performing the tuning of your algorithm it is necessary to define an \irace 
 tuning scenario that will give \irace all the necessary information to optimize the 
 parameters of the algorithm. The tuning scenario is composed of the following elements:
@@ -440,7 +434,7 @@ be executed using the command-line wrappers provided by the package
 
 
 \begin{enumerate}
-\item On GNU/Linux and OSx execute \irace by doing:
+\item On GNU/Linux and OSX execute \irace by doing:
 
 <<irace_cmd_exe0,engine='bash', eval=FALSE>>=
 # $IRACE_HOME is the installation directory of irace.
@@ -474,7 +468,7 @@ execute the following commands:
 
 
 \begin{enumerate}
-\item On GNU/Linux and OSx execute from the command-line:
+\item On GNU/Linux and OSX execute from the command-line:
 
 <<irace_check,engine='bash', eval=FALSE>>=
 # $IRACE_HOME is the installation directory of irace.
@@ -574,7 +568,7 @@ For more information of \irace options and their default values see Section~\ref
 execute your algorithm with the parameters and instances specified by \irace and
 return \textbf{only} one number corresponding to the evaluation of the execution.
 The template we use in this guide is in bash, that means it can only be used 
-in GNU/Linux and OSx systems, for other systems you can use any other scripting 
+in GNU/Linux and OSX systems, for other systems you can use any other scripting 
 language, we provide a python template in the \code{$IRACE_HOME/examples/python} 
 package directory. Follow this instructions to adjust the \code{target-runner} to your algorithm:
         \begin{enumerate}
@@ -2406,10 +2400,12 @@ and from the \aR prompt install the \irace package (see Section~\ref{sec:irace i
 
 \subsection{Windows}
 
-You can install \aR from a CRAN mirror\footnote{Belgian CRAN mirror: 
-\url{http://cran.freestatistics.org/bin/windows/}}. Once \aR is installed, 
-you can launch the \aR console and install the \irace package from it 
-(see Section~\ref{sec:irace install}).
+You can install \aR from a CRAN mirror\footnote{Belgian CRAN mirror:
+  \url{http://cran.freestatistics.org/bin/windows/}}. We recommend that you
+install \aR on a filesystem path without spaces, special characters or long
+names, such as \path{C:\R}. Once \aR is installed, you can launch the \aR
+console and install the \irace package from it (see Section~\ref{sec:irace
+  install}).
 
 
 \section{TargetRunner script check list} \label{sec:check list}
