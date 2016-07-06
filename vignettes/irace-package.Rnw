@@ -159,8 +159,11 @@ options(width=60)
 %%
 %%
 \section{General information}
+\MANUEL{Some things could be taken from the intro of the irace paper and reformulated.}
+\MANUEL{It would be good to mention that not only opt algorithms can be configured with irace, we say this in the paper.}
+
 \subsection{Background}
-%\MANUEL{I would add a paragraph defining what is irace (a bit longer than the abstract above) and references to the literature so people can find more info. The first reference should be the irace TR.} \LESLIE{Here i guess we should say why tune an algorithm is a good idea, and why using irace is a better one.}
+\MANUEL{I would add a paragraph defining what is irace (a bit longer than the abstract above) and references to the literature so people can find more info. The first reference should be the irace TR.} \LESLIE{Here i guess we should say why tune an algorithm is a good idea, and why using irace is a better one.}
 The \irace package implements the \emph{iterated racing} procedure, 
 which is an extension of Iterated F-race (\IFRACE).  The main use of 
 \irace is the automatic configuration of optimization algorithms, 
@@ -186,7 +189,7 @@ file formats detailed in this document.
 
 \subsection{License}
 
-The \pkg{irace} package is Copyright (C) 2016 and distributed under the GNU General Public 
+The \irace package is Copyright \copyright{} 2016 and distributed under the GNU General Public 
 License version 3.0 (\url{http://www.gnu.org/licenses/gpl-3.0.en.html}).
 The \irace package is free software (software libre): you can redistribute it and/or modify it under the terms 
 of the GNU General Public License as published by the Free Software Foundation, 
@@ -1241,7 +1244,7 @@ constraints defined in \parameter{forbiddenFile}.
 \section{Parallelization}\label{sec:parallel}
 A single run of \irace can be done much faster by executing the calls
 to \parameter{targetRunner} (the runs of the target algorithm) in
-parallel. There are three ways to parallelize a single run of \irace:
+parallel. There are four ways to parallelize a single run of \irace:
 
 \begin{itemize}
 \item \textbf{Parallel processes}: The option \parameter{parallel} allows
@@ -2005,7 +2008,7 @@ it as a good configuration if it gives very good results for other instances.
 Most of the \irace options can be specified by command line using a flag, 
 by setting them in the \irace scenario file using the option name or 
 by directly setting them in the scenario \aR object. This section describes
-the \irace options that can be specified by the user:\\
+the \irace options that can be specified by the user.
 
 %\LESLIE{Improve this comments} 
 
