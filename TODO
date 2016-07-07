@@ -24,6 +24,8 @@ TODO General (in order of importance):
  * Various initialization modes Latin Hyper-cube, random, exhaustive,
    Hammersley point set, etc.
 
+ * Use testthat package for testing: http://r-pkgs.had.co.nz/tests.html
+ 
  * The truncated normal distribution actually gives more probability to the
    side further away from the mean (that is, the integral of the PDF is larger
    on the side where the distance is larger from the mean). This is not really

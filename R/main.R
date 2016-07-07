@@ -30,15 +30,15 @@
 
 ## __VERSION__ below will be replaced by the version defined in R/version.R
 ## This avoids constant conflicts within this file.
-irace.license <- 
+irace.license <-
 '*******************************************************************************
-* irace: An implementation in R of Iterated Race                                
+* irace: An implementation in R of Iterated Race
 * Version: __VERSION__
-* Copyright (C) 2010-2016                                                       
-* Manuel Lopez-Ibanez     <manuel.lopez-ibanez@manchester.ac.uk>                
-* Jeremie Dubois-Lacoste  <jeremie.dubois-lacoste@ulb.ac.be>                    
-* Leslie Perez Caceres    <leslie.perez.caceres@ulb.ac.be>                      
-*                                                                                 
+* Copyright (C) 2010-2016
+* Manuel Lopez-Ibanez     <manuel.lopez-ibanez@manchester.ac.uk>
+* Jeremie Dubois-Lacoste  <jeremie.dubois-lacoste@ulb.ac.be>
+* Leslie Perez Caceres    <leslie.perez.caceres@ulb.ac.be>
+*
 * This is free software, and you are welcome to redistribute it under certain
 * conditions.  See the GNU General Public License for details. There is NO
 * WARRANTY; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -191,7 +191,8 @@ irace.main <- function(scenario = defaultScenario(), output.width = 9999)
   invisible(eliteConfigurations)
 }
 
-testing.main <- function(logFile){
+testing.main <- function(logFile)
+{
   if (is.null.or.empty(logFile)) {
     irace.note("No logFile provided to perform the testing of configurations. Skipping testing.\n")
     return(FALSE)

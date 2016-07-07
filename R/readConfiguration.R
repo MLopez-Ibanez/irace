@@ -12,10 +12,7 @@
 ## as in the file containing the definition of the parameters.
 ##
 ## FIXME: What about digits?
-readConfigurationsFile <-
-  function(filename = stop("'filename' is mandatory"), 
-           parameters = stop("'parameters' is mandatory"), 
-           debugLevel = 0)
+readConfigurationsFile <- function(filename, parameters, debugLevel = 0)
 {
   namesParameters <- names(parameters$conditions)
   
@@ -407,7 +404,7 @@ checkScenario <- function(scenario = defaultScenario())
                                    "t.holm" = "t.holm",
                                    "t-test-bonferroni" =, # Fall-through,
                                    "t.bonferroni" = "t.bonferroni",
-                                   irace.error ("invalid setting '", scenario$testType,
+                                   irace.error ("Invalid value '", scenario$testType,
                                                 "' of 'testType' (", .irace.params.def["testType", "long"],
                                                 "), valid values are: ",
                                                 "F-test, t-test, t-test-holm, t-test-bonferroni"))

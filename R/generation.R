@@ -40,9 +40,7 @@ get.fixed.value <- function(param, parameters)
 }
 
 ### Uniform sampling for the initial generation
-sampleUniform <- function (parameters,
-                           nbConfigurations = stop("parameter 'nbConfigurations' is required"),
-                           digits = stop("parameter 'digits' is required"),
+sampleUniform <- function (parameters, nbConfigurations, digits,
                            forbidden = NULL)
 {
   namesParameters <- names(parameters$conditions)

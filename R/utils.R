@@ -130,8 +130,10 @@ strcat <- function(..., collapse = NULL)
 }
 
 # FIXME: Isn't a R function to do this? More portable?
-canonical.dirname <- function(dirname = stop("required parameter"))
+canonical.dirname <- function(dirname)
 {
+  if (missing(dirname))
+    stop ("argument 'dirname' is required")
   return (sub ("([^/])$", "\\1/", dirname))
 }
 

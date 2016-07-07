@@ -62,8 +62,7 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
   }
 
   # Determine if a parameter is fixed.
-  isFixed <- function (type = stop("type is mandatory."),
-                       domain = stop("domain is mandatory."))
+  isFixed <- function (type, domain)
   {
     type <- as.character(type)
     if (type == "i" || type == "r") {
