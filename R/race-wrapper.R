@@ -124,7 +124,7 @@ target.runner.default <- function(experiment, scenario)
   
   targetRunner <- scenario$targetRunner
   if (as.logical(file.access(targetRunner, mode = 1))) {
-    irace.error ("targetRunner '", targetRunner, "' cannot be found or is not executable!\n")
+    irace.error ("targetRunner ", shQuote(targetRunner), " cannot be found or is not executable!\n")
   }
 
   args <- paste(configuration.id, instance.id, seed, instance, extra.params,
