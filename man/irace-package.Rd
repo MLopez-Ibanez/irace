@@ -12,7 +12,7 @@ Iterated racing for Automatic Algorithm Configuration
 Package: \tab irace\cr
 Type: \tab Package\cr
 Version: \tab 2.0 \cr
-Date: \tab 2016-06-25 \cr
+Date: \tab 2016-07-07 \cr
 License: \tab GPL (>= 2)\cr
 LazyLoad: \tab yes\cr
 }
@@ -86,7 +86,7 @@ parameters <- readParameters(text = parameters.table)
 ## configuration on a single instance. For simplicity, we restrict to
 ## three-dimensional functions and we set the maximum number of
 ## iterations of SANN to 5000.
-target.runner <- function(experiment, scenario = list())
+target.runner <- function(experiment, scenario)
 {
   instance <- experiment$instance
   configuration <- experiment$configuration

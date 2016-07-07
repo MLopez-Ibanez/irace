@@ -13,7 +13,7 @@ f_rastrigin <- function (x) {
 }
 
 ## target runner ###########################################################
-target.runner <- function(experiment, scenario = list())
+target.runner <- function(experiment, scenario)
 {
   debugLevel    <- scenario$debugLevel
   configuration.id  <- experiment$id.configuration

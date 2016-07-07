@@ -1202,7 +1202,7 @@ three-dimensional functions and we set the maximum number of
 iterations of SANN to $5000$.
 
 \begin{CodeInput}
-target.runner <- function(instance, candidate, extra.params = NULL, config = list())
+target.runner <- function(instance, candidate, extra.params = NULL, config)
 {
   D <- 3
   par <- runif(D, min=-1, max=1)
