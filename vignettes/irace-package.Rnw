@@ -55,7 +55,7 @@
 \newcommand{\SoftwarePackage}{\pkg}
 \newcommand{\ACOTSP}{\SoftwarePackage{ACOTSP}\xspace}
 
-%% How to use the command:
+%% How to use this command:
 % Parameter with one short switch: \defparameter[short]{paramName}{long}{default}
 % Parameter without short switch:  \defparameter{paramName}{long}{default}
 % Parameter without switch:  \defparameter{paramName}{}{default}
@@ -690,7 +690,7 @@ To execute this scenario follow the steps
 described in the following:
 
 \begin{enumerate}
-\item Create a directory for the tuning (\eg~\code{~/tuning/}) and copy the example scenario files 
+\item Create a directory for the tuning (\eg~\path{~/tuning/}) and copy the example scenario files 
 located in the \code{examples} folder to the created directory: 
 <<dir0,engine='bash',eval=FALSE>>=
 mkdir ~/tuning
@@ -699,15 +699,15 @@ cd ~/tuning
 cp $IRACE_HOME/examples/acotsp/* ~/tuning/
 @
 
-\item Download the training instances from \url{http://iridia.ulb.ac.be/irace/} to the \code{~/tuning/} directory.
-\item Create the instance directory (\eg~\code{~/tuning/Instances}) and decompress the instance files in on it.
+\item Download the training instances from \url{http://iridia.ulb.ac.be/irace/} to the \path{~/tuning/} directory.
+\item Create the instance directory (\eg~\path{~/tuning/Instances}) and decompress the instance files in on it.
 
 <<instance0,engine='bash',eval=FALSE>>=
 mkdir ~/tuning/Instances/
 cd ~/tuning/
 tar -xvf tsp-instances-training.tar.bz2 Instances/
 @
-\item Download the \ACOTSP software from \url{http://www.aco-metaheuristic.org/aco-code/} to the \code{~/tuning/}
+\item Download the \ACOTSP software from \url{http://www.aco-metaheuristic.org/aco-code/} to the \path{~/tuning/}
 directory and compile it.
 
 <<acotsp0,engine='bash',eval=FALSE>>=
@@ -1392,9 +1392,9 @@ from the scenario file.
 It is not possible (and in most cases not correct) to change the scenario options, given that the 
 previous results can become invalid. However there are some cases in which this options must be changed, 
 for example, if you have instances that are files, it might be the case that the instances are not 
-available in the same location. To change the location of them you should modify directly the \aR data file, 
+available at the same location. To change the location of them you should modify directly the \aR data file, 
 please be careful not to change the order of the instances, because this would make the results obtained by 
-\irace invalid. To change the instances path open the \aR console and use:
+\irace invalid. To change the instances path, open the \aR console and use:
 
 <<change_recover, prompt=TRUE, eval=FALSE>>=
 load ("~/tuning/irace.Rdata")
@@ -1423,9 +1423,9 @@ Figure~\ref{fig:output} shows the output of \irace until the first iteration. Th
 is an execution of the elitist \irace version using the \ACOTSP benchmark with 1000 
 evaluations as budget.  
 
-Note that \irace gives a warning because has found a file with the default scenario file 
-name, this is just a notice. Initially, general information about the selected \irace
-options is printed:
+First, \irace gives a warning informing the user that it has found a file with
+the default scenario file name and it will use it. Then, general information
+about the selected \irace options is printed:
 \begin{itemize}
  \item \code{nbIterations} indicates the minimum number of iterations \irace has calculated 
        for the scenario. Depending on the development of the tuning the final iterations that
@@ -2518,7 +2518,7 @@ created (check permissions) or has been deleted before the result can be read.
 
 
 
-\item Other errors can produce the follwing output:\\
+\item Other errors can produce the following output:\\
 
 \code{
 == irace == The output was: Tue May  3 19:49:06 UTC 2016: \\
