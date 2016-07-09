@@ -157,13 +157,12 @@ irace.main <- function(scenario = defaultScenario(), output.width = 9999)
 
   scenario <- checkScenario (scenario)
   debug.level <- scenario$debugLevel
+  options(.irace.execdir = scenario$execDir)
+  
   if (debug.level >= 1) {
-    execDir <- scenario$execDir
     op.debug <- options(warning.length = 8170,
-                        error = if (interactive()) utils::recover else
-                        bquote({utils::dump.frames(
-                          dumpto = paste0(.(execDir), "/iracedump"),
-                          to.file = TRUE)}))
+                        error = if (interactive()) utils::recover
+                                else irace.dump.frames)
     on.exit(options(op.debug), add = TRUE)
     printScenario (scenario)
   }

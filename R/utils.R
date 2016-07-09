@@ -41,6 +41,18 @@ irace.error <- function(...)
   stop (.irace.prefix, ..., call. = FALSE)
 }
 
+## utils::dump.frames is broken and cannot be used with bquote, so we need a wrapper.
+
+irace.dump.frames <- function()
+{
+  execDir <- getOption(".irace.execdir")
+  if (!is.null(execDir)) {
+    cwd <- setwd(execDir)
+    on.exit(setwd(cwd), add = TRUE)
+  }
+  utils::dump.frames(dumpto = "iracedump", to.file = TRUE)
+}
+
 irace.assert <- function(exp)
 {
   if (exp) return(invisible())
@@ -48,10 +60,10 @@ irace.assert <- function(exp)
   msg <- paste(deparse(mc), " is not TRUE\n", .irace.bug.report, sep = "")
   # FIXME: It would be great if we could save into a file the state of
   # the function that called this one.
-  print(traceback())
+  traceback(1)
   op <- options(warning.length = 8170,
-                error = if (interactive()) utils::recover else
-                quote(utils::dump.frames("iracedump", TRUE)))
+                error = if (interactive()) utils::recover
+                        else irace.dump.frames)
   on.exit(options(op))
   stop (msg)
   invisible()
@@ -357,6 +369,11 @@ configurations.print.command <- function(configuration, parameters)
 # one cannot change the number of slaves.  A more robust function
 # would try to close any open slaves, and then re-spawn a different
 # number.
+##
+# FIXME2: Slaves load irace without paying attention to R_LIBS, .libPaths or
+# whether library was called with lib.loc. Thus, one may end up running a
+# different version of irace on the slaves than on the master. I wasted more
+# than 12 hours trying to find a work-around but nothing seems to work.
 mpiInit <- function(nslaves, debugLevel = 0)
 {
   # Load the Rmpi package if it is not already loaded.
