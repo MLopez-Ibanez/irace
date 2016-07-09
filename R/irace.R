@@ -448,10 +448,11 @@ irace <- function(scenario, parameters)
       num <- nrow(allConfigurations)
       allConfigurations <- checkForbidden(allConfigurations, scenario$forbiddenExps)
       if (nrow(allConfigurations) < num) {
-        cat("# Warning: some of the configurations in the configurations file were forbidden and, thus, discarded\n")
+        cat("# Warning: some of the configurations in the configurations file were forbidden",
+            "and, thus, discarded\n")
       }
-      cat("# ", num, " initial configuration(s) read from '",
-          scenario$configurationsFile, "'\n", sep="")
+      cat("# Adding", nrow(allConfigurations), "initial configuration(s) from file",
+          shQuote(scenario$configurationsFile), "\n")
     } else {
       configurations.colnames <- c(".ID.", namesParameters, ".PARENT.")
       allConfigurations <-
