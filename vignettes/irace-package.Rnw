@@ -42,10 +42,23 @@
 
 \providecommand{\keywords}[1]{\textbf{\textit{Index terms---}} #1}
 
-%% MANUEL: What is this?
+% Simple font selection is not good enough.  For example, |\texttt{--}|
+% gives `\texttt{--}', i.e., an endash in typewriter font.  Hence, we
+% need to turn off ligatures, which currently only happens for commands
+% |\code| and |\samp| and the ones derived from them.  Hyphenation is
+% another issue; it should really be turned off inside |\samp|.  And
+% most importantly, \LaTeX{} special characters are a nightmare.  E.g.,
+% one needs |\~{}| to produce a tilde in a file name marked by |\file|.
+% Perhaps a few years ago, most users would have agreed that this may be
+% unfortunate but should not be changed to ensure consistency.  But with
+% the advent of the WWW and the need for getting `|~|' and `|#|' into
+% URLs, commands which only treat the escape and grouping characters
+% specially have gained acceptance
 \makeatletter
-\newcommand\code{\bgroup\@makeother\_\@makeother\~\@makeother\$\@codex}
-\def\@codex#1{{\normalfont\ttfamily\hyphenchar\font=-1 #1}\egroup}
+\DeclareRobustCommand\code{\bgroup\@makeother\_\@makeother\~\@makeother\$\@noligs\@codex}
+\def\@codex#1{\texorpdfstring%
+{{\normalfont\ttfamily\hyphenchar\font=-1 #1}}%
+{#1}\egroup}
 \makeatother
 
 \let\proglang=\textsf
@@ -133,7 +146,7 @@ library(knitr)
   Thomas St\"utzle and Mauro Birattari
 \\IRIDIA, CoDE, Universit\'e Libre de Bruxelles, Brussels, Belgium}
 
-\title{The \irace Package:\\ User Guide}
+\title{The \irace Package: User Guide}
 
 %\keywords{automatic
 %  algorithm configuration, racing, parameter tuning, \aR}
@@ -147,7 +160,7 @@ library(knitr)
 library("irace")
 load("examples.Rdata")
 load("irace-output.Rdata")
-options(width=60)
+options(width = 60)
 @ 
 \newpage
 
@@ -300,7 +313,7 @@ To install the package on Windows open \aR and execute the following line on
 the \aR console:
 %\LESLIE{Check that this actually works on internet says that  this: \code{Rscript -e "install.packages('foo.zip', repos = NULL)"} also works}
 
-<<install_win1,eval=FALSE, prompt=TRUE>>=
+<<install_win1,eval=FALSE, prompt=FALSE>>=
 # Replace <package> with the path of the downloaded file.
 install.packages("<package>", repos = NULL)
 @
@@ -340,8 +353,8 @@ following lines in the \aR console:
 
 <<install_win2,eval=FALSE, prompt=TRUE>>=
 # Replace <package> with the path to the downloaded file.
-# Replace <R_LIBS_USER>' with the path used for installation.
-install.packages("<package>", repos = NULL, lib="<R_LIBS_USER>")
+# Replace <R_LIBS_USER> with the path used for installation.
+install.packages("<package>", repos = NULL, lib = "<R_LIBS_USER>")
 # Tell R where to find R_LIBS_USER.
 # This must be executed for every new session.
 .libPaths(c("<R_LIBS_USER>", .libPaths()))
@@ -356,7 +369,7 @@ was successful by opening an \aR console and executing:
 # Load the package
 library("irace")
 # Obtain the installation path
-system.file(package="irace")
+system.file(package = "irace")
 @
 
 The last command must print out the filesystem path  where \irace is
@@ -408,7 +421,7 @@ irace.cmdline("--help")
 
 \section{Running irace}\label{sec:execution}
 
-Before performing the tuning of your algorithm it is necessary to define an \irace 
+Before performing the tuning of your algorithm, it is necessary to define an \irace 
 tuning scenario that will give \irace all the necessary information to optimize the 
 parameters of the algorithm. The tuning scenario is composed of the following elements:
 
@@ -433,11 +446,12 @@ continue to Section~\ref{sec:step}. For an example execution of \irace using the
 
 Once all the scenario elements are prepared you can execute \irace. \irace can 
 be executed using the command-line wrappers provided by the package 
-(only available for GNU/Linux and OS X) or directly from the \aR console:
+ or directly from the \aR console:
 
 
 \begin{enumerate}
-\item On GNU/Linux and OSX execute \irace by doing:
+\item Execute \irace from the command-line as (on Windows, you should execute
+  \code{irace.bat}):
 
 <<irace_cmd_exe0,engine='bash', eval=FALSE>>=
 # $IRACE_HOME is the installation directory of irace.
@@ -449,66 +463,62 @@ properly in the \code{scenario.txt} file using the options described in
 Section~\ref{sec:irace options}. Most \irace options can be specified 
 in the command line or directly in the \code{scenario.txt} file.  
 
-\item On any operating system you can execute \irace from the \aR 
-console by executing:
+\item Execute \irace from the \aR 
+console as:
 
 <<irace_R_exe0, eval=FALSE, prompt=TRUE>>=
 library("irace")
 parameters <- readParameters("parameters.txt")
-scenario <- readScenario(filename="scenario.txt", 
-                         scenario=defaultScenario())
-irace(scenario=scenario, parameters=parameters)
+scenario <- readScenario(filename = "scenario.txt", 
+                         scenario = defaultScenario())
+irace(scenario = scenario, parameters = parameters)
 @
 
 \end{enumerate}
 
-\irace provides a check tool to test that the scenario elements are
+\irace provides an option (\code{--check}) to check that the scenario is
 correctly defined. We recommend to perform a check every time
 you create a new scenario. When performing the check, \irace will 
-control that the scenario and parameter definition are correct and 
+verify that the scenario and parameter definition are correct and 
 will test the execution of the target algorithm. To check your scenario
 execute the following commands:
 
-
 \begin{enumerate}
-\item On GNU/Linux and OSX execute from the command-line:
+\item From the command-line (on Windows, execute \code{irace.bat}):
 
 <<irace_check,engine='bash', eval=FALSE>>=
 # $IRACE_HOME is the installation directory of irace.
 $IRACE_HOME/bin/irace --scenario scenario.txt --check
 @
 
-\item On any operating system execute from the \aR console the 
-following lines:
+\item From the \aR console:
 
 <<irace_R_check, eval=FALSE, prompt=TRUE>>=
 library("irace")
-scenario <- readScenario(filename="scenario.txt",
-                         scenario=defaultScenario())
-checkIraceScenario(scenario=scenario)
+parameters <- readParameters("parameters.txt")
+scenario <- readScenario(filename = "scenario.txt",
+                         scenario = defaultScenario())
+checkIraceScenario(scenario = scenario, parameters = parameters)
 @
 
 \end{enumerate}
 
 \subsection{Step by step setup guide}\label{sec:step}
-This section provides a guide to setup a basic execution of \irace. The template
-files provided in the package (\code{$IRACE_HOME/templates}) will be used as 
-base for creating your new scenario. Please follow carefully the indications 
-provided in each step and in the template files used, if you have doubts check the 
-the sections that describe each scenario element in detail.
+This section provides a guide to setup a basic execution of \irace. The
+template files provided in the package (\path{$IRACE_HOME/templates}) will be
+used as basis for creating your new scenario. Please follow carefully the
+indications provided in each step and in the template files used, if you have
+doubts check the the sections that describe each option in detail.
   
 \begin{enumerate}
-\item Create a directory (\eg~\code{~/tuning/}) for the scenario setup, this directory will contain
-all the files that describe the scenario.
+\item Create a directory (\eg~\path{~/tuning/}) for the scenario setup, this directory will contain
+all the files that describe the scenario. On GNU/Linux or OSX, you can do this as follows:
 <<dir1,engine='bash',eval=FALSE>>=
 mkdir ~/tuning
 cd ~/tuning
 @
-To set the working directory in \aR use the following lines in the \aR console:
-<<dirR1,prompt=TRUE, eval=FALSE>>=
-set.wd("~/tuning")
-@
-\item Copy all the template files in the to the \code{$IRACE_HOME/templates/} 
+
+\item Copy all the template files from the \path{$IRACE_HOME/templates/} 
 directory to the scenario directory.
 <<copy1,engine='bash',eval=FALSE>>=
 # $IRACE_HOME is the installation directory of irace.
@@ -520,117 +530,128 @@ directory of \irace. It can be obtained in the \aR console with:
 
 <<irace_path,eval=FALSE, prompt=TRUE>>=
 library("irace")
-system.file(package="irace")
+system.file(package = "irace")
 @
 
 \item For each template in your tuning directory, remove the \code{.tmpl} 
     suffix, and modify them following the next steps.
-    %\begin{enumerate}[leftmargin=0cm]
+ 
 \item Define the target algorithm parameters to be tuned, follow the 
 instructions in \code{parameters.txt}.  Available parameter types and other 
 guidelines can be found in Section~\ref{sec:target parameters}.
         
-\item \textit{Optional}: Define forbidden parameter values combinations,
-that is, configurations that \irace must not consider in the tuning. 
-Follow the instructions in \code{forbidden.txt}. More information about 
-forbidden configurations in Section~\ref{sec:forbidden}. \textbf{Important}: 
-If you do not need to define forbidden configurations remove this file from 
-the directory.
         
 \item \textit{Optional}: Define the initial parameter configuration(s) of your 
 algorithm, this option allows you to provide good starting configurations (if you know 
 some) for the tuning. Follow the instructions in \code{configurations.txt}. More 
 information in Section~\ref{sec:initial}. \textbf{Important}: If you do not need to 
 define initial configurations remove this file from the directory.
-     
-\item Put the instances you would like to use for the tuning of your algorithm in 
-the folder \code{~/tuning/Instances/}. In addition,  you can create a file 
-(\eg~\code{instances-list.tmpl}) that specifies which instances from that directory
-should be run and which instance-specific parameters to use. If you will be using 
-the instance list file, set in the \code{scenario.txt} file as:
-\begin{center}
- \code{trainInstancesFile = "instances-list.txt"} 
- \end{center}
-See Section~\ref{sec:training} for guidelines.
+
+\item \textit{Optional}: Define forbidden parameter values combinations,
+that is, configurations that \irace must not consider in the tuning. 
+Follow the instructions in \code{forbidden.txt}. More information about 
+forbidden configurations in Section~\ref{sec:forbidden}. \textbf{Important}: 
+If you do not need to define forbidden configurations remove this file from 
+the directory.
+
+\item Place the instances you would like to use for the tuning of your
+  algorithm in the folder \path{~/tuning/Instances/}. In addition, you can
+  create a file (\eg~\code{instances-list.txt}) that specifies which instances
+  from that directory should be run and which instance-specific parameters to
+  use. To use such an instance file, set the appropriate option in
+  \code{scenario.txt}, e.g., \code{trainInstancesFile = "instances-list.txt"}
+  . See Section~\ref{sec:training} for guidelines.
 
 \item Uncomment and assign in \code{scenario.txt} only the options for which you 
 need a value different than the default. The names of the template files match 
 the default names of the scenario options. Some common parameters that you might  
 want to adjust are:
-\begin{itemize}
-\item \parameter{execDir} (\code{--exec-dir}): set a directory in which \irace will execute the
-target algorithm, the default value is the current directory.
-\item \parameter{logFile} (\code{--log-file}): set the name of the results \aR data file that produces 
-\irace.
-\item \parameter{maxExperiments} (\code{--max-experiments}): set the maximum number of executions 
-of the target algorithm that \irace is allowed. The default is $1000$. 
-\end{itemize}
-For more information of \irace options and their default values see Section~\ref{sec:irace options}.
+\begin{description}
+\item[\parameter{execDir}] (\code{--exec-dir}): the directory in which \irace will execute the
+target algorithm; the default value is the current directory.
+%\item[\parameter{logFile}] (\code{--log-file}): a file the name of the results \aR data file that produces \irace.
+\item[\parameter{maxExperiments}] (\code{--max-experiments}): the maximum number of executions 
+of the target algorithm that \irace will perform.
+\end{description}
+For more information on \irace options and their default values see Section~\ref{sec:irace options}.
 
-\item Modify the \code{target-runner} script to run your algorithm, this script must
-execute your algorithm with the parameters and instances specified by \irace and
-return \textbf{only} one number corresponding to the evaluation of the execution.
-The template we use in this guide is in bash, that means it can only be used 
-in GNU/Linux and OSX systems, for other systems you can use any other scripting 
-language, we provide a python template in the \code{$IRACE_HOME/examples/python} 
-package directory. Follow this instructions to adjust the \code{target-runner} to your algorithm:
-        \begin{enumerate}
-          \item Set the \code{EXE} variable with the path to the executable of the target algorithm.
-          \item Set the \code{FIXED_PARAMS} if you need extra arguments in the execution line of your algorithm, 
-                an example could be the time that your algorithm is required to run (\code{FIXED_PARAMS="--time 60"})
-                or the number of evaluations required (\code{FIXED_PARAMS="--evaluations 10000"}).
-          \item The line provided in template:
-                \begin{center}
-                 \code{\$EXE \$\{FIXED_PARAMS\} -i \$\{INSTANCE\} --seed \$\{SEED\} \$\{CAND_PARAMS\}}
-                \end{center}
-                
-                Will execute the executable described in the EXE variable. You must change this line according
-                to the way your algorithm is executed. In this example, the algorithm receives the instance to
-                solve with the flag \code{-i} and the seed with the flag \code{--seed}. The variable
-                 \code{CAND_PARAMS} adds to the command line the parameters that \irace has give for 
-                 the execution.
-                You are free to set the command line execution as needed, for example the instance might not need
-                a flag and might need to be only the first argument:
-                \begin{center}
-                 \code{\$EXE \$\{INSTANCE\} \$\{FIXED_PARAMS\} --seed \$\{SEED\} \$\{CAND_PARAMS\}}
-                \end{center}
-                The output of your algorithm is redirected to the file defined in the \code{$STDOUT} variable
-                when there is an error in the execution the output of it will be in \code{$STDERR}. The line:
-                 \begin{center}
-                \code{if [ -s "\${STDOUT}" ]; then}
-                \end{center}
-                checks if the file where the output of your algorithm was redirected exists. The example provided 
-                in the template assumes that your algorithm prints in the last 
-                output line the best result found (only a number). The line:
-                \begin{center}
-                \code{COST=\$(cat \$\{STDOUT\} | grep -e '\^~[[:space:]]*[+-]\\?[0-9]' | cut -f1)}
-                \end{center}
-                parses the output of your algorithm to obtain the result from the last line. The \code{target-runner}
-                script must return \textbf{only} one number. In the template example the result is returned with 
-                \code{echo "\$COST"} and the used files are deleted.
-                
-                \begin{xwarningbox}
-                The \code{target-runner} script must be executable.
-                \end{xwarningbox}
-                
-                You can test the target runner from the \aR console by performing an scenario check:
-                
- <<irace_R_check2, eval=FALSE, prompt=TRUE>>=
-library("irace")
-scenario <- readScenario(filename="scenario.txt",
-                         scenario=defaultScenario())
-checkIraceScenario(scenario=scenario)
+\item Modify the \code{target-runner} script to run your algorithm, this script
+  must execute your algorithm with the parameters and instances specified by
+  \irace and return \textbf{only} one number corresponding to the evaluation of
+  the execution.  The template we use in this guide is in \proglang{GNU Bash}
+  scripting language, which can be executed easily in GNU/Linux and OSX
+  systems. However, you may use any other programming language. As an example,
+  we provide a \proglang{Python} template in the
+  \path{$IRACE_HOME/examples/python} directory. %
+  Follow these instructions to adjust the given \code{target-runner} template
+  to your algorithm:
+  \begin{enumerate}
+  \item Set the \code{EXE} variable with the path to the executable of the target algorithm.
+  \item Set the \code{FIXED_PARAMS} if you need extra arguments in the
+    execution line of your algorithm, an example could be the time that your
+    algorithm is required to run (\code{FIXED_PARAMS="--time 60"}) or the
+    number of evaluations
+    required\newline(\code{FIXED_PARAMS="--evaluations 10000"}).
+    
+  \item The line provided in template:
+    %
+    \begin{center}
+      \code{\$EXE \$\{FIXED_PARAMS\} -i \$\{INSTANCE\} --seed \$\{SEED\} \$\{CAND_PARAMS\}}
+    \end{center}
+    %
+    executes the executable described in the \code{EXE} variable. You must
+    change this line according to the way your algorithm is executed. In this
+    example, the algorithm receives the instance to solve with the flag
+    \code{-i} and the seed with the flag \code{--seed}. The variable
+    \code{CAND_PARAMS} adds to the command line the parameters that \irace has
+    given for the execution.  You are free to set the command line execution as
+    needed. For example, the instance might not need a flag and might need to be
+    the first argument:
+    \begin{center}
+      \code{\$EXE \$\{INSTANCE\} \$\{FIXED_PARAMS\} --seed \$\{SEED\} \$\{CAND_PARAMS\}}
+    \end{center}
+    The output of your algorithm is saved to the file defined in the
+    \code{\$STDOUT} variable, and error output is saved in the file given by
+    \code{\$STDERR}. The line:
+    \begin{center}
+      \code{if [ -s "\${STDOUT}" ]; then}
+    \end{center}
+    checks if the file containing the output of your algorithm is not
+    empty. The example provided in the template assumes that your algorithm
+    prints in the last output line the best result found (only a number). The
+    line:
+    \begin{center}
+      \code{COST=\$(cat \$\{STDOUT\} | grep -e '\^{}[[:space:]]*[+-]\textbackslash{}?[0-9]' | cut -f1)}
+    \end{center}
+    parses the output of your algorithm to obtain the result from the last line. The \code{target-runner}
+    script must return \textbf{only} one number. In the template example the result is returned with 
+    \code{echo "\$COST"} and the used files are deleted.
+    
+    \begin{xwarningbox}
+      The \code{target-runner} script must be executable.
+    \end{xwarningbox}
+
+   \MANUEL{Isn't this already explained a few lines above in page 9?}
+    You can test the target runner from the \aR console by checking the scenario:
+    
+    <<irace_R_check2, eval=FALSE, prompt=TRUE>>=
+    library("irace")
+    scenario <- readScenario(filename = "scenario.txt",
+                             scenario = defaultScenario())
+    checkIraceScenario(scenario = scenario)
 @
 
 If you are using GNU/Linux you can also execute the check from the command-line:
- <<irace_check2,engine='bash', eval=FALSE>>=
+%
+<<irace_check2,engine='bash', eval=FALSE>>=
 # $IRACE_HOME is the installation directory of irace.
 $IRACE_HOME/bin/irace --scenario scenario.txt --check
 @
            
-                If you have problems related to the \code{target-runner} script when executing \irace see 
-                Section~\ref{sec:check list} for a check list to find the problems. For more information 
-                about the \parameter{targetRunner} please see Section~\ref{sec:runner},
+If you have problems related to the \code{target-runner} script when executing
+\irace see Appendix~\ref{sec:check list} for a check list to diagnose common
+problems. For more information about the \parameter{targetRunner} please see
+Section~\ref{sec:runner},
         \end{enumerate}
       
       \item \textit{Optional}: Modify the \code{target-evaluator} file. You can follow the guidelines provided for
@@ -638,6 +659,7 @@ $IRACE_HOME/bin/irace --scenario scenario.txt --check
 
 \end{enumerate}
 
+\MANUEL{This is a duplicate with what was mentioned at the start of the section. I actually would keep this version. It looks nicer.}
 Once the files have been prepared you can execute \irace using the command-line or directly from the \aR console:
 
 \begin{itemize}
@@ -649,24 +671,26 @@ $IRACE_HOME/bin/irace
 @
 }
 \item{
-\textbf{On the \aR console}: create the \aR objects \code{scenario} and \code{parameters}, 
-go to the created directory (\code{cd tuning}), open an \aR console and execute:
+\textbf{On the \aR console}: open an \aR console and execute:
 
 <<irace_R_exe, eval=FALSE, prompt=TRUE>>=
 library("irace")
+# Go to the directory containing the scenario files
+set.wd("~/tuning")
+# Create the R objects scenario and parameters
 parameters <- readParameters("parameters.txt")
-scenario <- readScenario(filename="scenario.txt",
-                          scenario=defaultScenario())
-irace(scenario=scenario, parameters=parameters)
+scenario <- readScenario(filename = "scenario.txt",
+                         scenario = defaultScenario())
+irace(scenario = scenario, parameters = parameters)
 @
 }
 \end{itemize}
 
 This will perform one run of \irace. See the output of \code{irace --help} in the command-line or \code{irace.usage()} in \aR for quick information on 
-additional \irace parameters, for more information about \irace options see Section~\ref{sec:irace options}. 
+additional \irace parameters. For more information about \irace options, see Section~\ref{sec:irace options}. 
 
 \begin{xwarningbox}
-Command-line parameters override the scenario setup specified in the scenario.txt file.
+Command-line parameters override the scenario setup specified in the \code{scenario.txt} file.
 \end{xwarningbox}
 
 \subsection{Set-up example for ACOTSP}\label{sec:example}
@@ -681,10 +705,10 @@ examples of tuning scenarios can be found in the Algorithm Configuration Library
 \url{http://www.aclib.net/}
 \end{center}  
 
-In this section we describe how to execute the \ACOTSP scenario, if you wish to start setting up 
-your own scenario continue in the next section. For the example we assume
+In this section we describe how to execute the \ACOTSP scenario. If you wish to start setting up 
+your own scenario continue in the next section. For this example, we assume
 a GNU/Linux system but making the necessary changes in the commands and \parameter{targetRunner},
-it can be executed in any system that has a \code{C} compiler.
+it can be executed in any system that has a \proglang{C} compiler.
 %\MANUEL{I don't think this is true, since the target-runner script needs Bash}
 To execute this scenario follow the steps
 described in the following:
@@ -700,7 +724,7 @@ cp $IRACE_HOME/examples/acotsp/* ~/tuning/
 @
 
 \item Download the training instances from \url{http://iridia.ulb.ac.be/irace/} to the \path{~/tuning/} directory.
-\item Create the instance directory (\eg~\path{~/tuning/Instances}) and decompress the instance files in on it.
+\item Create the instance directory (\eg~\path{~/tuning/Instances}) and decompress the instance files on it.
 
 <<instance0,engine='bash',eval=FALSE>>=
 mkdir ~/tuning/Instances/
@@ -738,9 +762,9 @@ $IRACE_HOME/bin/irace
 library("irace")
 set.wd("~/tuning/")
 parameters <- readParameters("parameters-acotsp.txt")
-scenario <- readScenario(filename="scenario.txt", 
-                         scenario=defaultScenario())
-irace(scenario=scenario, parameters=parameters)
+scenario <- readScenario(filename = "scenario.txt", 
+                         scenario = defaultScenario())
+irace(scenario = scenario, parameters = parameters)
 @ 
  
 \end{enumerate}
@@ -748,10 +772,10 @@ irace(scenario=scenario, parameters=parameters)
 \section{\irace scenario}
 \subsection{Target algorithm parameters} \label{sec:target parameters}
 
-The target parameters are defined by a parameter file as described in 
-Section~\ref{sec:parameters file}. Optionally, when executing \irace 
-from the \aR console, the parameters can be specified directly as an
-\aR object (see Section~\ref{sec:parameters object}). For defining your parameters
+The parameters of the target algorithm are defined by a parameter file as
+described in Section~\ref{sec:parameters file}. Optionally, when executing
+\irace from the \aR console, the parameters can be specified directly as an \aR
+object (see Section~\ref{sec:parameters object}). For defining your parameters
 follow the guidelines provided in the following sections.
  
 \subsubsection{Parameter types}
@@ -778,8 +802,8 @@ types supported by \irace are the following:
   take only integer values within the given range. The range is
   specified as for real parameters. 
 
-\item \textit{Categorical} parameters are defined by a set of possible
-  values specified as `\code{(<value 1>, ..., <value n>)}'. The values
+\item \textit{Categorical} parameters are defined by a set of possible values
+  specified as `\code{(<value 1>,} \code{...,} \code{<value n>)}'. The values
   are quoted or unquoted character strings. Empty strings and strings
   containing commas or spaces must be quoted.
 
