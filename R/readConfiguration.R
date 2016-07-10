@@ -140,7 +140,7 @@ readConfigurationsFile <- function(filename, parameters, debugLevel = 0)
 # it gets completely overriden by the loop below.
 readScenario <- function(filename = "", scenario = list())
 {
-    # First find out which file...
+  # First find out which file...
   if (filename == "") {
     filename <- .irace.params.def["scenarioFile","default"]
     if (file.exists(filename)) {
@@ -175,7 +175,7 @@ readScenario <- function(filename = "", scenario = list())
           && (param %in% pathParams)) {
         value <- path.rel2abs(value, cwd = dirname(filename))
       }
-        scenario[[param]] <- value
+      scenario[[param]] <- value
     }
   }
   return (scenario)
@@ -454,7 +454,7 @@ defaultScenario <- function(scenario = list())
       && !all(names(scenario) %in% .irace.params.names)) {
     irace.error("Unknown scenario parameters: ",
                 paste(names(scenario)[which(!names(scenario)
-                                                 %in% .irace.params.names)],
+                                            %in% .irace.params.names)],
                       sep=", "))
   }
 
