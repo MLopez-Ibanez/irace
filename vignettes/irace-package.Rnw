@@ -36,9 +36,11 @@
 %  }
 %  knit_hooks$set(source=listing, output=listing)
 
+
 \DefineVerbatimEnvironment{Code}{Verbatim}{}
-\DefineVerbatimEnvironment{CodeInput}{Verbatim}{fontshape=sl}
+\DefineVerbatimEnvironment{CodeInput}{Verbatim}{fontshape=rm}
 \DefineVerbatimEnvironment{CodeOutput}{Verbatim}{}
+\newenvironment{CodeChunk}{}{}
 
 \providecommand{\keywords}[1]{\textbf{\textit{Index terms---}} #1}
 
@@ -676,7 +678,7 @@ $IRACE_HOME/bin/irace
 <<irace_R_exe, eval=FALSE, prompt=TRUE>>=
 library("irace")
 # Go to the directory containing the scenario files
-set.wd("~/tuning")
+setwd("~/tuning")
 # Create the R objects scenario and parameters
 parameters <- readParameters("parameters.txt")
 scenario <- readScenario(filename = "scenario.txt",
@@ -760,7 +762,7 @@ $IRACE_HOME/bin/irace
 
 <<runexample2,prompt=TRUE,eval=FALSE>>=
 library("irace")
-set.wd("~/tuning/")
+setwd("~/tuning/")
 parameters <- readParameters("parameters-acotsp.txt")
 scenario <- readScenario(filename = "scenario.txt", 
                          scenario = defaultScenario())
@@ -837,14 +839,13 @@ length of the tabu list needs to be set.
 \subsubsection{Parameter file format}\label{sec:parameters file}
 
 For simplicity, the description of the parameters space is given as a
-table. Each line of the table defines a configurable parameter:\\
-
-
-\code{<name> <label> <type> <range>  [ | <condition>] } \\
-
+table. Each line of the table defines a configurable parameter
+%
+\begin{center}
+\code{<name>\ <label>\ <type>\ <range>\ [ | <condition>\ ] }
+\end{center}
 where each field is defined as follows:
-
-
+%
 \begin{center}
 \renewcommand{\arraystretch}{1.2}
   \begin{tabularx}{0.98\linewidth}{@{}rX}
@@ -887,24 +888,23 @@ where each field is defined as follows:
 \end{center}
 
 Figure~\ref{fig:acotsp_parameters} gives as example the parameters file 
-of the ACOTSP scenario:
+of the \ACOTSP scenario.
 
-\begin{figure}[!ht]
-  \centering
-  \footnotesize
+\begin{figure}[!hbt]
+\footnotesize\centering%
 \begin{CodeInput}
-# name      switch           type values    [| conditions (using R syntax)]
-algorithm   "--"             c    (as,mmas,eas,ras,acs)
-localsearch "--localsearch " c    (0, 1, 2, 3)
-alpha       "--alpha "       r    (0.01, 5.00)
-beta        "--beta "        r    (0.01, 10.00)
-rho         "--rho  "        r    (0.00, 1.00)
-ants        "--ants "        i    (5, 100)
-nnls        "--nnls "        i    (5, 50)    | localsearch %in% c(1, 2, 3)
-q0          "--q0 "          r    (0.0, 1.0) | algorithm %in% c("acs")
-dlb         "--dlb "         c    (0, 1)     | localsearch %in% c(1,2,3)
-rasrank     "--rasranks "    i    (1, 100)   | algorithm %in% c("ras")
-elitistants "--elitistants " i    (1, 750)   | algorithm %in% c("eas")
+# name      switch            type values               [conditions (using R syntax)]
+algorithm   "--"              c    (as,mmas,eas,ras,acs)
+localsearch "--localsearch "  c    (0, 1, 2, 3)
+alpha       "--alpha "        r    (0.00, 5.00)
+beta        "--beta "         r    (0.00, 10.00)
+rho         "--rho  "         r    (0.01, 1.00)
+ants        "--ants "         i    (5, 100)
+nnls        "--nnls "         i    (5, 50)              | localsearch %in% c(1, 2, 3)
+q0          "--q0 "           r    (0.0, 1.0)           | algorithm == "acs"
+dlb         "--dlb "          c    (0, 1)               | localsearch %in% c(1,2,3)
+rasrank     "--rasranks "     i    (1, 100)             | algorithm == "ras"
+elitistants "--elitistants "  i    (1, 750)             | algorithm == "eas"
 \end{CodeInput}
 \caption{Parameter file (\code{parameters.txt}) for tuning \ACOTSP.}\label{fig:acotsp_parameters}
 \end{figure}
@@ -962,19 +962,20 @@ evaluation of the execution unless a post-execution evaluation (\eg multi object
 \subsubsection{Target runner executable program}
 
 When \parameter{targetRunner} is an auxiliary executable program, it
-is invoked for each candidate configuration, passing as arguments: \\~ \\
-\code{\footnotesize <configuration\_id> <instance\_id> <seed> <instance> [<extra\_instance\_params>] <command\_line>} \\
-
-\begin{enumerate}
-  
-  \item \code{configuration id} : The numeric identifier uniquely identifies a configuration.
+is invoked for each candidate configuration, passing as arguments:
+%
+\begin{center}
+\small\code{<config\_id>\ <instance\_id>\ <seed>\ <instance>\ [<extra\_instance\_params>]\ <command\_line>}
+\end{center}
+%
+\begin{description}
+\item \code{configuration id} : The numeric identifier uniquely identifies a configuration.
   \item \code{instance id}: The numeric identifier uniquely identifies a pair \code{<instance, seed>}.        
   \item \code{seed}: Seed to be used for the execution.                  
   \item \code{instance}: Instance to be used for the execution.
-  \item \code{extra instance parameters}: User-defined value associated to the instance.
+  \item \code{extra instance parameters}: User-defined parameters associated to the instance.
   \item \code{command line}: Candidate configuration command line.
-
-\end{enumerate}
+\end{description}
 
 The experiment list shown in Section~\ref{sec:runner fx}, would result in the following execution line:
 
