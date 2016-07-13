@@ -39,7 +39,7 @@ recoverFromFile <- function(filename)
       assign(name, iraceResults$state[[name]])
     assign(".Random.seed", iraceResults$state$.Random.seed, .GlobalEnv)
     for (name in ls(iraceResults$state$.irace))
-      assign(name, get(name, envir=iraceResults$state$.irace), envir=.irace)
+      assign(name, get(name, envir = iraceResults$state$.irace), envir = .irace)
     # These variables are not state, but they are used directly by irace.
     for (name in c("parameters", "allConfigurations"))
       assign(name, iraceResults[[name]])

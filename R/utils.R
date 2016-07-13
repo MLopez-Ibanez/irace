@@ -530,3 +530,5 @@ runcommand <- function(command, args, id, debugLevel)
   return(list(output = output, error = NULL))
 }
 
+# Safe sampling of vector: 
+resample <- function(x, ...) x[sample.int(length(x), ...)]

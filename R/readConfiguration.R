@@ -344,7 +344,7 @@ checkScenario <- function(scenario = defaultScenario())
     }
     scenario$mu <- scenario$firstTest
   }
-
+  
   # Real [0, 1] control parameters
   realParams <- .irace.params.def[.irace.params.def[, "type"] == "r", "name"]
   for (param in realParams) {
@@ -375,6 +375,13 @@ checkScenario <- function(scenario = defaultScenario())
   boolParams <- .irace.params.def[.irace.params.def[, "type"] == "b", "name"]
   for (p in boolParams) {
     scenario[[p]] <- as.boolean.param (scenario[[p]], p, .irace.params.def)
+  }
+
+  if (scenario$deterministic &&
+      scenario$firstTest > length(scenario$instances)) {
+    irace.error("When deterministic == TRUE, the number of instances (",
+                length(scenario$instances),
+                ") cannot be smaller than firstTest (", scenario$firstTest, ")")
   }
 
   if (scenario$mpi && scenario$parallel < 2) {

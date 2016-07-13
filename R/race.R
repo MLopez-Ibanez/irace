@@ -260,29 +260,31 @@ race <- function(maxExp = 0,
     stop("interactive must be a logical")
 
   # Create the instance list according to the algorithm selected
-  # if next.instance == 1 then is the first iteration.
+  # if next.instance == 1 then this is the first iteration.
   if (elitist && .irace$next.instance != 1) {
     last.new <- .irace$next.instance + elitistInstances - 1
     # cat("Instances row:", nrow(scenario$instancesList))
-      if (scenario$deterministic && last.new > nrow(scenario$instancesList)){
-        # The scenario is deterministic and does not have more instances
-        elitistInstances <- 0
-        race.instances   <- sample(1 : nrow(scenario$instancesList))
+    if (scenario$deterministic && last.new > nrow(scenario$instancesList)) {
+      # The scenario is deterministic and does not have more instances
+      elitistInstances <- 0
+      race.instances   <- resample(1 : nrow(scenario$instancesList))
                          
-      }else{
-        # present_instances + past_instances + future_instances
-        race.instances <- c(.irace$next.instance : last.new,
-                          sample(1 : (.irace$next.instance - 1)),
-                          (last.new + 1) : nrow(scenario$instancesList))
+    } else {
+      if (last.new >= .irace$next.instance) {
+        present <- .irace$next.instance : last.new
+      } else {
+        present <- NULL
       }
+      # present_instances + past_instances + future_instances
+      race.instances <- c(present,
+                          resample(1 : (.irace$next.instance - 1)),
+                          (last.new + 1) : nrow(scenario$instancesList))
+    }
   } else {
-    #Check if the instances are finished
-    if(scenario$deterministic && .irace$next.instance > nrow(scenario$instancesList))
-      #Since the instances are finished, we sample then  if needed
-      if(scenario$sampleInstances)
-         race.instances <- sample(seq(1,nrow(scenario$instancesList)))
-      else
-        race.instances <-seq(1,nrow(scenario$instancesList))
+    # Check if the instances are finished
+    if (scenario$deterministic &&
+        (.irace$next.instance > nrow(scenario$instancesList)))
+      race.instances <- 1:nrow(scenario$instancesList)
     else
       race.instances <- seq(.irace$next.instance, nrow(scenario$instancesList))
   }

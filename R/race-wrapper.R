@@ -181,15 +181,15 @@ execute.experiments <- function(experiments, scenario)
     if (mpi) {
       if (scenario$loadBalancing) {
         target.output <- Rmpi::mpi.applyLB(experiments, .irace$target.runner,
-                                         scenario = scenario)
+                                           scenario = scenario)
       } else {
         # Without load-balancing, we need to split the experiments into chunks
         # of size parallel.
-        target.output <- unlist(use.names=FALSE,
-                              tapply(experiments,
-                                     ceiling(1:length(experiments) / parallel),
-                                     Rmpi::mpi.apply, .irace$target.runner,
-                                     scenario = scenario))
+        target.output <- unlist(use.names = FALSE,
+                                tapply(experiments,
+                                       ceiling(1:length(experiments) / parallel),
+                                       Rmpi::mpi.apply, .irace$target.runner,
+                                       scenario = scenario))
       }
       # FIXME: if stop() is called from mpi.applyLB, it does not
       # terminate the execution of the parent process, so it will
@@ -200,7 +200,7 @@ execute.experiments <- function(experiments, scenario)
         # case, each element of the list does not keep the output of
         # each configuration and repetitions may occur.
         cat(unique(unlist(target.output[sapply(
-            target.output, inherits, "try-error")])), file = stderr(), sep="")
+            target.output, inherits, "try-error")])), file = stderr(), sep = "")
         irace.error("A slave process terminated with a fatal error")
       }
     } else {
