@@ -75,40 +75,34 @@ updateModel <- function (parameters, eliteConfigurations, oldModel,
 
       if (type == "c") {
         actualValue <- eliteConfigurations[idxConfiguration, currentParameter]
-        possibleValues <- parameters$domain[[currentParameter]]
       
         if (is.na(actualValue)) {
           # cat ("NA found, don't change the prob vector")
         } else {
+          possibleValues <- parameters$domain[[currentParameter]]
           # Decrease first all values in the vector:
           probVector <- probVector * (1 - ((indexIteration - 1) / nbIterations))
           # cat("new probVector after decrease: ", probVector)
           
           # Find the value that has been "chosen" to increase its probability.
-          # FIXME: This could simply be something like
-          # indexValue <- which (possibleValues == actualValue)
-          # probVector[indexValue] <- (probVector[indexValue]
-          #                            + ((indexIteration - 1) / nbIterations))
-          for (indexValue in seq_along(possibleValues)) {
-            if (possibleValues[indexValue] == actualValue) {
+          indexValue <- which (possibleValues == actualValue)
+          probVector[indexValue] <- (probVector[indexValue]
+                                      + ((indexIteration - 1) / nbIterations))
 #                 cat("The value found for the configuration n.",
 #                 idxConfiguration, "(ID=",
 #                 idCurrentConfiguration, ") is the ", indexValue,
 #                 "th.\n")
-              probVector[indexValue] <- (probVector[indexValue]
-                                         + ((indexIteration - 1) / nbIterations))
-            }
-          }
 
+          # Prevent probabilities from growing too much.
           if (scenario$elitist) {
-            probVector[indexValue] <- probVector[indexValue] / sum(probVector[indexValue])
-            probMax <- 0.2^(1 / parameters$nbVariable)
-            probVector[indexValue] <- pmin(probVector[indexValue], probMax)
+            probVector <- probVector / sum(probVector)
+            probMax    <- 0.2^(1 / parameters$nbVariable)
+            probVector <- pmin(probVector, probMax)
           }
-          probVector[indexValue] <- probVector[indexValue] / sum(probVector[indexValue])
-          
-#             print("newProbVector after increase: ")
-#             print(newVector)  
+          # Normalize probabilities.
+          probVector <- probVector / sum(probVector)
+          #print("newProbVector after increase: ")
+          #print(newVector)  
         }
       } else {
         irace.assert(type == "i" || type == "r" || type == "o")
