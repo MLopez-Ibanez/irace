@@ -24,8 +24,15 @@ irace.print.memUsed <- function(objects)
   }
   x <- sapply(objects, function(name)
               object.size(get(name, envir = envir)) / 1024)
-  # Do not print anything that is smaller than 10 Kb
-  x <- x[x > 10]
+
+  objects <- ls(envir = .irace)
+  y <- sapply(objects, function(name)
+              object.size(get(name, envir = .irace)) / 1024)
+  names(y) <- paste0(".irace$", names(y))
+  x <- c(x, y)
+
+  # Do not print anything that is smaller than 32 Kb
+  x <- x[x > 32]
   cat(sep="", sprintf("%30s : %17.1f Kb\n", names(x), x))
   cat(sep="", sprintf("%30s : %17.1f Mb\n", "Total", sum(x) / 1024))
 }

@@ -41,7 +41,6 @@ testConfigurations <- function(configurations, scenario, parameters)
 
   startParallel(scenario)
   on.exit(stopParallel())
-  #set.seed(scenario$seed)
 
   if (scenario$debugLevel >= 3) {
     irace.note ("Memory used in testConfigurations():\n")

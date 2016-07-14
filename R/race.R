@@ -37,7 +37,7 @@
 ## instance.idx: index of the instance that can be found in scenario$instances
 ## which.alive: index of the configurations that are still alive
 # LESLIE: should we replace data for the direct things? using enviroments would be better
-race.wrapper <- function(configurations, instance.idx , which.alive, which.exe, parameters, scenario)
+race.wrapper <- function(configurations, instance.idx, which.alive, which.exe, parameters, scenario)
 {
   debugLevel <- scenario$debugLevel
   
