@@ -60,7 +60,7 @@ error () {
 
 usage() {
     cat <<EOF
-Usage: $0 N[-M] [EXECDIR] --parallel <NUM> [IRACE PARAMS]
+Usage: $0 N[-M] [EXECDIR] --parallel <NUM> [--machine MACHINE] [IRACE PARAMS]
 
 Parameters:
  N                 an integer giving the number of repetitions of irace
@@ -68,6 +68,7 @@ Parameters:
  EXECDIR           job M will use EXECDIR-M directory (default: execdir-)
                    as the execDir (--exec-dir) parameter of irace.
  --parallel <NUM>  number of parallel jobs
+ --machine MACHINE qsub queue type, e.g., opteron6272
  IRACE PARAMS      additional parameters for irace.
 EOF
     exit 1
@@ -98,6 +99,7 @@ while [ $# -gt 0 ]; do
     case "$1" in
         --parallel) shift; NB_SLAVES="$1"; shift;;
         --seed) shift; SEED="$1"; shift;;
+        --machine) shift; MACHINE="$1"; shift;;
         *) PARAMS="$PARAMS $1"; shift;;# terminate case
 
     esac
@@ -109,9 +111,6 @@ if [ $NB_SLAVES -lt 2 ]; then
 fi
 
 let NB_PARALLEL_PROCESS=NB_SLAVES+1
-
-# Find our own location.
-BINDIR=$(dirname "$(readlink -f "$(type -P $0 || echo $0)")")
 
 for i in $(seq $START $REPETITIONS); do
     EXECDIR=$(printf '%s-%002d' ${EXECDIR_PREFIX} $i)
