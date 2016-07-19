@@ -42,11 +42,13 @@ import threading
 
 class Runner(object):
 
-    def __init__(self, executable, fixed_params, instance, parse_output,
-                 candidate, parameters, max_tests):
+    def __init__(self, executable, fixed_params, instanceid, instance, seed,
+                 parse_output, candidate, parameters, max_tests):
         self.executable = executable
         self.fixed_params = fixed_params
+        self.instanceid = instanceid
         self.instance = instance
+        self.seed = seed
         self.parse_output = parse_output
         self.candidate = candidate
         self.parameters = parameters
@@ -58,9 +60,13 @@ class Runner(object):
         self.maximize = False
 
         # logging (by default only errors are logged)
-        filename = socket.gethostname() + '_' + str(os.getpid())
+        filename = 'c' + self.candidate + '-' + self.seed + '-' + str(instanceid) + '.' + socket.gethostname() + '_' + str(os.getpid())
         self.logger = logging.getLogger('target-runner')
-        hdlr = logging.FileHandler(filename, delay=True)
+        try :
+            hdlr = logging.FileHandler(filename, delay=True)
+        except OSError as e:
+            print "Current working dir : %s" % os.getenv('PWD')
+            raise
         formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
         hdlr.setFormatter(formatter)
         self.logger.addHandler(hdlr)
@@ -216,7 +222,7 @@ class Runner(object):
                                                 stderr=subprocess.PIPE,
                                                 shell=True,
                                                 env=os.environ)
-                (self.out, self.err) = self.process.communicate()
+                self.out, self.err = self.process.communicate()
                 self.logger.debug(self.out)
                 self.logger.debug(self.err)
                 self.logger.debug('job finished')
@@ -326,10 +332,10 @@ class Runner(object):
             # in case somehting goes wrong we write stdout and stderr files
             self.logger.error('something went wrong after ' + \
                               str(self.max_tests) + ' runs')
-            self.logger.error('saving candidate stdout to ' + 'c' + \
-                               self.candidate + '.std(out|err)')
-            self.save('c' + self.candidate + '.stdout', out)
-            self.save('c' + self.candidate + '.stderr', err)
+            self.logger.error('saving candidate stdout to ' + \
+                                  'c' + self.candidate + '-' + self.seed + '-' + str(instanceid) + '.stdout')
+            self.save('c' + self.candidate + '-' + self.seed + '-' + str(instanceid) + '.stdout', out)
+            self.save('c' + self.candidate + '-' + self.seed + '-' + str(instanceid) + '.stderr', err)
             self.logger.error('returning cost: ' + str(cost))
             self.logger.error('exit status is ' + str(status))
             sys.stdout.write('something went wrong for candidate ' + \
@@ -353,20 +359,30 @@ def parse_output(out):
     # parsing last thing printed
     return out.strip().split()[-1]
 
+def is_exe(fpath):
+    return os.path.isfile(fpath) and os.access(fpath, os.X_OK) \
+        and os.path.getsize(fpath) > 0
 
 if __name__=='__main__':
+
+    bindir = os.path.dirname(os.path.realpath(__file__))
+    
     # reading parameters and setting problem specific stuff
-    executable = '../../../../generate_parameters.py'
-    fixed_params = 'grammars/PFSPWCT.xml None 20 0 ' + sys.argv[3]
-    instance = sys.argv[1]
-    candidate = sys.argv[2]
-    parameters = sys.argv[4:]
+    rootdir = bindir + "/../../../"
+    timeout = 180
+    candidate = sys.argv[1]
+    instanceid = sys.argv[2]
+    seed = sys.argv[3]
+    instance = sys.argv[4]
+    parameters = sys.argv[5:]
+
+    executable = './' + candidate
+    fixed_params = 'grammars/PFSPWCT.xml None 20 0 ' + seed
 
     # maximum number of trials before giving up with the configuration
     max_tests = 100
-
-    hr = Runner(executable, fixed_params, instance, parse_output,
-                candidate, parameters, max_tests)
+    hr = Runner(executable, fixed_params, instanceid, instance, seed,
+                parse_output, candidate, parameters, max_tests)
 
     # maximizing instead of minimizing
     # hr.set_maximize()
@@ -391,14 +407,13 @@ if __name__=='__main__':
     # execute through temporary files with timeout
     # after 2 minutes of *CPU time* if we do not get the results we kill
     # the subprocess and try another time...
-    hr.exec_mode(hr.execute_threaded_timeout, 180)
+    hr.exec_mode(hr.execute_threaded_timeout, timeout)
 
     # environment variables that should be set for testing each configuration
-    hr.source_env('../../../../configuration')
+    hr.source_env(rootdir + 'configuration')
 
     # run the target-runner
     hr.run()
 
 
 # -------------------------------------------------------------------------- #
-
