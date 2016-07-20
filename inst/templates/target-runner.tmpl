@@ -19,15 +19,15 @@
 EXE=~/bin/program
 FIXED_PARAMS=""
 
-CANDIDATE=$1
-INSTANCEID=$2
+CONFIG_ID=$1
+INSTANCE_ID=$2
 SEED=$3
 INSTANCE=$4
 shift 4 || exit 1
-CAND_PARAMS=$*
+CONFIG_PARAMS=$*
 
-STDOUT=c${CANDIDATE}-${INSTANCEID}.stdout
-STDERR=c${CANDIDATE}-${INSTANCEID}.stderr
+STDOUT=c${CONFIG_ID}-${INSTANCE_ID}.stdout
+STDERR=c${CONFIG_ID}-${INSTANCE_ID}.stderr
 
 if [ ! -x "${EXE}" ]; then
     error "${EXE}: not found or not executable (pwd: $(pwd))"
@@ -35,13 +35,13 @@ fi
 
 # If the program just prints a number, we can use 'exec' to avoid
 # creating another process, but there can be no other commands after exec.
-#exec $EXE ${FIXED_PARAMS} -i $INSTANCE ${CAND_PARAMS}
+#exec $EXE ${FIXED_PARAMS} -i $INSTANCE ${CONFIG_PARAMS}
 # exit 1
 # 
 # Otherwise, save the output to a file, and parse the result from it.
 # (If you wish to ignore segmentation faults you can use '{}' around
 # the command.)
-$EXE ${FIXED_PARAMS} -i $INSTANCE --seed ${SEED} ${CAND_PARAMS} 1> ${STDOUT} 2> ${STDERR}
+$EXE ${FIXED_PARAMS} -i $INSTANCE --seed ${SEED} ${CONFIG_PARAMS} 1> ${STDOUT} 2> ${STDERR}
 
 error() {
     echo "`TZ=UTC date`: error: $@"
