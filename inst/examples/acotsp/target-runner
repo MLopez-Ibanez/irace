@@ -20,16 +20,16 @@ EXE=~/bin/acotsp
 # The time to be used is always 5 seconds, and we want only one run:
 FIXED_PARAMS=" --time 20 --tries 1 --quiet "
 
-CANDIDATE="$1"
-INSTANCEID="$2"
+CONFIG_ID="$1"
+INSTANCE_ID="$2"
 SEED="$3"
 INSTANCE="$4"
 # All other parameters are the candidate parameters to be passed to program
 shift 4 || error "Not enough parameters to $0"
-CAND_PARAMS=$*
+CONFIG_PARAMS=$*
 
-STDOUT=c${CANDIDATE}-${INSTANCEID}.stdout
-STDERR=c${CANDIDATE}-${INSTANCEID}.stderr
+STDOUT=c${CONFIG_ID}-${INSTANCE_ID}.stdout
+STDERR=c${CONFIG_ID}-${INSTANCE_ID}.stderr
 
 # In case of error, we print the current time:
 error() {
@@ -42,10 +42,11 @@ if [ ! -x "${EXE}" ]; then
 fi
 
 # Now we can call ACOTSP by building a command line with all parameters for it
-$EXE ${FIXED_PARAMS} -i $INSTANCE --seed $SEED ${CAND_PARAMS} 1> $STDOUT 2> $STDERR
+$EXE ${FIXED_PARAMS} -i $INSTANCE --seed $SEED ${CONFIG_PARAMS} 1> $STDOUT 2> $STDERR
 
-# The output of the candidate $CANDIDATE should be written in the file 
-# c${CANDIDATE}.stdout (see target runner for ACOTSP). Does this file exist?
+# The output of the candidate $CONFIG_ID should be written in the file 
+# c${CONFIG_ID}.stdout (see target runner for ACOTSP).
+# Does this file exist?
 if [ ! -s "${STDOUT}" ]; then
     # In this case, the file does not exist. Let's exit with a value 
     # different from 0. In this case irace will stop with an error.
