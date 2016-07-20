@@ -267,7 +267,7 @@ race <- function(maxExp = 0,
     if (scenario$deterministic && last.new > nrow(scenario$instancesList)) {
       # The scenario is deterministic and does not have more instances
       elitistInstances <- 0
-      race.instances   <- resample(1 : nrow(scenario$instancesList))
+      race.instances   <- sample.int(nrow(scenario$instancesList))
                          
     } else {
       if (last.new >= .irace$next.instance) {
@@ -277,7 +277,7 @@ race <- function(maxExp = 0,
       }
       # present_instances + past_instances + future_instances
       race.instances <- c(present,
-                          resample(1 : (.irace$next.instance - 1)),
+                          sample.int(.irace$next.instance - 1),
                           (last.new + 1) : nrow(scenario$instancesList))
     }
   } else {
