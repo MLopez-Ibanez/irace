@@ -989,8 +989,8 @@ is invoked for each candidate configuration, passing as arguments:
 \begin{center}
 \renewcommand{\arraystretch}{1.2}
   \begin{tabularx}{0.98\linewidth}{@{}rX}
-    \code{id.configuration}  & a numeric identifier that uniquely identifies a configuration;\\
-    \code{id.instance} & a numeric identifier that uniquely identifies a pair \code{<instance, seed>};\\
+    \code{id.configuration}  & an alphanumeric string that uniquely identifies a configuration;\\
+    \code{id.instance} & an alphanumeric string that uniquely identifies a pair \code{<instance, seed>};\\
     \code{seed} & seed to be used for this evaluation;\\
     \code{instance} & string giving the instance to be used for this evaluation;\\
     \code{extra.params} & user-defined parameters associated to the instance;\\
@@ -1035,8 +1035,8 @@ list. The structure of the \code{experiment} list is as follows:
 \begin{center}
 \renewcommand{\arraystretch}{1.2}
   \begin{tabularx}{0.98\linewidth}{@{}rX}
- \code{id.configuration}  & a numeric identifier that uniquely identifies a configuration;\\
-   \code{id.instance} & a numeric identifier that uniquely identifies a pair \code{<instance, seed>};\\
+ \code{id.configuration}  & an alphanumeric string that uniquely identifies a configuration;\\
+   \code{id.instance} & an alphanumeric string that uniquely identifies a pair \code{<instance, seed>};\\
    \code{seed} & seed to be used for this evaluation;\\
    \code{instance} & string giving the instance to be used for this evaluation;\\
    \code{extra.params} & user-defined parameters associated to the instance;\\
@@ -2387,13 +2387,24 @@ Optional data passed to \parameter{targetRunner}. This is ignored by the default
 %\section{Known problems}
 
 \section{Resources and contact information} \label{sec:contact}
-More information of the package can be found on the \irace webpage:\\
+
+More information of the package can be found on the \irace webpage:
 \begin{center} \url{http://iridia.ulb.ac.be/irace/}. \end{center}
 
-For questions and suggestions please contact the development team through the mailing list:
-\begin{center} \href{mailto:irace@iridia.ulb.ac.be}{irace@iridia.ulb.ac.be} \end{center}
-or the \irace package Google group:\\
-\begin{center} \url{https://groups.google.com/d/forum/irace-package} \end{center}
+For questions and suggestions please contact the development team through 
+the \irace package Google group:
+\begin{center}
+  \url{https://groups.google.com/d/forum/irace-package}
+\end{center} 
+or by sending an email to:
+\begin{center}
+  \href{mailto:irace-package@googlegroups.com}{irace-package@googlegroups.com}
+\end{center}
+
+%% MANUEL: I think we should use just one channel. If the Google group is the winner, that should be it.
+%the mailing list:
+%\begin{center} \href{mailto:irace@iridia.ulb.ac.be}{irace@iridia.ulb.ac.be} \end{center}
+
 
 \section{Acknowledgements}
 
