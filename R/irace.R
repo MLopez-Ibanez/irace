@@ -1,3 +1,5 @@
+# FIXME: It may be faster to create a single expression that concatenates all
+# the elements of forbidden using '|'
 checkForbidden <- function(configurations, forbidden)
 {
   # We have to use a variable name that will never appear in
