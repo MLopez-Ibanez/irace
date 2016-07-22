@@ -127,6 +127,7 @@ default:~\texttt{#4} \\
 \newcommand{\LESLIE}[1]{\footnote{\noindent\textbf{[ LESLIE: #1 ]}}}
 \newcommand{\THOMAS}[1]{\footnote{\noindent\textbf{[ THOMAS: #1 ]}}}
 }
+\newcommand{\hide}[1]{}
 
 \usepackage{tcolorbox}
 \newcommand{\infoicon}{%
@@ -1002,8 +1003,8 @@ is invoked for each candidate configuration, passing as arguments:
 
 The experiment list shown in \autoref{sec:runner fx}, would result in the following execution line:
 
-<<target_runner_cmd, engine='bash', eval=FALSE>>=
-targetRunner 1 113 734718556 /home/user/instances/tsp/2000-533.tsp \
+<<target_runner_ex1, engine='bash', eval=FALSE>>=
+target-runner 1 113 734718556 /home/user/instances/tsp/2000-533.tsp \
  --eas --localsearch 0 --alpha 2.92 --beta 3.06 --rho 0.6 --ants 80
 @
 
@@ -1062,24 +1063,25 @@ the given instance.
 
 The evaluation of the execution of a candidate configuration on an
 instance must be returned when finalizing the \parameter{targetRunner}
-execution (See \autoref{sec:runner}). Nevertheless there are cases
+execution (see \autoref{sec:runner}). Nevertheless, there are cases
 when the evaluation of the candidate configurations must be delayed until
 all candidate configurations in a race have been executed on a instance.
 
-\irace provides the option to postpone the evaluations of the candidate
-configurations by the use of a user-defined evaluation by setting the
-\parameter{targetEvaluator} parameter as either an \aR function or an
-auxiliary program. The \parameter{targetEvaluator} evaluations are executed
-when all alive candidate configurations have been executed on an instance.
+The \parameter{targetEvaluator} parameter is an auxiliary program (or an \aR
+function) that allows postponing the evaluations of the candidate
+configurations. For each instance seen, the evaluation
+of \parameter{targetEvaluator} for any configuration is only invoked after all
+the calls of \parameter{targetRunner} for all alive candidate configurations on
+the same instance have already finished.
 
 \begin{xwarningbox}
-When targetEvaluator is in use targetRunner must not return the evaluation
+When using \parameter{targetEvaluator}, \parameter{targetRunner} must not return the evaluation
 of the configuration.
 \end{xwarningbox}
 
 As an example, \parameter{targetEvaluator} may be used to dynamically find
 normalization bounds for the output returned by an algorithm for each
-individual instances. In this case, \parameter{targetRunner} will save the
+individual instance. In this case, \parameter{targetRunner} will save the
 output of the algorithm, then the first call to \parameter{targetEvaluator}
 will examine the output produced by all calls to \parameter{targetRunner} for
 the same instance, update the normalization bounds and return the normalized
@@ -1087,24 +1089,23 @@ output. Subsequent calls to \parameter{targetEvaluator} for the same instance
 will simply return the normalized output.
 
 A similar need arises when using quality measures for multi-objective
-optimization algorithms, such as the hypervolume~\cite{}, which typically
+optimization algorithms, such as the hypervolume, which typically
 require specifying reference points or sets. By
 using \parameter{targetEvaluator}, it is possible to dynamically compute the
 reference points or sets while \irace is running. Examples are provided at
-\code{examples/hypervolume}. See also \autoref{sec:multi objective} for
+\path{examples/hypervolume}. See also \autoref{sec:multi objective} for
 more information on how to tune multi-objective algorithms.
 
 
 \subsubsection{Target evaluator R function}
 
 When \parameter{targetEvaluator} is an \aR function, then it is invoked
-for each candidate configuration as:
+for each candidate configuration as:%
 %
 <<targetEvaluator, prompt=TRUE, eval=FALSE>>=
-targetEvaluator(experiment, num.configurations, all.conf.id,
-scenario, target.runner.call)
+targetEvaluator(experiment, num.configurations, all.conf.id, scenario,
+                target.runner.call)
 @
-%
 %
 where \code{experiment} is a list that contains the information of one
 experiment (See \autoref{sec:runner fx}), \code{num.configurations}
@@ -1120,17 +1121,23 @@ the given instance.
 \subsubsection{Target evaluator executable program}
 
 When \parameter{targetEvaluator} is an auxiliary executable program, then it
-is invoked for each candidate configuration once all the alive candidates
-have been executed in an instance. The executable receives the following arguments:
-
-\begin{enumerate}
- \item \code{configuration id}: The numeric identifier uniquely identifies a configuration.
- \item \code{instance id}: The numeric identifier uniquely identifies a pair \code{<instance, seed>}.
- \item \code{seed}: Seed to be used for the execution.
- \item \code{instance}: Instance to be used for the execution.
- \item \code{total candidates}: Number of alive candidates.
- \item \code{alive candidates ids}: Alive candidates ids.
-\end{enumerate}
+is invoked for each candidate with the following arguments:
+%
+\begin{center}
+\small\code{<id.configuration>\ <id.instance>\ <seed>\ <instance>\ <num.configurations>\ <all.conf.id>}
+\end{center}
+%
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+  \begin{tabularx}{0.98\linewidth}{@{}rX}
+ \code{id.configuration}  & an alphanumeric string that uniquely identifies a configuration;\\
+   \code{id.instance} & an alphanumeric string that uniquely identifies a pair \code{<instance, seed>};\\
+   \code{seed} & seed to be used for this evaluation;\\
+   \code{instance} & string giving the instance to be used for this evaluation;\\
+   \code{num.configurations} & number of alive candidate configurations;\\
+   \code{all.conf.id}    & list of IDs of the alive configurations separated by whitespace.\\
+  \end{tabularx}
+\end{center}
 
 The \parameter{targetEvaluator} executable must print a numerical value
 corresponding to the cost measure of the candidate configuration on
@@ -1139,152 +1146,174 @@ the given instance.
 
 \subsection{Training instances}\label{sec:training}
 
+The options \parameter{trainInstancesDir} and \parameter{trainInstancesFile}
+specify where to find the training instances.
 
-The training instances can be specified using the options
-\parameter{trainInstancesDir} and \parameter{trainInstancesFile}. The
-default training instance directory is \path{./Instances}, you
-can modify this directory using the \parameter{trainInstancesDir} option
-(\eg~ \code{--train-instances-dir ~/my-instances/}). A file containing
-a list of instances can be specified using the \parameter{trainInstancesFile}
-option (\eg~ \code{--train-instances-file ./instances-list.txt}).
+By default, the value of \parameter{trainInstancesFile} is empty. This means that \irace will consider all files within the directory given by \parameter{trainInstancesDir} (by default \path{./Instances}) as training instances. 
 
-The format of the file is one instance per line, the first value of each
-line corresponds to the instance filename. If \parameter{trainInstancesDir} is
-provided the instance filename is considered relative to the directory specified.
-The following values in each line correspond to extra parameters to be used with
-the specific instance. The following example shows a training instance file for
-the \ACOTSP scenario:
+Otherwise, the value of \parameter{trainInstancesFile} may specify a text
+file. The format of this file is one instance per line, and the first
+alphanumeric string of each line corresponds to the instance filename. The
+remainder text within each line are considered as extra parameters to be
+supplied to \parameter{targetRunner} for this specific instance.
+%
+The following example shows a training instance file for the \ACOTSP scenario:
 
 \begin{figure}[!ht]
-  \centering
+\centering%
+    \begin{minipage}{0.4\textwidth}
 \begin{CodeInput}
-#Example training instances file
+# Example training instances file
 100/100-1_100-2.tsp --time 1
 100/100-1_100-3.tsp --time 2
 100/100-1_100-4.tsp --time 3
 \end{CodeInput}
+\end{minipage}
 \caption{Training instances file for tuning \ACOTSP.}\label{fig:acotsp_training}
 \end{figure}
 
-If \code{./my-instances/} is provided as \parameter{trainInstancesDir},
-\irace will assume instances are located in this directory, for example the first
-instance would be passed to \parameter{targetRunner} as \code{./my-instances/100/100-1_100-2.tsp}.
-Disable the use of a directory by setting it as empty. Extra parameters are always passed
-to \parameter{targetRunner} together with the candidate configuration parameters values.
+The value of \parameter{trainInstancesDir} is always prefixed to the instance
+name, that is, the instances names are treated as relative to this directory.
+%
+For example, given the above file as \parameter{trainInstancesFile} and the default value of  \parameter{trainInstancesDir}, then a possible invocation of \parameter{targetRunner} would be:
+%
+<<target_runner_cmd, engine='bash', eval=FALSE>>=
+target-runner 1 113 734718556 ./Instances/100/100-1_100-2.tsp --time 1 --alpha 2.92 ...
+@
+%
 
-When having instances that are not files, for example descriptive types (\eg~ functions),
-use the name and extra instance parameters to define the instance. For example:
+Training instances do not need to be files, \irace just passes their names
+to \parameter{targetRunner}, thus the names can denote benchmark functions or
+descriptive labels that the target algorithm understands. The extra instance
+parameters could actually be the definition of the instance. In that case, \parameter{trainInstancesDir} is usually set to the empty string. For example,
 
-\begin{figure}[!ht]
-  \centering
+\begin{center}
+  \begin{minipage}{0.4\linewidth}
 \begin{CodeInput}
-#Example training instances file
-rosenbrock --nvar 20
-rosenbrock --nvar 30
-rastrigin --nvar 20
-rastrigin --nvar 30
+# Example training instances file
+rosenbrock_20 --function=12 --nvar 20
+rosenbrock_30 --function=12 --nvar 30
+rastrigin_20 --function=15 --nvar 20
+rastrigin_30 --function=15 --nvar 30
 \end{CodeInput}
-\caption{Training instances file example with no instance files.}\label{fig:nofile_training}
-\end{figure}
+\end{minipage}
+\end{center}
+%\caption{Example of training instances file where instances do not correspond to files.}\label{fig:nofile_training}
+%\end{figure}
 
-Optionally when executing \irace from the \aR console you can use directly the
-\code{scenario$instances} variable. To create an instance list for the previous example use:
+Optionally, when executing \irace from the \aR console, the list of instances and their specific parameters might be provided explicitly by means of the variables \code{scenario$instances} and \code{scenario$instances.extra-params}, respectively. Thus, the previous example would be equivalent to:
 
 <<instance1, prompt=TRUE, eval=FALSE>>=
-scenario$instances <-
- c("rosenbrock", "rosenbrock", "rastrigin", "rastrigin")
+scenario$instances <- c("rosenbrock_20", "rosenbrock_40",
+                        "rastrigin_20", "rastrigin_40")
 scenario$instances.extra.params <-
- c("--nvar 20", "--nvar 30", "--nvar 20", "--nvar 30")
+  c("--function=12 --nvar 20", "--function=12 --nvar 30",
+    "--function=15 --nvar 20", "--function=15 --nvar 30")
 @
 
 
-The \parameter{deterministic} option activates the deterministic algorithm mode. Each instance will be
-used at most once per race. Use this mode for algorithms that do not have an stochastic behavior
-and therefore executing instances several times with different seeds does not make sense.
+By default, \irace assumes that the target algorithm is stochastic (the value
+of the option \parameter{deterministic} is $0$), thus, the same configuration
+can be executed more than once on the same instance and obtain different
+results.  In this case, \irace generates pairs \code{<instance,seed>} by
+assigning a random seed to each instance. Once all pairs have been seen within
+a run of \irace, new pairs are generated with different seeds.
+
+If \parameter{deterministic} is set to $1$, then each instance will be used at
+most once per race. This should only be used for target algorithms that do not
+have a stochastic behavior and, therefore, executing the target algorithm on
+the same instance several times with different seeds does not make sense.
 \begin{xwarningbox}
 If \parameter{deterministic} is active and the number of training instances provided to \irace is less than
 \parameter{firstTest} (default: 5), no statistical test will be performed on the race.
 \end{xwarningbox}
 
-When \parameter{deterministic} is disabled \irace assigns each instance a seed once all the
-\code{<instance,seed>} pairs are used new pairs are generated with different seeds.
-
-The option \parameter{sampleInstances} enables the sampling of the instances, disable this
-option (\code{--sample-instances 0}) if you know the order provided in the instance file is adequate
-for the tuning.
+Finally, \irace randomly re-orders the sequence of instances provided. This random sampling may be disabled by using the
+option \parameter{sampleInstances} (\code{--sample-instances 0}) if keeping the order provided in the instance
+file is important.
 
 \begin{xwarningbox}
-We advise to always sample instances in order to prevent biasing the tuning due to
-the instance order.
+  We advise to always sample instances to prevent biasing the tuning
+  due to the instance order.
 \end{xwarningbox}
 
 
 
-\subsection{Initial candidates} \label{sec:initial}
+\subsection{Initial configurations} \label{sec:initial}
 
-The scenario option \parameter{configurationsFile} allows to specify a set
-of configurations to start the execution of \irace. If the number
-of initial configurations supplied is less than the number of configurations required by \irace
-in the first iteration, extra candidate configurations will be sampled uniformly.
+The scenario option \parameter{configurationsFile} allows specifying a text
+file that contains an initial set of configurations to start the execution of
+\irace. If the number of initial configurations supplied in the file is less
+than the number of configurations required by \irace in the first iteration,
+additional configurations will be sampled uniformly.
 
-The format of the configurations file is one configuration per line,
-and one parameter value per column. The first line must give the parameter name
+The format of the configurations file is one configuration per line, and one
+parameter value per column. The first line must give the parameter name
 corresponding to each column (names must match those given in the parameters
-file). Each configuration must satisfy the parameter conditions (\code{NA}
+file).  Each configuration must satisfy the parameter conditions (\code{NA}
 should be used for those parameters that are not enabled for a given
-configuration) and, if given, the constraints described by forbidden configurations
-(\autoref{sec:forbidden}).
+configuration) and not be forbidden by the constraints that define forbidden
+configurations (\autoref{sec:forbidden}), if any.
 
-Figure~\ref{fig:acotsp_default} gives an example file that corresponds to the \ACOTSP scenario:
+Figure~\ref{fig:acotsp_default} gives an example file that corresponds to the
+\ACOTSP scenario:
 
 \begin{figure}[!ht]
   \centering
+  \begin{minipage}{0.7\linewidth}
 \footnotesize
 \begin{CodeInput}
 ## Initial candidate configuration for irace
 algorithm localsearch alpha beta rho  ants nnls dlb q0 rasrank elitistants
 as        0           1.0   1.0  0.95 10   NA   NA  0  NA      NA
 \end{CodeInput}
+\end{minipage}
 \caption{Initial configuration file (\code{default.txt}) for tuning \ACOTSP.}\label{fig:acotsp_default}
 \end{figure}
 
 We advise to use this feature when a default configuration of the target algorithm exists or when
-different sets of good target parameters values are known. This will allow \irace to start the search
+different sets of good parameters values are known. This will allow \irace to start the search
 from those parameter values and attempt to improve their performance.
 
 
 \subsection{Forbidden configurations}\label{sec:forbidden}
-The scenario option \parameter{forbiddenFile} allows to specify a file containing
-parameter value combinations that should not be generated during the tuning.
-This option can be useful when some known combination of values could
-cause the target algorithm to crash or when it is know that some parameter
-combinations do no produce satisfactory results.
 
-The format of the forbidden configurations file is one constraint per line.
-Each constraint is a logical expression (in R syntax), for a quick list
-of \aR logical operators see:
+The scenario option \parameter{forbiddenFile} specifies a text file containing
+logical expressions of parameter values that valid configurations should not
+satisfy, that is, no configuration that satisfies any of these logical
+expressions will be evaluated by \irace. This is useful when some combination
+of parameter values could cause the target algorithm to crash, consume
+excessive CPU or memory, or when it is known that they do no produce
+satisfactory results.
+
+The format of the forbidden configurations file is one constraint per line,
+where each constraint is a logical expression (in \aR syntax) containing
+parameter names as defined by the \parameter{parameterFile}
+(\autoref{sec:target parameters}), values and logical operators. For a quick
+list of \aR logical operators see:
 \begin{center}
  \url{https://stat.ethz.ch/R-manual/R-devel/library/base/html/Syntax.html}
 \end{center}
-The parameters are called by the parameter name set in the \parameter{parameterFile} described
-in \autoref{sec:target parameters}.
 
-If a parameter configuration is generated that makes the logical expression evaluate
-to \code{TRUE}, then the configuration is considered forbidden and is discarded. Figure~\ref{fig:acotsp_forbidden}
-shows an example file that corresponds to the \ACOTSP scenario:
+If a parameter configuration is generated that makes any of the logical
+expressions evaluate to \code{TRUE}, then the configuration is considered
+forbidden and it is discarded. Figure~\ref{fig:acotsp_forbidden} shows an
+example file that corresponds to the \ACOTSP scenario:
 
 \begin{figure}[!ht]
   \centering
+  \begin{minipage}{0.5\linewidth}
 \begin{CodeInput}
 ## Examples of valid logical operators are:
 ## ==  !=  >=  <=  >  <  &  |  !  %in%
 (alpha == 0.0) & (beta == 0.0)
 \end{CodeInput}
+\end{minipage}
 \caption{Forbidden configurations file (\code{forbidden.txt}) for tuning \ACOTSP.}\label{fig:acotsp_forbidden}
 \end{figure}
 
 \begin{xwarningbox}
-Note that if initial configuration are provided (\autoref{sec:initial}), they must also comply with the
+If initial configuration are provided (\autoref{sec:initial}), they must also comply with the
 constraints defined in \parameter{forbiddenFile}.
 \end{xwarningbox}
 
@@ -1310,23 +1339,25 @@ parallel. There are four ways to parallelize a single run of \irace:
 
    The user is responsible for setting up the required MPI environment.  MPI is
    commonly available in computing clusters and requires launching \irace in
-   some particular way. An example script for using MPI mode in an SGE cluster
+   some particular way. An example script for using MPI mode in a SGE cluster
    is given at \code{$IRACE_HOME/examples/mpi/}.
 
  \item \textbf{SGE cluster}: This mode uses the commands \code{qsub} and
    \code{qstat} often found in Sun Grid Engine (SGE) and compatible
    clusters. The command \code{qsub} must return a message that contains the
-   string: \code{Your job JOBID}, where \code{JOBID} is a unique identifier for
+   string: \code{"Your job JOBID"}, where \code{JOBID} is a unique identifier for
    the job submitted.  The command \code{qstat -j JOBID} must return nonzero if
    JOBID has finished its execution, and zero otherwise.
 
    Enabling the option \parameter{sgeCluster} (\code{--sge-cluster 1}) will
-   launch as many calls of \parameter{targetRunner} as possible and use \code{qstat}
-   to wait for cluster jobs. The user \underline{must} call \code{qsub} from
+   launch as many calls of \parameter{targetRunner} as possible and use
+   \code{qstat} to wait for cluster jobs.  In
+   this mode, \irace must run in the submission node of the cluster, and hence,
+   \code{qsub} should not be used to invoke \irace itself. The user \underline{must} call
+   \code{qsub} from within
    \parameter{targetRunner} with the appropriate settings for their cluster,
-   otherwise \parameter{targetRunner} will not submit jobs to the cluster. In this
-   mode, \irace must run in the submission node, and hence, \code{qsub} should
-   not be used to invoke \irace itself.  Moreover, the use of a separate
+   otherwise \parameter{targetRunner} will not submit jobs to the
+   cluster. Moreover, the use of a separate
    \parameter{targetEvaluator} script is required to parse the results of
    \parameter{targetRunner} and return them to \irace. See the examples in
     \code{$IRACE_HOME/examples/sge-cluster/}.
@@ -1341,90 +1372,103 @@ parallel. There are four ways to parallelize a single run of \irace:
    %
    where \code{experiments} is a list that contains elements with the
    information of configurations and instances to be executed (see
-   \autoref{sec:runner} for a description), \parameter{targetRunner} is the
-   \parameter{targetRunner} script or function and \code{scenario} is the scenario
-   list. The \parameter{targetRunnerParallel} function must execute the
-   \parameter{targetRunner} using the given experiments and scenario provided, and
-   return a list of the same length as \code{experiments} containing the output
-   of each call to \parameter{targetRunner}.
+   \autoref{sec:runner} for a description), \code{targetRunner} is the
+   \parameter{targetRunner} script or function and \code{scenario} is the
+   scenario list. The \parameter{targetRunnerParallel} function must execute
+   the given \code{targetRunner} using the \code{experiments} and
+   \code{scenario} provided, and return a list of the same length as
+   \code{experiments} containing the output of each call to
+   \code{targetRunner}.
 
 
 \end{itemize}
 
 \section{Testing of configurations}\label{sec:testing}
 
-Once the tuning process is finished \irace commonly returns a set of configurations, out of which
-one is the best regarding the mean. These configurations have been found to be not statistically
-different and therefore they all could be appropriate to use. To further investigate the quality
-of this configurations \irace offers the possibility of executing the testing of these
-configurations on a test instance set at the end of the execution. Even more, the testing can also be
-performed including the best configuration of each iteration.
+Once the tuning process is finished, \irace commonly returns a set of
+configurations corresponding to the elite configurations at the end of the run,
+and order from best to worst. To further investigate the quality of these
+configurations, \irace offers the possibility of evaluating these
+configurations on a test instance set, typically different from the training
+set using during the tuning phase. These evaluations will use the same settings
+for parallel execution, \parameter{targetRunner}
+and \parameter{targetEvaluator}.
 
-The options \parameter{testNbElites} and \parameter{testIterationElites} allow to set
-a testing of the best configurations found after the \irace execution has been completed.
-The test instance set can be specified by the options \parameter{testInstancesDir} and \parameter{testInstancesFile}
-if using a directory or text file, or by setting the variable \code{scenario$testInstances} directly from the \aR console.
-For the testing each instance is assigned a different seed in the same way that is done for the tuning.
-To set the testing instances follow the same guidelines as for the training instances (see \autoref{sec:training}).
+The test instance set can be specified by the
+options \parameter{testInstancesDir} and \parameter{testInstancesFile}, or by
+setting directly the variable \code{scenario\$testInstances}, which behave the
+same as their counterparts for the training instances
+(\autoref{sec:training}). In particular, each test instance is assigned a
+different seed in the same way that is done for the training instances.
 
-There are two types of testing:
+The options \parameter{testNbElites} and \parameter{testIterationElites}
+control which configurations are evaluated during the testing phase. In
+particular, setting \code{testIterationElites = 1} will test not only the final
+set of elite configurations (those returned at the end of the training phase),
+but also the set of elites at the end of each race
+(iteration). The option \parameter{testNbElites} limits the maximum number configurations considered within each set. Some examples:
 \begin{itemize}
-\item \textbf{Final elite configurations testing}: \parameter{testNbElites}
-indicates the number of elite configurations to be tested, if
-the number of elite configurations is less than the value provided for \parameter{testNbElites},
-then the number of elite configurations is used as \parameter{testNbElites}.
-
-\item \textbf{Iteration elite configurations testing}: \parameter{testIterationElites}
-enables the testing of the best configuration found at each iteration.
-
+\item \code{testIterationElites = 0; testNbElites = 1} means that only the best
+  configuration found during the run of \irace, the final best, will be used in
+  the testing phase.
+\item \code{testIterationElites = 1; testNbElites = 1} will test, in addition to the final best, the best configuration found at each iteration.
+\item \code{testIterationElites = 1; testNbElites = 2} will test the two best
+  configurations found at each iteration, in addition to the final best and
+  second-best configurations.
 \end{itemize}
 
-If the the testing options are specified when launching \irace the, testing
-will be performed immediately after the tuning. The testing can be executed
-later using the following \aR command:
+The testing can be also (re-)executed at a later time by using the following
+\aR command:
 
 <<testing_r, prompt=TRUE, eval=FALSE>>=
-testing.main(logFile="~/tuning/irace.Rdata")
+testing.main(logFile = "./irace.Rdata")
 @
 
-This line will load the \irace results found in the generated \parameter{logFile}
-file to perform the testing. The testing results will be saved in the \irace
-log file specified in \code{scenario$logFile} in the \code{iraceResults$testing}
-\aR object. The structure of the object is described in \autoref{sec:output r}
-for examples on how to analyse the data or the testing and the \irace data see
-\autoref{sec:analysis}.
+This line will load the \irace results found in the
+generated \parameter{logFile} file to perform the testing.  The testing results
+will be saved in the \irace log file specified in
+\code{scenario\$logFile} in the \code{iraceResults\$testing} \aR object. The
+structure of the object is described in \autoref{sec:output r}.  For examples
+on how to analyse the data see \autoref{sec:analysis}.
 
 \section{Recovering \irace runs}\label{sec:rec}
 
-Problems like power cuts, hardware malfunction or the need to use computational power
-for other tasks may occur during the execution of the \irace causing that the tuning is
-not executed completely. \irace saves at the end of each iteration an \aR data file that
-not only contains the information of the tuning progress (See \autoref{sec:output r})
-but also internal information that allows to recover an incomplete execution.
+Problems like power cuts, hardware malfunction or the need to use computational
+power for other tasks may occur during the execution of \irace, terminating a
+run before completion. At the end of each iteration, \irace saves an \aR data
+file (\parameter{logFile}, by default \code{"./irace.Rdata"}) that not only
+contains the information of the tuning progress (\autoref{sec:output r}), but
+also internal information that allows recovering an incomplete execution.
 
-To recover an \irace execution use the \parameter{recoveryFile} option and specify the \aR data log
-file to be used. \irace will continue the execution from the last saved iteration. The state
-of the random generator is saved and loaded, therefore, as long as the execution is continued
-in the same machine, the obtained results will be exactly as executing \irace in one go.
-You can specify the \parameter{recoveryFile} from the command-line or from the scenario file,
-and execute \irace as described in \autoref{sec:execution}. For example from the command-line use:
+To recover an incomplete \irace run, set the option \parameter{recoveryFile} to
+the log file previously produced, and \irace will continue the execution from
+the last saved iteration. The state of the random generator is saved and
+loaded, therefore, as long as the execution is continued in the same machine,
+the obtained results will be exactly the same as executing \irace in one step
+(although external factors, such as CPU load and disk caches, may affect the
+target algorithm and that may affect the results).  You can specify
+the \parameter{recoveryFile} from the command-line or from the scenario file,
+and execute \irace as described in \autoref{sec:execution}. For example, from
+the command-line use:
 
 <<lauch_reco, engine="bash", eval=FALSE>>=
 irace --recovery-file "./irace-backup.Rdata"
 @
 
-When an execution is recovered, the \irace log will be saved on the file specified with
-the \parameter{logFile} option.
-
 \begin{xwarningbox}
-You must define a different location for the \parameter{logFile} and the \parameter{recoveryFile}.
-Before executing the recovery please change the name of the saved \aR data file.
+  When recovering a previous run, \irace will try to save data on the file
+  specified by the \parameter{logFile} option. Thus, you must specify different
+  files for \parameter{logFile} and \parameter{recoveryFile}.  Before
+  recovering, we strongly advise to rename the saved \aR data file as in the
+  example above, which uses \code{"irace-backup.Rdata"}.
 \end{xwarningbox}
 
-When recovery is done you can modify some \irace options from the command-line or
-from the scenario file.
+\hide{%
 
 %\LESLIE{Actually, there other variables we allow to change...what we shoudl say about this?}
+% MANUEL: I would say nothing for now until we fix this properly.
+When recovery is done you can modify some \irace options from the command-line
+or from the scenario file.
 
 \begin{itemize}
 \item \parameter{execDir}
@@ -1454,20 +1498,24 @@ save (iraceResults, file="~/tuning/irace.Rdata")
 @
 
 This example can also can be applied to the target execution files \parameter{targetRunner} and \parameter{targetEvaluator}.
+}
+
 \begin{xwarningbox}
-Before changing any other option directly in the \aR data log, please consider carefully the
-effect the change will cause in the tuning. For questions contact us in the \irace group (\autoref{sec:contact}).
+  Do not change anything in the log file or the scenario file before
+  recovering, as it may have unexpected effects on the recovered run of
+  \irace. In case of doubt, please contact us first (\autoref{sec:contact}).
 \end{xwarningbox}
 
 \section{Output and results}
-During the execution of \irace a text output with the progress of
-the tuning will be shown in the standard output. Additionally, after each
-iteration an \aR data file is produced (\parameter{logFile} option), this file contains
-the partial results of the \irace execution.
+
+During its execution, \irace prints information about the progress of the
+tuning in the standard output.  Additionally, after each iteration, an \aR data
+file is saved (\parameter{logFile} option) containing the state of \irace.
 
 \subsection{Text output}\label{sec:output text}
-Figure~\ref{fig:output} shows the output of \irace until the first iteration. This
-is an execution of the elitist \irace version using the \ACOTSP benchmark with 1000
+
+Figure~\ref{fig:output} shows the output, up to the end of the first iteration,
+of a run of elitist \irace applied to the \ACOTSP scenario with 1000
 evaluations as budget.
 
 First, \irace gives a warning informing the user that it has found a file with
