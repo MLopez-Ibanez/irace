@@ -44,7 +44,7 @@ Requisites
 
  * R (<http://www.r-project.org>) is required for running irace, but
    you don't need to know the R language to use it.
-   Versions that work: >= 2.14.0
+   Versions that work: >= 2.15.0
    (See Installing R below for a quick install guide)
 
  * If you wish to use the command-line wrappers `irace` and
