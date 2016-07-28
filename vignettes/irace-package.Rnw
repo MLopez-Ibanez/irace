@@ -592,13 +592,16 @@ target algorithm; the default value is the current directory.
 %\item[\parameter{logFile}] (\code{--log-file}): a file the name of the results \aR data file that produces \irace.
 \item[\parameter{maxExperiments}] (\code{--max-experiments}): the maximum number of executions
 of the target algorithm that \irace will perform.
+\item[\parameter{maxTime}] (\code{--max-time}): the total maximum execution time of the target 
+algorithm. Note that you must provide either \parameter{maxTime} or \parameter{maxExperiments}.
 \end{description}
-For more information on \irace options and their default values see \autoref{sec:irace options}.
+For setting the tuning budget see \autoref{sec:budget}. For more information on \irace options and their default values see \autoref{sec:irace options}.
 
 \item Modify the \code{target-runner} script to run your algorithm, this script
-  must execute your algorithm with the parameters and instances specified by
-  \irace and return \textbf{only} one number corresponding to the evaluation of
-  the execution.  The template we use in this guide is in \proglang{GNU Bash}
+  must execute your algorithm with the parameters and instance specified by
+  \irace and return the evaluation of the execution and \textit{*optionally*} the execution 
+  time (\code{cost [time]}). When the \parameter{maxTime} option is used, returning time is mandatory.
+  The template we use in this guide is in \proglang{GNU Bash}
   scripting language, which can be executed easily in GNU/Linux and OSX
   systems. However, you may use any other programming language. As an example,
   we provide a \proglang{Python} template in the
@@ -624,7 +627,7 @@ For more information on \irace options and their default values see \autoref{sec
     example, the algorithm receives the instance to solve with the flag
     \code{-i} and the seed with the flag \code{--seed}. The variable
     \code{CONFIG_PARAMS} adds to the command line the parameters that \irace has
-    given for the execution.  You are free to set the command line execution as
+    given for the execution.  You must set the command line execution as
     needed. For example, the instance might not need a flag and might need to be
     the first argument:
     \begin{center}
@@ -645,28 +648,14 @@ For more information on \irace options and their default values see \autoref{sec
     \end{center}
     parses the output of your algorithm to obtain the result from the last line. The \code{target-runner}
     script must return \textbf{only} one number. In the template example the result is returned with
-    \code{echo "\$COST"} and the used files are deleted.
+    \code{echo "\$COST"} (assuming \parameter{maxExperiments} is used) and the used files are deleted.
 
     \begin{xwarningbox}
       The \code{target-runner} script must be executable.
     \end{xwarningbox}
 
-   \MANUEL{Isn't this already explained a few lines above in page 9?}
-    You can test the target runner from the \aR console by checking the scenario:
-
-    <<irace_R_check2, eval=FALSE, prompt=TRUE>>=
-    library("irace")
-    scenario <- readScenario(filename = "scenario.txt",
-                             scenario = defaultScenario())
-    checkIraceScenario(scenario = scenario)
-@
-
-If you are using GNU/Linux you can also execute the check from the command-line:
-%
-<<irace_check2,engine='bash', eval=FALSE>>=
-# $IRACE_HOME is the installation directory of irace.
-$IRACE_HOME/bin/irace --scenario scenario.txt --check
-@
+    You can test the target runner from the \aR console by checking the scenario as 
+    explained earlier in Section~\ref{sec:execution}
 
 If you have problems related to the \code{target-runner} script when executing
 \irace see \autoref{sec:check list} for a check list to diagnose common
@@ -679,7 +668,7 @@ problems. For more information about the \parameter{targetRunner} please see
 
 \end{enumerate}
 
-\MANUEL{This is a duplicate with what was mentioned at the start of the section. I actually would keep this version. It looks nicer.}
+\MANUEL{This is a duplicate with what was mentioned at the start of the section. I actually would keep this version. It looks nicer.} \LESLIE{I think is better to keep both...}
 Once the files have been prepared you can execute \irace using the command-line or directly from the \aR console:
 
 \begin{itemize}
@@ -1011,9 +1000,10 @@ target-runner 1 113 734718556 /home/user/instances/tsp/2000-533.tsp \
 The command line switches that describe the candidate configuration are
 constructed by appending to each parameter label (switch), \emph{without
 separator}, the value of the parameter, following the order given in the
-parameter table. The program \parameter{targetRunner} must print (only) a real
+parameter table. The program \parameter{targetRunner} must print a real
 number, which corresponds to the cost measure of the candidate configuration
-for the given instance. The working directory of \parameter{targetRunner} is
+for the given instance and optionally its execution time (mandatory when \parameter{maxTime} is used).
+The working directory of \parameter{targetRunner} is
 set to the execution directory specified by the option
 \parameter{execDir}. This allows the user to execute independent runs of \irace
 in parallel using different values for \parameter{execDir}, without the runs
@@ -1055,7 +1045,8 @@ print(experiment)
 
 The function \parameter{targetRunner} must return a numerical value
 corresponding to the evaluation of the candidate configuration on
-the given instance.
+the given instance and optionally the execution time (mandatory when 
+\parameter{maxTime} is used).
 
 
 
@@ -1076,7 +1067,8 @@ the same instance have already finished.
 
 \begin{xwarningbox}
 When using \parameter{targetEvaluator}, \parameter{targetRunner} must not return the evaluation
-of the configuration.
+of the configuration. If \parameter{maxTime} is used, \parameter{targetRunner} must return only 
+execution time.
 \end{xwarningbox}
 
 As an example, \parameter{targetEvaluator} may be used to dynamically find
@@ -1532,6 +1524,7 @@ about the selected \irace options is printed:
   \item \code{seed} is the number that was used to initialize the random number generator in \irace.
   \item \code{confidence level} is the confidence level of the statistical test.
   \item \code{budget} is the total number of evaluations available for the tuning.
+  \item \code{time budget} maximum execution time available for the tuning.
   \item \code{mu} is a value used for calculating the minimum number of iterations.
   \item \code{deterministic} indicates if the target algorithm has been marked as deterministic.
 \end{itemize}
@@ -1554,6 +1547,7 @@ Warning: A default scenario file './scenario.txt' has been found and will be rea
 # seed: 1234
 # confidence level: 0.95
 # budget: 1000
+# time budget: 0
 # mu: 5
 # deterministic: FALSE
 
@@ -1598,7 +1592,11 @@ In each iteration information about the progress of the execution printed as fol
 \begin{itemize}
   \item \code{experimentsUsedSoFar} is the number of experiments from the total budget
         has been used until the actual iteration.
+  \item \code{timeUsed} time used so far in the experiments. Only available when reported
+        in the \code{targetRunner} (activate it with \code{\parameter{maxTime}} option).
   \item \code{remainingBudget} is the number of evaluations that have not been used yet.
+  \item \code{timeEstimate} estimation of the mean execution time, this is used to calculate 
+        the remaining budget when \code{\parameter{maxTime}} is used.
   \item \code{currentBudget} is the number of evaluations \irace has allocated to the
         current iteration.
   \item \code{nbConfigurations} is the number of configurations \irace will use in the
@@ -1628,7 +1626,7 @@ In each iteration is initially printed information about the progress of the exe
 \end{itemize}
 
 The \code{instance} column gives the number of \code{<instance, seed>} pair executed, this number
-corresponds to the index of the list found in \code{scenario$instancesList}, see \autoref{sec:output r}
+corresponds to the index of the list found in \code{state$.irace$instancesList}, see \autoref{sec:output r}
 for more information.
 
 The \code{Alive} column gives the number of configurations that have not been discarded after
@@ -1746,7 +1744,7 @@ different reasons: 1) because it was not created yet when the instance was used
 or 3) the race was terminated before the instance could reach the execution of the instance.
 
 The row names correspond to the identifier of the \code{<instance, seed>} pairs
-defined in \code{scenario$instancesList}. To obtain the instance and seed used
+defined in \code{state$.irace$instancesList}. To obtain the instance and seed used
 for a particular experiment use:
 
 <<get_instance_seed, prompt=TRUE, eval=TRUE, comment="#">>=
@@ -1755,11 +1753,11 @@ for a particular experiment use:
 # Get index of the instances
 pair.id <- names(all.exp[!is.na(all.exp)])
 index <-
-    iraceResults$scenario$instancesList[pair.id,"instance"]
+    iraceResults$state$.irace$instancesList[pair.id,"instance"]
 # Obtain the instance names
 iraceResults$scenario$instances[index]
 # Get the seeds
-iraceResults$scenario$instancesList[index,"seed"]
+iraceResults$state$.irace$instancesList[index,"seed"]
 @
 \item \code{experimentLog}: A matrix with columns:
 \begin{center}
@@ -1767,7 +1765,7 @@ iraceResults$scenario$instancesList[index,"seed"]
 \end{center}
 This matrix contains the log of all the experiments that \irace
 performs during its execution. The instance column refers to the index of the
-\code{scenario$instancesList} data frame.
+\code{state$.irace$instancesList} data frame.
 
 \item \code{softRestart}: A logical vector that indicates if a soft restart was
 performed on each iteration. If \code{FALSE}, then no soft restart was performed.
@@ -1897,6 +1895,29 @@ in the \aR console: (\code{?parallelCoordinatesPlot}).
 
 
 \section{Advanced topics}
+
+\subsection{Tuning budget}\label{sec:budget}
+\irace provides two options for setting the total tuning budget (\parameter{maxExperiments} and 
+\parameter{maxTime}). Consider the number of parameters that need to be tuned, available processing power 
+and available time before setting the budget for the tuning. The option \parameter{maxExperiments} 
+limits the number of executions of \parameter{targetRunner} performed by \irace. The option \parameter{maxTime} limits the 
+total time of the \parameter{targetRunner} executions, when this option is used \parameter{targetRunner} 
+must return the evaluation cost together with the execution time (\code{<cost> <time>}). 
+
+\begin{xwarningbox}
+When tuning computation time and using \parameter{maxTime} as tuning budget just return the time as 
+the evaluation cost ($<time> <time>$).
+\end{xwarningbox}
+
+\begin{xwarningbox}
+When using \parameter{targetEvaluator} and using \parameter{maxTime} as tuning budget just return the time ($<time>$).
+\end{xwarningbox}
+
+When using \parameter{maxTime} \irace estimates the execution time of each \parameter{targetRunner} execution 
+before the configuration. The amount of budget used for the estimation is set with the option \parameter{budgetEstimation}
+(default is $2\%$). The obtained estimation is adjusted after each iteration using the obtained results and is used to estimate the number of experiments that can be executed. Internally \irace uses the number of remaining experiments to 
+adjust the number of configurations tested in each race. 
+
 \subsection{Multi Objective tuning}\label{sec:multi objective}
 \irace performs the automatic configuration of an algorithm optimizing only one objective
 that can be solution quality, computation time or any other and that is obtained by \irace
@@ -2317,10 +2338,18 @@ Optional data passed to \parameter{targetRunner}. This is ignored by the default
 \end{description}
 
 \subsection{Tuning budget}
+
 \begin{description}
-\defparameter{maxExperiments}{--max-experiments}{1000}\\
+\defparameter{maxExperiments}{--max-experiments}{0}
   The maximum number of runs (invocations of \parameter{targetRunner}) that will be performed. It determines the maximum budget
-  of experiments for the tuning.
+  of experiments for the tuning. See \autoref{sec:budget}.
+  \defparameter{maxTime}{--max-time}{0}
+  The maximum time in seconds for the runs of \parameter{targetRunner} that will be 
+  performed. The mean execution time is estimated to calculate the maximum number of experiments. 
+  When this is used \parameter{targetRunner} \textbf{must} return the execution time as second output: $<cost>~<time>$. See \autoref{sec:budget}.
+\defparameter{budgetEstimation}{--budget-estimation}{0.02}
+  The percentage of the budget used for estimating the mean execution time. Only used when \parameter{maxTime} $> 0$. See \autoref{sec:budget}.
+
 \end{description}
 
 \subsection{Statistical test}
@@ -2344,7 +2373,7 @@ Optional data passed to \parameter{targetRunner}. This is ignored by the default
 \defparameter{eachTest}{--each-test}{1} %
   Specifies how many instances are executed between elimination tests.
 
-\defparameter{confidence}{--confidence}{0.95}\\
+\defparameter{confidence}{--confidence}{0.95}
   Confidence level for the elimination test.
 
 \end{description}
@@ -2356,7 +2385,7 @@ Optional data passed to \parameter{targetRunner}. This is ignored by the default
 \defparameter{recoveryFile}{--recovery-file}{""}  %
   Previously saved \irace log file that should be used to recover the execution of irace,
   either absolute path or relative to the current directory. If empty or \code{NULL}, recovery is not performed.
-  For more details about recovery see \autoref{sec:recovery}.\\
+  For more details about recovery see \autoref{sec:recovery}.
 
 \end{description}
 
@@ -2451,6 +2480,7 @@ or by sending an email to:
 
 %% MANUEL: I think we should use just one channel. If the Google group is the winner, that should be it.
 %the mailing list:
+%% LESLIE I agree.
 %\begin{center} \href{mailto:irace@iridia.ulb.ac.be}{irace@iridia.ulb.ac.be} \end{center}
 
 
