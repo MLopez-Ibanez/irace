@@ -570,12 +570,8 @@ checkTargetFiles <- function(scenario, parameters)
 
   if (!is.null(.irace$target.evaluator)) {
     cat("# Executing targetEvaluator...\n")
-    all.conf.id <- paste(configurations[, ".ID."], collapse = " ")
-    for (k in seq_along(experiments)) {
-      output[[k]] <- withCallingHandlers (
-        tryCatch(.irace$target.evaluator(experiment = experiments[[k]], length(experiments),
-                                         all.conf.id, scenario = scenario,
-                                         target.runner.call = output[[k]]),
+    output <-  withCallingHandlers(
+      tryCatch(execute.evaluator(experiments, scenario, output, configurations[, ".ID."]),
                  error = function(e) {
                    cat(sep = "\n",
                        "\n# Error ocurred while executing targetEvaluator:",
@@ -587,7 +583,6 @@ checkTargetFiles <- function(scenario, parameters)
                        "\n# Warning ocurred while executing targetEvaluator:",
                        paste0(conditionMessage(w), collapse="\n"))
                    invokeRestart("muffleWarning")})
-    }
   }
   return(result)
 }

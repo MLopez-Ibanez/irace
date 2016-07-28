@@ -462,12 +462,7 @@ race <- function(maxExp = 0,
         # repeated.
         
         # Log time if needed
-        # FIXME: this should be done by a wrapper around .irace$target.runner
         output.time <- output[[i]]$time
-        if (is.null(output.time)) output.time <- NA
-        # FIXME: should  minimum time be a parameter?
-        else output.time <- max(output.time, 0.01)
-        
         experimentLog <- rbind(experimentLog,
                                c(race.instances[current.task],
                                  configurations[current.configuration, ".ID."],

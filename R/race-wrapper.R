@@ -45,7 +45,6 @@ target.error <- function(err.msg, output, scenario, target.runner.call,
   if (!is.null(target.evaluator.call)) {
     err.msg <- paste0(err.msg, "\n", .irace.prefix,
                       "The call to targetEvaluator was:\n", target.evaluator.call)
-    
   }
   if (!is.null(target.runner.call)) {
     err.msg <- paste0(err.msg, "\n", .irace.prefix,
@@ -76,12 +75,12 @@ check.output.target.evaluator <- function (output, scenario, target.runner.call 
 {
   err.msg <- output$error
   if (is.null(err.msg)) {
-    if (is.na (output$cost)) {
+    if (is.null(output$cost)) {
+      err.msg <- paste0("The output of targetEvaluator must be one number 'cost'!")
+    } else if (is.na (output$cost)) {
       err.msg <- paste0("The output of targetEvaluator is not numeric!")
     } else if (is.infinite(output$cost)) {
       err.msg <- paste0("The output of targetEvaluator is not finite!")
-    } else if (is.null(output$cost)) {
-      err.msg <- paste0("The output of targetEvaluator must be one number 'cost'!")
     }
   }
 
@@ -91,7 +90,16 @@ check.output.target.evaluator <- function (output, scenario, target.runner.call 
   }
 }
 
-target.evaluator.default <- function(experiment, num.configurations, all.conf.id = "",
+exec.target.evaluator <- function (experiment, num.configurations, all.conf.id,
+                                   scenario, target.runner.call)
+{
+  output <- .irace$target.evaluator(experiment, num.configurations, all.conf.id,
+                                    scenario, target.runner.call)
+  check.output.target.evaluator (output, scenario, target.runner.call = target.runner.call)
+  return (output)
+}
+
+target.evaluator.default <- function(experiment, num.configurations, all.conf.id,
                                      scenario, target.runner.call)
 {
   configuration.id <- experiment$id.configuration
@@ -123,24 +131,17 @@ target.evaluator.default <- function(experiment, num.configurations, all.conf.id
       cost <- v.output[1]
     }
   }
-  x <- list(cost = cost,
-            error = err.msg, outputRaw = output$output,
-            call = paste(targetEvaluator, args))
-  # FIXME: We should check the output outside this function in case the user overrides it.
-  check.output.target.evaluator (x, scenario, target.runner.call = target.runner.call)
-  return (x)
+  return(list(cost = cost,
+              error = err.msg, outputRaw = output$output,
+              call = paste(targetEvaluator, args)))
 }
 
 check.output.target.runner <- function (output, scenario)
 {
   err.msg <- output$error
   if (is.null(err.msg)) {
-    if (is.na(output$cost) || is.na(output$time)) {
-      err.msg <- paste0("The output of targetRunner is not numeric!")
-    } else if (is.infinite(output$cost) || is.infinite(output$time)) {
-      err.msg <- paste0("The output of targetRunner is not finite!")
-      # When targetEvaluator is provided targetRunner must return only the time.
-    } else if (!is.null(scenario$targetEvaluator)) {
+    # When targetEvaluator is provided targetRunner must return only the time.
+    if (!is.null(scenario$targetEvaluator)) {
       if (scenario$maxTime > 0 && is.null(output$time)) {
         err.msg <- paste0("The output of targetRunner must be one number 'time'!")
       } else if (!is.null(output$cost)) {
@@ -152,11 +153,51 @@ check.output.target.runner <- function (output, scenario)
       err.msg <- paste0("The output of targetRunner must be one number 'cost'!")
     } else if (!is.null(output$time) && output$time < 0) {
       err.msg <- paste0("The value of time returned by targetRunner cannot be negative (", output$time, ")!")
+    } 
+
+    if (!is.null (output$cost)) {
+      if (is.na(output$cost)) {
+        err.msg <- paste0("The cost returned by targetRunner is not numeric!")
+      } else if (is.infinite(output$cost)) {
+        err.msg <- paste0("The cost returned by targetRunner is not finite!")
+      }
     }
+
+    if (!is.null (output$time)) {
+      if (is.na(output$time)) {
+        err.msg <- paste0("The time returned by targetRunner is not numeric!")
+      } else if (is.infinite(output$time)) {
+        err.msg <- paste0("The time returned by targetRunner is not finite!")
+      }
+    }
+
+    # Fix too small time.
+    output$time <- if (is.null(output$time)) NA else max(output$time, 0.01)
+    
   }
   if (!is.null(err.msg)) {
     target.error (err.msg, output, scenario, target.runner.call = output$call)
   }
+  return (output)
+}
+
+# This function invokes target.runner. 
+exec.target.runner <- function(experiment, scenario)
+{
+  doit <- function(experiment, scenario)
+  {
+    x <- .irace$target.runner(experiment, scenario)
+    return (check.output.target.runner (x, scenario))
+  }
+  
+  retries <- scenario$targetRunnerRetries
+  while (retries > 0) {
+    output <- try (doit(experiment, scenario))
+    if (!inherits(output, "try-error")) return (output)
+    irace.note("Retrying (", retries, " left).\n")
+    retries <- retries - 1
+  }
+  return (doit(experiment, scenario))
 }
 
 target.runner.default <- function(experiment, scenario)
@@ -179,13 +220,6 @@ target.runner.default <- function(experiment, scenario)
                 buildCommandLine(configuration, switches))
   output <- runcommand(targetRunner, args, configuration.id, debugLevel)
 
-  retries <- scenario$targetRunnerRetries
-  # Retry!
-  while (!is.null(output$error) && retries > 0) {
-    output <- runcommand(targetRunner, args, configuration.id, debugLevel)
-    retries <- retries - 1
-  }
-
   cost <- time <- NULL
   err.msg <- output$error
   if (is.null(err.msg)) {
@@ -203,12 +237,9 @@ target.runner.default <- function(experiment, scenario)
       time <- v.output[2]
     }
   }
-  x <- list(cost = cost, time = time,
-            error = err.msg, outputRaw = output$output,
-            call = paste(targetRunner, args))
-  # FIXME: We should check the output outside this function in case the user overrides it.
-  check.output.target.runner (x, scenario)
-  return (x)
+  return(list(cost = cost, time = time,
+              error = err.msg, outputRaw = output$output,
+              call = paste(targetRunner, args)))
 }
 
 execute.experiments <- function(experiments, scenario)
@@ -228,11 +259,11 @@ execute.experiments <- function(experiments, scenario)
   if (!is.null(scenario$targetRunnerParallel)) {
     # User-defined parallelization
     target.output <-
-      scenario$targetRunnerParallel(experiments, .irace$target.runner, scenario = scenario)
+      scenario$targetRunnerParallel(experiments, exec.target.runner, scenario = scenario)
   } else if (parallel > 1) {
     if (mpi) {
       if (scenario$loadBalancing) {
-        target.output <- Rmpi::mpi.applyLB(experiments, .irace$target.runner,
+        target.output <- Rmpi::mpi.applyLB(experiments, exec.target.runner,
                                            scenario = scenario)
       } else {
         # Without load-balancing, we need to split the experiments into chunks
@@ -240,7 +271,7 @@ execute.experiments <- function(experiments, scenario)
         target.output <- unlist(use.names = FALSE,
                                 tapply(experiments,
                                        ceiling(1:length(experiments) / parallel),
-                                       Rmpi::mpi.apply, .irace$target.runner,
+                                       Rmpi::mpi.apply, exec.target.runner,
                                        scenario = scenario))
       }
       # FIXME: if stop() is called from mpi.applyLB, it does not
@@ -260,18 +291,18 @@ execute.experiments <- function(experiments, scenario)
         irace.assert(!is.null(.irace$cluster))
         if (scenario$loadBalancing) {
           target.output <-
-            parallel::parLapplyLB(.irace$cluster, experiments, .irace$target.runner,
+            parallel::parLapplyLB(.irace$cluster, experiments, exec.target.runner,
                                   scenario = scenario)
         } else {
           target.output <-
-            parallel::parLapply(.irace$cluster, experiments, .irace$target.runner,
+            parallel::parLapply(.irace$cluster, experiments, exec.target.runner,
                                 scenario = scenario)
         }
         # FIXME: if stop() is called from parLapply, then the parent
         # process also terminates, and we cannot give further errors.
       } else {
         target.output <-
-          parallel::mclapply(experiments, .irace$target.runner,
+          parallel::mclapply(experiments, exec.target.runner,
                              # FALSE means load-balancing.
                              mc.preschedule = !scenario$loadBalancing,
                              mc.cores = parallel,
@@ -296,7 +327,7 @@ execute.experiments <- function(experiments, scenario)
   } else {
     # One process, all sequential
     for (k in seq_along(experiments)) {
-      target.output[[k]] <- .irace$target.runner(experiments[[k]], scenario = scenario)
+      target.output[[k]] <- exec.target.runner(experiments[[k]], scenario = scenario)
     }
   }
  
@@ -309,10 +340,10 @@ execute.evaluator <- function(experiments, scenario, target.output, configuratio
   
   ## Evaluate configurations sequentially
   for (k in seq_along(experiments)) {
-    output <- .irace$target.evaluator(experiment = experiments[[k]],
-                                      num.configurations = length(configurations.id),
-                                      all.conf.id, scenario = scenario,
-                                      target.runner.call = target.output[[k]]$call)
+    output <- exec.target.evaluator(experiment = experiments[[k]],
+                                    num.configurations = length(configurations.id),
+                                    all.conf.id, scenario = scenario,
+                                    target.runner.call = target.output[[k]]$call)
     target.output[[k]]$cost <- output$cost
   }
   return(target.output)
