@@ -2663,3 +2663,7 @@ file for errors and the \code{.stdout} file to see the output your algorithm pro
 \end{appendices}
 
 \end{document}
+
+%%% Local Variables:
+%%% TeX-master: t
+%%% End:
