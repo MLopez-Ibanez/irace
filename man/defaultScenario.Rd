@@ -82,8 +82,10 @@
   }
   Tuning budget:
   \itemize{
-     \item maxExperiments: Maximum number of runs (invocations of \code{targetRunner}) that will be performed. It determines the maximum budget of experiments for the tuning. (Default: 1000)
-  }
+     \item maxExperiments: Maximum number of runs (invocations of \code{targetRunner}) that will be performed. It determines the maximum budget of experiments for the tuning. (Default: 0)
+     \item maxTime: Maximum total execution time for the executions of \code{targetRunner}. targetRunner must return two values: quality time. (Default: 0)
+     \item budgetEstimation: Percentage of the time budget used to estimate the mean computation time of a configuration. Only used when maxTime is provided. (Default: 0.02)
+  } 
   Statistical test:
   \itemize{
      \item testType: Statistical test used for elimination. (Default: "F-test") 

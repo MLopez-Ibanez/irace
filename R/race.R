@@ -44,8 +44,8 @@ race.wrapper <- function(configurations, instance.idx, which.alive, which.exe, p
   irace.assert (isTRUE(parameters$nbParameters > 0))
   irace.assert (length(parameters$names) == parameters$nbParameters)
   
-  seed <- scenario$instancesList[instance.idx, "seed"]
-  id.instance  <- scenario$instancesList[instance.idx, "instance"]
+  seed <- .irace$instancesList[instance.idx, "seed"]
+  id.instance  <- .irace$instancesList[instance.idx, "instance"]
   instance <- scenario$instances[[id.instance]]
   extra.params <- NULL
   if (!is.null (scenario$instances.extra.params)
@@ -211,7 +211,6 @@ aux.ttest <- function(results, no.tasks.sofar, alive, which.alive, no.alive, con
               dropped.any = dropped.any, p.value = min(PJ[2,])))
 }
 
-
 # FIXME: This can be simplified a lot more. Some arguments already appear in
 # scenario.
 race <- function(maxExp = 0,
@@ -219,7 +218,8 @@ race <- function(maxExp = 0,
                  elite.data = NULL,
                  configurations,
                  parameters,
-                 scenario)
+                 scenario,
+                 elitistInstances)
 {
   # FIXME: Remove argument checking. This must have been done by the caller.
   stat.test <- scenario$testType
@@ -227,7 +227,6 @@ race <- function(maxExp = 0,
   first.test <- scenario$firstTest
   each.test <- scenario$eachTest
   elitist <- scenario$elitist
-  elitistInstances <- scenario$elitistInstances
   
   interactive <- TRUE  
   # Check argument: maxExp
@@ -263,12 +262,11 @@ race <- function(maxExp = 0,
   # if next.instance == 1 then this is the first iteration.
   if (elitist && .irace$next.instance != 1) {
     last.new <- .irace$next.instance + elitistInstances - 1
-    # cat("Instances row:", nrow(scenario$instancesList))
-    if (scenario$deterministic && last.new > nrow(scenario$instancesList)) {
+    # cat("Instances row:", nrow(.irace$instancesList))
+    if (scenario$deterministic && last.new > nrow(.irace$instancesList)) {
       # The scenario is deterministic and does not have more instances
       elitistInstances <- 0
-      race.instances   <- sample.int(nrow(scenario$instancesList))
-                         
+      race.instances   <- sample.int(nrow(.irace$instancesList))
     } else {
       if (last.new >= .irace$next.instance) {
         present <- .irace$next.instance : last.new
@@ -278,15 +276,15 @@ race <- function(maxExp = 0,
       # present_instances + past_instances + future_instances
       race.instances <- c(present,
                           sample.int(.irace$next.instance - 1),
-                          (last.new + 1) : nrow(scenario$instancesList))
+                          (last.new + 1) : nrow(.irace$instancesList))
     }
   } else {
     # Check if the instances are finished
     if (scenario$deterministic &&
-        (.irace$next.instance > nrow(scenario$instancesList)))
-      race.instances <- 1:nrow(scenario$instancesList)
+        (.irace$next.instance > nrow(.irace$instancesList)))
+      race.instances <- 1:nrow(.irace$instancesList)
     else
-      race.instances <- seq(.irace$next.instance, nrow(scenario$instancesList))
+      race.instances <- seq(.irace$next.instance, nrow(.irace$instancesList))
   }
   no.configurations <- nrow(configurations)
   no.tasks      <- length(race.instances)
@@ -314,8 +312,8 @@ race <- function(maxExp = 0,
                         as.character(configurations[, ".ID."])) )
     Results[rownames(elite.data), colnames(elite.data)] <- elite.data
   }
-  experimentLog <- matrix(nrow = 0, ncol = 2,
-                          dimnames = list(NULL, c("instance", "configuration")))
+  experimentLog <- matrix(nrow = 0, ncol = 3,
+                          dimnames = list(NULL, c("instance", "configuration", "time")))
   alive <- rep(TRUE, no.configurations)
   best <- 0
   race.ranks <- c()
@@ -457,15 +455,23 @@ race <- function(maxExp = 0,
       # then the result is in the output.
       if (current.configuration %in% which.exe
           || !is.null(scenario$targetEvaluator)) {
-        result <- output[[i]]
-        Results[current.task, current.configuration] <- result[1]
+        Results[current.task, current.configuration] <- output[[i]]$cost
         # LESLIE: For the elitist version in the case target.evaluator is used,
         # the value of the elites is changing from iteration to iteration maybe
         # we could add a result info, even though the information would be
         # repeated.
+        
+        # Log time if needed
+        # FIXME: this should be done by a wrapper around .irace$target.runner
+        output.time <- output[[i]]$time
+        if (is.null(output.time)) output.time <- NA
+        # FIXME: should  minimum time be a parameter?
+        else output.time <- max(output.time, 0.01)
+        
         experimentLog <- rbind(experimentLog,
                                c(race.instances[current.task],
-                                 configurations[current.configuration,".ID."]))
+                                 configurations[current.configuration, ".ID."],
+                                 output.time))
       }
     }
 

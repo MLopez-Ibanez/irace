@@ -4,7 +4,7 @@
 
 \description{
   \code{target.runner.default} is the default targetRunner function. You can use it as
-  an advanced example of how to create your own hooRun function.
+  an advanced example of how to create your own targetRunner function.
 }
 \usage{
 target.runner.default(experiment, scenario)
@@ -28,6 +28,12 @@ target.runner.default(experiment, scenario)
 \value{
   If \code{targetEvaluator} is \code{NULL}, then this function returns the
   output of evaluating the candidate configuration, which must be a numerical value.
+  
+  %% MANUEL: This needs updating?
+  If \code{maxTime}, then this function returns the
+  output of evaluating the candidate configuration and the execution time, if 
+  \code{targetEvaluator} is not \code{NULL}, this function must return only the 
+  execution time.
 
   Otherwise, it returns a string. By the default, this string is the
   actual command-line call to the target-runner program. This information is

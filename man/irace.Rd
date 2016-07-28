@@ -64,9 +64,10 @@
      \item{experiments: }{A matrix with configurations as columns and instances as rows. Column 
      names correspond to the internal identifier of the configuration (\code{allConfigurations$.ID.}).}
      
-     \item{experimentLog: }{A matrix with columns \code{iteration, instance, configuration}. 
+     \item{experimentLog: }{A matrix with columns \code{iteration, instance, configuration, time}. 
      This matrix contains the log of all the experiments that \pkg{irace} performs during its execution. 
-     The instance column refers to the index of the \code{scenario$instancesList} data frame.}
+     The instance column refers to the index of the \code{scenario$instancesList} data frame. Time is saved
+     ONLY when reported by the targetRunner.}
 
      \item{softRestart: }{A logical vector that indicates if a soft restart was performed on each 
      iteration. If \code{FALSE}, then no soft restart was performed.}

@@ -358,6 +358,27 @@ checkScenario <- function(scenario = defaultScenario())
       irace.error ("'", param, "' must be a real value within [0, 1].")
   }
   
+  ## Only maxExperiments or maxTime should be set. Negative values are not allowed.
+  if (scenario$maxExperiments == 0 && scenario$maxTime == 0) {
+    irace.error("Tuning budget was not provided. Set maxExperiments (",
+                .irace.params.def["maxExperiments", "long"], ") or maxTime (",
+                .irace.params.def["maxTime", "long"], ").\n" )
+  } else if (scenario$maxExperiments > 0 && scenario$maxTime > 0) {
+    irace.error("Two different tuning budgets provided, please set only maxExperiments (",
+                .irace.params.def["maxExperiments", "long"], ") or only maxTime (",
+                .irace.params.def["maxTime", "long"], ").\n" )
+  } else if (scenario$maxExperiments < 0 ) {
+    irace.error("Negative budget provided, maxExperiments (",
+                .irace.params.def["maxExperiments", "long"], ") must be >= 0.\n" )
+  } else if (scenario$maxTime < 0) {
+    irace.error("Negative budget provided, maxTime  (",
+                .irace.params.def["maxTime", "long"], ") must be >= 0.\n" )
+  }
+  
+  if (scenario$maxTime > 0 && (scenario$budgetEstimation <= 0 || scenario$budgetEstimation >= 1)) 
+    irace.error("budgetEstimation (", .irace.params.def["budgetEstimation", "long"],
+                ") must be within (0,1).")
+  
   if (is.na (scenario$softRestartThreshold)) {
     scenario$softRestartThreshold <- 10^(- scenario$digits)
   }
@@ -503,31 +524,6 @@ readInstances <- function(instancesDir = NULL, instancesFile = NULL)
   
   return(list(instances = instances,
               instances.extra.params = instances.extra.params))
-}
-
-
-## Generate instances + seed.
-generateInstances <- function(scenario)
-{
-  instances <- scenario$instances
-  ntimes <- if (scenario$deterministic) 1 else
-            # "Upper bound"" of instances needed
-            # FIXME: We could bound it even further if maxExperiments >> nInstances
-            ceiling (scenario$maxExperiments / length(instances))
-
-  # Get instances order
-  if (scenario$sampleInstances) {
-    # Sample instances index in groups (ntimes)
-    sindex <- as.vector(sapply(rep(length(instances), ntimes), sample.int, replace = FALSE))
-  } else {
-    sindex <- rep(1:length(instances), ntimes)
-  }
-  # Sample seeds.
-  # 2147483647 is the maximum value for a 32-bit signed integer.
-  # We use replace = TRUE, because replace = FALSE allocates memory for each possible number.
-  tmp <- data.frame (instance = sindex,
-                     seed = sample.int(2147483647, size = ntimes * length(instances), replace = TRUE))
-  return(tmp)
 }
 
 ## Check targetRunner execution

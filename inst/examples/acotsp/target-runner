@@ -10,7 +10,7 @@
 # The rest ($* after `shift 4') are parameters for running ACOTSP
 #
 # RETURN VALUE:
-# This script should print a single numerical value (the value to be minimized)
+# This script should print a single numerical value (the value to be minimized).
 ###############################################################################
 
 # Path to the ACOTSP software:
@@ -18,7 +18,7 @@ EXE=~/bin/acotsp
 
 # Fixed parameters that should be always passed to ACOTSP.
 # The time to be used is always 5 seconds, and we want only one run:
-FIXED_PARAMS=" --time 20 --tries 1 --quiet "
+FIXED_PARAMS=" --tries 1 --quiet "
 
 CONFIG_ID="$1"
 INSTANCE_ID="$2"

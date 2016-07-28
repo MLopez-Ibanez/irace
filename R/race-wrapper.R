@@ -22,67 +22,73 @@ buildCommandLine <- function(values, switches)
   return(command)
 }
 
-
-# FIXME: This should be called in race-wrapper for cases where target.runner.default
-# is overriden
-check.output <- function(output, command, scenario, target.runner.call = NULL, outputRaw = NULL)
+# This function tries to convert a, possibly empty, character vector into a
+# numeric vector.
+parse.output <- function(outputRaw, verbose)
 {
-  # We check the output here to provide better error messages.
-  err.msg <- NULL
-  if (length(output) < 1 || length(output) > 1 || any (is.na (output)) || any (!is.numeric(output))) {
-    err.msg <- paste0("The output of '", command, "' is not numeric!")
-  } else if (any(is.infinite(output))) {
-    err.msg <- paste0("The output of '", command, "' is not finite!")
-  }
-
-  if (length(output) > 1)
-    err.msg <- paste0("The output of `", command, "' must be one number 'cost'!")
-
-  if (!is.null(err.msg)) {
-    if (!is.null(target.runner.call)) {
-      err.msg <- paste0(err.msg, "\n", .irace.prefix,
-                        "The call to targetRunner was:\n", target.runner.call)
-    }
-
-    if (is.null(outputRaw)) {
-      # Message for a function call.
-      outputRaw <- output
-      advice.txt <- paste0(
-        "This is not a bug in irace, but means that something failed in ",
-        "a call to the targetRunner or targetEvaluator functions provided by the user.",
-        " Please check those functions carefully.")
-    } else {
-      # Message for an external script.
-      advice.txt <- paste0(
-        "This is not a bug in irace, but means that something failed when",
-        " running the command above or it was terminated before completion.",
-        " Try to run the command above from the execution directory '",
-        scenario$execDir, "' to investigate the issue.")
-    }
-    irace.error(err.msg, "\n", .irace.prefix,
-                "The output was:\n", paste(outputRaw, collapse = "\n"),
-                "\n", .irace.prefix, advice.txt)
-  }
-}
-
-# This function is used by the target.runner.default and
-# target.evaluator.default. If overridden, check.output will be called again
-# later.
-parse.output <- function(outputRaw, command, scenario, target.runner.call = NULL)
-{
-  if (scenario$debugLevel >= 2) { cat (outputRaw, sep = "\n") }
-
-  output <- NULL
+  if (verbose) { cat (outputRaw, sep = "\n") }
+  
+  # Initialize output as raw. If it is empty stays like this.
+  output <- outputRaw
   # strsplit crashes if outputRaw == character(0)
   if (length(outputRaw) > 0) {
     output <- strsplit(trim(outputRaw), "[[:space:]]+")[[1]]
-    # suppressWarnings to avoid messages about NAs introduced by coercion
-    output <- suppressWarnings (as.numeric (output))
   }
-  # We check the output here to provide better error messages.
-  check.output(output, command, scenario, target.runner.call, outputRaw = outputRaw)
-  
-  return(output)
+  # suppressWarnings to avoid messages about NAs introduced by coercion
+  output <- suppressWarnings (as.numeric (output))
+  return (output)
+}
+
+target.error <- function(err.msg, output, scenario, target.runner.call,
+                         target.evaluator.call = NULL)
+{
+  if (!is.null(target.evaluator.call)) {
+    err.msg <- paste0(err.msg, "\n", .irace.prefix,
+                      "The call to targetEvaluator was:\n", target.evaluator.call)
+    
+  }
+  if (!is.null(target.runner.call)) {
+    err.msg <- paste0(err.msg, "\n", .irace.prefix,
+                      "The call to targetRunner was:\n", target.runner.call)
+  }
+  if (is.null(output$outputRaw)) {
+    # Message for a function call.
+    # FIXME: Ideally, we should print the list as R would print it.
+    output$outputRaw <- toString(output)
+    advice.txt <- paste0(
+      "This is not a bug in irace, but means that something failed in ",
+      "a call to the targetRunner or targetEvaluator functions provided by the user.",
+      " Please check those functions carefully.")
+  } else {
+    # Message for an external script.
+    advice.txt <- paste0(
+      "This is not a bug in irace, but means that something failed when",
+      " running the command(s) above or they were terminated before completion.",
+      " Try to run the command(s) above from the execution directory '",
+      scenario$execDir, "' to investigate the issue.")
+  }
+  irace.error(err.msg, "\n", .irace.prefix,
+              "The output was:\n", paste(output$outputRaw, collapse = "\n"),
+              "\n", .irace.prefix, advice.txt)
+}
+
+check.output.target.evaluator <- function (output, scenario, target.runner.call = NULL)
+{
+  err.msg <- output$error
+  if (is.null(err.msg)) {
+    if (is.na (output$cost)) {
+      err.msg <- paste0("The output of targetEvaluator is not numeric!")
+    } else if (is.infinite(output$cost)) {
+      err.msg <- paste0("The output of targetEvaluator is not finite!")
+    } else if (is.null(output$cost)) {
+      err.msg <- paste0("The output of targetEvaluator must be one number 'cost'!")
+    }
+  }
+
+  if (!is.null(err.msg)) {
+    target.error (err.msg, output, scenario, target.runner.call = target.runner.call,
+                  target.evaluator.call = output$call)
+  }
 }
 
 target.evaluator.default <- function(experiment, num.configurations, all.conf.id = "",
@@ -106,9 +112,51 @@ target.evaluator.default <- function(experiment, num.configurations, all.conf.id
   output <- runcommand(targetEvaluator, args, configuration.id, debugLevel)
   setwd (cwd)
 
-  p.output <- parse.output(output$output, paste(targetEvaluator, args), scenario,
-                           target.runner.call = target.runner.call)
-  return(p.output)
+  cost <- time <- NULL
+  err.msg <- output$error
+  
+  if (is.null(err.msg)) {
+    v.output <- parse.output(output$output, verbose = (scenario$debugLevel >= 2))
+    if (length(v.output) != 1) {
+      err.msg <- paste0("The output of targetEvaluator must be one number 'cost'!")
+    } else {
+      cost <- v.output[1]
+    }
+  }
+  x <- list(cost = cost,
+            error = err.msg, outputRaw = output$output,
+            call = paste(targetEvaluator, args))
+  # FIXME: We should check the output outside this function in case the user overrides it.
+  check.output.target.evaluator (x, scenario, target.runner.call = target.runner.call)
+  return (x)
+}
+
+check.output.target.runner <- function (output, scenario)
+{
+  err.msg <- output$error
+  if (is.null(err.msg)) {
+    if (is.na(output$cost) || is.na(output$time)) {
+      err.msg <- paste0("The output of targetRunner is not numeric!")
+    } else if (is.infinite(output$cost) || is.infinite(output$time)) {
+      err.msg <- paste0("The output of targetRunner is not finite!")
+      # When targetEvaluator is provided targetRunner must return only the time.
+    } else if (!is.null(scenario$targetEvaluator)) {
+      if (scenario$maxTime > 0 && is.null(output$time)) {
+        err.msg <- paste0("The output of targetRunner must be one number 'time'!")
+      } else if (!is.null(output$cost)) {
+        err.msg <- paste0("The output of targetRunner must be empty or just one number 'time'!")
+      }
+    } else if (scenario$maxTime > 0 && (is.null (output$cost) || is.null(output$time))) {
+      err.msg <- paste0("The output of targetRunner must be two numbers 'cost time'!")
+    } else if (scenario$maxExperiments > 0 && is.null (output$cost)) {
+      err.msg <- paste0("The output of targetRunner must be one number 'cost'!")
+    } else if (!is.null(output$time) && output$time < 0) {
+      err.msg <- paste0("The value of time returned by targetRunner cannot be negative (", output$time, ")!")
+    }
+  }
+  if (!is.null(err.msg)) {
+    target.error (err.msg, output, scenario, target.runner.call = output$call)
+  }
 }
 
 target.runner.default <- function(experiment, scenario)
@@ -137,26 +185,30 @@ target.runner.default <- function(experiment, scenario)
     output <- runcommand(targetRunner, args, configuration.id, debugLevel)
     retries <- retries - 1
   }
-  
-  if (!is.null(output$error)) {
-    irace.error(output$error, "\n", .irace.prefix,
-               "The call to target.runner.default was:\n", targetRunner, " ", args, "\n", .irace.prefix,
-               "The output was:\n", paste(output$output, collapse = "\n"),
-               "\n", .irace.prefix,
-               "This is not a bug in irace, but means that something failed when",
-               " running the command above or it was terminated before completion.",
-               " Try to run the command above from the execution directory '",
-               scenario$execDir, "' to investigate the issue.")
-  }
 
-  if (!is.null(scenario$targetEvaluator)) {
-    # FIXME: We should also check that the output is empty.
-    return(paste(targetRunner, args))
+  cost <- time <- NULL
+  err.msg <- output$error
+  if (is.null(err.msg)) {
+    v.output <- parse.output(output$output, verbose = (scenario$debugLevel >= 2))
+    if (length(v.output) > 2) {
+      err.msg <- paste0("The output of targetRunner should not be more than two numbers!")
+    } else if (length(v.output) == 1) {
+      if (!is.null(scenario$targetEvaluator)) {
+        time <- v.output[1]
+      } else {
+        cost <- v.output[1]
+      }
+    } else if (length(v.output) == 2) {
+      cost <- v.output[1]
+      time <- v.output[2]
+    }
   }
-
-  # targetEvaluator is NULL, so parse the output just here.
-  p.output <- parse.output(output$output, paste(targetRunner, args), scenario)
-  return(p.output)
+  x <- list(cost = cost, time = time,
+            error = err.msg, outputRaw = output$output,
+            call = paste(targetRunner, args))
+  # FIXME: We should check the output outside this function in case the user overrides it.
+  check.output.target.runner (x, scenario)
+  return (x)
 }
 
 execute.experiments <- function(experiments, scenario)
@@ -248,20 +300,20 @@ execute.experiments <- function(experiments, scenario)
     }
   }
  
-  # FIXME: We are missing a check.output() here.
   return(target.output)
 }
 
 execute.evaluator <- function(experiments, scenario, target.output, configurations.id)
 {
   all.conf.id <- paste(configurations.id, collapse = " ")
+  
   ## Evaluate configurations sequentially
   for (k in seq_along(experiments)) {
-    target.output[[k]] <-
-      .irace$target.evaluator(experiment = experiments[[k]],
-                              num.configurations = length(configurations.id),
-                              all.conf.id, scenario = scenario,
-                              target.runner.call = target.output[[k]])
+    output <- .irace$target.evaluator(experiment = experiments[[k]],
+                                      num.configurations = length(configurations.id),
+                                      all.conf.id, scenario = scenario,
+                                      target.runner.call = target.output[[k]]$call)
+    target.output[[k]]$cost <- output$cost
   }
   return(target.output)
 }

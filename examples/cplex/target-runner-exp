@@ -1,14 +1,17 @@
 #!/bin/bash
 ###############################################################################
-# This script is to tune the CPLEX software.
+# This hook is to tune the CPLEX software.
 #
 # PARAMETERS:
-# $1 is the instance name  
-# $2 is the candidate configuration number
-# The rest ($* after `shift 2') are parameters to the run of CPLEX
+# $1 is the candidate configuration number
+# $2 is the instance ID
+# $3 is the seed
+# $4 is the instance name
+# The rest ($* after `shift 4') are parameters to the run of CPLEX
 #
 # RETURN VALUE:
-# This script should print a single numerical value (the value to be minimized)
+# This hook should print a single numerical value (the value to be minimized)
+# or a numerical value + the execution time when using maxBudgetTime
 ###############################################################################
 
 EXE=/opt/ibm/ILOG/CPLEX_Studio124/cplex/bin/x86-64_sles10_4.1/cplex 

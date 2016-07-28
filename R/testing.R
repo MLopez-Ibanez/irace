@@ -60,8 +60,9 @@ testConfigurations <- function(configurations, scenario, parameters)
 
   for (i in seq_along(experiments)) {
     testResults[rownames(testResults) == experiments[[i]]$instance,
-                colnames(testResults) == experiments[[i]]$id.configuration] <- target.output[[i]][1]
+                colnames(testResults) == experiments[[i]]$id.configuration] <- target.output[[i]]$cost
   }
+  ## MANUEL: Shouldn't we record these experiments in experimentLog
   
   return(list(experiments = testResults, seeds = instanceSeed))
 }

@@ -32,7 +32,7 @@ STDERR=c${CANDIDATE}-${INSTANCEID}.stderr
 # If you want to find where targer-runner is.
 #BINDIR=$(dirname "$(readlink -f "$(type -P $0 || echo $0)")")
 EXE=~/bin/program
-FIXED_PARAMS="--trials 1 --time 60 --input $INSTANCE"
+FIXED_PARAMS="--trials 1 --input $INSTANCE"
 
 # TODO: Use /tmp for all temporary files, i.e., put target-data under /tmp
 mkdir -p target-data

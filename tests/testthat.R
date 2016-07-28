@@ -35,7 +35,8 @@ target.runner <- function(experiment, scenario)
                  tmax = as.numeric(configuration[["tmax"]]), 
                  temp = as.numeric(configuration[["temp"]])))
   .Random.seed <- prevstate
-   return(res$value)
+  result <- list(cost = res$value, call = toString(experiment))
+  return(result)
 }
 
 ## Run function ########################################################
