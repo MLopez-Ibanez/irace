@@ -75,6 +75,11 @@
    'system.file("bin/irace.bat", package="irace")'
    (thanks to Anthony Antoun)                                        
 
+ * Budget can be specified as maximum time (maxTime, --max-time) consumed by
+   the target algorithm. See the documentation for the details about how this
+   is handled.
+   (Leslie Perez, Manuel López-Ibáñez)
+
 
 1.07
 
