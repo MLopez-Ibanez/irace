@@ -696,7 +696,8 @@ irace <- function(scenario, parameters)
                                nbConfigurations = nbConfigurations,
                                nbIterations = nbIterations,
                                remainingBudget = remainingBudget,
-                               timeUsed = timeUsed)
+                               timeUsed = timeUsed,
+                               timeEstimate = timeEstimate)
     
     ## Save to the log file
     iraceResults$allConfigurations <- allConfigurations
