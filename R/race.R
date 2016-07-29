@@ -193,10 +193,13 @@ aux.ttest <- function(results, no.tasks.sofar, alive, which.alive, no.alive, con
     # FIXME: mean(Vb) doesn't seem to change either.
     PVAL <- as.integer(isTRUE(all.equal(mean(Vb), mean(Vj))))
     try(PVAL <- t.test(Vb, Vj, paired = TRUE)$p.value)
-    if (!is.nan(PVAL) & !is.na(PVAL)) {
-      # FIXME: Is this equivalent to cbind or rbind?
-      PJ <- array(c(PJ, j, PVAL), dim = dim(PJ) + c(0,1))
+    if (is.nan(PVAL) | is.na(PVAL)) {
+      # This should not happen, but it happens sometimes if all values are
+      # equal.  We assume that we cannot reject anything.
+      PVAL <- 1
     }
+    # FIXME: Is this equivalent to cbind or rbind?
+    PJ <- array(c(PJ, j, PVAL), dim = dim(PJ) + c(0,1))
   }
   PJ[2,] <- p.adjust(PJ[2,], method = adjust)
   dropped.any <- FALSE
