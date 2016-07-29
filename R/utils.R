@@ -143,16 +143,19 @@ is.null.or.empty <- function(x)
   is.null(x) || (length(x) == 1 && is.character(x) && x == "")
 }
 
-strcat <- function(..., collapse = NULL)
+strcat <- function(...)
 {
-  do.call(paste, args=list(..., sep="", collapse = collapse))
+  do.call(paste0, args = list(..., collapse = NULL))
 }
 
-# FIXME: Isn't a R function to do this? More portable?
+# FIXME: Isn't there an R function to do this? More portable?
 canonical.dirname <- function(dirname)
 {
   if (missing(dirname))
     stop ("argument 'dirname' is required")
+  ## FIXME: Perhaps this is better?
+  # s <- .Platform$file.sep
+  # return(sub(paste0(s,"?$"), s, dirname))
   return (sub ("([^/])$", "\\1/", dirname))
 }
 
@@ -168,26 +171,42 @@ path.rel2abs <- function (path, cwd = getwd())
     return ("")
   }
 
+  s <- .Platform$file.sep
+
   # Possibly expand ~/path to /home/user/path.
   path <- path.expand(path)
-
   filename <- basename(path)
   path <- dirname(path)
-  s <- .Platform$file.sep
-  if (path == ".") {
-    if (filename == ".") { # This is the current directory
-      return (cwd)
-      # We handle the case ".." later.
-    } else if (filename != "..") { # This is a file in the current directory
-      return(strcat(cwd, s, filename))
-    }
-  }
-  # else
-  
+
   # Prefix the current cwd to the path if it doesn't start with "c:\" or /
   reg.exp <- strcat("^", s, "|^[A-Za-z]:", s)
-  if (!grepl(reg.exp, path))
+  if (path == "." || !grepl(reg.exp, path)) {
+    # There is no need to normalize cwd if it was returned by getwd()
+    if (!missing(cwd)) {
+      # Change "//" to "/" to get a canonical form
+      cwd <- gsub(strcat(s, s, "+"), s, cwd)
+      # Drop final '/' if any
+      cwd <- sub(strcat(s, "$"), "", cwd)
+      if (substr(cwd, 0, 1) == ".") {
+        # Recurse to get absolute cwd
+        cwd <- path.rel2abs(cwd)
+      }
+    }
+    if (path == ".") {
+      if (filename == ".") { # This is the current directory
+        return (suppressWarnings(normalizePath(cwd, mustWork = NA)))
+        # We handle the case ".." later.
+      } else if (filename != "..") { # This is a file in the current directory
+        path <- strcat(cwd, s, filename)
+        return(suppressWarnings(normalizePath(path, mustWork = NA)))
+      }
+    }
     path <- strcat(cwd, s, path)
+  }
+  # else
+
+  # Change "//" to "/" to get a canonical form 
+  path <- gsub(strcat(s, s, "+"), s, path)
 
   # Change "/./" to "/" to get a canonical form 
   path <- gsub(strcat(s, ".", s), s, path, fixed = TRUE)
@@ -219,12 +238,8 @@ path.rel2abs <- function (path, cwd = getwd())
   # It may happen that path ends in "/", for example, for "/x". Do
   # not add another "/"
   if (filename != ".") {
-    last <- substr(path, nchar(path), nchar(path))
-    if (last == s) {
-      path <- strcat(path, filename)
-    } else {
-      path <- strcat(path, s, filename)
-    }
+    # Drop final '/' if any
+    path <- sub(strcat(s, "?$"), strcat(s, filename), path)
   }
   # We use normalizePath, which will further simplify the path if
   # the path exists.

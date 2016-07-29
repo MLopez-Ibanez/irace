@@ -19,7 +19,7 @@ target.runner <- function(experiment, scenario)
   configuration.id  <- experiment$id.configuration
   instance.id   <- experiment$id.instance
   seed          <- experiment$seed
-  configuration     <- experiment$configuration
+  configuration <- experiment$configuration
   instance      <- experiment$instance
 
   prevstate <- .Random.seed
@@ -31,7 +31,7 @@ target.runner <- function(experiment, scenario)
     return(weight * f_rastrigin(x) + (1 - weight) * f_rosenbrock(x))
   }
   res <- optim(par,fn, method = "SANN", 
-               control = list(maxit = 1000,
+               control = list(maxit = 10,
                  tmax = as.numeric(configuration[["tmax"]]), 
                  temp = as.numeric(configuration[["temp"]])))
   .Random.seed <- prevstate
@@ -53,7 +53,8 @@ sann.irace <- function(...)
    '  
   parameters <- readParameters(text = parameters.table)
 
-  scenario <- list(targetRunner = target.runner, instances = weights, maxExperiments = 1000, seed = 1234567)
+  scenario <- list(targetRunner = target.runner, instances = weights,
+                   maxExperiments = 1000, seed = 1234567)
   scenario <- c(scenario, args)
 
   scenario <- checkScenario (scenario)
@@ -75,43 +76,49 @@ test.path.rel2abs <- function()
   if (getwd() != "/tmp") return(TRUE)
   
   testcases <- read.table(text='
-"."                          "/tmp"
-".."                         "/"
-"../"                        "/"
-"../."                       "/"
-"../.."                     "/"
-"../../"                     "/"
-"../../x.r"                  "/x.r"
-"../leslie/"                 "/leslie"
-"../leslie/x.r"              "/leslie/x.r"
-"../x.r"                     "/x.r"
-"..irace"                    "/tmp/..irace"
-"./"                         "/tmp"
-"./."                        "/tmp"
-"././x.r"                    "/tmp/x.r"
-"./irace/../x.r"             "/tmp/x.r"
-"./x.r"                      "/tmp/x.r"
-".x.R"                       "/tmp/.x.R"
-"/./x.r"                     "/x.r"
-"/home"                      "/home"
-"/home/leslie/././x.r"       "/home/leslie/x.r"
-"/home/leslie/~/x.r"         "/home/leslie/~/x.r"
-"/~/x.r"                     "/~/x.r"
-"e:/home/leslie/x.r"         "e:/home/leslie/x.r"
-"leslie/leslie/../../irace"  "/tmp/irace"
-"x.r"                        "/tmp/x.r"
-"~/../x.r"                   "/home/x.r"
-"~/irace/../../x.r"          "/home/x.r"
-"~/x.r"                      "~/x.r"
+"."                         "/tmp"  "/tmp"
+".."                        "/tmp"  "/"
+"../"                       "/tmp"  "/"
+"../."                      "/tmp"  "/"
+"../.."                     "/tmp"  "/"
+"../../"                    "/tmp"  "/"
+"../../x.r"                 "/tmp"  "/x.r"
+"../leslie/"                "/tmp"  "/leslie"
+"../leslie/x.r"             "/tmp"  "/leslie/x.r"
+"../x.r"                    "/tmp"  "/x.r"
+"..irace"                   "/tmp"  "/tmp/..irace"
+"./"                        "/tmp"  "/tmp"
+"./."                       "/tmp"  "/tmp"
+"./"                        "/tmp/"  "/tmp"
+"./."                       "/tmp/"  "/tmp"
+"././x.r"                   "/tmp"  "/tmp/x.r"
+"./irace/../x.r"            "/tmp"  "/tmp/x.r"
+"./x.r"                     "/tmp"  "/tmp/x.r"
+".x.R"                      "/tmp"  "/tmp/.x.R"
+"/./x.r"                    "/tmp"  "/x.r"
+"/home"                     "/tmp"  "/home"
+"/home/leslie/././x.r"      "/tmp"  "/home/leslie/x.r"
+"/home/leslie/~/x.r"        "/tmp"  "/home/leslie/~/x.r"
+"/~/x.r"                    "/tmp"  "/~/x.r"
+"e:/home/leslie/x.r"        "/tmp"  "e:/home/leslie/x.r"
+"leslie/leslie/../../irace" "/tmp"  "/tmp/irace"
+"x.r"                       "/tmp"  "/tmp/x.r"
+"~/../x.r"                  "/tmp"  "/home/x.r"
+"~/irace/../../x.r"         "/tmp"  "/home/x.r"
+"~/x.r"                     "/tmp"  "~/x.r"
+"../../../data"             "./"    "/data"
+"../../../data"             "/tmp/a/b/c/" "/tmp/data"
+"..//a"                     ".//"   "/a"
 ', stringsAsFactors=FALSE)
   for(i in 1:nrow(testcases)) {
     orig <- testcases[i,1]
-    res <- irace:::path.rel2abs(testcases[i,1])
-    exp <- path.expand(testcases[i,2])
+    cwd <-  testcases[i,2]
+    res <- irace:::path.rel2abs(testcases[i,1], cwd)
+    exp <- path.expand(testcases[i,3])
     if (res == exp) {
-      cat("[OK] ", orig, " -> ", res, "\n", sep="")
+      cat("[OK] (", orig, ", ", cwd, ") -> ", res, "\n", sep="")
     } else {
-      stop("[FAILED] ", orig, " -> ", res, " but expected: ", exp, "\n")
+      stop("[FAILED] (", orig, ", ", cwd, ") -> ", res, " but expected: ", exp, "\n")
     }
   }
 }
