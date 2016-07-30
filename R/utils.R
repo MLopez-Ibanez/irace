@@ -392,10 +392,19 @@ configurations.print.command <- function(configuration, parameters)
 # would try to close any open slaves, and then re-spawn a different
 # number.
 ##
-# FIXME2: Slaves load irace without paying attention to R_LIBS, .libPaths or
-# whether library was called with lib.loc. Thus, one may end up running a
-# different version of irace on the slaves than on the master. I wasted more
-# than 12 hours trying to find a work-around but nothing seems to work.
+# FIXME2: Slaves will load the irace namespace independently of how the master
+# loaded it. This can be seen by doing in the slaves:
+#
+## print(loadedNamespaces())
+## try(print(as.list(get(".__NAMESPACE__.", envir = asNamespace("irace", base.OK = FALSE),
+##                       inherits = FALSE))$path))
+## try(print(path.package("irace")))     
+#
+# That is, neither R_LIBS, .libPaths or whether library was called with lib.loc
+# will affect the slaves. It also happens before we can set those variables on
+# the slaves. Thus, one may end up running a different version of irace on the
+# slaves than on the master. I wasted more than 12 hours trying to find a
+# work-around but nothing seems to work.
 mpiInit <- function(nslaves, debugLevel = 0)
 {
   # Load the Rmpi package if it is not already loaded.

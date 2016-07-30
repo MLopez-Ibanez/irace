@@ -181,12 +181,15 @@ check.output.target.runner <- function (output, scenario)
   return (output)
 }
 
-# This function invokes target.runner. 
-exec.target.runner <- function(experiment, scenario)
+# This function invokes target.runner.  When used on a remote node by Rmpi,
+# environments do not seem to be shared and the default value is evaluated too
+# late, thus we have to pass .irace$target.runner explicitly.
+exec.target.runner <- function(experiment, scenario,
+                               target.runner = .irace$target.runner)
 {
   doit <- function(experiment, scenario)
   {
-    x <- .irace$target.runner(experiment, scenario)
+    x <- target.runner(experiment, scenario)
     return (check.output.target.runner (x, scenario))
   }
   
@@ -264,7 +267,8 @@ execute.experiments <- function(experiments, scenario)
     if (mpi) {
       if (scenario$loadBalancing) {
         target.output <- Rmpi::mpi.applyLB(experiments, exec.target.runner,
-                                           scenario = scenario)
+                                           scenario = scenario,
+                                           target.runner = .irace$target.runner)
       } else {
         # Without load-balancing, we need to split the experiments into chunks
         # of size parallel.
@@ -272,7 +276,8 @@ execute.experiments <- function(experiments, scenario)
                                 tapply(experiments,
                                        ceiling(1:length(experiments) / parallel),
                                        Rmpi::mpi.apply, exec.target.runner,
-                                       scenario = scenario))
+                                       scenario = scenario,
+                                       target.runner = .irace$target.runner))
       }
       # FIXME: if stop() is called from mpi.applyLB, it does not
       # terminate the execution of the parent process, so it will
