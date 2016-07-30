@@ -22,8 +22,6 @@ target.runner <- function(experiment, scenario)
   configuration <- experiment$configuration
   instance      <- experiment$instance
 
-  prevstate <- .Random.seed
-  set.seed(2)
   D <- 3
   par <- runif(D, min = -1, max = 1)
   fn <- function(x) {
@@ -34,7 +32,6 @@ target.runner <- function(experiment, scenario)
                control = list(maxit = 10,
                  tmax = as.numeric(configuration[["tmax"]]), 
                  temp = as.numeric(configuration[["temp"]])))
-  .Random.seed <- prevstate
   result <- list(cost = res$value, call = toString(experiment))
   return(result)
 }
