@@ -2460,6 +2460,44 @@ Optional data passed to \parameter{targetRunner}. This is ignored by the default
     GNU/Linux, it is easy to implement by using the \code{timeout} command in
     \code{targetRunner} when invoking your program.
 
+  \subsection{When using the mpi option, \irace is aborted with an error message indicating that a
+              function is not defined. How to fix this?}
+              
+     \code{Rmpi} does not work the same way when called from within a package and when called from a script or 
+     interactively. When \irace creates the slave nodes, the slaves will load a copy of \irace automatically. 
+     If the slave nodes are on different machines, they must have \irace installed. If \irace if not installed
+     system-wide, \aR needs to be able to find \irace on the slave nodes. This is usually done by setting \code{R\_LIBS}, 
+     \code{.libPaths()} or by loading \irace using \code{library()} or \code{require()} with the argument ``\code{lib.loc}''. 
+     The settings on the master are not applied to the slave nodes automatically, thus the slave 
+     nodes may need their own settings. After spawning the slaves, it is too late to modify 
+     those settings, thus modifying the shell variable \code{R\_LIBS} seems the only valid 
+     way to tell the slaves where to find \irace.
+
+     If the path is set correctly and the problem persists, please check follow these instructions:
+     
+     \begin{enumerate}
+       \item Test that \irace and \code{Rmpi} work: run \irace on a single machine (submit node), without calling \code{qsub}, \code{mpirun} or a 
+       similar wrapper around \irace/\aR.
+       \item Test loading \irace on the slave nodes. Note that \code{qsub}/\code{mpirun} may use a different mechanism than 
+       if you log into the node (e.g., with ssh). Thus, you need to write a little \aR program such as:
+       <<faq3, eval=FALSE>>=
+         library(Rmpi)
+         mpi.spawn.Rslaves(nslaves = 10)
+         x <- mpi.applyLB(1:10, function(x) {
+                                  library(irace)
+                                  return(path.package("irace")) })
+         print(x)
+      @
+      submit this program to the cluster (using \code{qsub}/\code{mpirun}) like you would submit \irace.
+      
+      \item Check \code{bin/parallel-irace-mpi}. The function \code{irace\_main()} creates an MPI job for our cluster. 
+      You may need to speak with the admin of your cluster and ask them how to best submit a job for MPI. There may be 
+      some particular settings that you need. Note also that \code{Rmpi} usually creates some log files; \irace does 
+      not create those files unless \code{debugLevel > 0}.
+     \end{enumerate}
+     
+     Please contact us on the \irace google group if you have further problems.
+     
 %FIXME: complete this section
 %\section{Known problems}
 
