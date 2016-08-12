@@ -2517,6 +2517,11 @@ Optional data passed to \parameter{targetRunner}. This is ignored by the default
      \end{enumerate}
      
      Please contact us on the \irace google group if you have further problems.
+
+\subsection[Error: 4 arguments passed to {.Internal(nchar)} which requires 3]{Error: 4 arguments passed to \code{.Internal(nchar)} which requires 3}
+
+This is a bug in \aR 3.2.0 on Windows. The solution is to update your version of
+\aR.
      
 %FIXME: complete this section
 %\section{Known problems}
