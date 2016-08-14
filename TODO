@@ -76,6 +76,13 @@ TODO General (in order of importance):
    http://www.itl.nist.gov/div898/software/dataplot/refman1/auxillar/friedman.htm
    (See also function friedman in package agricolae)
 
+ * Quade test as an alternative to Friedman:
+   http://stats.stackexchange.com/questions/83904/friedman-test-vs-wilcoxon-test
+
+ * ANOVA with rank transformation instead of Friedman:
+
+   https://seriousstats.wordpress.com/2012/02/14/friedman/
+
  * Maybe separate scenario setup from irace parameters? We should have two
    files: scenario.txt and irace-conf.txt. This will make clear what
    the user really has to change to define a scenario versus other
