@@ -43,14 +43,28 @@
 \usepackage{tocloft}
 \setlength{\cftsubsecnumwidth}{3em}% Set length of number width in ToC for \subsection
 \usepackage{enumitem}
-%\usepackage{listings} % for wrapping
-
-%listing <- function(x, options) {
-%    paste("\\begin{lstlisting}[basicstyle=\\ttfamily,breaklines=false]\n",
-%      x, "\\end{lstlisting}\n", sep = "")
-%  }
-%  knit_hooks$set(source=listing, output=listing)
-
+%% FIXME: listing is very limited, we should use 'minted'
+\usepackage{listings}
+\lstdefinestyle{BashInputStyle}{
+  language=bash,%
+  basicstyle=\ttfamily,%
+  numbers=none,%
+  frame=tb,%
+  rulecolor=\color{lightgray},
+%  framesep=1ex,
+  framexleftmargin=1ex,
+  columns=fullflexible,%
+  backgroundcolor=\color{yellow!01},%
+  linewidth=\linewidth,%
+ % xleftmargin=1\linewidth,%
+  identifierstyle=\color{darkgray},%
+  keywordstyle=\color{darkgray},%
+  keywordstyle={[2]\color{Cyan}},%
+  keywordstyle={[3]\color{olive}},%
+  stringstyle=\color{MidnightBlue},%
+  commentstyle=\itshape\color{RedOrange},%
+  morestring=[b]',%
+}
 
 \DefineVerbatimEnvironment{Code}{Verbatim}{}
 \DefineVerbatimEnvironment{CodeInput}{Verbatim}{fontshape=rm}
@@ -338,10 +352,12 @@ versions available depending on your operating system:
 To install the package on GNU/Linux and OS X, you must execute the following
 command at the shell:
 %
-<<bash_irace_install,engine='bash',eval=FALSE>>=
+%<<bash_irace_install,engine='bash',eval=FALSE>>=
+\begin{lstlisting}[style=BashInputStyle]
 # Replace <package> with the path to the downloaded file.
 R CMD INSTALL <package>
-@
+\end{lstlisting}
+%@
 
 To install the package on Windows, open \aR and execute the following line on
 the \aR console:
@@ -372,7 +388,8 @@ the path to the system variable \code{R_LIBS} or to the \aR internal variable
 On GNU/Linux or OS X, execute the following commands to install the
 package on a local directory:
 
-<<R_irace_install2,engine='bash',eval=FALSE>>=
+%<<R_irace_install2,engine='bash',eval=FALSE>>=
+\begin{lstlisting}[style=BashInputStyle]
 export R_LIBS_USER="<R_LIBS_USER>"
 # Create R_LIBS_USER if it doesn't exist
 mkdir $R_LIBS_USER
@@ -380,7 +397,8 @@ mkdir $R_LIBS_USER
 R CMD INSTALL --library=$R_LIBS_USER <package>
 # Tell R where to find R_LIBS_USER
 export R_LIBS=${R_LIBS_USER}:${R_LIBS}
-@
+\end{lstlisting}
+%@
 
 On Windows, you can install the package on a local directory by executing the
 following lines in the \aR console:
@@ -417,20 +435,24 @@ by defining the \code{\$IRACE_HOME} variable and adding it to the system
 \code{PATH}. Append the following commands to \path{~/.bash_profile}, \path{~/.bashrc} or
 \path{~/.profile}:
 %
-<<linux_irace_path1,engine='bash',eval=FALSE>>=
+%<<linux_irace_path1,engine='bash',eval=FALSE>>=
+\begin{lstlisting}[style=BashInputStyle]
 # Replace <IRACE_HOME> with the irace installation path
 export IRACE_HOME=<IRACE_HOME>
 export PATH=${IRACE_HOME}/bin/:$PATH
 # Tell R where to find R_LIBS_USER
 # Use the following line only if local installation was forced
 export R_LIBS=${R_LIBS_USER}:${R_LIBS}
-@
+\end{lstlisting}
+%@
 
 Then, open a new terminal and launch \irace as follows:
 
-<<linux_irace_help,engine='bash',eval=FALSE>>=
+%<<linux_irace_help,engine='bash',eval=FALSE>>=
+\begin{lstlisting}[style=BashInputStyle]
 irace --help
-@
+\end{lstlisting}
+%@
 
 On Windows, you need to add both \aR and the installation path of \irace to the
 environment variable \code{PATH}. To edit the \code{PATH}, search for
@@ -441,9 +463,11 @@ of \irace. If \irace was installed locally, you also need to edit the
 environment variable \code{R_LIBS} to add \code{R_LIBS_USER}. Then, open a new
 terminal (run program \code{cmd.exe}) and launch \irace as:
 %
-<<win_irace_help,engine='bash',eval=FALSE>>=
+%<<win_irace_help,engine='bash',eval=FALSE>>=
+\begin{lstlisting}[style=BashInputStyle]
 irace.bat --help
-@
+\end{lstlisting}
+%@
 
 Alternatively, you may directly invoke \irace from within the \aR
 console by executing:
@@ -486,10 +510,12 @@ Once all the scenario elements are prepared you can execute \irace, either using
 \item Execute \irace from the command-line as (on Windows, you should execute
   \code{irace.bat}):
 
-<<irace_cmd_exe0,engine='bash', eval=FALSE>>=
+%<<irace_cmd_exe0,engine='bash', eval=FALSE>>=
+\begin{lstlisting}[style=BashInputStyle]
 # $IRACE_HOME is the installation directory of irace.
 $IRACE_HOME/bin/irace --scenario scenario.txt
-@
+\end{lstlisting}
+%@
 
 For this example we assume that the needed scenario files have been set
 properly in the \code{scenario.txt} file using the options described in
@@ -518,10 +544,12 @@ execute the following commands:
 \begin{itemize}
 \item From the command-line (on Windows, execute \code{irace.bat}):
   
-<<irace_check,engine='bash', eval=FALSE>>=
+%<<irace_check,engine='bash', eval=FALSE>>=
+\begin{lstlisting}[style=BashInputStyle]
 # $IRACE_HOME is the installation directory of irace.
 $IRACE_HOME/bin/irace --scenario scenario.txt --check
-@
+\end{lstlisting}
+%@
 
 \item Or from the \aR console:
 
@@ -545,17 +573,21 @@ doubts check the the sections that describe each option in detail.
 \begin{enumerate}
 \item Create a directory (\eg~\path{~/tuning/}) for the scenario setup. This directory will contain
 all the files that describe the scenario. On GNU/Linux or OS X, you can do this as follows:
-<<dir1,engine='bash',eval=FALSE>>=
+%<<dir1,engine='bash',eval=FALSE>>=
+\begin{lstlisting}[style=BashInputStyle]
 mkdir ~/tuning
 cd ~/tuning
-@
+\end{lstlisting}
+%@
 
 \item Copy all the template files from the \path{$IRACE_HOME/templates/}
 directory to the scenario directory.
-<<copy1,engine='bash',eval=FALSE>>=
+%<<copy1,engine='bash',eval=FALSE>>=
+\begin{lstlisting}[style=BashInputStyle]
 # $IRACE_HOME is the installation directory of irace.
 cp $IRACE_HOME/templates/*.tmpl  ~/tuning/
-@
+\end{lstlisting}
+%@
 
 Remember that \code{$IRACE_HOME} is the path to the installation
 directory of \irace. It can be obtained in the \aR console with:
@@ -595,7 +627,7 @@ the directory.
   See \autoref{sec:training} for guidelines.
 
 \item Uncomment and assign in \code{scenario.txt} only the options for which you
-need a value different than the default.
+need a value different from the default.
 %% MANUEL: I'm not sure what this means.
 % The names of the template files match the default names of the scenario
 % options.
@@ -685,10 +717,12 @@ Once the files have been prepared, you can execute \irace using the command-line
 \begin{itemize}
 \item{
 \textbf{On the console}, call the command:
-<<irace_cmd_exe,engine='bash', eval=FALSE>>=
+%<<irace_cmd_exe,engine='bash', eval=FALSE>>=
+\begin{lstlisting}[style=BashInputStyle]
 cd ~/tuning/
 $IRACE_HOME/bin/irace
-@
+\end{lstlisting}
+%@
 }
 \item{
 \textbf{On the \aR console}, open an \aR console and execute:
@@ -736,45 +770,55 @@ described in the following:
 \begin{enumerate}
 \item Create a directory for the tuning (\eg~\path{~/tuning/}) and copy the example scenario files
 located in the \code{examples} folder to the created directory:
-<<dir0,engine='bash',eval=FALSE>>=
+%<<dir0,engine='bash',eval=FALSE>>=
+\begin{lstlisting}[style=BashInputStyle]
 mkdir ~/tuning
 cd ~/tuning
 # $IRACE_HOME is the installation directory of irace.
 cp $IRACE_HOME/examples/acotsp/* ~/tuning/
-@
+\end{lstlisting}
+%@
 
 \item Download the training instances from \url{http://iridia.ulb.ac.be/irace/} to the \path{~/tuning/} directory.
 \item Create the instance directory (\eg~\path{~/tuning/Instances}) and decompress the instance files on it.
 
-<<instance0,engine='bash',eval=FALSE>>=
+%<<instance0,engine='bash',eval=FALSE>>=
+\begin{lstlisting}[style=BashInputStyle]
 mkdir ~/tuning/Instances/
 cd ~/tuning/
 tar -xvf tsp-instances-training.tar.bz2 Instances/
-@
+\end{lstlisting}
+%@
+
 \item Download the \ACOTSP software from \url{http://www.aco-metaheuristic.org/aco-code/} to the \path{~/tuning/}
 directory and compile it.
-
-<<acotsp0,engine='bash',eval=FALSE>>=
+%<<acotsp0,engine='bash',eval=FALSE>>=
+\begin{lstlisting}[style=BashInputStyle]
 cd ~/tuning/
 tar -xvf ACOTSP-1.03.tgz
 cd ~/tuning/ACOTSP-1.03
 make
-@
+\end{lstlisting}
+%@
 \item Create a directory for the executable and copy it:
 
-<<acotsp1,engine='bash',eval=FALSE>>=
+%<<acotsp1,engine='bash',eval=FALSE>>=
+\begin{lstlisting}[style=BashInputStyle]
 mkdir ~/bin/
 cp ~/tuning/ACOTSP-1.03/acotsp ~/bin/
-@
+\end{lstlisting}
+%@
 
 \item Create a directory for executing the experiments and execute \irace:
 
-<<runexample,engine='bash',eval=FALSE>>=
+%<<runexample,engine='bash',eval=FALSE>>=
+\begin{lstlisting}[style=BashInputStyle]
 mkdir ~/tuning/acotsp-arena/
 cd ~/tuning/
 # $IRACE_HOME is the installation directory of irace.
 $IRACE_HOME/bin/irace
-@
+\end{lstlisting}
+%@
 
 \item Or you can also execute \irace from the \aR console using:
 
@@ -1004,10 +1048,12 @@ is invoked for each candidate configuration, passing as arguments:
 
 The experiment list shown in \autoref{sec:runner fx}, would result in the following execution line:
 
-<<target_runner_ex1, engine='bash', eval=FALSE>>=
+%<<target_runner_ex1, engine='bash', eval=FALSE>>=
+\begin{lstlisting}[style=BashInputStyle]
 target-runner 1 113 734718556 /home/user/instances/tsp/2000-533.tsp \
  --eas --localsearch 0 --alpha 2.92 --beta 3.06 --rho 0.6 --ants 80
-@
+\end{lstlisting}
+%@
 
 The command line switches that describe the candidate configuration are
 constructed by appending to each parameter label (switch), \emph{without
@@ -1180,11 +1226,14 @@ name, that is, the instances names are treated as relative to this directory.
 %
 For example, given the above file as \parameter{trainInstancesFile} and the default value of  \parameter{trainInstancesDir} (\code{./Instances}), then a possible invocation of \parameter{targetRunner} would be:
 %
-<<target_runner_cmd, engine='bash', eval=FALSE>>=
+%<<target_runner_cmd, engine='bash', eval=FALSE>>=
+\begin{lstlisting}[style=BashInputStyle]
 target-runner 1 113 734718 ./Instances/100/100-1_100-2.tsp --time 1 \
               --alpha 2.92 ...
-@
-%
+\end{lstlisting}
+%@
+
+
 Training instances do not need to be files, \irace just passes their names
 to \parameter{targetRunner}, thus the names can denote benchmark functions or
 descriptive labels that the target algorithm understands. The extra instance
@@ -1457,9 +1506,11 @@ the \parameter{recoveryFile} from the command-line or from the scenario file,
 and execute \irace as described in \autoref{sec:execution}. For example, from
 the command-line use:
 
-<<lauch_reco, engine="bash", eval=FALSE>>=
+%<<lauch_reco, engine="bash", eval=FALSE>>=
+\begin{lstlisting}[style=BashInputStyle]
 irace --recovery-file "./irace-backup.Rdata"
-@
+\end{lstlisting}
+%@
 
 \begin{xwarningbox}
   When recovering a previous run, \irace will try to save data on the file
@@ -1856,7 +1907,6 @@ boxplot (iraceResults$testing$experiments,
 
 %<<conc, prompt=TRUE, eval=TRUE, comment="">>=
 %irace:::concordance(iraceResults$testing$experiments)
-
 %@
 %
 
@@ -1878,7 +1928,7 @@ in the \aR console: (\code{?parallelCoordinatesPlot}).
  The following example shows how to create a parallel
 coordinate plot of the configurations in the last two iterations of \irace.
 
-<<parcord, fig.pos="H", fig.align="center", out.width='0.75\\textwidth', fig.cap="Parallel coordinate plots of the parameters of the configurations in the last two iterations of a run of \\irace.", prompt=TRUE, eval=TRUE, comment="">>=
+<<parcord, fig.pos="H", fig.align="center", out.width='0.75\\textwidth', fig.cap="Parallel coordinate plots of the parameters of the configurations in the last two iterations of a run of \\irace.", prompt=FALSE, eval=TRUE, comment="">>=
 # Get last iteration number
 last <- length(iraceResults$iterationElites)
 # Get configurations in the last two iterations
@@ -2026,7 +2076,7 @@ concordance coefficient in the text output of \irace.  See \autoref{sec:output
 
 The statistical test used in \irace identifies statistically bad performing
 configurations that can be discarded from the race in order to save
-budget. Different statistical tests uses different criteria to compare the
+budget. Different statistical tests use different criteria to compare the
 quality of the configurations, which has an effect on the tuning results.
 
 \Irace provides two types of statistical tests
@@ -2501,17 +2551,22 @@ Optional data passed to \parameter{targetRunner}. This is ignored by the default
      the program, not in \irace.  We recommend that in \parameter{targetRunner}, you use
      \code{valgrind} to run your program. That is, if your program is called like:
 
-    <<faq1,engine='bash', eval=FALSE>>=
+%    <<faq1,engine='bash', eval=FALSE>>=
+     \begin{lstlisting}[style=BashInputStyle]
     $EXE ${FIXED_PARAMS} -i $INSTANCE ${CONFIG_PARAMS} \
      1> ${STDOUT} 2> ${STDERR}
-    @
-    then replace that line with:
+\end{lstlisting}
+%    @
+     then replace that line with:
 
-   <<faq2,engine='bash', eval=FALSE>>=
+%   <<faq2,engine='bash', eval=FALSE>>=
+\begin{lstlisting}[style=BashInputStyle]
    valgrind --error-exitcode=1 $EXE ${FIXED_PARAMS} \
     -i $INSTANCE ${CONFIG_PARAMS} 1> ${STDOUT} 2> ${STDERR}
-   @
-  If there are bugs in your program, they will appear in \code{${STDERR}}, thus do not delete those files.
+\end{lstlisting}
+%   @
+     
+     If there are bugs in your program, they will appear in \code{${STDERR}}, thus do not delete those files.
 
 
   \subsection{My program may be buggy and run into an infinite loop. Is it possible to set a maximum timeout? }
@@ -2533,13 +2588,13 @@ Optional data passed to \parameter{targetRunner}. This is ignored by the default
      those settings, thus modifying the shell variable \code{R\_LIBS} seems the only valid 
      way to tell the slaves where to find \irace.
 
-     If the path is set correctly and the problem persists, please check follow these instructions:
+     If the path is set correctly and the problem persists, please check these instructions:
      
      \begin{enumerate}
-       \item Test that \irace and \code{Rmpi} work: run \irace on a single machine (submit node), without calling \code{qsub}, \code{mpirun} or a 
-       similar wrapper around \irace/\aR.
-       \item Test loading \irace on the slave nodes. Note that \code{qsub}/\code{mpirun} may use a different mechanism than 
-       if you log into the node (e.g., with ssh). Thus, you need to write a little \aR program such as:
+       \item Test that \irace and \code{Rmpi} work. Run \irace on a single machine (submit node), without calling \code{qsub}, \code{mpirun} or a 
+       similar wrapper around \irace or \aR.
+       \item Test loading \irace on the slave nodes. However,
+         jobs submitted by \code{qsub}/\code{mpirun} may load \aR packages using a different mechanism from the way it happens if you log directly into the node (e.g., with \code{ssh}). Thus, you need to write a little \aR program such as:
        <<faq3, eval=FALSE>>=
          library(Rmpi)
          mpi.spawn.Rslaves(nslaves = 10)
@@ -2548,12 +2603,11 @@ Optional data passed to \parameter{targetRunner}. This is ignored by the default
                                   return(path.package("irace")) })
          print(x)
       @
-      submit this program to the cluster (using \code{qsub}/\code{mpirun}) like you would submit \irace.
+      Submit this program to the cluster (using \code{qsub}/\code{mpirun}) like you would submit \irace.
       
-      \item Check \code{bin/parallel-irace-mpi}. The function \code{irace\_main()} creates an MPI job for our cluster. 
+      \item In the script \code{bin/parallel-irace-mpi}, the function \code{irace\_main()} creates an MPI job for our cluster. 
       You may need to speak with the admin of your cluster and ask them how to best submit a job for MPI. There may be 
-      some particular settings that you need. Note also that \code{Rmpi} usually creates some log files; \irace does 
-      not create those files unless \code{debugLevel > 0}.
+      some particular settings that you need. \code{Rmpi} normally creates  log files; but \irace suppresses those files unless $\texttt{debugLevel} > 0$.
      \end{enumerate}
      
      Please contact us on the \irace google group if you have further problems.
@@ -2619,9 +2673,12 @@ most cases. The official instructions are available at
 \subsection{GNU/Linux}
 You should install \aR from your package manager. On a Debian/Ubuntu system
 it will be something like:
-<<R_linux_install,engine='bash',eval=FALSE>>=
+%<<R_linux_install,engine='bash',eval=FALSE>>=
+\begin{lstlisting}[style=BashInputStyle]
 sudo apt-get install r-base
-@
+\end{lstlisting}
+%@
+
 Once \aR is installed, you can launch \aR from the Terminal and from the \aR prompt
 install the \irace package (see \autoref{sec:irace install}).
 
@@ -2634,10 +2691,13 @@ Alternatively, if you use
 homebrew, you can just brew the \aR formula from the science tap (unfortunately
 it does not come already bottled so you need to have Xcode\footnote{Xcode download
 webpage: \url{https://developer.apple.com/xcode/download/}} installed to compile it):
-<<R_OS_install,engine='bash',eval=FALSE>>=
+%<<R_OS_install,engine='bash',eval=FALSE>>=
+\begin{lstlisting}[style=BashInputStyle]
 brew tap homebrew/science
 brew install r
-@
+\end{lstlisting}
+%@
+
 Once \aR is installed, you can launch \aR from the Terminal (or from your Applications),
 and from the \aR prompt install the \irace package (see \autoref{sec:irace install}).
 
@@ -2652,17 +2712,18 @@ console and install the \irace package from it (see \autoref{sec:irace
   install}).
 
 
-\section{TargetRunner script check list} \label{sec:check list}
+\section{targetRunner script check list} \label{sec:check list}
 
-When the \parameter{targetRunner} script is not running properly it can be difficult to detect where
-the problem is. The more your script provides descriptive errors, the easier it will be to debug it. If you are
-using temporary files to redirect the output of your algorithm, check that these are created
-properly. We recommend to follow the structure of the example file (\code{target-runner})
-provided in \code{\$IRACE_HOME/templates}. The following examples are based on a file with
-that characteristics.
+If the \parameter{targetRunner} script fails to return the output expected by
+\irace, it can be sometimes difficult to diagnose where the problem lies. The
+more descriptive errors provided by your script, the easier it will be to debug
+it. If you are using temporary files to redirect the output of your algorithm,
+check that these are created properly. We recommend to follow the structure of
+the example file (\code{target-runner}) provided in
+\code{\$IRACE_HOME/templates}. The following examples are based on a file with
+those characteristics.
 
-When you have problems with the \parameter{targetRunner}, you will see an error on the \irace output
-that says that the execution of \parameter{targetRunner} was not successful.
+In case of failure of \parameter{targetRunner}, \irace will print an error on its output describing which execution of \parameter{targetRunner} was not successful.
 
 Follow this list to detect where the problem is:
 
@@ -2686,9 +2747,11 @@ This error means that your \code{targetRunner} is not an executable file. In the
 is a folder and therefore there must be a problem with the name of the script. In the second case,
 you must make the file executable, which in GNU/Linux can be done by:
 
-<<perm,engine='bash', eval=FALSE>>=
+%<<perm,engine='bash', eval=FALSE>>=
+\begin{lstlisting}[style=BashInputStyle]
 chmod +x ~/tuning/target-runner
-@
+\end{lstlisting}
+%@
 
 \item Make sure that your executable is in the location described in the script
 (variable \code{EXE} for the templates example). A typical output for such an error is:\\
@@ -2777,11 +2840,14 @@ to see the output that your algorithm produces.
 \section{Glossary}
 
 \begin{description}
-\item[Parameter tuning:] Process of searching good settings for the parameters of an
-         algorithm under a particular tuning scenario (instances, execution time, etc.).
-\item[Scenario:] Settings of a tuning scenario, these settings include the algorithm to be tuned (target),
-         budget for the execution of the target algorithm (execution time, evaluations, iterations, etc.),
-          set of problem instances  and all the information that is required to perform the tuning.
+\item[Parameter tuning:] Process of searching good settings for the parameters
+  of an algorithm under a particular tuning scenario (instances, execution
+  time, etc.).
+\item[Scenario:] Settings that define an instance of the tuning problem. These
+  settings include the algorithm to be tuned (target), budget for the execution
+  of the target algorithm (execution time, evaluations, iterations, etc.), set
+  of problem instances and all the information that is required to perform the
+  tuning.
 \item[Target algorithm:] Algorithm whose parameters will be tuned.
 \item[Target parameter:] Parameter of the target algorithm that will be tuned.
 \item[\irace option:] Configurable option of \irace.
@@ -2799,4 +2865,4 @@ to see the output that your algorithm produces.
 %%% TeX-master: "irace-package.Rnw"
 %%% End:
 
-%  LocalWords:  iteratively
+% LocalWords: iteratively
