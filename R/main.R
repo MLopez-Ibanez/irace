@@ -303,9 +303,13 @@ irace.cmdline <- function(args = commandArgs (trailingOnly = TRUE))
   readCmdLineParameter <- function (paramName, default) {
     x <- readArg (short = .irace.params.def[paramName, "short"],
                   long  = .irace.params.def[paramName,"long"])
-    if (is.null(x))
+    if (is.null(x)) {
       return (if (is.null(default))
-              .irace.params.def[paramName, "default"] else default)
+                .irace.params.def[paramName, "default"] else default)
+    } else if (is.na(x) && .irace.params.def[paramName,"type"] != 'x' ) {
+      irace.error ("option '", .irace.params.def[paramName,"long"],
+                   "' requires an argument\n")
+    }
     return (x)
   }
 

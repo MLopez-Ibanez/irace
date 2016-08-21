@@ -43,18 +43,19 @@ is actually "5" so the comparison is lexicographic. How to solve this?
    ordinal parameters. Hopefully this will make obvious that these
    values are strings and cannot be compared with other numbers.
 
-#1 ------------------------------------------------------------
+
+
+###############################################################
+# FIXED bugs 
+###############################################################
+
+#1 --- fixed at revision 1590
 
 $ irace --debug-level
 Error in if (scenario$debugLevel >= 1) { :
   missing value where TRUE/FALSE needed
 Calls: irace.cmdline -> irace.main -> checkScenario
 Execution halted
-
-
-###############################################################
-# FIXED bugs 
-###############################################################
 
 #5 --- fixed at revision 1343
 
