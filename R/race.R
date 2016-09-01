@@ -222,7 +222,7 @@ race <- function(maxExp = 0,
                  configurations,
                  parameters,
                  scenario,
-                 elitistInstances)
+                 elitistNewInstances)
 {
   # FIXME: Remove argument checking. This must have been done by the caller.
   stat.test <- scenario$testType
@@ -264,11 +264,11 @@ race <- function(maxExp = 0,
   # Create the instance list according to the algorithm selected
   # if next.instance == 1 then this is the first iteration.
   if (elitist && .irace$next.instance != 1) {
-    last.new <- .irace$next.instance + elitistInstances - 1
+    last.new <- .irace$next.instance + elitistNewInstances - 1
     # cat("Instances row:", nrow(.irace$instancesList))
     if (scenario$deterministic && last.new > nrow(.irace$instancesList)) {
       # The scenario is deterministic and does not have more instances
-      elitistInstances <- 0
+      elitistNewInstances <- 0
       race.instances   <- sample.int(nrow(.irace$instancesList))
     } else {
       if (last.new >= .irace$next.instance) {
@@ -308,10 +308,10 @@ race <- function(maxExp = 0,
                       dimnames = list(NULL, as.character(configurations[, ".ID."])))
   } else {
     Results <- matrix(NA, 
-                      nrow = elitistInstances + nrow(elite.data), 
+                      nrow = elitistNewInstances + nrow(elite.data), 
                       ncol = no.configurations, 
                       dimnames = list(as.character(race.instances[
-                        1:(elitistInstances + nrow(elite.data))]),
+                        1:(elitistNewInstances + nrow(elite.data))]),
                         as.character(configurations[, ".ID."])) )
     Results[rownames(elite.data), colnames(elite.data)] <- elite.data
   }
@@ -363,7 +363,7 @@ race <- function(maxExp = 0,
   # Elitist irace needed info
   # MANUEL: I would call this minNewInstances
   if (elitist) {
-    initial.tests <- elitistInstances
+    initial.tests <- elitistNewInstances
     if (is.null(elite.data)) {
       elite.safe <- first.test
       n.elite <- 0

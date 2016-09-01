@@ -30,7 +30,7 @@
   Elitist irace:
   \itemize{
      \item elitist: Enable/disable elitist irace. (Default: 1)
-     \item elitistInstances: Number of instances to add to execution list before previous instances in elitist irace. (Default: 1)
+     \item elitistNewInstances: Number of instances added to the execution list before previous instances in elitist irace. (Default: 1)
      \item elitistLimit: Limit for the elitist race, number statistical test without elimination peformed. Use 0 for no limit. (Default: 2)
   }
   \code{irace} internal: For most of these parameters is adviced to use the default settings.

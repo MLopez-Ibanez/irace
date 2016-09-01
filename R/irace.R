@@ -235,7 +235,7 @@ checkMinimumBudget <- function(remainingBudget, minSurvival, nbIterations,
                                scenario)
 {
   eachTest <- scenario$eachTest
-  Tnew <- scenario$elitistInstances
+  Tnew <- scenario$elitistNewInstances
   mu <- max(scenario$mu, scenario$firstTest)
   
   # This is computed from the default formulas as follows:
@@ -302,13 +302,16 @@ checkMinimumBudget <- function(remainingBudget, minSurvival, nbIterations,
   }
      
   if (remainingBudget < minimumBudget) {
-    irace.error("Insufficient budget: ",
-                "With the current settings, irace will require a value of ",
-                "'maxExperiments' of at least '",  minimumBudget, "'. ",
-                "You can either increase the budget, ",
-                "or set a smaller value of either 'minNbSurvival' ",
-                "or 'nbIterations'")
+    if(scenario$maxTime == 0 || nbIterations==1)
+      irace.error("Insufficient budget: ",
+                  "With the current settings, irace will require a value of ",
+                  "'maxExperiments' of at least '",  minimumBudget, "'. ",
+                  "You can either increase the budget, ",
+                  "or set a smaller value of either 'minNbSurvival' ",
+                  "or 'nbIterations'")
+    return(FALSE)
   }
+  return(TRUE)
 }
 
 # This function is the interface between race and irace. It first
@@ -317,7 +320,7 @@ checkMinimumBudget <- function(remainingBudget, minSurvival, nbIterations,
 # into the proper data structures for irace.
 oneIterationRace <-
   function(scenario, configurations, parameters, budget, minSurvival,
-           elite.data = NULL, elitistInstances)
+           elite.data = NULL, elitistNewInstances)
 {
   # LESLIE : all this scenario parameters passed to race? why not to take them
   # from the scenario inside of race, since is also passed.
@@ -327,7 +330,7 @@ oneIterationRace <-
                   configurations = configurations,
                   parameters = parameters,
                   scenario = scenario,
-                  elitistInstances = elitistInstances)
+                  elitistNewInstances = elitistNewInstances)
 
   configurations$.ALIVE. <- as.logical(result$alive)
   # Assign the proper ranks in the configurations data.frame
@@ -659,13 +662,25 @@ irace <- function(scenario, parameters)
                                          nbIterations),
               scenario$nbExperimentsPerIteration)
 
-    checkMinimumBudget (remainingBudget, minSurvival, nbIterations,
-                        scenario = scenario)
+    # Check that the budget is enough, for the time estimation case we reduce the 
+    # number of instances to allow 
+    if (scenario$maxTime != 0) {
+      while (!checkMinimumBudget(remainingBudget, minSurvival, nbIterations, 
+                                 scenario = scenario)) {
+        nbIterations <- nbIterations - 1
+        irace.note("The time estimation suggests budget is not enough to",
+                    "execute irace with the current settings. Reducing the",
+                    "number of iterations.")
+      }
+    } else {
+       checkMinimumBudget (remainingBudget, minSurvival, nbIterations,
+                           scenario = scenario)
+    }
   }
   
   if (scenario$elitist) {
     catInfo("Elitist race\n",
-            "# Elitist instances: ", scenario$elitistInstances, "\n",
+            "# Elitist new instances: ", scenario$elitistNewInstances, "\n",
             "# Elitist limit: ",     scenario$elitistLimit, "\n", 
             verbose = FALSE)
   }
@@ -743,7 +758,7 @@ irace <- function(scenario, parameters)
                             eachTest = scenario$eachTest,
                             nElites = nrow(eliteConfigurations),
                             nOldInstances = nOldInstances,
-                            newInstances = scenario$elitistInstances)
+                            newInstances = scenario$elitistNewInstances)
     } else {
       nbConfigurations <-
         computeNbConfigurations(currentBudget, indexIteration,
@@ -932,8 +947,8 @@ irace <- function(scenario, parameters)
                                      budget = currentBudget, 
                                      minSurvival = minSurvival,
                                      elite.data = elite.data,
-                                     elitistInstances = if (indexIteration > 1)
-                                                          scenario$elitistInstances
+                                     elitistNewInstances = if (indexIteration > 1)
+                                                          scenario$elitistNewInstances
                                                         else 0)
 
     # Update experiments

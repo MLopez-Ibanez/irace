@@ -1699,19 +1699,18 @@ gives the mean of the best configuration across the instances seen so
 far in this race. The \code{Exp so far} gives the number of experiments
 performed so far.  The \code{W time} column gives the wall-clock time spent on that instance.
 
-\MANUEL{LESLIE: CITE PAPER OF HOLGER} The columns \code{rho}, \code{KenW}, and
-\code{Qvar} give the values of Spearman's rank correlation coefficient
-rho, Kendall's concordance coefficient W, and a variance measure,
-respectively, of the configurations across the instances executed so far in
-this race.  Use \code{rho}, \code{KenW} and \code{Qvar} to analyze how
-consistent is the performance of the configurations across the instances.  Note
-that these values are only valid for the instances that were already executed
-in the iteration.%
-\MANUEL{I'm not sure what the previous sentence means.} %
-Values close to 1 for \code{rho} and \code{KenW} and values close to 0 for
-\code{Qvar} indicate that the performance is consistent and, therefore, the
-scenario is homogeneous. For heterogeneous scenarios, we provide advice in
-\autoref{sec:het}.
+\MANUEL{LESLIE: CITE PAPER OF HOLGER} The columns \code{rho},
+\code{KenW}, and \code{Qvar} give the values of Spearman's rank
+correlation coefficient rho, Kendall's concordance coefficient W, and
+a variance measure, respectively, of the configurations across the
+instances executed so far in this race.  Use \code{rho}, \code{KenW}
+and \code{Qvar} to analyze how consistent is the performance of the
+configurations across the instances.  Note that these values are only
+valid for the instances that were already executed in the iteration.%
+\MANUEL{I'm not sure what the previous sentence means.} % Values close
+to 1 for \code{rho} and \code{KenW} and values close to 0 for
+\code{Qvar} indicate that the scenario is highly homogeneous. For
+heterogeneous scenarios, we provide advice in \autoref{sec:het}.
 
 Finally, \irace outputs the best configuration found and a list of the elite
 configurations. The elite configurations are configurations that did not show
@@ -2060,7 +2059,7 @@ instances of the same type.
 
 In addition, it may be useful to increase the number of instances executed
 before doing a statistical test in order to see more instance types before
-discarding configurations. The option \parameter{elitistInstances} in elitist
+discarding configurations. The option \parameter{elitistNewInstances} in elitist
 \irace (option \parameter{elitist}) can be used to increase the number of new
 instances executed in each iteration, \eg \code{--elitist-instances 5} (default
 value is 1). For the non-elitist \irace, the option \parameter{firstTest} may be used for the same purpose, \eg \code{--first-test 10} (default value is 5).
@@ -2266,7 +2265,7 @@ the \irace options that can be specified by the user.
   the same instances as the elite configurations.
 
   Each race begins by evaluating all configurations on a number of new
-  instances. This number is defined by the option \parameter{elitistInstances}.
+  instances. This number is defined by the option \parameter{elitistNewInstances}.
   After the new instances have been evaluated, configurations are evaluated on
   instances seen in the previous race.  Elite configurations already have
   results for most of these previous instances and, therefore, do not need to
@@ -2286,11 +2285,11 @@ the \irace options that can be specified by the user.
   % are always executed unless the
   % \parameter{deterministic} option is active and all instances have already been used.
 
-  \defparameter{elitistInstances}{elitist-instances}{1} %
+  \defparameter{elitistNewInstances}{elitist-instances}{1} %
   Number of new instances added to each race before evaluating instances from
   previous races (only for elitist \irace).
   \begin{xwarningbox}
-  If \parameter{deterministic} is \code{TRUE} then the number of \parameter{elitistInstances} will be reduced or
+  If \parameter{deterministic} is \code{TRUE} then the number of \parameter{elitistNewInstances} will be reduced or
   set to \code{0} once all instances have been evaluated.
   \end{xwarningbox}
 

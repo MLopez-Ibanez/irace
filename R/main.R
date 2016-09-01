@@ -123,7 +123,7 @@ testNbElites               i    ""     "--test-num-elites"            1         
 testIterationElites        b    ""     "--test-iteration-elites"      0                  "Enable/disable testing the elite configurations found at each iteration."
 elitist                    b    "-e"   "--elitist"                    1                  "Enable/disable elitist irace."
 ## MANUEL: These comments are not so clear.
-elitistInstances           i    ""     "--elitist-instances"          1                  "Number of instances to add to execution list before previous instances in elitist irace."
+elitistNewInstances        i    ""     "--elitist-new-instances"      1                  "Number of instances added to the execution list before previous instances in elitist irace."
 elitistLimit               i    ""     "--elitist-limit"              2                  "Limit for the elitist race, number statistical test without elimination peformed. Use 0 for no limit."
 ')
 rownames (.irace.params.def) <- .irace.params.def[,"name"]

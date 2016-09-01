@@ -171,7 +171,7 @@ firstTest = 7
 
 ## Number of instances to add to execution list before previous instances in
 ## elitist irace.
-# elitistInstances  = 1
+# elitistNewInstances  = 1
 
 ## Limit for the elitist race, number of statistical test performed without 
 ## elimination of configurations.
