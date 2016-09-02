@@ -302,7 +302,7 @@ checkMinimumBudget <- function(remainingBudget, minSurvival, nbIterations,
   }
      
   if (remainingBudget < minimumBudget) {
-    if(scenario$maxTime == 0 || nbIterations==1)
+    if (scenario$maxTime == 0 || nbIterations == 1)
       irace.error("Insufficient budget: ",
                   "With the current settings, irace will require a value of ",
                   "'maxExperiments' of at least '",  minimumBudget, "'. ",
@@ -496,7 +496,7 @@ irace <- function(scenario, parameters)
   if (!is.null(scenario$recoveryFile)) {
     irace.note ("Resuming from file: '", scenario$recoveryFile,"'\n")
     recoverFromFile(scenario$recoveryFile)
-  } else {
+  } else { # Do not recover
     scenario <- irace.init (scenario)
     debugLevel <- scenario$debugLevel
     # Set options controlling debug level.
@@ -662,19 +662,23 @@ irace <- function(scenario, parameters)
                                          nbIterations),
               scenario$nbExperimentsPerIteration)
 
-    # Check that the budget is enough, for the time estimation case we reduce the 
-    # number of instances to allow 
-    if (scenario$maxTime != 0) {
-      while (!checkMinimumBudget(remainingBudget, minSurvival, nbIterations, 
-                                 scenario = scenario)) {
-        nbIterations <- nbIterations - 1
-        irace.note("The time estimation suggests budget is not enough to",
-                    "execute irace with the current settings. Reducing the",
-                    "number of iterations.")
+    # Check that the budget is enough, for the time estimation case we reduce
+    # the number of iterations..
+    repeat {
+      if (checkMinimumBudget (remainingBudget, minSurvival, nbIterations,
+                              scenario = scenario)
+          || scenario$maxTime == 0) {
+        break;
       }
-    } else {
-       checkMinimumBudget (remainingBudget, minSurvival, nbIterations,
-                           scenario = scenario)
+      irace.note("Warning:",
+                 " with the current settings and estimated time per run,",
+                 " irace will not have enough budget to execute the minimum",
+                 " number of iterations.",
+                 " Execution will continue by assuming that the estimated time",
+                 " is too high and reducing the minimum number of iterations,",
+                 " however, if the estimation was correct or too low,",
+                 " results might not be better than random sampling.")
+      nbIterations <- nbIterations - 1
     }
   }
   

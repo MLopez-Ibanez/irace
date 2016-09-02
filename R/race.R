@@ -361,7 +361,6 @@ race <- function(maxExp = 0,
         sep="")
 
   # Elitist irace needed info
-  # MANUEL: I would call this minNewInstances
   if (elitist) {
     initial.tests <- elitistNewInstances
     if (is.null(elite.data)) {
