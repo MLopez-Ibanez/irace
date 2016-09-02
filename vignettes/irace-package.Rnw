@@ -2061,7 +2061,7 @@ In addition, it may be useful to increase the number of instances executed
 before doing a statistical test in order to see more instance types before
 discarding configurations. The option \parameter{elitistNewInstances} in elitist
 \irace (option \parameter{elitist}) can be used to increase the number of new
-instances executed in each iteration, \eg \code{--elitist-instances 5} (default
+instances executed in each iteration, \eg \code{--elitist-new-instances 5} (default
 value is 1). For the non-elitist \irace, the option \parameter{firstTest} may be used for the same purpose, \eg \code{--first-test 10} (default value is 5).
 \MANUEL{And both at the same time?}
 
@@ -2285,7 +2285,7 @@ the \irace options that can be specified by the user.
   % are always executed unless the
   % \parameter{deterministic} option is active and all instances have already been used.
 
-  \defparameter{elitistNewInstances}{elitist-instances}{1} %
+  \defparameter{elitistNewInstances}{elitist-new-instances}{1} %
   Number of new instances added to each race before evaluating instances from
   previous races (only for elitist \irace).
   \begin{xwarningbox}
