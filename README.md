@@ -6,7 +6,7 @@ output:
     toc: true
     toc_depth: 4
 ---
-[![CRAN Downloads](http://cranlogs.r-pkg.org/badges/grand-total/irace)](http://cran.rstudio.com/web/packages/irace/index.html)
+[![CRAN Downloads](http://cranlogs.r-pkg.org/badges/grand-total/irace)](https://cran.rstudio.com/web/packages/irace/index.html)
 
 **Maintainers:** [Manuel López-Ibáñez](http://iridia.ulb.ac.be/~manuel/), Jérémie Dubois-Lacoste, Leslie Pérez
 
@@ -309,7 +309,7 @@ Definitely. There are two main ways to achieve this:
     There is a minimal example in `$IRACE_HOME/examples/matlab/`.
 
 2. Call MATLAB code directly from R using the
-   [R.matlab package](http://cran.r-project.org/package=R.matlab). This
+   [R.matlab package](https://cran.r-project.org/package=R.matlab). This
    is a better option if you are experienced in R. Define targetRunner as
    an R function instead of a path to a script. The function should
    call your MATLAB code with appropriate parameters.
