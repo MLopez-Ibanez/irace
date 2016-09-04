@@ -1,5 +1,8 @@
 import("stats")
 import("utils")
+importFrom("grDevices", "dev.new", "dev.off", "pdf")
+importFrom("graphics", "abline", "axis", "barplot", "hist", "lines",
+           "matplot", "par", "text")
 export(irace.version,irace.license)
 export(irace.cmdline,irace.usage,irace.main,irace)
 # FIXME: export sampleUniform, sampleModel and other useful functions.
