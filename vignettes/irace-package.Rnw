@@ -30,7 +30,7 @@
     colorlinks,
     linkcolor={red!50!black},
     citecolor={blue!50!black},
-    urlcolor={blue!80!black}
+    urlcolor={blue!70!black}
 }
 \addto\extrasenglish{%
 \def\sectionautorefname{Section}
@@ -54,7 +54,7 @@
 %  framesep=1ex,
   framexleftmargin=1ex,
   columns=fullflexible,%
-  backgroundcolor=\color{yellow!01},%
+  backgroundcolor=\color{yellow!05},%
   linewidth=\linewidth,%
  % xleftmargin=1\linewidth,%
   identifierstyle=\color{darkgray},%
@@ -62,7 +62,7 @@
   keywordstyle={[2]\color{Cyan}},%
   keywordstyle={[3]\color{olive}},%
   stringstyle=\color{MidnightBlue},%
-  commentstyle=\itshape\color{RedOrange},%
+  commentstyle=\color{RedOrange},%
   morestring=[b]',%
 }
 
@@ -1101,9 +1101,10 @@ The following is an example of an experiment list for the \ACOTSP scenario:
 print(experiment)
 @
 
-The function \parameter{targetRunner} must return a numerical value
-corresponding to the evaluation of the candidate configuration on
-the given instance and optionally the execution time (mandatory when 
+The function \parameter{targetRunner} must return a list with one element
+\code{"cost"}, the numerical value corresponding to the evaluation of the
+candidate configuration on the given instance and, optionally, another element
+\code{"time"}, the execution time (mandatory when
 \parameter{maxTime} is used).
 
 
@@ -1189,9 +1190,9 @@ the vector of IDs of the alive candidates configurations,  \code{scenario} is
 the scenario list and \code{target.tunner.call} is the string of the
 \parameter{targetRunner} execution line.
 
-The function \parameter{targetEvaluator} must return a numerical value
-corresponding to the cost measure of the candidate configuration on
-the given instance.
+The function \parameter{targetEvaluator} must return a list with one element
+\code{"cost"}, the numerical value corresponding to the cost measure of the
+candidate configuration on the given instance.
 
 \subsection{Training instances}\label{sec:training}
 
