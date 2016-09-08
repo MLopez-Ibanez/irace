@@ -89,7 +89,7 @@ TODO General (in order of importance):
    parameters for irace.
 
  * A new parameter "--hook-error-mode [exit | stop | retry ]" to
-   control what to do when a call to hook-run fails. Exit is
+   control what to do when a call to target-runner fails. Exit is
    exit irace with an error; stop is call something like
    pskill(Sys.getpid(), signal=SIGSTOP) to put irace to sleep until
    the user send a SIGCONT signal, then retry; and retry is retry
@@ -121,7 +121,7 @@ TODO General (in order of importance):
    changed.
 
  * Implement some kind of immediate rejection handling, that is, if
-   hook.run returns +Inf, just discard the candidate immediately
+   target-runner returns +Inf, just discard the candidate immediately
    without doing any more tests.
 
  * Implement a regression testing testsuite to check that everything
@@ -147,7 +147,7 @@ TODO General (in order of importance):
    The same applies to runif().
 
  * Add command-line option --cluster=[sge|pbs] to choose the type of
-   cluster. Then, hook-run calls qsub and prints a jobID. jobID must
+   cluster. Then, target-runner calls qsub and prints a jobID. jobID must
    be a single word ([0-9a-z._-@]+); if not or length(jobID) != 1 or
    exit code is != 0, then complain. The option --cluster only chooses
    which type of qstat command is invoked. This will leave parsing the
@@ -197,7 +197,7 @@ TODO General (in order of importance):
  * If we have too many elites, remove some of them. Add a parameter
    --max-elites.
 
- * Add example of logarithmic/parameter conversions in hook-run.
+ * Add example of logarithmic/parameter conversions in target-runner.
 
  * Make the update model convergence take into account the hierarchy
    of parameters.
@@ -229,10 +229,10 @@ TODO General (in order of importance):
 
 DONE:
 
- * Pass to hook-run/hook-evaluate an instance index that uniquely
+ * Pass to target-runner/hook-evaluate an instance index that uniquely
    identifies each instance. This has two main advantages: 1) we can
    schedule jobs in parallel for different instances, e.g., execute
-   all jobs for the first-test instances in parallel; 2) hook-run can
+   all jobs for the first-test instances in parallel; 2) target-runner can
    use the index to assign a unique seed to each instance.
    [DONE by Manuel, Leslie]
    
@@ -241,11 +241,11 @@ DONE:
    [DONE by Leslie]
 
  * Add a --verify option that checks whether all files are in place,
-   all options are valid, and it runs hook-run on a random
+   all options are valid, and it runs target-runner on a random
    configuration on a random instance.
    Implement a test mode that allows the user to check his set-up is
    correct (checking the configuration can be read, giving the number
-   of iterations\candidates that would be used, calling hook-run
+   of iterations\candidates that would be used, calling target-runner
    once...).
    [DONE by Leslie]
    
@@ -265,8 +265,8 @@ DONE:
    sources. That would mean also the sources for the IRIDIA TR covers.
    [DONE by Leslie]
 
- * A new parameter "--hook-run-retries". Number of times to retry a
-   hook-run call if the output is not ok. Default 0. Inf allowed.
+ * A new parameter "--target-runner-retries". Number of times to retry a
+   target-runner call if the output is not ok. Default 0. Inf allowed.
    [DONE by Manuel]
 
  * Handle properly fixed parameters in candidatesFile (see FIXME in
