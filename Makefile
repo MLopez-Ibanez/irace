@@ -5,6 +5,7 @@ BINDIR=$(CURDIR)/..
 RNODE=iridiacluster
 RDIR=~/
 INSTALL_FLAGS=
+BUILD_FLAGS=
 REALVERSION=$(PACKAGEVERSION).$(SVN_REV)
 DATE=$(shell date +%F)
 PACKAGEDIR=$(CURDIR)
@@ -39,7 +40,7 @@ help:
 	@echo "submit     submit the package to CRAN (read DEVEL-README first)"
 
 build : bumpdate clean
-	cd $(BINDIR) &&	R CMD build $(PACKAGEDIR)
+	cd $(BINDIR) &&	R CMD build $(BUILD_FLAGS) $(PACKAGEDIR)
 
 closeversion:
 	svn ci NEWS -m " * NEWS: Close version $(PACKAGEVERSION)"
@@ -48,9 +49,11 @@ closeversion:
 	make build # again to update version.R and svn_version
 
 
+releasebuild: BUILD_FLAGS=--compact-vignettes=both
 releasebuild:
-	cd $(BINDIR) &&	R CMD build $(PACKAGEDIR) && tar -atvf $(PACKAGE)_$(PACKAGEVERSION).tar.gz
+	cd $(BINDIR) &&	R CMD build $(BUILD_FLAGS) $(PACKAGEDIR) && tar -atvf $(PACKAGE)_$(PACKAGEVERSION).tar.gz
 
+cran : BUILD_FLAGS=--compact-vignettes=both
 cran : build
 	cd $(BINDIR) && _R_CHECK_FORCE_SUGGESTS_=false R CMD check --as-cran $(PACKAGE)_$(PACKAGEVERSION).tar.gz
 
