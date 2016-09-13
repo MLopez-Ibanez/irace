@@ -73,6 +73,13 @@ target.error <- function(err.msg, output, scenario, target.runner.call,
 
 check.output.target.evaluator <- function (output, scenario, target.runner.call = NULL)
 {
+  if (!is.list(output)) {
+    output <- list()
+    err.msg <- paste0("The output of targetEvaluator must be a list")
+    target.error (err.msg, output, scenario, target.runner.call = target.runner.call)
+    return(output)
+  }
+
   err.msg <- output$error
   if (is.null(err.msg)) {
     if (is.null(output$cost)) {
@@ -138,6 +145,13 @@ target.evaluator.default <- function(experiment, num.configurations, all.conf.id
 
 check.output.target.runner <- function (output, scenario)
 {
+  if (!is.list(output)) {
+    output <- list()
+    err.msg <- paste0("The output of targetRunner must be a list")
+    target.error (err.msg, output, scenario, target.runner.call = NULL)
+    return(output)
+  }
+  
   err.msg <- output$error
   if (is.null(err.msg)) {
     # When targetEvaluator is provided targetRunner must return only the time.
