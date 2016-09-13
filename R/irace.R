@@ -325,7 +325,7 @@ oneIterationRace <-
   # LESLIE : all this scenario parameters passed to race? why not to take them
   # from the scenario inside of race, since is also passed.
   result <- race (maxExp = budget,
-                  stop.min.conf = minSurvival,
+                  minSurvival = minSurvival,
                   elite.data = elite.data,
                   configurations = configurations,
                   parameters = parameters,
@@ -340,19 +340,19 @@ oneIterationRace <-
   configurations <- configurations[order(as.numeric(configurations[, ".RANK."])), ]
 
   # Consistency check
-  irace.assert (all(as.logical(configurations[1:(result$no.alive), ".ALIVE."])))
-  if (result$no.alive < nrow(configurations))
-    irace.assert(!any(as.logical(configurations[(result$no.alive + 1):nrow(configurations) , ".ALIVE."])))
+  irace.assert (all(as.logical(configurations[1:(result$nbAlive), ".ALIVE."])))
+  if (result$nbAlive < nrow(configurations))
+    irace.assert(!any(as.logical(configurations[(result$nbAlive + 1):nrow(configurations) , ".ALIVE."])))
 
   if (scenario$debugLevel >= 3) {
     irace.note ("Memory used in oneIterationRace():\n")
     irace.print.memUsed()
   }
   
-  return (list (nbAlive = result$no.alive,
-                experimentsUsed = result$no.experiments,
+  return (list (nbAlive = result$nbAlive,
+                experimentsUsed = result$experimentsUsed,
                 configurations = configurations,
-                experiments = result$results,
+                experiments = result$experiments,
                 experimentLog = result$experimentLog))
 }
 

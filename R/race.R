@@ -92,7 +92,8 @@ aux2.friedman <- function(y, I, alive, conf.level = 0.95)
   k <- length(I)
   r <- t(apply(y[,I], 1L, rank))
   R <- colSums(r)
-  J <- I[order(R)]
+  o <- order(R)
+  best <- I[o[1]]
   TIES <- tapply(r, row(r), table)
   STATISTIC <- ((12 * sum((R - n * (k + 1) / 2)^2)) /
                 (n * k * (k + 1)
@@ -110,8 +111,7 @@ aux2.friedman <- function(y, I, alive, conf.level = 0.95)
     A <- sum(as.vector(r)^2)
     t <- qt(1 - alpha / 2, df = (n - 1) * (k - 1)) *
       (2 * (n * A - sum(R^2)) / ((n - 1) * (k - 1)))^(1 / 2)
-    o <- order(R)
-    J <- I[o[1]]
+    J <- best
     for (j in 2:k) {
       if (abs(R[o[j]] - R[o[1]]) > t) {
         break
@@ -122,8 +122,8 @@ aux2.friedman <- function(y, I, alive, conf.level = 0.95)
     alive[-J] <- FALSE
     dropped.any <- TRUE
   }
-  irace.assert(I[which.min(R)] == J[1])
-  return(list(best = J[1], ranks = R, alive = alive, dropped.any = dropped.any, p.value = PVAL))
+  irace.assert(I[which.min(R)] == best)
+  return(list(best = best, ranks = R, alive = alive, dropped.any = dropped.any, p.value = PVAL))
 }
 
 aux.friedman <- function(results, alive, which.alive, no.alive, conf.level)
@@ -217,7 +217,7 @@ aux.ttest <- function(results, no.tasks.sofar, alive, which.alive, no.alive, con
 # FIXME: This can be simplified a lot more. Some arguments already appear in
 # scenario.
 race <- function(maxExp = 0,
-                 stop.min.conf=1,
+                 minSurvival = 1,
                  elite.data = NULL,
                  configurations,
                  parameters,
@@ -297,9 +297,9 @@ race <- function(maxExp = 0,
   if (maxExp && no.configurations > maxExp)
     irace.error("Max number of experiments is smaller than number of configurations")
 
-  if (no.configurations <= stop.min.conf) {
+  if (no.configurations <= minSurvival) {
     irace.error("Not enough configurations (", no.configurations,
-                ") for a race (stop.min.conf=", stop.min.conf, ")")
+                ") for a race (minSurvival=", minSurvival, ")")
   }
   
   # Initialize some variables...
@@ -322,30 +322,6 @@ race <- function(maxExp = 0,
   race.ranks <- c()
   no.experiments.sofar <- 0
   no.tasks.sofar <- 0
-
-  # Define some functions...
-  # FIXME: Keep only what we need!
-  log.list <- function(end=FALSE){
-    log <- list(results = Results[1:no.tasks.sofar, ],
-                experimentLog = experimentLog,
-                no.configurations=no.configurations,
-                no.tasks=no.tasks.sofar,
-                no.experiments=no.experiments.sofar,
-                no.alive=sum(alive),
-                alive=alive,
-                best=best,
-                mean.best=mean.best,
-                ranks = race.ranks)
-    
-    if (end) {
-      log <- c(log, list(description.best = description.best,
-                         alive.inTime = ifelse(no.tasks.sofar > 1,
-                           apply(Results[1:no.tasks.sofar,],
-                                 1,function(u){sum(!(is.na(u)))}),
-                           sum(!is.na(Results[1,])))))
-    }
-    return(log)
-  }
 
   if (interactive)
     cat("  Markers:
@@ -378,7 +354,7 @@ race <- function(maxExp = 0,
   break.msg <- paste0("all instances (", no.tasks, ") evaluated")
   for (current.task in seq_len (no.tasks)) {
     which.alive <- which(alive)
-    no.alive    <- length(which.alive)
+    nbAlive    <- length(which.alive)
     which.exe   <- which.alive
 
     if (elitist) {  
@@ -398,11 +374,11 @@ race <- function(maxExp = 0,
 
     if (no.tasks.sofar >= first.test) {
     # We always stop when we have less configurations than required.
-      if (no.alive <= stop.min.conf) {
+      if (nbAlive <= minSurvival) {
         # stop race if we have less or equal than the minimum number of configurations
-        break.msg <- paste0("number of alive configurations (", no.alive,
+        break.msg <- paste0("number of alive configurations (", nbAlive,
                             ") <= minimum number of configurations (",
-                            stop.min.conf, ")")
+                            minSurvival, ")")
         break
       }
       # If we just did a test, check that we have enough budget to reach the next test.
@@ -423,18 +399,18 @@ race <- function(maxExp = 0,
         break
       }
 ##     This is not needed anymore... 
-#      else if (current.task > initial.tests && no.alive <= stop.min.conf) {
+#      else if (current.task > initial.tests && nbAlive <= minSurvival) {
 #        # We can stop the race ONLY when we pass the elite.safe
 #        # this is because how we are recovering the data from
 #        # previous runs (based on iteration).
-#        break.msg <- paste0("number of alive configurations (", no.alive,
+#        break.msg <- paste0("number of alive configurations (", nbAlive,
 #                            ") less or equal than minimum number (",
-#                            stop.min.conf, ")")
+#                            minSurvival, ")")
 #        break
 #      }
     }
 
-    if (no.alive == 1) {
+    if (nbAlive == 1) {
       break.msg <- "only one alive configuration"
       break
     }
@@ -483,10 +459,10 @@ race <- function(maxExp = 0,
         && length(which.alive) > 1) {
       test.res <-
         switch(stat.test,
-               friedman = aux.friedman(Results[1:no.tasks.sofar, ], alive, which.alive, no.alive, conf.level),
-               t.none = aux.ttest(Results[1:no.tasks.sofar, ], no.tasks.sofar, alive, which.alive, no.alive, conf.level, adjust = "none"),
-               t.holm = aux.ttest(Results[1:no.tasks.sofar, ], no.tasks.sofar, alive, which.alive, no.alive, conf.level, adjust = "holm"),
-               t.bonferroni = aux.ttest(Results[1:no.tasks.sofar, ], no.tasks.sofar, alive, which.alive, no.alive, conf.level, adjust = "bonferroni"))
+               friedman = aux.friedman(Results[1:no.tasks.sofar, ], alive, which.alive, nbAlive, conf.level),
+               t.none = aux.ttest(Results[1:no.tasks.sofar, ], no.tasks.sofar, alive, which.alive, nbAlive, conf.level, adjust = "none"),
+               t.holm = aux.ttest(Results[1:no.tasks.sofar, ], no.tasks.sofar, alive, which.alive, nbAlive, conf.level, adjust = "holm"),
+               t.bonferroni = aux.ttest(Results[1:no.tasks.sofar, ], no.tasks.sofar, alive, which.alive, nbAlive, conf.level, adjust = "bonferroni"))
 
       best <- test.res$best
       race.ranks <- test.res$ranks
@@ -590,6 +566,10 @@ race <- function(maxExp = 0,
     irace.print.memUsed()
   }
   
-  # Build the return variable with everything inside: 
-  invisible(log.list(end=TRUE))
+  return(list(experiments = Results[1:no.tasks.sofar, ],
+              experimentLog = experimentLog,
+              experimentsUsed = no.experiments.sofar,
+              nbAlive = sum(alive),
+              alive = alive,
+              ranks = race.ranks))
 }
