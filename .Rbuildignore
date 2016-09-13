@@ -38,4 +38,5 @@ DEVEL-README
 ^vignettes/.*log
 ^vignettes/.*synctex.gz
 ^vignettes/.*rel
+^vignettes/.*dvi
 ^web
