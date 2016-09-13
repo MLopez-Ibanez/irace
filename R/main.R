@@ -176,8 +176,7 @@ irace.main <- function(scenario = defaultScenario(), output.width = 9999)
 						
   if (debug.level >= 2) { irace.note("Parameters have been read\n") }
   
-  eliteConfigurations <- irace (scenario = scenario,
-                            parameters = parameters)
+  eliteConfigurations <- irace (scenario = scenario, parameters = parameters)
   
   cat("# Best configurations (first number is the configuration ID)\n")
   configurations.print(eliteConfigurations)
