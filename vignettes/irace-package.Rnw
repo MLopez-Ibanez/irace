@@ -25,6 +25,7 @@
 \usepackage{fancyvrb}
 \usepackage[hyphens]{url}
 \usepackage{hyperref}
+\usepackage[nottoc,numbib]{tocbibind}
 %% For autoref
 \hypersetup{
     colorlinks,
@@ -215,7 +216,7 @@ options(width = 60)
 \subsection{Background}
 \MANUEL{I would add a paragraph defining what is irace (a bit longer than the abstract above) and references to the literature so people can find more info. The first reference should be the irace TR.} \LESLIE{Here i guess we should say why tune an algorithm is a good idea, and why using irace is a better one.}
 The \irace package implements an \emph{iterated racing} procedure,
-which is an extension of Iterated F-race (\IFRACE).  The main use of
+which is an extension of Iterated F-race (\IFRACE)\cite{BirYuaBal2010:emaoa}.  The main use of
 \irace is the automatic configuration of optimization and decision algorithms,
 that is, finding the most appropriate settings of an algorithm given a 
 set of instances of a problem. However, it may also be useful for 
@@ -236,6 +237,8 @@ versions of the package can be found in the CRAN website.
 Previous versions of \irace might not be compatible with the
 file formats detailed in this document.
 \end{xwarningbox}
+
+See the technical report in \cite{LopDubStu2011irace} for details of the previous implementation of \irace.
 
 
 \subsection{License}
@@ -1703,7 +1706,7 @@ performed so far.  The \code{W time} column gives the wall-clock time spent on t
 \MANUEL{LESLIE: CITE PAPER OF HOLGER} The columns \code{rho},
 \code{KenW}, and \code{Qvar} give the values of Spearman's rank
 correlation coefficient rho, Kendall's concordance coefficient W, and
-a variance measure, respectively, of the configurations across the
+a variance measure described in \cite{SchHoo2012quanti}, respectively, of the configurations across the
 instances executed so far in this race.  Use \code{rho}, \code{KenW}
 and \code{Qvar} to analyze how consistent is the performance of the
 configurations across the instances.  Note that these values are only
@@ -1806,7 +1809,7 @@ all.exp[!is.na(all.exp)]
 
 When a configuration was not executed on an instance, its value is \code{NA}. A
 configuration may not be executed on an instance because: 1) it was not created
-yet when the instance was used (only for the non elitist \irace),\MANUEL{I don't understand why it is ``only''} or 2) it was
+yet when the instance was used,\MANUEL{I don't understand why it is ``only''}\LESLIE{You are right, it can happen also in the elitist} or 2) it was
 discarded by the statistical test and not executed on subsequent instances, or
 3) the race terminated before this instance was considered.
 
@@ -1815,6 +1818,7 @@ defined in \code{state$.irace$instancesList}. The instance and seed used
 for a particular experiment can be obtained with:
 
 \MANUEL{This example is broken}
+\LESLIE{Fixed, file updated}
 <<get_instance_seed, prompt=TRUE, eval=TRUE, comment="">>=
 # As an example, we get seed and instance of the experiments
 # of the best candidate.
@@ -2659,6 +2663,13 @@ colaborated in the development and improvement of \irace.
 \item Alberto Franzin
 \item Anthony Antoun
 \end{itemize}
+
+
+%\bibliographystyle{abbrv}
+%\bibliography{abbrev,journals,authors,biblio,crossref}
+
+\input{irace-package.bib}
+
 
 \newpage
 

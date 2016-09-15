@@ -128,6 +128,7 @@ parcoordlabel <- function (configurations, parameters, col = "green", lty = 1,
     }
     
     replace.na <- function(x,r) {
+      x <- unlist(x)
       x <- (x-r[1])/(r[2]-r[1]) 
       x[is.na(x)] <- 1
       return(x)
