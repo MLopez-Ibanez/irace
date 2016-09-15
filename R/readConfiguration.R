@@ -470,6 +470,7 @@ printScenario <- function(scenario)
       print.instances (param, scenario[[param]])
     } else {# All other parameters (no vector, but can be functions)
       # FIXME: Perhaps deparse() is not the right way to do this?
+      # FIXME: Perhaps toString() ?
       cat(param, "=", deparse(scenario[[param]]), "\n")
     }
   }
