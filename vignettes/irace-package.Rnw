@@ -1,5 +1,10 @@
 %%% DO NOT EDIT the .tex file directly since it is generated from the .Rnw
 %%% sources.
+%\VignetteEngine{knitr::knitr}
+%\VignetteIndexEntry{irace package:user guide}
+%\VignetteDepends{knitr}
+%\VignetteCompiler{knitr}
+%\VignetteEngine{knitr::knitr}
 \RequirePackage[dvipsnames]{xcolor}
 \documentclass[a4paper,english]{article}
 \usepackage[a4paper]{geometry} % It saves some pages
@@ -9,12 +14,7 @@
 \usepackage{ifthen}
 \newboolean{Release}
 \setboolean{Release}{false}
-%\setboolean{Release}{true}
-%\VignetteEngine{knitr::knitr}
-%\VignetteIndexEntry{irace package:user guide}
-%\VignetteDepends{knitr}
-%\VignetteCompiler{knitr}
-%\VignetteEngine{knitr::knitr}
+\setboolean{Release}{true}
 \usepackage{calc}
 \usepackage{algorithm,algorithmic}
 \usepackage{booktabs}
@@ -25,7 +25,7 @@
 \usepackage{fancyvrb}
 \usepackage[hyphens]{url}
 \usepackage{hyperref}
-\usepackage[nottoc,numbib]{tocbibind}
+\usepackage[nottoc]{tocbibind}
 %% For autoref
 \hypersetup{
     colorlinks,
@@ -216,7 +216,7 @@ options(width = 60)
 \subsection{Background}
 \MANUEL{I would add a paragraph defining what is irace (a bit longer than the abstract above) and references to the literature so people can find more info. The first reference should be the irace TR.} \LESLIE{Here i guess we should say why tune an algorithm is a good idea, and why using irace is a better one.}
 The \irace package implements an \emph{iterated racing} procedure,
-which is an extension of Iterated F-race (\IFRACE)\cite{BirYuaBal2010:emaoa}.  The main use of
+which is an extension of Iterated F-race (\IFRACE)~\cite{BirYuaBal2010:emaoa}.  The main use of
 \irace is the automatic configuration of optimization and decision algorithms,
 that is, finding the most appropriate settings of an algorithm given a 
 set of instances of a problem. However, it may also be useful for 
@@ -238,7 +238,7 @@ Previous versions of \irace might not be compatible with the
 file formats detailed in this document.
 \end{xwarningbox}
 
-See the technical report in \cite{LopDubStu2011irace} for details of the previous implementation of \irace.
+See the technical report~\cite{LopDubStu2011irace} for details of the previous implementation of \irace.
 
 
 \subsection{License}
@@ -355,12 +355,10 @@ versions available depending on your operating system:
 To install the package on GNU/Linux and OS X, you must execute the following
 command at the shell:
 %
-%<<bash_irace_install,engine='bash',eval=FALSE>>=
 \begin{lstlisting}[style=BashInputStyle]
 # Replace <package> with the path to the downloaded file.
 R CMD INSTALL <package>
 \end{lstlisting}
-%@
 
 To install the package on Windows, open \aR and execute the following line on
 the \aR console:
@@ -391,7 +389,6 @@ the path to the system variable \code{R_LIBS} or to the \aR internal variable
 On GNU/Linux or OS X, execute the following commands to install the
 package on a local directory:
 
-%<<R_irace_install2,engine='bash',eval=FALSE>>=
 \begin{lstlisting}[style=BashInputStyle]
 export R_LIBS_USER="<R_LIBS_USER>"
 # Create R_LIBS_USER if it doesn't exist
@@ -401,7 +398,6 @@ R CMD INSTALL --library=$R_LIBS_USER <package>
 # Tell R where to find R_LIBS_USER
 export R_LIBS=${R_LIBS_USER}:${R_LIBS}
 \end{lstlisting}
-%@
 
 On Windows, you can install the package on a local directory by executing the
 following lines in the \aR console:
@@ -1703,7 +1699,7 @@ gives the mean of the best configuration across the instances seen so
 far in this race. The \code{Exp so far} gives the number of experiments
 performed so far.  The \code{W time} column gives the wall-clock time spent on that instance.
 
-\MANUEL{LESLIE: CITE PAPER OF HOLGER} The columns \code{rho},
+The columns \code{rho},
 \code{KenW}, and \code{Qvar} give the values of Spearman's rank
 correlation coefficient rho, Kendall's concordance coefficient W, and
 a variance measure described in \cite{SchHoo2012quanti}, respectively, of the configurations across the
@@ -1809,7 +1805,7 @@ all.exp[!is.na(all.exp)]
 
 When a configuration was not executed on an instance, its value is \code{NA}. A
 configuration may not be executed on an instance because: 1) it was not created
-yet when the instance was used,\MANUEL{I don't understand why it is ``only''}\LESLIE{You are right, it can happen also in the elitist} or 2) it was
+yet when the instance was used, or 2) it was
 discarded by the statistical test and not executed on subsequent instances, or
 3) the race terminated before this instance was considered.
 
@@ -1817,8 +1813,6 @@ The row names correspond to the identifier of the \code{(instance, seed)} pairs
 defined in \code{state$.irace$instancesList}. The instance and seed used
 for a particular experiment can be obtained with:
 
-\MANUEL{This example is broken}
-\LESLIE{Fixed, file updated}
 <<get_instance_seed, prompt=TRUE, eval=TRUE, comment="">>=
 # As an example, we get seed and instance of the experiments
 # of the best candidate.
@@ -1980,8 +1974,7 @@ algorithm with \irace, there are two alternatives. If the algorithm returns a
 single vector of objective values, they can be aggregate into one single number
 by using, for example, a weighted sum. Otherwise, if the target algorithm
 returns a set of objective vectors, a unary quality metric (\eg~the
-hypervolume) may be used to evaluate the quality of the set.\footnote{An implementation is publicly available at \url{http://lopez-ibanez.eu/hypervolume}}
-\LESLIE{Add reference to hypervolume!}
+hypervolume) may be used to evaluate the quality of the set.\footnote{An implementation is publicly available at \url{http://lopez-ibanez.eu/hypervolume}~\cite{FonPaqLop06:hypervolume}}
 
 % The first option is simple, it requires to devise a formula that can aggregate
 % the objectives in a way that balances the importance of all of them. This might
@@ -2665,11 +2658,12 @@ colaborated in the development and improvement of \irace.
 \end{itemize}
 
 
-%\bibliographystyle{abbrv}
-%\bibliography{abbrev,journals,authors,biblio,crossref}
-
-\input{irace-package.bib}
-
+\bibliographystyle{abbrv}
+\ifthenelse {\boolean{Release}}{%
+\bibliography{irace-package}%
+}{%
+\bibliography{optbib/abbrev,optbib/journals,optbib/authors,optbib/biblio,optbib/crossref}%
+}
 
 \newpage
 
@@ -2758,11 +2752,9 @@ This error means that your \code{targetRunner} is not an executable file. In the
 is a folder and therefore there must be a problem with the name of the script. In the second case,
 you must make the file executable, which in GNU/Linux can be done by:
 
-%<<perm,engine='bash', eval=FALSE>>=
 \begin{lstlisting}[style=BashInputStyle]
 chmod +x ~/tuning/target-runner
 \end{lstlisting}
-%@
 
 \item Make sure that your executable is in the location described in the script
 (variable \code{EXE} for the templates example). A typical output for such an error is:\\
@@ -2781,12 +2773,13 @@ Tue May  3 19:00:37 UTC 2016: error: ~/bin/acotsp: not found or not executable\\
 }\\
 
 For testing your script, you can copy the command line shown in the error and
-execute \code{target-runner} directly on the execution directory (\parameter{execDir}). In this case, the command line is:\\
-
-\code{
-~/tuning/target-runner 1 8 676651103 ~/tuning/Instances/1000-16.tsp  --ras \\
- --localsearch 2 --alpha 4.03 --beta 1.89 --rho  0.02 --ants 37 --nnls 48
- --dlb 0\\ --rasranks 15}\\
+execute \code{target-runner} directly on the execution directory (\parameter{execDir}). In this case, the command line is:
+%
+\begin{lstlisting}[style=BashInputStyle]
+~/tuning/target-runner 1 8 676651103 ~/tuning/Instances/1000-16.tsp  --ras \
+ --localsearch 2 --alpha 4.03 --beta 1.89 --rho  0.02 --ants 37 --nnls 48 \
+ --dlb 0 --rasranks 15
+\end{lstlisting}
 
 This executes the \code{targetRunner} script as \irace does. The output of this script must be only one number. 
 
@@ -2804,12 +2797,13 @@ Solution: 24479793
 }\\
 
 
-For testing your script, copy the command-line of \code{target-runner} and execute it directly on the execution directory (\parameter{execDir}):\\
-
-\code{
-~/tuning/target-runner 1 25 365157769 ~/tuning/Instances/1000-31.tsp
- --ras \\ --localsearch 1 --alpha 0.26 --beta 6.95 --rho  0.69 --ants 56
- --nnls 10 --dlb 0\\ --rasranks 7}\\
+For testing your script, copy the command-line of \code{target-runner} and execute it directly on the execution directory (\parameter{execDir}):
+%
+\begin{lstlisting}[style=BashInputStyle]
+~/tuning/target-runner 1 25 365157769 ~/tuning/Instances/1000-31.tsp  --ras \
+ --localsearch 1 --alpha 0.26 --beta 6.95 --rho  0.69 --ants 56 \
+ --nnls 10 --dlb 0 --rasranks 7
+\end{lstlisting}
 
 This  executes the \code{targetRunner} script as \irace does. The output of this
 script must be only one number. In this example, the output of the script is
@@ -2835,9 +2829,11 @@ error: c1-23.stdout: Output is not a number}\\
 
 This might be because your \code{targetRunner} script is not executing your
 algorithm correctly. To further investigate this issue, comment out the line that eliminates the
-temporary files that saves the output of your algorithm. Similar to this one\\
-
-\code{rm -f "\$\{STDOUT\}" "\$\{STDERR\}"}\\
+temporary files that saves the output of your algorithm. Similar to this one
+%
+\begin{lstlisting}[style=BashInputStyle]
+rm -f "${STDOUT}" "${STDERR}"
+\end{lstlisting}
 
 Execute directly the \code{targetRunner} command-line that is provided in the
 error message, look in your execution directory for the files that are

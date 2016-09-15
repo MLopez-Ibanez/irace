@@ -35,7 +35,10 @@ DEVEL-README
 ^tune-conf$
 ^vignettes/\.auctex-auto
 ^vignettes/figure
+^vignettes/optbib
 ^vignettes/.*log
+^vignettes/.*blg
+^vignettes/.*bbl
 ^vignettes/.*synctex.gz
 ^vignettes/.*rel
 ^vignettes/.*dvi
