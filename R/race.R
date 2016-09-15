@@ -128,6 +128,8 @@ aux2.friedman <- function(y, I, alive, conf.level = 0.95)
 
 aux.friedman <- function(results, alive, which.alive, no.alive, conf.level)
 {
+  irace.assert(no.alive == length(which.alive))
+  
   if (no.alive == 2) {
     best <- NULL
     ranks <- NULL
@@ -169,6 +171,8 @@ aux.friedman <- function(results, alive, which.alive, no.alive, conf.level)
 aux.ttest <- function(results, no.tasks.sofar, alive, which.alive, no.alive, conf.level,
                       adjust = c("none","bonferroni","holm"))
 {
+  irace.assert(no.alive == length(which.alive))
+  
   adjust <- match.arg(adjust)
   mean.all <- c()
   for (j in 1:ncol(results)) {
@@ -561,6 +565,18 @@ race <- function(maxExp = 0,
     cat("\n\n")
   }
 
+  nbAlive <- sum(alive)
+  configurations$.ALIVE. <- as.logical(alive)
+  # Assign the proper ranks in the configurations data.frame
+  configurations$.RANK. <- Inf
+  configurations[which(alive), ".RANK."] <- race.ranks
+  # Now we can sort the data.frame by the rank
+  configurations <- configurations[order(as.numeric(configurations[, ".RANK."])), ]
+  # Consistency check
+  irace.assert (all(configurations[1:nbAlive, ".ALIVE."]))
+  if (nbAlive < nrow(configurations))
+    irace.assert(!any(configurations[(nbAlive + 1):nrow(configurations), ".ALIVE."]))
+
   if (scenario$debugLevel >= 3) {
     irace.note ("Memory used in race():\n")
     irace.print.memUsed()
@@ -569,7 +585,6 @@ race <- function(maxExp = 0,
   return(list(experiments = Results[1:no.tasks.sofar, ],
               experimentLog = experimentLog,
               experimentsUsed = no.experiments.sofar,
-              nbAlive = sum(alive),
-              alive = alive,
-              ranks = race.ranks))
+              nbAlive = nbAlive,
+              configurations = configurations))
 }

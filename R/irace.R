@@ -314,48 +314,6 @@ checkMinimumBudget <- function(remainingBudget, minSurvival, nbIterations,
   return(TRUE)
 }
 
-# This function is the interface between race and irace. It first
-# converts all data structures used in irace to the ones expected by
-# race, it calls race, and then conversely converts the resulting data
-# into the proper data structures for irace.
-oneIterationRace <-
-  function(scenario, configurations, parameters, budget, minSurvival,
-           elite.data = NULL, elitistNewInstances)
-{
-  # LESLIE : all this scenario parameters passed to race? why not to take them
-  # from the scenario inside of race, since is also passed.
-  result <- race (maxExp = budget,
-                  minSurvival = minSurvival,
-                  elite.data = elite.data,
-                  configurations = configurations,
-                  parameters = parameters,
-                  scenario = scenario,
-                  elitistNewInstances = elitistNewInstances)
-
-  configurations$.ALIVE. <- as.logical(result$alive)
-  # Assign the proper ranks in the configurations data.frame
-  configurations$.RANK. <- Inf
-  configurations[which(result$alive), ".RANK."] <- result$ranks
-  # Now we can sort the data.frame by the rank
-  configurations <- configurations[order(as.numeric(configurations[, ".RANK."])), ]
-
-  # Consistency check
-  irace.assert (all(as.logical(configurations[1:(result$nbAlive), ".ALIVE."])))
-  if (result$nbAlive < nrow(configurations))
-    irace.assert(!any(as.logical(configurations[(result$nbAlive + 1):nrow(configurations) , ".ALIVE."])))
-
-  if (scenario$debugLevel >= 3) {
-    irace.note ("Memory used in oneIterationRace():\n")
-    irace.print.memUsed()
-  }
-  
-  return (list (nbAlive = result$nbAlive,
-                experimentsUsed = result$experimentsUsed,
-                configurations = configurations,
-                experiments = result$experiments,
-                experimentLog = result$experimentLog))
-}
-
 startParallel <- function(scenario)
 {
   cwd <- setwd (scenario$execDir)
@@ -945,15 +903,15 @@ irace <- function(scenario, parameters)
       .irace$instancesList <- addInstances(scenario, .irace$instancesList,  ceiling(remainingBudget/minSurvival))
     }
 
-    raceResults <- oneIterationRace (scenario = scenario,
-                                     configurations = testConfigurations,
-                                     parameters = parameters, 
-                                     budget = currentBudget, 
-                                     minSurvival = minSurvival,
-                                     elite.data = elite.data,
-                                     elitistNewInstances = if (indexIteration > 1)
-                                                          scenario$elitistNewInstances
-                                                        else 0)
+    raceResults <- race (scenario = scenario,
+                         configurations = testConfigurations,
+                         parameters = parameters, 
+                         maxExp = currentBudget, 
+                         minSurvival = minSurvival,
+                         elite.data = elite.data,
+                         elitistNewInstances = if (indexIteration > 1)
+                                                 scenario$elitistNewInstances
+                                               else 0)
 
     # Update experiments
     # LESLIE: Maybe we can think is make iraceResults an environment, so these values
