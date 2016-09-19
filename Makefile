@@ -40,8 +40,9 @@ help:
 	@echo "submit     submit the package to CRAN (read DEVEL-README first)"
 
 build : bumpdate clean
-	@sed -i 's/%\\setboolean{Release}{true}/\\setboolean{Release}{true}/' $(PACKAGEDIR)/vignettes/$(PACKAGE)-package.Rnw
-	cd vignettes && aux2bib irace-package.aux > irace-package.bib
+	cd $(PACKAGEDIR)/vignettes \
+	&& sed -i 's/%\\setboolean{Release}{true}/\\setboolean{Release}{true}/' $(PACKAGE)-package.Rnw \
+	&& aux2bib irace-package.aux > irace-package.bib
 	cd $(BINDIR) &&	R CMD build $(BUILD_FLAGS) $(PACKAGEDIR)
 
 closeversion:
@@ -70,10 +71,10 @@ vignettes: vignettes/irace-package.Rnw vignettes/irace-package.bib
 # FIXME: How to do all this on a temporary directory to avoid people editing the .tex file directly?
 # R CMD Sweave --pdf --clean --verbose irace-package.Rnw
 # but then there is no output, not sure if it uses knit or it is uses bibtex...
-	cd vignettes && \
-	Rscript -e "library(knitr); knit('irace-package.Rnw', output='irace-package.tex', quiet = TRUE)" && \
-	$(PDFLATEX) irace-package.tex && bibtex irace-package && $(PDFLATEX) irace-package.tex && $(PDFLATEX) irace-package.tex && $(RM) irace-package.tex && \
-	cp irace-package.pdf ../inst/doc/
+	cd $(PACKAGEDIR)/vignettes \
+	&& sed -i 's/\\setboolean{Release}{true}/%\\setboolean{Release}{true}/' $(PACKAGE)-package.Rnw ; \
+	Rscript -e "library(knitr); knit('irace-package.Rnw', output='irace-package.tex', quiet = TRUE)" \
+	&& $(PDFLATEX) irace-package.tex && bibtex irace-package && $(PDFLATEX) irace-package.tex && $(PDFLATEX) irace-package.tex && $(RM) irace-package.tex
 
 pdf: vignettes 
 	$(RM) $(BINDIR)/$(PACKAGE).pdf
