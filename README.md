@@ -25,15 +25,18 @@ It builds upon the race package by Birattari and it is implemented in R.
 
 Relevant literature:
 
- 1. Manuel López-Ibáñez, Jérémie Dubois-Lacoste, Thomas Stützle, and Mauro
+ 1. M. López-Ibáñez, J. Dubois-Lacoste, L. Pérez Cáceres, T. Stützle, and
+    M. Birattari. [**The irace package: Iterated Racing for Automatic Algorithm Configuration.**](http://dx.doi.org/10.1016/j.orp.2016.09.002).
+    *Operations Research Perspectives*, 2016.  doi:[10.1016/j.orp.2016.09.002](http://dx.doi.org/10.1016/j.orp.2016.09.002).
+
+ 2. Manuel López-Ibáñez, Jérémie Dubois-Lacoste, Thomas Stützle, and Mauro
     Birattari. [**The irace package, Iterated Race for Automatic Algorithm Configuration**](http://iridia.ulb.ac.be/IridiaTrSeries/IridiaTr2011-004.pdf).
     Technical Report TR/IRIDIA/2011-004, IRIDIA, Université libre de Bruxelles,
     Belgium, 2011.<br>
     [ [bibtex](http://iridia.ulb.ac.be/~manuel/LopezIbanez_bib.html#LopDubStu2011irace)
     | [PDF](http://iridia.ulb.ac.be/IridiaTrSeries/IridiaTr2011-004.pdf) ]
 
-
- 2. Manuel López-Ibáñez. [**The irace
+ 3. Manuel López-Ibáñez. [**The irace
     software package: A tutorial**](http://iridia.ulb.ac.be/irace/files/irace-comex-tutorial.pdf). COMEX Workshop on Practical Automatic Algorithm Configuration, 2014.<br>
     [ [workshop webpage](http://iridia.ulb.ac.be/~manuel/comex_workshop/)
     | [PDF](http://iridia.ulb.ac.be/irace/files/irace-comex-tutorial.pdf) ]
@@ -118,7 +121,7 @@ computer. There are two methods:
         R> CTRL+d
 ```
 
-2. Manually
+1. Manually
    [download the package from CRAN](http://cran.r-project.org/package=irace)
    and invoke at the command-line:
 
@@ -186,7 +189,7 @@ Usage
         $ cd ~/tuning
 ```
 
-2. Copy the template and example files to the scenario directory
+1. Copy the template and example files to the scenario directory
 ```bash
         $ cp $IRACE_HOME/templates/*.tmpl .
 ```
@@ -199,7 +202,7 @@ Usage
         > system.file(package="irace")
 ```
 
-3. For each template in your tuning directory, remove the `.tmpl`
+1. For each template in your tuning directory, remove the `.tmpl`
    suffix, and modify them following the instructions in each file. In
    particular,
     * The scripts `target-runner` and `targetEvaluator` (if you need it at all)
@@ -212,7 +215,7 @@ Usage
    
     There are examples in `$IRACE_HOME/examples/`.
 
-4. Put the instances in `~/tuning/Instances/`. In addition, you can
+2. Put the instances in `~/tuning/Instances/`. In addition, you can
    create a file that specifies which instances from that directory
    should be run and which instance-specific parameters to use. See
    `scenario.txt.tmpl` and `instances-list.tmpl` for examples. The command
@@ -220,7 +223,7 @@ Usage
    so it must exist before calling irace. The default execDir is the
    current directory.
 
-5. Calling the command:
+3. Calling the command:
 ```bash
         $ cd ~/tuning/ && $IRACE_HOME/bin/irace
 ```

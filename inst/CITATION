@@ -5,17 +5,19 @@ if(!exists("meta") || is.null(meta)) meta <- packageDescription("eaf")
 year <- sub(".*(2[[:digit:]]{3})-.*", "\\1", meta$Date)
 vers <- paste("R package version", meta$Version)
      
-citEntry(entry="techreport",
-         title = "The irace package, Iterated Race for Automatic Algorithm Configuration",
+citEntry(entry="article",
+         title = "The irace package: Iterated Racing for Automatic
+                  Algorithm Configuration",
          author = personList(as.person("Manuel López-Ibáñez"),
-           as.person("Jérémie Dubois-Lacoste"),
-           as.person("Thomas Stützle"),
-           as.person("Mauro Birattari")),
-         year = 2011,
-         institution="IRIDIA, Université Libre de Bruxelles, Belgium",
-         number="TR/IRIDIA/2011-004",
-         url="http://iridia.ulb.ac.be/IridiaTrSeries/IridiaTr2011-004.pdf",
+                             as.person("Jérémie Dubois-Lacoste"),
+                             as.person("Leslie {Pérez Cáceres}"),
+                             as.person("Thomas Stützle"),
+                             as.person("Mauro Birattari")),
+         year = 2016,
+         journal = "Operations Research Perspectives",
+         doi = "10.1016/j.orp.2016.09.002",
          textVersion=
-         paste("Manuel López-Ibáñez, Jérémie Dubois-Lacoste, Thomas Stützle, and Mauro Birattari. ", 
-         "The irace package, Iterated Race for Automatic Algorithm Configuration. ",
-         "Technical Report TR/IRIDIA/2011-004, IRIDIA, Université Libre de Bruxelles, Belgium, 2011.", sep=""))
+           paste("Manuel López-Ibáñez, Jérémie Dubois-Lacoste, Leslie Pérez Cáceres, Thomas Stützle, and Mauro Birattari. ",
+                 "The irace package: Iterated Racing for Automatic Algorithm Configuration. ",
+                 "Operations Research Perspectives, 2016. doi:10.1016/j.orp.2016.09.002",
+                 sep=""))
