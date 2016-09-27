@@ -454,6 +454,8 @@ irace <- function(scenario, parameters)
   if (!is.null(scenario$recoveryFile)) {
     irace.note ("Resuming from file: '", scenario$recoveryFile,"'\n")
     recoverFromFile(scenario$recoveryFile)
+    startParallel(scenario)
+    on.exit(stopParallel())
   } else { # Do not recover
     scenario <- irace.init (scenario)
     debugLevel <- scenario$debugLevel
