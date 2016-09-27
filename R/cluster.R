@@ -1,45 +1,40 @@
 ## FIXME: Implement this using Rsge package.
-## Launch a job with qsub and return its jobID. This function does not
-## call qsub directly, but instead command should be a script that
-## invokes qsub and prints its output.
-sge.cluster.qsub <- function(command, debugLevel = 0)
+
+## Parse the output of qsub.
+sge.cluster.qsub <- function(outputRaw)
 {
-  if (debugLevel >= 1) {
-    cat (format(Sys.time(), usetz=TRUE), ":", command, "\n")
-  }
-  rawOutput <- system (paste(command, " 2>&1"), intern = TRUE)
-  if (debugLevel >= 1) { cat(rawOutput, sep="\n") }
   ## FIXME: Can we make this more robust against different languages and
   ## variants of qsub?
   # FIXME: This is a bit too complex for just parsing a number and
   # returning the number or NULL.
-  match <- grep("Your job \\d+ ", rawOutput, perl = TRUE)
-  if (length(match) != 1) {
-    # Some error matching.
-    return(NULL)
+  match <- grep("Your job \\d+ ", outputRaw, perl = TRUE)
+  if (length(match) == 1) {
+    jobID <-
+      suppressWarnings(as.integer(grep("\\d+",
+                                       unlist(strsplit(outputRaw[match], " ")),
+                                       perl = TRUE, value = TRUE)[1]))
+    if (length(jobID) == 1 && is.numeric(jobID)) {
+      return(list(jobID = jobID))
+    }
   }
-  jobID <-
-    suppressWarnings(as.integer(grep("\\d+",
-                                     unlist(strsplit(rawOutput[match], " ")),
-                                     perl = TRUE, value = TRUE)[1]))
-  if (length(jobID) == 1 && is.numeric(jobID)) {
-    return(jobID)
-  } else return(NULL)
+  # Some error matching.
+  return(list(jobID = NULL,
+              error = "The output of targetRunner should be 'Your job ID'",
+              outputRaw = outputRaw))
 }
 
-pbs.cluster.qsub <- function(command, debugLevel = 0)
+pbs.cluster.qsub <- function(outputRaw)
 {
-  if (debugLevel >= 1) {
-    cat (format(Sys.time(), usetz=TRUE), ":", command, "\n")
-  }
-  rawOutput <- system (paste(command, " 2>&1"), intern = TRUE)
-  if (debugLevel >= 1) { cat(rawOutput, sep="\n") }
   ## FIXME: Can we make this more robust against different languages and
   ## variants of qsub?
-  jobID <- grep("\\d+\\.[a-z]+", rawOutput, perl = TRUE,value=TRUE)
+  jobID <- grep("\\d+\\.[a-z]+", outputRaw, perl = TRUE, value = TRUE)
   if (length(jobID) == 1) {
-    return(jobID)
-  } else return(NULL)
+    return(list(jobID = jobID))
+  } else { # Some error matching.
+    return(list(jobID = NULL,
+                error = "The output of targetRunner should be an ID of the form '\\d+\\.[a-z]+'",
+                outputRaw = outputRaw))
+  }
 }
 
 sge.job.status <- function(jobid)
@@ -56,51 +51,54 @@ pbs.job.status <- function(jobid)
                  intern = FALSE, wait = TRUE))
 }
 
-target.runner.qsub <- function(experiment, scenario, cluster.qsub)
+## Launch a job with qsub and return its jobID. This function does not
+## call qsub directly, but instead command should be a script that
+## invokes qsub and prints its output.
+target.runner.qsub <- function(experiment, scenario, cluster.parse.qsub)
 {
-  debugLevel   <- scenario$debugLevel
-  id           <- experiment$id
-  configuration<- experiment$configuration
-  instance     <- experiment$instance
-  extra.params <- experiment$extra.params 
-  switches     <- experiment$switches
+  debugLevel       <- scenario$debugLevel
+  configuration.id <- experiment$id.configuration
+  instance.id      <- experiment$id.instance
+  seed             <- experiment$seed
+  configuration    <- experiment$configuration
+  instance         <- experiment$instance
+  extra.params     <- experiment$extra.params
+  switches         <- experiment$switches
   
   targetRunner <- scenario$targetRunner
   if (as.logical(file.access(targetRunner, mode = 1))) {
-    irace.error ("targetRunner '", targetRunner, "' cannot be found or is not executable!\n")
+    irace.error ("targetRunner ", shQuote(targetRunner), " cannot be found or is not executable!\n")
   }
-  command <- paste (targetRunner, instance, id, extra.params,
-                    buildCommandLine(configuration, switches))
 
-  jobID <- cluster.qsub (command, debugLevel)
-  exit.code <- is.null(jobID)
+  args <- paste(configuration.id, instance.id, seed, instance, extra.params,
+                buildCommandLine(configuration, switches))
+  output <- runcommand(targetRunner, args, configuration.id, debugLevel)
 
-  if (exit.code) {
-    irace.error("Command `", command, "' returned non-zero exit status (",
-                exit.code / 256, ")!\n",
-                "This is not a bug in irace, ",
-                "it means that something failed when running your program ",
-                "or it was terminated before completion. ",
-                "Try to run the command above from the execution directory '",
-                scenario$execDir, "' to investigate the issue.")
+  outputRaw <- output$output
+  err.msg <- output$error
+  if (is.null(err.msg)) {
+    # FIXME: Output should be parsed by targetRunner, which should return just
+    # the jobID as an alphanumeric string.
+    cluster.parse.qsub <- sge.cluster.qsub
+    return(c(cluster.parse.qsub(outputRaw), call = paste(targetRunner, args)))
   }
-  
-  return(list(command = command, jobID = jobID))
+  return (list(jobID = NULL,
+               error = err.msg, outputRaw = outputRaw,
+               call = paste(targetRunner, args)))
 }
 
-cluster.lapply <- function(X, ..., scenario,
-                           cluster.qsub = sge.cluster.qsub,
+cluster.lapply <- function(X, scenario,
+                           # FIXME: This should depend on a parameter --qsub [pbs|sge]
                            cluster.job.status = sge.job.status,
                            poll.time = 2)
 {
   debugLevel <- scenario$debugLevel
-  output <- lapply(X, target.runner.qsub, ..., scenario = scenario, cluster.qsub = cluster.qsub)
+  output <- lapply(X, exec.target.runner, scenario = scenario, target.runner = target.runner.qsub)
   jobIDs <- sapply(output, "[[", "jobID")
   
   ## Wait for cluster jobs to finish.
   if (length(jobIDs) > 0 && debugLevel >= 1) {
-    cat(format(Sys.time(), usetz=TRUE), ": Waiting for jobs ('.' ==",
-        poll.time, "s) ")
+    irace.note("Waiting for jobs ('.' ==", poll.time, "s) ")
   }
   for (jobID in jobIDs) {
     while (!cluster.job.status(jobID)) {
@@ -108,9 +106,9 @@ cluster.lapply <- function(X, ..., scenario,
       Sys.sleep(poll.time)
     }
     if (debugLevel >= 1) {
-      cat ("\n", format(Sys.time(), usetz=TRUE), ": DONE (", jobID, ")")
+      irace.note ("DONE (", jobID, ")")
     }
   }
   cat ("\n")
-  return(lapply(output, "[[", "command"))
+  return(output)
 }
