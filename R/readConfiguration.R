@@ -226,7 +226,7 @@ checkScenario <- function(scenario = defaultScenario())
     if (is.character(scenario$targetRunner)) {
       scenario$targetRunner <- path.rel2abs(scenario$targetRunner)
       file.check (scenario$targetRunner, executable = TRUE,
-                  text = "run program runner")
+                  text = "target runner")
       .irace$target.runner <- target.runner.default
     } else {
       irace.error("targetRunner must be a function or an executable program")

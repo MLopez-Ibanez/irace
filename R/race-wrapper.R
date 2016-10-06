@@ -330,7 +330,8 @@ execute.experiments <- function(experiments, scenario)
         # terminate the execution of the parent process, so it will
         # continue and give more errors later. We have to terminate
         # here, but is there a nicer way to detect this and terminate?
-        if (any(sapply(target.output, inherits, "try-error"))) {
+        if (any(sapply(target.output, inherits, "try-error"))
+            || any(sapply(target.output, is.null))) {
           # FIXME: mclapply has some bugs in case of error. In that
           # case, each element of the list does not keep the output of
           # each configuration and repetitions may occur.

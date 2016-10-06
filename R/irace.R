@@ -611,7 +611,7 @@ irace <- function(scenario, parameters)
       if (!scenario$elitist) {
         timeUsed <- 0
       }
-    }
+    } # end of do not recover
 
     # Compute the total initial budget, that is, the maximum number of
     # experiments that we can perform.
