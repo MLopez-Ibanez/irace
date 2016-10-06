@@ -14,7 +14,7 @@
 \usepackage{ifthen}
 \newboolean{Release}
 \setboolean{Release}{false}
-%%%%\setboolean{Release}{true}
+\setboolean{Release}{true}
 \usepackage{calc}
 \usepackage{algorithm,algorithmic}
 \usepackage{booktabs}
@@ -44,6 +44,8 @@
 \usepackage{tocloft}
 \setlength{\cftsubsecnumwidth}{3em}% Set length of number width in ToC for \subsection
 \usepackage{enumitem}
+\setlist[enumerate]{leftmargin=*,widest=00}
+\setlist[itemize]{leftmargin=1.5em}
 %% FIXME: listing is very limited, we should use 'minted'
 \usepackage{listings}
 \lstdefinestyle{BashInputStyle}{
@@ -569,7 +571,7 @@ used as basis for creating your new scenario. Please follow carefully the
 indications provided in each step and in the template files used; if you have
 doubts check the the sections that describe each option in detail.
 
-\begin{enumerate}
+\begin{enumerate}[leftmargin=*]
 \item Create a directory (\eg~\path{~/tuning/}) for the scenario setup. This directory will contain
 all the files that describe the scenario. On GNU/Linux or OS X, you can do this as follows:
 %<<dir1,engine='bash',eval=FALSE>>=
@@ -1500,7 +1502,7 @@ the log file previously produced, and \irace will continue the execution from
 the last saved iteration. The state of the random generator is saved and
 loaded, therefore, as long as the execution is continued in the same machine,
 the obtained results will be exactly the same as executing \irace in one step
-(although external factors, such as CPU load and disk caches, may affect the
+(external factors, such as CPU load and disk caches, may affect the
 target algorithm and that may affect the results).  You can specify
 the \parameter{recoveryFile} from the command-line or from the scenario file,
 and execute \irace as described in \autoref{sec:execution}. For example, from
@@ -2586,8 +2588,8 @@ Optional data passed to \parameter{targetRunner}. This is ignored by the default
      way to tell the slaves where to find \irace.
 
      If the path is set correctly and the problem persists, please check these instructions:
-     
-     \begin{enumerate}
+%     
+\begin{enumerate}[leftmargin=*,widest=3]
        \item Test that \irace and \code{Rmpi} work. Run \irace on a single machine (submit node), without calling \code{qsub}, \code{mpirun} or a 
        similar wrapper around \irace or \aR.
        \item Test loading \irace on the slave nodes. However,
@@ -2607,7 +2609,7 @@ Optional data passed to \parameter{targetRunner}. This is ignored by the default
       some particular settings that you need. \code{Rmpi} normally creates  log files; but \irace suppresses those files unless $\texttt{debugLevel} > 0$.
      \end{enumerate}
      
-     Please contact us on the \irace google group if you have further problems.
+     Please contact us (\autoref{sec:contact}) if you have further problems.
 
 \subsection[Error: 4 arguments passed to {.Internal(nchar)} which requires 3]{Error: 4 arguments passed to \code{.Internal(nchar)} which requires 3}
 
@@ -2729,51 +2731,57 @@ the example file (\code{target-runner}) provided in
 those characteristics.
 
 In case of failure of \parameter{targetRunner}, \irace will print an error on its output describing which execution of \parameter{targetRunner} was not successful.
-
+%
 Follow this list to detect where the problem is:
 
-\begin{enumerate}[leftmargin=0cm]
+\begin{enumerate}[leftmargin=*,widest=9]
 
-\item Make sure that your \code{targetRunner script} is at the specified location. If you see an error as:\\
+\item Make sure that your \code{targetRunner} script or program is at the specified location. If you see this error:
+\begin{CodeInput}
+Error: == irace == target runner '~/tuning/target-runner' does not exist
+\end{CodeInput}
+%
+it means that \irace cannot find the \code{target-runner} file. Check that the file is at
+the path specified by the error.
 
-\code{Error: == irace == run program runner '~/tuning/target-runner' does not exist}\\
-
-\irace is not finding the script file. Check that the file is in the path specified by the error.
-
-\item Make sure that your \code{targetRunner} script is an executable if you see an error as:\\
-
-\code{Error: == irace == run program runner '~/tuning/target-runner' is a directory, not a file}
-
+\item Make sure that your \code{targetRunner} script is an executable file and the user running \irace has permission to execute it. The following errors:
+%
+\begin{CodeInput}
+Error: == irace == target runner '~/tuning/target-runner' is a directory,
+not a file
+\end{CodeInput}
 or
-
-\code{Error: == irace == run program runner '~/tuning/target-runner' is not executable}\\
-
-This error means that your \code{targetRunner} is not an executable file. In the first case, the script
-is a folder and therefore there must be a problem with the name of the script. In the second case,
-you must make the file executable, which in GNU/Linux can be done by:
-
+\begin{CodeInput}
+Error: == irace == target runner '~/tuning/target-runner' is not executable
+\end{CodeInput}
+%
+mean that your \code{targetRunner} is not an executable file. In the first
+case, the script is a folder and therefore there must be a problem with the
+name of the script. In the second case, you must make the file executable,
+which in GNU/Linux can be done by:
+%
 \begin{lstlisting}[style=BashInputStyle]
 chmod +x ~/tuning/target-runner
 \end{lstlisting}
 
-\item Make sure that your executable is in the location described in the script
-(variable \code{EXE} for the templates example). A typical output for such an error is:\\
-
-\code{%
-Error: == irace == running command ''~/tuning/target-runner' 1 8 676651103 \\
-~/tuning/Instances/1000-16.tsp --ras --localsearch 2 --alpha 4.03 --beta 1.89\\
---rho  0.02 --ants 37 --nnls 48 --dlb 0 --rasranks 15 2>\&1' had status 1 \\ \\
-== irace == The call to target.runner.default was:\\
-~/tuning/target-runner 1 8 676651103 ~/tuning/Instances/1000-16.tsp --ras \\
---localsearch 2 --alpha 4.03 --beta 1.89 --rho  0.02 --ants 37 --nnls 48 \\
---dlb 0 --rasranks 15\\ \\
-== irace == The output was:\\
-Tue May  3 19:00:37 UTC 2016: error: ~/bin/acotsp: not found or not executable\\
+\item If your \code{targetRunner} script calls another program, make sure it is at  the location described in the script
+(variable \code{EXE} in the examples and templates). A typical output for such an error is:
+%
+\begin{CodeInput}
+Error: == irace == running command ''~/tuning/target-runner' 1 8 676651103 
+~/tuning/Instances/1000-16.tsp --ras --localsearch 2 --alpha 4.03 --beta 1.89
+--rho  0.02 --ants 37 --nnls 48 --dlb 0 --rasranks 15 2>\&1' had status 1  
+== irace == The call to target.runner.default was:
+~/tuning/target-runner 1 8 676651103 ~/tuning/Instances/1000-16.tsp --ras 
+--localsearch 2 --alpha 4.03 --beta 1.89 --rho  0.02 --ants 37 --nnls 48 
+--dlb 0 --rasranks 15 
+== irace == The output was:
+Tue May  3 19:00:37 UTC 2016: error: ~/bin/acotsp: not found or not executable
 (pwd: ~/tuning/acotsp-arena)
-}\\
-
-For testing your script, you can copy the command line shown in the error and
-execute \code{target-runner} directly on the execution directory (\parameter{execDir}). In this case, the command line is:
+\end{CodeInput}
+%
+You may test your script by copying the command line shown in the error and
+executing \code{target-runner} directly on the execution directory (\parameter{execDir}). In this case, the command line is:
 %
 \begin{lstlisting}[style=BashInputStyle]
 ~/tuning/target-runner 1 8 676651103 ~/tuning/Instances/1000-16.tsp  --ras \
@@ -2785,18 +2793,16 @@ This executes the \code{targetRunner} script as \irace does. The output of this 
 
 
 \item Check that your \code{targetRunner} script is actually returning one number as
-output. If you see an error as the following, this is your problem:\\
-
-\code{
-Error: == irace == The output of '~/tuning/target-runner \\
-1 25 365157769 ~/tuning/Instances/1000-31.tsp --ras \\
---localsearch 1 --alpha 0.26  --beta 6.95 --rho  0.69 \\
---ants 56 --nnls 10 --dlb 0 --rasranks 7' is not numeric!\\ \\
-== irace == The output was:\\
+output. If you see an error as the following, this is your problem:
+\begin{CodeInput}
+Error: == irace == The output of '~/tuning/target-runner 
+1 25 365157769 ~/tuning/Instances/1000-31.tsp --ras 
+--localsearch 1 --alpha 0.26  --beta 6.95 --rho  0.69 
+--ants 56 --nnls 10 --dlb 0 --rasranks 7' is not numeric! 
+== irace == The output was:
 Solution: 24479793
-}\\
-
-
+\end{CodeInput}
+%
 For testing your script, copy the command-line of \code{target-runner} and execute it directly on the execution directory (\parameter{execDir}):
 %
 \begin{lstlisting}[style=BashInputStyle]
@@ -2810,37 +2816,36 @@ script must be only one number. In this example, the output of the script is
 ``\code{Solution: 24479793}'', which is not a number. The code that \code{targetRunner} uses to parse the output of the algorithm must be checked.
 
 \item Check that your \code{targetRunner} script is creating the output files for your algorithm.
-If you see an error as:\\
+If you see an error as:
 
-\code{
-== irace == The output was: Tue May  3 19:41:40 UTC 2016: \\
-error: c1-9.stdout: No such file or directory}\\
-
+\begin{CodeInput}
+== irace == The output was: Tue May  3 19:41:40 UTC 2016: 
+error: c1-9.stdout: No such file or directory
+\end{CodeInput}
 The output file of the execution of your algorithm has not been
 created (check permissions) or has been deleted before the result can be read.
 
 
-
-\item Other errors can produce the following output:\\
-
-\code{
-== irace == The output was: Tue May  3 19:49:06 UTC 2016: \\
-error: c1-23.stdout: Output is not a number}\\
-
+\item Other errors can produce the following output:
+%
+\begin{CodeInput}
+== irace == The output was: Tue May  3 19:49:06 UTC 2016: 
+error: c1-23.stdout: Output is not a number
+\end{CodeInput}
+%
 This might be because your \code{targetRunner} script is not executing your
-algorithm correctly. To further investigate this issue, comment out the line that eliminates the
-temporary files that saves the output of your algorithm. Similar to this one
+algorithm correctly. To further investigate this issue, comment out the line
+that eliminates the temporary files that saves the output of your
+algorithm. Similar to this one
 %
 \begin{lstlisting}[style=BashInputStyle]
 rm -f "${STDOUT}" "${STDERR}"
 \end{lstlisting}
-
+%
 Execute directly the \code{targetRunner} command-line that is provided in the
 error message, look in your execution directory for the files that are
 created. Check the \code{.stderr} file for errors and the \code{.stdout} file
 to see the output that your algorithm produces.
-
-
 
 \end{enumerate}
 
@@ -2863,6 +2868,28 @@ to see the output that your algorithm produces.
   probabilistic models associated to the elite configurations.  All elite
   configurations are also included in the next iteration.
 \end{description}
+
+\section{NEWS}
+
+\RecustomVerbatimCommand{\VerbatimInput}{VerbatimInput}%
+{fontsize=\footnotesize,
+ %
+ frame=lines,  % top and bottom rule only
+ framesep=1em, % separation between frame and text
+ rulecolor=\color{Gray},
+ %
+ label=\fbox{\color{Black}NEWS},
+ labelposition=topline,
+ %
+ % commandchars=\|\(\), % escape character and argument delimiters for
+ %                      % commands within the verbatim
+ % commentchar=*        % comment character
+}
+
+%% NEWS is latin1 but this file is utf8
+\begingroup\inputencoding{latin1}%
+\VerbatimInput{../NEWS}%
+\endgroup
 
 \end{appendices}
 
