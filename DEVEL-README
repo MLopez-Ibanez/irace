@@ -58,7 +58,7 @@ RELEASE Process:
 
 6. Send package to the maintainers of the packages listed in
    "Reverse suggests" or "Reverse depend" at
-   http://cran.r-project.org/web/packages/irace/ so they can check we do not
+   https://cran.r-project.org/package=irace so they can check we do not
    break their packages (this step would be automatic once ./check-reverse
    above works). If everything is OK, continue, otherwise fix and goto 1.
 
