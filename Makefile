@@ -43,6 +43,9 @@ build : bumpdate clean
 	cd $(PACKAGEDIR)/vignettes \
 	&& sed -i 's/%\+\\setboolean{Release}{true}/\\setboolean{Release}{true}/' $(PACKAGE)-package.Rnw \
 	&& aux2bib irace-package.aux > irace-package.bib
+	@if [ ! -s "$(PACKAGEDIR)/vignettes/irace-package.bib" ]; then \
+	    echo "error: vignettes/irace-package.bib is empty: run 'make vignettes'"; exit 1 \
+	else true; fi
 	cd $(BINDIR) &&	R CMD build $(BUILD_FLAGS) $(PACKAGEDIR)
 
 closeversion:
