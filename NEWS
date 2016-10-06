@@ -1,7 +1,7 @@
  * Minimum R version is 2.15. 
 
  * Elitist irace by default, it can be disabled with parameter --elitist 0. 
-   (Leslie Perez, Manuel López-Ibáñez)
+   (Leslie Pérez Cáceres, Manuel López-Ibáñez)
 
  * The parameter --test-type gains two additional values:
 
@@ -26,7 +26,7 @@
                                                    (Manuel López-Ibáñez)
 
  * We print diversity measures after evaluating on each instance:
-   (Leslie Perez)
+   (Leslie Pérez Cáceres)
 
    - Kendall's W (also known as Kendall's coefficient of concordance) If 1,
      all candidates have ranked in the same order in all instances.  If 0, the
@@ -78,7 +78,7 @@
  * Budget can be specified as maximum time (maxTime, --max-time) consumed by
    the target algorithm. See the documentation for the details about how this
    is handled.
-   (Leslie Perez, Manuel López-Ibáñez)
+   (Leslie Pérez Cáceres, Manuel López-Ibáñez)
 
 
 1.07
@@ -86,7 +86,7 @@
  * The best configurations found, either at the end or at each iteration of an
    irace run, can now be applied to a set of test instances different from the
    training instances. See options testInstanceDir, testInstanceFile,
-   testNbElites, and testIterationElites. (Leslie Perez, Manuel López-Ibáñez)
+   testNbElites, and testIterationElites. (Leslie Pérez Cáceres, Manuel López-Ibáñez)
 
  * The R interfaces of hookRun, hookEvaluate and hookRunParallel have changed.
    See help(hook.run.default) and help(hook.evaluate.default) for examples of
@@ -94,7 +94,7 @@
 
  * Printing of race progress now reports the actual configuration and instance
    IDs, and numbers are printed in a more human-readable format.
-   (Leslie Perez, Manuel López-Ibáñez)
+   (Leslie Pérez Cáceres, Manuel López-Ibáñez)
 
  * Reduce memory use for very large values of maxExperiments.  
    (Manuel López-Ibáñez, thanks to Federico Caselli for identifying the issue)
@@ -120,7 +120,7 @@
    final configurations. (Manuel López-Ibáñez)
 
  * Fix bug if there are more initial candidates than needed for the
-   first race. (Leslie Perez, Manuel López-Ibáñez)
+   first race. (Leslie Pérez Cáceres, Manuel López-Ibáñez)
 
  * New configuration options, mainly for R users:
                     
@@ -156,13 +156,13 @@
    (Manuel López-Ibáñez)
 
  * New option --recovery-file (recoveryFile) allows resuming a
-   previous irace run. (Leslie Perez)
+   previous irace run. (Leslie Pérez Cáceres)
 
  * The confidence level for the elimination test is now
-   configurable with parameter --confidence. (Leslie Perez)
+   configurable with parameter --confidence. (Leslie Pérez Cáceres)
 
  * Much more robust handling of relative/absolute paths. Improved support
-   for Windows. (Leslie Perez, Manuel López-Ibáñez)
+   for Windows. (Leslie Pérez Cáceres, Manuel López-Ibáñez)
 
  * Provide better error messages for incorrect parameter
    descriptions. (Manuel López-Ibáñez)
@@ -210,7 +210,7 @@
    were removed.
 
  * Faster computation of similar candidates (Jeremie Dubois-Lacoste
-   and Leslie Perez).
+   and Leslie Pérez Cáceres).
 
  * Fix bug when saving instances in tunerResults$experiments.
 
@@ -222,6 +222,6 @@
    not handling directory names with a trailing backslash or slash on
    Windows.
  
- * Fix bug using per-instance parameters (Leslie Perez).
+ * Fix bug using per-instance parameters (Leslie Pérez Cáceres).
 
  * Fix bug when reading initial candidates from a file.
