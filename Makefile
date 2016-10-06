@@ -41,7 +41,7 @@ help:
 
 build : bumpdate clean
 	cd $(PACKAGEDIR)/vignettes \
-	&& sed -i 's/%\\setboolean{Release}{true}/\\setboolean{Release}{true}/' $(PACKAGE)-package.Rnw \
+	&& sed -i 's/%\+\\setboolean{Release}{true}/\\setboolean{Release}{true}/' $(PACKAGE)-package.Rnw \
 	&& aux2bib irace-package.aux > irace-package.bib
 	cd $(BINDIR) &&	R CMD build $(BUILD_FLAGS) $(PACKAGEDIR)
 
