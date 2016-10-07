@@ -42,7 +42,7 @@ help:
 build : bumpdate clean
 	cd $(PACKAGEDIR)/vignettes \
 	&& sed -i 's/^%\+\\setboolean{Release}{true}/\\setboolean{Release}{true}/' $(PACKAGE)-package.Rnw \
-	&& aux2bib irace-package.aux > irace-package.bib
+	&& aux2bib irace-package.aux | grep -v '@comment' > irace-package.bib
 	@if [ ! -s "$(PACKAGEDIR)/vignettes/irace-package.bib" ]; then \
 	    echo "error: vignettes/irace-package.bib is empty: run 'make vignettes'"; exit 1 \
 	else true; fi
@@ -50,6 +50,7 @@ build : bumpdate clean
 
 closeversion: build
 	svn ci NEWS -m " * NEWS: Close version $(PACKAGEVERSION)"
+	svn rm ^/tags/$(PACKAGEVERSION) -m " * Delete previous tag for version $(PACKAGEVERSION)" || echo "OK: tag is new."
 	svn cp ^/trunk ^/tags/$(PACKAGEVERSION) -m " * Tag version $(PACKAGEVERSION)"
 	svn up
 	make releasebuild # again to update version.R and svn_version
