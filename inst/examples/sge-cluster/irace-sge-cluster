@@ -1,6 +1,7 @@
 #!/bin/bash
  
-# To use --sge-cluster, irace must be invoked in the submission node.
+# To use --sge-cluster, irace must be invoked in the submission node and
+# target-runner will launch jobs using qsub.
 BINDIR=$1
 EXECDIR=$2
 DESTMAIL=${USER}@localhost
