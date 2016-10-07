@@ -49,7 +49,7 @@ build : bumpdate clean
 	cd $(BINDIR) &&	R CMD build $(BUILD_FLAGS) $(PACKAGEDIR)
 
 closeversion: build
-	svn ci NEWS -m " * NEWS: Close version $(PACKAGEVERSION)"
+	svn ci -m " * NEWS: Close version $(PACKAGEVERSION)"
 	svn rm ^/tags/$(PACKAGEVERSION) -m " * Delete previous tag for version $(PACKAGEVERSION)" || echo "OK: tag is new."
 	svn cp ^/trunk ^/tags/$(PACKAGEVERSION) -m " * Tag version $(PACKAGEVERSION)"
 	svn up
