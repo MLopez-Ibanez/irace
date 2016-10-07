@@ -111,6 +111,8 @@ endif
 
 submit: 
 	@echo "Read http://cran.r-project.org/web/packages/policies.html"
+	@echo "*** You need to use http://cran.r-project.org/submit.html"
+	@exit 1
 	cd $(BINDIR) && echo $(FTP_COMMANDS) | ftp -v -e -g -i -n cran.r-project.org
 	@echo "Don't forget to send email to cran@r-project.org !"
 
