@@ -2891,7 +2891,7 @@ to see the output that your algorithm produces.
 
 %% NEWS is latin1 but this file is utf8
 \begingroup\inputencoding{latin1}%
-\VerbatimInput{NEWS}%
+\VerbatimInput{NEWS.txt}%
 \endgroup
 
 \end{appendices}
