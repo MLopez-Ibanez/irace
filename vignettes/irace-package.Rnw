@@ -1428,42 +1428,40 @@ parallel. There are four ways to parallelize a single run of \irace:
     Its value must be an \aR function that will be invoked by \irace as follows:
 
    <<targetRunnerParallel,prompt=FALSE, eval=FALSE>>=
-     targetRunnerParallel(experiments, targetRunner, scenario)
+     targetRunnerParallel(experiments, exec.target.runner, scenario)
    @
    %
    
-   where \code{experiments} is a list that contains elements with 
-   information about configurations and instances to be executed (see
-   \autoref{sec:runner} for a description), \code{targetRunner} is the
-   \parameter{targetRunner} script or function provided by the user and 
-   \code{scenario} is the scenario list. The \parameter{targetRunnerParallel} 
-   function must execute the given \parameter{targetRunner} for each experiment in the 
-   \code{experiments} list and using the provided \code{scenario} list, for example:
+   where \code{experiments} is a list that contains elements with information
+   about configurations and instances to be executed (see \autoref{sec:runner}
+   for a description), \code{exec.target.runner} is the function within \irace
+   that takes care of executing \parameter{targetRunner}, check its output and,
+   possibly, retry in case of error (\parameter{targetRunnerRetries}) and
+   \code{scenario} is the scenario list. The \parameter{targetRunnerParallel}
+   function may call the given \code{exec.target.runner} for each element
+   in the \code{experiments} list. A trivial example would be:
    
    <<targetRunnerParallel2,prompt=FALSE, eval=FALSE>>=
-     # Option 1
-     output.experiments <- list()
-     for (i in 1:length(experiments))
-       output.experiments[[i]] <- targetRunner(experiments[[i]], scenario)
-     # Option 2
-     output.experiments <- lapply(experiments, targetRunner, scenario=scenario)  
+   targetRunnerParallel <- function(experiments, exec.target.runner, scenario)
+   {
+     return (lapply(experiments, exec.target.runner, scenario = scenario))
+   }
    @
    %
-   The \parameter{targetRunnerParallel} function must return a list of 
-   the same length as \code{experiments} containing the output of each call to
-   \parameter{targetRunner}. Each \parameter{targetRunner} execution returns a list 
-   containing two elements \code{<cost, time>}. When the time is not returned, the time 
-   element of the list should be set as \code{NA}. If you decide not to use the 
-   provided \code{targetRunner}, keep in mind that the output of each execution must be in this format,
-   the following is an example of an output of a \parameter{targetRunnerParallel} with 2 experiments, 
-   in which the execution time is not reported:
+   However, the user is free to set up the calls in any way, perhaps
+   implementing its own replacement for \code{exec.target.runner}.
+   
+   The only requirement is that the \parameter{targetRunnerParallel} function
+   must return a list of the same length as \code{experiments}, where each
+   element is the output expected from the corresponding call
+   to \parameter{targetRunner} (see \autoref{sec:runner}). The following is an
+   example of the output of a call to \parameter{targetRunnerParallel} with 2
+   experiments, in which the execution time is not reported:
   
   <<targetRunnerParallel3,prompt=FALSE, eval=TRUE>>=
      print(output)
    @
    %
-   
-   
 
 
 \end{itemize}
