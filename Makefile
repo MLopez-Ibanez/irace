@@ -41,7 +41,7 @@ help:
 
 build : bumpdate clean
 	cd $(PACKAGEDIR)/vignettes \
-	&& sed -i 's/%\+\\setboolean{Release}{true}/\\setboolean{Release}{true}/' $(PACKAGE)-package.Rnw \
+	&& sed -i 's/^%\+\\setboolean{Release}{true}/\\setboolean{Release}{true}/' $(PACKAGE)-package.Rnw \
 	&& aux2bib irace-package.aux > irace-package.bib
 	@if [ ! -s "$(PACKAGEDIR)/vignettes/irace-package.bib" ]; then \
 	    echo "error: vignettes/irace-package.bib is empty: run 'make vignettes'"; exit 1 \
@@ -75,7 +75,7 @@ vignettes: vignettes/irace-package.Rnw vignettes/irace-package.bib
 # R CMD Sweave --pdf --clean --verbose irace-package.Rnw
 # but then there is no output, not sure if it uses knit or it is uses bibtex...
 	cd $(PACKAGEDIR)/vignettes \
-	&& sed -i 's/\\setboolean{Release}{true}/%\\setboolean{Release}{true}/' $(PACKAGE)-package.Rnw ; \
+	&& sed -i 's/^\\setboolean{Release}{true}/%\\setboolean{Release}{true}/' $(PACKAGE)-package.Rnw ; \
 	Rscript -e "library(knitr); knit('irace-package.Rnw', output='irace-package.tex', quiet = TRUE)" \
 	&& $(PDFLATEX) irace-package.tex && bibtex irace-package && $(PDFLATEX) irace-package.tex && $(PDFLATEX) irace-package.tex && $(RM) irace-package.tex
 

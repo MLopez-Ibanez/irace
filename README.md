@@ -6,11 +6,11 @@ output:
     toc: true
     toc_depth: 4
 ---
-[![CRAN Downloads](http://cranlogs.r-pkg.org/badges/grand-total/irace)](https://cran.rstudio.com/web/packages/irace/index.html)
+[![CRAN Downloads](http://cranlogs.r-pkg.org/badges/grand-total/irace)](https://CRAN.R-project.org/package=irace)
 
-**Maintainers:** [Manuel López-Ibáñez](http://iridia.ulb.ac.be/~manuel/), Jérémie Dubois-Lacoste, Leslie Pérez
+**Maintainers:** [Manuel López-Ibáñez](http://lopez-ibanez.eu), Jérémie Dubois-Lacoste, Leslie Pérez
 
-**Contact email:** irace@iridia.ulb.ac.be
+**Contact:** <https://groups.google.com/d/forum/irace-package>
 
 Introduction
 ------------
@@ -58,7 +58,7 @@ Installing R
 ------------
 
 The official instructions are available at
-<http://cran.r-project.org/doc/manuals/r-release/R-admin.html>
+<https://cran.r-project.org/doc/manuals/r-release/R-admin.html>
 
 We give below a quick installation guide that will work in most cases.
 
@@ -75,8 +75,8 @@ prompt install the irace package. See instructions below.
 
 ### OS X ###
 
-You can install R directly from a CRAN mirror (the link of the Belgian one is
-<http://cran.freestatistics.org/bin/macosx/>)
+You can install R directly from a CRAN mirror
+(<https://cran.r-project.org/bin/macosx/>)
 
 Alternatively, if you use homebrew, you can just brew the R formula
 from the science tap (unfortunately it does not come already bottled
@@ -93,8 +93,8 @@ instructions below.
 
 ### Windows ###
 
-You can install R from a CRAN mirror (the link for the Belgian one is
-<http://cran.freestatistics.org/bin/windows/>)
+You can install R from a CRAN mirror
+(<https://cran.r-project.org/bin/windows/>)
 
 Once R is installed, you can launch the R console and install the
 irace package from it. See instructions below.
@@ -122,7 +122,7 @@ computer. There are two methods:
 ```
 
 1. Manually
-   [download the package from CRAN](http://cran.r-project.org/package=irace)
+   [download the package from CRAN](https://cran.r-project.org/package=irace)
    and invoke at the command-line:
 
         $ R CMD INSTALL <package>

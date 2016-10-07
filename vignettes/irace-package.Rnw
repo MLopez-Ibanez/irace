@@ -14,7 +14,7 @@
 \usepackage{ifthen}
 \newboolean{Release}
 \setboolean{Release}{false}
-%%%%%\setboolean{Release}{true}
+\setboolean{Release}{true}
 \usepackage{calc}
 \usepackage{algorithm,algorithmic}
 \usepackage{booktabs}
@@ -263,8 +263,13 @@ made substantive use of this program, it is your obligation as a scientist to
 (b) mention the algorithm in the References section. The appropriate citation
 is:
 
-\begin{itemize}
-\item[] Manuel López-Ibáñez, Jérémie Dubois-Lacoste, Thomas Stützle, and Mauro Birattari. The \irace package, Iterated Race for Automatic Algorithm Configuration. Technical Report TR/IRIDIA/2011-004, IRIDIA, Université libre de Bruxelles, Belgium, 2011.\newline\url{http://iridia.ulb.ac.be/IridiaTrSeries/IridiaTr2011-004.pdf}
+\begin{itemize}[leftmargin=3em]
+\item[] Manuel López-Ibáñez, Jérémie Dubois-Lacoste, Leslie Pérez Cáceres,
+  Thomas Stützle, and Mauro Birattari. The \irace package: Iterated Racing for
+  Automatic Algorithm Configuration. \emph{Operations Research Perspectives},
+  2016.
+  doi:~\href{http://dx.doi.org/10.1016/j.orp.2016.09.002}{10.1016/j.orp.2016.09.002}
+  % Manuel López-Ibáñez, Jérémie Dubois-Lacoste, Thomas Stützle, and Mauro Birattari. The \irace package, Iterated Race for Automatic Algorithm Configuration. Technical Report TR/IRIDIA/2011-004, IRIDIA, Université libre de Bruxelles, Belgium, 2011.\newline\url{http://iridia.ulb.ac.be/IridiaTrSeries/IridiaTr2011-004.pdf}
 
 \end{itemize}
 
@@ -346,7 +351,7 @@ the \code{Packages and data->Package installer} menu on OS X or the \code{Packag
 \subsubsection{Manual download and installation}
 
 From the \irace package CRAN website
-(\url{http://cran.r-project.org/package=irace}), download one of the three
+(\url{https://cran.r-project.org/package=irace}), download one of the three
 versions available depending on your operating system:
 \begin{itemize}
 \item \code{irace_\iraceversion.tar.gz} (Unix/BSD/GNU/Linux)
@@ -614,7 +619,7 @@ define initial configurations remove this file from the directory.
 
 \item \textit{Optional}: Define forbidden parameter value combinations,
 that is, configurations that \irace must not consider in the tuning.
-Follow the instructions in \code{forbidden.txt} and set \parameter{forbiddenFile}\code{="forbidden.txt"} in \code{scenario.txt}. More information about
+Follow the instructions in \code{forbidden.txt} and update \code{scenario.txt} with \parameter{forbiddenFile} \code{=} \code{"forbidden.txt"}. More information about
 forbidden configurations in \autoref{sec:forbidden}. 
 If you do not need to define forbidden configurations remove this file from
 the directory.
@@ -624,7 +629,7 @@ the directory.
   create a file (\eg~\code{instances-list.txt}) that specifies which instances
   from that directory should be run and which instance-specific parameters to
   use. To use such an instance file, set the appropriate option in
-  \code{scenario.txt}, e.g., \code{trainInstancesFile = "instances-list.txt"}.
+  \code{scenario.txt}, e.g., \parameter{trainInstancesFile} \code{= "instances-list.txt"}.
   See \autoref{sec:training} for guidelines.
 
 \item Uncomment and assign in \code{scenario.txt} only the options for which you
@@ -659,9 +664,9 @@ For setting the tuning budget see \autoref{sec:budget}. For more information on 
   \item Set the \code{EXE} variable with the path to the executable of the target algorithm.
   \item Set the \code{FIXED_PARAMS} if you need extra arguments in the
     execution line of your algorithm. An example could be the time that your
-    algorithm is required to run (\code{FIXED_PARAMS="--time 60"}) or the
-    number of evaluations
-    required\newline(\code{FIXED_PARAMS="--evaluations 10000"}).
+    algorithm is required to run
+    (\code{FIXED_PARAMS}\hspace{0pt}\code{=}\hspace{0pt}\code{"--time 60"}) or
+    the number of evaluations required (\code{FIXED_PARAMS}\hspace{0pt}\code{=}\hspace{0pt}\code{"--evaluations 10000"}).
 
   \item The line provided in the template executes the executable described in the \code{EXE} variable.
     %
@@ -2537,7 +2542,7 @@ Optional data passed to \parameter{targetRunner}. This is ignored by the default
             \end{center}
         }
        \item{ Call MATLAB code directly from \aR using the
-            \pkg{R.matlab} package (\url{http://cran.r-project.org/package=R.matlab}). This
+            \pkg{R.matlab} package (\url{https://cran.r-project.org/package=R.matlab}). This
             is a better option if you are experienced in \aR. Define \parameter{targetRunner} as
             an \aR function instead of a path to a script. The function should
             call your MATLAB code with appropriate parameters.
@@ -2675,7 +2680,7 @@ colaborated in the development and improvement of \irace.
 
 This section gives a quick \aR installation guide that will work in
 most cases. The official instructions are available at
-\url{http://cran.r-project.org/doc/manuals/r-release/R-admin.html}
+\url{https://cran.r-project.org/doc/manuals/r-release/R-admin.html}
 
 \subsection{GNU/Linux}
 You should install \aR from your package manager. On a Debian/Ubuntu system
@@ -2692,8 +2697,7 @@ install the \irace package (see \autoref{sec:irace install}).
 
 \subsection{OS X}
 
-You can install \aR directly from a CRAN mirror.\footnote{Belgian CRAN mirror:
-\url{http://cran.freestatistics.org/bin/macosx/}} %
+You can install \aR directly from a CRAN mirror.\footnote{\url{https://cran.r-project.org/bin/macosx/}} %
 Alternatively, if you use
 homebrew, you can just brew the \aR formula from the science tap (unfortunately
 it does not come already bottled so you need to have Xcode\footnote{Xcode download
@@ -2710,8 +2714,7 @@ and from the \aR prompt install the \irace package (see \autoref{sec:irace insta
 
 \subsection{Windows}
 
-You can install \aR from a CRAN mirror.\footnote{Belgian CRAN mirror:
-  \url{http://cran.freestatistics.org/bin/windows/}} %
+You can install \aR from a CRAN mirror.\footnote{\url{http://cran.r-project.org/bin/windows/}} %
 We recommend that you
 install \aR on a filesystem path without spaces, special characters or long
 names, such as \path{C:\R}. Once \aR is installed, you can launch the \aR
@@ -2888,7 +2891,7 @@ to see the output that your algorithm produces.
 
 %% NEWS is latin1 but this file is utf8
 \begingroup\inputencoding{latin1}%
-\VerbatimInput{../NEWS}%
+\VerbatimInput{NEWS}%
 \endgroup
 
 \end{appendices}
