@@ -183,13 +183,12 @@ Usage
 -------
 
 1. Create a directory for storing the tuning scenario setup
-
 ```bash
         $ mkdir ~/tuning
         $ cd ~/tuning
 ```
 
-1. Copy the template and example files to the scenario directory
+2. Copy the template and example files to the scenario directory
 ```bash
         $ cp $IRACE_HOME/templates/*.tmpl .
 ```
@@ -202,7 +201,7 @@ Usage
         > system.file(package="irace")
 ```
 
-1. For each template in your tuning directory, remove the `.tmpl`
+3. For each template in your tuning directory, remove the `.tmpl`
    suffix, and modify them following the instructions in each file. In
    particular,
     * The scripts `target-runner` and `targetEvaluator` (if you need it at all)
@@ -215,7 +214,7 @@ Usage
    
     There are examples in `$IRACE_HOME/examples/`.
 
-2. Put the instances in `~/tuning/Instances/`. In addition, you can
+4. Put the instances in `~/tuning/Instances/`. In addition, you can
    create a file that specifies which instances from that directory
    should be run and which instance-specific parameters to use. See
    `scenario.txt.tmpl` and `instances-list.tmpl` for examples. The command
@@ -223,7 +222,7 @@ Usage
    so it must exist before calling irace. The default execDir is the
    current directory.
 
-3. Calling the command:
+5. Calling the command:
 ```bash
         $ cd ~/tuning/ && $IRACE_HOME/bin/irace
 ```
@@ -343,13 +342,6 @@ thus do not delete those files.
 We are not aware of any way to achieve this using R. However, in
 GNU/Linux, it is easy to implement by using the `timeout` command in
 `target-runner` when invoking your program.
-
-
-Contact
--------
-
-If you find that you need to modify anything else, something is not
-clear or if you have problems, please contact irace@iridia.ulb.ac.be
 
 
 <!--
