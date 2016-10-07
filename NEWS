@@ -1,3 +1,5 @@
+2.0
+
  * Minimum R version is 2.15. 
 
  * Elitist irace by default, it can be disabled with parameter --elitist 0. 
