@@ -48,11 +48,11 @@ build : bumpdate clean
 	else true; fi
 	cd $(BINDIR) &&	R CMD build $(BUILD_FLAGS) $(PACKAGEDIR)
 
-closeversion:
+closeversion: build
 	svn ci NEWS -m " * NEWS: Close version $(PACKAGEVERSION)"
 	svn cp ^/trunk ^/tags/$(PACKAGEVERSION) -m " * Tag version $(PACKAGEVERSION)"
 	svn up
-	make build # again to update version.R and svn_version
+	make releasebuild # again to update version.R and svn_version
 
 
 releasebuild: BUILD_FLAGS=--compact-vignettes=both
