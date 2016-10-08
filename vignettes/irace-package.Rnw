@@ -1,7 +1,7 @@
 %%% DO NOT EDIT the .tex file directly since it is generated from the .Rnw
 %%% sources.
 %\VignetteEngine{knitr::knitr}
-%\VignetteIndexEntry{irace package:user guide}
+%\VignetteIndexEntry{irace package: User Guide}
 %\VignetteDepends{knitr}
 %\VignetteCompiler{knitr}
 %\VignetteEngine{knitr::knitr}
@@ -322,8 +322,8 @@ algorithms.
   quick installation guide of \aR.
 
 \item For GNU/Linux and OS X, the command-line executables \code{irace} and
-  \code{parallel-irace} require GNU Bash. Individual examples may require
-  additional software.
+  \code{parallel-irace} require GNU Bash. There is also a \code{irace.bat} for
+  Windows. Individual examples may require additional software.
 \end{itemize}
 
 \subsection{\irace installation} \label{sec:irace install}
@@ -1728,18 +1728,17 @@ gives the mean of the best configuration across the instances seen so
 far in this race. The \code{Exp so far} gives the number of experiments
 performed so far.  The \code{W time} column gives the wall-clock time spent on that instance.
 
-The columns \code{rho},
-\code{KenW}, and \code{Qvar} give the values of Spearman's rank
-correlation coefficient rho, Kendall's concordance coefficient W, and
-a variance measure described in \cite{SchHoo2012quanti}, respectively, of the configurations across the
-instances executed so far in this race.  Use \code{rho}, \code{KenW}
-and \code{Qvar} to analyze how consistent is the performance of the
-configurations across the instances.  Note that these values are only
-valid for the instances that were already executed in the iteration.%
-\MANUEL{I'm not sure what the previous sentence means.} % Values close
-to 1 for \code{rho} and \code{KenW} and values close to 0 for
-\code{Qvar} indicate that the scenario is highly homogeneous. For
-heterogeneous scenarios, we provide advice in \autoref{sec:het}.
+The columns \code{rho}, \code{KenW}, and \code{Qvar} give the values of
+Spearman's rank correlation coefficient rho, Kendall's concordance coefficient
+W, and a variance measure described in \cite{SchHoo2012quanti}, respectively,
+of the configurations across the instances executed so far in this race.  Use
+\code{rho}, \code{KenW} and \code{Qvar} to analyze how consistent is the
+performance of the configurations across the instances.  Note that these values
+are only valid for the instances that were already executed in the iteration.%
+\MANUEL{I'm not sure what the previous sentence means.} %
+Values close to 1 for \code{rho} and \code{KenW} and values close to 0 for
+\code{Qvar} indicate that the scenario is highly homogeneous. For heterogeneous
+scenarios, we provide advice in \autoref{sec:het}.
 
 Finally, \irace outputs the best configuration found and a list of the elite
 configurations. The elite configurations are configurations that did not show
@@ -2673,12 +2672,6 @@ We would like to thank all the people that directly or indirectly have
 colaborated in the development and improvement of \irace.
 
 \begin{itemize}
-%% MANUEL: I don't think we should mention ourselves.
-%% \item Mauro Birattari
-%% \item Thomas St\"uzle
-%% \item Manuel L\'opez-Ib\'a\~nez
-%% \item J\'er\'emie Dubois-Lacoste
-%% \item Leslie P\'erez C\'aceres
 \item Prasanna Balaprakash
 \item Zhi (Eric) Yuan
 \item Franco Mascia
@@ -2707,11 +2700,9 @@ most cases. The official instructions are available at
 \subsection{GNU/Linux}
 You should install \aR from your package manager. On a Debian/Ubuntu system
 it will be something like:
-%<<R_linux_install,engine='bash',eval=FALSE>>=
 \begin{lstlisting}[style=BashInputStyle]
 sudo apt-get install r-base
 \end{lstlisting}
-%@
 
 Once \aR is installed, you can launch \aR from the Terminal and from the \aR prompt
 install the \irace package (see \autoref{sec:irace install}).
