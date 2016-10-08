@@ -48,11 +48,20 @@ Requisites
  * R (<http://www.r-project.org>) is required for running irace, but
    you don't need to know the R language to use it.
    Versions that work: >= 2.15.0
-   (See Installing R below for a quick install guide)
 
- * If you wish to use the command-line wrappers `irace` and
-   `parallel-irace`, they require GNU Bash.
+User guide
+----------
 
+A complete [user guide](https://cran.r-project.org/web/packages/irace/vignettes/irace-package.pdf)
+comes with the package. You can access it online or, after installing the irace
+package, invoking from R the following command:
+
+```R
+        R> vignette("irace-package")
+```
+
+We give below a quick-start guide. The user guide gives more detailed
+instructions.
 
 Installing R
 ------------
@@ -252,97 +261,17 @@ Check the help of `parallel-irace` by running it without parameters.
 
 ### Parallelize one tuning ###
 
-
 A single run of irace can be done much faster by executing the calls
 to `targetRunner` (the runs of the algorithm being tuned) in
-parallel. There are three ways to parallelize a single run of irace.
-
-1. Parallel processes: The option `--parallel N` will use the
-   `parallel` package to launch *locally* up to N calls of `targetRunner` in
-   parallel.
-
-2. MPI: The option `--mpi 1 --parallel N` will use the Rmpi package to
-   launch N slaves + 1 master, in order to execute N calls of
-   `targetRunner` in parallel. The user is responsible to set up MPI
-   correctly.
-
-    An example script for using MPI mode in an SGE cluster is given at
-    `$IRACE_HOME/examples/mpi/`.
-
-3. SGE cluster: This mode requires Grid Engine commands qsub and
-   qstat. The command qsub should return a message that contains the
-   string: `Your job JOBID`. The command `qstat -j JOBID` should return
-   nonzero if JOBID has finished, otherwise it should return zero.
-
-    The option `--sge-cluster 1` will launch as many calls of `targetRunner` as
-    possible and use `qstat` to wait for cluster jobs. The user *must* call
-    `qsub` from `targetRunner` with the appropriate settings for their cluster,
-    otherwise `targetRunner` will not submit jobs to the cluster. In this mode,
-    irace must run in the submission node, and hence, qsub should not be used
-    to invoke irace.  You also need to create a separate targetEvaluator script
-    to parse the results of the targetRunner and return them to irace. See the
-    examples in `$IRACE_HOME/examples/sge-cluster/`.
+parallel. See the [user guide](https://cran.r-project.org/web/packages/irace/vignettes/irace-package.pdf) for the details.
 
 
 Frequently Asked Questions
 --------------------------
 
-#### Is irace minimizing or maximizing the output of my algorithm? ####
-
-By default, irace considers that the value returned by `target-runner` (or by
-`targetEvaluator`, if used) should be *minimized*. In case of a maximization
-problem, one can simply multiply the value by -1 before returning it to
-irace. This is done, for example, when maximizing the hypervolume (see the last
-lines in `$IRACE_HOME/examples/hypervolume/target-evaluator`).
-
-
-#### Is it possible to configure a MATLAB algorithm with irace?  ####
-
-Definitely. There are two main ways to achieve this:
-
-1. Edit the target-runner script to call MATLAB in a non-interactive
-   way. See the MATLAB documentation, or the following links:<br>
-   <http://stackoverflow.com/questions/1518072/suppress-start-message-of-matlab/><br>
-   <http://stackoverflow.com/questions/4611195/how-to-call-matlab-from-command-line-and-print-to-stdout-before-exiting>
-
-    You would need to pass the parameter received by target-runner to your MATLAB
-    script:
-    <http://www.mathworks.nl/support/solutions/en/data/1-1BS5S/?solution=1-1BS5S>
-    There is a minimal example in `$IRACE_HOME/examples/matlab/`.
-
-2. Call MATLAB code directly from R using the
-   [R.matlab package](https://cran.r-project.org/package=R.matlab). This
-   is a better option if you are experienced in R. Define targetRunner as
-   an R function instead of a path to a script. The function should
-   call your MATLAB code with appropriate parameters.
-
-
-#### My program works perfectly on its own, but not when running under irace. Is irace broken?  ####
-
-Every time this was reported, it was a difficult-to-reproduce bug in
-the program, not in irace.  We recommend that in `target-runner`, you use
-`valgrind` to run your program. That is, if you program is called like:
-
-```bash
-    $EXE ${FIXED_PARAMS} -i $INSTANCE ${CAND_PARAMS} 1> ${STDOUT} 2> ${STDERR}
-```
-
-then replace that line with:
-
-```bash
-    valgrind --error-exitcode=1 $EXE ${FIXED_PARAMS} -i $INSTANCE ${CAND_PARAMS} 1> ${STDOUT} 2> ${STDERR}
-```
-
-If there are bugs in your program, they will appear in `${STDERR}`,
-thus do not delete those files.
-
-
-#### My program may be buggy and run into an infinite loop. Is it possible to set a maximum timeout?  ####
-
-We are not aware of any way to achieve this using R. However, in
-GNU/Linux, it is easy to implement by using the `timeout` command in
-`target-runner` when invoking your program.
-
+The
+[user guide](https://cran.r-project.org/web/packages/irace/vignettes/irace-package.pdf)
+contains a list of frequently asked questions.
 
 <!--
 Local Variables:
