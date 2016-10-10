@@ -1,3 +1,6 @@
+
+ * Fix CRAN errors in tests.
+ 
 2.0
 
  * Minimum R version is 2.15. 
