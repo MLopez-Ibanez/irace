@@ -52,7 +52,7 @@ Requisites
 User guide
 ----------
 
-A complete [user guide](https://cran.r-project.org/web/packages/irace/vignettes/irace-package.pdf)
+A complete [user guide](https://cran.r-project.org/package=irace/vignettes/irace-package.pdf)
 comes with the package. You can access it online or, after installing the irace
 package, invoking from R the following command:
 
@@ -263,14 +263,14 @@ Check the help of `parallel-irace` by running it without parameters.
 
 A single run of irace can be done much faster by executing the calls
 to `targetRunner` (the runs of the algorithm being tuned) in
-parallel. See the [user guide](https://cran.r-project.org/web/packages/irace/vignettes/irace-package.pdf) for the details.
+parallel. See the [user guide](https://cran.r-project.org/package=irace/vignettes/irace-package.pdf) for the details.
 
 
 Frequently Asked Questions
 --------------------------
 
 The
-[user guide](https://cran.r-project.org/web/packages/irace/vignettes/irace-package.pdf)
+[user guide](https://cran.r-project.org/package=irace/vignettes/irace-package.pdf)
 contains a list of frequently asked questions.
 
 <!--
