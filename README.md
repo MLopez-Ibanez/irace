@@ -8,7 +8,12 @@ output:
 ---
 [![CRAN Downloads](http://cranlogs.r-pkg.org/badges/grand-total/irace)](https://CRAN.R-project.org/package=irace)
 
-**Maintainers:** [Manuel López-Ibáñez](http://lopez-ibanez.eu), Jérémie Dubois-Lacoste, Leslie Pérez
+**Maintainers:** [Manuel López-Ibáñez](http://lopez-ibanez.eu), Leslie Pérez Cáceres
+
+**Creators:** [Manuel López-Ibáñez](http://lopez-ibanez.eu), Jérémie Dubois-Lacoste
+  
+**Contributors:** Jérémie Dubois-Lacoste, Thomas Stützle, Mauro Birattari, Eric
+  Yuan and Prasanna Balaprakash.
 
 **Contact:** <https://groups.google.com/d/forum/irace-package>
 
