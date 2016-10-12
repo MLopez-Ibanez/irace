@@ -72,7 +72,7 @@ clean:
 	cd $(PACKAGEDIR) && ($(RM) ./$(PACKAGE)-Ex.R ./src/*.o ./src/*.so; \
 		find . -name '*.orig' | xargs $(RM) )
 
-vignettes: vignettes/irace-package.Rnw vignettes/irace-package.bib
+vignettes: version vignettes/irace-package.Rnw vignettes/irace-package.bib
 # FIXME: How to do all this on a temporary directory to avoid people editing the .tex file directly?
 # R CMD Sweave --pdf --clean --verbose irace-package.Rnw
 # but then there is no output, not sure if it uses knit or it is uses bibtex...
@@ -95,6 +95,7 @@ version :
 	echo 'irace.version <- "$(REALVERSION)"' > $(PACKAGEDIR)/R/version.R
 	@sed -i 's/Version:.*$$/Version: $(PACKAGEVERSION)/' $(PACKAGEDIR)/DESCRIPTION
 	@sed -i 's/Version:.*$$/Version: \\tab $(PACKAGEVERSION) \\cr/' $(PACKAGEDIR)/man/$(PACKAGE)-package.Rd
+	@sed -i 's/\\iraceversion}{.*}$$/\\iraceversion}{$(PACKAGEVERSION)}/' vignettes/$(PACKAGE)-package.Rnw
 
 rsync : version
 ifndef RDIR

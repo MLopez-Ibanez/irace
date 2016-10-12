@@ -16,8 +16,10 @@ citEntry(entry="article",
          year = 2016,
          journal = "Operations Research Perspectives",
          doi = "10.1016/j.orp.2016.09.002",
+         volume = "3",
+         pages = "43--58",
          textVersion=
            paste("Manuel López-Ibáñez, Jérémie Dubois-Lacoste, Leslie Pérez Cáceres, Thomas Stützle, and Mauro Birattari. ",
                  "The irace package: Iterated Racing for Automatic Algorithm Configuration. ",
-                 "Operations Research Perspectives, 2016. doi:10.1016/j.orp.2016.09.002",
+                 "Operations Research Perspectives, 3:43-58, 2016. doi:10.1016/j.orp.2016.09.002",
                  sep=""))

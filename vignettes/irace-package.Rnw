@@ -14,7 +14,7 @@
 \usepackage{ifthen}
 \newboolean{Release}
 \setboolean{Release}{false}
-\setboolean{Release}{true}
+%\setboolean{Release}{true}
 \usepackage{calc}
 \usepackage{algorithm,algorithmic}
 \usepackage{booktabs}
@@ -25,6 +25,7 @@
 \usepackage{fancyvrb}
 \usepackage[hyphens]{url}
 \usepackage{hyperref}
+\usepackage[numbers]{natbib}
 \usepackage[nottoc]{tocbibind}
 %% For autoref
 \hypersetup{
@@ -123,7 +124,7 @@
 \newcommand{\race}{\pkg{race}\xspace}
 \newcommand{\FRACE}{\text{F-Race}\xspace}
 \newcommand{\IFRACE}{\text{I/F-Race}\xspace}
-\newcommand{\iraceversion}{2.0}
+\newcommand{\iraceversion}{2.1}
 
 \newcommand{\Niter}{\ensuremath{N^\text{iter}}\xspace}
 \newcommand{\Nparam}{\ensuremath{{N^\text{param}}}\xspace}
@@ -187,7 +188,7 @@ library(knitr)
 \\IRIDIA, CoDE, Universit\'e Libre de Bruxelles, Brussels, Belgium}
 
 \title{The \irace Package: User Guide}
-
+\date{Version \iraceversion, \today}
 %\keywords{automatic
 %  algorithm configuration, racing, parameter tuning, \aR}
 
@@ -236,11 +237,14 @@ versions of the package can be found in the CRAN website.
 \end{center}
 %
 \begin{xwarningbox}
-Previous versions of \irace might not be compatible with the
-file formats detailed in this document.
+  Versions of \irace before 2.0 are not compatible with the file formats
+  detailed in this document.
 \end{xwarningbox}
 
-See the technical report~\cite{LopDubStu2011irace} for details of the previous implementation of \irace.
+The algorithm underlying the current version of \irace and its motivation are
+described by \citet{LopDubPerStuBir2016irace}. Details of the implementation
+before version 2.0 can be found in a previous technical
+report~\cite{LopDubStu2011irace}.
 
 
 \subsection{License}
@@ -266,10 +270,8 @@ is:
 \begin{itemize}[leftmargin=3em]
 \item[] Manuel López-Ibáñez, Jérémie Dubois-Lacoste, Leslie Pérez Cáceres,
   Thomas Stützle, and Mauro Birattari. The \irace package: Iterated Racing for
-  Automatic Algorithm Configuration. \emph{Operations Research Perspectives},
-  2016.
+  Automatic Algorithm Configuration. \emph{Operations Research Perspectives}, 3:43--58, 2016.
   doi:~\href{http://dx.doi.org/10.1016/j.orp.2016.09.002}{10.1016/j.orp.2016.09.002}
-  % Manuel López-Ibáñez, Jérémie Dubois-Lacoste, Thomas Stützle, and Mauro Birattari. The \irace package, Iterated Race for Automatic Algorithm Configuration. Technical Report TR/IRIDIA/2011-004, IRIDIA, Université libre de Bruxelles, Belgium, 2011.\newline\url{http://iridia.ulb.ac.be/IridiaTrSeries/IridiaTr2011-004.pdf}
 
 \end{itemize}
 
@@ -931,8 +933,8 @@ where each field is defined as follows:
                   command-line switch used to pass the value of this parameter, for
                   instance `\code{"-{}-ants "}'.\newline
                   The value of the parameter is concatenated \emph{without
-                  separator} to the switch string when
-                  invoking \parameter{targetRunner}, thus whitespace is significant. Following the same example, when parameter \code{ants} takes value \code{5}, the default targetRunner will pass the parameter as \code{"--ants 5"}.\\
+                  separator} to the label when
+                  invoking \parameter{targetRunner}, thus \emph{any whitespace in the label is significant}. Following the same example, when parameter \code{ants} takes value \code{5}, the default targetRunner will pass the parameter as \code{"-{}-ants 5"}.\\
                   %
   \code{{<type>}} & The type of the parameter, either
                     \textit{integer}, \textit{real}, \textit{ordinal} or
@@ -2680,7 +2682,7 @@ colaborated in the development and improvement of \irace.
 \end{itemize}
 
 
-\bibliographystyle{abbrv}
+\bibliographystyle{abbrvnat}
 \ifthenelse {\boolean{Release}}{%
 \bibliography{irace-package}%
 }{%
