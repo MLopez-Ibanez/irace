@@ -247,13 +247,13 @@ checkIraceScenario <- function(scenario, parameters = NULL)
   printScenario(scenario)
  
   if (is.null(parameters)) {
-    cat("# Reading parameter file [", scenario$parameterFile, "].\n")
+    cat("# Reading parameter file '", scenario$parameterFile, "'.\n", sep = "")
     parameters <- readParameters (file = scenario$parameterFile,
                                   digits = scenario$digits,
                                   debugLevel = 2)
   } else if (!is.null.or.empty(scenario$parameterFile)) {
     cat("# Parameters provided by user.\n",
-        "# Parameter file [ ", scenario$parameterFile, " ] will be ignored\n", sep="")
+        "# Parameter file '", scenario$parameterFile, "' will be ignored\n", sep = "")
   }
 
   cat("# Checking target execution.\n")
