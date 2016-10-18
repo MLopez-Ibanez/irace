@@ -24,6 +24,9 @@ TODO General (in order of importance):
  * Various initialization modes Latin Hyper-cube, random, exhaustive,
    Hammersley point set, etc.
 
+ * crayon: Colored Terminal Output
+   https://cran.r-project.org/package=crayon
+    
  * Use testthat package for testing: http://r-pkgs.had.co.nz/tests.html
  
  * The truncated normal distribution actually gives more probability to the
