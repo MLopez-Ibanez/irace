@@ -1,6 +1,9 @@
 2.1
 
- * Fix CRAN errors in tests.
+ * Fix CRAN errors in tests. (Manuel López-Ibáñez)
+ 
+ * Avoid generating too many configurations at once if the initial time
+    estimation is too small. (Manuel López-Ibáñez)
  
 2.0
 

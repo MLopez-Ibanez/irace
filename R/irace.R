@@ -549,8 +549,6 @@ irace <- function(scenario, parameters)
                  "% of ", scenario$maxTime, " = ", estimationTime, "\n")
 
       # Estimate the number of configurations to be used
-      ## FIXME: We could use scenario$parallel to estimate how many
-      ## configurations we need to run to fill all CPUs.
       nconfigurations <- max(2, floor(scenario$parallel/ninstances))
       
       next.configuration <- 1
@@ -585,11 +583,18 @@ irace <- function(scenario, parameters)
         
         next.configuration <- nconfigurations + 1
         
-        # Calculate how many new candidates
+        # Calculate how many new configurations:
+        # 1. We do not want to overrun estimationTime
         new.conf <- floor(((estimationTime - timeUsed) / timeEstimate) / ninstances)
-        if (timeUsed >= estimationTime || new.conf == 0) break
-        else
-          nconfigurations <- nconfigurations + new.conf        
+        # 2. But there is no point in executing more configurations than those
+        # that we can execute in parallel.
+        new.conf <- min(new.conf, max(1, floor(scenario$parallel / ninstances)))
+
+        if (timeUsed >= estimationTime || new.conf == 0) {
+          break
+        } else {
+          nconfigurations <- nconfigurations + new.conf
+        }
       }
   
       irace.note("Estimated execution time is ", timeEstimate, " based on ",
@@ -713,7 +718,7 @@ irace <- function(scenario, parameters)
                                          nbIterations),
               scenario$nbExperimentsPerIteration)
     
-    # Compute the number of configuration configurations for this race.
+    # Compute the number of configurations for this race.
     if (scenario$elitist && indexIteration > 1) {
       nOldInstances <- nrow(iraceResults$experiments)
       nbConfigurations <-
@@ -744,14 +749,14 @@ irace <- function(scenario, parameters)
         next
       } else {
         catInfo("Stopped because ",
-                "there is no enough budget to enforce the value of nbConfigurations")
+                "there is not enough budget to enforce the value of nbConfigurations")
         return (eliteConfigurations)
       }
     }
 
     # Stop if the number of configurations to test is NOT larger than the minimum.
     if (nbConfigurations <= minSurvival) {
-      catInfo("Stopped because there is no enough budget left to race more than ",
+      catInfo("Stopped because there is not enough budget left to race more than ",
               "the minimum (", minSurvival,")\n",
               "# You may either increase the budget or set 'minNbSurvival' to a lower value")
       return (eliteConfigurations)
@@ -761,14 +766,23 @@ irace <- function(scenario, parameters)
     # the number of elites.
     if (nbConfigurations <= nrow(eliteConfigurations)) {
       catInfo("Stopped because ",
-              "there is no enough budget left to race newly sampled configurations")
+              "there is not enough budget left to race newly sampled configurations")
       #(number of elites  + 1) * (mu + min(5, indexIteration)) > remainingBudget" 
       return (eliteConfigurations)
     }
 
-    if (nbConfigurations * max(scenario$mu, scenario$firstTest)
-        > currentBudget) {
-      catInfo("Stopped because there is no enough budget left to race all configurations")
+    if (scenario$elitist) {
+      # The non-elite have to run up to the first test. The elites consume
+      # budget at most up to the new instances.
+      if ((nbConfigurations - nrow(eliteConfigurations)) * max(scenario$mu, scenario$firstTest)
+          + nrow(eliteConfigurations) * min(scenario$elitistNewInstances, max(scenario$mu, scenario$firstTest))
+          > currentBudget) {
+        catInfo("Stopped because there is not enough budget left to race all configurations up to the first test (or mu)")
+        return (eliteConfigurations)
+      }
+    } else if (nbConfigurations * max(scenario$mu, scenario$firstTest)
+               > currentBudget) {
+      catInfo("Stopped because there is not enough budget left to race all configurations up to the first test (or mu)")
       return (eliteConfigurations)
     }
 
