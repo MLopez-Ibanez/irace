@@ -154,6 +154,10 @@ check.output.target.runner <- function (output, scenario)
   
   err.msg <- output$error
   if (is.null(err.msg)) {
+    if (is.null.or.na(output$cost))
+      output$cost <- NULL
+    if (is.null.or.na(output$time))
+      output$time <- NULL
     # When targetEvaluator is provided targetRunner must return only the time.
     if (!is.null(scenario$targetEvaluator)) {
       if (scenario$maxTime > 0 && is.null(output$time)) {
