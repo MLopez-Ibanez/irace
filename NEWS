@@ -1,3 +1,11 @@
+ * Fix bug: If testInstances contains duplicates, final results are not
+   correctly saved. Now unique IDs are used for each instance.
+   (Manuel López-Ibáñez)
+
+ * Fix bug where irace keeps retrying the target-runner call even if it
+   succeeds. (Manuel López-Ibáñez)
+
+
 2.1
 
  * Fix CRAN errors in tests. (Manuel López-Ibáñez)
