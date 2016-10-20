@@ -214,11 +214,14 @@ exec.target.runner <- function(experiment, scenario,
   retries <- scenario$targetRunnerRetries
   while (retries > 0) {
     output <- try (doit(experiment, scenario))
-    if (!inherits(output, "try-error")) return (output)
+    if (!inherits(output, "try-error") && is.null(output$error)) {
+      return (output)
+    }
     irace.note("Retrying (", retries, " left).\n")
     retries <- retries - 1
   }
-  return (doit(experiment, scenario))
+  output <- doit(experiment, scenario)
+  return (output)
 }
 
 target.runner.default <- function(experiment, scenario)
