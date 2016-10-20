@@ -23,13 +23,14 @@ testConfigurations <- function(configurations, scenario, parameters)
   if (! (".ID." %in% colnames(configurations))) {
     configurations$.ID. <- 1:nrow(configurations)
   }
+  instances.ID <- paste0(1:length(testInstances), "t")
   # Create experiment list
   experiments <- vector("list", nrow(configurations) * length(testInstances))
   ntest <- 1
   for (i in 1:nrow(configurations)) {
     for (j in 1:length(testInstances)) {
       experiments[[ntest]] <- list(id.configuration = configurations[i, ".ID."],
-                                   id.instance  = paste0(j, "t"),
+                                   id.instance  = instances.ID[j],
                                    seed         = instanceSeed[j],
                                    configuration = values[i, , drop = FALSE],
                                    instance = testInstances[j],
@@ -56,13 +57,12 @@ testConfigurations <- function(configurations, scenario, parameters)
 
   testResults <- matrix(NA, ncol = nrow(configurations), nrow = length(testInstances),
                         # dimnames = list(rownames, colnames)
-                        dimnames = list (testInstances, configurations$.ID.))
+                        dimnames = list (instances.ID, configurations$.ID.))
 
   for (i in seq_along(experiments)) {
-    testResults[rownames(testResults) == experiments[[i]]$instance,
+    testResults[rownames(testResults) == experiments[[i]]$id.instance,
                 colnames(testResults) == experiments[[i]]$id.configuration] <- target.output[[i]]$cost
   }
-  ## MANUEL: Shouldn't we record these experiments in experimentLog
-  
+  ## FIXME: Shouldn't we record these experiments in experimentLog ?
   return(list(experiments = testResults, seeds = instanceSeed))
 }
