@@ -74,6 +74,7 @@ name                       type short  long                           default   
 .help                      x    "-h"   "--help"                       NA                 "Show this help." 
 .version                   x    "-v"   "--version"                    NA                 "Show irace package version."
 .check                     x    "-c"   "--check"                      NA                 "Check scenario."
+.onlytest                  p    ""     "--only-test"                  ""                 "Only test the configurations given in the file passed as argument."
 scenarioFile               p    "-s"   "--scenario"                   "./scenario.txt"   "File that describes the configuration scenario setup and other irace settings." 
 parameterFile              p    "-p"   "--parameter-file"             "./parameters.txt" "File that contains the description of the parameters to be tuned. See the template." 
 execDir                    p    ""     "--exec-dir"                   "./"               "Directory where the programs will be run." 
@@ -239,6 +240,50 @@ testing.main <- function(logFile)
   return(TRUE)
 }
 
+testing.cmdline <- function(filename, scenario)
+{
+  irace.note ("Checking scenario\n")
+  scenario <- checkScenario(scenario)
+  printScenario(scenario)
+
+  irace.note("Reading parameter file '", scenario$parameterFile, "'.\n")
+  parameters <- readParameters (file = scenario$parameterFile,
+                                digits = scenario$digits)
+  allConfigurations <- readConfigurationsFile (filename, parameters)
+  allConfigurations <- cbind(.ID. = 1:nrow(allConfigurations),
+                             allConfigurations,
+                             .PARENT. = NA)
+  rownames(allConfigurations) <- allConfigurations$.ID.
+  num <- nrow(allConfigurations)
+  allConfigurations <- checkForbidden(allConfigurations, scenario$forbiddenExps)
+  if (nrow(allConfigurations) < num) {
+    cat("# Warning: some of the configurations in the configurations file were forbidden",
+        "and, thus, discarded\n")
+  }
+
+  # To save the logs
+  iraceResults <- list()
+  iraceResults$scenario <- scenario
+  iraceResults$irace.version <- irace.version
+  iraceResults$parameters <- parameters
+  iraceResults$allConfigurations <- allConfigurations
+  
+  irace.note ("Testing configurations: \n")
+  configurations.print(allConfigurations)  
+  iraceResults$testing <- testConfigurations(allConfigurations, scenario, parameters)
+
+  # FIXME : We should print the seeds also. As an additional column?
+  irace.note ("Testing results (column number is configuration ID):\n")
+  print(iraceResults$testing$experiments)
+  if (!is.null.or.empty(scenario$logFile)) {
+    cwd <- setwd(scenario$execDir)
+    save (iraceResults, file = scenario$logFile)
+    setwd(cwd)
+  }
+  irace.note ("Finished testing\n")
+  return(iraceResults)
+}
+
 checkIraceScenario <- function(scenario, parameters = NULL)
 {
   irace.note ("Checking scenario\n")
@@ -247,7 +292,7 @@ checkIraceScenario <- function(scenario, parameters = NULL)
   printScenario(scenario)
  
   if (is.null(parameters)) {
-    cat("# Reading parameter file '", scenario$parameterFile, "'.\n", sep = "")
+    irace.note("Reading parameter file '", scenario$parameterFile, "'.\n")
     parameters <- readParameters (file = scenario$parameterFile,
                                   digits = scenario$digits,
                                   debugLevel = 2)
@@ -346,7 +391,13 @@ irace.cmdline <- function(args = commandArgs (trailingOnly = TRUE))
     checkIraceScenario(scenario)
     return(invisible(NULL))
   }
-  
+
+  # Only do testing
+  testFile <- readArg (long = "--only-test")
+  if (!is.null(testFile)) {
+    return(invisible(testing.cmdline(testFile, scenario)))
+  }
+
   if (length(args) > 0) {
     irace.error ("Unknown command-line options: ", paste(args, collapse = " "))
   }

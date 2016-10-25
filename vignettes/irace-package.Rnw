@@ -1517,6 +1517,13 @@ will be saved in the \irace log file specified in
 structure of the object is described in \autoref{sec:output r}.  For examples
 on how to analyse the data see \autoref{sec:analysis}.
 
+Another alternative is to test a specific set of configurations using the command-line option \parameter{-{}-only-test} as follows:
+\begin{lstlisting}[style=BashInputStyle]
+irace --only-test configurations.txt
+\end{lstlisting}
+where \path{configurations.txt} has the same format as the 
+set of initial configurations (\autoref{sec:initial}).
+
 \section{Recovering \irace runs}\label{sec:rec}
 
 Problems like power cuts, hardware malfunction or the need to use computational
@@ -1537,11 +1544,10 @@ the \parameter{recoveryFile} from the command-line or from the scenario file,
 and execute \irace as described in \autoref{sec:execution}. For example, from
 the command-line use:
 
-%<<lauch_reco, engine="bash", eval=FALSE>>=
 \begin{lstlisting}[style=BashInputStyle]
 irace --recovery-file "./irace-backup.Rdata"
 \end{lstlisting}
-%@
+
 
 \begin{xwarningbox}
   When recovering a previous run, \irace will try to save data on the file
@@ -2539,7 +2545,10 @@ Optional data passed to \parameter{targetRunner}. This is ignored by the default
 
 \defparameter{testInstancesFile}{test-instance-file}{} %
   File containing a list of test instances and, optionally, additional parameters for them.
-
+  
+\defparameter{-{}-only-test}{}{} %
+  Run the configurations provided in the file argument on the test instances.
+  
 \end{description}
 
 \section{FAQ}

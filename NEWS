@@ -5,6 +5,14 @@
  * Fix bug where irace keeps retrying the target-runner call even if it
    succeeds. (Manuel López-Ibáñez)
 
+ * New command-line parameter
+
+       --only-test FILE
+
+   which simple evaluates the configurations given in FILE on the testing
+   instances defined by the scenario. Useful if you decide on the testing
+   instances only after running irace. (Manuel López-Ibáñez)
+
 
 2.1
 
