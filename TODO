@@ -4,8 +4,6 @@ BUGS: see BUGS file
 
 TODO R package:
 
- * Move the README information to the TR (vignette) to avoid duplication.
-
  * Add inst/COPYRIGHTS. See race package.
 
  * Fix check-reverse so we can check reverse dependencies before
@@ -231,6 +229,9 @@ TODO General (in order of importance):
 ------------------------------------------------------------------------------
 
 DONE:
+
+ * Move the README information to the TR (vignette) to avoid duplication.
+   [DONE by Leslie, Manuel]
 
  * Pass to target-runner/hook-evaluate an instance index that uniquely
    identifies each instance. This has two main advantages: 1) we can
