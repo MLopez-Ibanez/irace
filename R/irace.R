@@ -468,8 +468,7 @@ irace <- function(scenario, parameters)
     namesParameters <- names(parameters$conditions)
 
     nbUserConfigurations <- 0
-    if (!is.null(scenario$configurationsFile)
-        && scenario$configurationsFile != "") {
+    if (!is.null.or.empty(scenario$configurationsFile)) {
       allConfigurations <- readConfigurationsFile(scenario$configurationsFile,
                                           parameters, debugLevel)
       allConfigurations <- cbind(.ID. = 1:nrow(allConfigurations),
