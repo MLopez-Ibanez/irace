@@ -2581,26 +2581,23 @@ Optional data passed to \parameter{targetRunner}. This is ignored by the default
        }
      \end{enumerate}
 
-  \subsection{My program works perfectly on its own, but not when running under \irace. Is irace broken?}
+  \subsection{My program works perfectly on its own, but not when running under \irace. Is irace broken?}\label{sec:valgrind}
 
      Every time this was reported, it was a difficult-to-reproduce bug in
      the program, not in \irace.  We recommend that in \parameter{targetRunner}, you use
      \code{valgrind} to run your program. That is, if your program is called like:
-
-%    <<faq1,engine='bash', eval=FALSE>>=
-     \begin{lstlisting}[style=BashInputStyle]
+     % 
+\begin{lstlisting}[style=BashInputStyle]
     $EXE ${FIXED_PARAMS} -i $INSTANCE ${CONFIG_PARAMS} \
      1> ${STDOUT} 2> ${STDERR}
 \end{lstlisting}
-%    @
+%
      then replace that line with:
-
-%   <<faq2,engine='bash', eval=FALSE>>=
+%
 \begin{lstlisting}[style=BashInputStyle]
    valgrind --error-exitcode=1 $EXE ${FIXED_PARAMS} \
     -i $INSTANCE ${CONFIG_PARAMS} 1> ${STDOUT} 2> ${STDERR}
 \end{lstlisting}
-%   @
      
      If there are bugs in your program, they will appear in \code{${STDERR}}, thus do not delete those files.
 
@@ -2612,7 +2609,7 @@ Optional data passed to \parameter{targetRunner}. This is ignored by the default
     \code{targetRunner} when invoking your program.
 
   \subsection{When using the mpi option, \irace is aborted with an error message indicating that a
-              function is not defined. How to fix this?}
+              function is not defined. How to fix this?}\label{sec:mpi-error}
               
      \code{Rmpi} does not work the same way when called from within a package and when called from a script or 
      interactively. When \irace creates the slave nodes, the slaves will load a copy of \irace automatically. 
@@ -2702,7 +2699,7 @@ colaborated in the development and improvement of \irace.
 
 \begin{appendices}
 
-\section{R installation} \label{sec:installation}
+\section{Installing R} \label{sec:installation}
 
 This section gives a quick \aR installation guide that will work in
 most cases. The official instructions are available at
@@ -2818,9 +2815,9 @@ executing \code{target-runner} directly on the execution directory (\parameter{e
 
 This executes the \code{targetRunner} script as \irace does. The output of this script must be only one number. 
 
-
-\item Check that your \code{targetRunner} script is actually returning one number as
-output. If you see an error as the following, this is your problem:
+\item Check that your \code{targetRunner} script is actually returning one
+  number as output. If you see an error as the following, this is your problem:
+% 
 \begin{CodeInput}
 Error: == irace == The output of '~/tuning/target-runner 
 1 25 365157769 ~/tuning/Instances/1000-31.tsp --ras 
@@ -2842,9 +2839,9 @@ This  executes the \code{targetRunner} script as \irace does. The output of this
 script must be only one number. In this example, the output of the script is
 ``\code{Solution: 24479793}'', which is not a number. The code that \code{targetRunner} uses to parse the output of the algorithm must be checked.
 
-\item Check that your \code{targetRunner} script is creating the output files for your algorithm.
-If you see an error as:
-
+\item Check that your \code{targetRunner} script is creating the output files
+  for your algorithm.  If you see an error as:
+%
 \begin{CodeInput}
 == irace == The output was: Tue May  3 19:41:40 UTC 2016: 
 error: c1-9.stdout: No such file or directory
@@ -2874,7 +2871,52 @@ error message, look in your execution directory for the files that are
 created. Check the \code{.stderr} file for errors and the \code{.stdout} file
 to see the output that your algorithm produces.
 
+\item It is possible that transient bugs in the target algorithm are only
+  visible when running within \irace, and \code{targetRunner} appears to work
+  fine when executed directly in the command-line outside \irace (See FAQ in \autoref{sec:valgrind}).
+  %
+  We recommend that in \parameter{targetRunner}, you use
+     \code{valgrind} to run your program. That is, if your program is called like:
+     % 
+\begin{lstlisting}[style=BashInputStyle]
+    $EXE ${FIXED_PARAMS} -i $INSTANCE ${CONFIG_PARAMS} \
+     1> ${STDOUT} 2> ${STDERR}
+\end{lstlisting}
+%
+     then replace that line with:
+%
+\begin{lstlisting}[style=BashInputStyle]
+   valgrind --error-exitcode=1 $EXE ${FIXED_PARAMS} \
+    -i $INSTANCE ${CONFIG_PARAMS} 1> ${STDOUT} 2> ${STDERR}
+\end{lstlisting}
+     
+     If there are bugs in your program, they will appear in \code{${STDERR}}, thus do not delete those files.
+
+
+\item If your \code{targetRunner} script works when running irace with \code{parallel=1} but it fails when using higher number of cores, this may be due to any nmber of reasons:
+  \begin{itemize}
+  \item If you submit jobs through a queuing system, the running environment
+    when using the queuing system may not be the same as when you launch \irace
+    yourself. The queuing system may also send the job to different machines
+    depending on the number of CPUs requested. 
+    
+   \item The above is particularly problematic when using MPI, because some calls to \code{targetRunner} may run on different computers than the one running the master \irace process. See FAQ in \autoref{sec:mpi-error}.
+    
+  \item Does \code{targetRunner} read or create intermediate files? These files
+    may cause a race condition when two calls to \code{targetRunner} happen at
+    the same time. Maybe these files consume too much memory or fill the
+    filesystem when there are simultaneous \code{targetRunner} calls?
+    
+  \item Does the machine or the queuing system impose any limits on number of
+    processes or CPU/memory/filesystem usage per job? Such limits may only
+    trigger when more than one process is executed in parallel, killing the
+    \code{targetRunner} process before it has a chance to print anything
+    useful. In that case, \irace may not detect the the program finished
+    unexpectedly, only that the expected output was not printed.
+  \end{itemize}
+  
 \end{enumerate}
+
 
 \section{Glossary}
 
