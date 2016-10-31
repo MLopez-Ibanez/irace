@@ -1,3 +1,8 @@
+ * Update manual and vignette with details about the expected arguments and
+   return value of targetRunner and targetEvaluator. (Manuel López-Ibáñez)
+
+ * Fix \dontrun example in irace-package.Rd (Manuel López-Ibáñez)
+
  * Fix bug: If testInstances contains duplicates, final results are not
    correctly saved. Now unique IDs are used for each instance.
    (Manuel López-Ibáñez)
@@ -19,7 +24,7 @@
  * Fix CRAN errors in tests. (Manuel López-Ibáñez)
  
  * Avoid generating too many configurations at once if the initial time
-    estimation is too small. (Manuel López-Ibáñez)
+   estimation is too small. (Manuel López-Ibáñez)
  
 2.0
 
