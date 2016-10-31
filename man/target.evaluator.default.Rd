@@ -13,26 +13,42 @@ target.evaluator.default(experiment, num.configurations, all.conf.id,
                          scenario, target.runner.call)
 }
 \arguments{
-  \item{experiment}{A list describing the experiment. It should contain
-  at least:
-\itemize{
-  \item{instance}{A string containing the name of the instance (or
-    filename and full path in case the instance is a file).}
-  \item{id}{A numeric identifier for the candidate configuration that is
-    evaluated. This must match the one passed earlier to \code{target.runner}.}
-}}
-  \item{num.configurations}{The total number of candidate configurations evaluated in this
-    iteration.}
-  \item{all.conf.id}{List of configuration ids that have been evaluated in the instance This is used, for example, when calculating the bounds for the hyper volume evaluation.}
-  \item{scenario}{options passed when invoking \pkg{irace}.}
-  \item{target.runner.call}{a string describing the call to targetRunner that
-    corresponds to this call to targetEvaluator. This is used only for
+  \item{experiment}{A list describing the experiment. It contains at least:
+    \itemize{
+      \item{id.configuration}{An alphanumeric string that uniquely identifies a configuration;}
+      \item{id.instance}{An alphanumeric string that uniquely identifies a pair (instance, seed);}
+      \item{seed}{Seed for the random number generator to be used for this
+        evaluation, ignore the seed for deterministic algorithms;}
+      \item{instance}{String giving the instance to be used for this evaluation;}
+      \item{extra.params}{User-defined parameters associated to the instance;}
+      \item{configuration}{1-row data frame with a column per parameter
+        name;}
+      \item{switches}{Vector of parameter switches (labels) in the order of
+        parameters used in \code{configuration}.}
+    }
+  }
+  \item{num.configurations}{is the number of  configurations alive in the race;}
+  \item{all.conf.id}{is the vector of configuration IDs of the alive configurations;}
+  \item{scenario}{options passed when invoking \pkg{irace};}
+  \item{target.runner.call}{a string describing the call to \code{targetRunner} that
+    corresponds to this call to \code{targetEvaluator}. This is used for
     providing extra information to the user, for example, in case
-    targetEvaluator fails.}
+    \code{targetEvaluator} fails.}
 }
 \value{
-  This function returns the
-  output of evaluating the candidate configuration, which must be a numerical value.
+  The function \code{targetEvaluator} must return a list with one element
+  \code{"cost"}, the numerical value corresponding to the cost measure of the
+  given configuration on the given instance.
+  
+  The return list may also contain the following optional elements that are used
+  by \pkg{irace} for reporting errors in \code{targetEvaluator}:
+  \itemize{
+    \item{error}{is a string used to report an error;}
+    \item{outputRaw}{is a string used to report the raw output of calls to
+      an external program or function;}
+    \item{call}{is a string used to report how \code{targetEvaluator} called 
+      an external program or function.}
+  }
 }
 
 \author{Manuel López-Ibáñez and Jérémie Dubois-Lacoste}
