@@ -61,9 +61,9 @@ TODO General (in order of importance):
    single F/t-race.
 
  * Give an error if the user tries to change certain settings when recovering
-   (maxExperiments, elite, etc.). Other settings such as hookRun, trainingInstancesDir,
-   instanceFile, etc. are ok to change but we have to be careful to not
-   override them when recovering.
+   (maxExperiments, elite, etc.). Other settings such as hookRun,
+   trainInstancesDir, instanceFile, etc. are ok to change but we have to be
+   careful to not override them when recovering.
 
  * Print some info about the forbidden rules read.
 
