@@ -1503,7 +1503,7 @@ parallel. There are four ways to parallelize a single run of \irace:
 
 Once the tuning process is finished, \irace commonly returns a set of
 configurations corresponding to the elite configurations at the end of the run,
-ordered from best to worst. To further investigate the quality of these
+ordered from best to worst. To further investigate the cost of these
 configurations, \irace offers the possibility of evaluating these
 configurations on a test instance set, typically different from the training
 set used during the tuning phase. These evaluations will use the same settings
@@ -1927,7 +1927,7 @@ it has a probability for each of its values.
 The list contains the following elements:
   \begin{itemize}
     \item \code{experiments}: Matrix of experiments in the same format as the
-      tuning \code{experiment} matrix. The column names indicate the candidate
+      \code{iraceResults$experiments} matrix. The column names indicate the candidate
       configuration identifier and the row names contain the name of the instances.
 <<get_test_exp, prompt=TRUE, eval=TRUE, comment="">>=
 # Get the experiments of the testing
@@ -1965,8 +1965,8 @@ conf <- gl(ncol(results), # number of configurations
 pairwise.wilcox.test (as.vector(results), conf, paired = TRUE, p.adj = "bonf")
 # Plot the results
 boxplot (iraceResults$testing$experiments,
-         ylab = "solution quality",
-         xlab = "configuration id")
+         ylab = "Solution cost",
+         xlab = "Configuration ID")
 @
 
 %%FIXME: should we add something like this?
@@ -2040,7 +2040,7 @@ adjust the number of configurations tested in each race.
 \subsection{Multi-objective tuning}\label{sec:multi objective}
 
 Currently, \irace only optimizes one cost value at a time, which can be
-solution quality, computation time or any other objective that is returned to
+solution cost, computation time or any other objective that is returned to
 \irace by the \parameter{targetRunner}. If the target algorithm is
 multi-objective, it will typically return not a single cost value, but a set of
 objective vectors (typically, a Pareto front). For tuning such a target
@@ -2148,7 +2148,7 @@ concordance coefficient in the text output of \irace.  See \autoref{sec:output
 The statistical test used in \irace identifies statistically bad performing
 configurations that can be discarded from the race in order to save
 budget. Different statistical tests use different criteria to compare the
-quality of the configurations, which has an effect on the tuning results.
+cost of the configurations, which has an effect on the tuning results.
 
 \Irace provides two types of statistical tests
 (option \parameter{testType}). Each test has different characteristics that are
@@ -2158,11 +2158,11 @@ beneficial for different goals:
 \item Friedman test (\code{F-test}): This test uses the ranking of the
   configurations to analyze the differences between their performance. This
   makes the test suitable for scenarios where the numerical results and their
-  scale are not significant to assess the quality of the configurations.  For
+  scale are not significant to assess the cost of the configurations.  For
   example, if the results for different instances have high numerical
   differences and evaluating the performance of the configurations using the
   mean could be deceiving.  We recommend to use the \code{F-test} (default)
-  when tuning for solution quality and whenever the best performing algorithm
+  when tuning for solution cost and whenever the best performing algorithm
   should be among the best in as many instances as possible.
   
 \item Student's t-test (\code{t-test}): This test uses the mean performance of
