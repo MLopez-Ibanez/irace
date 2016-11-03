@@ -5,25 +5,22 @@ testConfigurations <- function(configurations, scenario, parameters)
   scenario <- checkScenario(defaultScenario(scenario))
   
   testInstances <- scenario$testInstances
+  instances.ID <- names(testInstances)
+  
   extra.params  <- scenario$testInstances.extra.params
   # 2147483647 is the maximum value for a 32-bit signed integer.
   # We use replace = TRUE, because replace = FALSE allocates memory for each possible number.
   instanceSeed <- sample.int(2147483647, size = length(testInstances), replace = TRUE)
-
+  names(instanceSeed) <- instances.ID
+  
   values <- removeConfigurationsMetaData(configurations)
-  values <- values[,parameters$names, drop = FALSE]
+  values <- values[, parameters$names, drop = FALSE]
   switches <- parameters$switches[parameters$names]
 
-  if (scenario$debugLevel >= 3) {
-    irace.note ("Memory used in testConfigurations():\n")
-    irace.print.memUsed()
-  }
-  
   # If there is no ID (e.g., after using readConfigurations), then add it.
   if (! (".ID." %in% colnames(configurations))) {
     configurations$.ID. <- 1:nrow(configurations)
   }
-  instances.ID <- paste0(1:length(testInstances), "t")
   # Create experiment list
   experiments <- vector("list", nrow(configurations) * length(testInstances))
   ntest <- 1
@@ -44,7 +41,7 @@ testConfigurations <- function(configurations, scenario, parameters)
   on.exit(stopParallel())
 
   if (scenario$debugLevel >= 3) {
-    irace.note ("Memory used in testConfigurations():\n")
+    irace.note ("Memory used before execute.experiments in testConfigurations():\n")
     irace.print.memUsed()
   }
 
@@ -63,6 +60,11 @@ testConfigurations <- function(configurations, scenario, parameters)
     testResults[rownames(testResults) == experiments[[i]]$id.instance,
                 colnames(testResults) == experiments[[i]]$id.configuration] <- target.output[[i]]$cost
   }
+  if (scenario$debugLevel >= 3) {
+    irace.note ("Memory used at the end of testConfigurations():\n")
+    irace.print.memUsed()
+  }
+
   ## FIXME: Shouldn't we record these experiments in experimentLog ?
   return(list(experiments = testResults, seeds = instanceSeed))
 }
