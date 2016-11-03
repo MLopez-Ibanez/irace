@@ -1308,7 +1308,7 @@ By default, \irace assumes that the target algorithm is stochastic (the value
 of the option \parameter{deterministic} is $0$), thus, the same configuration
 can be executed more than once on the same instance and obtain different
 results.  In this case, \irace generates pairs \code{(instance, seed)} by
-assigning a random seed to each instance. Once all pairs have been seen within
+generating a random seed for each instance. Once all pairs have been seen within
 a run of \irace, new pairs are generated with different seeds.
 
 If \parameter{deterministic} is set to $1$, then each instance will be used at
@@ -1515,7 +1515,14 @@ options \parameter{testInstancesDir} and \parameter{testInstancesFile}, or by
 setting directly the variable \code{scenario\$testInstances}, which behave the
 same as their counterparts for the training instances
 (\autoref{sec:training}). In particular, each test instance is assigned a
-different seed in the same way as done for the training instances.
+different seed in the same way as done for the training instances. In
+principle, \irace evaluates each configuration on each testing instance just
+once, because evaluating one run on $n$ instances is always better than
+evaluating $n'$ runs on $n/n'$ instances~\citep{IRIDIA-2004-001}. However, if
+the number of instances is limited, one can always duplicate instances as
+needed in the \parameter{testInstancesFile}, and \irace will assign a different
+random seed to each instance.
+
 
 The options \parameter{testNbElites} and \parameter{testIterationElites}
 control which configurations are evaluated during the testing phase. In
@@ -2376,12 +2383,12 @@ the \irace options that can be specified by the user.
   information about training instances see \autoref{sec:training}.
 
 \defparameter{nbIterations}{iterations}{0} %
-  Number of iterations to be executed. By default (with 0), \irace calculates the number of iterations as $\Niter = \lfloor 2 + \log_{2}\Nparam \rfloor$, where $\Nparam$ is the number of non fixed parameters to be tuned).
+  Number of iterations to be executed. Each iteration involves the generation of new configurations and the use of racing to select the best configurations. By default (with 0), \irace calculates the number of iterations as $\Niter = \lfloor 2 + \log_{2}\Nparam \rfloor$, where $\Nparam$ is the number of non fixed parameters to be tuned.
   %
   We recommend to use the default value.
 
 \defparameter{nbExperimentsPerIteration}{experiments-per-iteration} {0} %
-  Number of experiments to execute per iteration. By default, \irace calculates the number of experiments per iteration based  as follows:
+  Number of experiments to execute per iteration. By default (when equal to 0), \irace calculates the number of experiments per iteration based  as follows:
   \begin{equation}
     \Budgetj = \dfrac{(\Budget - \Bused)}{ (\Niter -\iter + 1)}
   \end{equation}
@@ -2393,7 +2400,7 @@ the \irace options that can be specified by the user.
   We recommend to use the default value.
 
 \defparameter{nbConfigurations}{num-configurations}{0} %
-  The number of configurations that should be sampled and evaluated at each iteration. By default, \irace
+  The number of configurations that should be sampled and evaluated at each iteration. By default (when equal to 0), \irace
   calculates the number of configurations per iteration as follows:\begin{equation}
   \Ncand[\iter] = \left\lfloor \frac{\Budgetj} { (\mu + \min(5,\iter))}\right\rfloor
   \end{equation}
@@ -2402,8 +2409,14 @@ the \irace options that can be specified by the user.
   number of configurations that will be used in iteration $j$, $\Budgetj$ is the budget for iteration $j$ and $\mu$ is the 
   option \parameter{mu}. We recommend to use the default value.
   
-\defparameter{mu}{mu}{5} %
-  This value is used to determine the number of configurations to be sampled and evaluated at each iteration.
+  \defparameter{mu}{mu}{5} %
+  This value is used to determine the number of configurations to be sampled
+  and evaluated at each iteration. The number of configurations will be
+  calculated such that there is enough budget in each race to evaluate all
+  configurations on at least $\mu + \min(5,j)$ training instances, where $j$ is
+  the index of the current iteration. The value of $\mu$ will be adjusted to
+  never be lower than the value of \parameter{firstTest}. See
+  also \parameter{firstTest} and \parameter{eachTest}.
 
 
 \defparameter{minNbSurvival}{min-survival}{0} %
