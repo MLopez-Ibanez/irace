@@ -3,9 +3,12 @@
 
  * Fix \dontrun example in irace-package.Rd (Manuel López-Ibáñez)
 
- * Fix bug: If testInstances contains duplicates, final results are not
-   correctly saved. Now unique IDs are used for each instance.
-   (Manuel López-Ibáñez)
+ * Fix bug: If testInstances contains duplicates, results of testing are not
+   correctly saved in iraceResults$testing$experiments nor reported correctly
+   at the end of a run. Now unique IDs of the form 1t, 2t, ... are used for
+   each testing instance. These IDs are used for the rownames of
+   iraceResults$testing$experiments and the names of the scenario$testInstances
+   and iraceResults$testing$seeds vectors.  (Manuel López-Ibáñez)
 
  * Fix bug where irace keeps retrying the target-runner call even if it
    succeeds. (Manuel López-Ibáñez)
