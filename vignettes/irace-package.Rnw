@@ -14,7 +14,7 @@
 \usepackage{ifthen}
 \newboolean{Release}
 \setboolean{Release}{false}
-\setboolean{Release}{true}
+%\setboolean{Release}{true}
 \usepackage{calc}
 \usepackage{algorithm,algorithmic}
 \usepackage{booktabs}
@@ -755,7 +755,7 @@ additional \irace parameters. For more information about \irace options, see \au
 Command-line options override the same options specified in the \code{scenario.txt} file.
 \end{xwarningbox}
 
-\subsection{Set-up example for ACOTSP}\label{sec:example}
+\subsection{Setup example for ACOTSP}\label{sec:example}
 
 The \ACOTSP tuning example can be found in the package installation:
 \begin{center}
@@ -2383,56 +2383,68 @@ specified by the user in this way.
   are read from the \parameter{trainInstancesDir} when\parameter{trainInstancesFile} is not provided. For more
   information about training instances see \autoref{sec:training}.
 
-\defparameter{nbIterations}{iterations}{0} %
-  Number of iterations to be executed. Each iteration involves the generation of new configurations and the use of racing to select the best configurations. By default (with 0), \irace calculates the number of iterations as $\Niter = \lfloor 2 + \log_{2}\Nparam \rfloor$, where $\Nparam$ is the number of non fixed parameters to be tuned.
+  \defparameter{nbIterations}{iterations}{0} %
+  Minimum number of iterations to be executed. Each iteration involves the
+  generation of new configurations and the use of racing to select the best
+  configurations. By default (with 0), \irace calculates the minimum number of
+  iterations as $\Niter = \lfloor 2 + \log_{2}\Nparam \rfloor$, where $\Nparam$
+  is the number of non-fixed parameters to be tuned.
   %
   We recommend to use the default value.
 
 \defparameter{nbExperimentsPerIteration}{experiments-per-iteration} {0} %
-  Number of experiments to execute per iteration. By default (when equal to 0), \irace calculates the number of experiments per iteration based as follows:
-  \begin{equation}
-    \Budgetj = \dfrac{(\Budget - \Bused)}{ (\Niter -\iter + 1)}
-  \end{equation}
-  %
-  where $\Budgetj$ is the budget for iteration $j$, $\Budget$ is the total
-  tuning budget (\parameter{maxExperiments}), $\Bused$ is the used budget and $\Niter$ is maximum between the planned number of
-   iterations (\parameter{nbIterations}) and the current iteration ($j$). 
- %
+  Number of experiments to execute per iteration. By default (when equal to 0), this value changes for each iteration and depends on the iteration index and the remaining budget. Further details are provided in the \irace paper~\citep{LopDubPerStuBir2016irace}.
+  % \irace calculates the number of experiments per iteration based as follows:
+  % \begin{equation}
+  %   \Budgetj = \dfrac{(\Budget - \Bused)}{ (\Niter -\iter + 1)}
+  % \end{equation}
+  % %
+  % where $\Budgetj$ is the budget for iteration $j$, $\Budget$ is the total
+  % tuning budget (\parameter{maxExperiments}), $\Bused$ is the used budget and $\Niter$ is maximum between the planned number of
+  %  iterations (\parameter{nbIterations}) and the current iteration ($j$). 
+  %  
   We recommend to use the default value.
 
 \defparameter{nbConfigurations}{num-configurations}{0} %
-  The number of configurations that should be sampled and evaluated at each iteration. By default (when equal to 0), \irace
-  calculates the number of configurations per iteration as follows:\begin{equation}
-  \Ncand[\iter] = \left\lfloor \frac{\Budgetj} { (\mu + \min(5,\iter))}\right\rfloor
-  \end{equation}
-%
-  where $\Ncand[\iter]$ is the
-  number of configurations that will be used in iteration $j$, $\Budgetj$ is the budget for iteration $j$ and $\mu$ is the 
-  option \parameter{mu}. We recommend to use the default value.
+  The number of configurations that will be raced at each iteration. By default
+  (when equal to 0), this value changes for each iteration and depends
+  on \parameter{nbExperimentsPerIteration}, the iteration index
+  and \parameter{mu}. The precise details are given in the \irace
+  paper~\citep{LopDubPerStuBir2016irace}.
+  % \irace
+%   calculates the number of configurations per iteration as follows:\begin{equation}
+%   \Ncand[\iter] = \left\lfloor \frac{\Budgetj} { (\mu + \min(5,\iter))}\right\rfloor
+%   \end{equation}
+% %
+%   where $\Ncand[\iter]$ is the
+%   number of configurations that will be used in iteration $j$, $\Budgetj$ is the budget for iteration $j$ and $\mu$ is the 
+%   option \parameter{mu}.
+  We recommend to use the default value.
   
-\defparameter{mu}{mu}{5} %
+  \defparameter{mu}{mu}{5} %
   This value is used to determine the number of configurations to be sampled
   and evaluated at each iteration. The number of configurations will be
   calculated such that there is enough budget in each race to evaluate all
   configurations on at least $\mu + \min(5,j)$ training instances, where $j$ is
   the index of the current iteration. The value of $\mu$ will be adjusted to
-  never be lower than the value of \parameter{firstTest}. See
-  also \parameter{firstTest} and \parameter{eachTest}.
+  never be lower than the value of \parameter{firstTest}. We recommend to use
+  the default value and, if needed, adjust \parameter{firstTest}
+  and \parameter{eachTest}, instead.
 
 
 \defparameter{minNbSurvival}{min-survival}{0} %
   The minimum number of configurations needed to continue the execution of a
   race. If the number of configurations alive in the race is not larger than
-  this value, the race will stop even if there is budget left and a new
-  iteration starts. By default (when equal to 0), the value is calculated
+  this value, the current iteration will stop and a new iteration will start, even if there is budget left to continue the current race.
+  By default (when equal to 0), the value is calculated
   automatically as $\lfloor 2 + \log_{2}\Nparam \rfloor$, where $\Nparam$
-  is the number of non fixed parameters to be tuned.
+  is the number of non-fixed parameters to be tuned.
 
 \defparameter{softRestart}{soft-restart}{1} %
   Enable/disable the soft-restart strategy that avoids premature convergence of the probabilistic model.
   When a sampled configuration is \emph{similar} to its parent configuration, the probabilistic model
-  of these configurations is soft restarted. The similarity of categorical and ordered parameters is given
-  by the hamming distance, and the option \parameter{softRestartThreshold} defines the similarity of numerical parameters.
+  of these configurations is soft restarted. The soft-restart mechanism is explained in the \irace paper~\citep{LopDubPerStuBir2016irace}. The similarity of categorical and ordinal parameters is given
+  by the hamming distance, and the option \parameter{softRestartThreshold} defines the similarity of numerical parameters. 
 
 
 \defparameter{softRestartThreshold}{soft-restart-threshold}{NA} %
@@ -2597,7 +2609,7 @@ Optional data passed to \parameter{targetRunner}. This is ignored by the default
   File containing a list of test instances and, optionally, additional parameters for them.
   
 \defparameter{-{}-only-test}{}{} %
-  Run the configurations provided in the file argument on the test instances.
+Run the configurations provided in the file argument on the test instances. See \autoref{sec:testing}.
   
 \end{description}
 
@@ -2605,92 +2617,92 @@ Optional data passed to \parameter{targetRunner}. This is ignored by the default
 
 \subsection{Is \irace minimizing or maximizing the output of my algorithm?}
 
-        By default, \irace considers that the value returned by \parameter{targetRunner} (or by
-        \parameter{targetEvaluator}, if used) should be \underline{\textbf{minimized}}. In case of a maximization
-        problem, one can simply multiply the value by -1 before returning it to
-        irace. This is done, for example, when maximizing the hypervolume (see the last
-        lines in \code{$IRACE_HOME/examples/hypervolume/target-evaluator}).
+By default, \irace considers that the value returned by \parameter{targetRunner} (or by
+\parameter{targetEvaluator}, if used) should be \underline{\textbf{minimized}}. In case of a maximization
+problem, one can simply multiply the value by -1 before returning it to
+irace. This is done, for example, when maximizing the hypervolume (see the last
+lines in \code{$IRACE_HOME/examples/hypervolume/target-evaluator}).
 
 
-     \subsection{Is it possible to configure a MATLAB algorithm with \irace?}
+\subsection{Is it possible to configure a MATLAB algorithm with \irace?}
 
-     Definitely. There are two main ways to achieve this:
-     \begin{enumerate}
-       \item{ Edit the \parameter{targetRunner} script to call MATLAB in a non-interactive
-            way. See the MATLAB documentation, or the following links.\footnote{\url{http://stackoverflow.com/questions/1518072/suppress-start-message-of-matlab}\\ \url{http://stackoverflow.com/questions/4611195/how-to-call-matlab-from-command-line-and-print-to-stdout-before-exiting}} %
-            You would need to pass the parameter received by \parameter{targetRunner} to your MATLAB script: \url{http://www.mathworks.nl/support/solutions/en/data/1-1BS5S/?solution=1-1BS5S}. There is a minimal example in:
-            \begin{center}
-            \code{$IRACE_HOME/examples/matlab/}.
-            \end{center}
-        }
-       \item{ Call MATLAB code directly from \aR using the
-            \pkg{R.matlab} package (\url{https://cran.r-project.org/package=R.matlab}). This
-            is a better option if you are experienced in \aR. Define \parameter{targetRunner} as
-            an \aR function instead of a path to a script. The function should
-            call your MATLAB code with appropriate parameters.
-       }
-     \end{enumerate}
+Definitely. There are two main ways to achieve this:
+\begin{enumerate}
+\item{ Edit the \parameter{targetRunner} script to call MATLAB in a non-interactive
+    way. See the MATLAB documentation, or the following links.\footnote{\url{http://stackoverflow.com/questions/1518072/suppress-start-message-of-matlab}\\ \url{http://stackoverflow.com/questions/4611195/how-to-call-matlab-from-command-line-and-print-to-stdout-before-exiting}} %
+    You would need to pass the parameter received by \parameter{targetRunner} to your MATLAB script: \url{http://www.mathworks.nl/support/solutions/en/data/1-1BS5S/?solution=1-1BS5S}. There is a minimal example in:
+    \begin{center}
+      \code{$IRACE_HOME/examples/matlab/}.
+    \end{center}
+  }
+\item{ Call MATLAB code directly from \aR using the
+    \pkg{R.matlab} package (\url{https://cran.r-project.org/package=R.matlab}). This
+    is a better option if you are experienced in \aR. Define \parameter{targetRunner} as
+    an \aR function instead of a path to a script. The function should
+    call your MATLAB code with appropriate parameters.
+  }
+\end{enumerate}
 
-  \subsection{My program works perfectly on its own, but not when running under \irace. Is irace broken?}\label{sec:valgrind}
+\subsection{My program works perfectly on its own, but not when running under \irace. Is irace broken?}\label{sec:valgrind}
 
-     Every time this was reported, it was a difficult-to-reproduce bug in
-     the program, not in \irace.  We recommend that in \parameter{targetRunner}, you use
-     \code{valgrind} to run your program. That is, if your program is called like:
-     % 
+Every time this was reported, it was a difficult-to-reproduce bug in
+the program, not in \irace.  We recommend that in \parameter{targetRunner}, you use
+\code{valgrind} to run your program. That is, if your program is called like:
+% 
 \begin{lstlisting}[style=BashInputStyle]
     $EXE ${FIXED_PARAMS} -i $INSTANCE ${CONFIG_PARAMS} \
      1> ${STDOUT} 2> ${STDERR}
 \end{lstlisting}
 %
-     then replace that line with:
-%
+then replace that line with:
+% 
 \begin{lstlisting}[style=BashInputStyle]
    valgrind --error-exitcode=1 $EXE ${FIXED_PARAMS} \
     -i $INSTANCE ${CONFIG_PARAMS} 1> ${STDOUT} 2> ${STDERR}
 \end{lstlisting}
-     
-     If there are bugs in your program, they will appear in \code{${STDERR}}, thus do not delete those files.
+
+If there are bugs in your program, they will appear in \code{${STDERR}}, thus do not delete those files.
 
 
-  \subsection{My program may be buggy and run into an infinite loop. Is it possible to set a maximum timeout? }
+\subsection{My program may be buggy and run into an infinite loop. Is it possible to set a maximum timeout? }
 
-    We are not aware of any way to achieve this using \aR. However, in
-    GNU/Linux, it is easy to implement by using the \code{timeout} command in
-    \code{targetRunner} when invoking your program.
+We are not aware of any way to achieve this using \aR. However, in
+GNU/Linux, it is easy to implement by using the \code{timeout} command in
+\code{targetRunner} when invoking your program.
 
-  \subsection{When using the mpi option, \irace is aborted with an error message indicating that a
-              function is not defined. How to fix this?}\label{sec:mpi-error}
-              
-     \code{Rmpi} does not work the same way when called from within a package and when called from a script or 
-     interactively. When \irace creates the slave nodes, the slaves will load a copy of \irace automatically. 
-     If the slave nodes are on different machines, they must have \irace installed. If \irace if not installed
-     system-wide, \aR needs to be able to find \irace on the slave nodes. This is usually done by setting \code{R\_LIBS}, 
-     \code{.libPaths()} or by loading \irace using \code{library()} or \code{require()} with the argument ``\code{lib.loc}''. 
-     The settings on the master are not applied to the slave nodes automatically, thus the slave 
-     nodes may need their own settings. After spawning the slaves, it is too late to modify 
-     those settings, thus modifying the shell variable \code{R\_LIBS} seems the only valid 
-     way to tell the slaves where to find \irace.
+\subsection{When using the mpi option, \irace is aborted with an error message indicating that a
+  function is not defined. How to fix this?}\label{sec:mpi-error}
 
-     If the path is set correctly and the problem persists, please check these instructions:
-%     
+\pkg{Rmpi} does not work the same way when called from within a package and when called from a script or 
+interactively. When \irace creates the slave nodes, the slaves will load a copy of \irace automatically. 
+If the slave nodes are on different machines, they must have \irace installed. If \irace if not installed
+system-wide, \aR needs to be able to find \irace on the slave nodes. This is usually done by setting \code{R\_LIBS}, 
+\code{.libPaths()} or by loading \irace using \code{library()} or \code{require()} with the argument ``\code{lib.loc}''. 
+The settings on the master are not applied to the slave nodes automatically, thus the slave 
+nodes may need their own settings. After spawning the slaves, it is too late to modify 
+those settings, thus modifying the shell variable \code{R\_LIBS} seems the only valid 
+way to tell the slaves where to find \irace.
+
+If the path is set correctly and the problem persists, please check these instructions:
+% 
 \begin{enumerate}[leftmargin=*,widest=3]
-       \item Test that \irace and \code{Rmpi} work. Run \irace on a single machine (submit node), without calling \code{qsub}, \code{mpirun} or a 
-       similar wrapper around \irace or \aR.
-       \item Test loading \irace on the slave nodes. However,
-         jobs submitted by \code{qsub}/\code{mpirun} may load \aR packages using a different mechanism from the way it happens if you log directly into the node (e.g., with \code{ssh}). Thus, you need to write a little \aR program such as:
-       <<faq3, eval=FALSE>>=
-         library(Rmpi)
-         mpi.spawn.Rslaves(nslaves = 10)
-         x <- mpi.applyLB(1:10, function(x) {
-                                  library(irace)
-                                  return(path.package("irace")) })
+\item Test that \irace and \pkg{Rmpi} work. Run \irace on a single machine (submit node), without calling \code{qsub}, \code{mpirun} or a 
+  similar wrapper around \irace or \aR.
+\item Test loading \irace on the slave nodes. However,
+  jobs submitted by \code{qsub}/\code{mpirun} may load \aR packages using a different mechanism from the way it happens if you log directly into the node (e.g., with \code{ssh}). Thus, you need to write a little \aR program such as:
+  <<faq3, eval=FALSE>>=
+  library(Rmpi)
+  mpi.spawn.Rslaves(nslaves = 10)
+  x <- mpi.applyLB(1:10, function(x) {
+    library(irace)
+    return(path.package("irace")) })
          print(x)
       @
       Submit this program to the cluster (using \code{qsub}/\code{mpirun}) like you would submit \irace.
       
       \item In the script \code{bin/parallel-irace-mpi}, the function \code{irace\_main()} creates an MPI job for our cluster. 
       You may need to speak with the admin of your cluster and ask them how to best submit a job for MPI. There may be 
-      some particular settings that you need. \code{Rmpi} normally creates  log files; but \irace suppresses those files unless $\texttt{debugLevel} > 0$.
+      some particular settings that you need. \pkg{Rmpi} normally creates  log files; but \irace suppresses those files unless $\texttt{debugLevel} > 0$.
      \end{enumerate}
      
      Please contact us (\autoref{sec:contact}) if you have further problems.
@@ -2943,14 +2955,16 @@ to see the output that your algorithm produces.
      If there are bugs in your program, they will appear in \code{${STDERR}}, thus do not delete those files.
 
 
-\item If your \code{targetRunner} script works when running irace with \code{parallel=1} but it fails when using higher number of cores, this may be due to any nmber of reasons:
+\item If your \code{targetRunner} script works when running irace with \code{parallel=1} but it fails when using higher number of cores, this may be due to any number of reasons:
   \begin{itemize}
   \item If you submit jobs through a queuing system, the running environment
     when using the queuing system may not be the same as when you launch \irace
     yourself. The queuing system may also send the job to different machines
     depending on the number of CPUs requested. 
     
-   \item The above is particularly problematic when using MPI, because some calls to \code{targetRunner} may run on different computers than the one running the master \irace process. See FAQ in \autoref{sec:mpi-error}.
+  \item The above is particularly problematic when using MPI, because some
+    calls to \code{targetRunner} may run on different computers than the one
+    running the master \irace process. See FAQ in \autoref{sec:mpi-error}.
     
   \item Does \code{targetRunner} read or create intermediate files? These files
     may cause a race condition when two calls to \code{targetRunner} happen at
