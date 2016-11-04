@@ -1676,22 +1676,21 @@ about the selected \irace options is printed:
 \begin{CodeInput}
 *******************************************************************************
 Warning: A default scenario file './scenario.txt' has been found and will be read
-# 2016-05-02 19:24:50 CEST: Elitist race
-# Elitist instances: 1
+# 2016-11-04 19:05:11 CET: Elitist race
+# Elitist new instances: 1
 # Elitist limit: 2
 
-# 2016-05-02 19:24:50 CEST: Initialization
+# 2016-11-04 19:05:11 CET: Initialization
 # nbIterations: 5
 # minNbSurvival: 5
 # nbParameters: 11
-# seed: 1234
+# seed: 123
 # confidence level: 0.95
 # budget: 1000
-# time budget: 0
 # mu: 5
 # deterministic: FALSE
 
-# 2016-05-02 19:24:50 CEST: Iteration 1 of 5
+# 2016-11-04 19:05:11 CET: Iteration 1 of 5
 # experimentsUsedSoFar: 0
 # remainingBudget: 1000
 # currentBudget: 200
@@ -1700,30 +1699,28 @@ Warning: A default scenario file './scenario.txt' has been found and will be rea
      x No test is performed.
      - The test is performed and some configurations are discarded.
      = The test is performed but no configuration is discarded.
-     ! The test is performed and configurations could be discarded but elite
-       configurations are preserved.
-
-+-+---------+------+-----+------------+-----------+--------+-----+----+------+
-| | Instance| Alive| Best|   Mean best| Exp so far|  W time|  rho|KenW|  Qvar|
-+-+---------+------+-----+------------+-----------+--------+-----+----+------+
-|x|        1|    33|   15| 23268924.00|         33|00:01:55|   NA|  NA|    NA|
-|x|        2|    33|    8| 23185736.50|         66|00:01:53|+0.97|0.99|0.0025|
-|x|        3|    33|    8| 23239054.33|         99|00:01:56|+0.96|0.97|0.0030|
-|x|        4|    33|    8| 23168442.50|        132|00:01:55|+0.96|0.97|0.0027|
-|-|        5|     3|    8| 23222299.80|        165|00:01:56|-0.05|0.16|0.7109|
-+-+---------+------+-----+------------+-----------+--------+-----+----+------+
-Best configuration:           8    mean value:     23222299.80
+     ! The test is performed and configurations could be discarded but elite configurations are preserved.
+                                                                   
++-+-----------+------+-----+------------+-----------+--------+-----+----+------+
+| |   Instance| Alive| Best|   Mean best| Exp so far|  W time|  rho|KenW|  Qvar|
++-+-----------+------+-----+------------+-----------+--------+-----+----+------+
+|x|          1|    33|   28| 23166743.00|         33|00:00:30|   NA|  NA|    NA|
+|x|          2|    33|   28| 25845047.50|         66|00:00:31|+0.97|0.99|0.0053|
+|x|          3|    33|   23| 24976880.00|         99|00:00:30|+0.97|0.98|0.0078|
+|x|          4|    33|   28| 25882919.25|        132|00:00:31|+0.98|0.98|0.0067|
+|-|          5|     2|   23| 26349755.40|        165|00:00:31|-0.20|0.04|0.6000|
++-+-----------+------+-----+------------+-----------+--------+-----+----+------+
+Best configuration:          23    mean value:     26349755.40
 Description of the best configuration:
-  .ID. algorithm localsearch  alpha   beta    rho ants nnls     q0 dlb rasrank
-8    8       acs           1 3.8157 8.5915 0.4141   59   10 0.5812   1      NA
-  elitistants .PARENT.
-           NA       NA
+   .ID. algorithm localsearch  alpha  beta    rho ants nnls     q0 dlb rasrank elitistants .PARENT.
+23   23       acs           3 4.2705 3.679 0.8752   19   17 0.6667   1      NA          NA       NA
 
-# 2016-05-02 19:34:27 CEST: Elite configurations:
+
+# 2016-11-04 19:07:47 CET: Elite configurations:
    algorithm localsearch  alpha   beta    rho ants nnls     q0 dlb rasrank elitistants
-8        acs           1 3.8157 8.5915 0.4141   59   10 0.5812   1      NA          NA
-18      mmas           2 3.1134 7.3864 0.4623   60   32     NA   1      NA          NA
-15       ras           3 2.5838 6.5086 0.5082   42    6     NA   0      90          NA
+23       acs           3 4.2705 3.6790 0.8752   19   17 0.6667   1      NA          NA
+28       acs           3 3.8770 3.7682 0.0517   39   17 0.8505   0      NA          NA
+
 \end{CodeInput}
 \caption{Sample text output of \irace.}\label{fig:output}
 \end{figure}
