@@ -2045,7 +2045,7 @@ solution cost, computation time or any other objective that is returned to
 multi-objective, it will typically return not a single cost value, but a set of
 objective vectors (typically, a Pareto front). For tuning such a target
 algorithm with \irace, there are two alternatives. If the algorithm returns a
-single vector of objective values, they can be aggregate into one single number
+single vector of objective values, they can be aggregated into one single number
 by using, for example, a weighted sum. Otherwise, if the target algorithm
 returns a set of objective vectors, a unary quality metric (\eg~the
 hypervolume) may be used to evaluate the quality of the set.\footnote{An implementation is publicly available at \url{http://lopez-ibanez.eu/hypervolume}~\cite{FonPaqLop06:hypervolume}}
@@ -2063,7 +2063,7 @@ hypervolume) may be used to evaluate the quality of the set.\footnote{An impleme
 %Pareto front and the hypervolume of each configuration
 %is calculated and the tuning process continues normally.
 
-The use of aggregation or quality metrics often requires to normalize the
+The use of aggregation or quality metrics often requires normalizing the
 different objectives. If normalization bounds are known a priori for each
 instance, normalized values can be computed by \parameter{targetRunner}.
 Otherwise, the bounds may be dynamically computed while running \irace, by
@@ -2096,8 +2096,7 @@ or \code{SMAC}\footnote{\url{http://www.cs.ubc.ca/labs/beta/Projects/SMAC/}},
 since it does not make use of techniques, such as ``adaptive capping'', that
 avoid long runs of the target algorithm.
 
-We are currently extending \irace with an adaptive capping mechanism and it
-will likely be included in the forthcomming version $2.1$.
+We are currently extending \irace with an adaptive capping mechanism.
 
 \subsection{Heterogeneous scenarios}
 \label{sec:het}
@@ -2108,7 +2107,7 @@ configurations tend to perform well and bad configurations tend to perform
 poorly on all instances of the problem. By contrast, in heterogeneous
 scenarios, the target algorithm has an inconsistent performance on different
 instances, that is, some configurations perform well for a subset of the
-instances, while they perform poorly for different subset.
+instances, while they perform poorly for a different subset.
 
 When facing a heterogeneous scenario, the first question should be whether the
 objective of tuning is to find configurations that perform reasonably well over
@@ -2121,16 +2120,16 @@ portfolio when facing a new instance.
 
 If finding an overall good configuration for all the instances is the
 objective, then we recommend that instances are randomly sampled
-(option \parameter{sampleInstances}), unless one can devise the instances in a
+(option \parameter{sampleInstances}), unless one can provide the instances in a
 particular order that does not bias the tuning towards any subset.  For
-example, let's assume a heterogeneous scenario with two types of instances.  If
+example, let's assume a heterogeneous scenario with two classes of instances.  If
 training instances are not sampled and the first ten instances belong to only
 one class, the tuning will be biased towards configurations that perform good
 for those instances.  An optimal order would not ever present consecutively two
 instances of the same type.
 
 In addition, it may be useful to increase the number of instances executed
-before doing a statistical test in order to see more instance types before
+before doing a statistical test in order to see more instance classes before
 discarding configurations. The option \parameter{elitistNewInstances} in elitist
 \irace (option \parameter{elitist}) can be used to increase the number of new
 instances executed in each iteration, \eg \code{--elitist-new-instances 5} (default
@@ -2258,8 +2257,8 @@ e         "-e "   r      (0.0,2.0)
 
 These parameters could be used to define a value
 $\texttt{m}\cdot 10^\texttt{e}$ for another parameter
-(\code{--strength}). \parameter{targetRunner} can take take of parsing
-\code{-m} and \code{-e}, computing the value and passing the parameter
+(\code{--strength}) not known by \irace. Then, \parameter{targetRunner} takes care of parsing
+\code{-m} and \code{-e}, computing the strength value and passing the parameter
 \code{--strength} together with its value to the target algorithm.
 
 \subsection{Unreliable target algorithms}
@@ -2281,27 +2280,29 @@ successful.
 
 If the target algorithm consistently fails for a particular set of
 configurations, these configurations may be declared as forbidden
-(\parameter{forbiddenFile}) so that \irace avoids them.  On the other hand, the
-configurations that cause the problem are unknown, the \parameter{targetRunner}
-script should detect the failure and return a penalty cost (a very large cost
-value) so that \irace discards the failing configuration as soon as possible.
-The penalty must be set according to range of the cost measure and the goals of
-the tuning. For example, a configuration that crashes on a particular instance,
-\eg, by running out of memory, might still be considered acceptable if it gives
-very good results on other instances.
+(\parameter{forbiddenFile}) so that \irace avoids them.  On the other hand, if
+the configurations that cause the problem are unknown,
+the \parameter{targetRunner} script should detect the failure and return a
+penalty cost (a very large cost value) so that \irace discards the failing
+configuration as soon as possible.  The penalty must be set according to the
+range of the cost measure and the goals of the tuning. For example, a
+configuration that crashes on a particular instance, \eg by running out of
+memory, might still be considered acceptable if it gives very good results on
+other instances.
 
 
 \section{List of command-line and scenario options} \label{sec:irace options}
 
-Most of the \irace options can be specified by command line using a flag,
-by setting them in the \irace scenario file using the option name or
-by directly setting them in the scenario \aR object. This section describes
-the \irace options that can be specified by the user.
+Most \irace options can be specified in the command line using a flag or in the
+\irace scenario file using the option name (or setting their value in the
+\code{scenario} list passed to the various \aR functions exported by the
+package). This section describes the various \irace options that can be
+specified by the user in this way.
 
 \subsection{General options}
 \begin{description}
 \defparameter[s]{scenarioFile}{scenario}{./scenario.txt} %
-  File that contains the scenario setup and other irace settings. All options listed in this section
+  File that contains the scenario setup and other irace options. All options listed in this section
   can be included in this file. See \code{$IRACE_HOME/templates/} for an example.
 
 \defparameter{debugLevel}{debug-level}{0} %
@@ -2316,8 +2317,8 @@ the \irace options that can be specified by the user.
 \defparameter{execDir}{exec-dir}{./} %
   Directory where the target algorithm executions will be performed. The default execution directory is the current directory.
   \begin{xwarningbox}
-    \irace will not attempt to create the execution directory so it must exist
-    before executing it.
+    The execution directory must exist
+    before executing \irace, it will not be created automatically.
  \end{xwarningbox}
 
 \defparameter[l]{logFile}{log-file}{./irace.Rdata} %
@@ -2332,7 +2333,7 @@ the \irace options that can be specified by the user.
 \defparameter{elitist}{elitist}{1} %
   Enable/disable elitist \irace.
 
-  In the \textbf{elitist} version of \code{irace}, elite configurations are not
+  In the \textbf{elitist} version of \code{irace}~\citep{LopDubPerStuBir2016irace}, elite configurations are not
   discarded from the race until non-elite configurations have been executed on
   the same instances as the elite configurations.
 
@@ -2388,7 +2389,7 @@ the \irace options that can be specified by the user.
   We recommend to use the default value.
 
 \defparameter{nbExperimentsPerIteration}{experiments-per-iteration} {0} %
-  Number of experiments to execute per iteration. By default (when equal to 0), \irace calculates the number of experiments per iteration based  as follows:
+  Number of experiments to execute per iteration. By default (when equal to 0), \irace calculates the number of experiments per iteration based as follows:
   \begin{equation}
     \Budgetj = \dfrac{(\Budget - \Bused)}{ (\Niter -\iter + 1)}
   \end{equation}
@@ -2409,7 +2410,7 @@ the \irace options that can be specified by the user.
   number of configurations that will be used in iteration $j$, $\Budgetj$ is the budget for iteration $j$ and $\mu$ is the 
   option \parameter{mu}. We recommend to use the default value.
   
-  \defparameter{mu}{mu}{5} %
+\defparameter{mu}{mu}{5} %
   This value is used to determine the number of configurations to be sampled
   and evaluated at each iteration. The number of configurations will be
   calculated such that there is enough budget in each race to evaluate all
@@ -2420,7 +2421,12 @@ the \irace options that can be specified by the user.
 
 
 \defparameter{minNbSurvival}{min-survival}{0} %
-  The minimum number of configurations needed to continue the execution of a race.
+  The minimum number of configurations needed to continue the execution of a
+  race. If the number of configurations alive in the race is not larger than
+  this value, the race will stop even if there is budget left and a new
+  iteration starts. By default (when equal to 0), the value is calculated
+  automatically as $\lfloor 2 + \log_{2}\Nparam \rfloor$, where $\Nparam$
+  is the number of non fixed parameters to be tuned.
 
 \defparameter{softRestart}{soft-restart}{1} %
   Enable/disable the soft-restart strategy that avoids premature convergence of the probabilistic model.
