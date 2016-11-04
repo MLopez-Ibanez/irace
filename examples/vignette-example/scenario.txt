@@ -1,0 +1,13 @@
+###################################################### -*- mode: r -*- #####
+## Scenario setup for Iterated Race (iRace).
+############################################################################
+ logFile = "./irace-output.Rdata"
+trainInstancesDir = "./instances"
+trainInstancesFile = "instances.txt"
+maxExperiments = 1000
+testInstancesDir = "./instances"
+testInstancesFile = "instances-test.txt"
+testNbElites = 5
+testIterationElites = 1
+
+############################################################################
