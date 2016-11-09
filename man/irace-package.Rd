@@ -12,7 +12,7 @@ Iterated racing for Automatic Algorithm Configuration
 Package: \tab irace\cr
 Type: \tab Package\cr
 Version: \tab 2.2 \cr
-Date: \tab 2016-11-04 \cr
+Date: \tab 2016-11-08 \cr
 License: \tab GPL (>= 2)\cr
 LazyLoad: \tab yes\cr
 }
@@ -27,14 +27,19 @@ Thomas Stützle, Mauro Birattari, Eric Yuan and Prasanna Balaprakash
 }
 \references{
 
+  Manuel López-Ibáñez, Jérémie Dubois-Lacoste, Leslie Pérez Cáceres,
+  Thomas Stützle, and Mauro Birattari. The irace package: Iterated
+  Racing for Automatic Algorithm Configuration. \emph{Operations Research
+  Perspectives}, 2016. doi: 10.1016/j.orp.2016.09.002
+    
   Manuel López-Ibáñez, Jérémie Dubois-Lacoste, Thomas Stützle, and Mauro
   Birattari. \emph{The irace package, Iterated Race for Automatic
   Algorithm Configuration}. Technical Report TR/IRIDIA/2011-004, IRIDIA,
   Université Libre de Bruxelles, Belgium, 2011.
   
   Manuel López-Ibáñez and Thomas Stützle. The Automatic Design of
-  Multi-Objective Ant Colony Optimization Algorithms. IEEE Transactions
-  on Evolutionary Computation, 2012.
+  Multi-Objective Ant Colony Optimization Algorithms. \emph{IEEE Transactions
+  on Evolutionary Computation}, 2012.
 
 }
 \keyword{package}
