@@ -14,7 +14,7 @@
 \usepackage{ifthen}
 \newboolean{Release}
 \setboolean{Release}{false}
-%\setboolean{Release}{true}
+\setboolean{Release}{true}
 \usepackage{calc}
 \usepackage{algorithm,algorithmic}
 \usepackage{booktabs}
@@ -1308,25 +1308,32 @@ By default, \irace assumes that the target algorithm is stochastic (the value
 of the option \parameter{deterministic} is $0$), thus, the same configuration
 can be executed more than once on the same instance and obtain different
 results.  In this case, \irace generates pairs \code{(instance, seed)} by
-generating a random seed for each instance. Once all pairs have been seen within
-a run of \irace, new pairs are generated with different seeds.
+generating a random seed for each instance. In other words, configurations
+evaluated on the same instance use the same random seed. This is a well-known
+variance reduction technique called \emph{common random
+  numbers}~\citep{McG1992vrt}. If all available pairs are used within a run of
+\irace, new pairs are generated with different seeds, that is, a configuration
+evaluated more than once per instance will use different random seeds.
 
 If \parameter{deterministic} is set to $1$, then each instance will be used at
-most once per race. This should only be used for target algorithms that do not
-have a stochastic behavior and, therefore, executing the target algorithm on
-the same instance several times with different seeds does not make sense.
+most once per race. This setting should only be used for target algorithms that
+do not have a stochastic behavior and, therefore, executing the target
+algorithm on the same instance several times with different seeds does not make
+sense.
 \begin{xwarningbox}
-If \parameter{deterministic} is active and the number of training instances provided to \irace is less than
-\parameter{firstTest} (default: 5), no statistical test will be performed on the race.
+  If \parameter{deterministic} is active and the number of training instances
+  provided to \irace is less than \parameter{firstTest} (default: 5), no
+  statistical test will be performed on the race.
 \end{xwarningbox}
 
-Finally, \irace randomly re-orders the sequence of instances provided. This random sampling may be disabled by using the
-option \parameter{sampleInstances} (\code{--sample-instances 0}) if keeping the order provided in the instance
+Finally, \irace randomly re-orders the sequence of instances provided. This
+random sampling may be disabled by using the option \parameter{sampleInstances}
+(\code{--sample-instances 0}) if keeping the order provided in the instance
 file is important.
 
 \begin{xwarningbox}
-  We advise to always sample instances to prevent biasing the tuning
-  due to the instance order.
+  We advise to always sample instances to prevent biasing the tuning due to the
+  instance order. See also \autoref{sec:het}
 \end{xwarningbox}
 
 
@@ -1880,9 +1887,9 @@ yet when the instance was used, or 2) it was
 discarded by the statistical test and not executed on subsequent instances, or
 3) the race terminated before this instance was considered.
 
-The row names correspond to the identifier of the \code{(instance, seed)} pairs
-defined in \code{state$.irace$instancesList}. The instance and seed used
-for a particular experiment can be obtained with:
+Row names correspond to the identifier of the \code{(instance, seed)} pairs
+defined in \code{state\$.irace\$instancesList}. The instance and seed used
+for a particular experiment can be obtained with:\sloppy
 
 <<get_instance_seed, prompt=TRUE, eval=TRUE, comment="">>=
 # As an example, we get seed and instance of the experiments
