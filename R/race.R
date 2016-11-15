@@ -76,6 +76,7 @@ race.wrapper <- function(configurations, instance.idx, which.alive, which.exe, p
     which.exps <- which(which.alive %in% which.exe)
     target.output[which.exps] <- execute.experiments (experiments[which.exps], scenario)
   }
+  irace.assert(!any(sapply(target.output, is.null)))
 
   # target.evaluator may be NULL. If so, target.output must
   # contain the right output already.
@@ -97,8 +98,8 @@ aux2.friedman <- function(y, I, alive, conf.level = 0.95)
   TIES <- tapply(r, row(r), table)
   STATISTIC <- ((12 * sum((R - n * (k + 1) / 2)^2)) /
                 (n * k * (k + 1)
-                 - (sum(unlist(lapply(TIES, function (u) {u^3 - u}))) /
-                    (k - 1))))
+                  - (sum(unlist(lapply(TIES, function (u) {u^3 - u}))) /
+                     (k - 1))))
   PARAMETER <- k - 1
   PVAL      <- pchisq(STATISTIC, PARAMETER, lower.tail = FALSE)
   #names(STATISTIC) <- "Friedman chi-squared"
@@ -267,34 +268,45 @@ race <- function(maxExp = 0,
 
   # Create the instance list according to the algorithm selected
   # if next.instance == 1 then this is the first iteration.
+  max.instances <- nrow(.irace$instancesList)
   if (elitist && .irace$next.instance != 1) {
-    last.new <- .irace$next.instance + elitistNewInstances - 1
-    # cat("Instances row:", nrow(.irace$instancesList))
-    if (scenario$deterministic && last.new > nrow(.irace$instancesList)) {
-      # The scenario is deterministic and does not have more instances
-      elitistNewInstances <- 0
-      race.instances   <- sample.int(nrow(.irace$instancesList))
-    } else {
-      if (last.new >= .irace$next.instance) {
-        present <- .irace$next.instance : last.new
+    new.instances <- NULL
+    last.new <- .irace$next.instance - 1 + elitistNewInstances
+    # Do we need to add new instances?
+    if (elitistNewInstances > 0) {
+      if (last.new > max.instances) {
+        # This may happen if the scenario is deterministic and we would need
+        # more instances than what we have.
+        irace.assert(scenario$deterministic)
+        if (.irace$next.instance <= max.instances) {
+          # Add all instances that we have not seen yet as new ones.
+          last.new <- max.instances
+          new.instances <- .irace$next.instance : last.new
+        } # else new.instances remains NULL and last.new remains > number of instances.
+        # We need to update this because the value is used below and now there
+        # may be fewer than expected, even zero.
+        elitistNewInstances <- length(new.instances)
       } else {
-        present <- NULL
+        new.instances <- .irace$next.instance : last.new
       }
-      # present_instances + past_instances + future_instances
-      race.instances <- c(present,
-                          sample.int(.irace$next.instance - 1),
-                          (last.new + 1) : nrow(.irace$instancesList))
     }
+    future.instances <- NULL
+    if ((last.new + 1) <= max.instances) {
+      future.instances <- (last.new + 1) : max.instances
+    }
+    # new.instances + past.instances + future.instances
+    race.instances <- c(new.instances, sample.int(.irace$next.instance - 1),
+                        future.instances)
+  } else if (.irace$next.instance <= max.instances) {
+    race.instances <- .irace$next.instance : max.instances
   } else {
-    # Check if the instances are finished
-    if (scenario$deterministic &&
-        (.irace$next.instance > nrow(.irace$instancesList)))
-      race.instances <- 1:nrow(.irace$instancesList)
-    else
-      race.instances <- seq(.irace$next.instance, nrow(.irace$instancesList))
+    # This may happen if the scenario is deterministic and we would need
+    # more instances than what we have.
+    irace.assert(scenario$deterministic)
+    race.instances <- 1 : max.instances
   }
-  no.configurations <- nrow(configurations)
   no.tasks      <- length(race.instances)
+  no.configurations <- nrow(configurations)
 
   interactive <- TRUE
 

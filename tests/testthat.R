@@ -36,21 +36,22 @@ target.runner <- function(experiment, scenario)
   return(result)
 }
 
+set.seed(2)
+weights <- rnorm(200, mean = 0.9, sd = 0.02)
+
 ## Run function ########################################################
 sann.irace <- function(...)
 {
   args <- list(...)
   require("irace")
 
-  set.seed(2)
-  weights <- rnorm(200, mean = 0.9, sd = 0.02)
   parameters.table <- '
    tmax "" i (1, 5000)
    temp "" r (0, 100)
    '  
   parameters <- readParameters(text = parameters.table)
 
-  scenario <- list(targetRunner = target.runner, instances = weights,
+  scenario <- list(targetRunner = target.runner,
                    maxExperiments = 1000, seed = 1234567)
   scenario <- c(scenario, args)
 
@@ -59,7 +60,9 @@ sann.irace <- function(...)
   irace(scenario = scenario, parameters = parameters)
 }
 
-sann.irace()
+sann.irace(instances = weights)
+
+sann.irace(deterministic = TRUE, instances = weights[1:7])
 
 ## FIXME: This needs to be tested on Windows.
 ## The following code can be used to test this function.

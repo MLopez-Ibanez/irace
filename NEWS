@@ -1,5 +1,10 @@
+ * Fix bug when deterministic == 1.
+   (Manuel López-Ibáñez, Leslie Pérez Cáceres)
+
  * Update manual and vignette with details about the expected arguments and
    return value of targetRunner and targetEvaluator. (Manuel López-Ibáñez)
+
+ * Many updates to the User Guide vignette. (Manuel López-Ibáñez)
 
  * Fix \dontrun example in irace-package.Rd (Manuel López-Ibáñez)
 
