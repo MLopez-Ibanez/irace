@@ -1,3 +1,7 @@
+
+ * Do not warn if the last line in the instance file does not terminate with a
+   newline. (Manuel López-Ibáñez)
+ 
  * Fix bug when deterministic == 1.
    (Manuel López-Ibáñez, Leslie Pérez Cáceres)
 

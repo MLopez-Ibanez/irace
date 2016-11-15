@@ -510,7 +510,8 @@ readInstances <- function(instancesDir = NULL, instancesFile = NULL)
   
   if (!is.null.or.empty(instancesFile)) {
     file.check (instancesFile, readable = TRUE, text = "instance file")
-    lines <- readLines (instancesFile)
+    # We do not warn if the last line does not finish with a newline.
+    lines <- readLines (instancesFile, warn = FALSE)
     lines <- sub("#.*$", "", lines) # Remove comments
     lines <- sub("^[[:space:]]+", "", lines) # Remove extra spaces
     lines <- lines[lines != ""] # Delete empty lines

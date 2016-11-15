@@ -518,8 +518,6 @@ irace <- function(scenario, parameters)
     minSurvival <- floor(minSurvival)
     
     # Generate initial instance + seed list
-    # LESLIE: This list should go in a variable where all the variables of the race are stored, 
-    # the scenario should not have variables that are random no?
     .irace$instancesList <- addInstances(scenario, NULL, 
                                            if (scenario$maxExperiments != 0)
                                              ceiling(scenario$maxExperiments / minSurvival)
@@ -952,17 +950,17 @@ irace <- function(scenario, parameters)
     }
 
     if (debugLevel >= 3) {
-      irace.note("Results for the race n ", indexIteration, ":\n")
+      irace.note("Results for the race of iteration ", indexIteration, ":\n")
       configurations.print (raceResults$configurations, metadata=TRUE)
     }
 
-    if (debugLevel >= 1) { irace.note("Extract elites\n") }
+    if (debugLevel >= 1) { irace.note("Extracting elites\n") }
     # FIXME: Since we only actually keep the alive ones, we don't need
     # to carry around rejected ones in raceResults$configurations. This
     # would reduce overhead.
     eliteConfigurations <- extractElites(raceResults$configurations,
                                          min(raceResults$nbAlive, minSurvival))
-    irace.note("Elite configurations:\n")
+    irace.note("Elite configurations (first number is the configuration ID):\n")
     configurations.print(eliteConfigurations, metadata = debugLevel >= 1)
     iraceResults$iterationElites <- c(iraceResults$iterationElites, eliteConfigurations$.ID.[1])
     iraceResults$allElites[[indexIteration]] <- eliteConfigurations$.ID.

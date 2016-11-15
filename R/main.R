@@ -64,7 +64,7 @@ read.table.text <- function(text, header = TRUE, stringsAsFactors = FALSE, ...)
 }
 
 # Non-variable options (such as --help and --version) have names starting with '.'
-# Variables that do not have an option have description == ""
+# Variables that do not have a command-line option have description == ""
 # Types are b(oolean), i(nteger), s(tring), r(eal), p(ath), x (R object or no value)
 # FIXME: For i and r add their range.
 # FIXME: Align columns.
