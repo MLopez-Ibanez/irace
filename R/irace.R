@@ -210,7 +210,8 @@ computeComputationalBudget <- function(remainingBudget, indexIteration,
 
 ## The number of configurations
 computeNbConfigurations <- function(currentBudget, indexIteration, firstTest, eachTest,
-                                nElites = 0, nOldInstances = 0, newInstances = 0)
+                                nElites = 0, nOldInstances = 0, newInstances = 0,
+                                maxConfigurations=1024)
 {
   # FIXME: This is slightly incorrect, because we may have elites that have not
   # been executed on all nOldInstances. Thus, we need to pass explicitly the
@@ -218,8 +219,8 @@ computeNbConfigurations <- function(currentBudget, indexIteration, firstTest, ea
   savedBudget <- nElites *  nOldInstances
   n <- max (firstTest + eachTest * min(5, indexIteration),
             round.to.next.multiple(nOldInstances + newInstances, eachTest))
-    return (floor ((currentBudget + savedBudget) / n))
- 
+  return (min (floor ((currentBudget + savedBudget) / n), maxConfigurations) )
+  
 }
 
 ## Termination of a race at each iteration. The race will stop if the
