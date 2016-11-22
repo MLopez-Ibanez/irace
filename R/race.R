@@ -594,7 +594,7 @@ race <- function(maxExp = 0,
     irace.print.memUsed()
   }
   
-  return(list(experiments = Results[1:no.tasks.sofar, drop=FALSE],
+  return(list(experiments = Results[1:no.tasks.sofar,,drop=FALSE],
               experimentLog = experimentLog,
               experimentsUsed = no.experiments.sofar,
               nbAlive = nbAlive,
