@@ -1,4 +1,6 @@
-
+ * Restrict the number of maximum configurations per race to 1024.
+   (Leslie Pérez Cáceres)
+   
  * Do not warn if the last line in the instance file does not terminate with a
    newline. (Manuel López-Ibáñez)
  
