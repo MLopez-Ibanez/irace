@@ -2679,7 +2679,7 @@ GNU/Linux, it is easy to implement by using the \code{timeout} command in
 
 \pkg{Rmpi} does not work the same way when called from within a package and when called from a script or 
 interactively. When \irace creates the slave nodes, the slaves will load a copy of \irace automatically. 
-If the slave nodes are on different machines, they must have \irace installed. If \irace if not installed
+If the slave nodes are on different machines, they must have \irace installed. If \irace is not installed
 system-wide, \aR needs to be able to find \irace on the slave nodes. This is usually done by setting \code{R\_LIBS}, 
 \code{.libPaths()} or by loading \irace using \code{library()} or \code{require()} with the argument ``\code{lib.loc}''. 
 The settings on the master are not applied to the slave nodes automatically, thus the slave 
