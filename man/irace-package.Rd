@@ -2,35 +2,34 @@
 \alias{irace-package}
 \docType{package}
 \title{
-The irace package
+The irace package: \packageTitle{irace}
 }
 \description{
-Iterated racing for Automatic Algorithm Configuration
+  \packageDescription{irace}
 }
 \details{
 \tabular{ll}{
 Package: \tab irace\cr
 Type: \tab Package\cr
 Version: \tab 2.2 \cr
-Date: \tab 2016-11-15 \cr
+Date: \tab 2016-11-24 \cr
 License: \tab GPL (>= 2)\cr
 LazyLoad: \tab yes\cr
 }
 }
 \author{
-Maintainer: Manuel López-Ibáñez and Jérémie Dubois-Lacoste
+Maintainer: Manuel López-Ibáñez and Leslie Pérez Cáceres
 \email{irace@iridia.ulb.ac.be}
 
 
-Author: Manuel López-Ibáñez, Jérémie Dubois-Lacoste,
-Thomas Stützle, Mauro Birattari, Eric Yuan and Prasanna Balaprakash
+Author: \packageAuthor{irace}
 }
 \references{
 
   Manuel López-Ibáñez, Jérémie Dubois-Lacoste, Leslie Pérez Cáceres,
   Thomas Stützle, and Mauro Birattari. The irace package: Iterated
   Racing for Automatic Algorithm Configuration. \emph{Operations Research
-  Perspectives}, 2016. doi: 10.1016/j.orp.2016.09.002
+  Perspectives}, 2016. \doi{10.1016/j.orp.2016.09.002}
     
   Manuel López-Ibáñez, Jérémie Dubois-Lacoste, Thomas Stützle, and Mauro
   Birattari. \emph{The irace package, Iterated Race for Automatic
