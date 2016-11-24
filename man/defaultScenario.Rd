@@ -71,7 +71,7 @@
   Training instances:
   \itemize{
      \item instances: Array of the instances to be used in the \code{targetRunner}.
-     \item instancesList: Data frame that constains the instance and seeds used in the tuning. The order of this data frame indicate the order in which the instances have been used.
+     \item instancesList: Data frame that contains the instance and seeds used in the tuning. The order of this data frame indicates the order in which the instances have been used.
         \itemize{
           \item instance: The instance index (corresponding to the \code{instance} array).
           \item seed: Seed to be used with the corresponding instance.
