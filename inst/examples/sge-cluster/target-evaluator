@@ -28,14 +28,18 @@ TOTALCANDIDATES="$5"
 shift 5 || error "Not enough parameters to $0"
 ALLIDS=$*
 
-
-STDOUT=c${CANDIDATE}.stdout
-STDERR=c${CANDIDATE}.stderr
+STDOUT=c${CANDIDATE}-${INSTANCEID}.stdout
+STDERR=c${CANDIDATE}-${INSTANCEID}.stderr
 
 error() {
     echo "`TZ=UTC date`: error: $@"
     exit 1
 }
+
+ALLFILES=
+for FILENAME in ALLIDS; do
+    ALLFILES="$ALLFILES c${FILENAME}-${INSTANCEID}.stdout"
+done
 
 # # This may be used to introduce a delay if there are filesystem
 # # issues.
@@ -51,8 +55,11 @@ error() {
 if [ -s "${STDOUT}" ]; then
     COST=$(cat ${STDOUT} | grep -e '^[[:space:]]*[+-]\?[0-9]' | cut -f1)
     echo "$COST"
-    rm -f "${STDOUT}" "${STDERR}"
+    TODELETE=$(comm -23 <(ls -1 c*-${INSTANCEID}.* | sort) <(ls -1 $ALLFILES))
+    # Comment out if you wish to keep all output files around
+    echo "rm -f $TODELETE"
     exit 0
 else
     error "${STDOUT}: No such file or directory"
 fi
+

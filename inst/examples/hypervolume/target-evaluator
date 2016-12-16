@@ -74,7 +74,7 @@ while ! ls ${ALLFILES}_nor &> /dev/null ; do
     done
     calc_measure
     rm -f error.log
-    $TODELETE=$(comm -23 <(ls -1 c*-${INSTANCEID}.* | sort) <(ls -1 $ALLFILES))
+    TODELETE=$(comm -23 <(ls -1 c*-${INSTANCEID}.* | sort) <(ls -1 $ALLFILES))
     # Comment out if you wish to keep all output files around
     echo "rm -f $TODELETE"
 done

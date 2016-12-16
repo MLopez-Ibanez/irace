@@ -26,18 +26,22 @@ CANDIDATE=$1
 INSTANCEID=$2
 SEED=$3
 INSTANCE=$4
-shift 4 || exit 1
+shift 4 || error "Not enough parameters to $0"
 CAND_PARAMS=$*
 
+STDOUT=c${CANDIDATE}-${INSTANCEID}.stdout
+STDERR=c${CANDIDATE}-${INSTANCEID}.stderr
 
-STDOUT=c${CANDIDATE}.stdout
-STDERR=c${CANDIDATE}.stderr
+error() {
+    echo "`TZ=UTC date`: error: $@"
+    exit 1
+}
 
 # We use 'exec' to avoid creating another process. There can be no
 # other commands after exec.
 exec qsub <<EOF
 #!/bin/bash
-#$ -N irace-$PPID-$CANDIDATE
+#$ -N irace-$PPID-$CANDIDATE-${INSTANCEID}
 #$ -l xeon5410
 # -l long
 #$ -m as
