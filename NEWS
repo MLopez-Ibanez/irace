@@ -1,3 +1,5 @@
+ * Fix examples/sge-cluster for elitist irace. (Manuel López-Ibáñez)
+ 
  * Restrict the number of maximum configurations per race to 1024.
    (Leslie Pérez Cáceres)
    
