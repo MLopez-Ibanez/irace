@@ -22,6 +22,16 @@ TODO General (in order of importance):
  * Various initialization modes Latin Hyper-cube, random, exhaustive,
    Hammersley point set, etc.
 
+ * In elitist irace, target-evaluator is always called on elite configurations,
+   while the corresponding target-runner is called only once. Hence, the
+   files/data required by target-evaluator must be kept around for future
+   iterations. Moreover, the use of --sge-cluster requires using a
+   target-evaluator, even in cases where the actual result does not change. It
+   would be better to 1) not always require a target-evaluator for
+   --sge-cluster (but then we need a way pass the result from qsub to
+   target-runner to irace); or 2) make optional that target-evaluator is
+   re-evaluated (but we still need to re-evaluate for MO).
+   
  * crayon: Colored Terminal Output
    https://cran.r-project.org/package=crayon
     
