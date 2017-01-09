@@ -30,7 +30,7 @@
 
        --only-test FILE
 
-   which simple evaluates the configurations given in FILE on the testing
+   which just evaluates the configurations given in FILE on the testing
    instances defined by the scenario. Useful if you decide on the testing
    instances only after running irace. (Manuel López-Ibáñez)
 
