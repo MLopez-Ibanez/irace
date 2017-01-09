@@ -330,17 +330,28 @@ race <- function(maxExp = 0,
                         1:(elitistNewInstances + nrow(elite.data))]),
                         as.character(configurations[, ".ID."])) )
     Results[rownames(elite.data), colnames(elite.data)] <- elite.data
+    is.elite <- colSums(!is.na(Results))
   }
+
+  # Elitist irace needed info
+  if (elitist) {
+    if (is.null(elite.data)) {
+      elite.safe <- first.test
+    } else {
+      elite.safe <- elitistNewInstances + nrow(elite.data)
+    }
+  }
+
+
   experimentLog <- matrix(nrow = 0, ncol = 3,
                           dimnames = list(NULL, c("instance", "configuration", "time")))
   alive <- rep(TRUE, no.configurations)
   best <- 0
   race.ranks <- c()
   no.experiments.sofar <- 0
-  no.tasks.sofar <- 0
 
   if (interactive)
-    cat("  Markers:
+    cat(sep = "", "  Markers:
      x No test is performed.
      - The test is performed and some configurations are discarded.
      = The test is performed but no configuration is discarded.
@@ -349,56 +360,44 @@ race <- function(maxExp = 0,
 +-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
 | |   Instance|      Alive|       Best|      Mean best| Exp so far|  W time|  rho|KenW|  Qvar|
 +-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
-",
-        sep="")
+")
 
-  # Elitist irace needed info
-  if (elitist) {
-    initial.tests <- elitistNewInstances
-    if (is.null(elite.data)) {
-      elite.safe <- first.test
-      n.elite <- 0
-    } else {
-      elite.safe <- initial.tests + nrow(elite.data)
-      n.elite <- ncol(elite.data) 
-      is.elite <- apply(!is.na(elite.data), 2, sum)
-    }
-    no.elimination <- 0 # number of tasks without elimination
-  }
-
+  no.elimination <- 0 # number of tasks without elimination
   # Start main loop
   break.msg <- paste0("all instances (", no.tasks, ") evaluated")
   for (current.task in seq_len (no.tasks)) {
     which.alive <- which(alive)
-    nbAlive    <- length(which.alive)
+    nbAlive     <- length(which.alive)
     which.exe   <- which.alive
 
     if (elitist) {  
       # Filter configurations that do not need to be executed (elites).
       # This is valid only for previous iteration instances.
-      if (!is.null(elite.data) && initial.tests < current.task && current.task < elite.safe ) {
-          iteration.alive  <- alive
-          # disable all elites that have not NA values
-          already.executed <- which(!is.na(Results[current.task, 1:n.elite]))
-          iteration.alive[already.executed] <- FALSE
-          which.exe <- which(iteration.alive)
-          # remove one is.elite counter for the elites that do not execute
-          is.elite[already.executed] <- is.elite[already.executed] - 1
+      if (!is.null(elite.data) && elitistNewInstances < current.task
+          && current.task <= elite.safe ) {
+        # Execute everything that is alive and not yet executed.
+        not.executed <- is.na(Results[current.task, ])
+        irace.assert(length(not.executed) == length(alive))
+        which.exe <- which(alive & not.executed)
+        # Remove one elite count from every configuration already executed.
+        is.elite <- is.elite - (!not.executed)
+        irace.assert (all(is.elite >= 0))
       }
-    } 
-    
+    }
 
-    if (no.tasks.sofar >= first.test) {
+    if (current.task > first.test) {
     # We always stop when we have less configurations than required.
       if (nbAlive <= minSurvival) {
-        # stop race if we have less or equal than the minimum number of configurations
+        # Stop race if we have less or equal than the minimum number of
+        # configurations.
         break.msg <- paste0("number of alive configurations (", nbAlive,
                             ") <= minimum number of configurations (",
                             minSurvival, ")")
         break
       }
-      # If we just did a test, check that we have enough budget to reach the next test.
-      if (maxExp && (no.tasks.sofar %% each.test) == 0
+      # If we just did a test, check that we have enough budget to reach the
+      # next test.
+      if (maxExp && ( (current.task - 1) %% each.test) == 0
           && no.experiments.sofar + length(which.exe) * each.test > maxExp) {
         break.msg <- paste0("experiments for next test (",
                             no.experiments.sofar + length(which.exe) * each.test,
@@ -408,7 +407,7 @@ race <- function(maxExp = 0,
     }
 
     if (elitist) {
-      if (scenario$elitistLimit != 0 && elite.safe < current.task
+      if (scenario$elitistLimit != 0 && current.task > elite.safe
           && no.elimination >= scenario$elitistLimit) {
         break.msg <- paste0("tests without elimination (", no.elimination,
                             ") >= elitistLimit (", scenario$elitistLimit, ")")
@@ -465,20 +464,19 @@ race <- function(maxExp = 0,
     }
 
     no.experiments.sofar <- no.experiments.sofar + length(which.exe)
-    no.tasks.sofar <- no.tasks.sofar + 1
 
     ## Drop bad configurations.
     # We assume that first.test is a multiple of each.test.  In any
     # case, this will only do the first test after the first multiple
     # of each.test that is larger than first.test.
-    if (no.tasks.sofar >= first.test && (no.tasks.sofar %% each.test) == 0
+    if (current.task >= first.test && (current.task %% each.test) == 0
         && length(which.alive) > 1) {
       test.res <-
         switch(stat.test,
-               friedman = aux.friedman(Results[1:no.tasks.sofar, ], alive, which.alive, nbAlive, conf.level),
-               t.none = aux.ttest(Results[1:no.tasks.sofar, ], no.tasks.sofar, alive, which.alive, nbAlive, conf.level, adjust = "none"),
-               t.holm = aux.ttest(Results[1:no.tasks.sofar, ], no.tasks.sofar, alive, which.alive, nbAlive, conf.level, adjust = "holm"),
-               t.bonferroni = aux.ttest(Results[1:no.tasks.sofar, ], no.tasks.sofar, alive, which.alive, nbAlive, conf.level, adjust = "bonferroni"))
+               friedman = aux.friedman(Results[1:current.task, ], alive, which.alive, nbAlive, conf.level),
+               t.none = aux.ttest(Results[1:current.task, ], current.task, alive, which.alive, nbAlive, conf.level, adjust = "none"),
+               t.holm = aux.ttest(Results[1:current.task, ], current.task, alive, which.alive, nbAlive, conf.level, adjust = "holm"),
+               t.bonferroni = aux.ttest(Results[1:current.task, ], current.task, alive, which.alive, nbAlive, conf.level, adjust = "bonferroni"))
 
       best <- test.res$best
       race.ranks <- test.res$ranks
@@ -486,9 +484,12 @@ race <- function(maxExp = 0,
       aux.alive <- sum(alive)
 
       # The elite configurations can be removed only when they have no more
-      # pre-executed tests
-      if (elitist && !is.null(elite.data) && no.tasks.sofar < elite.safe)
-         alive[ which(is.elite > 0) ] <- TRUE
+      # previously-executed instances.
+      if (!is.null(elite.data) && current.task <= elite.safe) {
+        irace.assert (length(alive) == length(is.elite))
+        irace.assert (all(is.elite >= 0))
+        alive <- alive | (is.elite > 0)
+      }
 
       if (interactive) {
         if (test.res$dropped.any) {
@@ -504,12 +505,12 @@ race <- function(maxExp = 0,
       if (length(which.alive) == 1) {
         race.ranks <- 1
         best <- which.alive
-      } else if (no.tasks.sofar == 1)  {
+      } else if (current.task == 1)  {
         # FIXME: Shouldn't these be ranks when stat.test == "friedman" ?
         race.ranks <- Results[1,]
         best <- which.min(race.ranks)
       } else  {
-        tmpResults <- Results[1:no.tasks.sofar, which.alive]
+        tmpResults <- Results[1:current.task, which.alive]
         irace.assert(!any(is.na(tmpResults)))
         if (stat.test == "friedman") {
           race.ranks <- colSums(t(apply(tmpResults, 1, rank)))
@@ -526,7 +527,7 @@ race <- function(maxExp = 0,
     irace.assert(length(race.ranks) == sum(alive))
     # FIXME: This is the mean of the best, but perhaps it should be
     # the sum of ranks in the case of test == friedman?
-    mean.best <- mean(Results[1:no.tasks.sofar, best])
+    mean.best <- mean(Results[1:current.task, best])
 
     if (interactive) {
       time.diff <- difftime(Sys.time(), start.time, units = "secs")
@@ -538,9 +539,9 @@ race <- function(maxExp = 0,
                   no.experiments.sofar,
                   # FIXME: Maybe better and faster if we only print seconds?
                   format(.POSIXct(time.diff, tz="GMT"), "%H:%M:%S")))
-      if (no.tasks.sofar > 1 && sum(alive) > 1) {
-        conc <- concordance(Results[1:no.tasks.sofar, alive])
-        qvar <- dataVariance(Results[1:no.tasks.sofar, alive])
+      if (current.task > 1 && sum(alive) > 1) {
+        conc <- concordance(Results[1:current.task, alive])
+        qvar <- dataVariance(Results[1:current.task, alive])
         cat(sprintf("|%+#4.2f|%.2f|%.4f|\n", conc$spearman.rho, conc$kendall.w,
                     qvar))
       } else {
@@ -553,8 +554,8 @@ race <- function(maxExp = 0,
     if (elitist) {
       # Compute number of statistical tests without eliminations.
       # FIXME: Remove elite.safe check?
-      if (no.tasks.sofar >= elite.safe
-          && no.tasks.sofar > first.test && (no.tasks.sofar %% each.test) == 0) {
+      if (current.task >= elite.safe
+          && current.task > first.test && (current.task %% each.test) == 0) {
         if (length(which.alive) == length(prev.alive)) {
           no.elimination <- no.elimination + 1
         } else {
@@ -593,8 +594,9 @@ race <- function(maxExp = 0,
     irace.note ("Memory used in race():\n")
     irace.print.memUsed()
   }
-  
-  return(list(experiments = Results[1:no.tasks.sofar, , drop=FALSE],
+
+  irace.assert (nrow(Results) <= current.task)
+  return(list(experiments = Results,
               experimentLog = experimentLog,
               experimentsUsed = no.experiments.sofar,
               nbAlive = nbAlive,
