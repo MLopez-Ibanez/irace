@@ -81,7 +81,6 @@ execDir                    p    ""     "--exec-dir"                   "./"      
 logFile                    p    "-l"   "--log-file"                   "./irace.Rdata"    "File to save tuning results as an R dataset, either absolute path or relative to execDir." 
 recoveryFile               p    ""     "--recovery-file"              ""                 "Previously saved log file to recover the execution of irace, either absolute path or relative to the current directory.  If empty or NULL, recovery is not performed."
 instances                  s    ""     ""                             ""                 ""
-instancesList              s    ""     ""                             ""                 "" # List of instances + seed.
 instances.extra.params     s    ""     ""                             ""                 ""
 trainInstancesDir          p    ""     "--train-instances-dir"        "./Instances"      "Directory where tuning instances are located; either absolute path or relative to current directory." 
 trainInstancesFile         p    ""     "--train-instances-file"       ""                 "File containing a list of instances and optionally additional parameters for them." 
@@ -130,7 +129,7 @@ elitistLimit               i    ""     "--elitist-limit"              2         
 rownames (.irace.params.def) <- .irace.params.def[,"name"]
 .irace.params.names <- rownames(.irace.params.def)[substring(rownames(.irace.params.def), 1, 1) != "."]
 ## FIXME: If these values are special perhaps they should be saved in $state ?
-.irace.params.recover <- c("instances", "instancesList", "instances.extra.params", "seed",
+.irace.params.recover <- c("instances", "instances.extra.params", "seed",
                            "testInstances", "testInstances.extra.params",
                            # We need this because this data may mutate
                            "targetRunnerData", "elitist", "deterministic")
