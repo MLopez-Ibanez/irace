@@ -213,7 +213,11 @@ checkScenario <- function(scenario = defaultScenario())
     }
   }
 
-
+  quote.param <- function(name)
+  {
+    return(paste0("'", name, "' (", .irace.params.def[name, "long"], ")"))
+  }
+  
   if (is.null.or.empty(scenario$targetRunnerParallel)) {
     scenario$targetRunnerParallel <- NULL
   } else if (!is.function.name(scenario$targetRunnerParallel)) {
@@ -335,13 +339,16 @@ checkScenario <- function(scenario = defaultScenario())
     if (is.null(scenario[[param]])
         || is.na (scenario[[param]])
         || !is.wholenumber(scenario[[param]]))
-      irace.error ("'", param, "' must be an integer.")
+      irace.error (quote.param (param), " must be an integer.")
   }
-  
+
+  if (scenario$firstTest <= 1) {
+    irace.error(quote.param ("firstTest"), " must be larger than 1.")
+  }
+
   if (scenario$firstTest %% scenario$eachTest != 0) {
-    irace.error("firstTest (", .irace.params.def["firstTest", "long"],
-               ") must be a multiple of eachTest (",
-               .irace.params.def["eachTest", "long"], ")")
+    irace.error(quote.param("firstTest"), " must be a multiple of ",
+                quote.param("eachTest"), ".")
   }
   
   if (scenario$mu < scenario$firstTest) {
@@ -361,47 +368,46 @@ checkScenario <- function(scenario = defaultScenario())
     if (is.null(scenario[[param]])
         || is.na (scenario[[param]])
         || scenario[[param]] < 0.0 || scenario[[param]] > 1.0)
-      irace.error ("'", param, "' must be a real value within [0, 1].")
+      irace.error (quote.param(param), " must be a real value within [0, 1].")
   }
   
-  ## Only maxExperiments or maxTime should be set. Negative values are not allowed.
+  ## Only maxExperiments or maxTime should be set. Negative values are not
+  ## allowed.
   if (scenario$maxExperiments == 0 && scenario$maxTime == 0) {
-    irace.error("Tuning budget was not provided. Set maxExperiments (",
-                .irace.params.def["maxExperiments", "long"], ") or maxTime (",
-                .irace.params.def["maxTime", "long"], ").\n" )
+    irace.error("Tuning budget was not provided. Set ",
+                quote.param("maxExperiments"), "or ",
+                quote.param("maxTime"), ".")
   } else if (scenario$maxExperiments > 0 && scenario$maxTime > 0) {
-    irace.error("Two different tuning budgets provided, please set only maxExperiments (",
-                .irace.params.def["maxExperiments", "long"], ") or only maxTime (",
-                .irace.params.def["maxTime", "long"], ").\n" )
+    irace.error("Two different tuning budgets provided, please set only ",
+                quote.param("maxExperiments"), " or only ",
+                quote.param ("maxTime"), ".")
   } else if (scenario$maxExperiments < 0 ) {
-    irace.error("Negative budget provided, maxExperiments (",
-                .irace.params.def["maxExperiments", "long"], ") must be >= 0.\n" )
+    irace.error("Negative budget provided, ", quote.param("maxExperiments"),
+                "must be >= 0." )
   } else if (scenario$maxTime < 0) {
-    irace.error("Negative budget provided, maxTime  (",
-                .irace.params.def["maxTime", "long"], ") must be >= 0.\n" )
+    irace.error("Negative budget provided, ", quote.param("maxTime"),
+                " must be >= 0.")
   }
   
   if (scenario$maxTime > 0 && (scenario$budgetEstimation <= 0 || scenario$budgetEstimation >= 1)) 
-    irace.error("budgetEstimation (", .irace.params.def["budgetEstimation", "long"],
-                ") must be within (0,1).")
+    irace.error(quote.param("budgetEstimation"), " must be within (0,1).")
   
   if (is.na (scenario$softRestartThreshold)) {
     scenario$softRestartThreshold <- 10^(- scenario$digits)
   }
   
   # Boolean control parameters
-  as.boolean.param <- function(x, name, params)
+  as.boolean.param <- function(x, name)
   {
-    tmp <- as.integer(x)
-    if (is.na (tmp) || (tmp != 0 && tmp != 1)) {
-      irace.error ("'", name, "' (", params[name, "long"],
-                   ") must be either 0 or 1")
+    x <- as.integer(x)
+    if (is.na (x) || (x != 0 && x != 1)) {
+      irace.error (quote.param(name), " must be either 0 or 1.")
     }
-    return(as.logical(tmp))
+    return(as.logical(x))
   }
   boolParams <- .irace.params.def[.irace.params.def[, "type"] == "b", "name"]
   for (p in boolParams) {
-    scenario[[p]] <- as.boolean.param (scenario[[p]], p, .irace.params.def)
+    scenario[[p]] <- as.boolean.param (scenario[[p]], p)
   }
 
   if (scenario$deterministic &&
@@ -412,36 +418,35 @@ checkScenario <- function(scenario = defaultScenario())
   }
 
   if (scenario$mpi && scenario$parallel < 2) {
-    irace.error ("'parallel' (", .irace.params.def["parallel","long"],
-                 ") must be larger than 1 when mpi is enabled")
+    irace.error (quote.param("parallel"),
+                 " must be larger than 1 when mpi is enabled.")
   }
 
   if (scenario$sgeCluster && scenario$mpi) {
-    irace.error("'mpi' (", .irace.params.def["mpi", "long"], ") and ",
-                "'sgeCluster' (", .irace.params.def["sgeCluster", "long"], ") ",
-                "cannot be enabled at the same time")
+    irace.error(quote.param("mpi"), " and ", quote.param("sgeCluster"),
+                " cannot be enabled at the same time.")
   }
 
   if (scenario$sgeCluster && scenario$parallel > 1) {
     irace.error("It does not make sense to use ",
-                "'parallel' (", .irace.params.def["parallel", "long"], ") and ",
-                "'sgeCluster' (", .irace.params.def["sgeCluster", "long"], ") ",
-                "at the same time")
+                quote.param("parallel"), " and ", quote.param("sgeCluster"),
+                " at the same time.")
   }
   
-  scenario$testType <- switch(tolower(scenario$testType),
-                                   "f-test" =, # Fall-through
-                                   "friedman" = "friedman",
-                                   "t-test" =, # Fall-through
-                                   "t.none" = "t.none",
-                                   "t-test-holm" =, # Fall-through,
-                                   "t.holm" = "t.holm",
-                                   "t-test-bonferroni" =, # Fall-through,
-                                   "t.bonferroni" = "t.bonferroni",
-                                   irace.error ("Invalid value '", scenario$testType,
-                                                "' of 'testType' (", .irace.params.def["testType", "long"],
-                                                "), valid values are: ",
-                                                "F-test, t-test, t-test-holm, t-test-bonferroni"))
+  scenario$testType <-
+    switch(tolower(scenario$testType),
+           "f-test" =, # Fall-through
+           "friedman" = "friedman",
+           "t-test" =, # Fall-through
+           "t.none" = "t.none",
+           "t-test-holm" =, # Fall-through,
+           "t.holm" = "t.holm",
+           "t-test-bonferroni" =, # Fall-through,
+           "t.bonferroni" = "t.bonferroni",
+           irace.error ("Invalid value '", scenario$testType,
+                        "' of ", quote.param("testType"),
+                        ", valid values are: ",
+                        "F-test, t-test, t-test-holm, t-test-bonferroni"))
   return (scenario)
 }
 
