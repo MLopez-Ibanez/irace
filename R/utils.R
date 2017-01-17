@@ -49,7 +49,7 @@ irace.error <- function(...)
 }
 
 ## utils::dump.frames is broken and cannot be used with bquote, so we need a wrapper.
-
+## See help(dump.frames)
 irace.dump.frames <- function()
 {
   execDir <- getOption(".irace.execdir")
@@ -57,7 +57,13 @@ irace.dump.frames <- function()
     cwd <- setwd(execDir)
     on.exit(setwd(cwd), add = TRUE)
   }
-  utils::dump.frames(dumpto = "iracedump", to.file = TRUE)
+  ## Only a very recent R version allows saving GlovalEnv:
+  ## https://stat.ethz.ch/pipermail/r-devel/2016-November/073378.html
+  # utils::dump.frames(dumpto = "iracedump", to.file = TRUE, include.GlobalEnv = TRUE)
+  ## For now, we use the following work-around:
+  ## http://stackoverflow.com/questions/40421552/r-how-make-dump-frames-include-all-variables-for-later-post-mortem-debugging
+  utils::dump.frames(dumpto = "iracedump")
+  save.image(file = "iracedump.rda")
 }
 
 irace.assert <- function(exp)
