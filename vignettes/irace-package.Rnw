@@ -75,6 +75,8 @@
 \DefineVerbatimEnvironment{CodeOutput}{Verbatim}{}
 \newenvironment{CodeChunk}{}{}
 
+\newcommand{\IRACEHOME}[1]{\hyperlink{irace_home}{\path{$IRACE_HOME}}\path{#1}}
+
 \providecommand{\keywords}[1]{\textbf{\textit{Index terms---}} #1}
 
 % Simple font selection is not good enough.  For example, |\texttt{--}|
@@ -573,7 +575,7 @@ checkIraceScenario(scenario = scenario, parameters = parameters)
 
 \subsection{Step-by-step setup guide}\label{sec:step}
 This section provides a guide to setup a basic execution of \irace. The
-template files provided in the package (\path{$IRACE_HOME/templates}) will be
+template files provided in the package (\IRACEHOME{/templates}) will be
 used as basis for creating your new scenario. Please follow carefully the
 indications provided in each step and in the template files used; if you have
 doubts check the the sections that describe each option in detail.
@@ -588,7 +590,7 @@ cd ~/tuning
 \end{lstlisting}
 %@
 
-\item Copy all the template files from the \path{$IRACE_HOME/templates/}
+\item Copy all the template files from the \IRACEHOME{/templates/}
 directory to the scenario directory.
 %<<copy1,engine='bash',eval=FALSE>>=
 \begin{lstlisting}[style=BashInputStyle]
@@ -597,13 +599,13 @@ cp $IRACE_HOME/templates/*.tmpl  ~/tuning/
 \end{lstlisting}
 %@
 
-Remember that \code{$IRACE_HOME} is the path to the installation
-directory of \irace. It can be obtained in the \aR console with:
-
-<<irace_path,eval=FALSE, prompt=FALSE>>=
-library("irace")
-system.file(package = "irace")
-@
+% Remember that \IRACEHOME{} is the path to the installation
+% directory of \irace. It can be obtained in the \aR console with:
+%
+% <<irace_path,eval=FALSE, prompt=FALSE>>=
+% library("irace")
+% system.file(package = "irace")
+% @
 
 \item For each template in your tuning directory, remove the \code{.tmpl}
     suffix, and modify them following the next steps.
@@ -659,7 +661,7 @@ For setting the tuning budget see \autoref{sec:budget}. For more information on 
   scripting language, which can be executed easily in GNU/Linux and OS X
   systems. However, you may use any other programming language. As an example,
   we provide a \proglang{Python} example in the directory
-  \path{$IRACE_HOME/examples/python}. %
+  \IRACEHOME{/examples/python}. %
   Follow these instructions to adjust the given \code{target-runner} template
   to your algorithm:
   \begin{enumerate}
@@ -759,7 +761,7 @@ Command-line options override the same options specified in the \code{scenario.t
 
 The \ACOTSP tuning example can be found in the package installation:
 \begin{center}
- \code{$IRACE_HOME/examples/acotsp}
+ \IRACEHOME{/examples/acotsp}
 \end{center}
 Additionally, a number of example scenarios can be found in the \code{examples} folder. More
 examples of tuning scenarios can be found in the Algorithm Configuration Library (AClib):
@@ -1439,7 +1441,7 @@ parallel. There are four ways to parallelize a single run of \irace:
    The user is responsible for setting up the required MPI environment.  MPI is
    commonly available in computing clusters and requires launching \irace in
    some particular way. An example script for using MPI mode in a SGE cluster
-   is given at \code{$IRACE_HOME/examples/mpi/}.
+   is given at \IRACEHOME{/examples/mpi/}.
 
  \item \textbf{SGE cluster}: This mode uses the commands \code{qsub} and
    \code{qstat} often found in Sun Grid Engine (SGE) and compatible
@@ -1461,7 +1463,7 @@ parallel. There are four ways to parallelize a single run of \irace:
    \parameter{targetRunner} and return them to \irace.
    \end{xwarningbox}
  See the examples in
-    \code{$IRACE_HOME/examples/sge-cluster/}.
+    \IRACEHOME{/examples/sge-cluster/}.
 
   \item \parameter{targetRunnerParallel}: This option allows users to fully
     control the parallelization of the execution of \parameter{targetRunner}. 
@@ -2085,7 +2087,7 @@ sets often required by unary quality metrics.
 For more information about defining a \parameter{targetEvaluator}, see
 \autoref{sec:evaluator}. Examples of tuning a multi-objective target algorithm
 using the hypervolume can be found in the examples at
-\code{$IRACE_HOME/examples/hypervolume} and \code{$IRACE_HOME/examples/moaco}.
+\IRACEHOME{/examples/hypervolume} and \IRACEHOME{/examples/moaco}.
 
 \subsection{Tuning for minimizing computation time}
 
@@ -2307,7 +2309,7 @@ specified by the user in this way.
 \begin{description}
 \defparameter[s]{scenarioFile}{scenario}{./scenario.txt} %
   File that contains the scenario setup and other irace options. All options listed in this section
-  can be included in this file. See \code{$IRACE_HOME/templates/} for an example.
+  can be included in this file. See \IRACEHOME{/templates/} for an example.
 
 \defparameter{debugLevel}{debug-level}{0} %
   Level of information to display in the text output of \irace. A value of 0 silences all debug messages.
@@ -2625,7 +2627,7 @@ By default, \irace considers that the value returned by \parameter{targetRunner}
 \parameter{targetEvaluator}, if used) should be \underline{\textbf{minimized}}. In case of a maximization
 problem, one can simply multiply the value by -1 before returning it to
 irace. This is done, for example, when maximizing the hypervolume (see the last
-lines in \code{$IRACE_HOME/examples/hypervolume/target-evaluator}).
+lines in \IRACEHOME{/examples/hypervolume/target-evaluator}).
 
 
 \subsection{Is it possible to configure a MATLAB algorithm with \irace?}
@@ -2636,7 +2638,7 @@ Definitely. There are two main ways to achieve this:
     way. See the MATLAB documentation, or the following links.\footnote{\url{http://stackoverflow.com/questions/1518072/suppress-start-message-of-matlab}\\ \url{http://stackoverflow.com/questions/4611195/how-to-call-matlab-from-command-line-and-print-to-stdout-before-exiting}} %
     You would need to pass the parameter received by \parameter{targetRunner} to your MATLAB script: \url{http://www.mathworks.nl/support/solutions/en/data/1-1BS5S/?solution=1-1BS5S}. There is a minimal example in:
     \begin{center}
-      \code{$IRACE_HOME/examples/matlab/}.
+      \IRACEHOME{/examples/matlab/}.
     \end{center}
   }
 \item{ Call MATLAB code directly from \aR using the
@@ -2817,7 +2819,7 @@ more descriptive errors provided by your script, the easier it will be to debug
 it. If you are using temporary files to redirect the output of your algorithm,
 check that these are created properly. We recommend to follow the structure of
 the example file (\code{target-runner}) provided in
-\code{\$IRACE_HOME/templates}. The following examples are based on a file with
+\IRACEHOME{/templates}. The following examples are based on a file with
 those characteristics.
 
 In case of failure of \parameter{targetRunner}, \irace will print an error on its output describing which execution of \parameter{targetRunner} was not successful.
@@ -3004,6 +3006,14 @@ to see the output that your algorithm produces.
   configurations for the next iteration of \irace are sampled from the
   probabilistic models associated to the elite configurations.  All elite
   configurations are also included in the next iteration.
+\item[\hypertarget{irace_home}{\path{$IRACE_HOME}:}] The filesystem path where \irace is
+  installed. You can find this information by opening an \aR console and
+  executing:
+  
+<<R_irace_home2, prompt=FALSE, eval=FALSE>>=
+system.file(package = "irace")
+@
+
 \end{description}
 
 \section{NEWS}
