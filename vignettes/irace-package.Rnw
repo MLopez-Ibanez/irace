@@ -44,9 +44,10 @@
 \newcommand*{\Appendixautorefname}{Appendix}
 \usepackage{tocloft}
 \setlength{\cftsubsecnumwidth}{3em}% Set length of number width in ToC for \subsection
-\usepackage{enumitem}
+\usepackage[inline]{enumitem}
 \setlist[enumerate]{leftmargin=*,widest=00}
 \setlist[itemize]{leftmargin=1.5em}
+
 %% FIXME: listing is very limited, we should use 'minted'
 \usepackage{listings}
 \lstdefinestyle{BashInputStyle}{
@@ -2745,15 +2746,20 @@ or by sending an email to:
 \section{Acknowledgements}
 
 We would like to thank all the people that directly or indirectly have
-colaborated in the development and improvement of \irace.
-
-\begin{itemize}
+collaborated in the development and improvement of \irace:
+%
+\newlist{acklist}{itemize*}{1}
+\setlist[acklist]{label={}, before=\unskip{}, afterlabel=\unskip{ }, itemjoin={{,}}, itemjoin*={, and }, after={{.}}}
+\begin{acklist}
 \item Prasanna Balaprakash
 \item Zhi (Eric) Yuan
 \item Franco Mascia
 \item Alberto Franzin
 \item Anthony Antoun
-\end{itemize}
+\item Esteban Diaz Leiva %MATLAB example
+\item Federico Caselli % bug reports with fixes
+\item Pablo Valledor Pellicer % testing of --parallel under Windows
+\end{acklist}
 
 
 \bibliographystyle{abbrvnat}
@@ -2811,20 +2817,21 @@ console and install the \irace package from it (see \autoref{sec:irace
   install}).
 
 
-\section{targetRunner script check list} \label{sec:check list}
+\section{targetRunner troubleshooting checklist} \label{sec:check list}
 
 If the \parameter{targetRunner} script fails to return the output expected by
 \irace, it can be sometimes difficult to diagnose where the problem lies. The
 more descriptive errors provided by your script, the easier it will be to debug
 it. If you are using temporary files to redirect the output of your algorithm,
 check that these are created properly. We recommend to follow the structure of
-the example file (\code{target-runner}) provided in
-\IRACEHOME{/templates}. The following examples are based on a file with
-those characteristics.
+the example file (\code{target-runner}) provided in \IRACEHOME{/templates}. The
+following examples are based on a file with those characteristics.
 
-In case of failure of \parameter{targetRunner}, \irace will print an error on its output describing which execution of \parameter{targetRunner} was not successful.
+In case of failure of \parameter{targetRunner}, \irace will print an error on
+its output describing which execution of \parameter{targetRunner} was not
+successful.
 %
-Follow this list to detect where the problem is:
+Follow this checklist to detect where the problem is:
 
 \begin{enumerate}[leftmargin=*,widest=9]
 
