@@ -236,7 +236,6 @@ race <- function(maxExp = 0,
   each.test <- scenario$eachTest
   elitist <- scenario$elitist
   
-  interactive <- TRUE  
   # Check argument: maxExp
   if (!missing(maxExp) &&
       (!is.numeric(maxExp) ||
@@ -251,20 +250,6 @@ race <- function(maxExp = 0,
       (!is.numeric(conf.level) || length(conf.level)!=1 ||
        !is.finite(conf.level) || conf.level<0 || conf.level>1)) 
     stop("conf.level must be a single number between 0 and 1")
-
-  # Check argument: first.test
-  if (!missing(first.test) &&
-      (!is.numeric(first.test) ||
-       length(first.test)!=1 ||
-       !is.finite(first.test)))
-    stop("first.test must be an single number")
-  first.test <- ifelse(first.test>0,first.test,0)
-  first.test <- floor(first.test)
-
-  # Check argument: interactive
-  if (!missing(interactive) &&
-      (!is.logical(interactive) || length(interactive)!=1))
-    stop("interactive must be a logical")
 
   # Create the instance list according to the algorithm selected
   # if next.instance == 1 then this is the first iteration.
@@ -580,12 +565,12 @@ race <- function(maxExp = 0,
 
   nbAlive <- sum(alive)
   configurations$.ALIVE. <- as.logical(alive)
-  # Assign the proper ranks in the configurations data.frame
+  # Assign the proper ranks in the configurations data.frame.
   configurations$.RANK. <- Inf
   configurations[which(alive), ".RANK."] <- race.ranks
-  # Now we can sort the data.frame by the rank
+  # Now we can sort the data.frame by the rank.
   configurations <- configurations[order(as.numeric(configurations[, ".RANK."])), ]
-  # Consistency check
+  # Consistency check.
   irace.assert (all(configurations[1:nbAlive, ".ALIVE."]))
   if (nbAlive < nrow(configurations))
     irace.assert(!any(configurations[(nbAlive + 1):nrow(configurations), ".ALIVE."]))
@@ -595,7 +580,7 @@ race <- function(maxExp = 0,
     irace.print.memUsed()
   }
 
-  irace.assert (nrow(Results) <= current.task)
+  # nrow(Results) may be smaller, equal or larger than current.task.
   return(list(experiments = Results,
               experimentLog = experimentLog,
               experimentsUsed = no.experiments.sofar,
