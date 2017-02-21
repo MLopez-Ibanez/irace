@@ -53,6 +53,7 @@ done
 # target-runner. It assumes that the objective value is the first number in
 # the first column of the only line starting with a digit.
 if [ -s "${STDOUT}" ]; then
+    # You may need to update this to parse the output of your algorithm.
     COST=$(cat ${STDOUT} | grep -e '^[[:space:]]*[+-]\?[0-9]' | cut -f1)
     echo "$COST"
     TODELETE=$(comm -23 <(ls -1 c*-${INSTANCEID}.* | sort) <(ls -1 $ALLFILES))

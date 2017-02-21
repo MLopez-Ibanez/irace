@@ -1,18 +1,2 @@
-SGE cluster:
-
-This mode requires Grid Engine commands qsub and qstat. The comand
-qsub should return a message that contains the string: `Your job
-JOBID`. The command `qstat -j JOBID` should return nonzero if JOBID
-has finished, otherwise it should return zero.
-
-The option `--sge-cluster 1` will launch as many calls of `targetRunner` as
-possible and use `qstat` to wait for cluster jobs. The user *must*
-call `qsub` from `targetRunner` with the appropriate configuration for
-their cluster, otherwise `targetRunner` will not submit jobs to the
-cluster. In this mode, irace must run in the submission node, and
-hence, qsub should not be used to invoke irace.
-You also need to create a separate target-evaluator
-script to parse the results of the targetRunner and return them to irace,
-and set targetEvaluator in scenario.txt or use the command-line option
---target-evaluator so irace can find the target-evaluator program.
-
+These scripts are meant to be used with the option --batchmode.
+See the documentation of the option --batchmode in the user guide.
