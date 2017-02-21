@@ -158,12 +158,12 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li><p>Put the instances in <code>~/tuning/Instances/</code>. In addition, you can create a file that specifies which instances from that directory should be run and which instance-specific parameters to use. See <code>scenario.txt.tmpl</code> and <code>instances-list.tmpl</code> for examples. The command irace will not attempt to create the execution directory (execDir), so it must exist before calling irace. The default execDir is the current directory.</p></li>
 <li><p>Calling the command:</p>
 <div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">    $ <span class="kw">cd</span> ~/tuning/ <span class="kw">&amp;&amp;</span> <span class="ot">$IRACE_HOME</span><span class="kw">/bin/irace</span></code></pre></div>
-<p>performs one run of Iterated Race. See the output of <code>irace --help</code> for additional irace parameters. Command-line parameters override the scenario setup specified in the scenario.txt file.</p></li>
+<p>performs one run of Iterated Race. See the output of <code>irace --help</code> for additional irace parameters. Command-line parameters override the scenario setup specified in the <code>scenario.txt</code> file.</p></li>
 </ol>
 <h2 id="many-tuning-runs-in-parallel">Many tuning runs in parallel</h2>
 <p>For executing several repetitions of irace in parallel, call the program</p>
 <div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">    $ <span class="kw">cd</span> ~/tuning/ <span class="kw">&amp;&amp;</span> <span class="ot">$IRACE_HOME</span><span class="kw">/bin/parallel-irace</span> N</code></pre></div>
-<p>where N is the number of repetitions. By default, the execution directory of each run of irace will be set to <code>./execdir-dd</code>, where dd is a number padded with zeroes.</p>
+<p>where N is the number of repetitions. By default, the execution directory of each run of irace will be set to <code>./execdir-dd</code>, where <code>dd</code> is a number padded with zeroes.</p>
 <p><strong>Be careful</strong>, <code>parallel-irace</code> will create these directories from scratch, deleting them first if they already exist.</p>
 <p>Check the help of <code>parallel-irace</code> by running it without parameters.</p>
 <h2 id="parallelize-one-tuning">Parallelize one tuning</h2>
