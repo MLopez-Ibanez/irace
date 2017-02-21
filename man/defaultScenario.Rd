@@ -61,8 +61,8 @@
      \item deterministic: If the target algorithm is deterministic, configurations will be evaluated only once per instance. (Default: 0)
      \item parallel: Number of calls to \code{targetRunner} to execute in parallel. 0 or 1 mean disabled. (Default: 0) 
      \item loadBalancing: Enable/disable load-balancing when executing experiments in parallel. Load-balancing makes better use of computing resources, but increases communication overhead. If this overhead is large, disabling load-balancing may be faster. (Default: 1)
-     \item mpi: Enable/disable MPI. Use Rmpi to execute targetRunner in parallel (parameter parallel is the number of slaves). (Default 0)
-     \item sgeCluster: Enable/disable SGE cluster mode. Use qstat to wait for cluster jobs to finish (targetRunner must invoke qsub). (Default: 0)
+     \item mpi: Enable/disable MPI. Use Rmpi to execute targetRunner in parallel (parameter parallel is the number of slaves). (Default: 0)
+     \item batchmode:  Specify how irace waits for jobs to finish when \code{targetRunner} submits jobs to a batch cluster: sge, pbs, torque or slurm (\code{targetRunner} must submit jobs to the cluster using. for example, \code{qsub}). (Default: 0)
   }
   Initial configurations:
   \itemize{

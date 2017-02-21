@@ -1444,27 +1444,30 @@ parallel. There are four ways to parallelize a single run of \irace:
    some particular way. An example script for using MPI mode in a SGE cluster
    is given at \IRACEHOME{/examples/mpi/}.
 
- \item \textbf{SGE cluster}: This mode uses the commands \code{qsub} and
-   \code{qstat} often found in Sun Grid Engine (SGE) and compatible
-   clusters. The command \code{qsub} must return a message that contains the
-   string: \code{"Your job JOBID"}, where \code{JOBID} is a unique identifier for
-   the job submitted.  The command \code{qstat -j JOBID} must return nonzero if
-   \code{JOBID} has finished its execution, and zero otherwise.
+ \item \textbf{Batch jobs clusters}: Some computing clusters work by submitting
+   jobs to a batch queue and waiting for the jobs to finish. With the
+   option \parameter{batchmode} (\code{--batchmode [sge|pbs|torque|slurm]}),
+   \irace will launch in parallel as many calls of \parameter{targetRunner} as
+   possible (\parameter{parallel} can be used to set a limit) and use a
+   cluster-specific method to wait for jobs to finish. If your cluster type is
+   not supported or not working as expected, please contact us and we will
+   gladly add support for it.
 
-   Enabling the option \parameter{sgeCluster} (\code{--sge-cluster 1}), \irace will
-   launch in parallel as many calls of \parameter{targetRunner} as possible and use
-   \code{qstat} to wait for cluster jobs.
    \begin{xwarningbox}
      In this mode, \irace must run in the submission node of the cluster, and
-     hence, \code{qsub} should not be used to invoke \irace itself. The user
-     must call \code{qsub} from within
-   \parameter{targetRunner} with the appropriate settings for their cluster,
-   otherwise \parameter{targetRunner} will not submit jobs to the cluster. The use of a separate
+     hence, \irace should not be submitted to the cluster as a job (that is,
+     neither \code{qsub} nor \code{squeue} should be used to invoke \irace
+     itself). The user must call the appropriate job submission command (e.g., )\code{qsub}) from within
+     \parameter{targetRunner} with the appropriate settings for their cluster,
+     otherwise \parameter{targetRunner} will not submit jobs to the
+     cluster. The script must return a single string: The job ID that allows
+     \irace to determine the status of the running job. Moreover, the use of a
+     separate
    \parameter{targetEvaluator} script is required to evaluate the results of
    \parameter{targetRunner} and return them to \irace.
    \end{xwarningbox}
  See the examples in
-    \IRACEHOME{/examples/sge-cluster/}.
+    \IRACEHOME{/examples/batchmode-cluster/}.
 
   \item \parameter{targetRunnerParallel}: This option allows users to fully
     control the parallelization of the execution of \parameter{targetRunner}. 
@@ -1619,7 +1622,7 @@ or from the scenario file.
 \item \parameter{parallel}
 \item \parameter{loadBalancing}
 \item \parameter{mpi}
-\item \parameter{sgeCluster}
+\item \parameter{batchmode}
 \end{itemize}
 
 It is not possible (and in most cases not correct) to change the scenario options, given that the
@@ -2514,9 +2517,11 @@ Optional data passed to \parameter{targetRunner}. This is ignored by the default
   Enable/disable use of \pkg{Rmpi} to execute the \parameter{targetRunner} in parallel using MPI protocol. When \parameter{mpi} is
   enabled, the option \parameter{parallel} is the number of slave nodes. See \autoref{sec:parallel}.
 
-\defparameter{sgeCluster}{sge-cluster}{0} %
-  Enable/disable SGE cluster mode, which uses \code{qstat} to wait for cluster jobs to finish (\parameter{targetRunner} must
-   invoke \code{qsub}). See \autoref{sec:parallel}.
+\defparameter{batchmode}{batchmode}{0} %
+  Specify how irace waits for jobs to finish when \parameter{targetRunner} submits jobs to
+  a batch cluster: sge, pbs, torque or slurm (\parameter{targetRunner} must
+  submit jobs to the cluster using. for example, \code{qsub}). See
+  \autoref{sec:parallel}.
 
  
 \end{description}

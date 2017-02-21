@@ -19,6 +19,8 @@
 # This script should print nothing.
 # Exit with 0 if no error, with 1 in case of error
 ###############################################################################
+tmpfile=$(mktemp)
+
 EXE=~/bin/program
 FIXED_PARAMS=""
 
@@ -34,12 +36,12 @@ STDERR=c${CANDIDATE}-${INSTANCEID}.stderr
 
 error() {
     echo "`TZ=UTC date`: error: $@"
+    cat $tmpfile
+    rm -f $tmpfile
     exit 1
 }
 
-# We use 'exec' to avoid creating another process. There can be no
-# other commands after exec.
-exec qsub <<EOF
+qsub &> $tmpfile <<EOF
 #!/bin/bash
 #$ -N irace-$PPID-$CANDIDATE-${INSTANCEID}
 #$ -l xeon5410
@@ -58,3 +60,16 @@ mv \$TMP/* ./
 rmdir -p \$TMP &> /dev/null
 exit \$RET
 EOF
+
+rc=$?
+if [[ $rc == 0 ]]; then
+    JOBID=$(grep -o -e "Your job [^ ]\+" $tmpfile | cut -f3 -d ' ')
+    if ! [[ "$JOBID" =~ ^[_-.@0-9A-Za-z]+$ ]] ; then
+        error "$0: cannot parse jobID from the output of qsub!"
+    fi
+    echo "$JOBID"
+    rm -f $tmpfile
+    exit 0
+else
+    error "$0: qsub failed!"
+fi

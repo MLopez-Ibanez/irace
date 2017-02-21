@@ -15,7 +15,7 @@ checkForbidden <- function(configurations, forbidden)
 }
 
 # Sets irace variables from a recovery file.  It is executed in the
-# parent environment.
+# parent environment which must be irace().
 #
 # FIXME: Restoring occurs after reading the command-line/scenario file. At
 # least for the irace command-line parameters (scenario), it should occur
@@ -26,7 +26,9 @@ checkForbidden <- function(configurations, forbidden)
 # 2) if set, then recover irace scenario
 
 # 3) then read other settings from command-line/scenario file being
-# careful to not override whatever the recovery has set.
+# careful to not override with defaults whatever the recovery has set.
+#
+# 4) checkSchenario()
 #
 # A work-around is to modify the recovery file (you can load it in R,
 # modify scenario then save it again).
@@ -454,6 +456,9 @@ irace <- function(scenario, parameters)
   if (!is.null(scenario$recoveryFile)) {
     irace.note ("Resuming from file: '", scenario$recoveryFile,"'\n")
     recoverFromFile(scenario$recoveryFile)
+    # We call checkScenario again to fix any inconsistencies in the recovered
+    # data.
+    scenario <- checkScenario(scenario)
     startParallel(scenario)
     on.exit(stopParallel())
   } else { # Do not recover

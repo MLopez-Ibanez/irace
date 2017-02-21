@@ -37,7 +37,7 @@ error() {
 }
 
 ALLFILES=
-for FILENAME in ALLIDS; do
+for FILENAME in $ALLIDS; do
     ALLFILES="$ALLFILES c${FILENAME}-${INSTANCEID}.stdout"
 done
 

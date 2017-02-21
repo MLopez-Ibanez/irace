@@ -146,11 +146,12 @@
 ## parallel. Load-balancing makes better use of computing resources, but
 ## increases communication overhead. If this overhead is large, disabling
 ## load-balancing may be faster.
-# loadBalancing = 1
+# loadBalancing = 
 
-## Enable/disable SGE cluster mode. Use qstat to wait for
-## cluster jobs to finish (targetRunner must invoke qsub).
-# sgeCluster = 0
+## Specify how irace waits for jobs to finish when targetRunner submits jobs to
+## a batch cluster: sge, pbs, torque or slurm (targetRunner must submit jobs to
+## the cluster using. for example, qsub).
+# batchmode = 0
 
 ## Enable/disable MPI. Use MPI to execute targetRunner in parallel
 ## (parameter parallel is the number of slaves).

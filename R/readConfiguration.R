@@ -133,13 +133,23 @@ readConfigurationsFile <- function(filename, parameters, debugLevel = 0)
   return (configurationTable)
 }
 
-# reads scenario setup from filename and returns it as a list. Anything
-# not mentioned in the file is not present in the list (that is, it is
-# NULL).
-# FIXME: Does passing an initial scenario actually work? It seems
-# it gets completely overriden by the loop below.
+# Reads scenario setup from filename and returns it as a list. Anything not
+# mentioned in the file is not present in the list (that is, it is NULL).
+# FIXME: Does passing an initial scenario actually work? It seems it gets
+# completely overriden by the loop below.
 readScenario <- function(filename = "", scenario = list())
 {
+  # This function allows recursively including scenario files.
+  envir <- environment()
+  include.scenario <- function(rfilename, topfile = filename, envir. = envir)
+  {
+    if (!file.exists (rfilename)) {
+      irace.error ("The scenario file ", shQuote(rfilename), " included from ",
+                   shQuote(topfile), " does not exist.")
+    }
+    source(rfilename, local = envir., chdir = TRUE)
+  }
+
   # First find out which file...
   if (filename == "") {
     filename <- .irace.params.def["scenarioFile","default"]
@@ -158,7 +168,8 @@ readScenario <- function(filename = "", scenario = list())
     debug.level <- getOption(".irace.debug.level", default = 0)
     if (debug.level >= 1)
       cat ("# Reading scenario file", shQuote(filename), ".......")
-    source(filename, local = TRUE)
+    # chdir = TRUE to allow recursive sourcing.
+    source(filename, local = TRUE, chdir = TRUE)
     if (debug.level >= 1) cat (" done!\n")
   } else {
     irace.error ("The scenario file ", shQuote(filename), " does not exist.")
@@ -236,7 +247,7 @@ checkScenario <- function(scenario = defaultScenario())
       irace.error("targetRunner must be a function or an executable program")
     }
   }
-  
+
   if (scenario$targetEvaluator == "") scenario$targetEvaluator <- NULL
   if (is.null(scenario$targetEvaluator)) {
     .irace$target.evaluator <- NULL
@@ -250,6 +261,8 @@ checkScenario <- function(scenario = defaultScenario())
   } else {
     irace.error("targetEvaluator must be a function or an executable program")
   }
+
+  irace.assert(is.null(scenario$targetEvaluator) == is.null(.irace$target.evaluator))
   
   # Training instances
   if (is.null.or.empty(scenario$instances.extra.params)) {
@@ -422,17 +435,30 @@ checkScenario <- function(scenario = defaultScenario())
                  " must be larger than 1 when mpi is enabled.")
   }
 
-  if (scenario$sgeCluster && scenario$mpi) {
-    irace.error(quote.param("mpi"), " and ", quote.param("sgeCluster"),
+  if (is.null.or.empty(scenario$batchmode))
+    scenario$batchmode <- 0
+  if (scenario$batchmode != 0) {
+    scenario$batchmode <- tolower(scenario$batchmode)
+    # FIXME: We should encode options in the large table in main.R
+    valid.batchmode <- c("sge", "pbs", "torque", "slurm")
+    if (!(scenario$batchmode %in% valid.batchmode)) {
+      irace.error ("Invalid value '", scenario$batchmode,
+                   "' of ", quote.param("batchmode"),
+                   ", valid values are: ",
+                   paste0(valid.batchmode, collapse = ", "))
+    }
+  }
+  # Currently batchmode requires a targetEvaluator
+  if (scenario$batchmode != 0 && is.null(scenario$targetEvaluator)) {
+    irace.error(quote.param("batchmode"), " requires using ",
+                quote.param("targetEvaluator"), ".")
+  }
+
+  if (scenario$batchmode != 0 && scenario$mpi) {
+    irace.error(quote.param("mpi"), " and ", quote.param("batchmode"),
                 " cannot be enabled at the same time.")
   }
 
-  if (scenario$sgeCluster && scenario$parallel > 1) {
-    irace.error("It does not make sense to use ",
-                quote.param("parallel"), " and ", quote.param("sgeCluster"),
-                " at the same time.")
-  }
-  
   scenario$testType <-
     switch(tolower(scenario$testType),
            "f-test" =, # Fall-through
@@ -581,6 +607,13 @@ checkTargetFiles <- function(scenario, parameters)
                    paste0(conditionMessage(w), collapse="\n"))
                invokeRestart("muffleWarning")})
 
+  if (scenario$debugLevel >= 1) {
+    cat ("# targetRunner returned:\n")
+    print(output)
+  }
+  
+  irace.assert(is.null(scenario$targetEvaluator) == is.null(.irace$target.evaluator))
+
   if (!is.null(.irace$target.evaluator)) {
     cat("# Executing targetEvaluator...\n")
     output <-  withCallingHandlers(
@@ -596,6 +629,10 @@ checkTargetFiles <- function(scenario, parameters)
                        "\n# Warning ocurred while executing targetEvaluator:",
                        paste0(conditionMessage(w), collapse="\n"))
                    invokeRestart("muffleWarning")})
+    if (scenario$debugLevel >= 1) {
+      cat ("# targetEvaluator returned:\n")
+      print(output)
+    }
   }
   return(result)
 }

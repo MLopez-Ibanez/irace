@@ -112,7 +112,7 @@ seed                       i    ""     "--seed"                       NA        
 parallel                   i    ""     "--parallel"                   0                  "Number of calls to targetRunner to execute in parallel. 0 or 1 mean disabled."
 loadBalancing              b    ""     "--load-balancing"             1                  "Enable/disable load-balancing when executing experiments in parallel. Load-balancing makes better use of computing resources, but increases communication overhead. If this overhead is large, disabling load-balancing may be faster."
 mpi                        b    ""     "--mpi"                        0                  "Enable/disable MPI. Use Rmpi to execute targetRunner in parallel (parameter parallel is the number of slaves)."
-sgeCluster                 b    ""     "--sge-cluster"                0                  "Enable/disable SGE cluster mode. Use qstat to wait for cluster jobs to finish (targetRunner must invoke qsub)."
+batchmode                    s    ""     "--batchmode"                    0                 "Specify how irace waits for jobs to finish when targetRunner submits jobs to a batch cluster: sge, pbs, torque or slurm."
 softRestart                b    ""     "--soft-restart"               1                  "Enable/disable the soft restart strategy that avoids premature convergence of the probabilistic model."
 softRestartThreshold       r    ""     "--soft-restart-threshold"     NA                 "Soft restart threshold value for numerical parameters. If NA, it computed as 10^-digits."
 testInstancesDir           p    ""     "--test-instances-dir"         ""                 "Directory where testing instances are located, either absolute or relative to current directory."

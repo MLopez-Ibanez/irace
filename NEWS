@@ -1,8 +1,29 @@
+ * The option --sge-cluster (sgeCluster) was removed and replaced by
+   --batchmode (batchmode). It is now the responsibility of the target-runner to
+   parse the output of the batch job submission command (e.g., qsub or squeue),
+   and return just the job ID. Values supported are: "sge", "torque", "pbs" and
+   "slurm".
+                                                     (Manuel López-Ibáñez)
+
+ * The option --parallel can now be combined with --batchmode to limit the
+   number of jobs submitted by irace at once. This may be useful in batch
+   clusters that have a small queue of jobs.
+                                                   (Manuel López-Ibáñez)
+
+ * New examples under inst/examples/batchmode-cluster/.
+                                                       (Manuel López-Ibáñez)
+
+ * It is now possible to include scenario definition files from other scenario
+   files by using:
+   
+      eval.parent(source("scenario-common.txt", chdir = TRUE, local = TRUE))
+
+   This feature is VERY experimental and the syntax is likely to change in the
+   future.                                             (Manuel López-Ibáñez)
+ 
  * Fix a bug that re-executed elite results under some circumstances.
    (Leslie Pérez Cáceres)
-   
- * Fix examples/sge-cluster for elitist irace. (Manuel López-Ibáñez)
- 
+
  * Restrict the number of maximum configurations per race to 1024.
    (Leslie Pérez Cáceres)
    
