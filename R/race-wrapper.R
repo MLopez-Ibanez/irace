@@ -362,6 +362,8 @@ execute.experiments <- function(experiments, scenario)
 
 execute.evaluator <- function(experiments, scenario, target.output, configurations.id)
 {
+  ## FIXME: We do not need the configurations.id argument:
+  # configurations.id <- sapply(experiments, function(x) x[["id.configuration"]])
   all.conf.id <- paste(configurations.id, collapse = " ")
   
   ## Evaluate configurations sequentially
