@@ -31,6 +31,10 @@ TODO General (in order of importance):
    --sge-cluster (but then we need a way pass the result from qsub to
    target-runner to irace); or 2) make optional that target-evaluator is
    re-evaluated (but we still need to re-evaluate for MO).
+
+ * It would be useful to report the command-line string passed to irace in the
+   output (for logging purposes) and save it in the log file (for further
+   replicability).
    
  * crayon: Colored Terminal Output
    https://cran.r-project.org/package=crayon
@@ -157,14 +161,6 @@ TODO General (in order of importance):
 
    The same applies to runif().
 
- * Add command-line option --cluster=[sge|pbs] to choose the type of
-   cluster. Then, target-runner calls qsub and prints a jobID. jobID must
-   be a single word ([0-9a-z._-@]+); if not or length(jobID) != 1 or
-   exit code is != 0, then complain. The option --cluster only chooses
-   which type of qstat command is invoked. This will leave parsing the
-   jobID to the user, since it is very fragile. We should put examples
-   for PBS and SGE in examples/.
-
  * generateCandidatesNormal() takes too much time with >800 candidates
    and >20 parameters (SPEAR testcase).
 
@@ -240,7 +236,16 @@ TODO General (in order of importance):
 
 DONE:
 
- * Move the README information to the TR (vignette) to avoid duplication.
+ * Add command-line option --cluster=[sge|pbs] to choose the type of
+   cluster. Then, target-runner calls qsub and prints a jobID. jobID must
+   be a single word ([0-9a-z._-@]+); if not or length(jobID) != 1 or
+   exit code is != 0, then complain. The option --cluster only chooses
+   which type of qstat command is invoked. This will leave parsing the
+   jobID to the user, since it is very fragile. We should put examples
+   for PBS and SGE in examples/.
+   [DONE by Manuel]
+
+* Move the README information to the TR (vignette) to avoid duplication.
    [DONE by Leslie, Manuel]
 
  * Pass to target-runner/hook-evaluate an instance index that uniquely
