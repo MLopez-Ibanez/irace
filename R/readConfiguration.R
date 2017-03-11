@@ -232,7 +232,13 @@ checkScenario <- function(scenario = defaultScenario())
   if (is.null.or.empty(scenario$targetRunnerParallel)) {
     scenario$targetRunnerParallel <- NULL
   } else if (!is.function.name(scenario$targetRunnerParallel)) {
-    irace.error("targetRunnerParallel must be a function")
+    irace.error("'targetRunnerParallel' must be a function")
+  }
+  
+  if (is.null.or.empty(scenario$repairConfiguration)) {
+    scenario$repairConfiguration <- NULL
+  } else if (!is.function.name(scenario$repairConfiguration)) {
+    irace.error("'repairConfiguration' must be a function")
   }
 
   if (is.function.name(scenario$targetRunner)) {
@@ -244,7 +250,7 @@ checkScenario <- function(scenario = defaultScenario())
                   text = "target runner")
       .irace$target.runner <- target.runner.default
     } else {
-      irace.error("targetRunner must be a function or an executable program")
+      irace.error("'targetRunner' must be a function or an executable program")
     }
   }
 
@@ -259,7 +265,7 @@ checkScenario <- function(scenario = defaultScenario())
                 text = "target evaluator")
     .irace$target.evaluator <- target.evaluator.default
   } else {
-    irace.error("targetEvaluator must be a function or an executable program")
+    irace.error("'targetEvaluator' must be a function or an executable program")
   }
 
   irace.assert(is.null(scenario$targetEvaluator) == is.null(.irace$target.evaluator))
@@ -573,7 +579,8 @@ checkTargetFiles <- function(scenario, parameters)
   conf.id <- c("testConfig1","testConfig2")
   configurations <- sampleUniform(parameters, length(conf.id),
                                   digits = scenario$digits,
-                                  forbidden = scenario$forbiddenExps)
+                                  forbidden = scenario$forbiddenExps,
+                                  repair = scenario$repairConfiguration)
   configurations <- cbind (.ID. = conf.id, configurations)
   
   # Get info of the configuration

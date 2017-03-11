@@ -9,6 +9,8 @@ checkForbidden <- function(configurations, forbidden)
     configurations <- subset(configurations, eval(.FORBIDDEN))
     #print(configurations)
     #print(str(configurations))
+    ## FIXME: This is normally called with a single configuration. Thus, it
+    ## would be faster to break as soon as nrow(configurations) < 1
   }
   #print(nrow(configurations))
   return(configurations)
@@ -560,7 +562,8 @@ irace <- function(scenario, parameters)
           newConfigurations <- sampleUniform(parameters,
                                              nconfigurations - nrow(allConfigurations),
                                              digits = scenario$digits,
-                                             forbidden = scenario$forbiddenExps)
+                                             forbidden = scenario$forbiddenExps,
+                                             repair = scenario$repairConfiguration)
           newConfigurations <-
             cbind (.ID. = max(0, allConfigurations$.ID.) + 1:nrow(newConfigurations),
                    newConfigurations)
@@ -808,7 +811,8 @@ irace <- function(scenario, parameters)
         }
         newConfigurations <- sampleUniform(parameters, nbNewConfigurations,
                                            digits = scenario$digits,
-                                           forbidden = scenario$forbiddenExps)
+                                           forbidden = scenario$forbiddenExps,
+                                           repair = scenario$repairConfiguration)
         newConfigurations <-
           cbind (.ID. = max(0, allConfigurations$.ID.) + 1:nrow(newConfigurations),
                  newConfigurations)
@@ -851,7 +855,8 @@ irace <- function(scenario, parameters)
       newConfigurations <- sampleModel(parameters, eliteConfigurations,
                                    model, nbNewConfigurations,
                                    digits = scenario$digits,
-                                   forbidden = scenario$forbiddenExps)
+                                   forbidden = scenario$forbiddenExps,
+                                   repair = scenario$repairConfiguration)
       #cat("# ", format(Sys.time(), usetz=TRUE), " sampleModel() DONE\n")
       # Set ID of the new configurations.
       newConfigurations <- cbind (.ID. = max(0, allConfigurations$.ID.) +
@@ -876,9 +881,10 @@ irace <- function(scenario, parameters)
           # Re-sample after restart like above
           #cat("# ", format(Sys.time(), usetz=TRUE), " sampleModel()\n")
           newConfigurations <- sampleModel(parameters, eliteConfigurations,
-                                       model, nbNewConfigurations,
-                                       digits = scenario$digits,
-                                       forbidden = scenario$forbiddenExps)
+                                           model, nbNewConfigurations,
+                                           digits = scenario$digits,
+                                           forbidden = scenario$forbiddenExps,
+                                           repair = scenario$repairConfiguration)
           #cat("# ", format(Sys.time(), usetz=TRUE), " sampleModel() DONE\n")
           # Set ID of the new configurations.
           newConfigurations <- cbind (.ID. = max(0, allConfigurations$.ID.) + 

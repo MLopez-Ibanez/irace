@@ -41,7 +41,7 @@ get.fixed.value <- function(param, parameters)
 
 ### Uniform sampling for the initial generation
 sampleUniform <- function (parameters, nbConfigurations, digits,
-                           forbidden = NULL)
+                           forbidden = NULL, repair = NULL)
 {
   namesParameters <- names(parameters$conditions)
   newConfigurations  <-
@@ -87,6 +87,10 @@ sampleUniform <- function (parameters, nbConfigurations, digits,
         configuration[[p]] <- newVal
       }
       configuration <- as.data.frame(configuration, stringsAsFactors=FALSE)
+      if (!is.null(repair)) {
+        configuration <- repair(configuration, parameters, digits)
+      }
+
       if (is.null(forbidden)
           || nrow(checkForbidden(configuration, forbidden)) == 1) {
         newConfigurations[idxConfiguration,] <- configuration
@@ -105,7 +109,8 @@ sampleUniform <- function (parameters, nbConfigurations, digits,
 # 2) Nb configurations is the number of configurations at the end
 # included the elite ones obtained from the previous iteration
 sampleModel <- function (parameters, eliteConfigurations, model,
-                         nbNewConfigurations, digits, forbidden = NULL)
+                         nbNewConfigurations, digits, forbidden = NULL,
+                         repair = NULL)
 {
   if (nbNewConfigurations <= 0) {
     irace.error ("The number of configurations to generate appears to be negative or zero.")
@@ -199,6 +204,9 @@ sampleModel <- function (parameters, eliteConfigurations, model,
       }
       
       configuration <- as.data.frame(configuration, stringsAsFactors=FALSE)
+      if (!is.null(repair)) {
+        configuration <- repair(configuration, parameters, digits)
+      }
       if (is.null(forbidden)
           || nrow(checkForbidden(configuration, forbidden)) == 1) {
         newConfigurations[idxConfiguration,] <- configuration

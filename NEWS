@@ -1,3 +1,7 @@
+ * Users may provide a function to repair configurations before being
+   evaluated. See the scenario variable repairConfiguration.
+                                                     (Manuel López-Ibáñez)
+ 
  * The option --sge-cluster (sgeCluster) was removed and replaced by
    --batchmode (batchmode). It is now the responsibility of the target-runner to
    parse the output of the batch job submission command (e.g., qsub or squeue),
