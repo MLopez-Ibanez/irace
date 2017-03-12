@@ -2688,7 +2688,7 @@ Definitely. There are two main ways to achieve this:
   }
 \end{enumerate}
 
-\subsection{My program works perfectly on its own, but not when running under \irace. Is irace broken?}\label{sec:valgrind}
+\subsection{My program works perfectly on its own, but not when running under \irace. Is irace broken?}\label{faq:valgrind}
 
 Every time this was reported, it was a difficult-to-reproduce bug in
 the program, not in \irace.  We recommend that in \parameter{targetRunner}, you use
@@ -2709,7 +2709,7 @@ then replace that line with:
 If there are bugs in your program, they will appear in \code{${STDERR}}, thus do not delete those files.
 
 
-\subsection{My program may be buggy and run into an infinite loop. Is it possible to set a maximum timeout? }
+\subsection{My program may be buggy and run into an infinite loop. Is it possible to set a maximum timeout?}\label{faq:timeout}
 
 We are not aware of any way to achieve this using \aR. However, in
 GNU/Linux, it is easy to implement by using the \code{timeout} command in
@@ -2860,10 +2860,12 @@ console and install the \irace package from it (see \autoref{sec:irace
 If the \parameter{targetRunner} script fails to return the output expected by
 \irace, it can be sometimes difficult to diagnose where the problem lies. The
 more descriptive errors provided by your script, the easier it will be to debug
-it. If you are using temporary files to redirect the output of your algorithm,
-check that these are created properly. We recommend to follow the structure of
-the example file (\code{target-runner}) provided in \IRACEHOME{/templates}. The
-following examples are based on a file with those characteristics.
+it. If \parameter{targetRunner} enters an infinite loop, irace will wait
+indefinitely (see FAQ in \autoref{faq:timeout}).  If you are using temporary
+files to redirect the output of your algorithm, check that these files are
+properly created. We recommend to follow the structure of the example file
+(\code{target-runner}) provided in \IRACEHOME{/templates}. The following
+error examples are based on a file with those characteristics.
 
 In case of failure of \parameter{targetRunner}, \irace will print an error on
 its output describing which execution of \parameter{targetRunner} was not
@@ -2986,7 +2988,7 @@ to see the output that your algorithm produces.
 
 \item It is possible that transient bugs in the target algorithm are only
   visible when running within \irace, and \code{targetRunner} appears to work
-  fine when executed directly in the command-line outside \irace (See FAQ in \autoref{sec:valgrind}).
+  fine when executed directly in the command-line outside \irace (See FAQ in \autoref{faq:valgrind}).
   %
   We recommend that in \parameter{targetRunner}, you use
      \code{valgrind} to run your program. That is, if your program is called like:
@@ -3011,16 +3013,22 @@ to see the output that your algorithm produces.
   \item If you submit jobs through a queuing system, the running environment
     when using the queuing system may not be the same as when you launch \irace
     yourself. The queuing system may also send the job to different machines
-    depending on the number of CPUs requested. 
+    depending on the number of CPUs requested. One way to test this is to
+    submit the failing execution of \code{targetRunner} to the queuing system,
+    and specifically to any problematic machine.
     
-  \item The above is particularly problematic when using MPI, because some
-    calls to \code{targetRunner} may run on different computers than the one
-    running the master \irace process. See FAQ in \autoref{sec:mpi-error}.
+  \item When using MPI, some calls to \code{targetRunner} may run on different
+    computers than the one running the master \irace process. See FAQ in
+    \autoref{sec:mpi-error}.
     
   \item Does \code{targetRunner} read or create intermediate files? These files
     may cause a race condition when two calls to \code{targetRunner} happen at
-    the same time. Maybe these files consume too much memory or fill the
-    filesystem when there are simultaneous \code{targetRunner} calls?
+    the same time. You have to make sure that parallel runs of
+    \code{targetRunner} do not interfere with each other's files.
+    
+  \item Maybe these files consume too much memory or fill the filesystem when
+    there are simultaneous \code{targetRunner} calls? Moreover, queuing systems
+    have stricter limits for computing nodes than for the submit/host node.
     
   \item Does the machine or the queuing system impose any limits on number of
     processes or CPU/memory/filesystem usage per job? Such limits may only

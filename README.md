@@ -6,6 +6,8 @@ output:
     toc: true
     toc_depth: 4
 ---
+
+[![CRAN version](http://www.r-pkg.org/badges/version-last-release/irace)](https://CRAN.R-project.org/package=irace)
 [![CRAN Downloads](http://cranlogs.r-pkg.org/badges/grand-total/irace)](https://CRAN.R-project.org/package=irace)
 
 **Maintainers:** [Manuel López-Ibáñez](http://lopez-ibanez.eu), Leslie Pérez Cáceres
