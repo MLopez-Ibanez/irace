@@ -32,9 +32,6 @@ TODO General (in order of importance):
    target-runner to irace); or 2) make optional that target-evaluator is
    re-evaluated (but we still need to re-evaluate for MO).
 
- * It would be useful to report the command-line string passed to irace in the
-   output (for logging purposes) and save it in the log file (for further
-   replicability).
    
  * crayon: Colored Terminal Output
    https://cran.r-project.org/package=crayon
@@ -78,8 +75,6 @@ TODO General (in order of importance):
    (maxExperiments, elite, etc.). Other settings such as hookRun,
    trainInstancesDir, instanceFile, etc. are ok to change but we have to be
    careful to not override them when recovering.
-
- * Print some info about the forbidden rules read.
 
  * Weighted sampling of instances. Use the instance parameters to
    provide a biased sampling. Note that one can currently achieve this
@@ -235,6 +230,12 @@ TODO General (in order of importance):
 ------------------------------------------------------------------------------
 
 DONE:
+
+ * It would be useful to report the command-line string passed to irace in the
+   output (for logging purposes) and save it in the log file (for further
+   replicability). [DONE by Manuel]
+
+ * Print some info about the forbidden rules read.    [DONE by Manuel]
 
  * Add command-line option --cluster=[sge|pbs] to choose the type of
    cluster. Then, target-runner calls qsub and prints a jobID. jobID must

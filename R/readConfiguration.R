@@ -326,7 +326,7 @@ checkScenario <- function(scenario = defaultScenario())
                 text = "forbidden configurations file")
     # FIXME: Using && or || instead of & and | will not work. Detect
     # this and give an error to the user.
-    scenario$forbiddenExps <- parse(file=scenario$forbiddenFile)
+    scenario$forbiddenExps <- parse(file = scenario$forbiddenFile)
     # When a is NA and we check a == 5, we would get NA, which is
     # always FALSE, when we actually want to be TRUE, so we test
     # is.na() first below.
@@ -336,8 +336,8 @@ checkScenario <- function(scenario = defaultScenario())
     # FIXME: Check that the parameter names that appear in forbidden
     # all appear in parameters$names to catch typos.
     cat("# ", length(scenario$forbiddenExps),
-        " expression(s) specifying forbidden scenarios read from '",
-        scenario$forbiddenFile, "'\n", sep="")
+        " expression(s) specifying forbidden configurations read from '",
+        scenario$forbiddenFile, "'\n", sep = "")
   }
 
   # Make it NULL if it is "" or NA

@@ -649,13 +649,12 @@ irace <- function(scenario, parameters)
     }
   } #end of do not recover
   
-  if (scenario$elitist) {
-    catInfo("Elitist race\n",
-            "# Elitist new instances: ", scenario$elitistNewInstances, "\n",
-            "# Elitist limit: ",         scenario$elitistLimit, "\n", 
-            verbose = FALSE)
-  }
-  catInfo("Initialization\n", 
+  catInfo("Initialization\n",
+          if (scenario$elitist)
+            paste0("# Elitist race\n",
+                   "# Elitist new instances: ", scenario$elitistNewInstances, "\n",
+                   "# Elitist limit: ",         scenario$elitistLimit, "\n")
+          else paste0("# Non-elitist race\n"),
           "# nbIterations: ", nbIterations, "\n",
           "# minNbSurvival: ", minSurvival, "\n",
           "# nbParameters: ", parameters$nbVariable, "\n",

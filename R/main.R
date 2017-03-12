@@ -69,6 +69,7 @@ read.table.text <- function(text, header = TRUE, stringsAsFactors = FALSE, ...)
 # FIXME: For i and r add their range.
 # FIXME: Align columns.
 # FIXME: make order of the parameters
+# FIXME: Add type for R functions.
 .irace.params.def <- read.table.text('
 name                       type short  long                           default            description
 .help                      x    "-h"   "--help"                       NA                 "Show this help." 
@@ -370,20 +371,20 @@ irace.cmdline <- function(args = commandArgs (trailingOnly = TRUE))
 
   if (!is.null(readArg (short = "-v", long = "--version"))) {
     cat.irace.license()
-    cat ("\tinstalled at: ", system.file(package="irace"), "\n", sep="")
+    cat ("# installed at: ", system.file(package="irace"), "\n", sep = "")
     return(invisible(NULL))
   }
 
   cat.irace.license()
-  cat ("\tinstalled at: ", system.file(package="irace"), "\n", sep="")
+  cat ("# installed at: ", system.file(package="irace"), "\n",
+       "# called with: ", paste(args, collapse = " "), "\n", sep = "")
   
   # Read the scenario file and the command line
   scenarioFile <- readCmdLineParameter ("scenarioFile", default = "")
   scenario <- readScenario(scenarioFile)
   for (param in .irace.params.names) {
-    scenario[[param]] <-
-      readCmdLineParameter (paramName = param,
-                            default = scenario[[param]])
+    scenario[[param]] <- readCmdLineParameter (paramName = param,
+                                               default = scenario[[param]])
   }
  
   # Check scenario

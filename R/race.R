@@ -560,7 +560,7 @@ race <- function(maxExp = 0,
         sprintf("    mean value: %#15.10g", mean.best), "\n",
         "Description of the best configuration:\n")
     print(description.best)
-    cat("\n\n")
+    cat("\n")
   }
 
   nbAlive <- sum(alive)
