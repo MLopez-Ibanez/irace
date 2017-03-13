@@ -12,7 +12,7 @@ The irace package: \packageTitle{irace}
 Package: \tab irace\cr
 Type: \tab Package\cr
 Version: \tab 2.2 \cr
-Date: \tab 2017-03-12 \cr
+Date: \tab 2017-03-13 \cr
 License: \tab GPL (>= 2)\cr
 LazyLoad: \tab yes\cr
 }
