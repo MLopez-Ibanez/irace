@@ -952,9 +952,9 @@ where each field is defined as follows:
                          enabled or disabled, thus making the parameter conditional. If the
                          condition evaluates to false, then no value is assigned to this
                          parameter, and neither the parameter value nor the corresponding
-                         label are passed to \parameter{targetRunner}. The condition must be a
+                         label are passed to \parameter{targetRunner}. The condition must follow the same syntax as those for specifying forbidden configurations (\autoref{sec:forbidden}), that is, it must be a
                          valid \aR logical expression\footnote{For a quick list of \aR operators
-                         see: \url{https://stat.ethz.ch/R-manual/R-devel/library/base/html/Syntax.html}}.
+                         see: \url{https://stat.ethz.ch/R-manual/R-devel/library/base/html/Syntax.html}}. 
                          The condition may contain the name
                          of other parameters as long as the dependency graph does not
                          contain any cycle. Otherwise, \irace will detect the cycle and
@@ -1419,6 +1419,17 @@ If initial configuration are provided (\autoref{sec:initial}), they must also co
 constraints defined in \parameter{forbiddenFile}.
 \end{xwarningbox}
 
+\begin{xwarningbox}
+Categorical and ordinal parameters are always treated as strings. Given a parameter like:
+\begin{CodeInput}
+a "" c (0, 5, 10, 20)
+\end{CodeInput}
+then, a condition like \code{a > 10} will be true when \code{a} is \code{5},
+because comparisons between strings are lexicographic and \code{"10"} is sorted
+before \code{"5"}. As a work-around, you can convert the string to numeric in
+the condition with \code{as.numeric(a)}.
+\end{xwarningbox}
+
 \subsection{Repairing configurations}\label{sec:repairconf}
 
 In some problems, the parameter values require complex constraints that cannot
@@ -1679,6 +1690,17 @@ This example can also can be applied to the target execution files \parameter{ta
   Do not change anything in the log file or the scenario file before
   recovering, as it may have unexpected effects on the recovered run of
   \irace. In case of doubt, please contact us first (\autoref{sec:contact}).
+\end{xwarningbox}
+
+\begin{xwarningbox}
+  If your scenario uses \parameter{targetEvaluator} (\autoref{sec:evaluator})
+  and \parameter{targetEvaluator} requires files created
+  by \parameter{targetRunner}, then recovery will fail if those files are not
+  present in the \parameter{execDir} directory. This can happen, for example,
+  if you recover from a different directory than the one from which irace was
+  initially executed, or when \parameter{execDir} is set to a temporary
+  directory for every irace run. Thus, you need to copy the contents of the
+  previous \parameter{execDir} into the new one.
 \end{xwarningbox}
 
 \section{Output and results}
