@@ -97,24 +97,6 @@ parameterFrequency <- function(configurations, parameters,
   if (!is.null(filename)) dev.off()
   par(def.par)  #- reset to default
 }
-## TODO: convert this to a function:
-## load("../irace.Rdata")
-## library(irace)
-## best <- colnames(iraceResults$experiments)[which(apply(iraceResults$experiments, 2, function(x) { sum(!is.na(x))}) > 1)]
-## data <- iraceResults$experiments[,best]
-## par(bg = "white")
-## image(x = 1:ncol(data), y = 1:nrow(data),
-##       z = apply(data, 1, rank), col = gray.colors(100, start = 0, end = 0.6),
-##       xlab = "Configurations", ylab = "Instances",
-##       axes = FALSE)
-## at <- axTicks(1)
-## axis(1, at = at, labels = as.numeric(colnames(data))[at])
-## at <- axTicks(2)
-## axis(2, at = at, labels = as.numeric(rownames(data))[at])
-## box()
-## library(lattice)
-## levelplot(t(data), xlab="Configurations", ylab="Instances")
-
 
 #Function parcoordlabel plots parallel coordinates for categorical and numerical configurations
 #idea from http://stackoverflow.com/questions/23553210/add-ticks-to-parcoord-parallel-coordinates-plot
