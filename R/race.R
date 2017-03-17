@@ -73,7 +73,11 @@ race.wrapper <- function(configurations, instance.idx, which.alive, which.exe, p
   target.output <- rep(list(NA), length(experiments))
   # Execute commands
   if (length(which.exe) > 0) {
+    # which.exe values are within 1:nbConfigurations, whereas experiments
+    # indices are within 1:length(which.alive). The following line converts
+    # from one to the other.
     which.exps <- which(which.alive %in% which.exe)
+    irace.assert(length(which.exps) == length(which.exe))
     target.output[which.exps] <- execute.experiments (experiments[which.exps], scenario)
   }
   irace.assert(!any(sapply(target.output, is.null)))
@@ -583,6 +587,7 @@ race <- function(maxExp = 0,
   # nrow(Results) may be smaller, equal or larger than current.task.
   return(list(experiments = Results,
               experimentLog = experimentLog,
+              # FIXME: Rename this to experimentsUsed for consistency
               experimentsUsed = no.experiments.sofar,
               nbAlive = nbAlive,
               configurations = configurations))
