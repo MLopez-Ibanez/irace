@@ -609,7 +609,7 @@ irace <- function(scenario, parameters)
       # Update budget
       remainingBudget <- round((scenario$maxTime - timeUsed) / timeEstimate)
 
-      experimentsUsedSoFar <- experimentsUsedSoFar + nrow(output$experimentLog)
+      experimentsUsedSoFar <- experimentsUsedSoFar + nrow(iraceResults$experimentLog)
       eliteConfigurations <- allConfigurations[1:(next.configuration - 1),]
 
       # Without elitist, the racing does not re-use the results computed during
@@ -683,7 +683,10 @@ irace <- function(scenario, parameters)
                                remainingBudget = remainingBudget,
                                timeUsed = timeUsed,
                                timeEstimate = timeEstimate)
-    
+    # Consistency checks
+    irace.assert(sum(!is.na(iraceResults$experiments)) == experimentsUsedSoFar)
+    irace.assert(sum(nrow(iraceResults$experimentLog)) == experimentsUsedSoFar)
+
     ## Save to the log file
     iraceResults$allConfigurations <- allConfigurations
     if (!is.null.or.empty(scenario$logFile)) {

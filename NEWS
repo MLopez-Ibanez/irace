@@ -60,7 +60,10 @@
 
    which just evaluates the configurations given in FILE on the testing
    instances defined by the scenario. Useful if you decide on the testing
-   instances only after running irace. (Manuel López-Ibáñez)
+   instances only after running irace.    (Manuel López-Ibáñez)
+
+ * Bugfix: When using maxTime != 0, the number of experiments performed may be
+   miscounted in some cases.              (Manuel López-Ibáñez)
 
 
 2.1
