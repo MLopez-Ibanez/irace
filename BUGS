@@ -1,5 +1,36 @@
 ------------------------------------------------------------*- mode: text -*-
 
+#8 ------------------------------------------------------------
+
+We do not re-evaluate the elitist (using which.exe), but we do call target.evaluator on them. See this code in race.R:
+
+  # Execute commands
+  if (length(which.exe) > 0) {
+    which.exps <- which(which.alive %in% which.exe)
+    target.output[which.exps] <- execute.experiments (experiments[which.exps], scenario)
+  }
+  irace.assert(!any(sapply(target.output, is.null)))
+
+  # target.evaluator may be NULL. If so, target.output must
+  # contain the right output already.
+  if (!is.null(.irace$target.evaluator))
+    target.output <- execute.evaluator (experiments, scenario, target.output,
+                                        configurations[which.alive, ".ID."])
+
+The reason for that is, in some scenarios, we want to normalize the output of
+the algorithm, so when we evaluate new configurations, there is a need to
+re-normalize the output of the elites as well. So we need to call
+target-evaluator again.
+
+However, when recovering, the files needed by target.evaluator are likely
+lost. We would need to call again target-runner.
+
+This is perhaps a design mistake: We could simply do the normalization internally in irace or create a separate target script (target-re-evaluator?) that only people needing something like re-normalization will use.
+
+As a short-term fix, we could implement something like:
+
+If recovering and target-evaluator is in use, keep elites as elites, but re-run target-runner on them. (Perhaps we need a new .irace$ flag saying: first race from recovery).
+
 #7 ------------------------------------------------------------
 
 The semantics of recovery are not clear. Should it recover the exact parameters
