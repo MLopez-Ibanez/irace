@@ -52,7 +52,7 @@ Relevant literature:
 Requisites
 ----------
 
- * R (<http://www.r-project.org>) is required for running irace, but
+ * R (<https://www.r-project.org>) is required for running irace, but
    you don't need to know the R language to use it.
    Versions that work: >= 2.15.0
 
