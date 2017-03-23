@@ -1,3 +1,5 @@
+2.2
+
  * Command-line parameters are printed to stdout (useful for future
    replications). (Manuel López-Ibáñez, suggested by Markus Wagner)
 
