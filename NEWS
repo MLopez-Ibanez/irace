@@ -1,3 +1,6 @@
+ * Command-line parameters are printed to stdout (useful for future
+   replications). (Manuel López-Ibáñez, suggested by Markus Wagner)
+
  * Users may provide a function to repair configurations before being
    evaluated. See the scenario variable repairConfiguration.
                                                      (Manuel López-Ibáñez)
