@@ -323,7 +323,7 @@ algorithms.
 \item \aR ($\text{version} \geq 2.15$) is required for running irace, but you don't
   need to know the \aR language to use it.  \aR is freely available and you can
   download it from the \aR project website
-  (\url{http://www.r-project.org}). See \autoref{sec:installation} for a
+  (\url{https://www.r-project.org}). See \autoref{sec:installation} for a
   quick installation guide of \aR.
 
 \item For GNU/Linux and OS X, the command-line executables \code{irace} and
@@ -2869,7 +2869,7 @@ and from the \aR prompt install the \irace package (see \autoref{sec:irace insta
 
 \subsection{Windows}
 
-You can install \aR from a CRAN mirror.\footnote{\url{http://cran.r-project.org/bin/windows/}} %
+You can install \aR from a CRAN mirror.\footnote{\url{https://cran.r-project.org/bin/windows/}} %
 We recommend that you
 install \aR on a filesystem path without spaces, special characters or long
 names, such as \path{C:\R}. Once \aR is installed, you can launch the \aR
