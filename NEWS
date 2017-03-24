@@ -1,3 +1,11 @@
+ * readConfigurationsFile() now has a text= argument, which allows reading
+   configurations from a string.
+                                                     (Manuel López-Ibáñez)
+ * Conditions for forbidden configurations and the repairConfiguration function
+   are now byte-compiled when read, which should make their evaluation
+   noticeably faster.
+                                                     (Manuel López-Ibáñez)
+
 2.2
 
  * Command-line parameters are printed to stdout (useful for future

@@ -11,7 +11,7 @@ Maintainer: Manuel López-Ibáñez <manuel.lopez-ibanez@manchester.ac.uk>
 Author: Manuel López-Ibáñez, Jérémie Dubois-Lacoste, Leslie Pérez Cáceres,
         Thomas Stützle, Mauro Birattari, Eric Yuan and Prasanna Balaprakash
 Depends: R (>= 2.15.0)
-Imports: stats, utils
+Imports: stats, utils, compiler
 Suggests: Rmpi (>= 0.6.0), parallel, knitr
 VignetteBuilder: knitr
 License: GPL (>= 2)

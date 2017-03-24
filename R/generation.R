@@ -8,6 +8,7 @@ conditionsSatisfied <- function (parameters, partialConfiguration, paramName)
 {
   condition <- parameters$conditions[[paramName]]
   # If there is no condition, do not waste time evaluating it.
+  ## FIXME: In R 3.2, all.vars does not work with byte-compiled expressions.
   if (!length(all.vars(condition, max.names = 1L))) return(TRUE)
 
   v <- eval(condition, as.list(partialConfiguration))

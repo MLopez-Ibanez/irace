@@ -65,7 +65,6 @@ sann.irace(instances = weights)
 sann.irace(deterministic = TRUE, instances = weights[1:7])
 
 ## FIXME: This needs to be tested on Windows.
-## The following code can be used to test this function.
 test.path.rel2abs <- function()
 {
   # Try to set wd; otherwise fail silently.
@@ -122,3 +121,21 @@ test.path.rel2abs <- function()
   }
 }
 test.path.rel2abs()
+
+
+test.checkForbidden <- function()
+{
+  params <- irace:::readParameters("parameters.txt")
+  confs <- irace:::readConfigurationsFile("configurations.txt", params)
+  forbidden <- irace:::readForbiddenFile("forbidden.txt")
+  exp.confs <- irace:::readConfigurationsFile(text='
+param1 param2 mode   real mutation
+5        NA    "x2"   4.0   "low"
+1        NA    "x2"   4.0   "low"
+5        6     "x1"   3.5   "low"
+NA        NA   "x3"   4.5   "low"
+', parameters = params)
+  confs <- irace:::checkForbidden(confs, forbidden)
+  rownames(confs) <- rownames(exp.confs) <- NULL
+  stopifnot(identical(confs, exp.confs))
+}

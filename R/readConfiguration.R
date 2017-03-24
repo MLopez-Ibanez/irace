@@ -12,14 +12,19 @@
 ## as in the file containing the definition of the parameters.
 ##
 ## FIXME: What about digits?
-readConfigurationsFile <- function(filename, parameters, debugLevel = 0)
+readConfigurationsFile <- function(filename, parameters, debugLevel = 0, text)
 {
-  namesParameters <- names(parameters$conditions)
-  
-  # Read the file.
-  configurationTable <- read.table(filename, header = TRUE,
-                               colClasses = "character",
-                               stringsAsFactors = FALSE)
+  if (missing(filename) && !missing(text)) {
+    filename <- strcat("text=", deparse(substitute(text)))
+    configurationTable <- read.table(text = text, header = TRUE,
+                                     colClasses = "character",
+                                     stringsAsFactors = FALSE)
+  } else {
+    # Read the file.
+    configurationTable <- read.table(filename, header = TRUE,
+                                     colClasses = "character",
+                                     stringsAsFactors = FALSE)
+  }
   irace.assert(is.data.frame(configurationTable))
   nbConfigurations <- nrow(configurationTable)
   # Print the table that has been read.
@@ -28,6 +33,7 @@ readConfigurationsFile <- function(filename, parameters, debugLevel = 0)
     print(as.data.frame(configurationTable, stringAsFactor = FALSE))
   }
 
+  namesParameters <- names(parameters$conditions)
   # This ignores fixed parameters unless they are given with a different value.
   if (ncol(configurationTable) != length(namesParameters)
       || !setequal (colnames(configurationTable), namesParameters)) {
@@ -132,6 +138,30 @@ readConfigurationsFile <- function(filename, parameters, debugLevel = 0)
   }
   return (configurationTable)
 }
+
+readForbiddenFile <- function(filename)
+{
+  forbiddenExps <- parse(file = filename)
+  # FIXME: Using && or || instead of & and | will not work. Detect
+  # this and give an error to the user.
+
+  # When a is NA and we check a == 5, we would get NA, which is
+  # always FALSE, when we actually want to be TRUE, so we test
+  # is.na() first below.
+  forbiddenExps <- sapply(forbiddenExps,
+                          function(x) substitute(is.na(x) | !(x), list(x = x)))
+  # FIXME: Check that the parameter names that appear in forbidden
+  # all appear in parameters$names to catch typos.
+
+  # FIXME: Instead of a list, we should generate a single expression that is
+  # the logical-OR of all elements of the list.
+
+  # Byte-compile them. We expect that there will be undefined variables, since
+  # the expressions will be evaluated within a data.frame later.
+  forbiddenExps <- sapply(forbiddenExps, compiler::compile,
+                          options = list(suppressUndefined=TRUE))
+  return(forbiddenExps)
+}      
 
 # Reads scenario setup from filename and returns it as a list. Anything not
 # mentioned in the file is not present in the list (that is, it is NULL).
@@ -239,6 +269,10 @@ checkScenario <- function(scenario = defaultScenario())
     scenario$repairConfiguration <- NULL
   } else if (!is.function.name(scenario$repairConfiguration)) {
     irace.error("'repairConfiguration' must be a function")
+  } else {
+    # Byte-compile it.
+    # FIXME: How to prevent byte-compiling two times?
+    scenario$repairConfiguration <- compiler::cmpfun(scenario$repairConfiguration)
   }
 
   if (is.function.name(scenario$targetRunner)) {
@@ -324,17 +358,7 @@ checkScenario <- function(scenario = defaultScenario())
     scenario$forbiddenFile <- path.rel2abs(scenario$forbiddenFile)
     file.check (scenario$forbiddenFile, readable = TRUE,
                 text = "forbidden configurations file")
-    # FIXME: Using && or || instead of & and | will not work. Detect
-    # this and give an error to the user.
-    scenario$forbiddenExps <- parse(file = scenario$forbiddenFile)
-    # When a is NA and we check a == 5, we would get NA, which is
-    # always FALSE, when we actually want to be TRUE, so we test
-    # is.na() first below.
-    scenario$forbiddenExps <-
-      sapply(scenario$forbiddenExps,
-             function(x) substitute(is.na(x) | !(x), list(x = x)))
-    # FIXME: Check that the parameter names that appear in forbidden
-    # all appear in parameters$names to catch typos.
+    scenario$forbiddenExps <- readForbiddenFile(scenario$forbiddenFile)
     cat("# ", length(scenario$forbiddenExps),
         " expression(s) specifying forbidden configurations read from '",
         scenario$forbiddenFile, "'\n", sep = "")
@@ -527,7 +551,7 @@ defaultScenario <- function(scenario = list())
     irace.error("Unknown scenario parameters: ",
                 paste(names(scenario)[which(!names(scenario)
                                             %in% .irace.params.names)],
-                      sep=", "))
+                      collapse = ", "))
   }
 
   for (k in .irace.params.names) {
