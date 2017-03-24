@@ -149,6 +149,14 @@ is.null.or.empty <- function(x)
   is.null(x) || (length(x) == 1 && is.character(x) && x == "")
 }
 
+is.bytecode <- function(x) typeof(x) == "bytecode"
+
+bytecompile <- function(x)
+{
+  if (is.bytecode(x)) return(x)
+  else return(compiler::cmpfun(x))
+}
+
 strcat <- function(...)
 {
   do.call(paste0, args = list(..., collapse = NULL))

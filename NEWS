@@ -2,9 +2,10 @@
    configurations from a string.
                                                      (Manuel López-Ibáñez)
 
- * Conditions for forbidden configurations and the targetRunner,
-   targetEvaluator and repairConfiguration functions are now byte-compiled
-   when read, which should make their evaluation noticeably faster.
+ * User-provided functions (targetRunner, targetEvaluator and
+   repairConfiguration) and user-provided conditions for forbidden
+   configurations are now byte-compiled when read, which should make their
+   evaluation noticeably faster.
                                                       (Manuel López-Ibáñez)
 
 2.2
