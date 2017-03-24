@@ -1,0 +1,6 @@
+param1          "--param1 "          i  (1, 10) | mode %in% c("x1", "x2")
+param2          "--param2 "          i  (1, 10) | mode %in% c("x1", "x3") && real > 2.5 && real <= 3.5
+mode            "--"                 c  ("x1" ,"x2", "x3")
+real            "--paramreal="       r  (1.5, 4.5)
+mutation        "--mutation="        o  ("none", "very low", "low", "medium", "high", "very high", "all")
+#unused         "-u "                c  (1, 2, 10, 20)

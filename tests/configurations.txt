@@ -1,0 +1,11 @@
+param1 param2 mode   real mutation
+5        NA    "x2"   4.0   "low"
+1        NA    "x1"   4.0   "low"
+1        NA    "x2"   4.0   "low"
+5        7     "x1"   3.5   "low"
+5        6     "x1"   3.5   "low"
+NA       7     "x3"   3.5   "low"
+NA       6     "x3"   3.5   "low"
+5        NA    "x2"   2.0   "low"
+NA        NA   "x3"   1.5   "low"
+NA        NA   "x3"   4.5   "low"
