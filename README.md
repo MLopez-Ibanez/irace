@@ -217,9 +217,9 @@ Usage
 3. For each template in your tuning directory, remove the `.tmpl`
    suffix, and modify them following the instructions in each file. In
    particular,
-    * The scripts `target-runner` and `targetEvaluator` (if you need it at all)
+    * The scripts `target-runner` and `target-evaluator` (if you need it at all)
       should be executable. The output of `target-runner` (or
-      `targetEvaluator` if you use a separate evaluation step) is minimized by
+      `target-evaluator` if you use a separate evaluation step) is minimized by
       default. If you wish to maximize it, just multiply the value by `-1`
       within the script.
     * In `scenario.txt`, uncomment and assign only the parameters for which
