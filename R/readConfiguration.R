@@ -276,7 +276,7 @@ checkScenario <- function(scenario = defaultScenario())
   }
 
   if (is.function.name(scenario$targetRunner)) {
-    .irace$target.runner <- scenario$targetRunner
+    .irace$target.runner <- compiler::cmpfun(scenario$targetRunner)
   } else if (is.null(scenario$targetRunnerParallel)) {
     if (is.character(scenario$targetRunner)) {
       scenario$targetRunner <- path.rel2abs(scenario$targetRunner)
@@ -292,7 +292,7 @@ checkScenario <- function(scenario = defaultScenario())
   if (is.null(scenario$targetEvaluator)) {
     .irace$target.evaluator <- NULL
   } else if (is.function.name(scenario$targetEvaluator)) {
-    .irace$target.evaluator <- scenario$targetEvaluator
+    .irace$target.evaluator <- compiler::cmpfun(scenario$targetEvaluator)
   } else if (is.character(scenario$targetEvaluator)) {
     scenario$targetEvaluator <- path.rel2abs(scenario$targetEvaluator)
     file.check (scenario$targetEvaluator, executable = TRUE,
