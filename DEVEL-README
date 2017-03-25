@@ -84,6 +84,28 @@ RELEASE Process:
 
   * svn ci -m " * Bump development version to $NEW_VERSION
 
+11. Announce the release in the Google group:
+
+    https://groups.google.com/d/forum/irace-package
+
+Announce email
+==============
+
+Dear irace users,
+
+Version 2.2 of irace is available from CRAN:
+https://cran.r-project.org/package=irace
+
+
+There are significant bugfixes and only very minor interface changes so we recommend all users to
+upgrade:
+
+NEWS entry
+
+Best wishes,
+
+    Manuel López-Ibáñez.
+     
 
 
 
