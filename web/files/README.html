@@ -4,7 +4,7 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta http-equiv="Content-Style-Type" content="text/css" />
   <meta name="generator" content="pandoc" />
-  <title></title>
+  <title>irace: Iterated Racing for Automatic Algorithm Configuration</title>
   <style type="text/css">code{white-space: pre;}</style>
   <style type="text/css">
 div.sourceCode { overflow-x: auto; }
@@ -45,8 +45,12 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
   </style>
 </head>
 <body>
+<div id="header">
+<h1 class="title">irace: Iterated Racing for Automatic Algorithm Configuration</h1>
+</div>
 <div id="TOC">
 <ul>
+<li><a href="#irace-iterated-racing-for-automatic-algorithm-configuration"><strong>irace</strong>: Iterated Racing for Automatic Algorithm Configuration</a></li>
 <li><a href="#introduction">Introduction</a><ul>
 <li><a href="#requisites">Requisites</a></li>
 </ul></li>
@@ -67,13 +71,14 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li><a href="#frequently-asked-questions">Frequently Asked Questions</a></li>
 </ul>
 </div>
-<p><a href="https://CRAN.R-project.org/package=irace"><img src="http://www.r-pkg.org/badges/version-last-release/irace" alt="CRAN version" /></a> <a href="https://CRAN.R-project.org/package=irace"><img src="http://cranlogs.r-pkg.org/badges/grand-total/irace" alt="CRAN Downloads" /></a></p>
+<h1 id="irace-iterated-racing-for-automatic-algorithm-configuration"><strong>irace</strong>: Iterated Racing for Automatic Algorithm Configuration</h1>
+<p><a href="https://cran.r-project.org/package=irace"><img src="http://www.r-pkg.org/badges/version/irace" alt="CRAN_Status_Badge" /></a> <a href="https://CRAN.R-project.org/package=irace"><img src="http://cranlogs.r-pkg.org/badges/grand-total/irace" alt="CRAN Downloads" /></a></p>
 <p><strong>Maintainers:</strong> <a href="http://lopez-ibanez.eu">Manuel L&#243;pez-Ib&#225;&#241;ez</a>, Leslie P&#233;rez C&#225;ceres</p>
 <p><strong>Creators:</strong> <a href="http://lopez-ibanez.eu">Manuel L&#243;pez-Ib&#225;&#241;ez</a>, J&#233;r&#233;mie Dubois-Lacoste</p>
 <p><strong>Contributors:</strong> J&#233;r&#233;mie Dubois-Lacoste, Thomas St&#252;tzle, Mauro Birattari, Eric Yuan and Prasanna Balaprakash.</p>
 <p><strong>Contact:</strong> <a href="https://groups.google.com/d/forum/irace-package" class="uri">https://groups.google.com/d/forum/irace-package</a></p>
 <h1 id="introduction">Introduction</h1>
-<p>The irace package implements the Iterated Race method, which is a generalization of the Iterated F-race method for the automatic configuration of optimization algorithms, that is, the tuning of their parameters by finding the most appropriate settings given a set of instances of an optimization problem. It builds upon the race package by Birattari and it is implemented in R.</p>
+<p>The <strong>irace</strong> package implements the Iterated Race method, which is a generalization of the Iterated F-race method for the automatic configuration of optimization algorithms, that is, the tuning of their parameters by finding the most appropriate settings given a set of instances of an optimization problem. It builds upon the race package by Birattari and it is implemented in R.</p>
 <p><strong>Keywords</strong>: automatic configuration, offline tuning, parameter tuning, racing, F-race.</p>
 <p>Relevant literature:</p>
 <ol style="list-style-type: decimal">
@@ -83,7 +88,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ol>
 <h2 id="requisites">Requisites</h2>
 <ul>
-<li>R (<a href="http://www.r-project.org" class="uri">http://www.r-project.org</a>) is required for running irace, but you don't need to know the R language to use it. Versions that work: &gt;= 2.15.0</li>
+<li>R (<a href="https://www.r-project.org" class="uri">https://www.r-project.org</a>) is required for running irace, but you don't need to know the R language to use it. Versions that work: &gt;= 2.15.0</li>
 </ul>
 <h1 id="user-guide">User guide</h1>
 <p>A complete <a href="https://cran.r-project.org/package=irace/vignettes/irace-package.pdf">user guide</a> comes with the package. You can access it online or, after installing the irace package, invoking from R the following command:</p>
@@ -151,7 +156,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <ol start="3" style="list-style-type: decimal">
 <li>For each template in your tuning directory, remove the <code>.tmpl</code> suffix, and modify them following the instructions in each file. In particular,
 <ul>
-<li>The scripts <code>target-runner</code> and <code>targetEvaluator</code> (if you need it at all) should be executable. The output of <code>target-runner</code> (or <code>targetEvaluator</code> if you use a separate evaluation step) is minimized by default. If you wish to maximize it, just multiply the value by <code>-1</code> within the script.</li>
+<li>The scripts <code>target-runner</code> and <code>target-evaluator</code> (if you need it at all) should be executable. The output of <code>target-runner</code> (or <code>target-evaluator</code> if you use a separate evaluation step) is minimized by default. If you wish to maximize it, just multiply the value by <code>-1</code> within the script.</li>
 <li>In <code>scenario.txt</code>, uncomment and assign only the parameters for which you need a value different than the default one.</li>
 </ul>
 <p>There are examples in <code>$IRACE_HOME/examples/</code>.</p></li>

@@ -1,13 +1,7 @@
----
-title: "irace: Iterated Racing for Automatic Algorithm Configuration
-output:
-  html_document:
-    theme: journal
-    toc: true
-    toc_depth: 4
----
+**irace**: Iterated Racing for Automatic Algorithm Configuration
+================================================================
 
-[![CRAN version](http://www.r-pkg.org/badges/version-last-release/irace)](https://CRAN.R-project.org/package=irace)
+[![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/irace)](https://cran.r-project.org/package=irace)
 [![CRAN Downloads](http://cranlogs.r-pkg.org/badges/grand-total/irace)](https://CRAN.R-project.org/package=irace)
 
 **Maintainers:** [Manuel López-Ibáñez](http://lopez-ibanez.eu), Leslie Pérez Cáceres
@@ -22,7 +16,7 @@ output:
 Introduction
 ============
 
-The irace package implements the Iterated Race method, which is a
+The **irace** package implements the Iterated Race method, which is a
 generalization of the Iterated F-race method for the automatic configuration of
 optimization algorithms, that is, the tuning of their parameters by finding the
 most appropriate settings given a set of instances of an optimization problem.

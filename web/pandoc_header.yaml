@@ -1,0 +1,6 @@
+---
+title: 'irace: Iterated Racing for Automatic Algorithm Configuration'
+output:
+  html_document:
+    theme: journal
+---

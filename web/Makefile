@@ -23,8 +23,8 @@ get:
 put: files/README.html
 	rsync $(RSYNC_FLAGS)  --delete --delete-excluded . $(HOST):$(REMOTEDIR)
 
-files/README.html : ../README.md
-	pandoc -s --toc --toc-depth=4  --ascii ../README.md > files/README.html
+files/README.html : ../README.md pandoc_header.yaml
+	pandoc -s --toc --toc-depth=4  --ascii ./pandoc_header.yaml ../README.md > files/README.html
 
 tutorial: 
 	pushd ../examples && \
