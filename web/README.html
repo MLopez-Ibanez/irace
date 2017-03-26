@@ -43,6 +43,7 @@ code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Ann
 code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
 code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
   </style>
+  <link rel="stylesheet" href="pandoc-simple.css" type="text/css" />
 </head>
 <body>
 <div id="header">
@@ -51,9 +52,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div id="TOC">
 <ul>
 <li><a href="#irace-iterated-racing-for-automatic-algorithm-configuration"><strong>irace</strong>: Iterated Racing for Automatic Algorithm Configuration</a></li>
-<li><a href="#introduction">Introduction</a><ul>
+<li><a href="#introduction">Introduction</a></li>
 <li><a href="#requisites">Requisites</a></li>
-</ul></li>
 <li><a href="#user-guide">User guide</a></li>
 <li><a href="#installing-r">Installing R</a><ul>
 <li><a href="#gnulinux">GNU/Linux</a></li>
@@ -71,22 +71,23 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li><a href="#frequently-asked-questions">Frequently Asked Questions</a></li>
 </ul>
 </div>
+<hr />
 <h1 id="irace-iterated-racing-for-automatic-algorithm-configuration"><strong>irace</strong>: Iterated Racing for Automatic Algorithm Configuration</h1>
-<p><a href="https://cran.r-project.org/package=irace"><img src="http://www.r-pkg.org/badges/version/irace" alt="CRAN_Status_Badge" /></a> <a href="https://CRAN.R-project.org/package=irace"><img src="http://cranlogs.r-pkg.org/badges/grand-total/irace" alt="CRAN Downloads" /></a></p>
+<p><a href="https://CRAN.R-project.org/package=irace"><img src="http://www.r-pkg.org/badges/version-last-release/irace" alt="CRAN_Status_Badge" /></a> <a href="https://CRAN.R-project.org/package=irace"><img src="http://cranlogs.r-pkg.org/badges/grand-total/irace" alt="CRAN Downloads" /></a></p>
 <p><strong>Maintainers:</strong> <a href="http://lopez-ibanez.eu">Manuel L&#243;pez-Ib&#225;&#241;ez</a>, Leslie P&#233;rez C&#225;ceres</p>
 <p><strong>Creators:</strong> <a href="http://lopez-ibanez.eu">Manuel L&#243;pez-Ib&#225;&#241;ez</a>, J&#233;r&#233;mie Dubois-Lacoste</p>
 <p><strong>Contributors:</strong> J&#233;r&#233;mie Dubois-Lacoste, Thomas St&#252;tzle, Mauro Birattari, Eric Yuan and Prasanna Balaprakash.</p>
 <p><strong>Contact:</strong> <a href="https://groups.google.com/d/forum/irace-package" class="uri">https://groups.google.com/d/forum/irace-package</a></p>
 <h1 id="introduction">Introduction</h1>
 <p>The <strong>irace</strong> package implements the Iterated Race method, which is a generalization of the Iterated F-race method for the automatic configuration of optimization algorithms, that is, the tuning of their parameters by finding the most appropriate settings given a set of instances of an optimization problem. It builds upon the race package by Birattari and it is implemented in R.</p>
-<p><strong>Keywords</strong>: automatic configuration, offline tuning, parameter tuning, racing, F-race.</p>
-<p>Relevant literature:</p>
+<p><strong>Keywords:</strong> automatic configuration, offline tuning, parameter tuning, racing, F-race.</p>
+<p><strong>Relevant literature:</strong></p>
 <ol style="list-style-type: decimal">
-<li><p>M. L&#243;pez-Ib&#225;&#241;ez, J. Dubois-Lacoste, L. P&#233;rez C&#225;ceres, T. St&#252;tzle, and M. Birattari. <a href="http://dx.doi.org/10.1016/j.orp.2016.09.002">The irace package: Iterated Racing for Automatic Algorithm Configuration.</a>. <em>Operations Research Perspectives</em>, 2016. doi:<a href="http://dx.doi.org/10.1016/j.orp.2016.09.002">10.1016/j.orp.2016.09.002</a>.</p></li>
+<li><p>M. L&#243;pez-Ib&#225;&#241;ez, J. Dubois-Lacoste, L. P&#233;rez C&#225;ceres, T. St&#252;tzle, and M. Birattari. <a href="http://dx.doi.org/10.1016/j.orp.2016.09.002">The irace package: Iterated Racing for Automatic Algorithm Configuration.</a>. <em>Operations Research Perspectives</em>, 3:43&#8211;58, 2016.<br> [ <a href="http://lopez-ibanez.eu/LopezIbanez_bib.html#LopDubPerStuBir2016irace">bibtex</a> | doi:<a href="http://dx.doi.org/10.1016/j.orp.2016.09.002">10.1016/j.orp.2016.09.002</a> ]</p></li>
 <li><p>Manuel L&#243;pez-Ib&#225;&#241;ez, J&#233;r&#233;mie Dubois-Lacoste, Thomas St&#252;tzle, and Mauro Birattari. <a href="http://iridia.ulb.ac.be/IridiaTrSeries/IridiaTr2011-004.pdf">The irace package, Iterated Race for Automatic Algorithm Configuration</a>. Technical Report TR/IRIDIA/2011-004, IRIDIA, Universit&#233; libre de Bruxelles, Belgium, 2011.<br> [ <a href="http://iridia.ulb.ac.be/~manuel/LopezIbanez_bib.html#LopDubStu2011irace">bibtex</a> | <a href="http://iridia.ulb.ac.be/IridiaTrSeries/IridiaTr2011-004.pdf">PDF</a> ]</p></li>
 <li><p>Manuel L&#243;pez-Ib&#225;&#241;ez. <a href="http://iridia.ulb.ac.be/irace/files/irace-comex-tutorial.pdf">The irace software package: A tutorial</a>. COMEX Workshop on Practical Automatic Algorithm Configuration, 2014.<br> [ <a href="http://iridia.ulb.ac.be/~manuel/comex_workshop/">workshop webpage</a> | <a href="http://iridia.ulb.ac.be/irace/files/irace-comex-tutorial.pdf">PDF</a> ]</p></li>
 </ol>
-<h2 id="requisites">Requisites</h2>
+<h1 id="requisites">Requisites</h1>
 <ul>
 <li>R (<a href="https://www.r-project.org" class="uri">https://www.r-project.org</a>) is required for running irace, but you don't need to know the R language to use it. Versions that work: &gt;= 2.15.0</li>
 </ul>

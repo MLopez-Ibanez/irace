@@ -11,7 +11,7 @@ default:
 	@echo "make [ get | put | testget | testput ]"
 	@echo "You need to have 'rsync' and 'pandoc' installed"	
 
-testput: files/README.html
+testput: README.html
 	rsync $(RSYNC_FLAGS) --dry-run --delete --delete-excluded . $(HOST):$(REMOTEDIR)
 
 testget:
@@ -20,11 +20,11 @@ testget:
 get:
 	rsync $(RSYNC_FLAGS) $(HOST):$(REMOTEDIR) .
 
-put: files/README.html
+put: README.html
 	rsync $(RSYNC_FLAGS)  --delete --delete-excluded . $(HOST):$(REMOTEDIR)
 
-files/README.html : ../README.md pandoc_header.yaml
-	pandoc -s --toc --toc-depth=4  --ascii ./pandoc_header.yaml ../README.md > files/README.html
+README.html : ../README.md pandoc_header.yaml pandoc-simple.css
+	pandoc -s --toc --toc-depth=4  --css pandoc-simple.css --ascii ./pandoc_header.yaml ../README.md > README.html
 
 tutorial: 
 	pushd ../examples && \

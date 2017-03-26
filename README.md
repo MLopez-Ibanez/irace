@@ -1,7 +1,7 @@
 **irace**: Iterated Racing for Automatic Algorithm Configuration
 ================================================================
 
-[![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/irace)](https://cran.r-project.org/package=irace)
+[![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version-last-release/irace)](https://CRAN.R-project.org/package=irace)
 [![CRAN Downloads](http://cranlogs.r-pkg.org/badges/grand-total/irace)](https://CRAN.R-project.org/package=irace)
 
 **Maintainers:** [Manuel López-Ibáñez](http://lopez-ibanez.eu), Leslie Pérez Cáceres
@@ -22,13 +22,16 @@ optimization algorithms, that is, the tuning of their parameters by finding the
 most appropriate settings given a set of instances of an optimization problem.
 It builds upon the race package by Birattari and it is implemented in R.
 
-**Keywords**: automatic configuration, offline tuning, parameter tuning, racing, F-race.
+**Keywords:** automatic configuration, offline tuning, parameter tuning, racing, F-race.
 
-Relevant literature:
+**Relevant literature:**
 
  1. M. López-Ibáñez, J. Dubois-Lacoste, L. Pérez Cáceres, T. Stützle, and
     M. Birattari. [The irace package: Iterated Racing for Automatic Algorithm Configuration.](http://dx.doi.org/10.1016/j.orp.2016.09.002).
-    *Operations Research Perspectives*, 2016.  doi:[10.1016/j.orp.2016.09.002](http://dx.doi.org/10.1016/j.orp.2016.09.002).
+    *Operations Research Perspectives*, 3:43–58, 2016.<br>
+    [ [bibtex](http://lopez-ibanez.eu/LopezIbanez_bib.html#LopDubPerStuBir2016irace) 
+    |
+    doi:[10.1016/j.orp.2016.09.002](http://dx.doi.org/10.1016/j.orp.2016.09.002) ]
 
  2. Manuel López-Ibáñez, Jérémie Dubois-Lacoste, Thomas Stützle, and Mauro
     Birattari. [The irace package, Iterated Race for Automatic Algorithm Configuration](http://iridia.ulb.ac.be/IridiaTrSeries/IridiaTr2011-004.pdf).
@@ -44,7 +47,7 @@ Relevant literature:
 
 
 Requisites
-----------
+==========
 
  * R (<https://www.r-project.org>) is required for running irace, but
    you don't need to know the R language to use it.
