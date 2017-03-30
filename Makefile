@@ -27,7 +27,7 @@ REVNUM = $(shell sh -c 'cat svn_version | tr -d -c "[:digit:]" 2> /dev/null')
 .PHONY : help build check clean install pdf rsync version bumpdate submit cran winbuild vignettes
 
 
-install: version
+install:
 	$(MAKE) build
 	cd $(BINDIR) && R CMD INSTALL $(INSTALL_FLAGS) $(PACKAGE)_$(PACKAGEVERSION).tar.gz
 
