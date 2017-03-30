@@ -237,6 +237,34 @@ race.print.header <- function()
 ")
 }
 
+race.print.task <- function(Results,
+                            instance,
+                            current.task,
+                            alive,
+                            id.best,
+                            mean.best,
+                            no.experiments.sofar,
+                            start.time)
+{
+  time.diff <- difftime(Sys.time(), start.time, units = "secs")
+  cat(sprintf("%11d|%11d|%11d|%#15.10g|%11d|%s",
+              instance,
+              sum(alive),
+              id.best,
+              mean.best,
+              no.experiments.sofar,
+              # FIXME: Maybe better and faster if we only print seconds?
+              format(.POSIXct(time.diff, tz="GMT"), "%H:%M:%S")))
+  if (current.task > 1 && sum(alive) > 1) {
+    conc <- concordance(Results[1:current.task, alive])
+    qvar <- dataVariance(Results[1:current.task, alive])
+    cat(sprintf("|%+#4.2f|%.2f|%.4f|\n", conc$spearman.rho, conc$kendall.w,
+                   qvar))
+  } else {
+    cat("|   NA|  NA|    NA|\n")
+  }
+}
+
 race.print.footer <- function(bestconf, mean.best, break.msg, debug.level)
 {
   cat(sep = "",
@@ -437,7 +465,8 @@ race <- function(maxExp = 0,
 
     start.time <- Sys.time()
     # Execute experiments
-    output <- race.wrapper (configurations = configurations, instance.idx = race.instances[current.task],
+    output <- race.wrapper (configurations = configurations,
+                            instance.idx = race.instances[current.task],
                             which.alive = which.alive, which.exe = which.exe,
                             parameters = parameters, scenario = scenario)
                             
@@ -534,25 +563,15 @@ race <- function(maxExp = 0,
     # the sum of ranks in the case of test == friedman?
     mean.best <- mean(Results[1:current.task, best])
 
-    if (interactive) {
-      time.diff <- difftime(Sys.time(), start.time, units = "secs")
-      cat(sprintf("%11d|%11d|%11d|%#15.10g|%11d|%s",
-                  race.instances[current.task],
-                  sum(alive),
-                  configurations[best, ".ID."],
-                  mean.best,
-                  no.experiments.sofar,
-                  # FIXME: Maybe better and faster if we only print seconds?
-                  format(.POSIXct(time.diff, tz="GMT"), "%H:%M:%S")))
-      if (current.task > 1 && sum(alive) > 1) {
-        conc <- concordance(Results[1:current.task, alive])
-        qvar <- dataVariance(Results[1:current.task, alive])
-        cat(sprintf("|%+#4.2f|%.2f|%.4f|\n", conc$spearman.rho, conc$kendall.w,
-                    qvar))
-      } else {
-        cat("|   NA|  NA|    NA|\n")
-      }
-    }
+    race.print.task(Results,
+                    race.instances[current.task],
+                    current.task,
+                    alive,
+                    configurations[best, ".ID."],
+                    mean.best,
+                    no.experiments.sofar,
+                    start.time)
+
     prev.alive  <- which.alive
     which.alive <- which(alive)
 
