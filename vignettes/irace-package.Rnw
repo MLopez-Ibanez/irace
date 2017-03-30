@@ -1907,7 +1907,7 @@ configuration corresponds to the first ID. To obtain the values of the
 parameters of all elite configurations found by \irace use:
 
 <<get_elites, prompt=TRUE, eval=TRUE, comment="">>=
-getFinalElites(irace.logFile = "irace-output.Rdata", n = 0)
+getFinalElites(logFile = "irace-output.Rdata", n = 0)
 @
 
 \item \code{iterationElites}: A vector containing the best candidate configuration ID of each iteration. The best configuration found corresponds to the last one
@@ -1921,7 +1921,7 @@ One can obtain the full configuration with:
 <<get_elite, prompt=TRUE, eval=TRUE, comment="">>=
 last <- length(iraceResults$iterationElites)
 id <- iraceResults$iterationElites[last]
-getConfigurationById(irace.logFile = "irace-output.Rdata", ids = id)
+getConfigurationById(logFile = "irace-output.Rdata", ids = id)
 @
 
 \item \code{experiments}: A matrix with configurations as columns and instances
@@ -2072,6 +2072,45 @@ parallelCoordinatesPlot (conf, iraceResults$parameters,
                          param_names = c("algorithm", "alpha",
                                          "beta", "rho", "q0"),
                          hierarchy = FALSE)
+@
+
+
+It is also possible to plot the performance evolution of the best-so-far configuration over the number of experiments as follows:
+<<trainEvo, fig.pos="H", fig.align="center", out.width='0.75\\textwidth', fig.cap="Training set performance of the best-so-far configuration over number of experiments.", prompt=FALSE, eval=TRUE, comment="">>=
+# Get number of iterations
+iters <- unique(iraceResults$experimentLog[, "iteration"])
+# Get number of experiments (function evaluations) up to each iteration
+fes <- cumsum(sapply(iters, function(k)
+  sum(iraceResults$experimentLog[, "iteration"] == k)))
+# Get the mean value of all experiments executed up to each iteration for the best configuration of that iteration.
+values <- sapply(iters, function(k) {
+  instances <- as.character(
+    unique(iraceResults$experimentLog[
+                          iraceResults$experimentLog[, "iteration"] == k,
+                          "instance"]))
+  return(mean(iraceResults$experiments[
+                             instances,
+                             as.character(iraceResults$iterationElites[k])]))})
+plot(fes, values, type="s", xlab = "Function evaluations",
+     ylab = "Estimated mean value over training set")
+points(fes, values)
+@
+
+We can do the same, but using the performance on the test set:
+<<testEvo, fig.pos="H", fig.align="center", out.width='0.75\\textwidth', fig.cap="Testing set performance of the best-so-far configuration over number of experiments.", prompt=FALSE, eval=TRUE, comment="">>=
+# Get number of iterations
+iters <- unique(iraceResults$experimentLog[, "iteration"])
+# Get number of experiments (function evaluations) up to each iteration
+fes <- cumsum(sapply(iters, function(k)
+  sum(iraceResults$experimentLog[, "iteration"] == k)))
+# Get the mean value of all experiments executed up to each iteration
+# for the best configuration of that iteration.
+values <- sapply(iters, function(k) 
+  mean(iraceResults$testing$experiments[
+                            , as.character(iraceResults$iterationElites[k])]))
+plot(fes, values, type = "s",
+     xlab = "Function evaluations", ylab = "Mean value over testing set")
+points(fes, values)
 @
 
 
@@ -2574,7 +2613,7 @@ Optional data passed to \parameter{targetRunner}. This is ignored by the default
 
 \defparameter{batchmode}{batchmode}{0} %
   Specify how irace waits for jobs to finish when \parameter{targetRunner} submits jobs to
-  a batch cluster: sge, pbs, torque or slurm (\parameter{targetRunner} must
+  a batch cluster: \code{sge}, \code{pbs}, \code{torque} or \code{slurm} (\parameter{targetRunner} must
   submit jobs to the cluster using. for example, \code{qsub}). See
   \autoref{sec:parallel}.
 

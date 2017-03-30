@@ -57,7 +57,11 @@ sann.irace <- function(...)
 
   scenario <- checkScenario (scenario)
 
-  irace(scenario = scenario, parameters = parameters)
+  confs <- irace(scenario = scenario, parameters = parameters)
+  best.conf <- getFinalElites(logFile = scenario$logFile, n = 1,
+                              drop.metadata = TRUE)
+  stopifnot(identical(removeConfigurationsMetaData(confs[1, , drop = FALSE]),
+                      best.conf))
 }
 
 sann.irace(instances = weights)

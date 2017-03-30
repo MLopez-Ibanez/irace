@@ -30,8 +30,7 @@ parameterFrequency <- function(configurations, parameters,
   
   def.par <- par(no.readonly = TRUE) # save default, for resetting...
 
-  # This is the same as removeConfigurationsMetaData
-  configurations <- configurations[, grep("^\\.", colnames(configurations), invert=TRUE), drop = FALSE]
+  configurations <- removeConfigurationsMetaData(configurations)
 
   param.names <- as.character(parameters$names)
   nparams <- parameters$nbVariable
@@ -255,29 +254,19 @@ parallelCoordinatesPlot <- function(configurations, parameters, param_names=para
 
 }
 
-## Get the "n" best final elite configurations.
-## iraceResults: object created by irace and saved in scenario$logFile.
-## iraceLog: log file created by irace, this file must contain the iraceResults object.
-## n: number of elite configurations to return, if n is larger than the number of 
-##    configurations, then only the existing ones are returned.
-## drop.internals: Remove the internal identifier and parent identifier from the returned 
-##    configurations data frame.
-## * iraceResults or iraceLog must be provided, in case both are give iraceResults will be used.
-## This function returns a data frame containing the selected candidate configurations 
-getFinalElites <- function(iraceResults=NULL, irace.logFile=NULL, n=0, drop.internals=FALSE) {
-  if(is.null(iraceResults)){
-    if(is.null(irace.logFile))
-      stop("You must supply either iraceResults or iraceLog argument.\n")
+getFinalElites <- function(iraceResults = NULL, logFile = NULL, n = 0,
+                           drop.metadata = FALSE)
+{
+  if (is.null(iraceResults)) {
+    if (is.null(logFile))
+      stop("You must supply either 'iraceResults' or 'logFile' argument.\n")
     else
-      load(irace.logFile)
+      load(logFile)
   }
   
-  #Following is done to avoid the note "make check"
-  .ID.<-NULL
+  last.elites <- iraceResults$allElites[[length(iraceResults$allElites)]]
   
-  last.elites  <- iraceResults$allElites[[length(iraceResults$allElites)]]
-  
-  if (n==0) 
+  if (n == 0)
     n <- length(last.elites) 
     
   if (length(last.elites) < n) {
@@ -286,12 +275,12 @@ getFinalElites <- function(iraceResults=NULL, irace.logFile=NULL, n=0, drop.inte
   }
   last.elites <- last.elites[1:n]
   
-  configurations <-as.data.frame(t(sapply(last.elites,function (x) subset(iraceResults$allConfigurations, .ID.==x))))
-  
-  if(drop.internals)
-    configurations <-  removeConfigurationsMetaData(configurations)
+  configurations <- subset(iraceResults$allConfigurations,
+                           get(".ID.") %in% as.character(last.elites),
+                           drop = FALSE)
+  if (drop.metadata)
+    configurations <- removeConfigurationsMetaData(configurations)
   return(configurations)
-
 }
 
 
@@ -299,17 +288,17 @@ getFinalElites <- function(iraceResults=NULL, irace.logFile=NULL, n=0, drop.inte
 ## iraceResults: object created by irace and saved in scenario$logFile.
 ## iraceLog: log file created by irace, this file must contain the iraceResults object.
 ## ids: the id or a vector of ids of the candidates configurations to obtain.
-## drop.internals: Remove the internal identifier and parent identifier from the returned 
+## drop.metadata: Remove the internal identifier and parent identifier from the returned 
 ##    configurations data frame.
 ## * iraceResults or iraceLog must be provided, in case both are give iraceResults will be used.
 ## This function returns a data frame containing the selected candidate configurations 
-getConfigurationById <- function(iraceResults=NULL, irace.logFile=NULL, ids, drop.internals=FALSE) {
+getConfigurationById <- function(iraceResults=NULL, logFile=NULL, ids, drop.metadata=FALSE) {
 
   if(is.null(iraceResults)){
-    if(is.null(irace.logFile))
+    if(is.null(logFile))
       stop("You must supply either iraceResults or iraceLog argument.\n")
     else
-      load(irace.logFile)
+      load(logFile)
   }
   
   if(length(ids) <1 ) stop("You must provide at least one configuration id.\n")
@@ -320,7 +309,7 @@ getConfigurationById <- function(iraceResults=NULL, irace.logFile=NULL, ids, dro
   
   configurations <-iraceResults$allConfigurations[selection, , drop=FALSE]
   
-  if(drop.internals)
+  if(drop.metadata)
     configurations <-  removeConfigurationsMetaData(configurations)
   return(configurations)
 }
@@ -330,24 +319,23 @@ getConfigurationById <- function(iraceResults=NULL, irace.logFile=NULL, ids, dro
 ## iraceResults: object created by irace and saved in scenario$logFile.
 ## iraceLog: log file created by irace, this file must contain the iraceResults object.
 ## iterations: the iteration or a vector of iterations from where the configurations should be obtained.
-## drop.internals: Remove the internal identifier and parent identifier from the returned 
+## drop.metadata: Remove the internal identifier and parent identifier from the returned 
 ##    configurations data frame.
 ## * iraceResults or iraceLog must be provided, in case both are give iraceResults will be used.
 ## This function returns a data frame containing the selected candidate configurations 
-getConfigurationByIteration <- function(iraceResults=NULL, irace.logFile=NULL, iterations, drop.internals=FALSE) {
-
+getConfigurationByIteration <- function(iraceResults = NULL, logFile = NULL,
+                                        iterations, drop.metadata = FALSE)
+{
   if(is.null(iraceResults)){
-    if(is.null(irace.logFile))
+    if(is.null(logFile))
       stop("You must supply either iraceResults or iraceLog argument.\n")
     else
-      load(irace.logFile)
+      load(logFile)
   }
   
   if(length(iterations) <1 ) stop("You must provide at least one configuration id.\n")
   
-  #Following is done to avoid the note "make check"
   iteration <-NULL
-  
   ids <- unique(subset(as.data.frame(iraceResults$experimentLog), iteration==iterations,  select=c("configuration"), drop=TRUE))
   
   selection <- iraceResults$allConfigurations[,".ID."] %in% ids
@@ -356,7 +344,7 @@ getConfigurationByIteration <- function(iraceResults=NULL, irace.logFile=NULL, i
   
   configurations <-iraceResults$allConfigurations[selection, , drop=FALSE]
   
-  if(drop.internals)
+  if (drop.metadata)
     configurations <-  removeConfigurationsMetaData(configurations)
   return(configurations)
 }
