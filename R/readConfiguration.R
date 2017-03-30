@@ -313,7 +313,7 @@ checkScenario <- function(scenario = defaultScenario())
       scenario$trainInstancesFile <- path.rel2abs(scenario$trainInstancesFile)
     }
     scenario[c("instances", "instances.extra.params")] <-
-      readInstances(instancesDir = canonical.dirname (scenario$trainInstancesDir),
+      readInstances(instancesDir = scenario$trainInstancesDir,
                     instancesFile = scenario$trainInstancesFile)
   }
   
@@ -330,7 +330,7 @@ checkScenario <- function(scenario = defaultScenario())
         scenario$testInstancesFile <- path.rel2abs(scenario$testInstancesFile)
       }
       scenario[c("testInstances", "testInstances.extra.params")] <-
-        readInstances(instancesDir = canonical.dirname (scenario$testInstancesDir),
+        readInstances(instancesDir = scenario$testInstancesDir,
                       instancesFile = scenario$testInstancesFile)
     } else {
       scenario$testInstances <- NULL
@@ -576,7 +576,7 @@ readInstances <- function(instancesDir = NULL, instancesFile = NULL)
     lines <- sub("^[[:space:]]+", "", lines) # Remove extra spaces
     lines <- lines[lines != ""] # Delete empty lines
     instances <- sub("^([^[:space:]]+).*$", "\\1", lines)
-    instances <- paste0 (instancesDir, instances)
+    instances <- paste0 (instancesDir, .Platform$file.sep, instances)
     instances.extra.params <- sub("^[^[:space:]]+(.*)$", "\\1", lines)
     names (instances.extra.params) <- instances
   } else {

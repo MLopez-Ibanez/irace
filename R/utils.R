@@ -163,31 +163,29 @@ strcat <- function(...)
   do.call(paste0, args = list(..., collapse = NULL))
 }
 
-# FIXME: Isn't there an R function to do this? More portable?
-canonical.dirname <- function(dirname)
-{
-  if (missing(dirname))
-    stop ("argument 'dirname' is required")
-  ## FIXME: Perhaps this is better?
-  # s <- .Platform$file.sep
-  # return(sub(paste0(s,"?$"), s, dirname))
-  return (sub ("([^/])$", "\\1/", dirname))
-}
-
 # Function to convert a relative to an absolute path. CWD is the
 # working directory to complete relative paths. It tries really hard
 # to create canonical paths.
 path.rel2abs <- function (path, cwd = getwd())
 {
+  # Keep doing gsub as long as x keeps changing.
+  gsub.all <- function(pattern, repl, x, ...) {
+    repeat {
+      newx <- gsub(pattern, repl, x, ...)
+      if (newx == x) return(newx)
+      x <- newx
+    }
+  }
+    
   if (is.null.or.na(path)) {
     return (NULL)
   } else if (path == "") {
     return ("")
   }
-
-  s <- .Platform$file.sep
+  # s <- .Platform$file.sep
+  s <- "/"
   # Remove winslashes if given.
-  path <- gsub("\\\\", s, path, fixed = TRUE)
+  path <- gsub("\\", s, path, fixed = TRUE)
   # Possibly expand ~/path to /home/user/path.
   path <- path.expand(path)
 
@@ -198,12 +196,19 @@ path.rel2abs <- function (path, cwd = getwd())
     m <- regexpr(windrive.regex, path)
     windrive <- regmatches(path, m)
     path <- sub(windrive.regex, "", path)
-    if (path == "") path <- s
   }
-  
-  filename <- basename(path)
-  path <- dirname(path)
 
+  
+  # Change "/./" to "/" to get a canonical form 
+  path <- gsub.all(paste0(s, ".", s), s, path, fixed = TRUE)
+  # Change "//" to "/" to get a canonical form 
+  path <- gsub(paste0(s, s, "+"), s, path)
+  # Change "/.$" to "/" to get a canonical form 
+  path <- sub(paste0(s, "\\.$"), s, path)
+  # Drop final "/"
+  path <- sub(paste0(s, "$"), "", path)
+  if (path == "") path <- s
+  
   # Prefix the current cwd to the path if it doesn't start with
   # / \\ or whatever separator.
   if (path == "." || !grepl(paste0("^",s), path)) {
@@ -212,43 +217,31 @@ path.rel2abs <- function (path, cwd = getwd())
       # Recurse to get absolute cwd
       cwd <- path.rel2abs(cwd)
     }
-    
+
+    # Speed-up the most common cases.
+    # If it is just "."
     if (path == ".") {
-      if (filename == ".") { # This is the current directory
-        return (suppressWarnings(normalizePath(cwd, mustWork = NA)))
-        # We handle the case ".." later.
-      } else if (filename != "..") { # This is a file in the current directory
-        # Drop final '/' if any
-        path <- sub(paste0(s, "?$"), paste0(s, filename), cwd)
-        return(suppressWarnings(normalizePath(path, mustWork = NA)))
-      }
+      return (suppressWarnings(normalizePath(cwd, mustWork = NA)))
     }
-    path <- paste0(cwd, s, path)
+    # Remove "./" from the start of path.
+    path <- sub(paste0("^\\.", s), "", path)
+    # Make it absolute but avoid doubling s
+    if (substring(cwd, nchar(cwd)) == s) path <- paste0(cwd, path)
+    else path <- paste0(cwd, s, path)
+    # If it is just a path without ".." inside
+    if (!grepl(paste0(s,"\\.\\."), path)) {
+      return(suppressWarnings(normalizePath(path, mustWork = NA)))
+    }
     # Detect a Windows drive
     if (grepl(paste0(windrive.regex, "($|", s, ")"), path)) {
       m <- regexpr(windrive.regex, path)
       windrive <- regmatches(path, m)
       path <- sub(windrive.regex, "", path)
-      if (path == "") path <- s
     }
   }
   # else
 
-  if (filename == "..") {
-    path <- paste0(path, s, filename)
-    filename <- ""
-  }
-    
-  # Change "//" to "/" to get a canonical form 
-  path <- gsub(paste0(s, s, "+"), s, path)
-
-  # Change "/./" to "/" to get a canonical form 
-  path <- gsub(paste0(s, ".", s), s, path, fixed = TRUE)
-
-  # Change "/.$" to "/" to get a canonical form 
-  path <- sub(paste0(s, "\\.$"), s, path)
-
-  # Change "/x/../" to "/" to get a canonical form 
+  # Change "/x/.." to "/" to get a canonical form 
   prevdir.regex <- paste0(s, "[^", s,"]+", s, "\\.\\.")
   repeat {
     # We need to do it one by one so "a/b/c/../../../" is not converted to "a/b/../"
@@ -269,12 +262,6 @@ path.rel2abs <- function (path, cwd = getwd())
   # Handle "^/..$" to "/" that is, when ".." is the last thing in the path.
   path <- sub(paste0("^", s, "\\.\\.$"), s, path)
 
-  # It may happen that path ends in "/", for example, for "/x". Do
-  # not add another "/"
-  if (filename != ".") {
-    # Drop final '/' if any
-    path <- sub(paste0(s, "?$"), paste0(s, filename), path)
-  }
   # Add back Windows drive, if any.
   path <- paste0(windrive, path)
 
