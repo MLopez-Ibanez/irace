@@ -1,3 +1,6 @@
+ * Several fixes for handling paths in Windows.
+                                                     (Manuel López-Ibáñez)
+                                                     
  * readConfigurationsFile() now has a text= argument, which allows reading
    configurations from a string.
                                                      (Manuel López-Ibáñez)
