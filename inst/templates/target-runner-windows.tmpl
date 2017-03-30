@@ -38,13 +38,13 @@ SET "stderr=c%config_id%-%instance_id%.stderr"
 
 :: If the program just prints a number, we can use 'exec' to avoid
 :: creating another process, but there can be no other commands after exec.
-::exec %exe %FIXED_PARAMS% -i %instance %candidate_parameters%
+::exec %exe %fixed_params% -i %instance %candidate_parameters%
 :: exit 1
 ::
 :: Otherwise, save the output to a file, and parse the result from it.
 :: (If you wish to ignore segmentation faults you can use '{}' around
 :: the command.)
-%exe% %FIXED_PARAMS% --seed %seed% -i %instance% %candidate_parameters% 1>%stdout% 2>%stderr%
+%exe% %fixed_params% --seed %seed% -i %instance% %candidate_parameters% 1>%stdout% 2>%stderr%
 
 ::if %errorlevel% neq 0 exit /b %errorlevel%
 
