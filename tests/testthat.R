@@ -68,9 +68,9 @@ sann.irace(deterministic = TRUE, instances = weights[1:7])
 test.path.rel2abs <- function()
 {
   # Try to set wd; otherwise fail silently.
-  cwd <- getwd()
-  if (is.null(cwd)) return(TRUE)
-  on.exit(setwd(cwd))
+  old.cwd <- getwd()
+  if (is.null(old.cwd)) return(TRUE)
+  on.exit(setwd(old.cwd), add = TRUE)
   try (setwd("/tmp"))
   if (getwd() != "/tmp") return(TRUE)
   
@@ -122,7 +122,6 @@ test.path.rel2abs <- function()
 }
 test.path.rel2abs()
 
-
 test.checkForbidden <- function()
 {
   params <- irace:::readParameters("parameters.txt")
@@ -139,3 +138,4 @@ NA        NA   "x3"   4.5   "low"
   rownames(confs) <- rownames(exp.confs) <- NULL
   stopifnot(identical(confs, exp.confs))
 }
+test.checkForbidden()
