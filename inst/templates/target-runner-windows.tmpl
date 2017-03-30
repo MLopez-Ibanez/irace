@@ -48,17 +48,19 @@ SET "stderr=c%config_id%-%instance_id%.stderr"
 
 ::if %errorlevel% neq 0 exit /b %errorlevel%
 
-:: # This may be used to introduce a delay if there are filesystem
-:: # issues.
+:: :: # This may be used to introduce a delay if there are filesystem
+:: :: # issues.
+:: :: FIXME: The following is not BAT code, so it cannot really be executed in
+:: :: Windows. What is the Windows equivalent?
 :: SLEEPTIME=1
 :: while [ ! -s "%stdout%" ]; do
 ::     sleep %SLEEPTIME
 ::     let "SLEEPTIME += 1"
 :: done
 ::
-:: This is an example of reading a number from the output.
-:: It assumes that the objective value is the first number in
-:: the first column of the last line of the output.
+:: :: This is an example of reading a number from the output.
+:: :: It assumes that the objective value is the first number in
+:: :: the first column of the last line of the output.
 
 
 ::if exist %stdout% (
