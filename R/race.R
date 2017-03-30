@@ -223,6 +223,32 @@ aux.ttest <- function(results, no.tasks.sofar, alive, which.alive, no.alive, con
               dropped.any = dropped.any, p.value = min(PJ[2,])))
 }
 
+race.print.header <- function()
+{
+  cat(sep = "", "  Markers:
+     x No test is performed.
+     - The test is performed and some configurations are discarded.
+     = The test is performed but no configuration is discarded.
+     ! The test is performed and configurations could be discarded but elite configurations are preserved.
+                                                                   
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+| |   Instance|      Alive|       Best|      Mean best| Exp so far|  W time|  rho|KenW|  Qvar|
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+")
+}
+
+race.print.footer <- function(bestconf, mean.best, break.msg, debug.level)
+{
+  cat(sep = "",
+      "+-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+\n",
+      if (debug.level >= 1) paste0("# Stopped because ", break.msg, "\n"),
+      sprintf("Best configuration: %11d", bestconf[1, ".ID."]),
+      sprintf("    mean value: %#15.10g", mean.best), "\n",
+      "Description of the best configuration:\n")
+  print(bestconf)
+  cat("\n")
+}
+
 # FIXME: This can be simplified a lot more. Some arguments already appear in
 # scenario.
 race <- function(maxExp = 0,
@@ -339,17 +365,7 @@ race <- function(maxExp = 0,
   race.ranks <- c()
   no.experiments.sofar <- 0
 
-  if (interactive)
-    cat(sep = "", "  Markers:
-     x No test is performed.
-     - The test is performed and some configurations are discarded.
-     = The test is performed but no configuration is discarded.
-     ! The test is performed and configurations could be discarded but elite configurations are preserved.
-                                                                   
-+-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
-| |   Instance|      Alive|       Best|      Mean best| Exp so far|  W time|  rho|KenW|  Qvar|
-+-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
-")
+  race.print.header()
 
   no.elimination <- 0 # number of tasks without elimination
   # Start main loop
@@ -554,19 +570,10 @@ race <- function(maxExp = 0,
     } 
   }
 
-  description.best <- configurations[best, , drop = FALSE]
+  race.print.footer(bestconf = configurations[best, , drop = FALSE],
+                    mean.best = mean.best,
+                    break.msg = break.msg, debug.level = scenario$debugLevel)
   
-  if (interactive) {
-    cat(sep = "",
-        "+-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+\n",
-        if (scenario$debugLevel >= 1) paste0("# Stopped because ", break.msg, "\n"),
-        sprintf("Best configuration: %11d", description.best[1, ".ID."]),
-        sprintf("    mean value: %#15.10g", mean.best), "\n",
-        "Description of the best configuration:\n")
-    print(description.best)
-    cat("\n")
-  }
-
   nbAlive <- sum(alive)
   configurations$.ALIVE. <- as.logical(alive)
   # Assign the proper ranks in the configurations data.frame.
