@@ -47,11 +47,6 @@ race.wrapper <- function(configurations, instance.idx, which.alive, which.exe, p
   seed <- .irace$instancesList[instance.idx, "seed"]
   id.instance  <- .irace$instancesList[instance.idx, "instance"]
   instance <- scenario$instances[[id.instance]]
-  extra.params <- NULL
-  if (!is.null (scenario$instances.extra.params)
-      && !is.na (scenario$instances.extra.params[[id.instance]]))
-    extra.params <- scenario$instances.extra.params[[id.instance]]
-
   values <- removeConfigurationsMetaData(configurations)
   values <- values[, parameters$names, drop = FALSE]
   switches <- parameters$switches[parameters$names]
@@ -65,7 +60,6 @@ race.wrapper <- function(configurations, instance.idx, which.alive, which.exe, p
                                   seed = seed,
                                   configuration = values[i, , drop = FALSE],
                                   instance = instance, 
-                                  extra.params = extra.params,
                                   switches = switches)
     ntest <- ntest + 1
   }

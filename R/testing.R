@@ -7,7 +7,6 @@ testConfigurations <- function(configurations, scenario, parameters)
   testInstances <- scenario$testInstances
   instances.ID <- names(testInstances)
   
-  extra.params  <- scenario$testInstances.extra.params
   # 2147483647 is the maximum value for a 32-bit signed integer.
   # We use replace = TRUE, because replace = FALSE allocates memory for each possible number.
   instanceSeed <- sample.int(2147483647, size = length(testInstances), replace = TRUE)
@@ -31,7 +30,6 @@ testConfigurations <- function(configurations, scenario, parameters)
                                    seed         = instanceSeed[j],
                                    configuration = values[i, , drop = FALSE],
                                    instance = testInstances[j],
-                                   extra.params = extra.params[j], 
                                    switches = switches)
       ntest <- ntest + 1
     }

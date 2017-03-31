@@ -20,7 +20,6 @@ target.evaluator.default(experiment, num.configurations, all.conf.id,
       \item{seed}{Seed for the random number generator to be used for this
         evaluation, ignore the seed for deterministic algorithms;}
       \item{instance}{String giving the instance to be used for this evaluation;}
-      \item{extra.params}{User-defined parameters associated to the instance;}
       \item{configuration}{1-row data frame with a column per parameter
         name;}
       \item{switches}{Vector of parameter switches (labels) in the order of

@@ -1040,7 +1040,7 @@ When \parameter{targetRunner} is an auxiliary executable program, it
 is invoked for each candidate configuration, passing as arguments:
 %
 \begin{center}
-\small\code{<id.configuration>\ <id.instance>\ <seed>\ <instance>\ [<extra.params>]\ <configuration>}
+\small\code{<id.configuration>\ <id.instance>\ <seed>\ <instance>\ <configuration>}
 \end{center}
 %
 \begin{center}
@@ -1050,7 +1050,6 @@ is invoked for each candidate configuration, passing as arguments:
     \code{id.instance} & an alphanumeric string that uniquely identifies a pair \code{(instance, seed)};\\
     \code{seed} & seed for the random number generator to be used for this evaluation, ignore the seed for deterministic algorithms;\\
     \code{instance} & string giving the instance to be used for this evaluation;\\
-    \code{extra.params} & user-defined parameters associated to the instance;\\
     \code{configuration} & the pairs parameter label-value that
     describe this candidate configuration. Typically given as command-line
     switches to be passed to the executable program.\\
@@ -1099,7 +1098,6 @@ list. The structure of the \code{experiment} list is as follows:
    \code{id.instance} & an alphanumeric string that uniquely identifies a pair \code{(instance, seed)};\\
    \code{seed} & seed to be used for this evaluation;\\
    \code{instance} & string giving the instance to be used for this evaluation;\\
-   \code{extra.params} & user-defined parameters associated to the instance;\\
    \code{configuration}    & 1-row data frame with a column per parameter name;\\
    \code{switches}         & vector of parameter switches (labels) in the order of parameters used in \code{configuration}.\\
 
@@ -1244,10 +1242,7 @@ specify where to find the training instances.
 By default, the value of \parameter{trainInstancesFile} is empty. This means that \irace will consider all files within the directory given by \parameter{trainInstancesDir} (by default \path{./Instances}) as training instances. 
 
 Otherwise, the value of \parameter{trainInstancesFile} may specify a text
-file. The format of this file is one instance per line, and the first
-alphanumeric string of each line corresponds to the instance filename. The
-remainder text within each line are considered as extra parameters to be
-supplied to \parameter{targetRunner} for this specific instance.
+file. The format of this file is one instance per line. Within each line, elements separated by white-space will be parsed as separate arguments to be supplied to \parameter{targetRunner}. This allows defining instance-specific parameter settings. Quoted strings will be parsed as a single argument.
 %
 The following example shows a training instance file for the \ACOTSP scenario:
 
@@ -1277,11 +1272,7 @@ target-runner 1 113 734718 ./Instances/100/100-1_100-2.tsp --time 1 \
 %@
 
 
-Training instances do not need to be files, \irace just passes their names
-to \parameter{targetRunner}, thus the names can denote benchmark functions or
-descriptive labels that the target algorithm understands. The extra instance
-parameters could actually be the definition of the instance. In that case, 
-\parameter{trainInstancesDir} is usually set to the empty string (\code{--train-instances-dir=""}). For example,
+Training instances do not need to be files, \irace just passes the elements of each line as arguments to \parameter{targetRunner}, thus each line may denote the name of a benchmark function or a label, plus instance-specific settings, that the target algorithm understands. Each line may even be the command-line parameters required to call an instance generator within \parameter{targetRunner}. When the instances do not represent actual files, then \parameter{trainInstancesDir} is usually set to the empty string (\code{--train-instances-dir=""}). For example,
 
 \begin{center}
   \begin{minipage}{0.4\linewidth}
@@ -1297,14 +1288,13 @@ rastrigin_30 --function=15 --nvar 30
 %\caption{Example of training instances file where instances do not correspond to files.}\label{fig:nofile_training}
 %\end{figure}
 
-Optionally, when executing \irace from the \aR console, the list of instances and their specific parameters might be provided explicitly by means of the variables \code{scenario$instances} and \code{scenario$instances.extra.params}, respectively. Thus, the previous example would be equivalent to:
+Optionally, when executing \irace from the \aR console, the list of instances might be provided explicitly by means of the variable \code{scenario$instances}. Thus, the previous example would be equivalent to:
 
 <<instance1, prompt=FALSE, eval=FALSE>>=
-scenario$instances <- c("rosenbrock_20", "rosenbrock_40",
-                        "rastrigin_20", "rastrigin_40")
-scenario$instances.extra.params <-
-  c("--function=12 --nvar 20", "--function=12 --nvar 30",
-    "--function=15 --nvar 20", "--function=15 --nvar 30")
+scenario$instances <- c("rosenbrock_20 --function=12 --nvar 20",
+                        "rosenbrock_40 --function=12 --nvar 30",
+                        "rastrigin_20 --function=15 --nvar 20",
+                        "rastrigin_40 --function=15 --nvar 30")
 @
 
 By default, \irace assumes that the target algorithm is stochastic (the value

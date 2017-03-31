@@ -1,3 +1,4 @@
+
  * Several fixes for handling paths in Windows.
                                                      (Manuel López-Ibáñez)
                                                      
@@ -10,6 +11,16 @@
    configurations are now byte-compiled when read, which should make their
    evaluation noticeably faster.
                                                       (Manuel López-Ibáñez)
+
+ * The argument 'experiment' passed to the R function targetRunner does not
+   contain anymore an element 'extra.params'. Similarly, the 'scenario'
+   structure does not contain anymore the elements 'instances.extra.params' and
+   'testInstances.extra.params'. Any instance-specific parameters values now
+   form part of the character string that defines an instance and it is up to
+   the user-defined targetRunner to parse them appropriately. These changes
+   make no difference when targetRunner is an external script, or when
+   instances and instance-specific parameter values are read from a file.
+                                                        (Manuel López-Ibáñez)
 
 2.2
 

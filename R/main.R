@@ -82,7 +82,6 @@ execDir                    p    ""     "--exec-dir"                   "./"      
 logFile                    p    "-l"   "--log-file"                   "./irace.Rdata"    "File to save tuning results as an R dataset, either absolute path or relative to execDir." 
 recoveryFile               p    ""     "--recovery-file"              ""                 "Previously saved log file to recover the execution of irace, either absolute path or relative to the current directory.  If empty or NULL, recovery is not performed."
 instances                  s    ""     ""                             ""                 ""
-instances.extra.params     s    ""     ""                             ""                 ""
 trainInstancesDir          p    ""     "--train-instances-dir"        "./Instances"      "Directory where tuning instances are located; either absolute path or relative to current directory." 
 trainInstancesFile         p    ""     "--train-instances-file"       ""                 "File containing a list of instances and optionally additional parameters for them." 
 configurationsFile         p    ""     "--configurations-file"        ""                 "File containing a list of initial configurations. If empty or NULL do not use a file."
@@ -119,7 +118,6 @@ softRestartThreshold       r    ""     "--soft-restart-threshold"     NA        
 testInstancesDir           p    ""     "--test-instances-dir"         ""                 "Directory where testing instances are located, either absolute or relative to current directory."
 testInstancesFile          p    ""     "--test-instances-file"        ""                 "File containing a list of test instances and optionally additional parameters for them."
 testInstances              x    ""     ""                             ""                 ""
-testInstances.extra.params x    ""     ""                             ""                 ""
 testNbElites               i    ""     "--test-num-elites"            1                  "Number of elite configurations returned by irace that will be tested if test instances are provided."
 testIterationElites        b    ""     "--test-iteration-elites"      0                  "Enable/disable testing the elite configurations found at each iteration."
 elitist                    b    "-e"   "--elitist"                    1                  "Enable/disable elitist irace."
@@ -131,8 +129,7 @@ repairConfiguration        x    ""     ""                             ""        
 rownames (.irace.params.def) <- .irace.params.def[,"name"]
 .irace.params.names <- rownames(.irace.params.def)[substring(rownames(.irace.params.def), 1, 1) != "."]
 ## FIXME: If these values are special perhaps they should be saved in $state ?
-.irace.params.recover <- c("instances", "instances.extra.params", "seed",
-                           "testInstances", "testInstances.extra.params",
+.irace.params.recover <- c("instances", "seed", "testInstances",
                            # We need this because this data may mutate
                            "targetRunnerData", "elitist", "deterministic")
 

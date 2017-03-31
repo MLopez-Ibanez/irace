@@ -58,7 +58,6 @@ target.runner.qsub <- function(experiment, scenario)
   seed             <- experiment$seed
   configuration    <- experiment$configuration
   instance         <- experiment$instance
-  extra.params     <- experiment$extra.params
   switches         <- experiment$switches
   
   targetRunner <- scenario$targetRunner
@@ -66,7 +65,7 @@ target.runner.qsub <- function(experiment, scenario)
     irace.error ("targetRunner ", shQuote(targetRunner), " cannot be found or is not executable!\n")
   }
 
-  args <- paste(configuration.id, instance.id, seed, instance, extra.params,
+  args <- paste(configuration.id, instance.id, seed, instance,
                 buildCommandLine(configuration, switches))
   output <- runcommand(targetRunner, args, configuration.id, debugLevel)
 

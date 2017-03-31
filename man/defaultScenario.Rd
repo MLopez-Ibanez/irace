@@ -78,7 +78,6 @@
           \item instance: The instance index (corresponding to the \code{instance} array).
           \item seed: Seed to be used with the corresponding instance.
         }
-     \item instances.extra.params: Array that contains the extra parameters defined per instance, the name of each element corresponds to the instance name in the \code{instances} array. When no extra parameters are provided this element is \code{NULL}.
      \item trainInstancesDir: Directory where tuning instances are located; either absolute path or relative to current directory.. If no \code{trainInstancesFiles} is provided all the files in \code{trainInstancesDir} will be listed as instances. (Default: "./Instances")
      \item trainInstancesFile: Path to a file that contains a list of instances and optionally additional parameters for them. If \code{trainInstancesDir} is provided \code{irace} will search for the files in this folder. (Default: "")
   }
@@ -107,7 +106,6 @@
      \item testInstancesDir: Directory where testing instances are located, either absolute or relative to current directory. (Default: "")
      \item testInstancesFile: Path to a file containing a list of test instances and optionally additional parameters for them. (Default: "")
      \item testInstances: Array of the instances to be used in the \code{targetRunner} when executing the testing.
-     \item testInstances.extra.params: Array that contains the extra parameters defined per instance, the name of each element corresponds to the instance name in the \code{testInstances} array. When no extra parameters are provided this element is \code{NULL}.
   }
 }
 \seealso{

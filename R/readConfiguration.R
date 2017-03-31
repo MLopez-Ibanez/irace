@@ -303,24 +303,17 @@ checkScenario <- function(scenario = defaultScenario())
   irace.assert(is.null(scenario$targetEvaluator) == is.null(.irace$target.evaluator))
   
   # Training instances
-  if (is.null.or.empty(scenario$instances.extra.params)) {
-    scenario$instances.extra.params <- NULL
-  }
   if (is.null.or.empty(scenario$instances)) {
     scenario$trainInstancesDir <- path.rel2abs(scenario$trainInstancesDir)
     if (!is.null.or.empty(scenario$trainInstancesFile)) {
       scenario$trainInstancesFile <- path.rel2abs(scenario$trainInstancesFile)
     }
-    scenario[c("instances", "instances.extra.params")] <-
+    scenario$instances <-
       readInstances(instancesDir = scenario$trainInstancesDir,
                     instancesFile = scenario$trainInstancesFile)
   }
   
   # Testing instances
-  if (is.null.or.empty(scenario$testInstances.extra.params)) {
-    scenario$testInstances.extra.params <- NULL
-  }
-
   if (is.null.or.empty(scenario$testInstances)) {
     if (!is.null.or.empty(scenario$testInstancesDir) || 
         !is.null.or.empty(scenario$testInstancesFile)) {
@@ -328,7 +321,7 @@ checkScenario <- function(scenario = defaultScenario())
       if (!is.null.or.empty(scenario$testInstancesFile)) {
         scenario$testInstancesFile <- path.rel2abs(scenario$testInstancesFile)
       }
-      scenario[c("testInstances", "testInstances.extra.params")] <-
+      scenario$testInstances <-
         readInstances(instancesDir = scenario$testInstancesDir,
                       instancesFile = scenario$testInstancesFile)
     } else {
@@ -504,16 +497,6 @@ checkScenario <- function(scenario = defaultScenario())
   return (scenario)
 }
 
-print.instances.extra.params <- function(param, value)
-{
-  if (is.null.or.empty(paste(value, collapse=""))) {
-    cat (param, "= NULL\n")
-  } else {
-    cat (param, "=\n")
-    cat(paste(names(value), value, sep=" : "), sep="\n")
-  }
-}
-
 print.instances <- function(param, value)
 {
   cat (param, "= \"")
@@ -526,12 +509,8 @@ printScenario <- function(scenario)
   cat("## irace scenario:\n")
   for (param in .irace.params.names) {
     
-    # Special case for instances.extra.params
-    if (param == "instances.extra.params"
-        || param == "testInstances.extra.params") {
-      print.instances.extra.params (param, scenario[[param]])
-    } else if (param == "instances" || param == "testInstances") {
-      # Special case for instances
+    # Special case for instances
+    if (param == "instances" || param == "testInstances") {
       print.instances (param, scenario[[param]])
     } else {# All other parameters (no vector, but can be functions)
       # FIXME: Perhaps deparse() is not the right way to do this?
@@ -565,19 +544,16 @@ readInstances <- function(instancesDir = NULL, instancesFile = NULL)
   if (is.null.or.empty(instancesDir) && is.null.or.empty(instancesFile))
     irace.error("Both instancesDir and instancesFile are empty: No instances provided")
   
-  instances <- instances.extra.params <- NULL
+  instances <- NULL
   
   if (!is.null.or.empty(instancesFile)) {
     file.check (instancesFile, readable = TRUE, text = "instance file")
     # We do not warn if the last line does not finish with a newline.
     lines <- readLines (instancesFile, warn = FALSE)
     lines <- sub("#.*$", "", lines) # Remove comments
-    lines <- sub("^[[:space:]]+", "", lines) # Remove extra spaces
+    lines <- sub("^[[:space:]]+", "", lines) # Remove leading whitespace
     lines <- lines[lines != ""] # Delete empty lines
-    instances <- sub("^([^[:space:]]+).*$", "\\1", lines)
-    instances <- paste0 (instancesDir, .Platform$file.sep, instances)
-    instances.extra.params <- sub("^[^[:space:]]+(.*)$", "\\1", lines)
-    names (instances.extra.params) <- instances
+    instances <- paste0 (instancesDir, "/", instances)
   } else {
     file.check (instancesDir, isdir = TRUE, notempty = TRUE,
                 text = "instances directory")
@@ -589,8 +565,7 @@ readInstances <- function(instancesDir = NULL, instancesFile = NULL)
       irace.error("No instances found in `", instancesDir, "'")
   }
   
-  return(list(instances = instances,
-              instances.extra.params = instances.extra.params))
+  return(instances)
 }
 
 ## Check targetRunner execution
@@ -618,7 +593,6 @@ checkTargetFiles <- function(scenario, parameters)
                               seed = 1234567,
                               configuration = values[i, , drop = FALSE],
                               instance = scenario$instances[1],
-                              extra.params = scenario$instances.extra.params[[1]],
                               switches = switches)
   # Executing targetRunner
   cat("# Executing targetRunner (", nrow(configurations), "times)...\n")

@@ -123,6 +123,7 @@ target.evaluator.default <- function(experiment, num.configurations, all.conf.id
   }
 
   cwd <- setwd (execDir)
+  # FIXME: I think we don't even need to paste the args, since system2 handles this by itself.'
   args <- paste(configuration.id, instance.id, seed, instance, num.configurations, all.conf.id)
   output <- runcommand(targetEvaluator, args, configuration.id, debugLevel)
   setwd (cwd)
@@ -232,7 +233,6 @@ target.runner.default <- function(experiment, scenario)
   seed             <- experiment$seed
   configuration    <- experiment$configuration
   instance         <- experiment$instance
-  extra.params     <- experiment$extra.params
   switches         <- experiment$switches
   
   targetRunner <- scenario$targetRunner
@@ -240,7 +240,7 @@ target.runner.default <- function(experiment, scenario)
     irace.error ("targetRunner ", shQuote(targetRunner), " cannot be found or is not executable!\n")
   }
 
-  args <- paste(configuration.id, instance.id, seed, instance, extra.params,
+  args <- paste(configuration.id, instance.id, seed, instance,
                 buildCommandLine(configuration, switches))
   output <- runcommand(targetRunner, args, configuration.id, debugLevel)
 
