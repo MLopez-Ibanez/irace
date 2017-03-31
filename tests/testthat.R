@@ -1,3 +1,5 @@
+require("irace")
+
 ## Functions ##########################################################
 f_rosenbrock <- function (x) {
   d  <- length(x)
@@ -43,7 +45,6 @@ weights <- rnorm(200, mean = 0.9, sd = 0.02)
 sann.irace <- function(...)
 {
   args <- list(...)
-  require("irace")
 
   parameters.table <- '
    tmax "" i (1, 5000)
@@ -115,7 +116,7 @@ test.path.rel2abs <- function()
     orig <- testcases[i,1]
     cwd <-  testcases[i,2]
     res <- irace:::path.rel2abs(testcases[i,1], cwd)
-    exp <- path.expand(testcases[i,3])
+    exp <- gsub("\\", "/", path.expand(testcases[i,3]), fixed = TRUE)
     if (res == exp) {
       cat("[OK] (", orig, ", ", cwd, ") -> ", res, "\n", sep="")
     } else {
@@ -128,117 +129,116 @@ test.path.rel2abs()
 testwindows.path.rel2abs <- function()
 {
   testcases <- read.table(text='
-.                         C:\\\\tmp  C:/tmp
-..                        C:\\\\tmp  C:/
-..\\\\                       C:\\\\tmp  C:/
-..\\\\.                      C:\\\\tmp  C:/
-..\\\\..                     C:\\\\tmp  C:/
-..\\\\..\\\\                    C:\\\\tmp  C:/
-..\\\\..\\\\x.r                 C:\\\\tmp  C:/x.r
-..\\\\leslie\\\\                C:\\\\tmp  C:/leslie
-..\\\\leslie\\\\x.r             C:\\\\tmp  C:/leslie/x.r
-..\\\\x.r                    C:\\\\tmp  C:/x.r
-..irace                   C:\\\\tmp  C:/tmp/..irace
-.\\\\                        C:\\\\tmp  C:/tmp
-.\\\\.                       C:\\\\tmp  C:/tmp
-.\\\\                        C:\\\\tmp\\\\ C:/tmp
-.\\\\.                       C:\\\\tmp\\\\  C:/tmp
-.\\\\.\\\\x.r                   C:\\\\tmp  C:/tmp/x.r
-.\\\\irace\\\\..\\\\x.r            C:\\\\tmp  C:/tmp/x.r
-.\\\\x.r                     C:\\\\tmp  C:/tmp/x.r
-.x.R                      C:\\\\tmp  C:/tmp/.x.R
-.                         C:\\tmp  C:/tmp
-..                        C:\\tmp  C:/
-..\\                       C:\\tmp  C:/
-..\\.                      C:\\tmp  C:/
-..\\..                     C:\\tmp  C:/
-..\\..\\                    C:\\tmp  C:/
-..\\..\\x.r                 C:\\tmp  C:/x.r
-..\\leslie\\                C:\\tmp  C:/leslie
-..\\leslie\\x.r             C:\\tmp  C:/leslie/x.r
-..\\x.r                    C:\\tmp  C:/x.r
-..irace                   C:\\tmp  C:/tmp/..irace
-.\\                        C:\\tmp  C:/tmp
-.\\.                       C:\\tmp  C:/tmp
-.\\                        C:\\tmp\\ C:/tmp
-.\\.                       C:\\tmp\\  C:/tmp
-.\\.\\x.r                   C:\\tmp  C:/tmp/x.r
-.\\irace\\..\\x.r            C:\\tmp  C:/tmp/x.r
-.\\x.r                     C:\\tmp  C:/tmp/x.r
-.x.R                      C:\\tmp  C:/tmp/.x.R
-.                         C:  C:/
-..                        C:  C:/
-..\\\\                       C:  C:/
-..\\\\.                      C:  C:/
-..\\\\..                     C:  C:/
-..\\\\..\\\\                    C:  C:/
-..\\\\..\\\\x.r                 C:  C:/x.r
-..\\\\leslie\\\\                C:  C:/leslie
-..\\\\leslie\\\\x.r             C:  C:/leslie/x.r
-..\\\\x.r                    C:  C:/x.r
-..\\                       C:  C:/
-..\\.                      C:  C:/
-..\\..                     C:  C:/
-..\\..\\                    C:  C:/
-..\\..\\x.r                 C:  C:/x.r
-..\\leslie\\                C:  C:/leslie
-..\\leslie\\x.r             C:  C:/leslie/x.r
-..\\x.r                    C:  C:/x.r
-..irace                   C:  C:/..irace
-.\\\\                        C:  C:/
-.\\\\.                       C:  C:/
-.\\\\                        C:\\\\ C:/
-.\\\\.                       C:\\\\  C:/
-.\\\\.\\\\x.r                   C:  C:/x.r
-.\\\\irace\\\\..\\\\x.r            C:  C:/x.r
-.\\\\x.r                     C:  C:/x.r
-.\\                        C:  C:/
-.\\.                       C:  C:/
-.\\                        C:\\ C:/
-.\\.                       C:\\  C:/
-.\\.\\x.r                   C:  C:/x.r
-.\\irace\\..\\x.r            C:  C:/x.r
-.\\x.r                     C:  C:/x.r
-.x.R                      C:  C:/.x.R
-.                         C:/tmp  C:/tmp
-..                        C:/tmp  C:/
-../                       C:/tmp  C:/
-../.                      C:/tmp  C:/
-../..                     C:/tmp  C:/
-../../                    C:/tmp  C:/
-../../x.r                 C:/tmp  C:/x.r
-../leslie/                C:/tmp  C:/leslie
-../leslie/x.r             C:/tmp  C:/leslie/x.r
-../x.r                    C:/tmp  C:/x.r
-..irace                   C:/tmp  C:/tmp/..irace
-./                        C:/tmp  C:/tmp
-./.                       C:/tmp  C:/tmp
-./                        C:/tmp/ C:/tmp
-./.                       C:/tmp/  C:/tmp
-././x.r                   C:/tmp  C:/tmp/x.r
-./irace/../x.r            C:/tmp  C:/tmp/x.r
-./x.r                     C:/tmp  C:/tmp/x.r
-.x.R                      C:/tmp  C:/tmp/.x.R
-D:/./x.r                  C:/tmp  D:/x.r
-D:\\\\.\\\\x.r                  C:/tmp  D:/x.r
-D:\\.\\x.r                  C:/tmp  D:/x.r
-D:                        C:/tmp  D:/
-D:\\\\                       C:/tmp  D:/
-D:/                       C:/tmp  D:/
-D:/leslie/././x.r         C:/tmp  D:/leslie/x.r
-D:/leslie/~/x.r        C:/tmp  D:/leslie/~/x.r
-/~/x.r                    C:/tmp  /~/x.r
+.                         N:\\\\tmp  N:/tmp
+..                        N:\\\\tmp  N:/
+..\\\\                       N:\\\\tmp  N:/
+..\\\\.                      N:\\\\tmp  N:/
+..\\\\..                     N:\\\\tmp  N:/
+..\\\\..\\\\                    N:\\\\tmp  N:/
+..\\\\..\\\\x.r                 N:\\\\tmp  N:/x.r
+..\\\\leslie\\\\                N:\\\\tmp  N:/leslie
+..\\\\leslie\\\\x.r             N:\\\\tmp  N:/leslie/x.r
+..\\\\x.r                    N:\\\\tmp  N:/x.r
+..irace                   N:\\\\tmp  N:/tmp/..irace
+.\\\\                        N:\\\\tmp  N:/tmp
+.\\\\.                       N:\\\\tmp  N:/tmp
+.\\\\                        N:\\\\tmp\\\\ N:/tmp
+.\\\\.                       N:\\\\tmp\\\\  N:/tmp
+.\\\\.\\\\x.r                   N:\\\\tmp  N:/tmp/x.r
+.\\\\irace\\\\..\\\\x.r            N:\\\\tmp  N:/tmp/x.r
+.\\\\x.r                     N:\\\\tmp  N:/tmp/x.r
+.x.R                      N:\\\\tmp  N:/tmp/.x.R
+.                         N:\\tmp  N:/tmp
+..                        N:\\tmp  N:/
+..\\                       N:\\tmp  N:/
+..\\.                      N:\\tmp  N:/
+..\\..                     N:\\tmp  N:/
+..\\..\\                    N:\\tmp  N:/
+..\\..\\x.r                 N:\\tmp  N:/x.r
+..\\leslie\\                N:\\tmp  N:/leslie
+..\\leslie\\x.r             N:\\tmp  N:/leslie/x.r
+..\\x.r                    N:\\tmp  N:/x.r
+..irace                   N:\\tmp  N:/tmp/..irace
+.\\                        N:\\tmp  N:/tmp
+.\\.                       N:\\tmp  N:/tmp
+.\\                        N:\\tmp\\ N:/tmp
+.\\.                       N:\\tmp\\  N:/tmp
+.\\.\\x.r                   N:\\tmp  N:/tmp/x.r
+.\\irace\\..\\x.r            N:\\tmp  N:/tmp/x.r
+.\\x.r                     N:\\tmp  N:/tmp/x.r
+.x.R                      N:\\tmp  N:/tmp/.x.R
+.                         N:  N:/
+..                        N:  N:/
+..\\\\                       N:  N:/
+..\\\\.                      N:  N:/
+..\\\\..                     N:  N:/
+..\\\\..\\\\                    N:  N:/
+..\\\\..\\\\x.r                 N:  N:/x.r
+..\\\\leslie\\\\                N:  N:/leslie
+..\\\\leslie\\\\x.r             N:  N:/leslie/x.r
+..\\\\x.r                    N:  N:/x.r
+..\\                       N:  N:/
+..\\.                      N:  N:/
+..\\..                     N:  N:/
+..\\..\\                    N:  N:/
+..\\..\\x.r                 N:  N:/x.r
+..\\leslie\\                N:  N:/leslie
+..\\leslie\\x.r             N:  N:/leslie/x.r
+..\\x.r                    N:  N:/x.r
+..irace                   N:  N:/..irace
+.\\\\                        N:  N:/
+.\\\\.                       N:  N:/
+.\\\\                        N:\\\\ N:/
+.\\\\.                       N:\\\\  N:/
+.\\\\.\\\\x.r                   N:  N:/x.r
+.\\\\irace\\\\..\\\\x.r            N:  N:/x.r
+.\\\\x.r                     N:  N:/x.r
+.\\                        N:  N:/
+.\\.                       N:  N:/
+.\\                        N:\\ N:/
+.\\.                       N:\\  N:/
+.\\.\\x.r                   N:  N:/x.r
+.\\irace\\..\\x.r            N:  N:/x.r
+.\\x.r                     N:  N:/x.r
+.x.R                      N:  N:/.x.R
+.                         N:/tmp  N:/tmp
+..                        N:/tmp  N:/
+../                       N:/tmp  N:/
+../.                      N:/tmp  N:/
+../..                     N:/tmp  N:/
+../../                    N:/tmp  N:/
+../../x.r                 N:/tmp  N:/x.r
+../leslie/                N:/tmp  N:/leslie
+../leslie/x.r             N:/tmp  N:/leslie/x.r
+../x.r                    N:/tmp  N:/x.r
+..irace                   N:/tmp  N:/tmp/..irace
+./                        N:/tmp  N:/tmp
+./.                       N:/tmp  N:/tmp
+./                        N:/tmp/ N:/tmp
+./.                       N:/tmp/  N:/tmp
+././x.r                   N:/tmp  N:/tmp/x.r
+./irace/../x.r            N:/tmp  N:/tmp/x.r
+./x.r                     N:/tmp  N:/tmp/x.r
+.x.R                      N:/tmp  N:/tmp/.x.R
+D:/./x.r                  N:/tmp  D:/x.r
+D:\\\\.\\\\x.r                  N:/tmp  D:/x.r
+D:\\.\\x.r                  N:/tmp  D:/x.r
+D:                        N:/tmp  D:/
+D:\\\\                       N:/tmp  D:/
+D:/                       N:/tmp  D:/
+D:/leslie/././x.r         N:/tmp  D:/leslie/x.r
+D:/leslie/~/x.r        N:/tmp  D:/leslie/~/x.r
 e:/home/leslie/x.r        /tmp  e:/home/leslie/x.r
-leslie/leslie/../../irace C:/tmp  C:/tmp/irace
-x.r                       C:/tmp  C:/tmp/x.r
-~/irace/../x.r            C:/tmp  ~/x.r
-~/x.r                     C:/tmp  ~/x.r
+leslie/leslie/../../irace N:/tmp  N:/tmp/irace
+x.r                       N:/tmp  N:/tmp/x.r
+~/irace/../x.r            N:/tmp  ~/x.r
+~/x.r                     N:/tmp  ~/x.r
 ', stringsAsFactors=FALSE)
   for(i in 1:nrow(testcases)) {
     orig <- testcases[i,1]
     cwd <-  testcases[i,2]
     res <- irace:::path.rel2abs(testcases[i,1], cwd)
-    exp <- path.expand(testcases[i,3])
+    exp <- gsub("\\", "/", path.expand(testcases[i,3]), fixed = TRUE)
     if (res == exp) {
       cat("[OK] ", i, ": path.rel2abs(\"", orig, "\", \"", cwd, "\") -> ", res, "\n", sep="")
     } else {

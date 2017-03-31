@@ -53,10 +53,7 @@ irace.error <- function(...)
 irace.dump.frames <- function()
 {
   execDir <- getOption(".irace.execdir")
-  if (!is.null(execDir)) {
-    cwd <- setwd(execDir)
-    on.exit(setwd(cwd), add = TRUE)
-  }
+  if (!is.null(execDir)) cwd <- setwd(execDir)
   ## Only a very recent R version allows saving GlovalEnv:
   ## https://stat.ethz.ch/pipermail/r-devel/2016-November/073378.html
   # utils::dump.frames(dumpto = "iracedump", to.file = TRUE, include.GlobalEnv = TRUE)
@@ -64,6 +61,10 @@ irace.dump.frames <- function()
   ## http://stackoverflow.com/questions/40421552/r-how-make-dump-frames-include-all-variables-for-later-post-mortem-debugging
   utils::dump.frames(dumpto = "iracedump")
   save.image(file = "iracedump.rda")
+
+  if (!is.null(execDir)) setwd(cwd)
+  # We need this to signal an error in R CMD check.
+  q("no", status = 1, runLast = FALSE)  
 }
 
 irace.assert <- function(exp)
@@ -176,18 +177,23 @@ path.rel2abs <- function (path, cwd = getwd())
       x <- newx
     }
   }
+  irace.normalize.path <- function(path) {
+    print(path)
+    return(suppressWarnings(normalizePath(path, winslash = "/", mustWork = NA)))
+  }
     
   if (is.null.or.na(path)) {
     return (NULL)
   } else if (path == "") {
     return ("")
   }
-  # s <- .Platform$file.sep
+  # Using .Platform$file.sep is too fragile. Better just use "/" everywhere.
   s <- "/"
-  # Remove winslashes if given.
-  path <- gsub("\\", s, path, fixed = TRUE)
+
   # Possibly expand ~/path to /home/user/path.
   path <- path.expand(path)
+  # Remove winslashes if given.
+  path <- gsub("\\", s, path, fixed = TRUE)
 
   # Detect a Windows drive
   windrive.regex <- "^[A-Za-z]:"
@@ -221,7 +227,7 @@ path.rel2abs <- function (path, cwd = getwd())
     # Speed-up the most common cases.
     # If it is just "."
     if (path == ".") {
-      return (suppressWarnings(normalizePath(cwd, mustWork = NA)))
+      return (irace.normalize.path(cwd))
     }
     # Remove "./" from the start of path.
     path <- sub(paste0("^\\.", s), "", path)
@@ -230,7 +236,7 @@ path.rel2abs <- function (path, cwd = getwd())
     else path <- paste0(cwd, s, path)
     # If it is just a path without ".." inside
     if (!grepl(paste0(s,"\\.\\."), path)) {
-      return(suppressWarnings(normalizePath(path, mustWork = NA)))
+      return (irace.normalize.path(path))
     }
     # Detect a Windows drive
     if (grepl(paste0(windrive.regex, "($|", s, ")"), path)) {
@@ -267,7 +273,7 @@ path.rel2abs <- function (path, cwd = getwd())
 
   # We use normalizePath, which will further simplify the path if
   # the path exists.
-  return (suppressWarnings(normalizePath(path, mustWork = NA)))
+  return (irace.normalize.path(path))
 }
 
 is.function.name <- function(FUN)
