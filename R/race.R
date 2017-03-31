@@ -223,6 +223,56 @@ aux.ttest <- function(results, no.tasks.sofar, alive, which.alive, no.alive, con
               dropped.any = dropped.any, p.value = min(PJ[2,])))
 }
 
+race.init.instances <- function(deterministic, max.instances)
+{
+  if (.irace$next.instance <= max.instances) {
+    race.instances <- .irace$next.instance : max.instances
+  } else {
+    # This may happen if the scenario is deterministic and we would need
+    # more instances than what we have.
+    irace.assert(deterministic)
+    race.instances <- 1 : max.instances
+  }
+  return(race.instances)
+}
+
+elitrace.init.instances <- function(race.env, deterministic, max.instances)
+{
+  # if next.instance == 1 then this is the first iteration.
+  if (.irace$next.instance != 1) {
+    new.instances <- NULL
+    last.new <- .irace$next.instance + race.env$elitistNewInstances - 1
+    # Do we need to add new instances?
+    if (race.env$elitistNewInstances > 0) {
+      if (last.new > max.instances) {
+        # This may happen if the scenario is deterministic and we would need
+        # more instances than what we have.
+        irace.assert(deterministic)
+        if (.irace$next.instance <= max.instances) {
+          # Add all instances that we have not seen yet as new ones.
+          last.new <- max.instances
+          new.instances <- .irace$next.instance : last.new
+        } # else new.instances remains NULL and last.new remains > number of instances.
+        # We need to update this because the value is used below and now there
+        # may be fewer than expected, even zero.
+        race.env$elitistNewInstances <- length(new.instances)
+      } else {
+        new.instances <- .irace$next.instance : last.new
+      }
+    }
+    future.instances <- NULL
+    if ((last.new + 1) <= max.instances) {
+      future.instances <- (last.new + 1) : max.instances
+    }
+    # new.instances + past.instances + future.instances
+    race.instances <- c(new.instances, sample.int(.irace$next.instance - 1),
+                        future.instances)
+  } else {
+    race.instances <- race.init.instances(deterministic, max.instances)
+  }
+  return(race.instances)
+}
+
 race.print.header <- function()
 {
   cat(sep = "", "  Markers:
@@ -287,12 +337,16 @@ race <- function(maxExp = 0,
                  scenario,
                  elitistNewInstances)
 {
+  race.env <- new.env()
+  race.env$elitistNewInstances <- scenario$elitistNewInstances
+  
   # FIXME: Remove argument checking. This must have been done by the caller.
   stat.test <- scenario$testType
   conf.level <- scenario$confidence
   first.test <- scenario$firstTest
   each.test <- scenario$eachTest
   elitist <- scenario$elitist
+  no.configurations <- nrow(configurations)
   
   # Check argument: maxExp
   if (!missing(maxExp) &&
@@ -302,6 +356,13 @@ race <- function(maxExp = 0,
     stop("maxExp must be an single number")
   maxExp <- ifelse(maxExp>0,maxExp,0)
   maxExp <- floor(maxExp)
+  if (maxExp && no.configurations > maxExp)
+    irace.error("Max number of experiments is smaller than number of configurations")
+
+  if (no.configurations <= minSurvival) {
+    irace.error("Not enough configurations (", no.configurations,
+                ") for a race (minSurvival=", minSurvival, ")")
+  }
 
   # Check argument: conf.level
   if (!missing(conf.level) &&
@@ -310,81 +371,32 @@ race <- function(maxExp = 0,
     stop("conf.level must be a single number between 0 and 1")
 
   # Create the instance list according to the algorithm selected
-  # if next.instance == 1 then this is the first iteration.
-  max.instances <- nrow(.irace$instancesList)
-  if (elitist && .irace$next.instance != 1) {
-    new.instances <- NULL
-    last.new <- .irace$next.instance - 1 + elitistNewInstances
-    # Do we need to add new instances?
-    if (elitistNewInstances > 0) {
-      if (last.new > max.instances) {
-        # This may happen if the scenario is deterministic and we would need
-        # more instances than what we have.
-        irace.assert(scenario$deterministic)
-        if (.irace$next.instance <= max.instances) {
-          # Add all instances that we have not seen yet as new ones.
-          last.new <- max.instances
-          new.instances <- .irace$next.instance : last.new
-        } # else new.instances remains NULL and last.new remains > number of instances.
-        # We need to update this because the value is used below and now there
-        # may be fewer than expected, even zero.
-        elitistNewInstances <- length(new.instances)
-      } else {
-        new.instances <- .irace$next.instance : last.new
-      }
-    }
-    future.instances <- NULL
-    if ((last.new + 1) <= max.instances) {
-      future.instances <- (last.new + 1) : max.instances
-    }
-    # new.instances + past.instances + future.instances
-    race.instances <- c(new.instances, sample.int(.irace$next.instance - 1),
-                        future.instances)
-  } else if (.irace$next.instance <= max.instances) {
-    race.instances <- .irace$next.instance : max.instances
-  } else {
-    # This may happen if the scenario is deterministic and we would need
-    # more instances than what we have.
-    irace.assert(scenario$deterministic)
-    race.instances <- 1 : max.instances
-  }
-  no.tasks      <- length(race.instances)
-  no.configurations <- nrow(configurations)
+  if (elitist)
+    race.instances <- elitrace.init.instances(race.env,
+                                              scenario$deterministic,
+                                              max.instances = nrow(.irace$instancesList))
+  else
+    race.instances <- race.init.instances(scenario$deterministic,
+                                          max.instances = nrow(.irace$instancesList))
+  no.tasks <- length(race.instances)
 
   interactive <- TRUE
 
-  if (maxExp && no.configurations > maxExp)
-    irace.error("Max number of experiments is smaller than number of configurations")
-
-  if (no.configurations <= minSurvival) {
-    irace.error("Not enough configurations (", no.configurations,
-                ") for a race (minSurvival=", minSurvival, ")")
-  }
-  
   # Initialize some variables...
   if (is.null(elite.data)) {
+    if (elitist) elite.safe <- first.test
     Results <- matrix(nrow = 0, ncol = no.configurations,
                       dimnames = list(NULL, as.character(configurations[, ".ID."])))
   } else {
+    elite.safe <- race.env$elitistNewInstances + nrow(elite.data)
     Results <- matrix(NA, 
-                      nrow = elitistNewInstances + nrow(elite.data), 
+                      nrow = elite.safe,
                       ncol = no.configurations, 
-                      dimnames = list(as.character(race.instances[
-                        1:(elitistNewInstances + nrow(elite.data))]),
-                        as.character(configurations[, ".ID."])) )
+                      dimnames = list(as.character(race.instances[1:elite.safe]),
+                                      as.character(configurations[, ".ID."])))
     Results[rownames(elite.data), colnames(elite.data)] <- elite.data
     is.elite <- colSums(!is.na(Results))
   }
-
-  # Elitist irace needed info
-  if (elitist) {
-    if (is.null(elite.data)) {
-      elite.safe <- first.test
-    } else {
-      elite.safe <- elitistNewInstances + nrow(elite.data)
-    }
-  }
-
 
   experimentLog <- matrix(nrow = 0, ncol = 3,
                           dimnames = list(NULL, c("instance", "configuration", "time")))
@@ -392,10 +404,10 @@ race <- function(maxExp = 0,
   best <- 0
   race.ranks <- c()
   no.experiments.sofar <- 0
+  no.elimination <- 0 # number of tasks without elimination
 
   race.print.header()
 
-  no.elimination <- 0 # number of tasks without elimination
   # Start main loop
   break.msg <- paste0("all instances (", no.tasks, ") evaluated")
   for (current.task in seq_len (no.tasks)) {
