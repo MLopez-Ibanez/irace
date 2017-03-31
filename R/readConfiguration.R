@@ -49,8 +49,7 @@ readConfigurationsFile <- function(filename, parameters, debugLevel = 0, text)
     }
 
     # All non-fixed parameters must appear in column names.
-    # FIXME: varParameters <- parameters$names[!parameters$isFixed]
-    varParameters <- parameters$names[!unlist(parameters$isFixed)]
+    varParameters <- parameters$names[!parameters$isFixed]
     missing <- setdiff (varParameters, colnames(configurationTable))
     if (length(missing) > 0) {
       irace.error("The parameter names (",
