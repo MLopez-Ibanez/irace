@@ -338,9 +338,7 @@ race <- function(maxExp = 0,
                  elitistNewInstances)
 {
   race.env <- new.env()
-  race.env$elitistNewInstances <- scenario$elitistNewInstances
-  
-  # FIXME: Remove argument checking. This must have been done by the caller.
+  race.env$elitistNewInstances <- elitistNewInstances
   stat.test <- scenario$testType
   conf.level <- scenario$confidence
   first.test <- scenario$firstTest
@@ -348,6 +346,7 @@ race <- function(maxExp = 0,
   elitist <- scenario$elitist
   no.configurations <- nrow(configurations)
   
+  # FIXME: Remove argument checking. This must have been done by the caller.
   # Check argument: maxExp
   if (!missing(maxExp) &&
       (!is.numeric(maxExp) ||
@@ -418,8 +417,7 @@ race <- function(maxExp = 0,
     if (elitist) {  
       # Filter configurations that do not need to be executed (elites).
       # This is valid only for previous iteration instances.
-      if (!is.null(elite.data) && elitistNewInstances < current.task
-          && current.task <= elite.safe ) {
+      if (!is.null(elite.data) && current.task <= elite.safe ) {
         # Execute everything that is alive and not yet executed.
         not.executed <- is.na(Results[current.task, ])
         irace.assert(length(not.executed) == length(alive))
