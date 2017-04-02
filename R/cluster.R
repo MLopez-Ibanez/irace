@@ -1,14 +1,14 @@
 ### Submit/wait for jobs in batch clusters.
 sge.job.finished <- function(jobid)
 {
-  return(system (paste("qstat -j", jobid),
+  return(system (paste0("qstat -j ", jobid),
                  ignore.stdout = TRUE, ignore.stderr = TRUE,
                  intern = FALSE, wait = TRUE))
 }
 
 pbs.job.finished <- function(jobid)
 {
-  return(system (paste("qstat", jobid),
+  return(system (paste0("qstat ", jobid),
                  ignore.stdout = TRUE, ignore.stderr = TRUE,
                  intern = FALSE, wait = TRUE))
 }
