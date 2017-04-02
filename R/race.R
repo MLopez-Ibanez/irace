@@ -287,7 +287,7 @@ race.print.task <- function(Results,
                             alive,
                             id.best,
                             mean.best,
-                            no.experiments.sofar,
+                            experimentsUsed,
                             start.time)
 {
   time.diff <- difftime(Sys.time(), start.time, units = "secs")
@@ -296,14 +296,13 @@ race.print.task <- function(Results,
               sum(alive),
               id.best,
               mean.best,
-              no.experiments.sofar,
+              experimentsUsed,
               # FIXME: Maybe better and faster if we only print seconds?
               format(.POSIXct(time.diff, tz="GMT"), "%H:%M:%S")))
   if (current.task > 1 && sum(alive) > 1) {
     conc <- concordance(Results[1:current.task, alive])
     qvar <- dataVariance(Results[1:current.task, alive])
-    cat(sprintf("|%+#4.2f|%.2f|%.4f|\n", conc$spearman.rho, conc$kendall.w,
-                   qvar))
+    cat(sprintf("|%+#4.2f|%.2f|%.4f|\n", conc$spearman.rho, conc$kendall.w, qvar))
   } else {
     cat("|   NA|  NA|    NA|\n")
   }
@@ -321,8 +320,6 @@ race.print.footer <- function(bestconf, mean.best, break.msg, debug.level)
   cat("\n")
 }
 
-# FIXME: This can be simplified a lot more. Some arguments already appear in
-# scenario.
 race <- function(maxExp = 0,
                  minSurvival = 1,
                  elite.data = NULL,
@@ -332,6 +329,9 @@ race <- function(maxExp = 0,
                  elitistNewInstances)
 {
   race.env <- new.env()
+  # FIXME: We should take this from scenario. However, this value should be
+  # zero for the first iteration.
+  ## FIXME2: Probably, instead of this, we should keep elite.safe in the race.env.
   race.env$elitistNewInstances <- elitistNewInstances
   stat.test <- scenario$testType
   conf.level <- scenario$confidence
@@ -339,8 +339,11 @@ race <- function(maxExp = 0,
   each.test <- scenario$eachTest
   elitist <- scenario$elitist
   no.configurations <- nrow(configurations)
+  experimentLog <- matrix(nrow = 0, ncol = 3,
+                          dimnames = list(NULL, c("instance", "configuration", "time")))
+  alive <- rep(TRUE, no.configurations)
   
-  # FIXME: Remove argument checking. This must have been done by the caller.
+  ## FIXME: Remove argument checking. This must have been done by the caller.
   # Check argument: maxExp
   if (!missing(maxExp) &&
       (!is.numeric(maxExp) ||
@@ -373,8 +376,6 @@ race <- function(maxExp = 0,
                                           max.instances = nrow(.irace$instancesList))
   no.tasks <- length(race.instances)
 
-  interactive <- TRUE
-
   # Initialize some variables...
   if (is.null(elite.data)) {
     if (elitist) elite.safe <- first.test
@@ -391,35 +392,31 @@ race <- function(maxExp = 0,
     is.elite <- colSums(!is.na(Results))
   }
 
-  experimentLog <- matrix(nrow = 0, ncol = 3,
-                          dimnames = list(NULL, c("instance", "configuration", "time")))
-  alive <- rep(TRUE, no.configurations)
   best <- 0
   race.ranks <- c()
-  no.experiments.sofar <- 0
+  experimentsUsed <- 0
   no.elimination <- 0 # number of tasks without elimination
 
   race.print.header()
 
   # Start main loop
-  break.msg <- paste0("all instances (", no.tasks, ") evaluated")
+  break.msg <- NULL
   for (current.task in seq_len (no.tasks)) {
     which.alive <- which(alive)
     nbAlive     <- length(which.alive)
     which.exe   <- which.alive
 
-    if (elitist) {  
-      # Filter configurations that do not need to be executed (elites).
-      # This is valid only for previous iteration instances.
-      if (!is.null(elite.data) && current.task <= elite.safe ) {
-        # Execute everything that is alive and not yet executed.
-        not.executed <- is.na(Results[current.task, ])
-        irace.assert(length(not.executed) == length(alive))
-        which.exe <- which(alive & not.executed)
-        # Remove one elite count from every configuration already executed.
-        is.elite <- is.elite - (!not.executed)
-        irace.assert (all(is.elite >= 0))
-      }
+    if (elitist
+        # Filter configurations that do not need to be executed (elites).
+        # This is valid only for previous iteration instances.
+        && !is.null(elite.data) && current.task <= elite.safe) {
+      # Execute everything that is alive and not yet executed.
+      not.executed <- is.na(Results[current.task, ])
+      irace.assert(length(not.executed) == length(alive))
+      which.exe <- which(alive & not.executed)
+      # Remove one elite count from every configuration already executed.
+      is.elite <- is.elite - (!not.executed)
+      irace.assert (all(is.elite >= 0))
     }
 
     if (current.task > first.test) {
@@ -435,13 +432,18 @@ race <- function(maxExp = 0,
       # If we just did a test, check that we have enough budget to reach the
       # next test.
       if (maxExp && ( (current.task - 1) %% each.test) == 0
-          && no.experiments.sofar + length(which.exe) * each.test > maxExp) {
+          && experimentsUsed + length(which.exe) * each.test > maxExp) {
         break.msg <- paste0("experiments for next test (",
-                            no.experiments.sofar + length(which.exe) * each.test,
+                            experimentsUsed + length(which.exe) * each.test,
                             ") > max experiments (", maxExp, ")")
         break
       }
     }
+    irace.assert(nbAlive > 1)
+    ## if (nbAlive == 1) {
+    ##   break.msg <- "only one alive configuration"
+    ##   break
+    ## }
 
     if (elitist) {
       if (scenario$elitistLimit != 0 && current.task > elite.safe
@@ -462,10 +464,6 @@ race <- function(maxExp = 0,
 #      }
     }
 
-    if (nbAlive == 1) {
-      break.msg <- "only one alive configuration"
-      break
-    }
 
     start.time <- Sys.time()
     # Execute experiments
@@ -491,17 +489,14 @@ race <- function(maxExp = 0,
         # the value of the elites is changing from iteration to iteration maybe
         # we could add a result info, even though the information would be
         # repeated.
-        
-        # Log time if needed
-        output.time <- output[[i]]$time
         experimentLog <- rbind(experimentLog,
                                c(race.instances[current.task],
                                  configurations[current.configuration, ".ID."],
-                                 output.time))
+                                 output[[i]]$time))
       }
     }
 
-    no.experiments.sofar <- no.experiments.sofar + length(which.exe)
+    experimentsUsed <- experimentsUsed + length(which.exe)
 
     ## Drop bad configurations.
     # We assume that first.test is a multiple of each.test.  In any
@@ -528,17 +523,15 @@ race <- function(maxExp = 0,
         irace.assert (all(is.elite >= 0))
         alive <- alive | (is.elite > 0)
       }
-
-      if (interactive) {
-        if (test.res$dropped.any) {
-          if (aux.alive != sum(alive)) cat("|!|") else cat("|-|") 
-        } else { 
-          cat("|=|") 
-        }
+      
+      if (test.res$dropped.any) {
+        if (aux.alive != sum(alive)) cat("|!|") else cat("|-|") 
+      } else { 
+        cat("|=|") 
       }
       
     } else {
-      if (interactive) cat("|x|")
+      cat("|x|")
       # LESLIE : Not sure this is needed, but just in case.
       if (length(which.alive) == 1) {
         race.ranks <- 1
@@ -573,7 +566,7 @@ race <- function(maxExp = 0,
                     alive,
                     configurations[best, ".ID."],
                     mean.best,
-                    no.experiments.sofar,
+                    experimentsUsed,
                     start.time)
 
     prev.alive  <- which.alive
@@ -592,6 +585,9 @@ race <- function(maxExp = 0,
       }
     } 
   }
+
+  if (is.null(break.msg))
+    break.msg <- paste0("all instances (", no.tasks, ") evaluated")
 
   race.print.footer(bestconf = configurations[best, , drop = FALSE],
                     mean.best = mean.best,
@@ -617,8 +613,7 @@ race <- function(maxExp = 0,
   # nrow(Results) may be smaller, equal or larger than current.task.
   return(list(experiments = Results,
               experimentLog = experimentLog,
-              # FIXME: Rename this to experimentsUsed for consistency
-              experimentsUsed = no.experiments.sofar,
+              experimentsUsed = experimentsUsed,
               nbAlive = nbAlive,
               configurations = configurations))
 }
