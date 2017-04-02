@@ -60,40 +60,48 @@ recoverFromFile <- function(filename)
 ##
 ## Numerical configurations similarity function
 ##
+# FIXME: This function is too slow and it shows up in profiles.
 numeric.configurations.equal <- function(x, configurations, parameters, threshold, param.names)
 {
   d <- rep(0.0, nrow(configurations))
-  bmat <- matrix(TRUE, nrow=nrow(configurations),ncol=length(param.names))
+  isSimilar.mat <- matrix(TRUE, nrow = nrow(configurations), ncol = length(param.names))
   selected <- 1:nrow(configurations)
   for (i in seq_along(param.names)) {
     param <- param.names[i]
-    lower <- paramLowerBound(param, parameters)
-    upper <- paramUpperBound(param, parameters)
+    lower <- parameters$domain[[param]][1]
+    upper <- parameters$domain[[param]][2]
  
     X <- x[[param]]
+    # FIXME: Since at the end we select a subset of configurations, we could use selected here.
     y <- configurations[, param]
-    for (j in seq_len(nrow(bmat))) { # Configurations loop
+    ## FIXME: This can probably done much faster by doing a matrix operation that updates
+    ## isSimilar.mat[, i] in one step instead of the for-loop.
+    ## We would need to handle the NAs first.
+    for (j in seq_len(nrow(isSimilar.mat))) { # Configurations loop
       Y <- y[selected[j]]
       if (is.na (X) && is.na(Y)) { # Both NA, just ignore this param
         next
       } else if (xor(is.na (X), is.na(Y))) { # Distance is 1.0, so not equal
-        bmat[j,i] <- FALSE 
+        isSimilar.mat[j,i] <- FALSE 
       } else {
+        # FIXME: Why is this updating d[j]? It seems that if the difference is
+        # large for one configuration, then it will be assumed to be large for
+        # the rest.
         d[j] <- max(d[j], abs((as.numeric(X) - as.numeric(Y)) / (upper - lower)))
-        if (d[j] > threshold) bmat[j,i] <- FALSE
+        if (d[j] > threshold) isSimilar.mat[j,i] <- FALSE
       }
     }
-    index <- which(apply(bmat,1,all))
-    bmat <- bmat[index, , drop=FALSE]
+    index <- which(apply(isSimilar.mat,1,all))
+    isSimilar.mat <- isSimilar.mat[index, , drop=FALSE]
     d <- d[index]
     selected  <- selected[index]
-    if (nrow(bmat) == 0) break
+    if (nrow(isSimilar.mat) == 0) break
   }
   
   similar <- c()
   if (length(selected) != 0)
     similar <- c(x[[".ID."]], configurations[selected,".ID."])
-  
+
   return(similar)
 }
 
@@ -186,6 +194,14 @@ similarConfigurations <- function(configurations, parameters, threshold)
         if (debug.level >= 1) cat(".")
       }
     }
+    # FIXME: We have to use unique because we return the same configuration
+    # more than once in different calls to
+    # numeric.configurations.equal. Currently, we compare each configuration
+    # k=1...n with every configuration k+1...n. Instead, we should compare
+    # k=1...n with ((k+1...n) notin similar).  It may happen that A ~ B and A ~
+    # C and B /= C, but this is OK because we still return A, B and C. It may
+    # also happen that A ~ B, B ~ C and A /= C, but this is also OK because we
+    # will compare A with B,C then B with C.
     similar <- unique(similar)
     configurations <- configurations[configurations[, ".ID."] %in% similar,]   
   }
