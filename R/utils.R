@@ -178,7 +178,6 @@ path.rel2abs <- function (path, cwd = getwd())
     }
   }
   irace.normalize.path <- function(path) {
-    print(path)
     return(suppressWarnings(normalizePath(path, winslash = "/", mustWork = NA)))
   }
     
