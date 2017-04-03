@@ -32,7 +32,6 @@ TODO General (in order of importance):
    target-runner to irace); or 2) make optional that target-evaluator is
    re-evaluated (but we still need to re-evaluate for MO).
 
-   
  * crayon: Colored Terminal Output
    https://cran.r-project.org/package=crayon
     
@@ -120,6 +119,9 @@ TODO General (in order of importance):
    cluster using the low-level primitives of the parallel and Rmpi
    packages. Currently we just call high-level functions that do all
    the work for us.
+
+   Maybe the futures package can help in this:
+   https://cran.r-project.org/web/packages/future/vignettes/future-1-overview.html
 
  * Make the output at beginning of iteration conditional on what is
    the tuning goal (time or nb evaluation). For instance it can be
