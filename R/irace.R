@@ -195,15 +195,15 @@ similarConfigurations <- function(configurations, parameters, threshold)
       }
     }
     # FIXME: We have to use unique because we return the same configuration
-    # more than once in different calls to
-    # numeric.configurations.equal. Currently, we compare each configuration
-    # k=1...n with every configuration k+1...n. Instead, we should compare
-    # k=1...n with ((k+1...n) notin similar).  It may happen that A ~ B and A ~
-    # C and B /= C, but this is OK because we still return A, B and C. It may
-    # also happen that A ~ B, B ~ C and A /= C, but this is also OK because we
-    # will compare A with B,C then B with C.
+    # more than once in different calls to numeric.configurations.equal.
+    # Currently, we compare each configuration k=1...n with every configuration
+    # k+1...n. Instead, we should compare k=1...n with ((k+1...n) notin
+    # similar).  It may happen that A ~ B and A ~ C and B /= C, but this is OK
+    # because we still return A, B and C. It may also happen that A ~ B, B ~ C
+    # and A /= C, but this is also OK because we will compare A with B,C then B
+    # with C.
     similar <- unique(similar)
-    configurations <- configurations[configurations[, ".ID."] %in% similar,]   
+    configurations <- configurations[configurations[, ".ID."] %in% similar, ]
   }
   
   if (debug.level >= 1) cat(" DONE\n")
