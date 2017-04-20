@@ -34,9 +34,9 @@ irace.license <-
 '*******************************************************************************
 * irace: An implementation in R of Iterated Race
 * Version: __VERSION__
-* Copyright (C) 2010-2016
+* Copyright (C) 2010-2017
 * Manuel Lopez-Ibanez     <manuel.lopez-ibanez@manchester.ac.uk>
-* Jeremie Dubois-Lacoste  <jeremie.dubois-lacoste@ulb.ac.be>
+* Jeremie Dubois-Lacoste  
 * Leslie Perez Caceres    <leslie.perez.caceres@ulb.ac.be>
 *
 * This is free software, and you are welcome to redistribute it under certain
