@@ -549,10 +549,12 @@ readInstances <- function(instancesDir = NULL, instancesFile = NULL)
   if (!is.null.or.empty(instancesFile)) {
     file.check (instancesFile, readable = TRUE, text = "instance file")
     # We do not warn if the last line does not finish with a newline.
-    lines <- readLines (instancesFile, warn = FALSE)
-    lines <- sub("#.*$", "", lines) # Remove comments
-    lines <- sub("^[[:space:]]+", "", lines) # Remove leading whitespace
-    lines <- lines[lines != ""] # Delete empty lines
+    instances <- readLines (instancesFile, warn = FALSE)
+    instances <- sub("#.*$", "", instances) # Remove comments
+    instances <- sub("^[[:space:]]+", "", instances) # Remove leading whitespace
+    instances <- instances[instances != ""] # Delete empty lines
+    if (is.null.or.empty(instances))
+      irace.error("No instances found in `", instancesFile, "'")
     instances <- paste0 (instancesDir, "/", instances)
   } else {
     file.check (instancesDir, isdir = TRUE, notempty = TRUE,

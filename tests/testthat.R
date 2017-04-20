@@ -266,6 +266,17 @@ NA        NA   "x3"   4.5   "low"
 }
 test.checkForbidden()
 
+test.instances <- function()
+{
+  scenario <- list(targetRunner = target.runner,
+                   maxExperiments = 1000, seed = 1234567,
+                   firstTest = 5,
+                   deterministic = TRUE,
+                   trainInstancesFile = "train-instances.txt")
+  scenario <- checkScenario (scenario)
+}
+test.instances()
+
 test.similarConfigurations <- function()
 {
   parameters <- irace:::readParameters(text = '
