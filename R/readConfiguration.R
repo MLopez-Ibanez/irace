@@ -286,8 +286,8 @@ checkScenario <- function(scenario = defaultScenario())
     }
   }
 
-  if (scenario$targetEvaluator == "") scenario$targetEvaluator <- NULL
-  if (is.null(scenario$targetEvaluator)) {
+  if (is.null.or.empty(scenario$targetEvaluator)) {
+    scenario$targetEvaluator <- NULL
     .irace$target.evaluator <- NULL
   } else if (is.function.name(scenario$targetEvaluator)) {
     .irace$target.evaluator <- bytecompile(scenario$targetEvaluator)
