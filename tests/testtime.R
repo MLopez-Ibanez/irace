@@ -1,3 +1,4 @@
+library(irace)
 # Init .Rrandom.seed
 # options(error = utils::recover)
 x <- runif(1)
@@ -15,8 +16,6 @@ target.runner <- function(experiment, scenario)
 time.irace <- function(...)
 {
   args <- list(...)
-  require("irace")
-
   weights <- rnorm(200, mean = 0.9, sd = 0.02)
   parameters.table <- '
    tmax "" i (1, 50)

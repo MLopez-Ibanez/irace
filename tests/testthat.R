@@ -1,4 +1,4 @@
-require("irace")
+library(irace)
 
 ## Functions ##########################################################
 f_rosenbrock <- function (x) {
