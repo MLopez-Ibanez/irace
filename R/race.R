@@ -64,7 +64,7 @@ race.wrapper <- function(configurations, instance.idx, which.alive, which.exe, p
     ntest <- ntest + 1
   }
 
-  target.output <- rep(list(NA), length(experiments))
+  target.output <- vector("list", length(experiments))
   # Execute commands
   if (length(which.exe) > 0) {
     # which.exe values are within 1:nbConfigurations, whereas experiments
@@ -74,7 +74,6 @@ race.wrapper <- function(configurations, instance.idx, which.alive, which.exe, p
     irace.assert(length(which.exps) == length(which.exe))
     target.output[which.exps] <- execute.experiments (experiments[which.exps], scenario)
   }
-  irace.assert(!any(sapply(target.output, is.null)))
 
   # target.evaluator may be NULL. If so, target.output must
   # contain the right output already.
@@ -478,26 +477,27 @@ race <- function(maxExp = 0,
     }
     
     # Extract results
-    for (i in seq_along(which.alive)) {
-      current.configuration <- which.alive[i]
-      # If the experiment was executed or target.evaluator exists
-      # then the result is in the output.
-      if (current.configuration %in% which.exe
-          || !is.null(scenario$targetEvaluator)) {
-        Results[current.task, current.configuration] <- output[[i]]$cost
-        # LESLIE: For the elitist version in the case target.evaluator is used,
-        # the value of the elites is changing from iteration to iteration maybe
-        # we could add a result info, even though the information would be
-        # repeated.
-        experimentLog <- rbind(experimentLog,
-                               c(race.instances[current.task],
-                                 configurations[current.configuration, ".ID."],
-                                 output[[i]]$time))
-      }
-    }
+    vcost <- unlist(lapply(output, "[[", "cost"))
+    # If the experiment was executed or target.evaluator exists
+    # then the result is in the output.
+    ## Currently, targetEvaluator always re-evaluates, which implies that the
+    ## value may change. We do this to allow online normalization.
+    which.exps <- if (is.null(scenario$targetEvaluator)) which.exe else which.alive
+    irace.assert(length(vcost) == length(which.exps))
+    Results[current.task, which.exps] <- vcost
 
+    # output is not indexed in the same way as configurations.
+    which.exps <- which(which.alive %in% which.exe)
+    irace.assert(length(which.exps) == length(which.exe))
+    vtimes <- unlist(lapply(output[which.exps], "[[", "time"))
+    irace.assert(length(vtimes) == length(which.exe))
+    experimentLog <- rbind(experimentLog,
+                           cbind(race.instances[current.task],
+                                 configurations[which.exe, ".ID."],
+                                 vtimes))
+    
     experimentsUsed <- experimentsUsed + length(which.exe)
-
+    
     ## Drop bad configurations.
     # We assume that first.test is a multiple of each.test.  In any
     # case, this will only do the first test after the first multiple
@@ -611,6 +611,8 @@ race <- function(maxExp = 0,
   }
 
   # nrow(Results) may be smaller, equal or larger than current.task.
+  irace.assert(nrow(experimentLog) == experimentsUsed)
+  
   return(list(experiments = Results,
               experimentLog = experimentLog,
               experimentsUsed = experimentsUsed,
