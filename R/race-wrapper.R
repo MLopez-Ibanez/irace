@@ -373,6 +373,10 @@ execute.evaluator <- function(experiments, scenario, target.output, configuratio
                                     all.conf.id, scenario = scenario,
                                     target.runner.call = target.output[[k]]$call)
     target.output[[k]]$cost <- output$cost
+    if (is.null(target.output[[k]]$call))
+      target.output[[k]]$call <- output$call
+    if (is.null(target.output[[k]]$time))
+      target.output[[k]]$time <- output$time
   }
   return(target.output)
 }
