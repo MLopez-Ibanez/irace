@@ -701,7 +701,7 @@ irace <- function(scenario, parameters)
                                timeEstimate = timeEstimate)
     # Consistency checks
     irace.assert(sum(!is.na(iraceResults$experiments)) == experimentsUsedSoFar)
-    irace.assert(sum(nrow(iraceResults$experimentLog)) == experimentsUsedSoFar)
+    irace.assert(nrow(iraceResults$experimentLog) == experimentsUsedSoFar)
 
     ## Save to the log file
     iraceResults$allConfigurations <- allConfigurations
