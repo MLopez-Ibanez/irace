@@ -48,16 +48,17 @@ build : bumpdate clean
 	else echo "error: vignettes/irace-package.bib is empty: run 'make vignettes'"; false; fi
 	cd $(BINDIR) &&	R CMD build $(BUILD_FLAGS) $(PACKAGEDIR)
 
+closeversion: SVN_REL_URL:=$(shell svn info --show-item relative-url)
 closeversion: build
 	svn ci -m " * NEWS: Close version $(PACKAGEVERSION)"
 	svn rm ^/tags/$(PACKAGEVERSION) -m " * Delete previous tag for version $(PACKAGEVERSION)" || echo "OK: tag is new."
-	svn cp ^/trunk ^/tags/$(PACKAGEVERSION) -m " * Tag version $(PACKAGEVERSION)"
+	svn cp $(SVN_REL_URL) ^/tags/$(PACKAGEVERSION) -m " * Tag version $(PACKAGEVERSION)"
 	svn up
 	make releasebuild # again to update version.R and svn_version
 
 
 releasebuild: BUILD_FLAGS=--compact-vignettes=both
-releasebuild:
+releasebuild: bumpdate
 	cd $(BINDIR) &&	R CMD build $(BUILD_FLAGS) $(PACKAGEDIR) && tar -atvf $(PACKAGE)_$(PACKAGEVERSION).tar.gz
 
 cran : BUILD_FLAGS=--compact-vignettes=both
