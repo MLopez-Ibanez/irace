@@ -22,14 +22,15 @@
    instances and instance-specific parameter values are read from a file.
                                                         (Manuel López-Ibáñez)
 
+2.3
+
  * Fix bug that will cause iraceResults$experimentLog to count calls to
    targetEvaluator as experiments, even if no call to targetRunner was
    performed. This does not affect the computation of the budget consumed and,
    thus, it does not affect the termination criteria of irace. The bug triggers
-   an assertion that terminates irace, thus no successful run with version 2.2
-   is affected.
+   an assertion that terminates irace, thus no run that was successful with
+   version 2.2 is affected.
                                                      (Manuel López-Ibáñez)
-
 
 2.2
 

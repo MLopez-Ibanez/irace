@@ -1,4 +1,4 @@
-PACKAGEVERSION=2.3
+PACKAGEVERSION=2.4
 PACKAGE=$(shell sh -c 'grep -F "Package: " DESCRIPTION | cut -f2 -d" "')
 # FIXME: This Makefile only works with this BINDIR!
 BINDIR=$(CURDIR)/..
