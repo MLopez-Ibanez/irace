@@ -228,8 +228,8 @@ Usage
    create a file that specifies which instances from that directory
    should be run and which instance-specific parameters to use. See
    `scenario.txt.tmpl` and `instances-list.tmpl` for examples. The command
-   irace will not attempt to create the execution directory (execDir),
-   so it must exist before calling irace. The default execDir is the
+   irace will not attempt to create the execution directory (`execDir`),
+   so it must exist before calling irace. The default `execDir` is the
    current directory.
 
 5. Calling the command:
