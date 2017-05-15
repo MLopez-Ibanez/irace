@@ -1448,7 +1448,7 @@ repairConfiguration <- function (configuration, parameters, digits)
   return(configuration)
 }
 @
-
+The above code can be directly specified in the \parameter{scenarioFile}, by default \code{scenario.txt}.
 
 \section{Parallelization}\label{sec:parallel}
 A single run of \irace can be done much faster by executing the calls
