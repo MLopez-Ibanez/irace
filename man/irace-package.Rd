@@ -12,7 +12,7 @@ The irace package: \packageTitle{irace}
 Package: \tab irace\cr
 Type: \tab Package\cr
 Version: \tab 2.4 \cr
-Date: \tab 2017-04-25 \cr
+Date: \tab 2017-05-18 \cr
 License: \tab GPL (>= 2)\cr
 LazyLoad: \tab yes\cr
 }
@@ -135,7 +135,7 @@ checkIraceScenario(scenario, parameters = parameters)
 tuned.confs <- irace(scenario = scenario, parameters = parameters)
 
 ## We can print the best configurations found by irace as follows:
-configurations.print(result)
+configurations.print(tuned.confs)
 
 ## We can evaluate the quality of the best configuration found by
 ## irace versus the default configuration of the SANN algorithm on
