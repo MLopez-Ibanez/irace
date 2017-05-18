@@ -1441,14 +1441,27 @@ variable \parameter{digits}. An example that makes all real-valued parameters
 sum up to one would be:
 %
 <<repairEx,prompt=FALSE, eval=FALSE>>=
-repairConfiguration <- function (configuration, parameters, digits)
+repairConfiguration = function (configuration, parameters, digits)
 {
   isreal <- parameters$type[colnames(configuration)] %in% "r"
   configuration[isreal] <- configuration[isreal] / sum(configuration[isreal])
   return(configuration)
 }
 @
-The above code can be directly specified in the \parameter{scenarioFile}, by default \code{scenario.txt}.
+The following example forces  three specific parameters to be in increasing order:
+%
+<<repairEx2,prompt=FALSE, eval=FALSE>>=
+repairConfiguration = function (configuration, parameters, digits)
+{
+ columns <- c("p1","p2","p3")
+ # cat("Before"); print(configuration)
+ configuration[columns] <- sort(configuration[columns])
+ # cat("After"); print(configuration)
+ return(configuration)
+}
+@
+
+The above code can be specified directly in the \parameter{scenarioFile}, by default \code{scenario.txt}.
 
 \section{Parallelization}\label{sec:parallel}
 A single run of \irace can be done much faster by executing the calls
