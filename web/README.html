@@ -110,7 +110,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h2 id="windows">Windows</h2>
 <p>You can install R from a CRAN mirror (<a href="https://cran.r-project.org/bin/windows/" class="uri">https://cran.r-project.org/bin/windows/</a>). Once R is installed, you can launch the R console and install the irace package from it. See instructions below.</p>
 <h1 id="installing-the-irace-package">Installing the irace package</h1>
-<p>Install the <a href="http://iridia.ulb.ac.be/irace">irace</a> R package on your computer. There are two methods:</p>
+<p>There are two methods for installing the <a href="http://iridia.ulb.ac.be/irace">irace</a> R package on your computer:</p>
 <ol style="list-style-type: decimal">
 <li><p>Install within R (automatic download):</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">    $<span class="st"> </span>R
@@ -131,15 +131,18 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
     R&gt;<span class="st"> </span><span class="kw">library</span>(irace)
     R&gt;<span class="st"> </span><span class="kw">system.file</span>(<span class="dt">package=</span><span class="st">&quot;irace&quot;</span>)
     [<span class="dv">1</span>] <span class="st">&quot;~/R/irace&quot;</span></code></pre></div>
+<p>The last command tells you the installation directory of <code>irace</code>.</p>
 <h2 id="gnulinux-and-os-x">GNU/Linux and OS X</h2>
-<p>The last command tells you the installation directory of <code>irace</code>. Save that path to a variable, and add it to your <code>.bash_profile</code>, <code>.bashrc</code> or <code>.profile</code>:</p>
+<p>Save the installation directory of <code>irace</code> to a variable, and add it to your <code>.bash_profile</code>, <code>.bashrc</code> or <code>.profile</code>:</p>
 <div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">    <span class="kw">export</span> <span class="ot">IRACE_HOME=</span>~/R/irace/ <span class="co"># Path given by system.file(package=&quot;irace&quot;)</span>
     <span class="kw">export</span> <span class="ot">PATH=${IRACE_HOME}</span>/bin/:<span class="ot">$PATH</span>
     <span class="co"># export R_LIBS=~/R:${R_LIBS} # Only if local installation was forced</span></code></pre></div>
 <p>After adding this and opening a new terminal, you should be able to invoke <code>irace</code> as follows:</p>
 <div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">    $ <span class="kw">irace</span> --help</code></pre></div>
 <h2 id="windows-1">Windows</h2>
-<p>Unfortunately, the command-line wrapper does not work in Windows. To launch irace, you need to open the R console and execute:</p>
+<p>If the installation directory of <code>irace</code> is <code>C:/R/irace/</code>, you can invoke <code>irace</code> by opening a terminal (launch the program <code>cmd.exe</code>) and executing:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">    <span class="kw">C</span>:<span class="dt">\&gt;</span> C:\R\irace\bin\irace.bat --help</code></pre></div>
+<p>You can also launch irace by opening the R console and executing:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">    R&gt;<span class="st"> </span><span class="kw">library</span>(irace)
     R&gt;<span class="st"> </span><span class="kw">irace.cmdline</span>(<span class="st">&quot;--help&quot;</span>)</code></pre></div>
 <h1 id="usage">Usage</h1>
@@ -161,7 +164,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li>In <code>scenario.txt</code>, uncomment and assign only the parameters for which you need a value different than the default one.</li>
 </ul>
 <p>There are examples in <code>$IRACE_HOME/examples/</code>.</p></li>
-<li><p>Put the instances in <code>~/tuning/Instances/</code>. In addition, you can create a file that specifies which instances from that directory should be run and which instance-specific parameters to use. See <code>scenario.txt.tmpl</code> and <code>instances-list.tmpl</code> for examples. The command irace will not attempt to create the execution directory (execDir), so it must exist before calling irace. The default execDir is the current directory.</p></li>
+<li><p>Put the instances in <code>~/tuning/Instances/</code>. In addition, you can create a file that specifies which instances from that directory should be run and which instance-specific parameters to use. See <code>scenario.txt.tmpl</code> and <code>instances-list.tmpl</code> for examples. The command irace will not attempt to create the execution directory (<code>execDir</code>), so it must exist before calling irace. The default <code>execDir</code> is the current directory.</p></li>
 <li><p>Calling the command:</p>
 <div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">    $ <span class="kw">cd</span> ~/tuning/ <span class="kw">&amp;&amp;</span> <span class="ot">$IRACE_HOME</span><span class="kw">/bin/irace</span></code></pre></div>
 <p>performs one run of Iterated Race. See the output of <code>irace --help</code> for additional irace parameters. Command-line parameters override the scenario setup specified in the <code>scenario.txt</code> file.</p></li>

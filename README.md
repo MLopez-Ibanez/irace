@@ -117,8 +117,8 @@ below.
 Installing the irace package
 ============================
 
-Install the [irace](http://iridia.ulb.ac.be/irace) R package on your
-computer. There are two methods:
+There are two methods for installing the [irace](http://iridia.ulb.ac.be/irace) R package on your
+computer:
 
 1. Install within R (automatic download):
 ```R
@@ -156,13 +156,13 @@ Once installed, test that it is working by doing:
     R> system.file(package="irace")
     [1] "~/R/irace"
 ```
+The last command tells you the installation directory of `irace`.
 
 GNU/Linux and OS X
 ------------------
 
-The last command tells you the installation directory of `irace`. Save
-that path to a variable, and add it to your `.bash_profile`, `.bashrc`
-or `.profile`:
+Save the installation directory of `irace` to a variable, and add it to your
+`.bash_profile`, `.bashrc` or `.profile`:
 
 ```bash
     export IRACE_HOME=~/R/irace/ # Path given by system.file(package="irace")
@@ -181,8 +181,14 @@ invoke `irace` as follows:
 Windows
 -------
 
-Unfortunately, the command-line wrapper does not work in Windows. To
-launch irace, you need to open the R console and execute:
+If the installation directory of `irace` is `C:/R/irace/`, you can invoke
+`irace` by opening a terminal (launch the program `cmd.exe`) and executing:
+
+```bash
+    C:\> C:\R\irace\bin\irace.bat --help
+```
+
+You can also launch irace by opening the R console and executing:
 
 ```R
     R> library(irace)
