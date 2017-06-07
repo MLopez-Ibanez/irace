@@ -1486,7 +1486,7 @@ parallel. There are four ways to parallelize a single run of \irace:
    The user is responsible for setting up the required MPI environment.  MPI is
    commonly available in computing clusters and requires launching \irace in
    some particular way. An example script for using MPI mode in a SGE cluster
-   is given at \IRACEHOME{/examples/mpi/}.
+   is given at \IRACEHOME{/bin/parallel-irace-mpi}.
 
  \item \textbf{Batch jobs clusters}: Some computing clusters work by submitting
    jobs to a batch queue and waiting for the jobs to finish. With the
