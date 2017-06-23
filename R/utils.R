@@ -18,16 +18,19 @@ irace.reload.debug <- function(package = "irace")
 
 irace.print.memUsed <- function(objects)
 {
+  object.size.kb <- function (name, envir) {
+    object.size(get(name, envir = envir)) / 1024
+  }
+
   envir <- parent.frame()
   if (missing(objects)) {
     objects <- ls(envir = envir, all.names = TRUE)
   }
-  x <- sapply(objects, function(name)
-              object.size(get(name, envir = envir)) / 1024)
+  
+  x <- sapply(objects, object.size.kb, envir = envir)
 
-  objects <- ls(envir = .irace)
-  y <- sapply(objects, function(name)
-              object.size(get(name, envir = .irace)) / 1024)
+  y <- sapply(ls(envir = .irace, all.names = TRUE),
+              object.size.kb, envir = .irace)
   names(y) <- paste0(".irace$", names(y))
   x <- c(x, y)
 
@@ -35,6 +38,8 @@ irace.print.memUsed <- function(objects)
   x <- x[x > 32]
   cat(sep="", sprintf("%30s : %17.1f Kb\n", names(x), x))
   cat(sep="", sprintf("%30s : %17.1f Mb\n", "Total", sum(x) / 1024))
+  # This does garbage collection and also prints memory used by R.
+  cat(sep="", sprintf("%30s : %17.1f Mb\n", "gc", sum(gc()[,2])))
 }
 
 # Print a user-level fatal error message, when the calling context
@@ -64,7 +69,20 @@ irace.dump.frames <- function()
 
   if (!is.null(execDir)) setwd(cwd)
   # We need this to signal an error in R CMD check.
-  q("no", status = 1, runLast = FALSE)  
+  if (!interactive()) q("no", status = 1, runLast = FALSE)
+}
+
+# Print an internal fatal error message that signals a bug in irace.
+irace.internal.error <- function(...)
+{
+  traceback(1)
+  op <- options(warning.length = 8170,
+                error = if (interactive()) utils::recover
+                        else irace.dump.frames)
+  on.exit(options(op))
+  warnings()
+  stop (.irace.prefix, ..., "\n", .irace.bug.report, call. = TRUE)
+  invisible()
 }
 
 irace.assert <- function(exp)
@@ -79,6 +97,7 @@ irace.assert <- function(exp)
                 error = if (interactive()) utils::recover
                         else irace.dump.frames)
   on.exit(options(op))
+  warnings()
   stop (msg)
   invisible()
 }
