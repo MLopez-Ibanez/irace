@@ -20,11 +20,9 @@ conditionsSatisfied <- function (parameters, partialConfiguration, paramName)
 
 new.empty.configuration <- function(parameters)
 {
-  namesParameters <- names(parameters$conditions)
-  newConfigurationsColnames <- c(namesParameters, ".PARENT.")
-  empty.configuration <- as.list(rep(NA, length(newConfigurationsColnames)))
-  names(empty.configuration) <- newConfigurationsColnames
-  return(empty.configuration)
+  newConfigurationsColnames <- c(names(parameters$conditions), ".PARENT.")
+  return(setNames(as.list(rep(NA, length(newConfigurationsColnames))),
+                  newConfigurationsColnames))
 }
 
 get.fixed.value <- function(param, parameters)
