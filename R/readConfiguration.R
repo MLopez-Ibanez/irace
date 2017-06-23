@@ -64,7 +64,7 @@ readConfigurationsFile <- function(filename, parameters, debugLevel = 0, text)
       tmp <- lapply(missing, function(x) get.fixed.value(x, parameters))
       names(tmp) <- missing
       configurationTable <- cbind.data.frame(configurationTable, tmp,
-                                         stringsAsFactors = FALSE)
+                                             stringsAsFactors = FALSE)
     }
   }
 
@@ -74,13 +74,14 @@ readConfigurationsFile <- function(filename, parameters, debugLevel = 0, text)
   for (currentParameter in namesParameters) {
     type <- parameters$types[[currentParameter]]
     if (type == "i" || type == "r") {
-      configurationTable[, currentParameter] <- suppressWarnings(as.numeric(configurationTable[, currentParameter]))
+      configurationTable[, currentParameter] <-
+        suppressWarnings(as.numeric(configurationTable[, currentParameter]))
     }
   }
 
   # Loop over all configurations in configurationTable
   for (k in seq_len(nbConfigurations)) {
-    # Loop over all parameters, in an order taken from the conditions
+    # Loop over all parameters, in hierarchical order.
     for (currentParameter in namesParameters) {
       currentValue <- configurationTable[k, currentParameter]
       type <- parameters$types[[currentParameter]]
