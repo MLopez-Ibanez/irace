@@ -26,11 +26,6 @@ REVNUM = $(shell sh -c 'cat svn_version | tr -d -c "[:digit:]" 2> /dev/null')
 
 .PHONY : help build check clean install pdf rsync version bumpdate submit cran winbuild vignettes
 
-
-install:
-	$(MAKE) build
-	cd $(BINDIR) && R CMD INSTALL $(INSTALL_FLAGS) $(PACKAGE)_$(PACKAGEVERSION).tar.gz
-
 help:
 	@echo "install    install the package"
 	@echo "build      build the package as a tar.gz file"
@@ -40,6 +35,13 @@ help:
 	@echo "winbuild   submit the package to the windows builder service"
 	@echo "submit     submit the package to CRAN (read DEVEL-README first)"
 
+install:
+	$(MAKE) build
+	cd $(BINDIR) && R CMD INSTALL $(INSTALL_FLAGS) $(PACKAGE)_$(PACKAGEVERSION).tar.gz
+
+quick-install:
+	cd $(BINDIR) &&	R CMD build $(BUILD_FLAGS) --no-vignettes $(PACKAGEDIR) && R CMD INSTALL $(INSTALL_FLAGS) $(PACKAGE)_$(PACKAGEVERSION).tar.gz
+
 build : bumpdate clean
 	cd $(PACKAGEDIR)/vignettes \
 	&& sed -i 's/^%\+\\setboolean{Release}{true}/\\setboolean{Release}{true}/' $(PACKAGE)-package.Rnw \
@@ -48,7 +50,7 @@ build : bumpdate clean
 	else echo "error: vignettes/irace-package.bib is empty: run 'make vignettes'"; false; fi
 	cd $(BINDIR) &&	R CMD build $(BUILD_FLAGS) $(PACKAGEDIR)
 
-closeversion: SVN_REL_URL:=$(shell svn info --show-item relative-url)
+closeversion: SVN_REL_URL=$(shell svn info --show-item relative-url)
 closeversion: build
 	svn ci -m " * NEWS: Close version $(PACKAGEVERSION)"
 	svn rm ^/tags/$(PACKAGEVERSION) -m " * Delete previous tag for version $(PACKAGEVERSION)" || echo "OK: tag is new."
@@ -105,7 +107,7 @@ ifdef RNODE
 	rsync -rlp -CIzc -L --delete --copy-unsafe-links --exclude=.svn --exclude=/examples/ --progress --relative \
 	.     \
 	$(RNODE):$(RDIR)/$(PACKAGE)/
-	ssh $(RNODE) "cd $(RDIR)/$(PACKAGE) && make install"
+	ssh $(RNODE) "cd $(RDIR)/$(PACKAGE) && make quick-install"
 else
 	@echo "ERROR: You must specify a remote node (e.g., RNODE=majorana)"
 	@exit 1
