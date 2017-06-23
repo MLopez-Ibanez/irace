@@ -854,7 +854,7 @@ irace <- function(scenario, parameters)
         }
         
       }
-      testConfigurations <- allConfigurations[1:nbConfigurations,]
+      raceConfigurations <- allConfigurations[1:nbConfigurations,]
     } else {
       # How many new configurations should be sampled?
       nbNewConfigurations <- nbConfigurations - nrow(eliteConfigurations)
@@ -879,19 +879,19 @@ irace <- function(scenario, parameters)
       # Set ID of the new configurations.
       newConfigurations <- cbind (.ID. = max(0, allConfigurations$.ID.) +
                               1:nrow(newConfigurations), newConfigurations)
-      testConfigurations <- rbind(eliteConfigurations[, 1:ncol(allConfigurations)],
+      raceConfigurations <- rbind(eliteConfigurations[, 1:ncol(allConfigurations)],
                               newConfigurations)
-      rownames(testConfigurations) <- testConfigurations$.ID.
+      rownames(raceConfigurations) <- raceConfigurations$.ID.
 
       if (scenario$softRestart) {
         #          Rprof("profile.out")
-        tmp.ids <- similarConfigurations (testConfigurations, parameters,
+        tmp.ids <- similarConfigurations (raceConfigurations, parameters,
                                       threshold = scenario$softRestartThreshold)
         #          Rprof(NULL)
         if (!is.null(tmp.ids)) {
           if (debugLevel >= 1)
             irace.note("Soft restart: ", paste(collapse = " ", tmp.ids), " !\n")
-          model <- restartConfigurations (testConfigurations, tmp.ids, model,
+          model <- restartConfigurations (raceConfigurations, tmp.ids, model,
                                       parameters, nbNewConfigurations)
           iraceResults$softRestart[indexIteration] <- TRUE
           iraceResults$model$afterSR[[indexIteration]] <- model
@@ -907,9 +907,9 @@ irace <- function(scenario, parameters)
           # Set ID of the new configurations.
           newConfigurations <- cbind (.ID. = max(0, allConfigurations$.ID.) + 
                                   1:nrow(newConfigurations), newConfigurations)
-          testConfigurations <- rbind(eliteConfigurations[, 1:ncol(allConfigurations)],
+          raceConfigurations <- rbind(eliteConfigurations[, 1:ncol(allConfigurations)],
                                       newConfigurations)
-          rownames(testConfigurations) <- testConfigurations$.ID.
+          rownames(raceConfigurations) <- raceConfigurations$.ID.
         }
       }
 
@@ -920,7 +920,7 @@ irace <- function(scenario, parameters)
 
     if (debugLevel >= 2) {
       irace.note("Configurations for the race n ", indexIteration, ":\n")
-      configurations.print(testConfigurations, metadata = TRUE)
+      configurations.print(raceConfigurations, metadata = TRUE)
     }
 
     # Get data from previous elite tests 
@@ -941,7 +941,7 @@ irace <- function(scenario, parameters)
 
     if (debugLevel >= 1) irace.note("Launch race\n")
     raceResults <- race (scenario = scenario,
-                         configurations = testConfigurations,
+                         configurations = raceConfigurations,
                          parameters = parameters, 
                          maxExp = currentBudget, 
                          minSurvival = minSurvival,
