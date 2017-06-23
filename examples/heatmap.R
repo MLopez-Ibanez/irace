@@ -207,7 +207,7 @@ irace.levelplot <- function(x)
 
 #matrix.plot(experiments)
 
-#irace.levelplot(experiments)
+irace.levelplot(experiments)
 
 # If x has missing values, this function does not work
 # NA/NaN/Inf in foreign function call (arg 11)
@@ -239,3 +239,8 @@ irace.heatmap(experiments[,1:100], Rowv = NULL, Colv = NULL,
 
 # create heatmap and don't reorder columns
 heatmap(mtscaled, Colv=F, scale='none')
+
+library(corrplot)
+corrplot(cor(t(experiments), method="spearman"), method="color", order="hclust")
+irace:::concordance(experiments)
+irace:::dataVariance(experiments)
