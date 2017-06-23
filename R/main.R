@@ -177,10 +177,12 @@ irace.main <- function(scenario = defaultScenario(), output.width = 9999)
   
   eliteConfigurations <- irace (scenario = scenario, parameters = parameters)
   
-  cat("# Best configurations (first number is the configuration ID)\n")
+  cat("# Best configurations (first number is the configuration ID;",
+      " listed from best to worst according to the ",
+      test.type.order.str(scenario$testType), "):\n")
   configurations.print(eliteConfigurations)
   
-  cat("# Best configurations as commandlines (first number is the configuration ID)\n")
+  cat("# Best configurations as commandlines (first number is the configuration ID; same order as above):\n")
   configurations.print.command (eliteConfigurations, parameters)
   
   if (length(eliteConfigurations) > 0 &&
@@ -219,7 +221,7 @@ testing.main <- function(logFile)
   configurations <- iraceResults$allConfigurations[testing.id, , drop=FALSE]
 
   cat(" \n\n")
-  irace.note ("Testing configurations: ", paste(testing.id, collapse=" "), "\n")
+  irace.note ("Testing configurations (in no particular order): ", paste(testing.id, collapse=" "), "\n")
   configurations.print(configurations)  
   cat("# Testing of elite configurations:", scenario$testNbElites, 
       "\n# Testing iteration configurations:", scenario$testIterationElites,"\n")
@@ -227,7 +229,7 @@ testing.main <- function(logFile)
   iraceResults$testing <- testConfigurations(configurations, scenario, parameters)
 
   # FIXME : We should print the seeds also. As an additional column?
-  irace.note ("Testing results (column number is configuration ID):\n")
+  irace.note ("Testing results (column number is configuration ID in no particular order):\n")
   print(iraceResults$testing$experiments)
   
   cwd <- setwd(scenario$execDir)
@@ -266,12 +268,12 @@ testing.cmdline <- function(filename, scenario)
   iraceResults$parameters <- parameters
   iraceResults$allConfigurations <- allConfigurations
   
-  irace.note ("Testing configurations: \n")
+  irace.note ("Testing configurations (in the order given as input): \n")
   configurations.print(allConfigurations)  
   iraceResults$testing <- testConfigurations(allConfigurations, scenario, parameters)
 
   # FIXME : We should print the seeds also. As an additional column?
-  irace.note ("Testing results (column number is configuration ID):\n")
+  irace.note ("Testing results (column number is configuration ID in no particular order):\n")
   print(iraceResults$testing$experiments)
   if (!is.null.or.empty(scenario$logFile)) {
     cwd <- setwd(scenario$execDir)

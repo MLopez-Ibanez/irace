@@ -919,7 +919,8 @@ irace <- function(scenario, parameters)
     }
 
     if (debugLevel >= 2) {
-      irace.note("Configurations for the race n ", indexIteration, ":\n")
+      irace.note("Configurations for the race n ", indexIteration,
+                 " (elite configurations listed first, then new configurations):\n")
       configurations.print(raceConfigurations, metadata = TRUE)
     }
 
@@ -974,8 +975,10 @@ irace <- function(scenario, parameters)
     }
 
     if (debugLevel >= 3) {
-      irace.note("Results for the race of iteration ", indexIteration, ":\n")
-      configurations.print (raceResults$configurations, metadata=TRUE)
+      irace.note("Results for the race of iteration ", indexIteration,
+                 " (from best to worst, according to the ",
+                 test.type.order.str(scenario$testType), "):\n")
+      configurations.print (raceResults$configurations, metadata = TRUE)
     }
 
     if (debugLevel >= 1) { irace.note("Extracting elites\n") }
@@ -984,7 +987,9 @@ irace <- function(scenario, parameters)
     # would reduce overhead.
     eliteConfigurations <- extractElites(raceResults$configurations,
                                          min(raceResults$nbAlive, minSurvival))
-    irace.note("Elite configurations (first number is the configuration ID):\n")
+    irace.note("Elite configurations (first number is the configuration ID;",
+               " listed from best to worst according to the ",
+               test.type.order.str(scenario$testType), "):\n")
     configurations.print(eliteConfigurations, metadata = debugLevel >= 1)
     iraceResults$iterationElites <- c(iraceResults$iterationElites, eliteConfigurations$.ID.[1])
     iraceResults$allElites[[indexIteration]] <- eliteConfigurations$.ID.
@@ -999,7 +1004,7 @@ irace <- function(scenario, parameters)
     }
 
     if (debugLevel >= 3) {
-      irace.note("All configurations:\n")
+      irace.note("All configurations (sampling order):\n")
       configurations.print(allConfigurations, metadata = TRUE)
     }
 

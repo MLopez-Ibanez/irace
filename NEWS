@@ -1,4 +1,8 @@
 
+ * The output of irace now specifies in which order, if any, configurations are
+   printed.
+                              (Manuel López-Ibáñez, suggested by Markus Wagner)
+ 
  * Several fixes for handling paths in Windows.
                                                      (Manuel López-Ibáñez)
                                                      

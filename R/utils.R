@@ -314,6 +314,17 @@ strlimit <- function(str, limit = 5000)
   return(str)
 }
 
+test.type.order.str <- function(test.type)
+{
+  return (switch(test.type,
+                 friedman = "sum of ranks",
+                 t.none =, # Fall-throught
+                 t.holm =, # Fall-throught
+                 t.bonferroni = "mean value",
+                 irace.internal.error ("test.type.order.str() Invalid value '",
+                                       test.type, "' of test.type")))
+}
+
 trim.leading <- function(str)
 {
   return (sub('^[[:space:]]+', '', str)) ## white space, POSIX-style
@@ -544,7 +555,7 @@ concordance <- function(data)
 #       data: matrix with the data, instances in rows (judges), configurations
 #             in columns.
 # Returns: variance value [0,1], where 0 is a homogeneous set of instances and 
-#          1 is a heterogeneous set. 
+#          1 is a heterogeneous set.
 dataVariance <- function(data)
 {
   irace.assert (is.matrix(data) && is.numeric(data))
@@ -575,7 +586,7 @@ dataVariance <- function(data)
 
 runcommand <- function(command, args, id, debugLevel)
 {
-  if (debugLevel >= 2) {
+  if (debugLevel >= 2L) {
     irace.note (command, " ", args, "\n")
     elapsed <- proc.time()["elapsed"]
   }
@@ -597,11 +608,11 @@ runcommand <- function(command, args, id, debugLevel)
     err <- paste(err, collapse ="\n")
     if (!is.null(attr(output, "errmsg")))
       output <- paste(sep = "\n", attr(output, "errmsg"))
-    if (debugLevel >= 2)
+    if (debugLevel >= 2L)
       irace.note ("ERROR (", id, "): ", err, "\n")
     return(list(output = output, error = err))
   }
-  if (debugLevel >= 2) {
+  if (debugLevel >= 2L) {
     irace.note ("DONE (", id, ") Elapsed: ",
                 formatC(proc.time()["elapsed"] - elapsed,
                         format = "f", digits = 2), "\n")
