@@ -14,7 +14,7 @@
 \usepackage{ifthen}
 \newboolean{Release}
 \setboolean{Release}{false}
-\setboolean{Release}{true}
+%\setboolean{Release}{true}
 \usepackage{calc}
 \usepackage{algorithm,algorithmic}
 \usepackage{booktabs}
@@ -2021,7 +2021,7 @@ If testing is performed, you can further analyze the resulting best
 configurations by performing statistical tests in \aR or just plotting the
 results:
 
-<<plot_test, fig.pos="H", fig.align="center", out.width='0.75\\textwidth', fig.cap="Boxplot of the testing results of the best configurations.", prompt=TRUE, eval=TRUE, comment="">>=
+<<plot_test, fig.pos="tbp", fig.align="center", out.width='0.75\\textwidth', fig.cap="Boxplot of the testing results of the best configurations.", prompt=TRUE, eval=TRUE, comment="">>=
 results <- iraceResults$testing$experiments
 # Wilcoxon paired test
 conf <- gl(ncol(results), # number of configurations
@@ -2055,7 +2055,7 @@ frequency of the sampling of a set of configurations. For more information on th
 \aR console: \code{?parameterFrequency}. The following example
 plots the frequency of the parameters sampled during one \irace run:
 
-<<freq, fig.pos="H", fig.cap="Parameters sampling frequency.", prompt=TRUE, eval=TRUE, comment="">>=
+<<freq, fig.pos="tbp", fig.cap="Parameters sampling frequency.", prompt=TRUE, eval=TRUE, comment="">>=
 parameterFrequency(iraceResults$allConfigurations, iraceResults$parameters)
 @
 
@@ -2065,27 +2065,27 @@ in the \aR console: (\code{?parallelCoordinatesPlot}).
  The following example shows how to create a parallel
 coordinate plot of the configurations in the last two iterations of \irace.
 
-<<parcord, fig.pos="H", fig.align="center", out.width='0.75\\textwidth', fig.cap="Parallel coordinate plots of the parameters of the configurations in the last two iterations of a run of \\irace.", prompt=FALSE, eval=TRUE, comment="">>=
+<<parcord, fig.pos="tbp", fig.align="center", out.width='0.75\\textwidth', fig.cap="Parallel coordinate plots of the parameters of the configurations in the last two iterations of a run of \\irace.", prompt=FALSE, eval=TRUE, comment="">>=
 # Get last iteration number
 last <- length(iraceResults$iterationElites)
 # Get configurations in the last two iterations
 conf <- getConfigurationByIteration(iraceResults = iraceResults,
                                     iterations = c(last - 1, last))
 parallelCoordinatesPlot (conf, iraceResults$parameters,
-                         param_names = c("algorithm", "alpha",
-                                         "beta", "rho", "q0"),
+                         param_names = c("algorithm", "alpha", "beta", "rho", "q0"),
                          hierarchy = FALSE)
 @
 
 
 It is also possible to plot the performance evolution of the best-so-far configuration over the number of experiments as follows:
-<<trainEvo, fig.pos="H", fig.align="center", out.width='0.75\\textwidth', fig.cap="Training set performance of the best-so-far configuration over number of experiments.", prompt=FALSE, eval=TRUE, comment="">>=
+<<trainEvo, fig.pos="tbp", fig.align="center", out.width='0.75\\textwidth', fig.cap="Training set performance of the best-so-far configuration over number of experiments.", prompt=FALSE, eval=TRUE, comment="">>=
 # Get number of iterations
 iters <- unique(iraceResults$experimentLog[, "iteration"])
 # Get number of experiments (function evaluations) up to each iteration
 fes <- cumsum(sapply(iters, function(k)
   sum(iraceResults$experimentLog[, "iteration"] == k)))
-# Get the mean value of all experiments executed up to each iteration for the best configuration of that iteration.
+# Get the mean value of all experiments executed up to each iteration
+# for the best configuration of that iteration.
 values <- sapply(iters, function(k) {
   instances <- as.character(
     unique(iraceResults$experimentLog[
@@ -2100,7 +2100,7 @@ points(fes, values)
 @
 
 We can do the same, but using the performance on the test set:
-<<testEvo, fig.pos="H", fig.align="center", out.width='0.75\\textwidth', fig.cap="Testing set performance of the best-so-far configuration over number of experiments.", prompt=FALSE, eval=TRUE, comment="">>=
+<<testEvo, fig.pos="tbp", fig.align="center", out.width='0.75\\textwidth', fig.cap="Testing set performance of the best-so-far configuration over number of experiments.", prompt=FALSE, eval=TRUE, comment="">>=
 # Get number of iterations
 iters <- unique(iraceResults$experimentLog[, "iteration"])
 # Get number of experiments (function evaluations) up to each iteration
