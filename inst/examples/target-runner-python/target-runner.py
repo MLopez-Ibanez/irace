@@ -23,15 +23,17 @@ import re
 import subprocess
 import sys
 
+exe = "~/bin/executable"
+fixed_params = " "
 
 if len(sys.argv) < 5:
     print "\nUsage: ./target-runner.py <candidate_id> <instance_id> <seed> <instance_path_name> <list of parameters>\n"
     sys.exit(1)
 
-
-exe = "~/bin/executable"
-fixed_params = " "
-
+def target_runner_error(msg):
+    now = datetime.datetime.now()
+    print(str(now) + " error: " + msg)
+    sys.exit(1)
 
 # Get the parameters as command line arguments.
 candidate_id = sys.argv[1]
@@ -45,8 +47,7 @@ out_file = "c" + str(candidate_id) + "-" + str(instance_id) + ".stdout"
 err_file = "c" + str(candidate_id) + "-" + str(instance_id) + ".stderr"
 
 if not os.path.isfile(exe):
-    now = datetime.datetime.now()
-    print(str(now) + " error: " + str(exe) + " not found")
+    target_runner_error (str(exe) + " not found")
 if not os.access(exe, os.X_OK):
     now = datetime.datetime.now()
     print(str(now) + " error: " + str(exe) + " is not executable")
@@ -71,14 +72,13 @@ if return_code != 0:
     print(str(now) + " error: command returned code " + str(return_code))
     sys.exit(1)
 
-# This is an example of reading a number from the output.
-# It assumes that the objective value is the first number in
-# the first column of the last line of the output.
-
 if not os.path.isfile(out_file):
     now = datetime.datetime.now()
     print(str(now) + " error: output file "+ out_file  +" not found.")
     sys.exit(1)
+# This is an example of reading a number from the output.
+# It assumes that the objective value is the first number in
+# the first column of the last line of the output.
 
 lastline = [line.rstrip('\n') for line in open(out_file)][-1]
 
