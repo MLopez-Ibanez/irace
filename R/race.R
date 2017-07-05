@@ -312,9 +312,9 @@ race.print.footer <- function(bestconf, mean.best, break.msg, debug.level)
   cat(sep = "",
       "+-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+\n",
       if (debug.level >= 1) paste0("# Stopped because ", break.msg, "\n"),
-      sprintf("Best configuration: %11d", bestconf[1, ".ID."]),
+      sprintf("Best-so-far configuration: %11d", bestconf[1, ".ID."]),
       sprintf("    mean value: %#15.10g", mean.best), "\n",
-      "Description of the best configuration:\n")
+      "Description of the best-so-far configuration:\n")
   print(bestconf)
   cat("\n")
 }
@@ -556,16 +556,15 @@ race <- function(maxExp = 0,
     # Remove the ranks of those that are not alive anymore
     race.ranks <- race.ranks[which.alive %in% which(alive)]
     irace.assert(length(race.ranks) == sum(alive))
-    # FIXME: This is the mean of the best, but perhaps it should be
-    # the sum of ranks in the case of test == friedman?
-    mean.best <- mean(Results[1:current.task, best])
 
     race.print.task(Results,
                     race.instances[current.task],
                     current.task,
                     alive,
                     configurations[best, ".ID."],
-                    mean.best,
+                    # FIXME: This is the mean of the best, but perhaps it should
+                    # be the sum of ranks in the case of test == friedman?
+                    mean.best = mean(Results[1:current.task, best]),
                     experimentsUsed,
                     start.time)
 
@@ -589,15 +588,54 @@ race <- function(maxExp = 0,
   if (is.null(break.msg))
     break.msg <- paste0("all instances (", no.tasks, ") evaluated")
 
+  # Recompute the best as follows. Given two configurations, the one evaluated
+  # on more instances is ranked better. Otherwise, break ties according to the
+  # criteria of the stat test.
+  overall.ranks <- function(x)
+  {
+    if (ncol(x) == 1) return(1)
+    
+    ninstances <- colSums(!is.na(x))
+    uniq.ninstances <- sort(unique(ninstances), decreasing = TRUE)
+    last.r <- 0
+    ranks <- rep(Inf,ncol(x))
+    # Iterate from the largest to the lowest number of instances.
+    for (k in uniq.ninstances) {
+      confs <- which(ninstances == k)
+      irace.assert(all(is.infinite(ranks[confs])))
+      r <- 1
+      if (length(confs) > 1) {
+        # Select only non-NA rows
+        y <- x[, confs]
+        y <- y[complete.cases(y), ]
+        irace.assert(!any(is.na(y)))
+        if (stat.test == "friedman") {
+          r <- colSums(t(apply(y, 1L, rank)))
+        } else {
+          r <- rank(colMeans(r))
+        }
+      }
+      r <- r + last.r
+      last.r <- max(r)
+      ranks[confs] <- r
+    }
+    return(ranks)
+  }
+
+  race.ranks <- overall.ranks(Results[, alive, drop = FALSE])
+  best <- which.alive[which.min(race.ranks)]
+
   race.print.footer(bestconf = configurations[best, , drop = FALSE],
-                    mean.best = mean.best,
+                    # FIXME: This is the mean of the best, but perhaps it should be
+                    # the sum of ranks in the case of test == friedman?
+                    mean.best = mean(Results[, best]),
                     break.msg = break.msg, debug.level = scenario$debugLevel)
   
   nbAlive <- sum(alive)
   configurations$.ALIVE. <- as.logical(alive)
   # Assign the proper ranks in the configurations data.frame.
   configurations$.RANK. <- Inf
-  configurations[which(alive), ".RANK."] <- race.ranks
+  configurations[which.alive, ".RANK."] <- race.ranks
   # Now we can sort the data.frame by the rank.
   configurations <- configurations[order(as.numeric(configurations[, ".RANK."])), ]
   # Consistency check.

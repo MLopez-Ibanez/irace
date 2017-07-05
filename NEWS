@@ -1,3 +1,8 @@
+ * At the end of each race, the best overall may be different than the best of
+   the race if the race stops before evaluating all instances seen in previous
+   races. We now print the best overall (best-so-far). Elites evaluated on more
+   instances are considered better than those evaluated on fewer.
+                                    (Manuel López-Ibáñez, Leslie Pérez Cáceres)      
 
  * The output of irace now specifies in which order, if any, configurations are
    printed.
