@@ -179,7 +179,7 @@ irace.main <- function(scenario = defaultScenario(), output.width = 9999)
   
   cat("# Best configurations (first number is the configuration ID;",
       " listed from best to worst according to the ",
-      test.type.order.str(scenario$testType), "):\n")
+      test.type.order.str(scenario$testType), "):\n", sep = "")
   configurations.print(eliteConfigurations)
   
   cat("# Best configurations as commandlines (first number is the configuration ID; same order as above):\n")
