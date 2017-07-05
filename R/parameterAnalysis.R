@@ -97,76 +97,74 @@ parameterFrequency <- function(configurations, parameters,
   par(def.par)  #- reset to default
 }
 
-#Function parcoordlabel plots parallel coordinates for categorical and numerical configurations
-#idea from http://stackoverflow.com/questions/23553210/add-ticks-to-parcoord-parallel-coordinates-plot
+# Function parcoordlabel plots parallel coordinates for categorical and
+# numerical configurations.  Idea from
+# http://stackoverflow.com/questions/23553210/add-ticks-to-parcoord-parallel-coordinates-plot
 parcoordlabel <- function (configurations, parameters, col = "green", lty = 1,
                            lblcol="blue", title="Parameters parallel coordinates", ...)
 {
   replace.cat <- function(y, vals){
-      for(i in 1:length(vals))
-        y[y %in% vals[i]] <- i
-      return(y)
+    for(i in 1:length(vals))
+      y[y %in% vals[i]] <- i
+    return(y)
+  }
+    
+  replace.na <- function(x,r) {
+    x <- unlist(x)
+    x <- (x-r[1])/(r[2]-r[1]) 
+    x[is.na(x)] <- 1
+    return(x)
+  }
+    
+  add.level <- function(x, bound, type){
+    if (type == "i" || type == "r"){
+      x <- c(x, x[length(x)] + (x[2]-x[1]))
+    } else {
+      x <- c(x, x[length(x)] +  x[length(x)]/length(bound))
     }
+    return(x)
+  }
     
-    replace.na <- function(x,r) {
-      x <- unlist(x)
-      x <- (x-r[1])/(r[2]-r[1]) 
-      x[is.na(x)] <- 1
-      return(x)
+  param.names <- colnames(configurations)
+    
+  bound.num <- parameters$domain   
+  # Categorical -> Numerical
+  for (i in 1:ncol(configurations)) {
+    pname <- param.names[i]
+    if (parameters$types[[pname]] == "c") {
+      configurations[,i]<- as.numeric(replace.cat(configurations[,i], bound.num[[pname]]))
+      bound.num[[pname]] <- seq(1,length(bound.num[[pname]]))
     }
+  }
     
-    add.level <- function(x, bound, type){
-       if(type== "i" || type == "r"){
-         
-         x <- c(x, x[length(x)] + (x[2]-x[1]))
-       }else{
-         x <- c(x, x[length(x)] +  x[length(x)]/length(bound))
-       }
-       return(x)
-    }
-    
-    param.names = colnames(configurations)
-    
-    bound.num <- parameters$domain   
-    #Categorical -> Numerical
-    for(i in 1:ncol(configurations)){
-      pname <- param.names[i]
-      if(parameters$types[[pname]]=="c"){
-        configurations[,i]<- as.numeric(replace.cat(configurations[,i], bound.num[[pname]]))
-        bound.num[[pname]] <- seq(1,length(bound.num[[pname]]))
-      }
-    }
-    
-     
-    #Intervals
-    pr <- lapply(bound.num[param.names], pretty)
-    #add extra level for NA values
-    for(param in param.names)
+  # Intervals
+  pr <- lapply(bound.num[param.names], pretty)
+  # add extra level for NA values
+  for(param in param.names)
     pr[[param]] <- add.level( pr[[param]], bound.num[[param]], parameters$types[[param]])
-    #Total range
-    rx <- lapply(pr, range, na.rm = TRUE)
-    
+  # Total range
+  rx <- lapply(pr, range, na.rm = TRUE)
 
-    #Values x plot
-    configurations <- mapply(replace.na, as.data.frame(configurations), rx) 
+  # Values x plot
+  configurations <- mapply(replace.na, as.data.frame(configurations), rx) 
 
-    matplot(1:ncol(configurations), t(configurations), type = "l", col = col,
-            lty = lty,  xlab = "", ylab = "", ylim=c(0,1), axes = FALSE, main=title, ...)
+  matplot(1:ncol(configurations), t(configurations), type = "l", col = col,
+          lty = lty,  xlab = "", ylab = "", ylim=c(0,1), axes = FALSE, main=title, ...)
         
-    axis(1, at = 1:ncol(configurations), labels = colnames(configurations), las=2)
+  axis(1, at = 1:ncol(configurations), labels = colnames(configurations), las=2)
     
-    for (i in 1:ncol(configurations)) {
-        pnames <- param.names[i]
-        lines(c(i, i), c(0, 1), col = "grey70")
-        if(parameters$types[[param.names[i]]]=="c"){
-          labels <- c(parameters$domain[[param.names[i]]], "NA")
-        }else{
-          labels <- pr[[pnames]]
-          labels[length(labels)] <- "<NA>"
-        }
-        text(c(i, i), seq(0,1,length.out=length(labels)), labels = labels,  xpd = NA, col=lblcol)
+  for (i in 1:ncol(configurations)) {
+    pnames <- param.names[i]
+    lines(c(i, i), c(0, 1), col = "grey70")
+    if(parameters$types[[param.names[i]]]=="c"){
+      labels <- c(parameters$domain[[param.names[i]]], "NA")
+    }else{
+      labels <- pr[[pnames]]
+      labels[length(labels)] <- "<NA>"
     }
-    invisible()
+    text(c(i, i), seq(0,1,length.out=length(labels)), labels = labels,  xpd = NA, col=lblcol)
+  }
+  invisible()
 }
 
 # TODO:
@@ -179,18 +177,21 @@ parcoordlabel <- function (configurations, parameters, col = "green", lty = 1,
 ## hierarchy: separate plots according to dependencies of parameters (one level)
 ## mar: margin for the plots
 ## filename: prefix to save pdf files
-parallelCoordinatesPlot <- function(configurations, parameters, param_names=parameters$names, hierarchy=TRUE, filename=NULL, pdf.width=14 , mar=c(8,1,4,1)){
-  getDependency <- function(){
+parallelCoordinatesPlot <-
+  function(configurations, parameters, param_names=parameters$names,
+           hierarchy = TRUE, filename = NULL, pdf.width = 14 , mar = c(8,1,4,1))
+{
+  getDependency <- function() {
     sdep <- list()
     independent <- c()
-    for(param in param_names){
+    for (param in param_names) {
       constraint <- all.vars(parameters$conditions[[param]])
-      if(length(constraint) <1){
+      if (length(constraint) < 1) {
         independent <- unique(c(independent, param))
         next
       }
         
-      for(cc in constraint){
+      for(cc in constraint) {
         if(is.null(sdep[[cc]]) || is.na(sdep[[cc]]))
           sdep[[cc]] <- param
         else 
@@ -292,25 +293,25 @@ getFinalElites <- function(iraceResults = NULL, logFile = NULL, n = 0,
 ##    configurations data frame.
 ## * iraceResults or iraceLog must be provided, in case both are give iraceResults will be used.
 ## This function returns a data frame containing the selected candidate configurations 
-getConfigurationById <- function(iraceResults=NULL, logFile=NULL, ids, drop.metadata=FALSE) {
-
-  if(is.null(iraceResults)){
-    if(is.null(logFile))
+getConfigurationById <- function(iraceResults=NULL, logFile=NULL, ids, drop.metadata=FALSE)
+{
+  if (is.null(iraceResults)) {
+    if (is.null(logFile))
       stop("You must supply either iraceResults or iraceLog argument.\n")
     else
       load(logFile)
   }
   
-  if(length(ids) <1 ) stop("You must provide at least one configuration id.\n")
+  if (length(ids) < 1) stop("You must provide at least one configuration id.\n")
   
   selection <- iraceResults$allConfigurations[,".ID."] %in% ids
   
-  if(length(selection) < 1) stop("No configuration found with id", ids,".\n")
+  if (length(selection) < 1) stop("No configuration found with id", ids,".\n")
   
   configurations <-iraceResults$allConfigurations[selection, , drop=FALSE]
   
-  if(drop.metadata)
-    configurations <-  removeConfigurationsMetaData(configurations)
+  if (drop.metadata)
+    configurations <- removeConfigurationsMetaData(configurations)
   return(configurations)
 }
 
@@ -326,21 +327,21 @@ getConfigurationById <- function(iraceResults=NULL, logFile=NULL, ids, drop.meta
 getConfigurationByIteration <- function(iraceResults = NULL, logFile = NULL,
                                         iterations, drop.metadata = FALSE)
 {
-  if(is.null(iraceResults)){
-    if(is.null(logFile))
+  if (is.null(iraceResults)) {
+    if (is.null(logFile))
       stop("You must supply either iraceResults or iraceLog argument.\n")
     else
       load(logFile)
   }
   
-  if(length(iterations) <1 ) stop("You must provide at least one configuration id.\n")
+  if(length(iterations) < 1) stop("You must provide at least one configuration id.\n")
   
   iteration <-NULL
   ids <- unique(subset(as.data.frame(iraceResults$experimentLog), iteration==iterations,  select=c("configuration"), drop=TRUE))
   
   selection <- iraceResults$allConfigurations[,".ID."] %in% ids
   
-  if(length(selection) < 1) stop("No configuration found with id", ids,".\n")
+  if (length(selection) < 1) stop("No configuration found with id", ids,".\n")
   
   configurations <-iraceResults$allConfigurations[selection, , drop=FALSE]
   
