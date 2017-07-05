@@ -1,4 +1,5 @@
 library(irace)
+set.seed(7)
 target.runner <- function(experiment, scenario)
 {
   return(list(call = toString(experiment)))
