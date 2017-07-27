@@ -844,6 +844,7 @@ irace(scenario = scenario, parameters = parameters)
 
 \end{enumerate}
 
+
 \section{Defining a configuration scenario}
 \subsection{Target algorithm parameters} \label{sec:target parameters}
 
@@ -1468,7 +1469,7 @@ A single run of \irace can be done much faster by executing the calls
 to \parameter{targetRunner} (the runs of the target algorithm) in
 parallel. There are four ways to parallelize a single run of \irace:
 
-\begin{itemize}
+\begin{enumerate}
 \item \textbf{Parallel processes}: The option \parameter{parallel} allows
   executing in parallel, within a single computer, the calls
   to \parameter{targetRunner}, by means of the \pkg{parallel} \aR package. For
@@ -1553,8 +1554,8 @@ parallel. There are four ways to parallelize a single run of \irace:
    @
    %
 
+ \end{enumerate}
 
-\end{itemize}
 
 \section{Testing of configurations}\label{sec:testing}
 
@@ -2365,6 +2366,11 @@ $\texttt{m}\cdot 10^\texttt{e}$ for another parameter
 \code{-m} and \code{-e}, computing the strength value and passing the parameter
 \code{--strength} together with its value to the target algorithm.
 
+More complex parameter space constraints may be implemented by means of
+the \parameter{repairConfiguration} function
+(\autoref{sec:repairconf})
+
+
 \subsection{Unreliable target algorithms}
 
 There are some situations in which the target algorithm may fail to execute
@@ -2408,8 +2414,9 @@ specified by the user in this way.
   command-line are relative to the current working directory (the directory at
   which \irace is invoked). However, paths given in
   the scenario file are relative to the directory containing
-  the scenario file.
+  the scenario file. See also Table~\ref{tab:paths}.
 \end{xwarningbox}
+
 
 
 \subsection{General options}
@@ -2732,7 +2739,7 @@ Run the configurations contained in the file provided as argument on the test in
   
 \end{description}
 
-\section{FAQ}
+\section{FAQ (Frequently Asked Questions)}
 
 \subsection{Is \irace minimizing or maximizing the output of my algorithm?}
 
@@ -2830,7 +2837,32 @@ If the path is set correctly and the problem persists, please check these instru
 
 This is a bug in \aR 3.2.0 on Windows. The solution is to update your version of
 \aR.
-     
+
+\subsection{How are relative file-system paths interpreted by \irace?}\label{faq:relpaths}
+
+The answer depends on where the path appears. Relative paths may appear as the
+argument of command-line options, as the value of options given in the scenario
+file, or within various scripts, functions or instance files. Table
+\ref{tab:paths} summarizes how paths are translated from relative to absolute.
+
+\begin{table}[h!]
+  \centering
+  \caption{Translation of relative to absolute file-system paths.}
+  \label{tab:paths}
+  \begin{tabular}{rl}
+    \toprule
+\bf    Relative path appears as \ldots  & \bf\ldots is relative to \ldots \\
+    \midrule
+    the value of \parameter{logFile} or \code{--log-file} & \parameter{execDir}\\
+    the value of other options in the scenario file  &  directory containing the scenario file\\
+    the value of other command-line options & invocation (working) directory of \irace\\
+    code within \parameter{targetRunner} or \parameter{targetEvaluator} & \parameter{execDir}\\
+    a string within \parameter{trainInstancesFile} & \parameter{trainInstancesDir}\\
+    a string within \parameter{testInstancesFile} & \parameter{testInstancesDir}\\
+\bottomrule    
+  \end{tabular}
+\end{table}
+
 %FIXME: complete this section
 %\section{Known problems}
 
