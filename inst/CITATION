@@ -1,25 +1,18 @@
 citHeader("To cite package 'irace' in publications use:")
-     
-## R >= 2.8.0 passes package metadata to citation().
-if(!exists("meta") || is.null(meta)) meta <- packageDescription("eaf")
-year <- sub(".*(2[[:digit:]]{3})-.*", "\\1", meta$Date)
-vers <- paste("R package version", meta$Version)
-     
-citEntry(entry="article",
-         title = "The irace package: Iterated Racing for Automatic
-                  Algorithm Configuration",
-         author = personList(as.person("Manuel López-Ibáñez"),
-                             as.person("Jérémie Dubois-Lacoste"),
-                             as.person("Leslie {Pérez Cáceres}"),
-                             as.person("Thomas Stützle"),
-                             as.person("Mauro Birattari")),
-         year = 2016,
-         journal = "Operations Research Perspectives",
-         doi = "10.1016/j.orp.2016.09.002",
-         volume = "3",
-         pages = "43--58",
-         textVersion=
-           paste("Manuel López-Ibáñez, Jérémie Dubois-Lacoste, Leslie Pérez Cáceres, Thomas Stützle, and Mauro Birattari. ",
-                 "The irace package: Iterated Racing for Automatic Algorithm Configuration. ",
-                 "Operations Research Perspectives, 3:43-58, 2016. doi:10.1016/j.orp.2016.09.002",
-                 sep=""))
+citEntry(
+  entry = "article",
+  title = "The irace package: Iterated Racing for Automatic Algorithm Configuration",
+  author = personList(as.person("Manuel López-Ibáñez"),
+                      as.person("Jérémie Dubois-Lacoste"),
+                      person(given = "Leslie", family = "Pérez Cáceres"),
+                      as.person("Thomas Stützle"),
+                      as.person("Mauro Birattari")),
+  year = 2016,
+  journal = "Operations Research Perspectives",
+  doi = "10.1016/j.orp.2016.09.002",
+  volume = "3",
+  pages = "43--58",
+  textVersion = paste0(
+    "Manuel López-Ibáñez, Jérémie Dubois-Lacoste, Leslie Pérez Cáceres, Thomas Stützle, and Mauro Birattari. ",
+    "The irace package: Iterated Racing for Automatic Algorithm Configuration. ",
+    "Operations Research Perspectives, 3:43-58, 2016. doi:10.1016/j.orp.2016.09.002"))
