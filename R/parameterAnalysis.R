@@ -185,6 +185,8 @@ parallelCoordinatesPlot <-
     sdep <- list()
     independent <- c()
     for (param in param_names) {
+      ## FIXME: If we ever byte-compile conditions, we need to use
+      ## all.vars(.Internal(disassemble(condition))[[3]][[1]]
       constraint <- all.vars(parameters$conditions[[param]])
       if (length(constraint) < 1) {
         independent <- unique(c(independent, param))

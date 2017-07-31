@@ -82,8 +82,9 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
   # *  If a parameter depends on another one not defined, execution is stopped
   treeLevelAux <- function(paramName, conditionsTree, rootParam)
   {
-    ## FIXME: In R 3.2, all.vars does not work with byte-compiled expressions.
-    ## but we can use all.vars(.Internal(disassemble(condition))[[3]][[1]])
+    ## FIXME: In R 3.2, all.vars does not work with byte-compiled expressions,
+    ## thus we do not byte-compile them; but we could use
+    ## all.vars(.Internal(disassemble(condition))[[3]][[1]])
     vars <- all.vars (conditionsTree[[paramName]])
     if (length(vars) == 0) {
       return (1) # This parameter does not have conditions
