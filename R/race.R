@@ -606,8 +606,8 @@ race <- function(maxExp = 0,
       r <- 1
       if (length(confs) > 1) {
         # Select only non-NA rows
-        y <- x[, confs]
-        y <- y[complete.cases(y), ]
+        y <- x[, confs, drop = FALSE]
+        y <- y[complete.cases(y), , drop = FALSE]
         irace.assert(!any(is.na(y)))
         if (stat.test == "friedman") {
           r <- colSums(t(apply(y, 1L, rank)))
