@@ -11,8 +11,8 @@ The irace package: \packageTitle{irace}
 \tabular{ll}{
 Package: \tab irace\cr
 Type: \tab Package\cr
-Version: \tab 2.4 \cr
-Date: \tab 2017-07-05 \cr
+Version: \tab 2.5 \cr
+Date: \tab 2017-08-04 \cr
 License: \tab GPL (>= 2)\cr
 LazyLoad: \tab yes\cr
 }

@@ -1,8 +1,7 @@
 **irace**: Iterated Racing for Automatic Algorithm Configuration
 ================================================================
 
-[![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version-last-release/irace)](https://CRAN.R-project.org/package=irace)
-[![CRAN Downloads](http://cranlogs.r-pkg.org/badges/grand-total/irace)](https://CRAN.R-project.org/package=irace)
+[![CRAN Status](http://www.r-pkg.org/badges/version-last-release/irace)](https://cran.r-project.org/package=irace) [![CRAN Downloads](http://cranlogs.r-pkg.org/badges/grand-total/irace)](https://CRAN.R-project.org/package=irace) 
 
 **Maintainers:** [Manuel López-Ibáñez](http://lopez-ibanez.eu), Leslie Pérez Cáceres
 
@@ -47,14 +46,14 @@ It builds upon the race package by Birattari and it is implemented in R.
 
 
 Requisites
-==========
+----------
 
  * R (<https://www.r-project.org>) is required for running irace, but
    you don't need to know the R language to use it.
    Versions that work: >= 2.15.0
 
 User guide
-==========
+----------
 
 A complete [user guide](https://cran.r-project.org/package=irace/vignettes/irace-package.pdf)
 comes with the package. You can access it online or, after installing the irace

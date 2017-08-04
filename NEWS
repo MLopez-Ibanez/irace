@@ -2,7 +2,9 @@
    the race if the race stops before evaluating all instances seen in previous
    races. We now print the best overall (best-so-far). Elites evaluated on more
    instances are considered better than those evaluated on fewer.
-                                    (Manuel López-Ibáñez, Leslie Pérez Cáceres)      
+                                    (Manuel López-Ibáñez, Leslie Pérez Cáceres)
+
+2.4
 
  * The output of irace now specifies in which order, if any, configurations are
    printed.
@@ -51,16 +53,15 @@
                                                      (Manuel López-Ibáñez)
  
  * The option --sge-cluster (sgeCluster) was removed and replaced by
-   --batchmode (batchmode). It is now the responsibility of the target-runner to
-   parse the output of the batch job submission command (e.g., qsub or squeue),
-   and return just the job ID. Values supported are: "sge", "torque", "pbs" and
-   "slurm".
-                                                     (Manuel López-Ibáñez)
+   --batchmode (batchmode). It is now the responsibility of the target-runner
+   to parse the output of the batch job submission command (e.g., qsub or
+   squeue), and return just the job ID. Values supported are: "sge", "torque",
+   "pbs" and "slurm".                                     (Manuel López-Ibáñez)
 
  * The option --parallel can now be combined with --batchmode to limit the
    number of jobs submitted by irace at once. This may be useful in batch
    clusters that have a small queue of jobs.
-                                                   (Manuel López-Ibáñez)
+                                                          (Manuel López-Ibáñez)
 
  * New examples under inst/examples/batchmode-cluster/.
                                                        (Manuel López-Ibáñez)
