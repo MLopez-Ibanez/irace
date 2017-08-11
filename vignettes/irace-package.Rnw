@@ -1488,10 +1488,14 @@ parallel. There are four ways to parallelize a single run of \irace:
    commonly available in computing clusters and requires launching \irace in
    some particular way. An example script for using MPI mode in a SGE cluster
    is given at \IRACEHOME{/bin/parallel-irace-mpi}.
+   
+   By default, \irace dynamically balances the load among nodes, however, this
+   may significantly increase communication overhead in some parallel
+   environments, where disabling \parameter{loadBalancing} may be faster.
 
  \item \textbf{Batch jobs clusters}: Some computing clusters work by submitting
    jobs to a batch queue and waiting for the jobs to finish. With the
-   option \parameter{batchmode} (\code{--batchmode [sge|pbs|torque|slurm]}),
+   option \parameter{batchmode} (\code{--batchmode} \code{[sge|pbs|} \code{torque|slurm]}),
    \irace will launch in parallel as many calls of \parameter{targetRunner} as
    possible (\parameter{parallel} can be used to set a limit) and use a
    cluster-specific method to wait for jobs to finish. If your cluster type is
@@ -2122,9 +2126,19 @@ points(fes, values)
 
 \subsection{Tuning budget}\label{sec:budget}
 
+Before setting the budget for a run of \irace, please consider the number of
+parameters that need to be tuned, available processing power and available
+time. The optimal budget depends on the difficulty of the tuning scenario, the
+size of the parameter space and the heterogeneity of the instances. Typical
+values range from $1\,000$ to $100\,000$ runs of the target algorithm, although
+smaller and larger values are also possible. Currently, \irace does not detect
+whether the given budget allows generating all possible configurations. In such
+a case, the use of \emph{iterated} racing is unnecessary: One can simply
+perform a single race of all configurations (see FAQ in
+\autoref{faq:allconfs}).
+
 \Irace provides two options for setting the total tuning budget (\parameter{maxExperiments} and 
-\parameter{maxTime}). Before setting the budget for the tuning, please consider the number of parameters that need to be tuned, available processing power 
-and available time. The option \parameter{maxExperiments} 
+\parameter{maxTime}). The option \parameter{maxExperiments} 
 limits the number of executions of \parameter{targetRunner} performed by \irace. The option \parameter{maxTime} limits the 
 total time of the \parameter{targetRunner} executions. When this latter option is used, \parameter{targetRunner} 
 must return the evaluation cost together with the execution time (\code{"cost time"}). 
@@ -2862,6 +2876,18 @@ file, or within various scripts, functions or instance files. Table
 \bottomrule    
   \end{tabular}
 \end{table}
+
+\subsection{My parameter space is small enough that \irace could generate all possible configurations; however, \irace generates repeated configurations and/or does not generate some of them. Is this a bug?}\label{faq:allconfs}
+
+Currently, \irace does not try to detect whether all possible configurations
+can be evaluated for the given budget, thus, the initial random sampling
+performed by \irace may generate repeated configurations and/or never generate
+some configurations, which is not ideal. The ideal approach in such cases is to
+provide all configurations explicitly to \irace (\autoref{sec:initial}) and
+execute a single race (\parameter{nbIterations}\code{=1}). Hopefully, a future
+version of \irace will automatically detect this case and switch to basic
+racing.
+
 
 %FIXME: complete this section
 %\section{Known problems}
