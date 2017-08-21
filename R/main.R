@@ -2,7 +2,7 @@
 # irace: An implementation in R of Iterated Race.
 # -------------------------------------------------------------------------
 #
-#  Copyright (C) 2010-2016
+#  Copyright (C) 2010-2017
 #  Manuel López-Ibáñez     <manuel.lopez-ibanez@manchester.ac.uk> 
 #  Jérémie Dubois-Lacoste  <jeremie.dubois-lacoste@ulb.ac.be>
 #  Leslie Perez Caceres    <leslie.perez.caceres@ulb.ac.be>
@@ -114,7 +114,7 @@ loadBalancing              b    ""     "--load-balancing"             1         
 mpi                        b    ""     "--mpi"                        0                  "Enable/disable MPI. Use Rmpi to execute targetRunner in parallel (parameter parallel is the number of slaves)."
 batchmode                    s    ""     "--batchmode"                    0                 "Specify how irace waits for jobs to finish when targetRunner submits jobs to a batch cluster: sge, pbs, torque or slurm."
 softRestart                b    ""     "--soft-restart"               1                  "Enable/disable the soft restart strategy that avoids premature convergence of the probabilistic model."
-softRestartThreshold       r    ""     "--soft-restart-threshold"     NA                 "Soft restart threshold value for numerical parameters. If NA, it computed as 10^-digits."
+softRestartThreshold       r    ""     "--soft-restart-threshold"     NA                 "Soft restart threshold value for numerical parameters. If NA, it is computed as 10^-digits."
 testInstancesDir           p    ""     "--test-instances-dir"         ""                 "Directory where testing instances are located, either absolute or relative to current directory."
 testInstancesFile          p    ""     "--test-instances-file"        ""                 "File containing a list of test instances and optionally additional parameters for them."
 testInstances              x    ""     ""                             ""                 ""
