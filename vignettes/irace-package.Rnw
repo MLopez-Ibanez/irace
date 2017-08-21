@@ -1561,16 +1561,16 @@ parallel. There are four ways to parallelize a single run of \irace:
  \end{enumerate}
 
 
-\section{Testing of configurations}\label{sec:testing}
+\section{Testing (Validation) of configurations}\label{sec:testing}
 
-Once the tuning process is finished, \irace commonly returns a set of
-configurations corresponding to the elite configurations at the end of the run,
-ordered from best to worst. To further investigate the cost of these
-configurations, \irace offers the possibility of evaluating these
-configurations on a test instance set, typically different from the training
-set used during the tuning phase. These evaluations will use the same settings
-for parallel execution, \parameter{targetRunner}
-and \parameter{targetEvaluator}.
+Once the tuning process is finished, \irace returns a set of configurations
+corresponding to the elite configurations at the end of the run, ordered from
+best to worst. In order to evaluate the generality of these configurations
+without looking at their performance on the training set, \irace offers the
+possibility of evaluating these configurations on a test instance set,
+typically different from the training set used during the tuning phase. These
+evaluations will use the same settings for parallel
+execution, \parameter{targetRunner} and \parameter{targetEvaluator}.
 
 The test instance set can be specified by the
 options \parameter{testInstancesDir} and \parameter{testInstancesFile}, or by
@@ -1862,10 +1862,10 @@ statistically significant difference during the race; they are ordered
 according to their mean performance on the executed instances.
 
 
-\subsection{Data file output}\label{sec:output r}
+\subsection[R data file (logFile)]{\aR data file (\code{logFile})}\label{sec:output r}
 
-The \aR data file created by \irace (\parameter{logFile}) contains an object called
-\code{iraceResults}. You can load this data in the \aR console by:
+The \aR data file created by \irace (by default as \code{irace.Rdata}, see option \parameter{logFile}) contains an object called
+\code{iraceResults}. You can load this file in the \aR console with:
 
 <<load_rdata, prompt=FALSE, eval=FALSE>>=
 load("irace-output.Rdata")
