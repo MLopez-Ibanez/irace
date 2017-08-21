@@ -50,9 +50,10 @@
   \itemize{
      \item parameterFile: Path to the file that contains the description of the parameters to be tuned. See the template. (Default: "./parameters.txt")
      \item digits: Indicates the number of decimal places to be considered for the real parameters. (Default: 4)
-     \item forbiddenExps: MANUEL
      \item forbiddenFile: Path to a file that contains a list of logical expressions that cannot be \code{TRUE} for any evaluated configuration. If empty or \code{NULL}, do not use forbidden expressions. (Default: "")
-  }
+     \item forbiddenExps: vector of R logical expressions that cannot
+  evaluate to \code{TRUE} for any evaluated configuration.
+   }
   Target algorithm execution:
   \itemize{
      \item targetRunner: Path to the script called for each configuration that launches the algorithm to be tuned. See templates. (Default: "./target-runner")
