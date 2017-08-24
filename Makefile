@@ -24,7 +24,7 @@ endif
 SVN_REV = $(shell sh -c 'cat svn_version 2> /dev/null')
 REVNUM = $(shell sh -c 'cat svn_version | tr -d -c "[:digit:]" 2> /dev/null')
 
-.PHONY : help build check clean install pdf rsync version bumpdate submit cran winbuild vignettes
+.PHONY : help build check clean install pdf rsync version bumpdate submit cran winbuild vignettes examples
 
 help:
 	@echo "install    install the package"
@@ -33,21 +33,20 @@ help:
 	@echo "rsync      copy the package and install it on $(RNODE)"
 	@echo "cran       build the package and run 'R CMD check --as-cran'"
 	@echo "winbuild   submit the package to the windows builder service"
+	@echo "examples   regenerate the examples used by vignettes"
 	@echo "submit     submit the package to CRAN (read DEVEL-README first)"
 
 install:
 	$(MAKE) build
 	cd $(BINDIR) && R CMD INSTALL $(INSTALL_FLAGS) $(PACKAGE)_$(PACKAGEVERSION).tar.gz
 
-quick-install:
-	cd $(BINDIR) &&	R CMD build $(BUILD_FLAGS) --no-vignettes $(PACKAGEDIR) && R CMD INSTALL $(INSTALL_FLAGS) $(PACKAGE)_$(PACKAGEVERSION).tar.gz
+quick-install: version
+	cd $(BINDIR) &&	R CMD build $(BUILD_FLAGS) --no-build-vignettes $(PACKAGEDIR) && R CMD INSTALL $(INSTALL_FLAGS) $(PACKAGE)_$(PACKAGEVERSION).tar.gz
 
 build : bumpdate clean
-	cd $(PACKAGEDIR)/vignettes \
-	&& sed -i 's/^%\+\\setboolean{Release}{true}/\\setboolean{Release}{true}/' $(PACKAGE)-package.Rnw \
-	&& aux2bib irace-package.aux | grep -v '@comment' > irace-package.bib
-	@if grep -q @ $(PACKAGEDIR)/vignettes/irace-package.bib; then true; \
-	else echo "error: vignettes/irace-package.bib is empty: run 'make vignettes'"; false; fi
+	$(MAKE) releasevignette
+	@if grep -q @ $(PACKAGEDIR)/vignettes/$(PACKAGE)-package.bib; then true; \
+	else echo "error: vignettes/$(PACKAGE)-package.bib is empty: run 'make vignettes'"; false; fi
 	cd $(BINDIR) &&	R CMD build $(BUILD_FLAGS) $(PACKAGEDIR)
 
 closeversion: SVN_REL_URL=$(shell svn info --show-item relative-url)
@@ -58,9 +57,19 @@ closeversion: build
 	svn up
 	make releasebuild # again to update version.R and svn_version
 
+releasevignette:
+	test -s $(PACKAGEDIR)/vignettes/$(PACKAGE)-package.aux || $(MAKE) nonreleasevignette vignettes
+	cd $(PACKAGEDIR)/vignettes \
+	&& aux2bib $(PACKAGE)-package.aux | grep -v '@comment' > $(PACKAGE)-package.bib \
+	&& sed -i 's/^%\+\\setboolean{Release}{true}/\\setboolean{Release}{true}/' \
+	$(PACKAGE)-package.Rnw
+
+nonreleasevignette:
+	sed -i 's/^\\setboolean{Release}{true}/%\\setboolean{Release}{true}/' \
+	$(PACKAGEDIR)/vignettes/$(PACKAGE)-package.Rnw
 
 releasebuild: BUILD_FLAGS=--compact-vignettes=both
-releasebuild: bumpdate
+releasebuild: bumpdate releasevignette
 	cd $(BINDIR) &&	R CMD build $(BUILD_FLAGS) $(PACKAGEDIR) && tar -atvf $(PACKAGE)_$(PACKAGEVERSION).tar.gz
 
 cran : BUILD_FLAGS=--compact-vignettes=both
@@ -74,20 +83,18 @@ clean:
 	cd $(PACKAGEDIR) && ($(RM) ./$(PACKAGE)-Ex.R ./src/*.o ./src/*.so; \
 		find . -name '*.orig' | xargs $(RM) )
 
-vignettes: version vignettes/irace-package.Rnw vignettes/irace-package.bib
-# FIXME: How to do all this on a temporary directory to avoid people editing the .tex file directly?
-# R CMD Sweave --pdf --clean --verbose irace-package.Rnw
-# but then there is no output, not sure if it uses knit or it is uses bibtex...
+vignettes: version vignettes/$(PACKAGE)-package.Rnw
+# FIXME: How to display the output of the latex and bibtex commands with R CMD?
+# FIXME: How to halt on warning?
 	cd $(PACKAGEDIR)/vignettes \
-	&& sed -i 's/^\\setboolean{Release}{true}/%\\setboolean{Release}{true}/' $(PACKAGE)-package.Rnw ; \
-	Rscript -e "library(knitr); knit('irace-package.Rnw', output='irace-package.tex', quiet = TRUE)" \
-	&& $(PDFLATEX) irace-package.tex && bibtex irace-package && $(PDFLATEX) irace-package.tex && $(PDFLATEX) irace-package.tex && $(RM) irace-package.tex
+	&& R CMD Sweave --pdf $(PACKAGE)-package.Rnw \
+	&& $(RM) $(PACKAGE)-package.tex
+# Rscript -e "library(knitr); knit('$(PACKAGE)-package.Rnw', output='$(PACKAGE)-package.tex', quiet = TRUE)" \
+# && $(PDFLATEX) $(PACKAGE)-package.tex && bibtex $(PACKAGE)-package && $(PDFLATEX) $(PACKAGE)-package.tex && $(PDFLATEX) $(PACKAGE)-package.tex && $(RM) $(PACKAGE)-package.tex
 
 pdf: vignettes 
 	$(RM) $(BINDIR)/$(PACKAGE).pdf
 	cd $(BINDIR) &&	R CMD Rd2pdf --no-preview --batch --output=$(PACKAGE).pdf $(PACKAGEDIR) 
-
-
 
 bumpdate: version
 	@sed -i 's/Date: .*/Date: $(DATE)/' $(PACKAGEDIR)/DESCRIPTION
@@ -102,15 +109,17 @@ version :
 rsync : version
 ifndef RDIR
 	@echo "ERROR: You must specify a remote dir (e.g., RDIR=~/)"
+	@exit 1
+endif
+ifndef RNODE
+	@echo "ERROR: You must specify a remote node (e.g., RNODE=majorana)"
+	@exit 1
 endif
 ifdef RNODE
 	rsync -rlp -CIzc -L --delete --copy-unsafe-links --exclude=.svn --exclude=/examples/ --progress --relative \
 	.     \
 	$(RNODE):$(RDIR)/$(PACKAGE)/
 	ssh $(RNODE) "cd $(RDIR)/$(PACKAGE) && make quick-install"
-else
-	@echo "ERROR: You must specify a remote node (e.g., RNODE=majorana)"
-	@exit 1
 endif
 
 submit: 
@@ -124,3 +133,9 @@ winbuild:
 	@echo "Winbuild: http://win-builder.r-project.org/"
 	cd $(BINDIR) && echo $(WINBUILD_FTP_COMMANDS) | ftp -v -p -e -g -i -n win-builder.r-project.org
 
+examples: install
+	@echo "*** Makefile: Regenerating vignette examples. This will take time..."
+#	cd examples/vignette-example/ && nice -n 19 $(PACKAGEDIR)/inst/bin/$(PACKAGE) --parallel 2
+	cd examples/vignette-example/ && R --vanilla --slave --file=create-example-file.R
+	cp examples/vignette-example/irace-output.Rdata examples/vignette-example/examples.Rdata vignettes/
+	$(MAKE) vignettes

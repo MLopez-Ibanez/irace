@@ -52,31 +52,33 @@ RELEASE Process:
 
 3. "make cran" passes
 
-4. make releasebuild # Inspect the output for strange files!
+4. "make examples" passes
 
-5. "make winbuild" passes. Wait for email and check logs!
+5. make releasebuild # Inspect the output for strange files!
 
-6. Send package to the maintainers of the packages listed in
+6. "make winbuild" passes. Wait for email and check logs!
+
+7. Send package to the maintainers of the packages listed in
    "Reverse suggests" or "Reverse depend" at
    https://cran.r-project.org/package=irace so they can check we do not
    break their packages (this step would be automatic once ./check-reverse
    above works). If everything is OK, continue, otherwise fix and goto 1.
 
-7. Update NEWS (add version number on top)
+8. Update NEWS (add version number on top)
 
-8. make closeversion
+9. make closeversion
 
-9. Use http://cran.r-project.org/submit.html to submit
+10. Use http://cran.r-project.org/submit.html to submit
    Read http://cran.r-project.org/web/packages/policies.html
 
-10.a IF the package requires further changes:
+11.a IF the package requires further changes:
 
   * Make the changes.
 
   * Repeat the whole RELEASE process above without bumping the version number.
 
 
-10.b IF the package is released in CRAN:
+11.b IF the package is released in CRAN:
 
   * Bump the version number in Makefile.
 
@@ -84,7 +86,7 @@ RELEASE Process:
 
   * svn ci -m " * Bump development version to $NEW_VERSION
 
-11. Announce the release in the Google group:
+12. Announce the release in the Google group:
 
     https://groups.google.com/d/forum/irace-package
 
