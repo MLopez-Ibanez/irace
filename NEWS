@@ -1,3 +1,5 @@
+ * New target-runner.bat for Windows contributed by André de Souza Andrade.
+  
  * At the end of each race, the best overall may be different than the best of
    the race if the race stops before evaluating all instances seen in previous
    races. We now print the best overall (best-so-far). Elites evaluated on more
