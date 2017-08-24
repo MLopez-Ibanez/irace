@@ -1841,29 +1841,29 @@ statistical test:
       could be discarded but they are kept because of the elitist rules. See option \parameter{elitist} in \autoref{sec:irace options} for more information.
 \end{description}
 
-The \code{instance} column gives the number of \code{(instance, seed)} pair executed. This number
+Other columns have the following meaning:
+\begin{description}
+  \item \code{instance}: Number of \code{(instance, seed)} pair executed. This number
 corresponds to the index of the list found in \code{state$.irace$instancesList}. See \autoref{sec:output r}
 for more information.
-
-The \code{Alive} column gives the number of configurations that have not been
-discarded after the statistical test was performed. The column \code{Best}
-gives the ID of the best configuration according to the instances seen
-so far in this race (i.e., not including previous iterations).  The \code{Mean best} column
-gives the mean of the best configuration across the instances seen so
-far in this race. The \code{Exp so far} gives the number of experiments
-performed so far.  The \code{W time} column gives the wall-clock time spent on that instance.
-
-The columns \code{rho}, \code{KenW}, and \code{Qvar} give the values of
-Spearman's rank correlation coefficient rho, Kendall's concordance coefficient
-W, and a variance measure described in \cite{SchHoo2012quanti}, respectively,
-of the configurations across the instances executed so far in this race.  Use
-\code{rho}, \code{KenW} and \code{Qvar} to analyze how consistent is the
-performance of the configurations across the instances.  Note that these values
-are only valid for the instances that were already executed in the iteration.%
-\MANUEL{I'm not sure what the previous sentence means.} %
-Values close to 1 for \code{rho} and \code{KenW} and values close to 0 for
-\code{Qvar} indicate that the scenario is highly homogeneous. For heterogeneous
-scenarios, we provide advice in \autoref{sec:het}.
+\item \code{Alive}: Number of configurations that have not been
+discarded after the statistical test was performed.
+\item \code{Best}: ID of the best configuration according to the instances seen
+so far in this race (i.e., not including previous iterations).
+\item \code{Mean best}: Mean of the best configuration across the instances seen so
+far in this race.
+\item  \code{Exp so far}: Number of experiments
+performed so far.
+\item \code{W time}:  Wall-clock time spent on this instance.
+\item \code{rho}, \code{KenW}, and \code{Qvar}: Spearman's rank correlation
+  coefficient rho, Kendall's concordance coefficient W, and a variance measure
+  described in \cite{SchHoo2012quanti}, respectively, of the configurations
+  across the instances evaluated so far in this iteration.  These measures
+  evaluate how consistent is the performance of the configurations across the
+  instances.  Values close to 1 for \code{rho} and \code{KenW} and values close
+  to 0 for \code{Qvar} indicate that the scenario is highly homogeneous. For
+  heterogeneous scenarios, we provide advice in \autoref{sec:het}.
+\end{description}
 
 Finally, \irace outputs the best configuration found and a list of the elite
 configurations. The elite configurations are configurations that did not show
