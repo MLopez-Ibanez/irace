@@ -295,7 +295,8 @@ getFinalElites <- function(iraceResults = NULL, logFile = NULL, n = 0,
 ##    configurations data frame.
 ## * iraceResults or iraceLog must be provided, in case both are give iraceResults will be used.
 ## This function returns a data frame containing the selected candidate configurations 
-getConfigurationById <- function(iraceResults=NULL, logFile=NULL, ids, drop.metadata=FALSE)
+getConfigurationById <- function(iraceResults = NULL, logFile = NULL,
+                                 ids, drop.metadata = FALSE)
 {
   if (is.null(iraceResults)) {
     if (is.null(logFile))
@@ -310,7 +311,7 @@ getConfigurationById <- function(iraceResults=NULL, logFile=NULL, ids, drop.meta
   
   if (length(selection) < 1) stop("No configuration found with id", ids,".\n")
   
-  configurations <-iraceResults$allConfigurations[selection, , drop=FALSE]
+  configurations <-iraceResults$allConfigurations[selection, , drop = FALSE]
   
   if (drop.metadata)
     configurations <- removeConfigurationsMetaData(configurations)
@@ -336,19 +337,23 @@ getConfigurationByIteration <- function(iraceResults = NULL, logFile = NULL,
       load(logFile)
   }
   
-  if(length(iterations) < 1) stop("You must provide at least one configuration id.\n")
-  
-  iteration <-NULL
-  ids <- unique(subset(as.data.frame(iraceResults$experimentLog), iteration==iterations,  select=c("configuration"), drop=TRUE))
+  if (length(iterations) < 1)
+    stop("You must provide at least one configuration id.\n")
+
+  # To silence warning.
+  iteration <- NULL
+  ids <- unique(subset(as.data.frame(iraceResults$experimentLog),
+                       iteration %in% iterations,
+                       select=c("configuration"), drop=TRUE))
   
   selection <- iraceResults$allConfigurations[,".ID."] %in% ids
   
   if (length(selection) < 1) stop("No configuration found with id", ids,".\n")
   
-  configurations <-iraceResults$allConfigurations[selection, , drop=FALSE]
+  configurations <- iraceResults$allConfigurations[selection, , drop=FALSE]
   
   if (drop.metadata)
-    configurations <-  removeConfigurationsMetaData(configurations)
+    configurations <- removeConfigurationsMetaData(configurations)
   return(configurations)
 }
 
