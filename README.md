@@ -3,6 +3,8 @@
 
 [![CRAN Status](https://www.r-pkg.org/badges/version-last-release/irace)](https://cran.r-project.org/package=irace) [![CRAN Downloads](https://cranlogs.r-pkg.org/badges/grand-total/irace)](https://CRAN.R-project.org/package=irace) 
 
+[ [**Homepage**](http://iridia.ulb.ac.be/irace/) ] [ [**User Guide (PDF)**](https://cran.r-project.org/package=irace/vignettes/irace-package.pdf) ] 
+
 **Maintainers:** [Manuel López-Ibáñez](http://lopez-ibanez.eu), Leslie Pérez Cáceres
 
 **Creators:** [Manuel López-Ibáñez](http://lopez-ibanez.eu), Jérémie Dubois-Lacoste
@@ -11,6 +13,8 @@
   Yuan and Prasanna Balaprakash.
 
 **Contact:** <https://groups.google.com/d/forum/irace-package>
+
+---------------------------------------
 
 Introduction
 ============
@@ -273,6 +277,35 @@ A single run of irace can be done much faster by executing the calls
 to `targetRunner` (the runs of the algorithm being tuned) in
 parallel. See the [user guide](https://cran.r-project.org/package=irace/vignettes/irace-package.pdf) for the details.
 
+License
+=======
+
+This software is Copyright (C) 2011-2017 Manuel López-Ibáñez and Jérémie
+Dubois-Lacoste.
+
+This program is free software (software libre); you can redistribute it and/or
+modify it under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 2 of the License, or (at your option)
+any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE. See the [GNU General Public License](https://cran.r-project.org/web/licenses/GPL-3) for more details.
+
+**IMPORTANT NOTE:** Please be aware that the fact that this program is released as
+Free Software does not excuse you from scientific propriety, which obligates
+you to give appropriate credit! If you write a scientific paper describing
+research that made substantive use of this program, it is your obligation as a
+scientist to (a) mention the fashion in which this software was used in the
+Methods section; (b) mention the algorithm in the References section. The
+appropriate citation is:
+
+> Manuel López-Ibáñez, Jérémie Dubois-Lacoste, Leslie Pérez Cáceres, Thomas
+> Stützle, and Mauro Birattari.
+> [**The irace package: Iterated Racing for Automatic Algorithm Configuration.**](http://dx.doi.org/10.1016/j.orp.2016.09.002)
+> _Operations Research Perspectives_, 2016.
+
+The race package is Copyright (C) 2003 Mauro Birattari, used under the GPL.
 
 Frequently Asked Questions
 ==========================
