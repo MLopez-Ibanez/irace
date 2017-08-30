@@ -13,7 +13,7 @@
 \usepackage{ifthen}
 \newboolean{Release}
 \setboolean{Release}{false}
-\setboolean{Release}{true}
+%\setboolean{Release}{true}
 \usepackage{calc}
 \usepackage{algorithm,algorithmic}
 \usepackage{booktabs}
@@ -2225,6 +2225,11 @@ since it does not make use of techniques, such as ``adaptive capping'', that
 avoid long runs of the target algorithm.
 
 We are currently extending \irace with an adaptive capping mechanism.
+
+\subsection{Hyper-pararameter optimization of machine learning methods}
+
+The \irace package can also be used for model selection and hyper-parameter optimization of machine learning methods. For such a task, we recommend the \pkg{mlr} package~\citep{R:mlr}. The following webpage documents how to use \irace for this purpose: \url{https://mlr-org.github.io/mlr-tutorial/devel/html/advanced_tune/index.html}
+
 
 \subsection{Heterogeneous scenarios}
 \label{sec:het}
