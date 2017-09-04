@@ -17,8 +17,8 @@
 EXE=~/bin/acotsp
 
 # Fixed parameters that should be always passed to ACOTSP.
-# The time to be used is always 5 seconds, and we want only one run:
-FIXED_PARAMS=" --tries 1 --quiet "
+# The time to be used is always 10 seconds, and we want only one run:
+FIXED_PARAMS=" --tries 1 --time 10 --quiet "
 
 CONFIG_ID="$1"
 INSTANCE_ID="$2"
