@@ -48,15 +48,15 @@ RELEASE Process:
 
 1. svn up
 
-2. "make check" passes
+2. make check # passes
 
-3. "make cran" passes
+3. make cran  # passes
 
-4. "make examples" passes
+4. make examples # Takes a few hours. Inspect the examples in the vignette.
 
 5. make releasebuild # Inspect the output for strange files!
 
-6. "make winbuild" passes. Wait for email and check logs!
+6. make winbuild # passes. Wait for email and check logs!
 
 7. Send package to the maintainers of the packages listed in
    "Reverse suggests" or "Reverse depend" at
@@ -89,6 +89,7 @@ RELEASE Process:
 12. Announce the release in the Google group:
 
     https://groups.google.com/d/forum/irace-package
+
 
 Announce email
 ==============
