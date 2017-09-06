@@ -136,6 +136,9 @@ TODO General (in order of importance):
    target-runner returns +Inf, just discard the candidate immediately
    without doing any more tests.
 
+ * Add --par integer >= 1 (PAR=), default 1: penalise timeouts or execution
+   failures with PAR * value.
+
  * Implement a regression testing testsuite to check that everything
    is working as expect before making a release. See:
 
