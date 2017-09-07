@@ -1702,10 +1702,11 @@ save (iraceResults, file="~/tuning/irace.Rdata")
 This example can also can be applied to the target execution files \parameter{targetRunner} and \parameter{targetEvaluator}.
 }
 
+
 \begin{xwarningbox}
   Do not change anything in the log file or the scenario file before
   recovering, as it may have unexpected effects on the recovered run of
-  \irace. In case of doubt, please contact us first (\autoref{sec:contact}).
+  \irace. In case of doubt, please contact us first (\autoref{sec:contact}. In particular, it is not possible to continue a run of \irace by recovering with a larger budget. Results will \textbf{not} be the same as running \irace from the start with the largest budget.  An alternative is to use the final configurations from one run as the initial configurations of a new run.
 \end{xwarningbox}
 
 \begin{xwarningbox}
