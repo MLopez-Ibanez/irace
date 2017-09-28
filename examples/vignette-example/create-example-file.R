@@ -38,5 +38,5 @@ output[[1]] <- list(cost=iraceResults$experiments[1,1], time=as.numeric(iraceRes
 output[[2]] <- list(cost=iraceResults$experiments[1,2], time=as.numeric(iraceResults$experimentLog[2,"time"]))
 
 #save in the folder
-save(experiment, output, parameters, file="examples.Rdata")
+save(experiment, output, file="examples.Rdata")
 
