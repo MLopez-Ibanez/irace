@@ -65,7 +65,7 @@ sann.irace <- function(...)
                       best.conf))
 }
 
-sann.irace(instances = weights)
+sann.irace(instances = weights, parallel = 2)
 
 sann.irace(deterministic = TRUE, instances = weights[1:7])
 
