@@ -155,14 +155,20 @@ file.check <- function (file, executable = FALSE, readable = executable,
 round.to.next.multiple <- function(x, d)
   return(x + d - 1 - (x - 1) %% d)
 
+# This returns FALSE for Inf/-Inf/NA
 is.wholenumber <- function(x, tol = .Machine$double.eps^0.5)
 {
-  abs(x - round(x)) < tol
+  is.finite(x) & (abs(x - round(x)) < tol)
+}
+
+is.na.nowarn <- function(x)
+{
+  length(x) == 1 && suppressWarnings(is.na(x))
 }
 
 is.null.or.na <- function(x)
 {
-  is.null(x) || (length(x) == 1 && suppressWarnings(is.na(x)))
+  is.null(x) || is.na.nowarn(x)
 }
 
 is.null.or.empty <- function(x)

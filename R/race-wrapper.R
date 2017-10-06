@@ -155,11 +155,25 @@ check.output.target.runner <- function (output, scenario)
   
   err.msg <- output$error
   if (is.null(err.msg)) {
-    if (is.null.or.na(output$cost))
-      output$cost <- NULL
-    if (is.null.or.na(output$time))
-      output$time <- NULL
-    # When targetEvaluator is provided targetRunner must return only the time.
+    if (!is.null (output$cost)) {
+      if (is.na.nowarn(output$cost)) {
+        err.msg <- paste0("The cost returned by targetRunner is not numeric!")
+      } else if (is.infinite(output$cost)) {
+        err.msg <- paste0("The cost returned by targetRunner is not finite!")
+      }
+    }
+
+    if (!is.null (output$time)) {
+      if (is.na.nowarn(output$time)) {
+        err.msg <- paste0("The time returned by targetRunner is not numeric!")
+      } else if (is.infinite(output$time)) {
+        err.msg <- paste0("The time returned by targetRunner is not finite!")
+      }
+    }
+  }
+
+  if (is.null(err.msg)) {
+    # When targetEvaluator is provided, targetRunner must return only the time.
     if (!is.null(.irace$target.evaluator)) {
       if (scenario$maxTime > 0 && is.null(output$time)) {
         err.msg <- paste0("The output of targetRunner must be one number 'time'!")
@@ -173,30 +187,13 @@ check.output.target.runner <- function (output, scenario)
     } else if (!is.null(output$time) && output$time < 0) {
       err.msg <- paste0("The value of time returned by targetRunner cannot be negative (", output$time, ")!")
     } 
-
-    if (!is.null (output$cost)) {
-      if (is.na(output$cost)) {
-        err.msg <- paste0("The cost returned by targetRunner is not numeric!")
-      } else if (is.infinite(output$cost)) {
-        err.msg <- paste0("The cost returned by targetRunner is not finite!")
-      }
-    }
-
-    if (!is.null (output$time)) {
-      if (is.na(output$time)) {
-        err.msg <- paste0("The time returned by targetRunner is not numeric!")
-      } else if (is.infinite(output$time)) {
-        err.msg <- paste0("The time returned by targetRunner is not finite!")
-      }
-    }
-
-    # Fix too small time.
-    output$time <- if (is.null(output$time)) NA else max(output$time, 0.01)
-    
   }
+
   if (!is.null(err.msg)) {
     target.error (err.msg, output, scenario, target.runner.call = output$call)
   }
+  # Fix too small time.
+  output$time <- if (is.null(output$time)) NA else max(output$time, 0.01)
   return (output)
 }
 

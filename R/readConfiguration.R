@@ -621,7 +621,7 @@ checkTargetFiles <- function(scenario, parameters)
   
   irace.assert(is.null(scenario$targetEvaluator) == is.null(.irace$target.evaluator))
 
-  if (!is.null(.irace$target.evaluator)) {
+  if (!is.null(scenario$targetEvaluator)) {
     cat("# Executing targetEvaluator...\n")
     output <-  withCallingHandlers(
       tryCatch(execute.evaluator(experiments, scenario, output, configurations[, ".ID."]),
