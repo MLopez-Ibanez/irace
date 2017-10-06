@@ -878,21 +878,21 @@ irace <- function(scenario, parameters)
       #cat("# ", format(Sys.time(), usetz=TRUE), " sampleModel() DONE\n")
       # Set ID of the new configurations.
       newConfigurations <- cbind (.ID. = max(0, allConfigurations$.ID.) +
-                              1:nrow(newConfigurations), newConfigurations)
+                                    1:nrow(newConfigurations), newConfigurations)
       raceConfigurations <- rbind(eliteConfigurations[, 1:ncol(allConfigurations)],
-                              newConfigurations)
+                                  newConfigurations)
       rownames(raceConfigurations) <- raceConfigurations$.ID.
 
       if (scenario$softRestart) {
         #          Rprof("profile.out")
         tmp.ids <- similarConfigurations (raceConfigurations, parameters,
-                                      threshold = scenario$softRestartThreshold)
+                                          threshold = scenario$softRestartThreshold)
         #          Rprof(NULL)
         if (!is.null(tmp.ids)) {
           if (debugLevel >= 1)
             irace.note("Soft restart: ", paste(collapse = " ", tmp.ids), " !\n")
           model <- restartConfigurations (raceConfigurations, tmp.ids, model,
-                                      parameters, nbNewConfigurations)
+                                          parameters, nbNewConfigurations)
           iraceResults$softRestart[indexIteration] <- TRUE
           iraceResults$model$afterSR[[indexIteration]] <- model
           if (debugLevel >= 2) { printModel (model) }
