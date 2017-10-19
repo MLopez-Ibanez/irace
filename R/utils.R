@@ -426,28 +426,28 @@ removeConfigurationsMetaData <- function(configurations)
                      drop = FALSE])
 }
 
-configurations.print <- function(configuration, metadata = FALSE)
+configurations.print <- function(configurations, metadata = FALSE)
 {
-  rownames(configuration) <- configuration$.ID.
+  rownames(configurations) <- configurations$.ID.
   if (!metadata) {
-    configuration <- removeConfigurationsMetaData(configuration)
+    configurations <- removeConfigurationsMetaData(configurations)
   } 
-  print(as.data.frame(configuration, stringsAsFactors = FALSE))
+  print(as.data.frame(configurations, stringsAsFactors = FALSE))
 }
 
-configurations.print.command <- function(configuration, parameters)
+configurations.print.command <- function(configurations, parameters)
 {
-  if (nrow(configuration) <= 0) return(invisible())
-  ids <- as.numeric(configuration$.ID.)
-  configuration <- removeConfigurationsMetaData(configuration)
+  if (nrow(configurations) <= 0) return(invisible())
+  ids <- as.numeric(configurations$.ID.)
+  configurations <- removeConfigurationsMetaData(configurations)
   # Re-sort the columns
-  configuration <- configuration[, parameters$names, drop = FALSE]
+  configurations <- configurations[, parameters$names, drop = FALSE]
   # A better way to do this? We cannot use apply() because that coerces
   # to a character matrix thus messing up numerical values.
   len <- nchar(max(ids))
-  for (i in seq_len (nrow(configuration))) {
+  for (i in seq_len (nrow(configurations))) {
     cat(sprintf("%-*d %s\n", len, ids[i],
-                buildCommandLine(configuration[i, , drop=FALSE], parameters$switches)))
+                buildCommandLine(configurations[i, , drop=FALSE], parameters$switches)))
   }
 }
 

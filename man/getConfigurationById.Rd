@@ -13,7 +13,7 @@
    \item{ids}{The id or a vector of ids of the candidates configurations to obtain.}
    \item{drop.metadata}{Remove metadata, such the configuration ID and
      the ID of the parent, from the returned configurations. See
-     \code{removeConfigurationsMetaData}.}
+     \code{\link{removeConfigurationsMetaData}}.}
 }
 \value{A data frame containing the elite configurations required.}
 

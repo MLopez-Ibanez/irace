@@ -2,13 +2,13 @@
 \alias{configurations.print}
 \title{configurations.print}
 \description{
-  Print configuration configurations (hereafter "configurations").
+  Print configurations.
 }
 \usage{
-  configurations.print(configuration, metadata = FALSE)
+  configurations.print(configurations, metadata = FALSE)
 }
 \arguments{
-  \item{configuration}{A matrix containing the configurations (one per row).}
+  \item{configurations}{a data frame containing the configurations (one per row).}
   \item{metadata}{A Boolean specifying whether to print the metadata or
   not. The metadata are data for the configurations (additionally to the
   value of each parameter) used by \pkg{irace}.}

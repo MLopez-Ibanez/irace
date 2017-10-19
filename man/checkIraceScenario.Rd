@@ -2,18 +2,17 @@
 \alias{checkIraceScenario}
 \title{checkIraceScenario}
 \description{
-  'checkIraceScenario' check the given scenario options.
+  \code{checkIraceScenario} check the given scenario options.
 }
 \usage{
   checkIraceScenario(scenario, parameters=NULL)
 }
 \arguments{
    \item{scenario}{Data structure containing \pkg{irace} settings.The data structure
-   has to be the one returned by the function \code{defaultScenario()} and
-   \code{readScenario()}. See documentation
-   of this function for details.}
+   has to be the one returned by the function \code{\link{defaultScenario}} and
+   \code{\link{readScenario}}.}
    \item{parameters}{Data structure containing the parameter definition. The data
-   structure has to be the one returned by the function \code{readParameters()}.
+   structure has to be the one returned by the function \code{\link{readParameters}}.
    See documentation of this function for details.}
 }
 \details{
