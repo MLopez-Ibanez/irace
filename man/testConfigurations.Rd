@@ -1,0 +1,28 @@
+\name{testConfigurations}
+\alias{testConfigurations}
+\title{testConfigurations}
+\description{
+  \code{testConfigurations} executes the given configurations on the
+  testing instances specified in the scenario.
+}
+\usage{
+testConfigurations(configurations, scenario, parameters)
+}
+\arguments{
+  \item{configurations}{a data frame containing the configurations (one per row).}
+   \item{scenario}{Data structure containing \pkg{irace} settings.The data structure
+   has to be the one returned by the function \code{\link{defaultScenario}} and
+   \code{\link{readScenario}}.}
+  \item{parameters}{A data structure similar to that provided
+    by the \code{link{readParameters}} function.}
+}
+\details{
+  A test instance set must be provided through \code{scenario$testInstances}.
+}
+
+\seealso{  
+  \code{\link{testing.main}}
+}
+
+\author{Manuel López-Ibáñez}
+
