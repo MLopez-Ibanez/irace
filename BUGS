@@ -1,5 +1,28 @@
 ------------------------------------------------------------*- mode: text -*-
 
+#9 ------------------------------------------------------------
+
+By default
+# trainInstancesDir = "./Instances/"
+# testInstancesDir = ""
+
+So not specifying any directory, like:
+
+## File with a list of instances and (optionally) parameters.
+## If empty or NULL, do not use a file.
+trainInstancesFile = "instances-train.txt"
+
+## File containing a list of test instances and optionally additional
+## parameters for them.  If empty or NULL, do not use a file.
+testInstancesFile = "instances-test.txt"
+
+defaults to for train instances to Instances/train-instance-1 ...
+but to ./test-instance-1 ... for test instances, which is unexpected.
+
+FIX: If testInstancesFile is given and trainInstancesDir is the default and
+testInstancesDir is "", then make testInstancesDir = trainInstancesDir
+
+
 #8 ------------------------------------------------------------
 
 We do not re-evaluate the elitist (using which.exe), but we do call target.evaluator on them. See this code in race.R:
