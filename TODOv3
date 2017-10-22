@@ -21,6 +21,10 @@ Some notes about refactoring:
 
 * Add the threshold for similarity as part of the definition of parameters. (one per parameter)
 
+* readConfigurationsFile -> readConfigurations
+  because it now accepts text='' ?
+
+
 main.R:
 
 * irace.params.def:  For integer (i) and real (r) parameters add their range. Align columns.
