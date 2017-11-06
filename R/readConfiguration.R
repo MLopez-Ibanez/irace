@@ -73,7 +73,7 @@ readConfigurationsFile <- function(filename, parameters, debugLevel = 0, text)
   # Fix up numeric columns.
   for (currentParameter in namesParameters) {
     type <- parameters$types[[currentParameter]]
-    if (type == "i" || type == "r") {
+    if (type %in% c("i", "i,log", "r", "r,log")) {
       configurationTable[, currentParameter] <-
         suppressWarnings(as.numeric(configurationTable[, currentParameter]))
     }
@@ -91,7 +91,7 @@ readConfigurationsFile <- function(filename, parameters, debugLevel = 0, text)
       if (conditionsSatisfied(parameters, configurationTable[k, ], 
                               currentParameter)) {
         # Check that the value is among the valid ones.
-        if (type == "i" || type == "r") {
+        if (type %in% c("i", "i,log", "r", "r,log")) {
           currentValue <- as.numeric(currentValue)
           lower <- paramLowerBound(currentParameter, parameters)
           upper <- paramUpperBound(currentParameter, parameters)
@@ -106,7 +106,7 @@ readConfigurationsFile <- function(filename, parameters, debugLevel = 0, text)
             return(NULL)
           }
           # For integers, only accept an integer.
-          if (type == "i" && as.integer(currentValue) != currentValue) {
+          if (type %in% c("i","i,log") && as.integer(currentValue) != currentValue) {
             irace.error ("Configuration number ", k, " from file ", filename,
                          " is invalid because parameter ", currentParameter,
                          " is of type integer but its value ",
@@ -365,7 +365,7 @@ checkScenario <- function(scenario = defaultScenario())
   # problem later.
 
   # Integer control parameters
-  intParams <- .irace.params.def[.irace.params.def[, "type"] == "i", "name"]
+  intParams <- .irace.params.def[.irace.params.def[, "type"] %in% c("i","i,log"), "name"]
   for (param in intParams) {
     if (is.na(scenario[[param]]))
       next # Allow NA default values
@@ -394,7 +394,7 @@ checkScenario <- function(scenario = defaultScenario())
   }
   
   # Real [0, 1] control parameters
-  realParams <- .irace.params.def[.irace.params.def[, "type"] == "r", "name"]
+  realParams <- .irace.params.def[.irace.params.def[, "type"] %in% c("r","r,log"), "name"]
   for (param in realParams) {
     if (is.na(scenario[[param]]))
       next # Allow NA default values

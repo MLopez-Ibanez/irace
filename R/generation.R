@@ -29,12 +29,12 @@ get.fixed.value <- function(param, parameters)
 {
   value <- parameters$domain[[param]][1]
   type <- parameters$types[[param]]
-  if (type == "i") {
+  if (type %in% c("i","i,log")) {
     return (as.integer(value))
   } else if (type == "c" || type == "o") {
     return (value)
   } else {
-    irace.assert (type == "r")
+    irace.assert (type %in% c("r","r,log"))
     return (as.double(value))
   }
 }
@@ -73,11 +73,56 @@ sampleUniform <- function (parameters, nbConfigurations, digits,
           lowerBound <- as.integer(parameters$domain[[currentParameter]][1])
           upperBound <- as.integer(parameters$domain[[currentParameter]][2])
           newVal <- floor(runif(1, min = lowerBound, max = 1 + upperBound))
+        } else if (currentType == "i,log") {
+          lowerBound <- as.integer(parameters$domain[[currentParameter]][1])
+          upperBound <- as.integer(parameters$domain[[currentParameter]][2])
+          # cannot compute the log of non-positive values
+          if (lowerBound <= 0) {
+              trlb <- -digits
+              trub <- log(upperBound - lowerBound)
+          } else {
+              trlb <- log(lowerBound)
+              trub <- log(upperBound)
+          }
+          newVal <- round(exp(runif(1, min = trlb, max = trub)), 1)
+          # re-check if LB was negative, then readjust
+          if (lowerBound <= 0) {
+            newVal <- newVal + lowerBound
+          }
+          # never too sure
+          if (newVal < lowerBound) {
+            newVal <- lowerBound
+          } else if (newVal > upperBound) {
+            newVal <- upperBound
+          }
         } else if (currentType == "r") {
           lowerBound <- parameters$domain[[currentParameter]][1]
           upperBound <- parameters$domain[[currentParameter]][2]
           newVal <- runif(1, as.double(lowerBound), as.double(upperBound))
           newVal <- round(newVal, digits)
+        } else if (currentType == "r,log") {
+          lowerBound <- parameters$domain[[currentParameter]][1]
+          upperBound <- parameters$domain[[currentParameter]][2]
+          # cannot compute the log of non-positive values
+          if (lowerBound <= 0) {
+              trlb <- -digits
+              trub <- log(upperBound - lowerBound)
+          } else {
+              trlb <- log(lowerBound)
+              trub <- log(upperBound)
+          }
+          newVal <- exp(runif(1, min = as.double(trlb), max = as.double(trub)))
+          newVal <- round(newVal, digits)
+          # re-check if LB was negative, then readjust
+          if (lowerBound <= 0) {
+            newVal <- newVal + lowerBound
+          }
+          # never too sure
+          if (newVal < lowerBound) {
+            newVal <- lowerBound
+          } else if (newVal > upperBound) {
+            newVal <- upperBound
+          }
         } else if (currentType == "c" || currentType == "o") {
           possibleValues <- parameters$domain[[currentParameter]]
           newVal <- sample(possibleValues, 1)
@@ -150,25 +195,100 @@ sampleModel <- function (parameters, eliteConfigurations, model,
           # We don't even need to sample, there is only one possible value !
           newVal <- get.fixed.value (currentParameter, parameters)
           # The parameter is not a fixed and should be sampled
-        } else if (currentType == "i" || currentType == "r") {
+        } else if (currentType %in% c("i", "i,log", "r", "r,log")) {
           lowerBound <- paramLowerBound(currentParameter, parameters)
           upperBound <- paramUpperBound(currentParameter, parameters)
           mean <- as.numeric(eliteParent[currentParameter])
           if (is.na(mean)) {
             # The elite parent does not have any value for this
             # parameter, let's sample uniformly.
-            newVal <- ifelse(currentType == "i",
-                             floor(runif(1, min = lowerBound, max = 1 + upperBound)),
-                             runif(1, lowerBound, upperBound))
+            if (currentType == "i") {
+              newVal <- floor(runif(1, min = lowerBound, max = 1 + upperBound))
+            } else if (currentType == "i,log") {
+              # cannot compute the log of non-positive values
+              if (lowerBound <= 0) {
+                trlb <- -digits
+                trub <- log(upperBound - lowerBound)
+              } else {
+                trlb <- log(lowerBound)
+                trub <- log(upperBound)
+              }
+              newVal <- round(exp(runif(1, min = trlb, max = trub)), 1)
+              # re-check if LB was negative, then readjust
+              if (lowerBound <= 0) {
+                newVal <- newVal + lowerBound
+              }
+              # never too sure
+              if (newVal < lowerBound) {
+                newVal <- lowerBound
+              } else if (newVal > upperBound) {
+                newVal <- upperBound
+              }
+            } else if (currenttype == "r") {
+              newVal <- runif(1, lowerBound, upperBound)
+            } else if (currentType == "r,log") {
+              # cannot compute the log of non-positive values
+              if (lowerBound <= 0) {
+                trlb <- -digits
+                trub <- log(upperBound - lowerBound)
+              } else {
+                  trlb <- log(lowerBound)
+                  trub <- log(upperBound)
+              }
+              newVal <- exp(runif(1, min = as.double(trlb), max = as.double(trub)))
+              newVal <- round(newVal, digits)
+              # re-check if LB was negative, then readjust
+              if (lowerBound <= 0) {
+                newVal <- newVal + lowerBound
+              }
+              # never too sure
+              if (newVal < lowerBound) {
+                newVal <- lowerBound
+              } else if (newVal > upperBound) {
+                newVal <- upperBound
+              }
+            }
           } else {
             stdDev <- model[[currentParameter]][[as.character(idEliteParent)]]
             newVal <- ifelse(currentType == "i",
                              rtnorm(1, mean + 0.5, stdDev, lowerBound, upperBound + 1) - 0.5,
                              rtnorm(1, mean, stdDev, lowerBound, upperBound))
+            if (currentType == "i") {
+              newVal <- rtnorm(1, mean + 0.5, stdDev, lowerBound, upperBound + 1) - 0.5
+              newVal <- round(newVal)
+            } else if (currentType == "r") {
+              newVal <- rtnorm(1, mean, stdDev, lowerBound, upperBound)
+              newVal <- round(newVal, digits)
+            } else {
+              # cannot compute log(0)
+              if (lowerBound == 0) {
+                  trLowerBound <- -digits
+                  trUpperBound <- log(upperBound)
+              } else if (lowerBound < 0) {
+                  trLowerBound <- -digits
+                  trUpperBound <- log(upperBound - lowerBound)
+                  mean <- mean - lowerBound
+              } else {
+                  trLowerBound <- log(lowerBound)
+                  trUpperBound <- log(upperBound)
+              }
+              # newVal <- exp(runif(1, min=trLowerBound, max=trUpperBound))
+              newVal <- exp(rtnorm(1, log(mean), abs(stdDev), trLowerBound, trUpperBound))
+
+              if (lowerBound < 0) {
+                newVal <- newVal + lowerBound
+              }
+
+               # triple-check
+              if (currentType == "i,log") {
+                newVal <- round(newVal)
+              } else {
+                newVal <- round(newVal, digits)
+              }
+              if (newVal < lowerBound) newVal <- lowerBound
+              if (newVal > upperBound) newVal <- upperBound
+            }
           }
-          newVal <- ifelse(currentType == "i", round(newVal),
-                           round(newVal, digits))
-          
         } else if (currentType == "o") {
           possibleValues <- paramDomain(currentParameter, parameters)  
           value <- eliteParent[currentParameter]

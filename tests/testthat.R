@@ -266,6 +266,24 @@ NA        NA   "x3"   4.5   "low"
 }
 test.checkForbidden()
 
+test.checkLogForbidden <- function()
+{
+  params <- irace:::readParameters("logparameters.txt")
+  confs <- irace:::readConfigurationsFile("configurations.txt", params)
+  forbidden <- irace:::readForbiddenFile("forbidden.txt")
+  exp.confs <- irace:::readConfigurationsFile(text='
+param1 param2 mode   real mutation
+5        NA    "x2"   4.0   "low"
+1        NA    "x2"   4.0   "low"
+5        6     "x1"   3.5   "low"
+NA        NA   "x3"   4.5   "low"
+', parameters = params)
+  confs <- irace:::checkForbidden(confs, forbidden)
+  rownames(confs) <- rownames(exp.confs) <- NULL
+  stopifnot(identical(confs, exp.confs))
+}
+test.checkLogForbidden()
+
 test.instances <- function()
 {
   scenario <- list(targetRunner = target.runner,

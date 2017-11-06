@@ -19,16 +19,22 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
   field.match <- function (line, pattern, delimited = FALSE, sep = "[[:space:]]")
   {
     #cat ("pattern:", pattern, "\n")
-    if (regexpr (paste("^", pattern, sep, sep=""), line) == -1) {
+    positions <- lapply(1:length(pattern), function(x) regexpr (paste("^", pattern[x], sep, sep=""), line))
+    if (all(sapply(positions, `[[`, 1) == -1)) {
       #cat("no match: NULL\n")
       return (list(match = NULL, line = line))
     }
-    pos.matched <- regexpr (paste("^", pattern, sep=""), line)
+    pos.matched.list <- lapply(1:length(pattern), function(x) regexpr (paste("^", pattern[x], sep=""), line))
     #cat("pos.matched:", pos.matched, "\n")
-    if (pos.matched == -1) {
+    if (all(sapply(pos.matched.list, `[[`, 1) == -1)) {
       #cat(line)
       return (list(match = NULL, line = line))
     }
+    position <- which(sapply(pos.matched.list, `[[`,1) != -1)
+    if (length(position) > 1) {
+      position <- position[1]
+    }
+    pos.matched <- pos.matched.list[[position]]
     delimited <- as.integer(delimited)
     match <- substr(line, pos.matched[1] + delimited,
                     attr(pos.matched, "match.length") - delimited)
@@ -65,7 +71,7 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
   isFixed <- function (type, domain)
   {
     type <- as.character(type)
-    if (type == "i" || type == "r") {
+    if (type %in% c("i", "i,log", "r", "r,log")) {
       return (domain[[1]] == domain[[2]])
     } else if (type == "c" || type == "o") {
       return (length(domain) == 1)
@@ -173,13 +179,15 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
                          "parameter switch must be a double-quoted string")
     }
     
-    ## Match param.type (single letter)
-    result <- field.match (line, "[ciro]")
+    ## Match param.type (longer matches must precede shorter ones)
+    result <- field.match (line, c("i,log", "r,log", "c","i","r","o"))
     param.type <- result$match
     line <- result$line
     if (is.null (result$match)) {
       errReadParameters (filename, nbLines, line,
-                         "parameter type must be a single character in {c,i,r,o}")
+                         "parameter type must be a single character in {c,i,r,o}; ",
+                         "i, r can be sampled using a logarthmic scale ",
+                         "with i,log and r,log respectively. No spaces in between.")
     }
 
     ## Match param.value (delimited by parenthesis)
@@ -192,7 +200,7 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
     }
 
     param.value <- string2vector(param.value)
-    if (param.type == "r" || param.type == "i") {
+    if (param.type == "r" || param.type == "r,log" || param.type == "i" || param.type == "i,log") {
       param.value <- suppressWarnings(as.numeric(param.value))
       if (any(is.na(param.value)) || length(param.value) != 2) {
         errReadParameters (filename, nbLines, NULL,
@@ -204,11 +212,11 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
                            result$match, ") for parameter '", param.name, "'")
       }
 
-      if (param.type == "r") {
+      if (param.type == "r" || param.type == "r,log") {
         # FIXME: Given (0.01,0.99) and digits=1, this produces (0, 1), which is
         # probably not what the user wants.
         param.value <- round(param.value, digits = digits)
-      } else if (param.type == "i" && !all(is.wholenumber(param.value))) {
+      } else if ((param.type == "i" || param.type == "i,log") && !all(is.wholenumber(param.value))) {
         errReadParameters (filename, nbLines, NULL,
                            "for parameter type 'i' values must be integers (",
                            result$match, ") for parameter '", param.name, "'")
@@ -235,12 +243,12 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
     # Reject non-categorical fixed parameters. They are often the
     # result of a user error.
     if (parameters$isFixed[[count]]) {
-      if (param.type == "i") {
+      if (param.type == "i" || param.type == "i,log") {
         errReadParameters (filename, nbLines, NULL,
                            "lower and upper bounds are the same in numeric range (",
                            param.value[1], ", ", param.value[2],
                            ") for parameter '", param.name, "'")
-      } else if (param.type == "r") {
+      } else if (param.type == "r" || param.type == "r,log") {
         errReadParameters (filename, nbLines, NULL,
                            "given digits=", digits,
                            ", lower and upper bounds are the same in numeric range (",

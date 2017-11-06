@@ -22,7 +22,9 @@
   structured as follows:
 
   \item{names}{Vector that contains the names of the parameters.}
-  \item{types}{Vector that contains the type of each parameter 'i', 'c', 'r', 'o'.}
+  \item{types}{Vector that contains the type of each parameter 'i', 'c', 'r', 'o'.
+    Numerical parameters can be sampled in a log-scale with 'i,log' and 'r,log'
+    (no spaces).}
   \item{switches}{Vector that contains the switches to be used for the
     parameters on the command line.}
   \item{domain}{List of vectors, where each vector may contain two

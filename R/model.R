@@ -25,6 +25,30 @@ initialiseModel <- function (parameters, configurations)
       lowerBound <- paramLowerBound(currentParameter, parameters)
       upperBound <- paramUpperBound(currentParameter, parameters)
       value <- (upperBound - lowerBound) / 2
+    } else if (type == "i,log" || type == "r,log") {
+      lowerBound <- paramLowerBound(currentParameter, parameters)
+      upperBound <- paramUpperBound(currentParameter, parameters)
+      # cannot compute log(0)
+      if (lowerBound <= 0) {
+        trLowerBound <- -digits
+        trUpperBound <- log(upperBound - lowerBound)
+      } else {
+        trLowerBound <- log(lowerBound)
+        trUpperBound <- log(upperBound)
+      }
+      # value <- exp(runif(1, min=trLowerBound, max=trUpperBound))
+      value <- exp((trLowerBound - trUpperBound) / 2)
+      if (lowerBound < 0) {
+        value <- value + lowerBound
+      }
+      # triple-check
+      if (type == "i,log") {
+        value <- round(value)
+      } else {
+        value <- round(value, digits)
+      }
+      if (value < lowerBound) value <- lowerBound
+      if (value > upperBound) value <- upperBound
     } else {
       irace.assert(type == "o")
       value <- (nbValues - 1) / 2
@@ -105,9 +129,14 @@ updateModel <- function (parameters, eliteConfigurations, oldModel,
           #print(newVector)  
         }
       } else {
-        irace.assert(type == "i" || type == "r" || type == "o")
+        irace.assert(type %in% c("i", "i,log", "r", "r,log", "o"))
         # Not really a vector but stdDev factor
-        probVector <- probVector * ((1 / nbNewConfigurations)^(1 / parameters$nbVariable))
+        newProbVector <- probVector * ((1 / nbNewConfigurations)^(1 / parameters$nbVariable))
+        if (type %in% c("i", "r", "o")) {
+          probVector <- newProbVector
+        } else {
+          probVector <- log(probVector / newProbVector)
+        }
       }
       newModel[[currentParameter]][[idCurrentConfiguration]] <- probVector
     }
@@ -147,11 +176,35 @@ restartConfigurations <- function (configurations, restart.ids, model, parameter
         probVector <- 0.9 * probVector + 0.1 * max(probVector)
         model[[param]][[id]] <- probVector / sum(probVector)
       } else {
-        irace.assert(type == "i" || type == "r" || type == "o")
+        irace.assert(type %in% c("i", "i,log", "r", "r,log", "o"))
         if (type == "i" || type == "r") {
           lowerBound <- paramLowerBound(param, parameters)
           upperBound <- paramUpperBound(param, parameters)
           value <- (upperBound - lowerBound) / 2
+        } else if (type == "i,log" || type == "r,log") {
+          lowerBound <- paramLowerBound(param, parameters)
+          upperBound <- paramUpperBound(param, parameters)
+          # cannot compute log(0)
+          if (lowerBound <= 0) {
+            trLowerBound <- -digits
+            trUpperBound <- log(upperBound - lowerBound)
+          } else {
+            trLowerBound <- log(lowerBound)
+            trUpperBound <- log(upperBound)
+          }
+          # value <- exp(runif(1, min=trLowerBound, max=trUpperBound))
+          value <- exp((trLowerBound + trUpperBound) / 2)
+          if (lowerBound < 0) {
+            value <- value + lowerBound
+          }
+          # triple-check
+          if (type == "i,log") {
+            value <- round(value)
+          } else {
+            value <- round(value, digits)
+          }
+          if (value < lowerBound) value <- lowerBound
+          if (value > upperBound) value <- upperBound
         } else {
           irace.assert(type == "o")
           value <- (length(parameters$domain[[param]]) - 1) / 2
@@ -160,6 +213,9 @@ restartConfigurations <- function (configurations, restart.ids, model, parameter
         model[[param]][[id]] <-
           min(model[[param]][[id]] * (nbConfigurations^(2 / parameters$nbVariable)),
               value * ((1 / nbConfigurations)^(1 / parameters$nbVariable)))
+        if (type %in% c("i,log", "r,log")) {
+            model[[param]][[id]] <- log(model[[param]][[id]])
+        }
       }
     }
   }
