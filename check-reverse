@@ -1,26 +1,15 @@
 #!/usr/bin/env Rscript
-## require("tools")
-
-## options(repos = 'http://cran.rstudio.com/')
-## pdb <- available.packages()
-## deps <- package_dependencies(packages = "irace", pdb, reverse = TRUE)
-## tools::check_packages_in_dir(dir = "/tmp", reverse = deps)
-
 # Check reverse dependencies
 require("devtools")
+devtools.revdep.libpath = "../irace.revdep"
+options(devtools.revdep.libpath = devtools.revdep.libpath)
+if (!dir.exists(devtools.revdep.libpath)) dir.create(devtools.revdep.libpath)
+revdep_check_resume()
+# This fails with:
 
-libpath = file.path(tempdir(), "R-lib")
-dir.create(libpath)
+## trying URL 'https://cran.rstudio.com/src/contrib/rJava_0.9-9.tar.gz'
+## Content type 'application/x-gzip' length 660454 bytes (644 KB)
+## ==================================================
+## downloaded 644 KB
 
-pkg = read.dcf("DESCRIPTION")[[1,"Package"]]
-deps = revdep(pkg)
-
-install.packages(deps, lib = libpath, repos = 'http://cran.rstudio.com/')
-ok = check_cran(deps, libpath = libpath)
-
-if(!all(sapply(ok, is.null))) {
-  f = names(Filter(function(x) !is.null(x), ok))
-  stop(sprintf("Some packages failed the test: %s", paste(f, collapse=", ")))
-}
-
-message("All reverse dependencies ok!")
+## Error: Command failed (1)
