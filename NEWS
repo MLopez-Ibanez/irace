@@ -1,3 +1,6 @@
+ * Numerical parameters may be sampled on a logarithmic scale using "i,log"
+   or "r,log".                                               (Alberto Franzin)
+ 
  * New target-runner.bat for Windows contributed by André de Souza Andrade.
   
  * At the end of each race, the best overall may be different than the best of
