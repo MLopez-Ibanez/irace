@@ -184,20 +184,19 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
     param.type <- result$match
     line <- result$line
     if (is.null (result$match)) {
-      errReadParameters (filename, nbLines, line,
-                         "parameter type must be a single character in {c,i,r,o}; ",
-                         "i, r can be sampled using a logarthmic scale ",
-                         "with i,log and r,log respectively. No spaces in between.")
+      errReadParameters (
+        filename, nbLines, line,
+        "parameter type must be a single character in {'c','i','r','o'}, ",
+        "with 'i', 'r' optionally followed by ',log' (no spaces in between) ",
+        "to sample using a logarithmic scale,")
+    } else if (param.type == "i,log") {
+      param.type <- "i"
+      param.transform <- "log"
+    } else if (param.type == "r,log") {
+      param.type <- "r"
+      param.transform <- "log"
     } else {
-      if (param.type == "i,log") {
-        param.type <- "i"
-        param.transform <- "log"
-      } else if (param.type == "r,log") {
-        param.type <- "r"
-        param.transform <- "log"
-      } else {
-        param.transform <- ""
-      }
+      param.transform <- ""
     }
 
     ## Match param.value (delimited by parenthesis)
