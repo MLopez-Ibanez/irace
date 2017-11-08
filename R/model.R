@@ -10,7 +10,7 @@
 # one element per categorical parameter.  Each categorical parameter
 # contains a list of vector. This list contains elements which are the
 # .ID. of the configuration. 
-initialiseModel <- function (parameters, configurations)
+initialiseModel <- function (parameters, configurations, digits)
 {
   model <- list()
   nbConfigurations <- nrow(configurations)
@@ -18,37 +18,27 @@ initialiseModel <- function (parameters, configurations)
   for (currentParameter in parameters$names[!parameters$isFixed]) {
     type <- parameters$types[[currentParameter]]
     nbValues <- length(parameters$domain[[currentParameter]])
+    transform <- parameters$transform[[currentParameter]]
     param <- list()
     if (type == "c") {
       value <- rep((1 / nbValues), nbValues)
     } else if (type == "i" || type == "r") {
       lowerBound <- paramLowerBound(currentParameter, parameters)
       upperBound <- paramUpperBound(currentParameter, parameters)
-      value <- (upperBound - lowerBound) / 2
-    } else if (type == "i,log" || type == "r,log") {
-      lowerBound <- paramLowerBound(currentParameter, parameters)
-      upperBound <- paramUpperBound(currentParameter, parameters)
-      # cannot compute log(0)
-      if (lowerBound <= 0) {
-        trLowerBound <- -digits
-        trUpperBound <- log(upperBound - lowerBound)
+      if (transform == "log") {
+        trRange <- range.transform.log(lowerBound, upperBound, digits)
+        trLb <- trRange[["trLowerBound"]]
+        trUb <- trRange[["trUpperBound"]]
+        value <- exp((trLb - trUb) / 2)
+        if (type == "i") {
+          value <- round(value)
+        } else {
+          value <- round(value, digits)
+        }
+        value <- check.transform.log(value, lowerBound, upperBound)
       } else {
-        trLowerBound <- log(lowerBound)
-        trUpperBound <- log(upperBound)
+        value <- (upperBound - lowerBound) / 2
       }
-      # value <- exp(runif(1, min=trLowerBound, max=trUpperBound))
-      value <- exp((trLowerBound - trUpperBound) / 2)
-      if (lowerBound < 0) {
-        value <- value + lowerBound
-      }
-      # triple-check
-      if (type == "i,log") {
-        value <- round(value)
-      } else {
-        value <- round(value, digits)
-      }
-      if (value < lowerBound) value <- lowerBound
-      if (value > upperBound) value <- upperBound
     } else {
       irace.assert(type == "o")
       value <- (nbValues - 1) / 2
@@ -75,6 +65,7 @@ updateModel <- function (parameters, eliteConfigurations, oldModel,
 
     for (currentParameter in parameters$names[!parameters$isFixed]) {
       type <- parameters$types[[currentParameter]]
+      transform <- parameters$transform[[currentParameter]]
 
       ## If the elite is older than the current iteration, it has
       ## its own model that has evolved with time. If the elite is
@@ -129,13 +120,13 @@ updateModel <- function (parameters, eliteConfigurations, oldModel,
           #print(newVector)  
         }
       } else {
-        irace.assert(type %in% c("i", "i,log", "r", "r,log", "o"))
+        irace.assert(type %in% c("i", "r", "o"))
         # Not really a vector but stdDev factor
         newProbVector <- probVector * ((1 / nbNewConfigurations)^(1 / parameters$nbVariable))
-        if (type %in% c("i", "r", "o")) {
-          probVector <- newProbVector
-        } else {
+        if (transform == "log") {
           probVector <- log(probVector / newProbVector)
+        } else {
+          probVector <- newProbVector
         }
       }
       newModel[[currentParameter]][[idCurrentConfiguration]] <- probVector
@@ -151,7 +142,7 @@ printModel <- function (model)
 }
 
 restartConfigurations <- function (configurations, restart.ids, model, parameters,
-                               nbConfigurations)
+                               nbConfigurations, digits)
 {
   #print(configurations)
   tmp.ids <- c()
@@ -167,6 +158,7 @@ restartConfigurations <- function (configurations, restart.ids, model, parameter
   #print(restart.ids)
   for (param in parameters$names[!parameters$isFixed]) {
     type <- parameters$types[[param]]
+    transform <- parameters$transform[[param]]
     for (id in restart.ids) {
       id <- as.character(id)
       irace.assert (id %in% names(model[[param]]))
@@ -176,35 +168,23 @@ restartConfigurations <- function (configurations, restart.ids, model, parameter
         probVector <- 0.9 * probVector + 0.1 * max(probVector)
         model[[param]][[id]] <- probVector / sum(probVector)
       } else {
-        irace.assert(type %in% c("i", "i,log", "r", "r,log", "o"))
         if (type == "i" || type == "r") {
           lowerBound <- paramLowerBound(param, parameters)
           upperBound <- paramUpperBound(param, parameters)
-          value <- (upperBound - lowerBound) / 2
-        } else if (type == "i,log" || type == "r,log") {
-          lowerBound <- paramLowerBound(param, parameters)
-          upperBound <- paramUpperBound(param, parameters)
-          # cannot compute log(0)
-          if (lowerBound <= 0) {
-            trLowerBound <- -digits
-            trUpperBound <- log(upperBound - lowerBound)
+          if (transform == "log") {
+            trRange <- range.transform.log(lowerBound, upperBound, digits)
+            trLb <- trRange[["trLowerBound"]]
+            trUb <- trRange[["trUpperBound"]]
+            value <- exp((trLb - trUb) / 2)
+            if (type == "i") {
+              value <- round(value)
+            } else {
+              value <- round(value, digits)
+            }
+            value <- check.transform.log(value, lowerBound, upperBound)
           } else {
-            trLowerBound <- log(lowerBound)
-            trUpperBound <- log(upperBound)
+            value <- (upperBound - lowerBound) / 2
           }
-          # value <- exp(runif(1, min=trLowerBound, max=trUpperBound))
-          value <- exp((trLowerBound + trUpperBound) / 2)
-          if (lowerBound < 0) {
-            value <- value + lowerBound
-          }
-          # triple-check
-          if (type == "i,log") {
-            value <- round(value)
-          } else {
-            value <- round(value, digits)
-          }
-          if (value < lowerBound) value <- lowerBound
-          if (value > upperBound) value <- upperBound
         } else {
           irace.assert(type == "o")
           value <- (length(parameters$domain[[param]]) - 1) / 2
@@ -213,7 +193,7 @@ restartConfigurations <- function (configurations, restart.ids, model, parameter
         model[[param]][[id]] <-
           min(model[[param]][[id]] * (nbConfigurations^(2 / parameters$nbVariable)),
               value * ((1 / nbConfigurations)^(1 / parameters$nbVariable)))
-        if (type %in% c("i,log", "r,log")) {
+        if (transform == "log") {
             model[[param]][[id]] <- log(model[[param]][[id]])
         }
       }

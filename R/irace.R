@@ -892,7 +892,7 @@ irace <- function(scenario, parameters)
           if (debugLevel >= 1)
             irace.note("Soft restart: ", paste(collapse = " ", tmp.ids), " !\n")
           model <- restartConfigurations (raceConfigurations, tmp.ids, model,
-                                          parameters, nbNewConfigurations)
+                                          parameters, nbNewConfigurations, scenario$digits)
           iraceResults$softRestart[indexIteration] <- TRUE
           iraceResults$model$afterSR[[indexIteration]] <- model
           if (debugLevel >= 2) { printModel (model) }
@@ -996,7 +996,7 @@ irace <- function(scenario, parameters)
     
     if (indexIteration == 1) {
       if (debugLevel >= 1)  { irace.note("Initialise model\n") }
-      model <- initialiseModel(parameters, eliteConfigurations)
+      model <- initialiseModel(parameters, eliteConfigurations, scenario$digits)
     }
       
     if (debugLevel >= 1) {

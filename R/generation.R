@@ -29,12 +29,12 @@ get.fixed.value <- function(param, parameters)
 {
   value <- parameters$domain[[param]][1]
   type <- parameters$types[[param]]
-  if (type %in% c("i","i,log")) {
+  if (type == "i") {
     return (as.integer(value))
   } else if (type == "c" || type == "o") {
     return (value)
   } else {
-    irace.assert (type %in% c("r","r,log"))
+    irace.assert (type == "r")
     return (as.double(value))
   }
 }
@@ -65,6 +65,7 @@ sampleUniform <- function (parameters, nbConfigurations, digits,
         # same order as namesParameters, because we sample in the order of the
         # conditions.
         currentType <- parameters$types[[currentParameter]]
+        transform <- parameters$transform[[currentParameter]]
         if (isFixed(currentParameter, parameters)) {
           # We don't even need to sample, there is only one possible value !
           newVal <- get.fixed.value (currentParameter, parameters)
@@ -72,56 +73,31 @@ sampleUniform <- function (parameters, nbConfigurations, digits,
         } else if (currentType == "i") {
           lowerBound <- as.integer(parameters$domain[[currentParameter]][1])
           upperBound <- as.integer(parameters$domain[[currentParameter]][2])
-          newVal <- floor(runif(1, min = lowerBound, max = 1 + upperBound))
-        } else if (currentType == "i,log") {
-          lowerBound <- as.integer(parameters$domain[[currentParameter]][1])
-          upperBound <- as.integer(parameters$domain[[currentParameter]][2])
-          # cannot compute the log of non-positive values
-          if (lowerBound <= 0) {
-              trlb <- -digits
-              trub <- log(upperBound - lowerBound)
+
+          if (transform == "log") {
+            trRange <- range.transform.log(lowerBound, upperBound, digits)
+            trLb <- trRange[["trLowerBound"]]
+            trUb <- trRange[["trUpperBound"]]
+            newVal <- round(exp(runif(1, min = trLb, max = trUb)), 1)
+            newVal <- check.transform.log(newVal, lowerBound, upperBound)
           } else {
-              trlb <- log(lowerBound)
-              trub <- log(upperBound)
+            newVal <- floor(runif(1, min = lowerBound, max = 1 + upperBound))
           }
-          newVal <- round(exp(runif(1, min = trlb, max = trub)), 1)
-          # re-check if LB was negative, then readjust
-          if (lowerBound <= 0) {
-            newVal <- newVal + lowerBound
-          }
-          # never too sure
-          if (newVal < lowerBound) {
-            newVal <- lowerBound
-          } else if (newVal > upperBound) {
-            newVal <- upperBound
-          }
+
         } else if (currentType == "r") {
           lowerBound <- parameters$domain[[currentParameter]][1]
           upperBound <- parameters$domain[[currentParameter]][2]
-          newVal <- runif(1, as.double(lowerBound), as.double(upperBound))
-          newVal <- round(newVal, digits)
-        } else if (currentType == "r,log") {
-          lowerBound <- parameters$domain[[currentParameter]][1]
-          upperBound <- parameters$domain[[currentParameter]][2]
-          # cannot compute the log of non-positive values
-          if (lowerBound <= 0) {
-              trlb <- -digits
-              trub <- log(upperBound - lowerBound)
+          
+          if (transform == "log") {
+            trRange <- range.transform.log(lowerBound, upperBound, digits)
+            trLb <- trRange[["trLowerBound"]]
+            trUb <- trRange[["trUpperBound"]]
+            newVal <- exp(runif(1, min = as.double(trLb), max = as.double(trUb)))
+            newVal <- round(newVal, digits)
+            newVal <- check.transform.log(newVal, lowerBound, upperBound)
           } else {
-              trlb <- log(lowerBound)
-              trub <- log(upperBound)
-          }
-          newVal <- exp(runif(1, min = as.double(trlb), max = as.double(trub)))
-          newVal <- round(newVal, digits)
-          # re-check if LB was negative, then readjust
-          if (lowerBound <= 0) {
-            newVal <- newVal + lowerBound
-          }
-          # never too sure
-          if (newVal < lowerBound) {
-            newVal <- lowerBound
-          } else if (newVal > upperBound) {
-            newVal <- upperBound
+            newVal <- runif(1, as.double(lowerBound), as.double(upperBound))
+            newVal <- round(newVal, digits)
           }
         } else if (currentType == "c" || currentType == "o") {
           possibleValues <- parameters$domain[[currentParameter]]
@@ -186,6 +162,7 @@ sampleModel <- function (parameters, eliteConfigurations, model,
         # should fix this or make it impossible to confuse them.
         currentParameter <- namesParameters[p]
         currentType <- parameters$types[[currentParameter]]
+        transform <- parameters$transform[[currentParameter]]
         if (!conditionsSatisfied(parameters, configuration, currentParameter)) {
           # Some conditions are unsatisfied.
           # Should be useless, NA is ?always? assigned when matrix created
@@ -195,98 +172,60 @@ sampleModel <- function (parameters, eliteConfigurations, model,
           # We don't even need to sample, there is only one possible value !
           newVal <- get.fixed.value (currentParameter, parameters)
           # The parameter is not a fixed and should be sampled
-        } else if (currentType %in% c("i", "i,log", "r", "r,log")) {
+        } else if (currentType %in% c("i", "r")) {
           lowerBound <- paramLowerBound(currentParameter, parameters)
           upperBound <- paramUpperBound(currentParameter, parameters)
           mean <- as.numeric(eliteParent[currentParameter])
           if (is.na(mean)) {
             # The elite parent does not have any value for this
             # parameter, let's sample uniformly.
+
             if (currentType == "i") {
-              newVal <- floor(runif(1, min = lowerBound, max = 1 + upperBound))
-            } else if (currentType == "i,log") {
-              # cannot compute the log of non-positive values
-              if (lowerBound <= 0) {
-                trlb <- -digits
-                trub <- log(upperBound - lowerBound)
+              if (transform == "log") {
+                trRange <- range.transform.log(lowerBound, upperBound, digits)
+                trLb <- trRange[["trLowerBound"]]
+                trUb <- trRange[["trUpperBound"]]
+                newVal <- round(exp(runif(1, min = trLb, max = trUb)), 1)
+                newVal <- check.transform.log(newVal, lowerBound, upperBound)
               } else {
-                trlb <- log(lowerBound)
-                trub <- log(upperBound)
+                newVal <- floor(runif(1, min = lowerBound, max = 1 + upperBound))
               }
-              newVal <- round(exp(runif(1, min = trlb, max = trub)), 1)
-              # re-check if LB was negative, then readjust
-              if (lowerBound <= 0) {
-                newVal <- newVal + lowerBound
-              }
-              # never too sure
-              if (newVal < lowerBound) {
-                newVal <- lowerBound
-              } else if (newVal > upperBound) {
-                newVal <- upperBound
-              }
-            } else if (currenttype == "r") {
-              newVal <- runif(1, lowerBound, upperBound)
-            } else if (currentType == "r,log") {
-              # cannot compute the log of non-positive values
-              if (lowerBound <= 0) {
-                trlb <- -digits
-                trub <- log(upperBound - lowerBound)
+            } else if (currentType == "r") {
+              if (transform == "log") {
+                trRange <- range.transform.log(lowerBound, upperBound, digits)
+                trLb <- trRange[["trLowerBound"]]
+                trUb <- trRange[["trUpperBound"]]
+                newVal <- exp(runif(1, min = as.double(trLb), max = as.double(trUb)))
+                newVal <- round(newVal, digits)
+                newVal <- check.transform.log(newVal, lowerBound, upperBound)
               } else {
-                  trlb <- log(lowerBound)
-                  trub <- log(upperBound)
-              }
-              newVal <- exp(runif(1, min = as.double(trlb), max = as.double(trub)))
-              newVal <- round(newVal, digits)
-              # re-check if LB was negative, then readjust
-              if (lowerBound <= 0) {
-                newVal <- newVal + lowerBound
-              }
-              # never too sure
-              if (newVal < lowerBound) {
-                newVal <- lowerBound
-              } else if (newVal > upperBound) {
-                newVal <- upperBound
+                newVal <- runif(1, as.double(lowerBound), as.double(upperBound))
+                newVal <- round(newVal, digits)
               }
             }
           } else {
             stdDev <- model[[currentParameter]][[as.character(idEliteParent)]]
-            newVal <- ifelse(currentType == "i",
-                             rtnorm(1, mean + 0.5, stdDev, lowerBound, upperBound + 1) - 0.5,
-                             rtnorm(1, mean, stdDev, lowerBound, upperBound))
-            if (currentType == "i") {
-              newVal <- rtnorm(1, mean + 0.5, stdDev, lowerBound, upperBound + 1) - 0.5
-              newVal <- round(newVal)
-            } else if (currentType == "r") {
-              newVal <- rtnorm(1, mean, stdDev, lowerBound, upperBound)
-              newVal <- round(newVal, digits)
-            } else {
-              # cannot compute log(0)
-              if (lowerBound == 0) {
-                  trLowerBound <- -digits
-                  trUpperBound <- log(upperBound)
-              } else if (lowerBound < 0) {
-                  trLowerBound <- -digits
-                  trUpperBound <- log(upperBound - lowerBound)
-                  mean <- mean - lowerBound
-              } else {
-                  trLowerBound <- log(lowerBound)
-                  trUpperBound <- log(upperBound)
-              }
-              # newVal <- exp(runif(1, min=trLowerBound, max=trUpperBound))
-              newVal <- exp(rtnorm(1, log(mean), abs(stdDev), trLowerBound, trUpperBound))
-
-              if (lowerBound < 0) {
-                newVal <- newVal + lowerBound
-              }
-
-               # triple-check
-              if (currentType == "i,log") {
+            if (transform == "log") {
+              trRange <- range.transform.log(lowerBound, upperBound, digits, mean)
+              trLb <- trRange[["trLowerBound"]]
+              trUb <- trRange[["trUpperBound"]]
+              trMean <- trRange[["trMean"]]
+              newVal <- exp(rtnorm(1, trMean, abs(stdDev), trLb, trUb))
+              if (currentType == "i") {
                 newVal <- round(newVal)
               } else {
                 newVal <- round(newVal, digits)
               }
-              if (newVal < lowerBound) newVal <- lowerBound
-              if (newVal > upperBound) newVal <- upperBound
+              newVal <- check.transform.log(newVal, lowerBound, upperBound)
+            } else {
+              newVal <- ifelse(currentType == "i",
+                               rtnorm(1, mean + 0.5, stdDev, lowerBound, upperBound + 1) - 0.5,
+                               rtnorm(1, mean, stdDev, lowerBound, upperBound))
+              if (currentType == "i") {
+                newVal <- round(newVal)
+              } else {
+                newVal <- round(newVal, digits)
+              }
             }
           }
         } else if (currentType == "o") {
@@ -339,4 +278,42 @@ sampleModel <- function (parameters, eliteConfigurations, model,
     }
   }
   return (newConfigurations)
+}
+
+# Transform the range [LB,UB] into [log(LB),log(UB)].
+# It needs to pay attention to shift the range in the
+# positive domain if LB <= 0. The mean is also transformed
+# (if provided, otherwise it can be ignored).
+# A similar check will be required after applying the
+# transformation (see function check.transform.log() ).
+range.transform.log <- function(lowerBound, upperBound, digits, mean=1) {
+  # cannot compute log(0)
+  if (lowerBound <= 0) {
+    trLowerBound <- -digits
+    trUpperBound <- log(upperBound - lowerBound)
+    trMean <- log(mean + lowerBound)
+  } else {
+    trLowerBound <- log(lowerBound)
+    trUpperBound <- log(upperBound)
+    trMean <- log(mean)
+  }
+  return(list("trLowerBound"=trLowerBound,
+              "trUpperBound"=trUpperBound,
+              "trMean"=trMean))
+}
+
+# Adjust the sampled value if the lower bound is <=0, and
+# check that it does not fall outside the allowed range.
+check.transform.log <- function(newVal, lowerBound, upperBound) {
+  # check if LB was negative, then readjust
+  if (lowerBound <= 0) {
+    newVal <- newVal + lowerBound
+  }
+  # never too sure
+  if (newVal < lowerBound) {
+    newVal <- lowerBound
+  } else if (newVal > upperBound) {
+    newVal <- upperBound
+  }
+  return(newVal)
 }
