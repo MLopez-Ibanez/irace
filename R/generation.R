@@ -70,35 +70,8 @@ sampleUniform <- function (parameters, nbConfigurations, digits,
           # We don't even need to sample, there is only one possible value !
           newVal <- get.fixed.value (currentParameter, parameters)
           # The parameter is not a fixed and should be sampled          
-        } else if (currentType == "i") {
-          lowerBound <- as.integer(parameters$domain[[currentParameter]][1])
-          upperBound <- as.integer(parameters$domain[[currentParameter]][2])
-
-          if (transform == "log") {
-            trRange <- range.transform.log(lowerBound, upperBound, digits)
-            trLb <- trRange[["trLowerBound"]]
-            trUb <- trRange[["trUpperBound"]]
-            newVal <- round(exp(runif(1, min = trLb, max = trUb)), 1)
-            newVal <- check.transform.log(newVal, lowerBound, upperBound)
-          } else {
-            newVal <- floor(runif(1, min = lowerBound, max = 1 + upperBound))
-          }
-
-        } else if (currentType == "r") {
-          lowerBound <- parameters$domain[[currentParameter]][1]
-          upperBound <- parameters$domain[[currentParameter]][2]
-          
-          if (transform == "log") {
-            trRange <- range.transform.log(lowerBound, upperBound, digits)
-            trLb <- trRange[["trLowerBound"]]
-            trUb <- trRange[["trUpperBound"]]
-            newVal <- exp(runif(1, min = as.double(trLb), max = as.double(trUb)))
-            newVal <- round(newVal, digits)
-            newVal <- check.transform.log(newVal, lowerBound, upperBound)
-          } else {
-            newVal <- runif(1, as.double(lowerBound), as.double(upperBound))
-            newVal <- round(newVal, digits)
-          }
+        } else if (currentType == "i" || currentType == "r") {
+          newVal <- sample.numerical(currentParameter, parameters, currentType, digits)
         } else if (currentType == "c" || currentType == "o") {
           possibleValues <- parameters$domain[[currentParameter]]
           newVal <- sample(possibleValues, 1)
@@ -173,60 +146,14 @@ sampleModel <- function (parameters, eliteConfigurations, model,
           newVal <- get.fixed.value (currentParameter, parameters)
           # The parameter is not a fixed and should be sampled
         } else if (currentType %in% c("i", "r")) {
-          lowerBound <- paramLowerBound(currentParameter, parameters)
-          upperBound <- paramUpperBound(currentParameter, parameters)
           mean <- as.numeric(eliteParent[currentParameter])
           if (is.na(mean)) {
             # The elite parent does not have any value for this
             # parameter, let's sample uniformly.
-
-            if (currentType == "i") {
-              if (transform == "log") {
-                trRange <- range.transform.log(lowerBound, upperBound, digits)
-                trLb <- trRange[["trLowerBound"]]
-                trUb <- trRange[["trUpperBound"]]
-                newVal <- round(exp(runif(1, min = trLb, max = trUb)), 1)
-                newVal <- check.transform.log(newVal, lowerBound, upperBound)
-              } else {
-                newVal <- floor(runif(1, min = lowerBound, max = 1 + upperBound))
-              }
-            } else if (currentType == "r") {
-              if (transform == "log") {
-                trRange <- range.transform.log(lowerBound, upperBound, digits)
-                trLb <- trRange[["trLowerBound"]]
-                trUb <- trRange[["trUpperBound"]]
-                newVal <- exp(runif(1, min = as.double(trLb), max = as.double(trUb)))
-                newVal <- round(newVal, digits)
-                newVal <- check.transform.log(newVal, lowerBound, upperBound)
-              } else {
-                newVal <- runif(1, as.double(lowerBound), as.double(upperBound))
-                newVal <- round(newVal, digits)
-              }
-            }
+            newVal <- sample.numerical(currentParameter, parameters, currentType, digits)
           } else {
             stdDev <- model[[currentParameter]][[as.character(idEliteParent)]]
-            if (transform == "log") {
-              trRange <- range.transform.log(lowerBound, upperBound, digits, mean)
-              trLb <- trRange[["trLowerBound"]]
-              trUb <- trRange[["trUpperBound"]]
-              trMean <- trRange[["trMean"]]
-              newVal <- exp(rtnorm(1, trMean, abs(stdDev), trLb, trUb))
-              if (currentType == "i") {
-                newVal <- round(newVal)
-              } else {
-                newVal <- round(newVal, digits)
-              }
-              newVal <- check.transform.log(newVal, lowerBound, upperBound)
-            } else {
-              newVal <- ifelse(currentType == "i",
-                               rtnorm(1, mean + 0.5, stdDev, lowerBound, upperBound + 1) - 0.5,
-                               rtnorm(1, mean, stdDev, lowerBound, upperBound))
-              if (currentType == "i") {
-                newVal <- round(newVal)
-              } else {
-                newVal <- round(newVal, digits)
-              }
-            }
+            newVal <- sample.numerical(currentParameter, parameters, currentType, digits, mean, stdDev)
           }
         } else if (currentType == "o") {
           possibleValues <- paramDomain(currentParameter, parameters)  
@@ -280,6 +207,72 @@ sampleModel <- function (parameters, eliteConfigurations, model,
   return (newConfigurations)
 }
 
+# Sample value for a numerical parameter.
+sample.numerical <- function(param, parameters, type, digits, mean=NULL, stdDev=NULL) {
+  lowerBound <- paramLowerBound(param, parameters)
+  upperBound <- paramUpperBound(param, parameters)
+  transform <- parameters$transform[[param]]
+
+  if (transform == "log") {
+    value <- sample.numeric.log(type, lowerBound, upperBound, digits, mean, stdDev)
+  } else {
+    value <- sample.numeric.norm(type, lowerBound, upperBound, digits, mean, stdDev)
+  }
+  return(value)
+}
+
+sample.numeric.norm <- function(type, lowerBound, upperBound, digits, mean, stdDev) {
+  if (type == "i") {
+    if (is.null(mean)) {
+      # integer uniform
+      newVal <- floor(runif(1, min = lowerBound, max = 1 + upperBound))
+    } else {
+      # integer from model
+      newVal <- round(rtnorm(1, mean + 0.5, stdDev, lowerBound, upperBound + 1) - 0.5)
+    }
+  } else {
+    # the assert is probably redundant
+    irace.assert(type == "r")
+    if (is.null(mean)) {
+      # real uniform
+      newVal <- runif(1, as.double(lowerBound), as.double(upperBound))
+    } else {
+      # real from model
+      newVal <- round(rtnorm(1, mean, stdDev, lowerBound, upperBound), digits)
+    }
+    newVal <- round(newVal, digits)
+  }
+  return(newVal)
+}
+
+sample.numeric.log <- function(type, lowerBound, upperBound, digits, mean, stdDev) {
+  if (is.null(mean)) {
+    trRange <- range.transform.log(lowerBound, upperBound, digits)
+  } else {
+    trRange <- range.transform.log(lowerBound, upperBound, digits, mean)
+  }
+  trLb <- trRange[["trLowerBound"]]
+  trUb <- trRange[["trUpperBound"]]
+  trMean <- trRange[["trMean"]]
+
+  if (is.null(mean)) {
+    # uniform
+    newVal <- exp(runif(1, min = as.double(trLb), max = as.double(trUb)))
+  } else {
+    # sample from model
+    newVal <- exp(rtnorm(1, trMean, abs(stdDev), trLb, trUb)) 
+  }
+
+  if (type == "i") {
+    newVal <- round(newVal)
+  } else {
+    newVal <- round(newVal, digits)
+  }
+
+  newVal <- check.transform.log(newVal, lowerBound, upperBound)
+  return(newVal)
+}
+
 # Transform the range [LB,UB] into [log(LB),log(UB)].
 # It needs to pay attention to shift the range in the
 # positive domain if LB <= 0. The mean is also transformed
@@ -297,9 +290,9 @@ range.transform.log <- function(lowerBound, upperBound, digits, mean=1) {
     trUpperBound <- log(upperBound)
     trMean <- log(mean)
   }
-  return(list("trLowerBound"=trLowerBound,
-              "trUpperBound"=trUpperBound,
-              "trMean"=trMean))
+  return(list(trLowerBound=trLowerBound,
+              trUpperBound=trUpperBound,
+              trMean=trMean))
 }
 
 # Adjust the sampled value if the lower bound is <=0, and

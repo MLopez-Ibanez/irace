@@ -18,27 +18,11 @@ initialiseModel <- function (parameters, configurations, digits)
   for (currentParameter in parameters$names[!parameters$isFixed]) {
     type <- parameters$types[[currentParameter]]
     nbValues <- length(parameters$domain[[currentParameter]])
-    transform <- parameters$transform[[currentParameter]]
     param <- list()
     if (type == "c") {
       value <- rep((1 / nbValues), nbValues)
     } else if (type == "i" || type == "r") {
-      lowerBound <- paramLowerBound(currentParameter, parameters)
-      upperBound <- paramUpperBound(currentParameter, parameters)
-      if (transform == "log") {
-        trRange <- range.transform.log(lowerBound, upperBound, digits)
-        trLb <- trRange[["trLowerBound"]]
-        trUb <- trRange[["trUpperBound"]]
-        value <- exp((trLb - trUb) / 2)
-        if (type == "i") {
-          value <- round(value)
-        } else {
-          value <- round(value, digits)
-        }
-        value <- check.transform.log(value, lowerBound, upperBound)
-      } else {
-        value <- (upperBound - lowerBound) / 2
-      }
+      value <- init.model.numeric(currentParameter, parameters, type, digits)
     } else {
       irace.assert(type == "o")
       value <- (nbValues - 1) / 2
@@ -158,7 +142,6 @@ restartConfigurations <- function (configurations, restart.ids, model, parameter
   #print(restart.ids)
   for (param in parameters$names[!parameters$isFixed]) {
     type <- parameters$types[[param]]
-    transform <- parameters$transform[[param]]
     for (id in restart.ids) {
       id <- as.character(id)
       irace.assert (id %in% names(model[[param]]))
@@ -169,22 +152,7 @@ restartConfigurations <- function (configurations, restart.ids, model, parameter
         model[[param]][[id]] <- probVector / sum(probVector)
       } else {
         if (type == "i" || type == "r") {
-          lowerBound <- paramLowerBound(param, parameters)
-          upperBound <- paramUpperBound(param, parameters)
-          if (transform == "log") {
-            trRange <- range.transform.log(lowerBound, upperBound, digits)
-            trLb <- trRange[["trLowerBound"]]
-            trUb <- trRange[["trUpperBound"]]
-            value <- exp((trLb - trUb) / 2)
-            if (type == "i") {
-              value <- round(value)
-            } else {
-              value <- round(value, digits)
-            }
-            value <- check.transform.log(value, lowerBound, upperBound)
-          } else {
-            value <- (upperBound - lowerBound) / 2
-          }
+          value <- init.model.numeric(param, parameters, type, digits)
         } else {
           irace.assert(type == "o")
           value <- (length(parameters$domain[[param]]) - 1) / 2
@@ -193,11 +161,34 @@ restartConfigurations <- function (configurations, restart.ids, model, parameter
         model[[param]][[id]] <-
           min(model[[param]][[id]] * (nbConfigurations^(2 / parameters$nbVariable)),
               value * ((1 / nbConfigurations)^(1 / parameters$nbVariable)))
-        if (transform == "log") {
+        if (parameters$transform[[param]] == "log") {
             model[[param]][[id]] <- log(model[[param]][[id]])
         }
       }
     }
   }
   return (model) 
+}
+
+# Initialise model in case of numerical variables.
+init.model.numeric <- function(param, parameters, type, digits) {
+  lowerBound <- paramLowerBound(param, parameters)
+  upperBound <- paramUpperBound(param, parameters)
+  transform <- parameters$transform[[param]]
+  if (transform == "log") {
+    trRange <- range.transform.log(lowerBound, upperBound, digits)
+    trLb <- trRange[["trLowerBound"]]
+    trUb <- trRange[["trUpperBound"]]
+    value <- exp((trLb - trUb) / 2)
+    value <- round(value)
+    value <- check.transform.log(value, lowerBound, upperBound)
+  } else {
+    value <- (upperBound - lowerBound) / 2
+  }
+  if (type == "i") {
+    value <- round(value)
+  } else {
+    value <- round(value, digits)
+  }
+  return(value)
 }

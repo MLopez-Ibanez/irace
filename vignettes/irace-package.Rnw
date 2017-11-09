@@ -1014,6 +1014,9 @@ The structure of the parameter list that is created is as follows:
    corresponding to parameter names.\\
     \code{isFixed}      & Logical vector that specifies which parameter is fixed
    and, thus, it does not need to be tuned.\\
+    \code{transform}    & Vector that contains the transformation of each parameter. Currently, it
+      can take values \code{``''} (no transformation, default) of \code{``log''}
+      (logarithmic transformation).\\
     \code{nbParameters} & An integer, the total number of parameters.\\
     \code{nbFixed}      & An integer, the number of parameters with a fixed value.\\
     \code{nbVariable}   & Number of variable (i.e., to be tuned) parameters.\\
