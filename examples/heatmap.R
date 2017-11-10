@@ -1,7 +1,7 @@
 load("./irace.Rdata")
 library(irace)
 ## TODO: convert all this to functions:
-experiments <- iraceResults$experiments
+experiments <- iraceResults$experiments[,unique(iraceResults$iterationElites)]
 ## colsumna <- apply(experiments, 2, function(x) { sum(!is.na(x))})
 ## experiments <- experiments[, order(-colsumna)]
 #conf.ids <- colnames(iraceResults$experiments)[which(apply(iraceResults$experiments, 2, function(x) { sum(!is.na(x)) > 1}))]
@@ -193,7 +193,7 @@ irace.heatmap <- function (x, Rowv = NULL, Colv = if (symm) "Rowv" else NULL,
 # + Nice looking non-square matrices
 # + No dendrogram
 # - Too busy x-axis labels (disabled here)
-irace.levelplot <- function(x)
+irace.levelplot <- function(x, xaxes = FALSE)
 {
   library(lattice)
   x <- apply(x, 1, rank, na.last = "keep") #as.matrix(scale(experiments))
@@ -201,7 +201,7 @@ irace.levelplot <- function(x)
   #x <- as.matrix(scale(x))
   levelplot(x = x, xlab="Configurations", ylab="Instances", aspect="fill",
             col.regions = gray.colors(100, start = 0, end = 0.6),
-            scales = list(tck = c(0,0), x=list(draw=FALSE)))
+            scales = list(tck = c(0,0), x=list(draw = xaxes)))
   #levelplot (as.matrix(scale(mtcars)), aspect = "iso",scale=list(x=list(rot=45)))
 }
 
