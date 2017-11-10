@@ -58,7 +58,7 @@ closeversion: build
 	make releasebuild # again to update version.R and svn_version
 
 releasevignette:
-	test -s $(PACKAGEDIR)/vignettes/$(PACKAGE)-package.aux || $(MAKE) nonreleasevignette vignettes
+	test -s $(PACKAGEDIR)/vignettes/$(PACKAGE)-package.aux || $(MAKE) nonreleasevignette
 	cd $(PACKAGEDIR)/vignettes \
 	&& aux2bib $(PACKAGE)-package.aux | grep -v '@comment' > $(PACKAGE)-package.bib \
 	&& sed -i 's/^%\+\\setboolean{Release}{true}/\\setboolean{Release}{true}/' \
@@ -67,6 +67,7 @@ releasevignette:
 nonreleasevignette:
 	sed -i 's/^\\setboolean{Release}{true}/%\\setboolean{Release}{true}/' \
 	$(PACKAGEDIR)/vignettes/$(PACKAGE)-package.Rnw
+	$(MAKE) vignettes
 
 releasebuild: BUILD_FLAGS=--compact-vignettes=both
 releasebuild: bumpdate releasevignette
@@ -83,6 +84,25 @@ clean:
 	cd $(PACKAGEDIR) && ($(RM) ./$(PACKAGE)-Ex.R ./src/*.o ./src/*.so; \
 		find . -name '*.orig' | xargs $(RM) )
 
+## FIXME: building the vignettes is a bit complicated and sometimes fails.
+# If \setboolean{Release}{false}, entries are taken from optbib and everything
+# should work. However, we cannot build the package like this because we cannot
+# distribute optbib. So when \setboolean{Release}{true}, we take entries from
+# irace-package.bib, to obtain irace-package.bib, we need to build with
+# \setboolean{Release}{false}, use aux2bib on the .aux file, then set
+# \setboolean{Release}{true}, then rebuild again. Ideally:
+#
+# make vignettes' or 'make pdf' should build in whatever Release value we have
+# and do whatever is necessary to get it working.
+#
+# make build/check/cran/install/releasebuild should build with Release as true
+# and do whatever is necessary to get it working, but avoid doing extra
+# work. For example, if irace-package.bib is non-empty, then do not build two
+# times with Release false and then with Release true.
+#
+# make nonreleasevignette should build with Release as false (which is faster and should always work).
+#
+# It is ok to fail if something is missing or needs to be done and give a nice error. For example, if optbib is missing.
 vignettes: version vignettes/$(PACKAGE)-package.Rnw
 # FIXME: How to display the output of the latex and bibtex commands with R CMD?
 # FIXME: How to halt on warning?
@@ -135,7 +155,7 @@ winbuild:
 
 examples: install
 	@echo "*** Makefile: Regenerating vignette examples. This will take time..."
-#	cd examples/vignette-example/ && nice -n 19 $(PACKAGEDIR)/inst/bin/$(PACKAGE) --parallel 2
+	cd examples/vignette-example/ && nice -n 19 $(PACKAGEDIR)/inst/bin/$(PACKAGE) --parallel 2
 	cd examples/vignette-example/ && R --vanilla --slave --file=create-example-file.R
 	cp examples/vignette-example/irace-output.Rdata examples/vignette-example/examples.Rdata vignettes/
 	$(MAKE) vignettes
