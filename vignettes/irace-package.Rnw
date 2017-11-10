@@ -203,7 +203,7 @@ library(knitr)
 library("irace")
 load("examples.Rdata")
 load("irace-output.Rdata")
-options(width = 60)
+options(width = 70)
 @
 \newpage
 
@@ -2019,14 +2019,14 @@ The list contains the following elements:
       \code{iraceResults$experiments} matrix. The column names indicate the candidate
       configuration identifier and the row names contain the name of the instances.
 <<get_test_exp, prompt=TRUE, eval=TRUE, comment="">>=
-# Get the experiments of the testing
+# Get the results of the testing
 iraceResults$testing$experiments
 @
 
     \item \code{seeds}: The seeds used for the experiments, each seed corresponds to
       each instance in the rows of the test \code{experiments} matrix.
 <<get_test_seeds, prompt=TRUE, eval=TRUE, comment="">>=
-# Get the experiments of the testing
+# Get the seeds used for testing
 iraceResults$testing$seeds
 @
 
@@ -2325,7 +2325,7 @@ strict test discards configurations faster by requiring less evidence against
 them and, therefore, it is more likely to discard good configurations.
 
 
-\subsection{Complex parameters}
+\subsection{Complex parameter space constraints}
 
 Some parameters may have complex dependencies. Ideally, parameters should be
 defined in the way that is more likely to help the search performed by
@@ -2811,7 +2811,7 @@ Definitely. There are two main ways to achieve this:
 
 Every time this was reported, it was a difficult-to-reproduce bug in
 the program, not in \irace.  We recommend that in \parameter{targetRunner}, you use
-\code{valgrind} to run your program. That is, if your program is called like:
+\code{valgrind}\footnote{\url{https://valgrind.org}} to run your program. That is, if your program is called like:
 % 
 \begin{lstlisting}[style=BashInputStyle]
     $EXE ${FIXED_PARAMS} -i $INSTANCE ${CONFIG_PARAMS} \
@@ -2891,12 +2891,12 @@ file, or within various scripts, functions or instance files. Table
     \toprule
 \bf    Relative path appears as \ldots  & \bf\ldots is relative to \ldots \\
     \midrule
-    the value of \parameter{logFile} or \code{--log-file} & \parameter{execDir}\\
-    the value of other options in the scenario file  &  directory containing the scenario file\\
-    the value of other command-line options & invocation (working) directory of \irace\\
-    code within \parameter{targetRunner} or \parameter{targetEvaluator} & \parameter{execDir}\\
     a string within \parameter{trainInstancesFile} & \parameter{trainInstancesDir}\\
     a string within \parameter{testInstancesFile} & \parameter{testInstancesDir}\\
+    code within \parameter{targetRunner} or \parameter{targetEvaluator} & \parameter{execDir}\\
+    the value of \parameter{logFile} or \code{--log-file} & \parameter{execDir}\\
+    the value of other options in the scenario file  &  the directory containing the scenario file\\
+    the value of other command-line options & invocation (working) directory of \irace\\
 \bottomrule    
   \end{tabular}
 \end{table}
