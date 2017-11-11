@@ -75,9 +75,9 @@ race.wrapper <- function(configurations, instance.idx, which.alive, which.exe, p
     target.output[which.exps] <- execute.experiments (experiments[which.exps], scenario)
   }
 
-  # target.evaluator may be NULL. If so, target.output must
+  # targetEvaluator may be NULL. If so, target.output must
   # contain the right output already.
-  if (!is.null(.irace$target.evaluator))
+  if (!is.null(scenario$targetEvaluator))
     target.output <- execute.evaluator (experiments, scenario, target.output,
                                         configurations[which.alive, ".ID."])
   return(target.output) 

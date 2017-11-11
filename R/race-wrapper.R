@@ -174,7 +174,7 @@ check.output.target.runner <- function (output, scenario)
 
   if (is.null(err.msg)) {
     # When targetEvaluator is provided, targetRunner must return only the time.
-    if (!is.null(.irace$target.evaluator)) {
+    if (!is.null(scenario$targetEvaluator)) {
       if (scenario$maxTime > 0 && is.null(output$time)) {
         err.msg <- paste0("The output of targetRunner must be one number 'time'!")
       } else if (!is.null(output$cost)) {

@@ -44,9 +44,9 @@ testConfigurations <- function(configurations, scenario, parameters)
   }
 
   target.output <- execute.experiments (experiments, scenario)
-  # target.evaluator may be NULL. If so, target.output must
+  # targetEvaluator may be NULL. If so, target.output must
   # contain the right output already.
-  if (!is.null(.irace$target.evaluator))
+  if (!is.null(sceanrio$targetEvaluator))
     target.output <- execute.evaluator (experiments, scenario, target.output,
                                         configurations$.ID.)
 
