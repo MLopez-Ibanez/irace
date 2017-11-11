@@ -171,7 +171,8 @@ restartConfigurations <- function (configurations, restart.ids, model, parameter
 }
 
 # Initialise model in case of numerical variables.
-init.model.numeric <- function(param, parameters, type, digits) {
+init.model.numeric <- function(param, parameters, type, digits)
+{
   lowerBound <- paramLowerBound(param, parameters)
   upperBound <- paramUpperBound(param, parameters)
   transform <- parameters$transform[[param]]

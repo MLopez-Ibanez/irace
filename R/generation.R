@@ -208,7 +208,8 @@ sampleModel <- function (parameters, eliteConfigurations, model,
 }
 
 # Sample value for a numerical parameter.
-sample.numerical <- function(param, parameters, type, digits, mean=NULL, stdDev=NULL) {
+sample.numerical <- function(param, parameters, type, digits, mean = NULL, stdDev = NULL)
+{
   lowerBound <- paramLowerBound(param, parameters)
   upperBound <- paramUpperBound(param, parameters)
   transform <- parameters$transform[[param]]
@@ -221,7 +222,8 @@ sample.numerical <- function(param, parameters, type, digits, mean=NULL, stdDev=
   return(value)
 }
 
-sample.numeric.norm <- function(type, lowerBound, upperBound, digits, mean, stdDev) {
+sample.numeric.norm <- function(type, lowerBound, upperBound, digits, mean, stdDev)
+{
   if (type == "i") {
     if (is.null(mean)) {
       # integer uniform
@@ -231,11 +233,10 @@ sample.numeric.norm <- function(type, lowerBound, upperBound, digits, mean, stdD
       newVal <- round(rtnorm(1, mean + 0.5, stdDev, lowerBound, upperBound + 1) - 0.5)
     }
   } else {
-    # the assert is probably redundant
     irace.assert(type == "r")
     if (is.null(mean)) {
       # real uniform
-      newVal <- runif(1, as.double(lowerBound), as.double(upperBound))
+      newVal <- runif(1, min = as.double(lowerBound), max = as.double(upperBound))
     } else {
       # real from model
       newVal <- round(rtnorm(1, mean, stdDev, lowerBound, upperBound), digits)
@@ -245,7 +246,8 @@ sample.numeric.norm <- function(type, lowerBound, upperBound, digits, mean, stdD
   return(newVal)
 }
 
-sample.numeric.log <- function(type, lowerBound, upperBound, digits, mean, stdDev) {
+sample.numeric.log <- function(type, lowerBound, upperBound, digits, mean, stdDev)
+{
   if (is.null(mean)) {
     trRange <- range.transform.log(lowerBound, upperBound, digits)
   } else {
@@ -254,7 +256,7 @@ sample.numeric.log <- function(type, lowerBound, upperBound, digits, mean, stdDe
   trLb <- trRange[["trLowerBound"]]
   trUb <- trRange[["trUpperBound"]]
   trMean <- trRange[["trMean"]]
-
+  
   if (is.null(mean)) {
     # uniform
     newVal <- exp(runif(1, min = as.double(trLb), max = as.double(trUb)))
@@ -279,7 +281,8 @@ sample.numeric.log <- function(type, lowerBound, upperBound, digits, mean, stdDe
 # (if provided, otherwise it can be ignored).
 # A similar check will be required after applying the
 # transformation (see function check.transform.log() ).
-range.transform.log <- function(lowerBound, upperBound, digits, mean=1) {
+range.transform.log <- function(lowerBound, upperBound, digits, mean = 1)
+{
   # cannot compute log(0)
   if (lowerBound <= 0) {
     trLowerBound <- -digits
@@ -290,14 +293,15 @@ range.transform.log <- function(lowerBound, upperBound, digits, mean=1) {
     trUpperBound <- log(upperBound)
     trMean <- log(mean)
   }
-  return(list(trLowerBound=trLowerBound,
-              trUpperBound=trUpperBound,
-              trMean=trMean))
+  return(list(trLowerBound = trLowerBound,
+              trUpperBound = trUpperBound,
+              trMean = trMean))
 }
 
 # Adjust the sampled value if the lower bound is <=0, and
 # check that it does not fall outside the allowed range.
-check.transform.log <- function(newVal, lowerBound, upperBound) {
+check.transform.log <- function(newVal, lowerBound, upperBound)
+{
   # check if LB was negative, then readjust
   if (lowerBound <= 0) {
     newVal <- newVal + lowerBound
