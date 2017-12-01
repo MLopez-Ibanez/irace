@@ -85,9 +85,9 @@ check.output.target.evaluator <- function (output, scenario, target.runner.call 
       err.msg <- "The output of targetEvaluator must be one number 'cost'!"
     } else if (is.na (output$cost)) {
       err.msg <- "The output of targetEvaluator is not numeric!"
-    } else if (is.infinite(output$cost)) {
-      err.msg <- "The output of targetEvaluator is not finite!"
-    }
+    } #else if (is.infinite(output$cost)) {
+#      err.msg <- "The output of targetEvaluator is not finite!"
+#    }
   }
 
   if (!is.null(err.msg)) {
@@ -158,9 +158,9 @@ check.output.target.runner <- function (output, scenario)
     if (!is.null (output$cost)) {
       if (is.na.nowarn(output$cost)) {
         err.msg <- paste0("The cost returned by targetRunner is not numeric!")
-      } else if (is.infinite(output$cost)) {
-        err.msg <- paste0("The cost returned by targetRunner is not finite!")
-      }
+      } #else if (is.infinite(output$cost)) {
+#        err.msg <- paste0("The cost returned by targetRunner is not finite!")
+#      }
     }
 
     if (!is.null (output$time)) {

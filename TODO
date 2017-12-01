@@ -132,10 +132,6 @@ TODO General (in order of importance):
  * race package has some recent updates. Check with Mauro what he
    changed.
 
- * Implement some kind of immediate rejection handling, that is, if
-   target-runner returns +Inf, just discard the candidate immediately
-   without doing any more tests.
-
  * Add --par integer >= 1 (PAR=), default 1: penalise timeouts or execution
    failures with PAR * value.
 
@@ -235,6 +231,10 @@ TODO General (in order of importance):
 ------------------------------------------------------------------------------
 
 DONE:
+
+ * Implement some kind of immediate rejection handling, that is, if
+   target-runner returns +Inf, just discard the candidate immediately
+   without doing any more tests. [DONE by Manuel]
 
  * It would be useful to report the command-line string passed to irace in the
    output (for logging purposes) and save it in the log file (for further

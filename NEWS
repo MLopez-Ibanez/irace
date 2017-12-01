@@ -1,3 +1,9 @@
+ * A return value of "Inf" from targetRunner/targetEvaluation results in the
+   immediate rejection of the configuration without any further
+   evaluation. This is useful for handling unreliable or broken
+   configurations that should not stop irace.
+                                                         (Manuel López-Ibáñez)
+
  * Numerical parameters may be sampled on a logarithmic scale using "i,log"
    or "r,log".                                               (Alberto Franzin)
  

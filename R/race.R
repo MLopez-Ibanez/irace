@@ -299,8 +299,8 @@ race.print.task <- function(Results,
               # FIXME: Maybe better and faster if we only print seconds?
               format(.POSIXct(time.diff, tz="GMT"), "%H:%M:%S")))
   if (current.task > 1 && sum(alive) > 1) {
-    conc <- concordance(Results[1:current.task, alive])
-    qvar <- dataVariance(Results[1:current.task, alive])
+    conc <- concordance(Results[1:current.task, alive, drop = FALSE])
+    qvar <- dataVariance(Results[1:current.task, alive, drop = FALSE])
     cat(sprintf("|%+#4.2f|%.2f|%.4f|\n", conc$spearman.rho, conc$kendall.w, qvar))
   } else {
     cat("|   NA|  NA|    NA|\n")
@@ -418,16 +418,16 @@ race <- function(maxExp = 0,
       irace.assert (all(is.elite >= 0))
     }
 
-    if (current.task > first.test) {
     # We always stop when we have less configurations than required.
-      if (nbAlive <= minSurvival) {
-        # Stop race if we have less or equal than the minimum number of
-        # configurations.
-        break.msg <- paste0("number of alive configurations (", nbAlive,
-                            ") <= minimum number of configurations (",
-                            minSurvival, ")")
-        break
-      }
+    if (nbAlive <= minSurvival) {
+      # Stop race if we have less or equal than the minimum number of
+      # configurations.
+      break.msg <- paste0("number of alive configurations (", nbAlive,
+                          ") <= minimum number of configurations (",
+                          minSurvival, ")")
+      break
+    }
+    if (current.task > first.test) {
       # If we just did a test, check that we have enough budget to reach the
       # next test.
       if (maxExp && ( (current.task - 1) %% each.test) == 0
@@ -439,10 +439,6 @@ race <- function(maxExp = 0,
       }
     }
     irace.assert(nbAlive > 1)
-    ## if (nbAlive == 1) {
-    ##   break.msg <- "only one alive configuration"
-    ##   break
-    ## }
 
     if (elitist) {
       if (scenario$elitistLimit != 0 && current.task > elite.safe
@@ -499,11 +495,25 @@ race <- function(maxExp = 0,
     experimentsUsed <- experimentsUsed + length(which.exe)
     
     ## Drop bad configurations.
+    ## Infinite values denote immediate rejection of a configuration.
+    rejected <- is.infinite(Results[current.task, alive])
+    if (any(rejected)) {
+      irace.note ("Immediately rejected configurations: ",
+                  paste0(configurations[which.alive[rejected], ".ID."],
+                         collapse = ", ") , "\n")
+      alive[which.alive[rejected]] <- FALSE
+      which.alive <- which(alive)
+      nbAlive     <- length(which.alive)
+      if (nbAlive == 0)
+        irace.error("All configurations have been immediately rejected (-Inf) !")
+    }
+
+    
     # We assume that first.test is a multiple of each.test.  In any
     # case, this will only do the first test after the first multiple
     # of each.test that is larger than first.test.
     if (current.task >= first.test && (current.task %% each.test) == 0
-        && length(which.alive) > 1) {
+        && nbAlive > 1) {
       test.res <-
         switch(stat.test,
                friedman = aux.friedman(Results[1:current.task, ], alive, which.alive, nbAlive, conf.level),
@@ -532,16 +542,11 @@ race <- function(maxExp = 0,
       
     } else {
       cat("|x|")
-      # LESLIE : Not sure this is needed, but just in case.
       if (length(which.alive) == 1) {
         race.ranks <- 1
         best <- which.alive
-      } else if (current.task == 1)  {
-        # FIXME: Shouldn't these be ranks when stat.test == "friedman" ?
-        race.ranks <- Results[1,]
-        best <- which.min(race.ranks)
       } else  {
-        tmpResults <- Results[1:current.task, which.alive]
+        tmpResults <- Results[1:current.task, which.alive, drop = FALSE]
         irace.assert(!any(is.na(tmpResults)))
         if (stat.test == "friedman") {
           race.ranks <- colSums(t(apply(tmpResults, 1, rank)))
@@ -553,8 +558,11 @@ race <- function(maxExp = 0,
     }
     irace.assert(best == which.alive[order(race.ranks)][1])
     irace.assert(length(race.ranks) == length(which.alive))
+
+    prev.alive  <- which.alive
+    which.alive <- which(alive)
     # Remove the ranks of those that are not alive anymore
-    race.ranks <- race.ranks[which.alive %in% which(alive)]
+    race.ranks <- race.ranks[which.alive]
     irace.assert(length(race.ranks) == sum(alive))
 
     race.print.task(Results,
@@ -568,8 +576,6 @@ race <- function(maxExp = 0,
                     experimentsUsed,
                     start.time)
 
-    prev.alive  <- which.alive
-    which.alive <- which(alive)
 
     if (elitist) {
       # Compute number of statistical tests without eliminations.

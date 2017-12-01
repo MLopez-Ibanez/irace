@@ -6,7 +6,7 @@ Description: Iterated race is an extension of the Iterated F-race method for
              (offline) tuning their parameters by finding the most appropriate
              settings given a set of instances of an optimization problem.
 Version: 2.5
-Date: 2017-11-11
+Date: 2017-12-01
 Maintainer: Manuel López-Ibáñez <manuel.lopez-ibanez@manchester.ac.uk>
 Author: Manuel López-Ibáñez, Jérémie Dubois-Lacoste, Leslie Pérez Cáceres,
         Thomas Stützle, Mauro Birattari, Eric Yuan and Prasanna Balaprakash

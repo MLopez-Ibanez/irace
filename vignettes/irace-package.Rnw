@@ -1131,7 +1131,9 @@ print(experiment)
 If \parameter{targetEvaluator} is \code{NULL}, then
 the \parameter{targetRunner} function must return a list with at least one
 element \code{"cost"}, the numerical value corresponding to the evaluation of
-the given configuration on the given instance.
+the given configuration on the given instance. A cost of \code{Inf} is accepted
+and results in the immediate rejection of the configuration (see
+\autoref{sec:reject}).
     
 If the scenario option \parameter{maxTime} is non-zero, then the list must contain
 at least another element \code{"time"} that reports the execution time for this
@@ -2409,7 +2411,7 @@ the \parameter{repairConfiguration} function
 (\autoref{sec:repairconf})
 
 
-\subsection{Unreliable target algorithms}
+\subsection{Unreliable target algorithms and immediate rejection}\label{sec:reject}
 
 There are some situations in which the target algorithm may fail to execute
 correctly.  By default, \irace stops as soon as a call
@@ -2430,10 +2432,9 @@ If the target algorithm consistently fails for a particular set of
 configurations, these configurations may be declared as forbidden
 (\parameter{forbiddenFile}) so that \irace avoids them.  On the other hand, if
 the configurations that cause the problem are unknown,
-the \parameter{targetRunner} script should detect the failure and return a
-penalty cost (a very large cost value) so that \irace discards the failing
-configuration as soon as possible.  The penalty must be set according to the
-range of the cost measure and the goals of the tuning. For example, a
+the \parameter{targetRunner} should return \code{Inf} so that \irace
+immediately rejects the failing configuration. This immediate rejection should
+be used with care according to the goals of the tuning. For example, a
 configuration that crashes on a particular instance, \eg by running out of
 memory, might still be considered acceptable if it gives very good results on
 other instances.

@@ -38,11 +38,18 @@ target.runner <- function(experiment, scenario)
   return(result)
 }
 
+## target runner ###########################################################
+target.runner.reject <- function(experiment, scenario)
+{
+  if (runif(1) <= 0.2) return (list(cost = -Inf, call = toString(experiment)))
+  return (target.runner(experiment, scenario))
+}
+
 set.seed(2)
 weights <- rnorm(200, mean = 0.9, sd = 0.02)
 
 ## Run function ########################################################
-sann.irace <- function(...)
+sann.irace <- function(..., targetRunner = target.runner)
 {
   args <- list(...)
 
@@ -52,7 +59,7 @@ sann.irace <- function(...)
    '  
   parameters <- readParameters(text = parameters.table)
 
-  scenario <- list(targetRunner = target.runner,
+  scenario <- list(targetRunner = targetRunner,
                    maxExperiments = 1000, seed = 1234567)
   scenario <- c(scenario, args)
 
@@ -65,9 +72,12 @@ sann.irace <- function(...)
                       best.conf))
 }
 
+sann.irace(instances = weights, parallel = 2, targetRunner = target.runner.reject)
+
 sann.irace(instances = weights, parallel = 2)
 
 sann.irace(deterministic = TRUE, instances = weights[1:7])
+
 
 test.path.rel2abs <- function()
 {
