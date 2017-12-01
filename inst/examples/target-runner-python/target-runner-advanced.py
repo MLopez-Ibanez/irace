@@ -84,7 +84,7 @@ class Runner(object):
 
 
     # changes the way the child process is executed
-    def exec_mode(self, mode, max_time=3600):
+    def exec_mode(self, mode, max_time = 3600):
         self.execute = mode
         # self.max_time is used only in execute_timeout functions
         self.max_time = max_time
@@ -348,72 +348,87 @@ class Runner(object):
                                  str(cost) + '\n')
                 sys.exit(1)
 
+def is_exe(fpath):
+    return os.path.isfile(fpath) and os.access(fpath, os.X_OK) \
+        and os.path.getsize(fpath) > 0
+
+def get_execdir():
+    return os.path.dirname(os.path.realpath(__file__))
 
 # ------------------------------ CHANGE HERE! ------------------------------ #
 
 
-# parse here directly the stdout of your job (the 'out' parameter)
+# Parse here directly the stdout of your job (the 'out' parameter)
 # alternatively you can ignore it and read other files produced by
 # your job
 def parse_output(out):
     # parsing last thing printed
     return out.strip().split()[-1]
 
-def is_exe(fpath):
-    return os.path.isfile(fpath) and os.access(fpath, os.X_OK) \
-        and os.path.getsize(fpath) > 0
-
 if __name__=='__main__':
 
-    bindir = os.path.dirname(os.path.realpath(__file__))
+    if len(sys.argv) < 5:
+        print "\nUsage: ./target-runner.py <candidate_id> <instance_id> <seed> <instance_path_name> <list of parameters>\n"
+        sys.exit(1)
+    
+    bindir = get_execdir()
     
     # reading parameters and setting problem specific stuff
     rootdir = bindir + "/../../../"
     timeout = 180
-    candidate = sys.argv[1]
-    instanceid = sys.argv[2]
+    ## FIXME: Convert this to a class that takes sys.argv and sets the correct
+    ## variables.
+    candidate_id = sys.argv[1]
+    instance_id = sys.argv[2]
     seed = sys.argv[3]
     instance = sys.argv[4]
     parameters = sys.argv[5:]
 
-    executable = './' + candidate
+    executable = './' + candidate_id
     fixed_params = 'grammars/PFSPWCT.xml None 20 0 ' + seed
 
     # maximum number of trials before giving up with the configuration
     max_tests = 100
-    hr = Runner(executable, fixed_params, instanceid, instance, seed,
-                parse_output, candidate, parameters, max_tests)
+    runner = Runner(executable, fixed_params, instance_id, instance, seed,
+                    parse_output, candidate_id, parameters, max_tests)
 
+    ## FIXME: Make this a parameter of the constructor.
     # maximizing instead of minimizing
-    # hr.set_maximize()
+    # runner.set_maximize()
 
+    ## FIXME: Make this a parameter of the constructor.
     # write debug information (1 log per target-runner use sparely)
-    # hr.log_level(logging.DEBUG)
+    # runner.log_level(logging.DEBUG)
 
+    ## FIXME: Convert this to flags with meaningful names
     # execute through pipes (this is the default)
-    # hr.exec_mode(hr.execute1)
+    # runner.exec_mode(runner.execute1)
 
+    ## FIXME: Convert this to flags with meaningful names
     # execute through temporary files (slightly more robust)
-    # hr.exec_mode(hr.execute2)
+    # runner.exec_mode(runner.execute2)
 
+    ## FIXME: Convert this to flags with meaningful names
     # execute through temporary files with timeout
     # after 5 minutes of *wallclock time* if we do not get the results we kill
     # the subprocess and try another time...
-    # hr.exec_mode(hr.execute_timeout1, 300)
+    # runner.exec_mode(runner.execute_timeout1, 300)
 
+    ## FIXME: Convert this to flags with meaningful names
     # python3 execute through pipes with timeout (slightly less robust)
-    # hr.exec_mode(hr.execute_timeout2, 300)
+    # runner.exec_mode(runner.execute_timeout2, 300)
 
+    ## FIXME: Convert this to flags with meaningful names
     # execute through temporary files with timeout
     # after 2 minutes of *CPU time* if we do not get the results we kill
     # the subprocess and try another time...
-    hr.exec_mode(hr.execute_threaded_timeout, timeout)
+    runner.exec_mode(runner.execute_threaded_timeout, timeout)
 
     # environment variables that should be set for testing each configuration
-    hr.source_env(rootdir + 'configuration')
+    runner.source_env(rootdir + 'configuration')
 
     # run the target-runner
-    hr.run()
+    runner.run()
 
 
 # -------------------------------------------------------------------------- #

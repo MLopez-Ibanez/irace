@@ -23,6 +23,8 @@ import re
 import subprocess
 import sys
 
+# FIXME: group together everything that needs to be edited by the user and put
+# in functions everything that does NOT to be edited.
 exe = "~/bin/executable"
 fixed_params = " "
 
@@ -68,14 +70,11 @@ outf.close()
 errf.close()
 
 if return_code != 0:
-    now = datetime.datetime.now()
-    print(str(now) + " error: command returned code " + str(return_code))
-    sys.exit(1)
+    target_runner_error("command returned code " + str(return_code))
 
 if not os.path.isfile(out_file):
-    now = datetime.datetime.now()
-    print(str(now) + " error: output file "+ out_file  +" not found.")
-    sys.exit(1)
+    target_runner_error("output file "+ out_file  +" not found.")
+
 # This is an example of reading a number from the output.
 # It assumes that the objective value is the first number in
 # the first column of the last line of the output.
