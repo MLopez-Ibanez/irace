@@ -46,7 +46,7 @@ testConfigurations <- function(configurations, scenario, parameters)
   target.output <- execute.experiments (experiments, scenario)
   # targetEvaluator may be NULL. If so, target.output must
   # contain the right output already.
-  if (!is.null(sceanrio$targetEvaluator))
+  if (!is.null(scenario$targetEvaluator))
     target.output <- execute.evaluator (experiments, scenario, target.output,
                                         configurations$.ID.)
 
