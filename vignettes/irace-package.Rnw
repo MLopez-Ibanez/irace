@@ -871,13 +871,13 @@ types supported by \irace are the following:
   number of digits of $4$, the values $0.12345$ and
   $0.12341$ are both rounded to $0.1234$.
   % However, the values  $0.00001$ and $0.00005$ remain the same.
-  Selected real-valued parameters can be optionally sampled under
-  a log-scale (base $e$).
+  Selected real-valued parameters can be optionally sampled on
+  a logarithmic scale (base $e$).
 
-\item \textit{Integer} parameters are numerical parameters that can
-  take only integer values within the given range. The range is
-  specified as for real parameters. As for real parameters, it is
-  possible to specify a logarithmic distribution.
+\item \textit{Integer} parameters are numerical parameters that can take only
+  integer values within the given range. Their range is specified as the range
+  of real parameters and they can also be optionally sampled on a
+  logarithmic scale.
 
 \item \textit{Categorical} parameters are defined by a set of possible values
   specified as `\code{(<value 1>,} \code{...,} \code{<value n>)}'. The values
@@ -946,9 +946,9 @@ where each field is defined as follows:
                     \textit{integer}, \textit{real}, \textit{ordinal} or
                     \textit{categorical}, given as a single letter: `\code{i}',
                     `\code{r}', `\code{o}' or `\code{c}'. Numerical parameters
-                    can be sampled using a log-scale with '\code{i,log}' and
+                    can be sampled using a logarithmic scale with '\code{i,log}' and
                     '\code{r,log}' (without spaces) for integer and real
-                    parameters respectively.\\
+                    parameters, respectively.\\
                     %
   \code{{<range>}} & The range or set of values of the parameter delimited by
                      parentheses. \eg~\code{(0,1)} or \code{(a,b,c,d)}.\\
