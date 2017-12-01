@@ -229,6 +229,11 @@ checkScenario <- function(scenario = defaultScenario())
 {
   # Fill possible unset (NULL) with default settings.
   scenario <- defaultScenario (scenario)
+
+  # Duplicated entries will cause confusion.
+  dups <- anyDuplicated(names(scenario))
+  if (dups > 0)
+    irace.error("scenario contains duplicated entries: ", names(scenario)[dups])
   
   ## Check that everything is fine with external parameters
   # Check that the files exist and are readable.
