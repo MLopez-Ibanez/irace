@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 ##############################################################################
 #                                                                            #
 # With this target-runner, you can:                                          #
@@ -24,12 +23,6 @@
 #                                                                            #
 ##############################################################################
 
-
-# ---------------------------- DO NOT CHANGE HERE ----------------------------
-#                     (unless you know what you are doing)
-# ---------------------- GO TO THE BOTTOM OF THIS FILE -----------------------
-
-
 import os
 import sys
 import time
@@ -38,21 +31,23 @@ import logging
 import tempfile
 import subprocess
 import threading
+import re
 
-
+# ---------------------------- DO NOT CHANGE HERE ----------------------------
+#                     (unless you know what you are doing)
+# ---------------------- Search for CHANGE BELOW! ----------------------------
 class Runner(object):
 
-    def __init__(self, executable, fixed_params, instanceid, instance, seed,
-                 parse_output, candidate, parameters, max_tests):
+    def __init__(self, executable, candidate, instanceid, seed, parameters,
+                 parse_output, max_tests):
         self.executable = executable
-        self.fixed_params = fixed_params
         self.instanceid = instanceid
-        self.instance = instance
         self.seed = seed
         self.parse_output = parse_output
         self.candidate = candidate
         self.parameters = parameters
         self.max_tests = max_tests
+        self.filename_prefix = 'c' + str(candidate) + '-' + str(seed) + '-' + str(instanceid)
 
         # default exec function
         self.execute = self.execute1
@@ -60,7 +55,7 @@ class Runner(object):
         self.maximize = False
 
         # logging (by default only errors are logged)
-        filename = 'c' + self.candidate + '-' + self.seed + '-' + str(instanceid) + '.' + socket.gethostname() + '_' + str(os.getpid())
+        filename = self.filename_prefix + '.' + socket.gethostname() + '_' + str(os.getpid())
         self.logger = logging.getLogger('target-runner')
         try :
             hdlr = logging.FileHandler(filename, delay=True)
@@ -294,8 +289,7 @@ class Runner(object):
         test = 0
         cost = None
         while test < self.max_tests:
-            command_list = [self.executable] + self.fixed_params.split() + \
-                           [self.instance] + self.parameters
+            command_list = [self.executable] + self.parameters
             (status, out, err) = self.execute(command_list)
             if status != 0:
                 test += 1
@@ -303,7 +297,7 @@ class Runner(object):
                                     str(test) + ' of ' + str(self.max_tests))
                 continue
             # parsing the output
-            cost = self.parse_output(out)
+            cost = self.parse_output(out).strip()
             try:
                 check = float(cost)
             except:
@@ -312,17 +306,19 @@ class Runner(object):
                                     str(test) + ' of ' + str(self.max_tests))
                 continue
 
-            # convert to float and multiply by -1 if maximizing
-            cost = float(cost)
+            # If maximising, simulate multiply by -1 if maximizing
             if self.maximize:
-                cost *= -1
-
+                if cost[0] == '-':
+                    cost = cost[1:]
+                else:
+                    cost = '-' + cost
+                    
             break
 
         # printing the result
         if test < self.max_tests:
-            self.logger.debug('returning cost: ' + str(cost))
-            sys.stdout.write(str(cost) + '\n')
+            self.logger.debug('returning cost: ' + cost)
+            sys.stdout.write(cost + '\n')
             # force to exit all possible threads except the main one (those
             # launched with execute_threaded_timeout) are run as daemons so
             # they should be terminated automatically when exiting, but just
@@ -333,10 +329,10 @@ class Runner(object):
             self.logger.error('something went wrong after ' + \
                               str(self.max_tests) + ' runs')
             self.logger.error('saving candidate stdout to ' + \
-                                  'c' + self.candidate + '-' + self.seed + '-' + str(instanceid) + '.stdout')
-            self.save('c' + self.candidate + '-' + self.seed + '-' + str(instanceid) + '.stdout', out)
-            self.save('c' + self.candidate + '-' + self.seed + '-' + str(instanceid) + '.stderr', err)
-            self.logger.error('returning cost: ' + str(cost))
+                              self.filename_prefix + '.stdout')
+            self.save(self.filename_prefix + '.stdout', out)
+            self.save(self.filename_prefix + '.stderr', err)
+            self.logger.error('returning cost: ' + cost)
             self.logger.error('exit status is ' + str(status))
             sys.stdout.write('something went wrong for candidate ' + \
                              self.candidate + '\n')
@@ -345,7 +341,7 @@ class Runner(object):
                 sys.exit(status)
             else:
                 sys.stdout.write('could not cast to float the result: \'' + \
-                                 str(cost) + '\n')
+                                 cost + '\n')
                 sys.exit(1)
 
 def is_exe(fpath):
@@ -355,16 +351,23 @@ def is_exe(fpath):
 def get_execdir():
     return os.path.dirname(os.path.realpath(__file__))
 
-# ------------------------------ CHANGE HERE! ------------------------------ #
 
+# ------------------------------- CHANGE BELOW! ------------------------------ #
+
+## This example is for the ACOTSP software. Compare it with
+## examples/acotsp/target-runner
 
 # Parse here directly the stdout of your job (the 'out' parameter)
 # alternatively you can ignore it and read other files produced by
 # your job
 def parse_output(out):
     # parsing last thing printed
-    return out.strip().split()[-1]
-
+    match = re.search(r'Best ([-+0-9.e]+)', out.strip())
+    if match:
+        return match.group(1);
+    else:
+        return "No match"
+        
 if __name__=='__main__':
 
     if len(sys.argv) < 5:
@@ -372,10 +375,10 @@ if __name__=='__main__':
         sys.exit(1)
     
     bindir = get_execdir()
-    
+    executable = '~/bin/acotsp'
+    fixed_params = ' --tries 1 --time 10 --quiet '
+   
     # reading parameters and setting problem specific stuff
-    rootdir = bindir + "/../../../"
-    timeout = 180
     ## FIXME: Convert this to a class that takes sys.argv and sets the correct
     ## variables.
     candidate_id = sys.argv[1]
@@ -384,13 +387,16 @@ if __name__=='__main__':
     instance = sys.argv[4]
     parameters = sys.argv[5:]
 
-    executable = './' + candidate_id
-    fixed_params = 'grammars/PFSPWCT.xml None 20 0 ' + seed
-
+    # maximum timeout in case the target algorithm does not terminate on its own.
+    timeout = 180
     # maximum number of trials before giving up with the configuration
-    max_tests = 100
-    runner = Runner(executable, fixed_params, instance_id, instance, seed,
-                    parse_output, candidate_id, parameters, max_tests)
+    max_tests = 5
+
+    # Extra whitespace around options is important!
+    parameters = [' -i ' + instance + ' --seed ' + seed + fixed_params ] + parameters
+    
+    runner = Runner(executable, candidate_id, instance_id, seed,
+                    parameters, parse_output, max_tests)
 
     ## FIXME: Make this a parameter of the constructor.
     # maximizing instead of minimizing
@@ -425,10 +431,7 @@ if __name__=='__main__':
     runner.exec_mode(runner.execute_threaded_timeout, timeout)
 
     # environment variables that should be set for testing each configuration
-    runner.source_env(rootdir + 'configuration')
+    # runner.source_env(rootdir + 'configuration')
 
     # run the target-runner
     runner.run()
-
-
-# -------------------------------------------------------------------------- #
