@@ -25,16 +25,24 @@ import sys
 
 # FIXME: group together everything that needs to be edited by the user and put
 # in functions everything that does NOT to be edited.
-exe = "~/bin/executable"
-fixed_params = " "
+
+## This example is for the ACOTSP software. Compare it with
+## examples/acotsp/target-runner
+# exe = "~/bin/executable"
+exe = "~/bin/acotsp"
+
+fixed_params = ' --tries 1 --time 10 --quiet '
+
+# This is an example of reading a number from the output.
+def parse_output(out):
+    match = re.search(r'Best ([-+0-9.eE]+)', out.strip())
+    if match:
+        return match.group(1);
+    else:
+        return "No match"
 
 if len(sys.argv) < 5:
     print "\nUsage: ./target-runner.py <candidate_id> <instance_id> <seed> <instance_path_name> <list of parameters>\n"
-    sys.exit(1)
-
-def target_runner_error(msg):
-    now = datetime.datetime.now()
-    print(str(now) + " error: " + msg)
     sys.exit(1)
 
 # Get the parameters as command line arguments.
@@ -44,24 +52,32 @@ seed = sys.argv[3]
 instance = sys.argv[4]
 cand_params = sys.argv[5:]
 
-# Define the stdout and stderr files.
-out_file = "c" + str(candidate_id) + "-" + str(instance_id) + ".stdout"
-err_file = "c" + str(candidate_id) + "-" + str(instance_id) + ".stderr"
-
-if not os.path.isfile(exe):
-    target_runner_error (str(exe) + " not found")
-if not os.access(exe, os.X_OK):
-    now = datetime.datetime.now()
-    print(str(now) + " error: " + str(exe) + " is not executable")
-
 # Build the command, run it and save the output to a file,
 # to parse the result from it.
 # 
 # Stdout and stderr files have to be opened before the call().
 #
 # Exit with error if something went wrong in the execution.
-
+exe = os.path.expanduser(exe)
 command = [exe] + fixed_params.split() + ["-i"] + [instance] + ["--seed"] + [seed] + cand_params
+
+# Define the stdout and stderr files.
+out_file = "c" + str(candidate_id) + "-" + str(instance_id) + ".stdout"
+err_file = "c" + str(candidate_id) + "-" + str(instance_id) + ".stderr"
+
+def target_runner_error(msg):
+    now = datetime.datetime.now()
+    print(str(now) + " error: " + msg)
+    sys.exit(1)
+
+def check_executable(fpath):
+    fpath = os.path.expanduser(fpath)
+    if not os.path.isfile(fpath):
+        target_runner_error(str(fpath) + " not found")
+    if not os.access(fpath, os.X_OK):
+        target_runner_error(str(fpath) + " is not executable")
+
+check_executable (exe)
 
 outf = open(out_file, "w")
 errf = open(err_file, "w")
@@ -73,31 +89,11 @@ if return_code != 0:
     target_runner_error("command returned code " + str(return_code))
 
 if not os.path.isfile(out_file):
-    target_runner_error("output file "+ out_file  +" not found.")
+    target_runner_error("output file " + out_file  + " not found.")
 
-# This is an example of reading a number from the output.
-# It assumes that the objective value is the first number in
-# the first column of the last line of the output.
-
-lastline = [line.rstrip('\n') for line in open(out_file)][-1]
-
-# from http://stackoverflow.com/questions/4703390
-numeric_const_pattern = r"""
-     [-+]? # optional sign
-     (?:
-         (?: \d* \. \d+ ) # .1 .12 .123 etc 9.1 etc 98.1 etc
-         |
-         (?: \d+ \.? ) # 1. 12. 123. etc 1 12 123 etc
-     )
-     # followed by optional exponent part if desired
-     (?: [Ee] [+-]? \d+ ) ?
-     """
-rx = re.compile(numeric_const_pattern, re.VERBOSE)
-
-cost = rx.findall(lastline)[0]
+cost = parse_output (open(out_file).read())
 print(cost)
 
 os.remove(out_file)
 os.remove(err_file)
-
 sys.exit(0)

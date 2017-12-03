@@ -39,8 +39,8 @@ import re
 class Runner(object):
 
     def __init__(self, executable, candidate, instanceid, seed, parameters,
-                 parse_output, max_tests):
-        self.executable = executable
+                 parse_output, max_tests, maximize = False, log_level = logging.ERROR):
+        self.executable = os.path.expanduser(executable)
         self.instanceid = instanceid
         self.seed = seed
         self.parse_output = parse_output
@@ -52,8 +52,8 @@ class Runner(object):
         # default exec function
         self.execute = self.execute1
 
-        self.maximize = False
-
+        self.maximize = maximize
+        
         # logging (by default only errors are logged)
         filename = self.filename_prefix + '.' + socket.gethostname() + '_' + str(os.getpid())
         self.logger = logging.getLogger('target-runner')
@@ -65,19 +65,8 @@ class Runner(object):
         formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
         hdlr.setFormatter(formatter)
         self.logger.addHandler(hdlr)
-        self.logger.setLevel(logging.ERROR)
-
-
-    # when returning the cost multiply by -1 if maximizing
-    def set_maximize(self):
-        self.maximize = True
-
-
-    # changes the log level
-    def log_level(self, level):
-        self.logger.setLevel(level)
-
-
+        self.logger.setLevel(log_level)
+    
     # changes the way the child process is executed
     def exec_mode(self, mode, max_time = 3600):
         self.execute = mode
@@ -306,7 +295,7 @@ class Runner(object):
                                     str(test) + ' of ' + str(self.max_tests))
                 continue
 
-            # If maximising, simulate multiply by -1 if maximizing
+            # If maximizing, simulate multiply by -1 if maximizing
             if self.maximize:
                 if cost[0] == '-':
                     cost = cost[1:]
@@ -345,6 +334,7 @@ class Runner(object):
                 sys.exit(1)
 
 def is_exe(fpath):
+    fpath = os.path.expanduser(fpath)
     return os.path.isfile(fpath) and os.access(fpath, os.X_OK) \
         and os.path.getsize(fpath) > 0
 
@@ -361,8 +351,7 @@ def get_execdir():
 # alternatively you can ignore it and read other files produced by
 # your job
 def parse_output(out):
-    # parsing last thing printed
-    match = re.search(r'Best ([-+0-9.e]+)', out.strip())
+    match = re.search(r'Best ([-+0-9.eE]+)', out.strip())
     if match:
         return match.group(1);
     else:
@@ -394,19 +383,13 @@ if __name__=='__main__':
 
     # Extra whitespace around options is important!
     parameters = [' -i ' + instance + ' --seed ' + seed + fixed_params ] + parameters
-    
+
     runner = Runner(executable, candidate_id, instance_id, seed,
-                    parameters, parse_output, max_tests)
+                    parameters, parse_output, max_tests,
+                    #log_level = logging.DEBUG,
+                    maximize = False)
 
-    ## FIXME: Make this a parameter of the constructor.
-    # maximizing instead of minimizing
-    # runner.set_maximize()
-
-    ## FIXME: Make this a parameter of the constructor.
-    # write debug information (1 log per target-runner use sparely)
-    # runner.log_level(logging.DEBUG)
-
-    ## FIXME: Convert this to flags with meaningful names
+    ## FIXME: Convert this to flags with meaningful names like log_level
     # execute through pipes (this is the default)
     # runner.exec_mode(runner.execute1)
 
@@ -430,8 +413,9 @@ if __name__=='__main__':
     # the subprocess and try another time...
     runner.exec_mode(runner.execute_threaded_timeout, timeout)
 
+    # Convert this to a parameter of the constructor.
     # environment variables that should be set for testing each configuration
-    # runner.source_env(rootdir + 'configuration')
+    # runner.source_env(bindir + 'configuration')
 
     # run the target-runner
     runner.run()
