@@ -53,7 +53,8 @@ cat.irace.license <- function()
 {
   cat(sub("__VERSION__", irace.version, irace.license, fixed=TRUE))
 }
-  
+
+# FIXME: In R > 3.0, this function can be replaced by read.table(text=)
 read.table.text <- function(text, header = TRUE, stringsAsFactors = FALSE, ...)
 {
   con <- textConnection(text)
@@ -137,17 +138,15 @@ irace.usage <- function ()
 {
   cat.irace.license()
 
-  # FIXME: The output would be nicer if we used cat(sprintf()) to
-  # print short and long within a fixed width field. The description
-  # can be wrapped with strwrap to the remainder space up to 80
-  # columns. We can calculate the field width from the largest string
-  # for each of short and long.
   for (i in seq_len(nrow(.irace.params.def))) {
-    if (.irace.params.def[i,"description"] != "")
-      cat(sprintf("%2s %-20s  %s\n",
-                  .irace.params.def[i,"short"],
-                  .irace.params.def[i,"long"],
-                  .irace.params.def[i,"description"]))
+    short <- .irace.params.def[i,"short"]
+    long <- .irace.params.def[i,"long"]
+    desc <- .irace.params.def[i,"description"]
+    if (desc == "" || (short == "" && long == "")) next
+    cat(sep = "\n",
+        strwrap(desc, width = 80,
+                initial = sprintf("%2s %-20s  ", short, long),
+                exdent = 25))
   }
 }
 
@@ -311,6 +310,8 @@ checkIraceScenario <- function(scenario, parameters = NULL)
 irace.cmdline <- function(args = commandArgs (trailingOnly = TRUE))
 {
   # Function to read command-line arguments.
+  ## FIXME: This function always consumes two arguments. This is problematic
+  ## for flags that have no arguments, like --check.
   readArg <- function(short = "", long = "") {
     pos <- c()
     if (length (short) > 0) {
