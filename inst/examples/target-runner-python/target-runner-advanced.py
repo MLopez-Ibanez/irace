@@ -364,6 +364,7 @@ if __name__=='__main__':
         sys.exit(1)
     
     bindir = get_execdir()
+    # Path to the target-algorithm executable
     executable = '~/bin/acotsp'
     fixed_params = ' --tries 1 --time 10 --quiet '
    
