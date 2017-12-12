@@ -2810,7 +2810,7 @@ Definitely. There are two main ways to achieve this:
 
 \subsection{My program works perfectly on its own, but not when running under \irace. Is irace broken?}\label{faq:valgrind}
 
-Every time this was reported, it was a difficult-to-reproduce bug in
+Every time this was reported, it was a difficult-to-reproduce bug, i.e., a \href{https://en.wikipedia.org/wiki/Heisenbug}{Heisenbug}, in
 the program, not in \irace.  We recommend that in \parameter{targetRunner}, you use
 \code{valgrind}\footnote{\url{https://valgrind.org}} to run your program. That is, if your program is called like:
 % 
