@@ -276,7 +276,7 @@ class Runner(object):
     # executing the program
     def run(self):
         test = 0
-        cost = None
+        cost = ""
         while test < self.max_tests:
             command_list = [self.executable] + self.parameters
             (status, out, err) = self.execute(command_list)
@@ -286,12 +286,22 @@ class Runner(object):
                                     str(test) + ' of ' + str(self.max_tests))
                 continue
             # parsing the output
-            cost = self.parse_output(out).strip()
+            try: 
+                cost = self.parse_output(out)
+            except: 
+                test += 1
+                self.logger.warning('something failed in parse_output: *RETRYING* ' + \
+                                    str(test) + ' of ' + str(self.max_tests))
+                continue
+            
+            if cost is None:
+                cost = ""
+            
             try:
                 check = float(cost)
             except:
                 test += 1
-                self.logger.warning('cost was not a number *RETRYING* ' + \
+                self.logger.warning('return value of parse_output was not a number: *RETRYING* ' + \
                                     str(test) + ' of ' + str(self.max_tests))
                 continue
 
@@ -321,7 +331,7 @@ class Runner(object):
                               self.filename_prefix + '.stdout')
             self.save(self.filename_prefix + '.stdout', out)
             self.save(self.filename_prefix + '.stderr', err)
-            self.logger.error('returning cost: ' + cost)
+            self.logger.error('return value of parse_output: ' + cost)
             self.logger.error('exit status is ' + str(status))
             sys.stdout.write('something went wrong for candidate ' + \
                              self.candidate + '\n')
@@ -329,8 +339,8 @@ class Runner(object):
                 sys.stdout.write('exit status: ' + str(status) + '\n')
                 sys.exit(status)
             else:
-                sys.stdout.write('could not cast to float the result: \'' + \
-                                 cost + '\n')
+                sys.stdout.write('could not cast to float the return value of parse_output: "' + \
+                                 cost + '"\n')
                 sys.exit(1)
 
 def is_exe(fpath):
@@ -347,9 +357,10 @@ def get_execdir():
 ## This example is for the ACOTSP software. Compare it with
 ## examples/acotsp/target-runner
 
-# Parse here directly the stdout of your job (the 'out' parameter)
-# alternatively you can ignore it and read other files produced by
-# your job
+# Parse here directly the stdout of your job (the 'out' parameter).  Or you can
+# ignore the out parameter and read other files produced by your job. This
+# function must return a string containing a floating-point number. Everything
+# else will generate an error.
 def parse_output(out):
     match = re.search(r'Best ([-+0-9.eE]+)', out.strip())
     if match:
@@ -360,13 +371,13 @@ def parse_output(out):
 if __name__=='__main__':
 
     if len(sys.argv) < 5:
-        print "\nUsage: ./target-runner.py <candidate_id> <instance_id> <seed> <instance_path_name> <list of parameters>\n"
+        print "\nUsage: " + __file__ + " <candidate_id> <instance_id> <seed> <instance_path_name> <list of parameters>\n"
         sys.exit(1)
     
     bindir = get_execdir()
     # Path to the target-algorithm executable
     executable = '~/bin/acotsp'
-    fixed_params = ' --tries 1 --time 10 --quiet '
+    fixed_params = ' --tries 1 --time 1 --quiet '
    
     # reading parameters and setting problem specific stuff
     ## FIXME: Convert this to a class that takes sys.argv and sets the correct
