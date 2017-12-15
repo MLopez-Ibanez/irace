@@ -41,7 +41,7 @@ install:
 	cd $(BINDIR) && R CMD INSTALL $(INSTALL_FLAGS) $(PACKAGE)_$(PACKAGEVERSION).tar.gz
 
 quick-install: version
-	cd $(BINDIR) &&	R CMD build $(BUILD_FLAGS) --no-build-vignettes $(PACKAGEDIR) && R CMD INSTALL $(INSTALL_FLAGS) $(PACKAGE)_$(PACKAGEVERSION).tar.gz
+	cd $(BINDIR) &&	R CMD build $(BUILD_FLAGS) --no-build-vignettes --no-vignettes $(PACKAGEDIR) && R CMD INSTALL $(INSTALL_FLAGS) $(PACKAGE)_$(PACKAGEVERSION).tar.gz
 
 build : bumpdate clean
 	$(MAKE) releasevignette
@@ -57,17 +57,22 @@ closeversion: build
 	svn up
 	make releasebuild # again to update version.R and svn_version
 
+vignettes/$(PACKAGE)-package.bib: vignettes/$(PACKAGE)-package.aux
+	cd $(PACKAGEDIR)/vignettes \
+	&& aux2bib $(PACKAGE)-package.aux | grep -v '@comment' > tmp-$(PACKAGE)-package.bib \
+	&& mv tmp-$(PACKAGE)-package.bib $(PACKAGE)-package.bib
+
 releasevignette:
 	test -s $(PACKAGEDIR)/vignettes/$(PACKAGE)-package.aux || $(MAKE) nonreleasevignette
-	cd $(PACKAGEDIR)/vignettes \
-	&& aux2bib $(PACKAGE)-package.aux | grep -v '@comment' > $(PACKAGE)-package.bib \
-	&& sed -i 's/^%\+\\setboolean{Release}{true}/\\setboolean{Release}{true}/' \
-	$(PACKAGE)-package.Rnw
+	$(MAKE) vignettes/$(PACKAGE)-package.bib
+	sed -i 's/^%\+\\setboolean{Release}{true}/\\setboolean{Release}{true}/' \
+	$(PACKAGEDIR)/vignettes/$(PACKAGE)-package.Rnw
 
 nonreleasevignette:
 	sed -i 's/^\\setboolean{Release}{true}/%\\setboolean{Release}{true}/' \
 	$(PACKAGEDIR)/vignettes/$(PACKAGE)-package.Rnw
 	$(MAKE) vignettes
+	$(MAKE) vignettes/$(PACKAGE)-package.bib
 
 releasebuild: BUILD_FLAGS=--compact-vignettes=both
 releasebuild: bumpdate releasevignette
