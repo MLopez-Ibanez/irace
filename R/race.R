@@ -77,6 +77,7 @@ race.wrapper <- function(configurations, instance.idx, which.alive, which.exe, p
 
   # targetEvaluator may be NULL. If so, target.output must
   # contain the right output already.
+  # Otherwise, targetEvaluator always re-evaluates.
   if (!is.null(scenario$targetEvaluator))
     target.output <- execute.evaluator (experiments, scenario, target.output,
                                         configurations[which.alive, ".ID."])
