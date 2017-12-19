@@ -478,7 +478,7 @@ irace <- function(scenario, parameters)
     # data.
     scenario <- checkScenario(scenario)
     startParallel(scenario)
-    on.exit(stopParallel())
+    on.exit(stopParallel(), add = TRUE)
   } else { # Do not recover
     scenario <- irace.init (scenario)
     debugLevel <- scenario$debugLevel
@@ -553,7 +553,7 @@ irace <- function(scenario, parameters)
     timeEstimate <- NA 
 
     startParallel(scenario)
-    on.exit(stopParallel())                                          
+    on.exit(stopParallel(), add = TRUE)
  
     if (scenario$maxTime == 0) {
       remainingBudget <- scenario$maxExperiments
@@ -590,7 +590,6 @@ irace <- function(scenario, parameters)
         # Execute tests
         output <- do.experiments(configurations = allConfigurations[next.configuration:nconfigurations, ],
                                  ninstances = ninstances, scenario = scenario, parameters = parameters)  
-
         iraceResults$experimentLog <- rbind(iraceResults$experimentLog,
                                             cbind(rep(0, nrow(output$experimentLog)),
                                                   output$experimentLog)) 
@@ -601,7 +600,6 @@ irace <- function(scenario, parameters)
         iraceResults$experiments <- merge.matrix (iraceResults$experiments,
                                                   output$experiments)
         rownames(iraceResults$experiments) <- 1:nrow(iraceResults$experiments)
-        
         next.configuration <- nconfigurations + 1
         
         # Calculate how many new configurations:
@@ -620,7 +618,7 @@ irace <- function(scenario, parameters)
   
       irace.note("Estimated execution time is ", timeEstimate, " based on ",
                  next.configuration - 1, " configurations and ",
-                 ninstances," instances. Used time: ", timeUsed, " .\n")
+                 ninstances," instances. Used time: ", timeUsed, "\n")
       
       # Update budget
       remainingBudget <- round((scenario$maxTime - timeUsed) / timeEstimate)
@@ -646,7 +644,7 @@ irace <- function(scenario, parameters)
               scenario$nbExperimentsPerIteration)
 
     # Check that the budget is enough, for the time estimation case we reduce
-    # the number of iterations..
+    # the number of iterations.
     repeat {
       if (scenario$maxTime == 0
           || checkMinimumBudget (remainingBudget, minSurvival, nbIterations,
@@ -660,7 +658,7 @@ irace <- function(scenario, parameters)
                  " Execution will continue by assuming that the estimated time",
                  " is too high and reducing the minimum number of iterations,",
                  " however, if the estimation was correct or too low,",
-                 " results might not be better than random sampling.")
+                 " results might not be better than random sampling.\n")
       nbIterations <- nbIterations - 1
     }
   } #end of do not recover
