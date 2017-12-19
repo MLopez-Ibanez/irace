@@ -196,11 +196,13 @@ irace.heatmap <- function (x, Rowv = NULL, Colv = if (symm) "Rowv" else NULL,
 irace.levelplot <- function(x, xaxes = FALSE)
 {
   library(lattice)
-  x <- apply(x, 1, rank, na.last = "keep") #as.matrix(scale(experiments))
+#  x <- apply(x, 1, rank, na.last = "keep") #as.matrix(scale(experiments))
+  x <- t(x)
   # scale data to mean=0, sd=1 and convert to matrix ?
   #x <- as.matrix(scale(x))
-  levelplot(x = x, xlab="Configurations", ylab="Instances", aspect="fill",
-            col.regions = gray.colors(100, start = 0, end = 0.6),
+  levelplot(x = x, xlab="Configurations", ylab="Scenarios", aspect="fill",
+            #col.regions = gray.colors(20, start = 0, end = 0.8),
+            col.regions = heat.colors(20),
             scales = list(tck = c(0,0), x=list(draw = xaxes)))
   #levelplot (as.matrix(scale(mtcars)), aspect = "iso",scale=list(x=list(rot=45)))
 }
