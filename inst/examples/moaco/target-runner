@@ -6,10 +6,11 @@
 # $2 is the instance id
 # $3 is the seed
 # $4 is the instance name
-# The rest ($* after `shift 4') are parameters to the run
+# The rest are parameters for running the program
 #
 # RETURN VALUE:
-# This script should print a single numerical value (the value to be minimized)
+# This script should print nothing.
+# Exit with 0 if no error, with 1 in case of error
 ###############################################################################
 # If you want to find where target-runner is.
 #BINDIR=$(dirname "$(readlink -f "$(type -P $0 || echo $0)")")
@@ -25,7 +26,7 @@ STDOUT=c${CONFIGURATION}-${INSTANCEID}.stdout
 STDERR=c${CONFIGURATION}-${INSTANCEID}.stderr
 
 # TODO: Use /tmp for all temporary files, i.e., put target-runner-data under /tmp
-tmp="./target-runner-tmp"
+tmp="./target-data"
 mkdir -p ${tmp}
 cd ${tmp} || error "cannot change to directory \'${tmp}\'"
 

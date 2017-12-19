@@ -20,6 +20,19 @@
 # RETURN VALUE:
 # This script should print a single numerical value
 ###############################################################################
+error() {
+    echo "`TZ=UTC date`: error: $@"
+    if [ -s error.log ]; then
+        cat error.log
+    fi
+    exit 1
+}
+
+error_sleep() {
+    echo "`TZ=UTC date`: error: $@" >> error.log
+    sleep 60
+}
+
 NORMALIZATION_RANGE="'1 2'"
 REFERENCE_POINT="'2.1 2.1'"
 
@@ -43,19 +56,6 @@ ALLIDS=$*
 STDOUT=c${CONFIGURATION}-${INSTANCEID}.stdout
 STDERR=c${CONFIGURATION}-${INSTANCEID}.stderr
 
-error() {
-    echo "`TZ=UTC date`: error: $@"
-    if [ -s error.log ]; then
-        cat error.log
-    fi
-    exit 1
-}
-
-error_sleep() {
-    echo "`TZ=UTC date`: error: $@" >> error.log
-    sleep 60
-}
-
 calc_measure() {
     LIMITSFILE=limits-${INSTANCEID}.txt
     LIMITSTMP=limits-${INSTANCEID}.tmp
@@ -66,17 +66,15 @@ calc_measure() {
     else
        eval "$NORMALIZE $ALLFILES $UPDATELIMITS" > $LIMITSFILE
     fi
-
 }
 
-tmp="./target-runner-tmp"
-cd ${tmp} || error "cannot change to directory \'${tmp}\'"
+# TODO: Use /tmp for all temporary files, i.e., put target-data under /tmp
+cd target-data || error "cannot change to directory 'target-data'"
 
 ALLFILES=
-for FILENAME in $ALLIDS; do
+for FILENAME in ALLIDS; do
     ALLFILES="$ALLFILES c${FILENAME}-${INSTANCEID}.stdout"
 done
-
 
 # First normalize output files, unless they are ready.
 while ! ls ${ALLFILES}_nor &> /dev/null ; do
@@ -105,5 +103,5 @@ fi
 COST=$(eval "$HV ${STDOUT}_nor" || error "calculating hypervolume failed")
 # Negative because hypervolume is maximised but irace minimises.
 echo "-$COST"
-exit 0
 
+exit 0
