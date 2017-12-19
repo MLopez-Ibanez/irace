@@ -217,8 +217,7 @@ check.output.target.runner <- function (output, scenario)
 # This function invokes target.runner.  When used on a remote node by Rmpi,
 # environments do not seem to be shared and the default value is evaluated too
 # late, thus we have to pass .irace$target.runner explicitly.
-exec.target.runner <- function(experiment, scenario,
-                               target.runner = .irace$target.runner)
+exec.target.runner <- function(experiment, scenario, target.runner)
 {
   doit <- function(experiment, scenario)
   {
@@ -284,7 +283,7 @@ execute.experiments <- function(experiments, scenario)
 {
   parallel <- scenario$parallel
   mpi <- scenario$mpi
-
+  target.runner <- .irace$target.runner
   execDir <- scenario$execDir
   if (!isTRUE (file.info(execDir)$isdir)) {
     irace.error ("Execution directory '", execDir, "' is not found or not a directory\n")
@@ -298,7 +297,7 @@ execute.experiments <- function(experiments, scenario)
     target.output <-
       scenario$targetRunnerParallel(experiments, exec.target.runner,
                                     scenario = scenario,
-                                    target.runner = .irace$target.runner)
+                                    target.runner = target.runner)
   } else if (scenario$batchmode != 0) {
     target.output <- cluster.lapply (experiments, scenario = scenario)
   } else if (parallel > 1) {
@@ -306,7 +305,7 @@ execute.experiments <- function(experiments, scenario)
       if (scenario$loadBalancing) {
         target.output <- Rmpi::mpi.applyLB(experiments, exec.target.runner,
                                            scenario = scenario,
-                                           target.runner = .irace$target.runner)
+                                           target.runner = target.runner)
       } else {
         # Without load-balancing, we need to split the experiments into chunks
         # of size parallel.
@@ -315,7 +314,7 @@ execute.experiments <- function(experiments, scenario)
                                        ceiling(1:length(experiments) / parallel),
                                        Rmpi::mpi.apply, exec.target.runner,
                                        scenario = scenario,
-                                       target.runner = .irace$target.runner))
+                                       target.runner = target.runner))
       }
       # FIXME: if stop() is called from mpi.applyLB, it does not
       # terminate the execution of the parent process, so it will
@@ -336,12 +335,12 @@ execute.experiments <- function(experiments, scenario)
           target.output <-
             parallel::parLapplyLB(.irace$cluster, experiments, exec.target.runner,
                                   scenario = scenario,
-                                  target.runner = .irace$target.runner)
+                                  target.runner = target.runner)
         } else {
           target.output <-
             parallel::parLapply(.irace$cluster, experiments, exec.target.runner,
                                 scenario = scenario,
-                                target.runner = .irace$target.runner)
+                                target.runner = target.runner)
         }
         # FIXME: if stop() is called from parLapply, then the parent
         # process also terminates, and we cannot give further errors.
@@ -352,7 +351,7 @@ execute.experiments <- function(experiments, scenario)
                              mc.preschedule = !scenario$loadBalancing,
                              mc.cores = parallel,
                              scenario = scenario,
-                             target.runner = .irace$target.runner)
+                             target.runner = target.runner)
         # FIXME: if stop() is called from mclapply, it does not
         # terminate the execution of the parent process, so it will
         # continue and give more errors later. We have to terminate
@@ -372,7 +371,8 @@ execute.experiments <- function(experiments, scenario)
   } else {
     # One process, all sequential
     target.output <- lapply(experiments, exec.target.runner,
-                            scenario = scenario)
+                            scenario = scenario,
+                            target.runner = target.runner)
   }
  
   return(target.output)
