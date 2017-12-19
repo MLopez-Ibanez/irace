@@ -1,5 +1,20 @@
 ------------------------------------------------------------*- mode: text -*-
 
+#10 -----------------------------------------------------------
+
+Related to #8.  With --maxTime, irace assumes that target-runner will report
+the time, however, this is not possible with --batchmode. If you are confident
+in modifying the package sources, you need to add a check on scenario$batchmode
+before checking the scenario$maxTime condition that you quote, you need to
+handle the case where that function returns no time and you need to handle the
+case that target-evaluator returns time and how to use that to increment the
+time budget.
+
+However, targetEvaluator is called again for elitist configurations even if no
+target-runner call is made. This means that we may double count the time?
+
+In the meantime, I would suggest that you don't use --maxTime for now.
+
 #9 ------------------------------------------------------------
 
 By default
