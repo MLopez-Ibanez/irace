@@ -200,16 +200,8 @@ TODO General (in order of importance):
  * If we have too many elites, remove some of them. Add a parameter
    --max-elites.
 
- * Add example of logarithmic/parameter conversions in target-runner.
-
  * Make the update model convergence take into account the hierarchy
    of parameters.
-
- * oneParamUpperBound and oneParamLowerBound are too much. We can
-   have a single function: paramBound that returns
-      return (as.numeric(parameters[["domain"]][[paramName]]))
-   then the user can use directly [1] or [2] to select whatever they
-   want. [Jeremie]
 
  * Error/Warn about unknown irace parameters.
 
@@ -231,6 +223,16 @@ TODO General (in order of importance):
 ------------------------------------------------------------------------------
 
 DONE:
+
+
+ * Add example of logarithmic/parameter conversions in target-runner.
+   [We know handle log conversion internally]
+
+ * oneParamUpperBound and oneParamLowerBound are too much. We can
+   have a single function: paramBound that returns
+      return (as.numeric(parameters[["domain"]][[paramName]]))
+   then the user can use directly [1] or [2] to select whatever they
+   want. [More or less DONE]
 
  * Implement some kind of immediate rejection handling, that is, if
    target-runner returns +Inf, just discard the candidate immediately
