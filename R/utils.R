@@ -109,9 +109,11 @@ irace.note <- function(...)
 }
 
 file.check <- function (file, executable = FALSE, readable = executable,
+                        writeable = FALSE,
                         isdir = FALSE, notempty = FALSE, text = NULL)
 {
   EXEC <- 1 # See documentation of the function file.access()
+  WRITE <- 2
   READ <- 4
 
   if (!is.character(file) || is.null.or.empty(file)) {
@@ -123,9 +125,22 @@ file.check <- function (file, executable = FALSE, readable = executable,
   ## must remain.
   
   if (!file.exists(file)) {
+    if (writeable) {
+      if (tryCatch({ suppressWarnings(file.create(file) && file.remove(file)) },
+                   error=function(e) FALSE))
+        return(TRUE)
+      irace.error("cannot create ", text, " ", shQuote(file))
+      return (FALSE)
+    }
     irace.error (text, " '", file, "' does not exist")
     return(FALSE)
   }
+
+  if (writeable && (file.access(file, mode = WRITE) != 0)) {
+    irace.error(text, " '", file, "' cannot be written into")
+    return(FALSE)
+  }
+  
   if (readable && (file.access(file, mode = READ) != 0)) {
     irace.error(text, " '", file, "' is not readable")
     return (FALSE)

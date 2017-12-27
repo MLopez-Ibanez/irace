@@ -227,6 +227,11 @@ readScenario <- function(filename = "", scenario = list())
 ## transformations.
 checkScenario <- function(scenario = defaultScenario())
 {
+  quote.param <- function(name)
+  {
+    return(paste0("'", name, "' (", .irace.params.def[name, "long"], ")"))
+  }
+  
   # Fill possible unset (NULL) with default settings.
   scenario <- defaultScenario (scenario)
 
@@ -238,30 +243,32 @@ checkScenario <- function(scenario = defaultScenario())
   ## Check that everything is fine with external parameters
   # Check that the files exist and are readable.
   scenario$parameterFile <- path.rel2abs(scenario$parameterFile)
-  # We don't check this file here because the user may give the
+  # We don't check parameterFile here because the user may give the
   # parameters explicitly. And it is checked in readParameters anyway.
   scenario$execDir <- path.rel2abs(scenario$execDir)
-  file.check (scenario$execDir, isdir = TRUE, text = "execution directory")
+  file.check (scenario$execDir, isdir = TRUE,
+              text = paste0("execution directory ", quote.param("execDir")))
   
   if (!is.null.or.empty(scenario$logFile)) {
     scenario$logFile <- path.rel2abs(scenario$logFile, cwd = scenario$execDir)
+    file.check(scenario$logFile, writeable = TRUE,
+               text = quote.param('logFile'))
+  } else {
+    scenario$logFile  <- NULL
   }
 
-  if (scenario$recoveryFile == "")
-    scenario$recoveryFile  <- NULL
-  if (!is.null(scenario$recoveryFile)) {
+  if (!is.null.or.empty(scenario$recoveryFile)) {
     scenario$recoveryFile <- path.rel2abs(scenario$recoveryFile)
     file.check(scenario$recoveryFile, readable = TRUE,
-               text = "recovery file")
-    if (scenario$recoveryFile == scenario$logFile) {
+               text = paste0("recovery file ", quote.param("recoveryFile")))
+    
+    if (!is.null.or.empty(scenario$logFile)
+        && scenario$recoveryFile == scenario$logFile) {
       irace.error("log file and recovery file should be different ('",
                   scenario$logFile, "'")
     }
-  }
-
-  quote.param <- function(name)
-  {
-    return(paste0("'", name, "' (", .irace.params.def[name, "long"], ")"))
+  } else {
+    scenario$recoveryFile  <- NULL
   }
   
   if (is.null.or.empty(scenario$targetRunnerParallel)) {
@@ -285,7 +292,7 @@ checkScenario <- function(scenario = defaultScenario())
     if (is.character(scenario$targetRunner)) {
       scenario$targetRunner <- path.rel2abs(scenario$targetRunner)
       file.check (scenario$targetRunner, executable = TRUE,
-                  text = "target runner")
+                  text = paste0("target runner ", quote.param("targetRunner")))
       .irace$target.runner <- target.runner.default
     } else {
       irace.error("'targetRunner' must be a function or an executable program")
