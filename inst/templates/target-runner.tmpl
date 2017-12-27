@@ -16,6 +16,11 @@
 # This script should print one numerical value: the cost that must be minimized.
 # Exit with 0 if no error, with 1 in case of error
 ###############################################################################
+error() {
+    echo "`TZ=UTC date`: $0: error: $@"
+    exit 1
+}
+
 EXE=~/bin/program
 FIXED_PARAMS=""
 
@@ -23,7 +28,7 @@ CONFIG_ID=$1
 INSTANCE_ID=$2
 SEED=$3
 INSTANCE=$4
-shift 4 || exit 1
+shift 4 || error "Not enough parameters"
 CONFIG_PARAMS=$*
 
 STDOUT=c${CONFIG_ID}-${INSTANCE_ID}.stdout
@@ -42,11 +47,6 @@ fi
 # (If you wish to ignore segmentation faults you can use '{}' around
 # the command.)
 $EXE ${FIXED_PARAMS} -i $INSTANCE --seed ${SEED} ${CONFIG_PARAMS} 1> ${STDOUT} 2> ${STDERR}
-
-error() {
-    echo "`TZ=UTC date`: error: $@"
-    exit 1
-}
 
 # # This may be used to introduce a delay if there are filesystem
 # # issues.

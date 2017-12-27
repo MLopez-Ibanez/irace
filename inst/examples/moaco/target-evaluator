@@ -21,7 +21,7 @@
 # This script should print a single numerical value
 ###############################################################################
 error() {
-    echo "`TZ=UTC date`: error: $@"
+    echo "`TZ=UTC date`: $0: error: $@"
     if [ -s error.log ]; then
         cat error.log
     fi
@@ -29,7 +29,7 @@ error() {
 }
 
 error_sleep() {
-    echo "`TZ=UTC date`: error: $@" >> error.log
+    echo "`TZ=UTC date`: $0: error: $@" >> error.log
     sleep 60
 }
 

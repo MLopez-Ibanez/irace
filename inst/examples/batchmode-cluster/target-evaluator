@@ -20,21 +20,21 @@
 # This script should print one numerical value: the cost that must be minimized.
 # Exit with 0 if no error, with 1 in case of error
 ###############################################################################
+error() {
+    echo "`TZ=UTC date`: $0: error: $@"
+    exit 1
+}
+
 CANDIDATE="$1"
 INSTANCEID="$2"
 SEED="$3"
 INSTANCE="$4"
 TOTALCANDIDATES="$5"
-shift 5 || error "Not enough parameters to $0"
+shift 5 || error "Not enough parameters"
 ALLIDS=$*
 
 STDOUT=c${CANDIDATE}-${INSTANCEID}.stdout
 STDERR=c${CANDIDATE}-${INSTANCEID}.stderr
-
-error() {
-    echo "`TZ=UTC date`: error: $@"
-    exit 1
-}
 
 ALLFILES=
 for FILENAME in $ALLIDS; do

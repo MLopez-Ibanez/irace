@@ -19,6 +19,11 @@
 # This script should print nothing.
 # Exit with 0 if no error, with 1 in case of error
 ###############################################################################
+error() {
+    echo "`TZ=UTC date`: $0: error: $@"
+    exit 1
+}
+
 EXE=~/bin/program
 FIXED_PARAMS=""
 
@@ -26,17 +31,11 @@ CANDIDATE=$1
 INSTANCEID=$2
 SEED=$3
 INSTANCE=$4
-shift 4 || error "Not enough parameters to $0"
+shift 4 || error "Not enough parameters"
 CAND_PARAMS=$*
 
 STDOUT=c${CANDIDATE}-${INSTANCEID}.stdout
 STDERR=c${CANDIDATE}-${INSTANCEID}.stderr
-
-error() {
-    echo "`TZ=UTC date`: error: $@"
-    exit 1
-}
-
 
 # PBS just prints the jobID, so it should be good to go.
 exec qsub <<EOF

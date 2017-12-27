@@ -20,6 +20,19 @@
 # RETURN VALUE:
 # This script should print a single numerical value
 ###############################################################################
+error() {
+    echo "`TZ=UTC date`: $0: error: $@"
+    if [ -s error.log ]; then
+        cat error.log
+    fi
+    exit 1
+}
+
+error_sleep() {
+    echo "`TZ=UTC date`: $0: error: $@" >> error.log
+    sleep 60
+}
+
 NORMALIZATION_RANGE="'1 2'"
 REFERENCE_POINT="'1.1 1.1'"
 
@@ -89,18 +102,4 @@ fi
 COST=$(eval "$HV ${STDOUT}_nor" || error "calculating hypervolume failed")
 # Negative because hypervolume is maximised but irace minimises.
 echo "-$COST"
-
-error() {
-    echo "`TZ=UTC date`: error: $@"
-    if [ -s error.log ]; then
-        cat error.log
-    fi
-    exit 1
-}
-
-error_sleep() {
-    echo "`TZ=UTC date`: error: $@" >> error.log
-    sleep 60
-}
-
 exit 0

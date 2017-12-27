@@ -14,6 +14,10 @@
 # This script should print nothing.
 # Exit with 0 if no error, with 1 in case of error
 ###############################################################################
+error() {
+    echo "`TZ=UTC date`: $0: oerror: $@"
+    exit 1
+}
 
 # NOTE: You need to customize EXE and FIXED_PARAMS below.  If you change the
 # rest, you need to also update target-evaluator
@@ -28,7 +32,7 @@ INSTANCEID="$2"
 SEED="$3"
 INSTANCE="$4"
 # All other parameters are the candidate parameters to be passed to program
-shift 4 || error "Not enough parameters to $0"
+shift 4 || error "Not enough parameters"
 CAND_PARAMS=$*
 
 STDOUT=c${CANDIDATE}-${INSTANCEID}.stdout
@@ -42,8 +46,3 @@ $EXE ${FIXED_PARAMS} ${CAND_PARAMS} 1> $STDOUT 2> $STDERR
 # We do this to make sure this target-runner terminated correctly in target-evaluator
 echo "OK" >> $STDERR
 exit 0
-
-error() {
-    echo "`TZ=UTC date`: error: $@"
-    exit 1
-}
