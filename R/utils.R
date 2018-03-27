@@ -3,7 +3,7 @@
 # FIXME: Reload dynamic libraries? See ?dyn.load
 irace.reload.debug <- function(package = "irace")
 {
-  pkg <- paste("package:", package, sep ="")
+  pkg <- paste0("package:", package)
   try(detach(pkg, character.only = TRUE, unload = TRUE))
   library(package, character.only = TRUE)
   options(error = if (interactive()) utils::recover else
@@ -89,7 +89,7 @@ irace.assert <- function(exp)
 {
   if (exp) return(invisible())
   mc <- match.call()[[2]]
-  msg <- paste(deparse(mc), " is not TRUE\n", .irace.bug.report, sep = "")
+  msg <- paste0(deparse(mc), " is not TRUE\n", .irace.bug.report)
   # FIXME: It would be great if we could save into a file the state of
   # the function that called this one.
   traceback(1)
@@ -188,7 +188,7 @@ is.null.or.na <- function(x)
 
 is.null.or.empty <- function(x)
 {
-  is.null(x) || (length(x) == 1 && is.character(x) && x == "")
+  is.null(x) || (!suppressWarnings(is.na(x)) && length(x) == 1 && is.character(x) && x == "")
 }
 
 is.bytecode <- function(x) typeof(x) == "bytecode"
@@ -433,6 +433,24 @@ extractElites <- function(configurations, nbElites)
   return (elites)
 }
 
+#' removeConfigurationsMetaData
+#'
+#' Remove the columns with "metadata" of a matrix containing some
+#' configuration configurations. These "metadata" are used internaly
+#' by \pkg{irace}. This function can be used e.g. before printing
+#' the configurations, to output only the values for the parameters
+#' of the configuration without data possibly useless to the user.
+#'   
+#' @param configurations A matrix containg the configurations, one per row.
+#' 
+#' @return The same matrix without the "metadata".
+#'    
+#' @seealso 
+#'   \code{\link{configurations.print.command}} to print the configurations as command lines.
+#'   \code{\link{configurations.print}} to print the configurations as a data frame.
+#' 
+#' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
+#' @export
 ## Keep only parameters values
 removeConfigurationsMetaData <- function(configurations)
 {
@@ -441,6 +459,20 @@ removeConfigurationsMetaData <- function(configurations)
                      drop = FALSE])
 }
 
+#' Print configurations as a data frame
+#' 
+#' @param configurations a data frame containing the configurations (one per row).
+#' @param metadata A Boolean specifying whether to print the metadata or
+#' not. The metadata are data for the configurations (additionally to the
+#' value of each parameter) used by \pkg{irace}.
+#' 
+#' @return None.
+#'
+#' @seealso
+#'  \code{\link{configurations.print.command}} to print the configurations as command-line strings.
+#' 
+#' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
+#' @export
 configurations.print <- function(configurations, metadata = FALSE)
 {
   rownames(configurations) <- configurations$.ID.
@@ -450,6 +482,22 @@ configurations.print <- function(configurations, metadata = FALSE)
   print(as.data.frame(configurations, stringsAsFactors = FALSE))
 }
 
+#' Print configurations as command-line strings.
+#' 
+#' Prints configurations after converting them into a representation for the
+#' command-line.
+#' 
+#' @param configurations a data frame containing the configurations (one per row).
+#' @param parameters A data structure similar to that provided by the 
+#' \code{\link{readParameters}} function.
+#' 
+#' @return None.
+#'
+#' @seealso
+#'  \code{\link{configurations.print}} to print the configurations as a data frame.
+#' 
+#' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
+#' @export
 configurations.print.command <- function(configurations, parameters)
 {
   if (nrow(configurations) <= 0) return(invisible())
@@ -626,7 +674,7 @@ runcommand <- function(command, args, id, debugLevel)
   # warning and in the attribute ‘"status"’ of the result: an attribute
   # ‘"errmsg"’ may also be available.
   if (!is.null(err)) {
-    err <- paste(err, collapse ="\n")
+    err <- paste(err, collapse = "\n")
     if (!is.null(attr(output, "errmsg")))
       output <- paste(sep = "\n", attr(output, "errmsg"))
     if (debugLevel >= 2L)
@@ -643,3 +691,30 @@ runcommand <- function(command, args, id, debugLevel)
 
 # Safe sampling of vector: 
 resample <- function(x, ...) x[sample.int(length(x), ...)]
+
+# Rounds up the number x to the specified number of decimal places 'digits'.
+ceiling.digits <- function(x, digits)
+{
+   multiple <- 10^-digits
+   div <- x / multiple
+   int_div <- trunc(div)
+   return (int_div * multiple + ceiling(div - int_div) * multiple)
+}
+
+# ceil.decimal <- function(x, d) { 
+  # # get the significant digits in the integer part.
+  # ssd <- x * 10^(d)
+  # # get the non significant digits
+  # nsd <- ssd - floor(ssd)
+
+  # ssd <- trunc(ssd)
+  # sel <- nsd > 0 | ssd==0
+  # ssd[sel] <- ssd[sel] + 1
+  # x2 <- ssd/10^(d)
+  # return(x2)
+# }
+
+is.file.extension <- function(filename, ext)
+{
+  return(substring(filename, nchar(filename) + 1 - nchar(ext)) == ext)
+}

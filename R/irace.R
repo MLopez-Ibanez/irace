@@ -1,3 +1,4 @@
+
 # FIXME: It may be faster to create a single expression that concatenates all
 # the elements of forbidden using '|'
 checkForbidden <- function(configurations, forbidden)
@@ -420,45 +421,176 @@ addInstances <- function(scenario, instancesList, n.instances)
 do.experiments <- function(configurations, ninstances, scenario, parameters)
 {
   output <- lapply(1:ninstances, race.wrapper, configurations = configurations, 
+                   bounds = if (scenario$capping) rep(scenario$boundMax, nrow(configurations))
+                            else NULL,
                    which.alive = 1:nrow(configurations), which.exe = 1:nrow(configurations), 
                    parameters = parameters, scenario = scenario)
                                         
   Results <- matrix(nrow = ninstances, ncol = nrow(configurations),
                     dimnames = list(1:ninstances, as.character(configurations[, ".ID."])))
-  experimentLog <- matrix(nrow = 0, ncol = 3,
-                          dimnames = list(NULL, c("instance", "configuration", "time")))
+  experimentLog <- matrix(nrow = 0, ncol = 4,
+                          dimnames = list(NULL, c("instance", "configuration", "time", "bound")))
                           
   # Extract results
-  ## FIXME: There must be a faster way to do this.
+  ## FIXME: There must be a faster way to do this. See what we do in race.R
   for (j in 1:ninstances) {
     for (i in 1:nrow(configurations)) {
-      Results[j, i] <- output[[j]][[i]]$cost
+      cost <- output[[j]][[i]]$cost
+      if (scenario$capping)
+        cost <- applyPAR(cost, scenario)
+      Results[j, i] <- cost
       output.time   <- output[[j]][[i]]$time
       irace.assert(!is.null(output.time))
       ## FIXME: It would be more efficient to build three vectors and cbind them once as:
       # experimentLog <- cbind(instance = rep(1:ninstances, nrow(configurations)), configuration = configurations[, ".ID."], time = output.time)
       experimentLog <- rbind(experimentLog,
-                             c(j, configurations[i, ".ID."], output.time))
+                             c(j, configurations[i, ".ID."], output.time,
+                               if (scenario$capping) scenario$boundMax else NA))
     }
   }
   
   return (list(experiments = Results, experimentLog = experimentLog))
 }
 
-## FIXME: Move this to the irace.Rd file
-#' High-level function to use iterated Race
+## Gets the elite configurations time matrix from the experiment log
+## FIXME: Make this function re-use previous matrix?
+generateTimeMatrix <- function(elites, experimentLog) {
+  
+  selectValues <- function(value) {
+    aux <- selectedLog[selectedLog[,"instance"] == value,
+                       c("configuration", "time", "bound"), drop=FALSE]
+    # FIXME: I think this is the same as pmin(experimentLog[,"time"], experimentLog[,"bound"])
+    res <- apply(aux, 1, function(x) min(x["time"], x["bound"]))
+    resultsTime[value, as.character(aux[,"configuration"])] <<- res
+    #aux[,"time"]
+  }
+
+  # MANUEL: This is quite a hack, what is this trying to do?
+  environment(selectValues) <- environment()
+  selectedLog <- experimentLog[experimentLog[,"configuration"] %in% elites$.ID.,, drop=FALSE]
+  # FIXME: Are the instance IDs numeric?
+  instances <- 1:max(selectedLog[,"instance"])
+  resultsTime <- matrix(NA, nrow = length(instances), ncol = nrow(elites), 
+                        dimnames = list(instances, elites$.ID.))
+                  
+  sapply(instances, selectValues)
+  return(resultsTime)           
+}
+
+#' irace
+#'
+#' \code{irace} implements iterated Race. It receives some parameters to be tuned 
+#'   and returns the best configurations found, namely, the elite configurations 
+#'   obtained from the last iterations (and sorted by rank).
 #' 
-#' This function implement iterated Race. It receives some parameters to be tuned and returns the best
-#' configurations found, namely, the elite configurations obtained from the last iterations (and sorted by rank).
+#' @param scenario Data structure containing \pkg{irace} settings.The data structure 
+#'   has to be the one returned by the function \code{\link{defaultScenario}} and 
+#'   \code{\link{readScenario}}.
+#' @param parameters Data structure containing the parameter definition. The data 
+#'   structure has to be the one returned by the function \code{\link{readParameters}}.
 #'
-#' @param parameter data-structure containing the parameter definition. The data-structure has to be the one
-#' returned by the function \code{readParameters()}. See documentation of this function for details.
+#' @details The function \code{irace} executes the tuning procedure using 
+#'  the information provided in \code{scenario} and \code{parameters}. Initially it checks 
+#'  the correctness of \code{scenario} and recovers a previous execution if 
+#'  \code{scenario$recoveryFile} is set. A R data file log of the execution is created 
+#'  in \code{scenario$logFile}.
 #'
-#' @param scenario data-structure containing irace settings.The data-structure has to be the one
-#' returned by the function \code{readScenario()}. See documentation of this function for details.
-#' @return Elites configurations obtained after the last iteration
-#' @callGraphPrimitives
-#' @note This is a note for the function \code{iteratedRace}
+#' @return A data frame with the set of best algorithm configurations found by \pkg{irace}. 
+#'  The data frame has the following columns:
+#'  \describe{
+#'    \item{\code{.ID.}}{Internal id of the candidate configuration.}
+#'    \item{\code{Parameter names}}{One column per parameter name in \code{parameters}.}
+#'    \item{\code{.PARENT.}}{Internal id of the parent candidate configuration.}
+#'  }
+#'  Additinally, this function saves an R data file containing an object called
+#'  \code{iraceResults}. The path of the file is indicated in \code{scenario$logFile}. 
+#'  The \code{iraceResults} object is a list with the following structure:
+#'  
+#' \describe{
+#'
+#'     \item{\code{scenario}}{The scenario R object containing the \pkg{irace}
+#'     options used for the execution. See \code{\link{defaultScenario}} help
+#'     for more information.}
+#'  
+#'     \item{\code{parameters}}{The parameters R object containing the
+#'     description of the target algorithm parameters. See
+#'     \code{\link{readParameters}}.}
+#'  
+#'     \item{\code{allConfigurations}}{The target algorithm configurations
+#'     generated by \pkg{irace}. This object is a data frame, each row is a
+#'     candidate configuration, the first column (\code{.ID.}) indicates the
+#'     internal identifier of the configuration, the following columns
+#'     correspond to the parameter values, each column named as the parameter
+#'     name specified in the parameter object. The final column
+#'     (\code{.PARENT.})  is the identifier of the configuration from which
+#'     model the actual configuration was sampled.}
+#'   
+#'     \item{\code{allElites}}{A list that contains one element per iteration,
+#'     each element contains the internal identifier of the elite candidate
+#'     configurations of the corresponding iteration (identifiers correspond to
+#'     \code{allConfigurations$.ID.}).}
+#'     
+#'     \item{\code{iterationElites}}{A vector containing the best candidate
+#'     configuration internal identifier of each iteration. The best
+#'     configuration found corresponds to the last one of this vector.}
+#'     
+#'     \item{\code{experiments}}{A matrix with configurations as columns and
+#'     instances as rows. Column names correspond to the internal identifier of
+#'     the configuration (\code{allConfigurations$.ID.}).}
+#'     
+#'     \item{\code{experimentLog}}{A matrix with columns \code{iteration,
+#'     instance, configuration, time}.  This matrix contains the log of all the
+#'     experiments that \pkg{irace} performs during its execution.  The
+#'     instance column refers to the index of the \code{scenario$instancesList}
+#'     data frame. Time is saved ONLY when reported by the targetRunner.}
+#'
+#'     \item{\code{softRestart}}{A logical vector that indicates if a soft
+#'     restart was performed on each iteration. If \code{FALSE}, then no soft
+#'     restart was performed.}
+#'
+#'     \item{\code{state}}{A list that contains the state of \pkg{irace}, the
+#'     recovery is done using the information contained in this object.}
+#'     
+#'     \item{\code{testing}}{A list that constains the testing results. The
+#'     elements of this list are: \code{experiments} a matrix with the testing
+#'     expriments of the selected configurations in the same format as the
+#'     explained above and \code{seeds} a vector with the seeds used to execute
+#'     each experiment.}
+#'
+#' }
+#'
+#' @examples
+#' \dontrun{
+#' parameters <- readParameters("parameters.txt")
+#' scenario <- readScenario(filename = "scenario.txt",
+#'                          scenario = defaultScenario())
+#' irace(scenario = scenario, parameters = parameters)
+#' }
+#'
+#' @seealso
+#'  \describe{
+#'  \item{\code{\link{irace.main}}}{a higher-level command-line interface to \code{irace}.}
+#'  \item{\code{\link{readScenario}}}{for reading a configuration scenario from a file.}
+#'  \item{\code{\link{readParameters}}}{read the target algorithm parameters from a file.}
+#'  \item{\code{\link{defaultScenario}}}{returns the default scenario settings of \pkg{irace}.}
+#'  \item{\code{\link{checkScenario}}}{to check that the scenario is valid.}
+#' }
+#' 
+#' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
+#' @export
+## FIXME: Move this to the irace.Rd file
+# High-level function to use iterated Race
+# 
+# This function implement iterated Race. It receives some parameters to be tuned and returns the best
+# configurations found, namely, the elite configurations obtained from the last iterations (and sorted by rank).
+#
+# @param parameter data-structure containing the parameter definition. The data-structure has to be the one
+# returned by the function \code{readParameters()}. See documentation of this function for details.
+#
+# @param scenario data-structure containing irace settings.The data-structure has to be the one
+# returned by the function \code{readScenario()}. See documentation of this function for details.
+# @return Elites configurations obtained after the last iteration
+# @note This is a note for the function \code{iteratedRace}
 irace <- function(scenario, parameters)
 {
   catInfo <- function(..., verbose = TRUE) {
@@ -530,10 +662,9 @@ irace <- function(scenario, parameters)
     iraceResults$iterationElites <- NULL
     iraceResults$allElites <- list()
     iraceResults$experiments <- matrix(nrow = 0, ncol = 0)
-    iraceResults$experimentLog <- matrix(nrow = 0, ncol = 4,
+    iraceResults$experimentLog <- matrix(nrow = 0, ncol = 5,
                                          dimnames = list(NULL,
-                                           c("iteration", "instance", "configuration", "time")))
-
+                                           c("iteration", "instance", "configuration", "time", "bound")))
     model <- NULL
     nbConfigurations <- 0
     eliteConfigurations <- data.frame()
@@ -577,7 +708,7 @@ irace <- function(scenario, parameters)
                  "% of ", scenario$maxTime, " = ", estimationTime, "\n")
 
       # Estimate the number of configurations to be used
-      nconfigurations <- max(2, floor(scenario$parallel/ninstances))
+      nconfigurations <- max(2, floor(scenario$parallel / ninstances))
       
       next.configuration <- 1
       while (TRUE) {
@@ -617,10 +748,10 @@ irace <- function(scenario, parameters)
         # that we can execute in parallel.
         new.conf <- min(new.conf, max(1, floor(scenario$parallel / ninstances)))
 
-        if (timeUsed >= estimationTime || new.conf == 0) {
+        if (timeUsed >= estimationTime || new.conf == 0 || nconfigurations == 1024) {
           break
         } else {
-          nconfigurations <- nconfigurations + new.conf
+          nconfigurations <- min(1024, nconfigurations + new.conf)
         }
       }
   
@@ -659,7 +790,7 @@ irace <- function(scenario, parameters)
                                  scenario = scenario)) {
         break;
       }
-      irace.note("Warning:",
+      irace.note("\nWarning:",
                  " with the current settings and estimated time per run,",
                  " irace will not have enough budget to execute the minimum",
                  " number of iterations.",
@@ -687,6 +818,12 @@ irace <- function(scenario, parameters)
           else paste0("# time budget: ", scenario$maxTime - timeUsed, "\n"),
           "# mu: ", max(scenario$mu, scenario$firstTest), "\n",
           "# deterministic: ", scenario$deterministic, "\n",
+          if (scenario$capping) 
+            paste0("# capping: ", scenario$cappingType, "\n",
+                   "# type bound: ", scenario$boundType, "\n", 
+                   "# maximum bound: ", scenario$boundMax, "\n", 
+                   "# par bound: ", scenario$boundPar, "\n", 
+                   "# bound digits: ", scenario$boundDigits, "\n"),
           verbose = FALSE)
 
   while (TRUE) {
@@ -762,7 +899,7 @@ irace <- function(scenario, parameters)
                             nElites = 0, nOldInstances = 0,
                             newInstances = 0)
     }
-
+    
     # If a value was given as a parameter, then this value limits the maximum,
     # but if we have budget only for less than this, then we have run out of
     # budget.
@@ -779,6 +916,15 @@ irace <- function(scenario, parameters)
         return (eliteConfigurations)
       }
     }
+    
+    # Reduce the number of elite configurations in the first iteration when needed.
+    # This is due to budget estimation. 
+    # NOTE: only in the first iteration is possible nbConfigurations==nrow(eliteConfigurations)
+    if (indexIteration==1 && nbConfigurations < nrow(eliteConfigurations)) {
+    	  eliteRanks <- overall.ranks(iraceResults$experiments, stat.test = scenario$testType)
+      eliteConfigurations <- eliteConfigurations[order(eliteRanks), ]
+      eliteConfigurations <- eliteConfigurations[1:nbConfigurations, ]
+    } 
 
     # Stop if the number of configurations to test is NOT larger than the minimum.
     if (nbConfigurations <= minSurvival) {
@@ -790,7 +936,8 @@ irace <- function(scenario, parameters)
 
     # Stop if  the number of configurations to produce is not greater than
     # the number of elites.
-    if (nbConfigurations <= nrow(eliteConfigurations)) {
+    if (nbConfigurations < nrow(eliteConfigurations) ||
+        (nbConfigurations == nrow(eliteConfigurations) && indexIteration > 1)) {
       catInfo("Stopped because ",
               "there is not enough budget left to race newly sampled configurations")
       #(number of elites  + 1) * (mu + min(5, indexIteration)) > remainingBudget" 
@@ -842,25 +989,25 @@ irace <- function(scenario, parameters)
                  newConfigurations)
         allConfigurations <- rbind(allConfigurations, newConfigurations)
         rownames(allConfigurations) <- allConfigurations$.ID.
+        raceConfigurations <- allConfigurations[1:nbConfigurations,]
       } else if (nbNewConfigurations < 0) {
         # We let the user know that not all configurations will be used
         if (nbUserConfigurations > nbConfigurations) {
           catInfo("Only ", nbConfigurations,
-                  " from the configurations file will be used",
+                  " from the initial configurations will be used",
                   verbose = FALSE)
-          # LESLIE: should we remove them in this case??
-          # if (scenario$maxTime <= 0 && nbUserConfigurations > nbConfigurations)
-          #   allConfigurations <- allConfigurations[1:nbConfigurations,]
         }
         
         # This is made only in case that the number of configurations used in the
         # time estimation is more than needed.
-        if (nrow(eliteConfigurations) > nbConfigurations) {
-          eliteConfigurations <- eliteConfigurations[1:nbConfigurations, ]
+        if (nrow(eliteConfigurations) == nbConfigurations) {
+          raceConfigurations <- eliteConfigurations
+        } else{
+          raceConfigurations <- allConfigurations[1:nbConfigurations,]
         }
         
       }
-      raceConfigurations <- allConfigurations[1:nbConfigurations,]
+      
     } else {
       # How many new configurations should be sampled?
       nbNewConfigurations <- nbConfigurations - nrow(eliteConfigurations)
@@ -933,7 +1080,11 @@ irace <- function(scenario, parameters)
     # Get data from previous elite tests 
     elite.data <- NULL
     if (scenario$elitist && nrow(eliteConfigurations) > 0) {
-      elite.data <- iraceResults$experiments[, as.character(eliteConfigurations[,".ID."]), drop=FALSE]
+      elite.data <- list()
+      elite.data[["experiments"]] <- iraceResults$experiments[, as.character(eliteConfigurations[,".ID."]), drop=FALSE]
+      if (scenario$capping)
+        elite.data[["time"]] <- generateTimeMatrix(elites = eliteConfigurations, 
+                                                   experimentLog = iraceResults$experimentLog)
     }
     
     .irace$next.instance <- max(nrow(iraceResults$experiments), 0) + 1
@@ -969,7 +1120,7 @@ irace <- function(scenario, parameters)
     # Merge new results
     iraceResults$experiments <- merge.matrix (iraceResults$experiments,
                                               raceResults$experiments)
-    
+
     experimentsUsedSoFar <- experimentsUsedSoFar + raceResults$experimentsUsed
     # Update remaining budget
     if (scenario$maxTime > 0) { 

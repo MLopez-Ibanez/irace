@@ -5,11 +5,17 @@ Description: Iterated race is an extension of the Iterated F-race method for
              the automatic configuration of optimization algorithms, that is,
              (offline) tuning their parameters by finding the most appropriate
              settings given a set of instances of an optimization problem.
-Version: 2.5
-Date: 2017-12-19
-Maintainer: Manuel López-Ibáñez <manuel.lopez-ibanez@manchester.ac.uk>
-Author: Manuel López-Ibáñez, Jérémie Dubois-Lacoste, Leslie Pérez Cáceres,
-        Thomas Stützle, Mauro Birattari, Eric Yuan and Prasanna Balaprakash
+Version: 3.0
+Date: 2018-03-26
+Authors@R: c(person("Manuel", "López-Ibáñez", role = c("aut", "cre"),
+                              email = "manuel.lopez-ibanez@manchester.ac.uk",
+                              comment = c(ORCID = "0000-0001-9974-1295")),
+             person("Jérémie", "Dubois-Lacoste", role = "aut"),
+             person("Leslie", "Pérez Cáceres", role = c("aut")),
+             person("Thomas", "Stützle", role = "aut"),
+             person("Mauro", "Birattari", role = "aut"),
+             person("Eric", "Yuan", role = "ctb"),
+             person("Prasanna", "Balaprakash", role = "ctb"))
 Depends: R (>= 2.15.0)
 Imports:
         stats,
@@ -25,3 +31,4 @@ URL: http://iridia.ulb.ac.be/irace
 ByteCompile: yes
 LazyData: yes
 Encoding: UTF-8
+RoxygenNote: 6.0.1

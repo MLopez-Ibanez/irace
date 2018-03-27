@@ -29,6 +29,10 @@ initialiseModel <- function (parameters, configurations, digits)
     }
     for (indexConfig in seq_len(nbConfigurations)) {
       idCurrentConfig <- as.character(configurations[indexConfig, ".ID."])
+      # Assign current parameter value to model
+      if (type == "i" || type == "r") {
+        value[2] <- configurations[indexConfig, currentParameter]
+      }
       param[[idCurrentConfig]] <- value
     }
     model[[currentParameter]] <- param
@@ -69,6 +73,10 @@ updateModel <- function (parameters, eliteConfigurations, oldModel,
         idParent <- as.character(idParent)
         # cat("The parent found is ", idParent, "\n")
         probVector <- oldModel[[currentParameter]][[idParent]]
+        #Change the current parameter value of the model
+        if (type %in% c("i", "r") &&
+            !is.na(eliteConfigurations[idCurrentConfiguration,currentParameter]))
+          probVector[2] <- eliteConfigurations[idCurrentConfiguration,currentParameter]
       }
       # cat("probVector: ", probVector)
 
@@ -106,11 +114,11 @@ updateModel <- function (parameters, eliteConfigurations, oldModel,
       } else {
         irace.assert(type %in% c("i", "r", "o"))
         # Not really a vector but stdDev factor
-        newProbVector <- probVector * ((1 / nbNewConfigurations)^(1 / parameters$nbVariable))
+        newProbVector <- probVector[1] * ((1 / nbNewConfigurations)^(1 / parameters$nbVariable))
         if (transform == "log") {
-          probVector <- log(probVector / newProbVector)
+          probVector[1] <- log(probVector[1] / newProbVector)
         } else {
-          probVector <- newProbVector
+          probVector[1] <- newProbVector
         }
       }
       newModel[[currentParameter]][[idCurrentConfiguration]] <- probVector
@@ -153,16 +161,18 @@ restartConfigurations <- function (configurations, restart.ids, model, parameter
       } else {
         if (type == "i" || type == "r") {
           value <- init.model.numeric(param, parameters, type, digits)
+          # We keep the value of the configuration as last known
+          value[2] <- configurations[id, param]
         } else {
           irace.assert(type == "o")
           value <- (length(parameters$domain[[param]]) - 1) / 2
         }
         # Bring back the value 2 iterations or to the second iteration value.
-        model[[param]][[id]] <-
-          min(model[[param]][[id]] * (nbConfigurations^(2 / parameters$nbVariable)),
-              value * ((1 / nbConfigurations)^(1 / parameters$nbVariable)))
+        model[[param]][[id]][1] <-
+          min(model[[param]][[id]][1] * (nbConfigurations^(2 / parameters$nbVariable)),
+              value[1] * ((1 / nbConfigurations)^(1 / parameters$nbVariable)))
         if (parameters$transform[[param]] == "log") {
-            model[[param]][[id]] <- log(model[[param]][[id]])
+            model[[param]][[id]][1] <- log(model[[param]][[id]][1])
         }
       }
     }
@@ -171,6 +181,8 @@ restartConfigurations <- function (configurations, restart.ids, model, parameter
 }
 
 # Initialise model in case of numerical variables.
+# it retuns an array size 2, first number indicates the 
+# standard deviation and second the last known value (initially NA)
 init.model.numeric <- function(param, parameters, type, digits)
 {
   lowerBound <- paramLowerBound(param, parameters)
@@ -191,5 +203,7 @@ init.model.numeric <- function(param, parameters, type, digits)
   } else {
     value <- round(value, digits)
   }
-  return(value)
+ # 
+  model <- c(value, NA)
+  return(model)
 }

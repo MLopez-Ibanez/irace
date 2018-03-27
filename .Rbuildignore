@@ -7,6 +7,7 @@ DEVEL-README
 \.patch$
 \.rej$
 \.svn$
+\.bak$
 ^.+\.data
 ^Instances$
 ^Makefile$
@@ -36,7 +37,7 @@ DEVEL-README
 ^vignettes/\.auctex-auto
 ^vignettes/figure
 ^vignettes/optbib
-^vignettes/.*log
+^vignettes/.*log$
 ^vignettes/.*blg
 ^vignettes/.*bbl
 ^vignettes/.*synctex.gz
@@ -44,3 +45,5 @@ DEVEL-README
 ^vignettes/.*dvi
 ^vignettes/_region_.tex
 ^web
+^scripts
+

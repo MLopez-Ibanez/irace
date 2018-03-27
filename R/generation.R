@@ -147,12 +147,15 @@ sampleModel <- function (parameters, eliteConfigurations, model,
           # The parameter is not a fixed and should be sampled
         } else if (currentType %in% c("i", "r")) {
           mean <- as.numeric(eliteParent[currentParameter])
+          # If there is not value we obtain it from the model
+          if (is.na(mean)) mean <- model[[currentParameter]][[as.character(idEliteParent)]][2]
           if (is.na(mean)) {
             # The elite parent does not have any value for this
             # parameter, let's sample uniformly.
+            ## FIXME: We should save the last used parameter in the model and use it here.
             newVal <- sample.numerical(currentParameter, parameters, currentType, digits)
           } else {
-            stdDev <- model[[currentParameter]][[as.character(idEliteParent)]]
+            stdDev <- model[[currentParameter]][[as.character(idEliteParent)]][1]
             newVal <- sample.numerical(currentParameter, parameters, currentType, digits, mean, stdDev)
           }
         } else if (currentType == "o") {
@@ -162,6 +165,7 @@ sampleModel <- function (parameters, eliteConfigurations, model,
           if (is.na(value)) {
             # The elite parent does not have any value for this
             # parameter, let's sample uniformly
+            ## FIXME: We should save the last used parameter in the model and use it here.
             newVal <- sample(possibleValues, 1)
           } else {
             # Find the position within the vector of possible
@@ -189,7 +193,7 @@ sampleModel <- function (parameters, eliteConfigurations, model,
         configuration[[p]] <- newVal
       }
       
-      configuration <- as.data.frame(configuration, stringsAsFactors=FALSE)
+      configuration <- as.data.frame(configuration, stringsAsFactors = FALSE)
       if (!is.null(repair)) {
         configuration <- repair(configuration, parameters, digits)
       }

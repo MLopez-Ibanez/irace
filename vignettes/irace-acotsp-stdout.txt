@@ -1,0 +1,83 @@
+*******************************************************************************
+* irace: An implementation in R of Iterated Race
+* Version: 3.0.1993:1995M
+* Copyright (C) 2010-2018
+* Manuel Lopez-Ibanez     <manuel.lopez-ibanez@manchester.ac.uk>
+* Jeremie Dubois-Lacoste  
+* Leslie Perez Caceres    <leslie.perez.caceres@ulb.ac.be>
+*
+* This is free software, and you are welcome to redistribute it under certain
+* conditions.  See the GNU General Public License for details. There is NO
+* WARRANTY; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+*
+* irace builds upon previous code from the race package:
+*
+* race: Racing methods for the selection of the best
+* Copyright (C) 2003 Mauro Birattari
+*******************************************************************************
+# installed at: /home/manu/R/x86_64-pc-linux-gnu-library/3.2/irace
+# called with: --parallel 2
+Warning: A default scenario file './scenario.txt' has been found and will be read
+# 2018-03-25 17:07:54 BST: Initialization
+# Elitist race
+# Elitist new instances: 1
+# Elitist limit: 2
+# nbIterations: 5
+# minNbSurvival: 5
+# nbParameters: 11
+# seed: 1625882921
+# confidence level: 0.95
+# budget: 1000
+# mu: 5
+# deterministic: FALSE
+
+# 2018-03-25 17:07:54 BST: Iteration 1 of 5
+# experimentsUsedSoFar: 0
+# remainingBudget: 1000
+# currentBudget: 200
+# nbConfigurations: 33
+  Markers:
+     x No test is performed.
+     - The test is performed and some configurations are discarded.
+     = The test is performed but no configuration is discarded.
+     ! The test is performed and configurations could be discarded but elite configurations are preserved.
+
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+| |   Instance|      Alive|       Best|      Mean best| Exp so far|  W time|  rho|KenW|  Qvar|
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+|x|          1|         33|          6|    23293574.00|         33|00:02:53|   NA|  NA|    NA|
+|x|          2|         33|          6|    23353615.50|         66|00:02:53|+0.93|0.97|0.0073|
+|x|          3|         33|          6|    23332104.33|         99|00:02:55|+0.94|0.96|0.0127|
+|x|          4|         33|          6|    24617613.50|        132|00:02:57|+0.95|0.96|0.0154|
+|!|          5|          6|          6|    25379789.40|        165|00:02:57|+0.26|0.41|0.5847|
+|=|          6|          6|          6|    25003070.33|        171|00:00:30|+0.18|0.31|0.6303|
+|=|          7|          6|          6|    25489348.57|        177|00:00:30|+0.19|0.31|0.6641|
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+Best-so-far configuration:           6    mean value:     25489348.57
+Description of the best-so-far configuration:
+  .ID. algorithm localsearch  alpha   beta    rho ants nnls     q0 dlb rasrank elitistants .PARENT.
+6    6       acs           3 3.0925 9.1777 0.6758   26   12 0.2937   1      NA          NA       NA
+
+# 2018-03-25 17:23:33 BST: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):
+   algorithm localsearch  alpha   beta    rho ants nnls     q0 dlb rasrank elitistants
+6        acs           3 3.0925 9.1777 0.6758   26   12 0.2937   1      NA          NA
+16       acs           3 2.1935 2.6582 0.0578   17   35 0.4327   1      NA          NA
+11       acs           3 4.0495 3.4822 0.5034   42   13 0.2156   1      NA          NA
+29       acs           3 2.1034 9.0054 0.3410   31   11 0.3320   0      NA          NA
+21      mmas           3 2.6706 3.3727 0.2954   13   25     NA   1      NA          NA
+# 2018-03-25 17:23:33 BST: Iteration 2 of 5
+# experimentsUsedSoFar: 177
+# remainingBudget: 823
+# currentBudget: 205
+# nbConfigurations: 30
+  Markers:
+     x No test is performed.
+     - The test is performed and some configurations are discarded.
+     = The test is performed but no configuration is discarded.
+     ! The test is performed and configurations could be discarded but elite configurations are preserved.
+
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+| |   Instance|      Alive|       Best|      Mean best| Exp so far|  W time|  rho|KenW|  Qvar|
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+|x|          8|         30|         42|    28122785.00|         30|00:02:34|   NA|  NA|    NA|
+|x|          7|         30|         42|    28286852.00|         55|00:02:14|+0.97|0.99|0.0053|

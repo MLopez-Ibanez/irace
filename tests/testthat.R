@@ -1,5 +1,10 @@
 library(irace)
 
+# Reproducible results
+seed <- sample(2^30, 1)
+cat("Seed: ", seed, "\n")
+set.seed(seed)
+
 ## Functions ##########################################################
 f_rosenbrock <- function (x) {
   d  <- length(x)
@@ -41,11 +46,11 @@ target.runner <- function(experiment, scenario)
 ## target runner ###########################################################
 target.runner.reject <- function(experiment, scenario)
 {
-  if (runif(1) <= 0.2) return (list(cost = -Inf, call = toString(experiment)))
+  if (runif(1) <= 0.05) return (list(cost = -Inf, call = toString(experiment)))
   return (target.runner(experiment, scenario))
 }
 
-set.seed(2)
+
 weights <- rnorm(200, mean = 0.9, sd = 0.02)
 
 ## Run function ########################################################

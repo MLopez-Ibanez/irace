@@ -1,6 +1,39 @@
-# configurations: configuration structure in irace results (iraceResults$allConfigurations)
-# parameters: parameter structure (iraceResults$parameters)
-
+#' parameterFrequency
+#'
+#' \code{parameterFrequency} plots the frequency of the parameters values of 
+#'  a set of target algorithm configurations.
+#'   
+#' @param configurations Data frame containing target algorithms configurations 
+#'   in the format used by \pkg{irace}.
+#' @param parameters List of target algorithm parameters in the \pkg{irace} format.
+#' @param rows Number of plots per column.
+#' @param cols Number of plots per row.
+#' @param filename Filename prefix to generate the plots. If \code{NULL} the plot 
+#'   displayed but not saved.
+#' @param pdf.width Width for the pdf file generated.
+#' @param col Color of the bar plot.
+#' 
+#' @return  A set of plots showing the Frequency of parameters values. 
+#'  If a filename is provided this plots are saved in one or more files.
+#'
+#' @examples
+#' \donttest{
+#'  ## To use data obtained by irace
+#' 
+#'  # First, load the data produced by irace.
+#'  irace.logfile <- file.path(system.file(package="irace"), "exdata", "irace-acotsp.Rdata")
+#'  load(irace.logfile)
+#'  attach(iraceResults)
+#'  parameterFrequency(allConfigurations, parameters)
+#' }
+#'
+#' @seealso 
+#'  \code{\link{readParameters}} to obtain a valid parameter structure from a parameters file.
+#'  \code{\link{readConfigurationsFile}} to obtain a set of target algorithm configurations from 
+#'    a configurations file.
+#' 
+#' @author Manuel López-Ibáñez and Leslie Pérez Cáceres
+#' @export
 # TODO:
 # * change slightly background of conditional parameters
 #
@@ -167,6 +200,42 @@ parcoordlabel <- function (configurations, parameters, col = "green", lty = 1,
   invisible()
 }
 
+#' parallelCoordinatesPlot
+#'
+#' \code{parallelCoordinatesPlot}  plots a set of parameter configurations in 
+#'   parallel coordinates.
+#'   
+#' @param configurations Data frame containing target algorithms configurations 
+#'   in the format used by \pkg{irace}.
+#' @param parameters List of target algorithm parameters in the \pkg{irace} format.
+#' @param param_names Parameters names that should be included. Default: parameters$names.
+#' @param hierarchy If \code{TRUE} conditional parameters will be displayed in a different 
+#'   plot. Default \code{TRUE}.
+#' @param filename Filename prefix to generate the plots. If \code{NULL} the plot 
+#'   displayed but not saved.
+#' @param pdf.width Width for the pdf file generated.
+#' @param mar Margin to use for the plot. See \code{\link{par}}.
+#' 
+#' @return  A set of parallel coordinates plots showing the parameters values. 
+#'   If a filename is provided this plots are saved in one or more files.
+#'
+#' @examples
+#' \donttest{
+#'  ## To use data obtained by irace
+#'  # First, load the data produced by irace.
+#'  irace.logfile <- file.path(system.file(package="irace"), "exdata", "irace-acotsp.Rdata")
+#'  load(irace.logfile)
+#'  attach(iraceResults)
+#'  parallelCoordinatesPlot(allConfigurations, parameters, hierarchy = FALSE)
+#' }
+#'
+#' @seealso 
+#'  \code{\link{readParameters}} to obtain a valid parameter structure from a parameters file.
+#'  \code{\link{readConfigurationsFile}} to obtain a set of target algorithm configurations from 
+#'    a configurations file.
+#' 
+#' @author Manuel López-Ibáñez and Leslie Pérez Cáceres
+#' @export
 # TODO:
 # * add color scheme
 #
@@ -257,6 +326,22 @@ parallelCoordinatesPlot <-
 
 }
 
+#' Return the elite configurations of the final iteration.
+#' 
+#' @param iraceResults Object created by \pkg{irace} and saved in \code{scenario$logFile}.
+#' @param logFile Log file created by \pkg{irace}, this file must contain the 
+#' \code{iraceResults} object.
+#' @param n Number of elite configurations to return, if \code{n} is larger than the 
+#' number of configurations, then only the existing ones are returned.
+#' @param drop.metadata Remove metadata, such the configuration ID and
+#' the ID of the parent, from the returned configurations. See
+#' \code{\link{removeConfigurationsMetaData}}.
+#' 
+#' @return A data frame containing the elite configurations required.
+#'
+#' 
+#' @author Manuel López-Ibáñez and Leslie Pérez Cáceres
+#' @export
 getFinalElites <- function(iraceResults = NULL, logFile = NULL, n = 0,
                            drop.metadata = FALSE)
 {
@@ -286,7 +371,20 @@ getFinalElites <- function(iraceResults = NULL, logFile = NULL, n = 0,
   return(configurations)
 }
 
-
+#' Returns the configurations selected by ID.
+#' 
+#' @param iraceResults Object created by \pkg{irace} and saved in \code{scenario$logFile}.
+#' @param logFile Log file created by \pkg{irace}, this file must contain the 
+#' \code{iraceResults} object.
+#' @param ids The id or a vector of ids of the candidates configurations to obtain.
+#' @param drop.metadata Remove metadata, such the configuration ID and
+#' the ID of the parent, from the returned configurations. See
+#' \code{\link{removeConfigurationsMetaData}}.
+#' 
+#' @return A data frame containing the elite configurations required.
+#'
+#' @author Manuel López-Ibáñez and Leslie Pérez Cáceres
+#' @export
 ## Get configuration(s) by the id(s).
 ## iraceResults: object created by irace and saved in scenario$logFile.
 ## iraceLog: log file created by irace, this file must contain the iraceResults object.
@@ -318,7 +416,21 @@ getConfigurationById <- function(iraceResults = NULL, logFile = NULL,
   return(configurations)
 }
 
-
+#' Returns the configurations by the iteration in which they were executed.
+#'
+#' @param iraceResults (\code{NULL}) Object created by \pkg{irace} and saved in \code{scenario$logFile}.
+#' @param logFile (\code{NULL}) Log file created by \pkg{irace}, this file must contain the 
+#' \code{iraceResults} object.
+#' @param iterations The iteration number or a vector of iteration numbers from where 
+#'  the configurations should be obtained.
+#' @param drop.metadata (\code{FALSE}) Remove metadata, such the configuration ID and
+#' the ID of the parent, from the returned configurations. See
+#' \code{\link{removeConfigurationsMetaData}}.
+#' 
+#' @return A data frame containing the elite configurations required.
+#'
+#' @author Manuel López-Ibáñez and Leslie Pérez Cáceres
+#' @export
 ## Get configuration(s) by the iteration in which they were executed.
 ## iraceResults: object created by irace and saved in scenario$logFile.
 ## iraceLog: log file created by irace, this file must contain the iraceResults object.

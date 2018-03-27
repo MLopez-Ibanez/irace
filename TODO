@@ -64,6 +64,12 @@ TODO General (in order of importance):
  * Compute how many possible parameter configurations (w.r.t. discrete
    values) can be sampled.
 
+ * Compositional parameter values (parameter values that must sum up to 1 or
+   100) could be transformed into Euclidean space by using isometric log-ratio
+   transformation (Egozcue, J.J., et al., 2003. Isometric logratio
+   transformations for compositional data. Mathematical Geology)
+   or mixture models.   
+   
  * Detect the case where all possible parameter configurations can be sampled
    and there is still enough budget to do at least one test. In that case, it
    is not worth it to sample configurations and do several iterations. It is
@@ -226,7 +232,7 @@ DONE:
 
 
  * Add example of logarithmic/parameter conversions in target-runner.
-   [We know handle log conversion internally]
+   [We now handle log conversion internally]
 
  * oneParamUpperBound and oneParamLowerBound are too much. We can
    have a single function: paramBound that returns

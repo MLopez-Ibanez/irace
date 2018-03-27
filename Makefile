@@ -1,4 +1,4 @@
-PACKAGEVERSION=2.5
+PACKAGEVERSION=3.0
 PACKAGE=$(shell sh -c 'grep -F "Package: " DESCRIPTION | cut -f2 -d" "')
 # FIXME: This Makefile only works with this BINDIR!
 BINDIR=$(CURDIR)/..
@@ -12,6 +12,7 @@ PACKAGEDIR=$(CURDIR)
 FTP_COMMANDS="user anonymous anonymous\nbinary\ncd incoming\nput $(PACKAGE)_$(PACKAGEVERSION).tar.gz\nquit\n"
 WINBUILD_FTP_COMMANDS="user anonymous anonymous\nbinary\ncd R-release\nput $(PACKAGE)_$(PACKAGEVERSION).tar.gz\nquit\n"
 PDFLATEX=pdflatex -shell-escape -file-line-error -halt-on-error -interaction=nonstopmode "\input"
+SED=sed -i.bak
 
 ## Do we have svnversion?
 ifeq ($(shell sh -c 'which svnversion 1> /dev/null 2>&1 && echo y'),y)
@@ -24,16 +25,18 @@ endif
 SVN_REV = $(shell sh -c 'cat svn_version 2> /dev/null')
 REVNUM = $(shell sh -c 'cat svn_version | tr -d -c "[:digit:]" 2> /dev/null')
 
-.PHONY : help build check clean install pdf rsync version bumpdate submit cran winbuild vignettes examples
+.PHONY : help build check clean install pdf rsync version bumpdate submit cran winbuild vignettes examples genoptions
 
 help:
 	@echo "install    install the package"
+	@echo "quick-install  install the package without rebuilding the vignettes"
 	@echo "build      build the package as a tar.gz file"
 	@echo "check      build the package and run 'R CMD check'"
 	@echo "rsync      copy the package and install it on $(RNODE)"
 	@echo "cran       build the package and run 'R CMD check --as-cran'"
 	@echo "winbuild   submit the package to the windows builder service"
 	@echo "examples   regenerate the examples used by vignettes"
+	@echo "vignettes  generate PDF of the vignettes"
 	@echo "submit     submit the package to CRAN (read DEVEL-README first)"
 
 install:
@@ -41,9 +44,17 @@ install:
 	cd $(BINDIR) && R CMD INSTALL $(INSTALL_FLAGS) $(PACKAGE)_$(PACKAGEVERSION).tar.gz
 
 quick-install: version
-	cd $(BINDIR) &&	R CMD build $(BUILD_FLAGS) --no-build-vignettes --no-vignettes $(PACKAGEDIR) && R CMD INSTALL $(INSTALL_FLAGS) $(PACKAGE)_$(PACKAGEVERSION).tar.gz
+	cd $(BINDIR) &&	R CMD build $(BUILD_FLAGS) --no-build-vignettes $(PACKAGEDIR) && R CMD INSTALL $(INSTALL_FLAGS) $(PACKAGE)_$(PACKAGEVERSION).tar.gz
 
-build : bumpdate clean
+genoptions: R/irace-options.R vignettes/section/irace-options.tex scripts/irace_options_comment.R
+
+R/irace-options.R vignettes/section/irace-options.tex scripts/irace_options_comment.R: scripts/irace_options.json scripts/generate-options.R
+	cd scripts && R --slave -f generate-options.R && cd ..
+
+gendoc: 
+	R --slave -e 'library(devtools);document()'
+
+build : bumpdate genoptions gendoc clean
 	$(MAKE) releasevignette
 	@if grep -q @ $(PACKAGEDIR)/vignettes/$(PACKAGE)-package.bib; then true; \
 	else echo "error: vignettes/$(PACKAGE)-package.bib is empty: run 'make vignettes'"; false; fi
@@ -65,11 +76,11 @@ vignettes/$(PACKAGE)-package.bib: vignettes/$(PACKAGE)-package.aux
 releasevignette:
 	test -s $(PACKAGEDIR)/vignettes/$(PACKAGE)-package.aux || $(MAKE) nonreleasevignette
 	$(MAKE) vignettes/$(PACKAGE)-package.bib
-	sed -i 's/^%\+\\setboolean{Release}{true}/\\setboolean{Release}{true}/' \
+	$(SED) 's/^%\+\\setboolean{Release}{true}/\\setboolean{Release}{true}/' \
 	$(PACKAGEDIR)/vignettes/$(PACKAGE)-package.Rnw
 
 nonreleasevignette:
-	sed -i 's/^\\setboolean{Release}{true}/%\\setboolean{Release}{true}/' \
+	$(SED) 's/^\\setboolean{Release}{true}/%\\setboolean{Release}{true}/' \
 	$(PACKAGEDIR)/vignettes/$(PACKAGE)-package.Rnw
 	$(MAKE) vignettes
 	$(MAKE) vignettes/$(PACKAGE)-package.bib
@@ -83,7 +94,7 @@ cran : build
 	cd $(BINDIR) && _R_CHECK_FORCE_SUGGESTS_=false R CMD check --as-cran $(PACKAGE)_$(PACKAGEVERSION).tar.gz
 
 check: build
-	cd $(BINDIR) && _R_CHECK_FORCE_SUGGESTS_=false R CMD check $(PACKAGE)_$(PACKAGEVERSION).tar.gz
+	cd $(BINDIR) && (_R_CHECK_FORCE_SUGGESTS_=false R CMD check --run-donttest --timings $(PACKAGE)_$(PACKAGEVERSION).tar.gz; cat $(PACKAGE).Rcheck/$(PACKAGE)-Ex.timings)
 
 clean: 
 	cd $(PACKAGEDIR) && ($(RM) ./$(PACKAGE)-Ex.R ./src/*.o ./src/*.so; \
@@ -108,7 +119,7 @@ clean:
 # make nonreleasevignette should build with Release as false (which is faster and should always work).
 #
 # It is ok to fail if something is missing or needs to be done and give a nice error. For example, if optbib is missing.
-vignettes: version vignettes/$(PACKAGE)-package.Rnw
+vignettes: version vignettes/$(PACKAGE)-package.Rnw vignettes/section/irace-options.tex
 # FIXME: How to display the output of the latex and bibtex commands with R CMD?
 # FIXME: How to halt on warning?
 	cd $(PACKAGEDIR)/vignettes \
@@ -117,19 +128,16 @@ vignettes: version vignettes/$(PACKAGE)-package.Rnw
 # Rscript -e "library(knitr); knit('$(PACKAGE)-package.Rnw', output='$(PACKAGE)-package.tex', quiet = TRUE)" \
 # && $(PDFLATEX) $(PACKAGE)-package.tex && bibtex $(PACKAGE)-package && $(PDFLATEX) $(PACKAGE)-package.tex && $(PDFLATEX) $(PACKAGE)-package.tex && $(RM) $(PACKAGE)-package.tex
 
-pdf: vignettes 
-	$(RM) $(BINDIR)/$(PACKAGE).pdf
-	cd $(BINDIR) &&	R CMD Rd2pdf --no-preview --batch --output=$(PACKAGE).pdf $(PACKAGEDIR) 
+pdf: install
+	cd $(BINDIR) &&	R CMD Rd2pdf --force --no-preview --batch --output=$(PACKAGE).pdf ~/R/x86_64-pc-linux-gnu-library/3.2/irace
 
 bumpdate: version
-	@sed -i 's/Date: .*/Date: $(DATE)/' $(PACKAGEDIR)/DESCRIPTION
-	@sed -i 's/Date: .*$$/Date: \\tab $(DATE) \\cr/' $(PACKAGEDIR)/man/$(PACKAGE)-package.Rd
+	@$(SED) 's/Date: .*/Date: $(DATE)/' $(PACKAGEDIR)/DESCRIPTION
 
 version :
-	echo 'irace.version <- "$(REALVERSION)"' > $(PACKAGEDIR)/R/version.R
-	@sed -i 's/Version:.*$$/Version: $(PACKAGEVERSION)/' $(PACKAGEDIR)/DESCRIPTION
-	@sed -i 's/Version:.*$$/Version: \\tab $(PACKAGEVERSION) \\cr/' $(PACKAGEDIR)/man/$(PACKAGE)-package.Rd
-	@sed -i 's/\\iraceversion}{.*}$$/\\iraceversion}{$(PACKAGEVERSION)}/' vignettes/$(PACKAGE)-package.Rnw
+	@echo "#' irace.version\n#'\n#' A character string containing the version of \pkg{irace}.\n#'\n#' @export\nirace.version <- '$(REALVERSION)'" > $(PACKAGEDIR)/R/version.R
+	@$(SED) 's/Version:.*$$/Version: $(PACKAGEVERSION)/' $(PACKAGEDIR)/DESCRIPTION
+	@$(SED) 's/\\iraceversion}{.*}$$/\\iraceversion}{$(PACKAGEVERSION)}/' vignettes/$(PACKAGE)-package.Rnw
 
 rsync : version
 ifndef RDIR
@@ -159,8 +167,9 @@ winbuild:
 	cd $(BINDIR) && echo $(WINBUILD_FTP_COMMANDS) | ftp -v -p -e -g -i -n win-builder.r-project.org
 
 examples: install
-	@echo "*** Makefile: Regenerating vignette examples. This will take time..."
-	cd examples/vignette-example/ && nice -n 19 $(PACKAGEDIR)/inst/bin/$(PACKAGE) --parallel 2
+	@echo "*** Makefile: Regenerating data for vignettes and examples. This will take time..."
+	cd examples/vignette-example/ && nice -n 19 $(PACKAGEDIR)/inst/bin/$(PACKAGE) --parallel 2 | tee irace-acotsp-stdout.txt
 	cd examples/vignette-example/ && R --vanilla --slave --file=create-example-file.R
-	cp examples/vignette-example/irace-output.Rdata examples/vignette-example/examples.Rdata vignettes/
+	cp examples/vignette-example/*.Rdata examples/vignette-example/irace-acotsp-stdout.txt vignettes/
 	$(MAKE) vignettes
+	$(MAKE) check

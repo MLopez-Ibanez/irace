@@ -1,8 +1,37 @@
+ * irace now supports adaptive capping for computation time minimization.  The
+   default value of the testType irace option is t-test when adaptive capping
+   is enabled. Please see the user-guide for details.
+                                    (Leslie Pérez Cáceres, Manuel López-Ibáñez)
+
+ * The package contains an ablation() function implementing the ablation
+   method for parameter importance analysis by Fawcett and Hoos (2016).
+                                     (Leslie Pérez Cáceres, Manuel López-Ibáñez)
+
+ * New option 'postselection' executes a post-selection race.
+                                                        (Leslie Pérez Cáceres)
+
+ * At the end of each race, if the race stops before evaluating all instances
+   seen in previous races, then the best overall may be different than the best
+   of the race. We now print the best overall (best-so-far). Elites evaluated
+   on more instances are considered better than those evaluated on fewer.
+                                    (Manuel López-Ibáñez, Leslie Pérez Cáceres)
+
+ * Last active parameter values of numerical parameters (i and r) are carried
+   by the sampling model. The element of the model list is now [std. dev.,last
+   value]. When a value must be assigned and the parameter was previously not
+   active, the sampling is performed around the last value.
+                                    (Leslie Pérez Cáceres, Manuel López-Ibáñez)
+
+ * R help pages are now generated with Roxygen2.
+                                   (Leslie Pérez Cáceres, Manuel López-Ibáñez)
+
+ * Document --version, --help, and --check in the user-guide.
+                                                        (Manuel López-Ibáñez)
+ 
  * A return value of "Inf" from targetRunner/targetEvaluation results in the
-   immediate rejection of the configuration without any further
-   evaluation. This is useful for handling unreliable or broken
-   configurations that should not stop irace.
-                                                         (Manuel López-Ibáñez)
+   immediate rejection of the configuration without any further evaluation.
+   This is useful for handling unreliable or broken configurations that should
+   not stop irace.                                     (Manuel López-Ibáñez)
 
  * Numerical parameters may be sampled on a logarithmic scale using "i,log"
    or "r,log".                                               (Alberto Franzin)
@@ -11,14 +40,8 @@
   
  * Fixed all shell scripts calling functions before defining them, which is not
    portable.
-                                                          (Manuel López-Ibáñez)
+                                                         (Manuel López-Ibáñez)
  
- * At the end of each race, the best overall may be different than the best of
-   the race if the race stops before evaluating all instances seen in previous
-   races. We now print the best overall (best-so-far). Elites evaluated on more
-   instances are considered better than those evaluated on fewer.
-                                    (Manuel López-Ibáñez, Leslie Pérez Cáceres)
-
 2.4
 
  * The output of irace now specifies in which order, if any, configurations are

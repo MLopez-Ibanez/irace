@@ -1,3 +1,24 @@
+#' readConfigurationsFile
+#'
+#' \code{readConfigurationsFile} reads a set of target algorithms configurations 
+#'  from a file and puts them in \pkg{irace} format. The configurations are checked 
+#'  to match the parameters description provided.
+#' 
+#' @param filename A filename from which the configurations should be read.
+#' @param parameters List of target algorithm parameters in the \pkg{irace} format.
+#' @param debugLevel Level of debug. Default: 0.
+#' @param text (optional) Character string: if file is not supplied and this is,
+#'  then parameters are read from the value of text via a text connection.
+#' 
+#' @return A data frame containing the obtained configurations. 
+#'   Each row of the data frame is a candidate configuration, 
+#'   the columns correspond to the parameter names in \code{parameters}.
+#'
+#' @seealso 
+#'   \code{\link{readParameters}} to obtain a valid parameter structure from a parameters list.
+#' 
+#' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
+#' @export
 ## Read some configurations from a file.
 ## Example of an input file,
 ## it should be readable with read.table( , header=TRUE).
@@ -163,6 +184,33 @@ readForbiddenFile <- function(filename)
   return(forbiddenExps)
 }      
 
+
+#' readScenario
+#'
+#' \code{readScenario} reads the scenario to be used by 
+#' \pkg{irace} from a file.
+#' 
+#' @param filename A filename from which the scenario will be
+#'     read. If empty, the default \code{scenarioFile} is used.
+#'     An example scenario file is provided in
+#'     \code{system.file(package="irace", "templates/scenario.txt.tmpl")}.
+#' @param scenario A list where tagged elements correspond to scenario
+#'     settings for \pkg{irace}. This is an initial scenario that is
+#'     overwritten for every parameter specified in the file to be read.
+#' 
+#' @return The scenario list read from the file. The scenario parameter not
+#'   present in the file are not present in the list, that is, they are
+#'   \code{NULL}.
+#'
+#' @seealso
+#'  \describe{
+#'  \item{\code{\link{printScenario}}}{prints the given scenario.}
+#'  \item{\code{\link{defaultScenario}}}{returns the default scenario settings of \pkg{irace}.}
+#'  \item{\code{\link{checkScenario}}}{to check that the scenario is valid.}
+#' }
+#' 
+#' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
+#' @export
 # Reads scenario setup from filename and returns it as a list. Anything not
 # mentioned in the file is not present in the list (that is, it is NULL).
 # FIXME: Does passing an initial scenario actually work? It seems it gets
@@ -222,6 +270,34 @@ readScenario <- function(filename = "", scenario = list())
   return (scenario)
 }
 
+#' Check and correct the given scenario
+#'
+#' \code{checkScenario} takes a (possibly incomplete) scenario setup of
+#' \pkg{irace}, checks for errors and transforms it into a valid scenario.
+#' 
+#' @param scenario A list where tagged elements correspond to scenario
+#' settings of \pkg{irace}.
+#' 
+#' @return The scenario received as a parameter, possibly corrected. Unset
+#' scenario settings are set to their default values.
+#'
+#' @details   This function checks that the directories and the file names 
+#' provided and required by the \pkg{irace} exist. It also checks that the 
+#' settings are of the proper type, e.g. that settings expected to be integers 
+#' are really integers. Finally, it also checks that there is no inconsistency
+#' between settings.  If an error is found that prevents \pkg{irace} from 
+#' running properly, it will stop with an error.
+#'
+#' @seealso
+#'  \describe{
+#'  \item{\code{\link{readScenario}}}{for reading a configuration scenario from a file.}
+#'  \item{\code{\link{printScenario}}}{prints the given scenario.}
+#'  \item{\code{\link{defaultScenario}}}{returns the default scenario settings of \pkg{irace}.}
+#'  \item{\code{\link{checkScenario}}}{to check that the scenario is valid.}
+#' }
+#' 
+#' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
+#' @export
 ## FIXME: This function should only do checks and return
 ## TRUE/FALSE. There should be other function that does the various
 ## transformations.
@@ -374,15 +450,16 @@ checkScenario <- function(scenario = defaultScenario())
     scenario$forbiddenExps <- NULL
 
   # We have characters everywhere, set to the right types to avoid
-  # problem later.
+  # problems later.
 
   # Integer control parameters
   intParams <- .irace.params.def[.irace.params.def[, "type"] == "i", "name"]
   for (param in intParams) {
+    if (is.null.or.empty(scenario[[param]]))
+      scenario[[param]] <- NA
     if (is.na(scenario[[param]]))
       next # Allow NA default values
-    if (!is.null(scenario[[param]]))
-      scenario[[param]] <- suppressWarnings(as.numeric(scenario[[param]]))
+    scenario[[param]] <- suppressWarnings(as.numeric(scenario[[param]]))
     if (is.null(scenario[[param]])
         || is.na (scenario[[param]])
         || !is.wholenumber(scenario[[param]]))
@@ -408,10 +485,11 @@ checkScenario <- function(scenario = defaultScenario())
   # Real [0, 1] control parameters
   realParams <- .irace.params.def[.irace.params.def[, "type"] == "r", "name"]
   for (param in realParams) {
+    if (is.null.or.empty(scenario[[param]]))
+      scenario[[param]] <- NA
     if (is.na(scenario[[param]]))
       next # Allow NA default values
-    if (!is.null(scenario[[param]]))
-      scenario[[param]] <- suppressWarnings(as.numeric(scenario[[param]]))
+    scenario[[param]] <- suppressWarnings(as.numeric(scenario[[param]]))
     if (is.null(scenario[[param]])
         || is.na (scenario[[param]])
         || scenario[[param]] < 0.0 || scenario[[param]] > 1.0)
@@ -493,6 +571,40 @@ checkScenario <- function(scenario = defaultScenario())
                 " cannot be enabled at the same time.")
   }
 
+  if (scenario$capping) {
+    if (!scenario$elitist) 
+      irace.error("When capping == TRUE, elitist must be enabled.")
+    if (scenario$boundMax <= 0) 
+      irace.error("When capping == TRUE, boundMax (", scenario$boundMax,
+                  ") must be > 0")
+    valid.types <- c("median", "mean", "worst", "best")
+    if (!(scenario$cappingType %in% valid.types)) {
+      irace.error ("Invalid value '", scenario$cappingType,
+                   "' of ", quote.param("cappingType"),
+                   ", valid values are: ",
+                   paste0(valid.types, collapse = ", "))
+    }
+    
+    valid.types <- c("instance", "candidate")
+    if (!(scenario$boundType %in% valid.types)) {
+      irace.error ("Invalid value '", scenario$boundType,
+                   "' of ", quote.param("boundType"),
+                   ", valid values are: ",
+                   paste0(valid.types, collapse = ", "))
+    }    
+    
+    if (scenario$boundPar < 1)
+      irace.error("Invalid value boundPar (", scenario$boundPar,
+                  ") must be >= 1")
+  }
+  
+  if (is.null.or.empty(scenario$testType) || 
+      is.null.or.na(scenario$testType) || 
+      scenario$testType =="") {
+  	if (scenario$capping) scenario$testType <- "t-test"
+  	else scenario$testType <- "f-test"
+  }
+  
   scenario$testType <-
     switch(tolower(scenario$testType),
            "f-test" =, # Fall-through
@@ -507,6 +619,8 @@ checkScenario <- function(scenario = defaultScenario())
                         "' of ", quote.param("testType"),
                         ", valid values are: ",
                         "F-test, t-test, t-test-holm, t-test-bonferroni"))
+                        
+
   return (scenario)
 }
 
@@ -517,6 +631,21 @@ print.instances <- function(param, value)
   cat ("\"\n")
 }
 
+#' Prints the given scenario
+#'
+#' @param scenario A list where tagged elements correspond to scenario
+#'    settings of \pkg{irace}.
+#' 
+#' @seealso
+#'  \describe{
+#'  \item{\code{\link{readScenario}}}{for reading a configuration scenario from a file.}
+#'  \item{\code{\link{printScenario}}}{prints the given scenario.}
+#'  \item{\code{\link{defaultScenario}}}{returns the default scenario settings of \pkg{irace}.}
+#'  \item{\code{\link{checkScenario}}}{to check that the scenario is valid.}
+#' }
+#' 
+#' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
+#' @export
 printScenario <- function(scenario)
 {
   cat("## irace scenario:\n")
@@ -534,6 +663,124 @@ printScenario <- function(scenario)
   cat("## end of irace scenario\n")
 }
 
+#' Default scenario settings
+#'
+#' Return scenario with default values.
+#' 
+#' @param scenario A list where tagged elements correspond to scenario
+#' settings of \pkg{irace}.
+#' 
+#' @return A list indexed by the \pkg{irace} parameter names,
+#' containing the default values for each parameter, except for those
+#' already present in the scenario passed as argument.
+#' The scenario list contains the following elements: 
+# __IRACE_OPTIONS__BEGIN__
+#' \itemize{
+#'  \item General options:
+#'    \describe{
+#'      \item{\code{scenarioFile}}{Path of the file that describes the configuration scenario setup and other irace settings. (Default: \code{"./scenario.txt"})}
+#'      \item{\code{execDir}}{Directory where the programs will be run. (Default: \code{"./"})}
+#'      \item{\code{logFile}}{File to save tuning results as an R dataset, either absolute path or relative to execDir. (Default: \code{"./irace.Rdata"})}
+#'      \item{\code{debugLevel}}{Debug level of the output of \code{irace}. Set this to 0 to silence all debug messages. Higher values provide more verbose debug messages. (Default: \code{0})}
+#'      \item{\code{seed}}{Seed of the random number generator (by default, generate a random seed). (Default: \code{NA})}
+#'      \item{\code{repairConfiguration}}{User-defined R function that takes a configuration generated by irace and repairs it. (Default: \code{""})}
+#'      \item{\code{postselection}}{Percentage of the configuration budget used to perform a postselection race of the best configurations of each iteration after the execution of irace. (Default: \code{0})}
+#'    }
+#'  \item Elitist \code{irace}:
+#'    \describe{
+#'      \item{\code{elitist}}{Enable/disable elitist irace. (Default: \code{1})}
+#'      \item{\code{elitistNewInstances}}{Number of instances added to the execution list before previous instances in elitist irace. (Default: \code{1})}
+#'      \item{\code{elitistLimit}}{In elitist irace, maximum number per race of elimination tests that do not eliminate a configuration. Use 0 for no limit. (Default: \code{2})}
+#'    }
+#'  \item Internal \code{irace} options:
+#'    \describe{
+#'      \item{\code{nbIterations}}{Number of iterations. (Default: \code{0})}
+#'      \item{\code{nbExperimentsPerIteration}}{Number of runs of the target algorithm per iteration. (Default: \code{0})}
+#'      \item{\code{sampleInstances}}{Randomly sample the training instances or use them in the order given. (Default: \code{1})}
+#'      \item{\code{minNbSurvival}}{Minimum number of configurations needed to continue the execution of each race (iteration). (Default: \code{0})}
+#'      \item{\code{nbConfigurations}}{Number of configurations to be sampled and evaluated at each iteration. (Default: \code{0})}
+#'      \item{\code{mu}}{Parameter used to define the number of configurations sampled and evaluated at each iteration. (Default: \code{5})}
+#'      \item{\code{softRestart}}{Enable/disable the soft restart strategy that avoids premature convergence of the probabilistic model. (Default: \code{1})}
+#'      \item{\code{softRestartThreshold}}{Soft restart threshold value for numerical parameters. If \code{NA}, \code{NULL} or \code{""}, it is computed as \code{10^-digits}. (Default: \code{""})}
+#'    }
+#'  \item Target algorithm parameters:
+#'    \describe{
+#'      \item{\code{parameterFile}}{File that contains the description of the parameters of the target algorithm. (Default: \code{"./parameters.txt"})}
+#'      \item{\code{forbiddenExps}}{Vector of R logical expressions that cannot evaluate to \code{TRUE} for any evaluated configuration. (Default: \code{""})}
+#'      \item{\code{forbiddenFile}}{File that contains a list of logical expressions that cannot be \code{TRUE} for any evaluated configuration. If empty or \code{NULL}, do not use forbidden expressions. (Default: \code{""})}
+#'      \item{\code{digits}}{Maximum number of decimal places that are significant for numerical (real) parameters. (Default: \code{4})}
+#'    }
+#'  \item Target algorithm execution:
+#'    \describe{
+#'      \item{\code{targetRunner}}{Script called for each configuration that executes the target algorithm to be tuned. See templates. (Default: \code{"./target-runner"})}
+#'      \item{\code{targetRunnerRetries}}{Number of times to retry a call to \code{targetRunner} if the call failed. (Default: \code{0})}
+#'      \item{\code{targetRunnerData}}{Optional data passed to \code{targetRunner}. This is ignored by the default \code{targetRunner} function, but it may be used by custom \code{targetRunner} functions to pass persistent data around. (Default: \code{""})}
+#'      \item{\code{targetRunnerParallel}}{Optional R function to provide custom parallelization of \code{targetRunner}. (Default: \code{""})}
+#'      \item{\code{targetEvaluator}}{Optional script or R function that provides a numeric value for each configuration. See templates/target-evaluator.tmpl (Default: \code{""})}
+#'      \item{\code{deterministic}}{If the target algorithm is deterministic, configurations will be evaluated only once per instance. (Default: \code{0})}
+#'      \item{\code{parallel}}{Number of calls to \code{targetRunner} to execute in parallel. Values \code{0} or \code{1} mean no parallelization. (Default: \code{0})}
+#'      \item{\code{loadBalancing}}{Enable/disable load-balancing when executing experiments in parallel. Load-balancing makes better use of computing resources, but increases communication overhead. If this overhead is large, disabling load-balancing may be faster. (Default: \code{1})}
+#'      \item{\code{mpi}}{Enable/disable MPI. Use \code{Rmpi} to execute \code{targetRunner} in parallel (parameter \code{parallel} is the number of slaves). (Default: \code{0})}
+#'      \item{\code{batchmode}}{Specify how irace waits for jobs to finish when \code{targetRunner} submits jobs to a batch cluster: sge, pbs, torque or slurm. \code{targetRunner} must submit jobs to the cluster using, for example, \code{qsub}. (Default: \code{0})}
+#'    }
+#'  \item Initial configurations:
+#'    \describe{
+#'      \item{\code{configurationsFile}}{File that contains a set of initial configurations. If empty or \code{NULL}, all initial configurations are randomly generated. (Default: \code{""})}
+#'    }
+#'  \item Training instances:
+#'    \describe{
+#'      \item{\code{instances}}{Character vector of the instances to be used in the \code{targetRunner}. (Default: \code{""})}
+#'      \item{\code{trainInstancesDir}}{Directory where training instances are located; either absolute path or relative to current directory. If no \code{trainInstancesFiles} is provided, all the files in \code{trainInstancesDir} will be listed as instances. (Default: \code{"./Instances"})}
+#'      \item{\code{trainInstancesFile}}{File that contains a list of training instances and optionally additional parameters for them. If \code{trainInstancesDir} is provided, \code{irace} will search for the files in this folder. (Default: \code{""})}
+#'    }
+#'  \item Tuning budget:
+#'    \describe{
+#'      \item{\code{maxExperiments}}{Maximum number of runs (invocations of \code{targetRunner}) that will be performed. It determines the maximum budget of experiments for the tuning. (Default: \code{0})}
+#'      \item{\code{maxTime}}{Maximum total execution time in seconds for the executions of \code{targetRunner}. \code{targetRunner} must return two values: cost and time. (Default: \code{0})}
+#'      \item{\code{budgetEstimation}}{Fraction (smaller than 1) of the budget used to estimate the mean computation time of a configuration. Only used when \code{maxTime} > 0 (Default: \code{0.02})}
+#'    }
+#'  \item Statistical test:
+#'    \describe{
+#'      \item{\code{testType}}{Statistical test used for elimination. Default test is always \code{F-test} unless \code{capping} is enabled, in which case the default test is \code{t-test}. Valid values are: F-test (Friedman test), t-test (pairwise t-tests with no correction), t-test-bonferroni (t-test with Bonferroni's correction for multiple comparisons), t-test-holm (t-test with Holm's correction for multiple comparisons). (Default: \code{"F-test"})}
+#'      \item{\code{firstTest}}{Number of instances evaluated before the first elimination test. It must be a multiple of \code{eachTest}. (Default: \code{5})}
+#'      \item{\code{eachTest}}{Number of instances evaluated between elimination tests. (Default: \code{1})}
+#'      \item{\code{confidence}}{Confidence level for the elimination test. (Default: \code{0.95})}
+#'    }
+#'  \item Adaptive capping:
+#'    \describe{
+#'      \item{\code{capping}}{Enable the use of adaptive capping, a technique designed for minimizing the computation time of configurations. This is only available when \code{elitist} is active. (Default: \code{0})}
+#'      \item{\code{cappingType}}{Measure used to obtain the execution bound from the performance of the elite configurations.\itemize{\item median: Median performance of the elite configurations.\item mean: Mean performance of the elite configurations.\item best: Best performance of the elite configurations.\item worst: Worst performance of the elite configurations.} (Default: \code{"median"})}
+#'      \item{\code{boundType}}{Method to calculate the mean performance of elite configurations.\itemize{\item candidate: Mean execution times across the executed instances and the current one.\item instance: Execution time of the current instance.} (Default: \code{"candidate"})}
+#'      \item{\code{boundMax}}{Maximum execution bound for \code{targetRunner}. It must be specified when capping is enabled. (Default: \code{0})}
+#'      \item{\code{boundDigits}}{Precision used for calculating the execution time. It must be specified when capping is enabled. (Default: \code{0})}
+#'      \item{\code{boundPar}}{Penalization constant for timed out executions (executions that reach \code{boundMax} execution time). (Default: \code{1})}
+#'      \item{\code{boundAsTimeout}}{Replace the configuration cost of bounded executions with \code{boundMax}. (Default: \code{1})}
+#'    }
+#'  \item Recovery:
+#'    \describe{
+#'      \item{\code{recoveryFile}}{Previously saved log file to recover the execution of \code{irace}, either absolute path or relative to the current directory.  If empty or \code{NULL}, recovery is not performed. (Default: \code{""})}
+#'    }
+#'  \item Testing:
+#'    \describe{
+#'      \item{\code{testInstancesDir}}{Directory where testing instances are located, either absolute or relative to current directory. (Default: \code{""})}
+#'      \item{\code{testInstancesFile}}{File containing a list of test instances and optionally additional parameters for them. (Default: \code{""})}
+#'      \item{\code{testInstances}}{Character vector of the instances to be used in the \code{targetRunner} when executing the testing. (Default: \code{""})}
+#'      \item{\code{testNbElites}}{Number of elite configurations returned by irace that will be tested if test instances are provided. (Default: \code{1})}
+#'      \item{\code{testIterationElites}}{Enable/disable testing the elite configurations found at each iteration. (Default: \code{0})}
+#'    }
+#' }
+# __IRACE_OPTIONS__END__
+#'
+#' @seealso
+#'  \describe{
+#'  \item{\code{\link{readScenario}}}{for reading a configuration scenario from a file.}
+#'  \item{\code{\link{printScenario}}}{prints the given scenario.}
+#'  \item{\code{\link{defaultScenario}}}{returns the default scenario settings of \pkg{irace}.}
+#'  \item{\code{\link{checkScenario}}}{to check that the scenario is valid.}
+#' }
+#'
+#' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
+#' @export
 defaultScenario <- function(scenario = list())
 {
   if (!is.null(names(scenario))
@@ -600,12 +847,13 @@ checkTargetFiles <- function(scenario, parameters)
   values <- removeConfigurationsMetaData(configurations)
   values <- values[, parameters$names, drop = FALSE]
   switches <- parameters$switches[parameters$names]
-  
+    
   # Create the experiment using the first instance
   experiments <- list()
   for (i in 1:nrow(configurations))
     experiments[[i]] <- list (id.configuration = configurations[i, ".ID."],
                               id.instance  = "instance1",
+                              bound = if (scenario$capping) scenario$boundMax else NULL,
                               seed = 1234567,
                               configuration = values[i, , drop = FALSE],
                               instance = scenario$instances[1],

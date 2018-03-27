@@ -1,5 +1,23 @@
 ------------------------------------------------------------*- mode: text -*-
 
+#11 ------------------------------------------------------------
+
+The semantics of recovery are not clear. Should it recover the exact parameters
+given to the original run? If so, then moving to a new execdir will mess up
+things. Should it allow changing parameters after recovery (that is, what to do
+if it finds a new scenario file with different values or it is passed
+additional command-line parameters?).
+
+One possible behavior could be: Recover everything as given originally; if new
+settings are given, either by a configuration file or command-line, override
+them; for settings that are still set to default values in the original,
+recompute the default (because overriden settings may influence the default of
+other settings). Report everything that is restored and overriden.
+
+This means recovery should happen much earlier, before reading
+command-line/scenario file.
+
+
 #9 ------------------------------------------------------------
 
 By default
@@ -19,13 +37,15 @@ testInstancesFile = "instances-test.txt"
 defaults to for train instances to Instances/train-instance-1 ...
 but to ./test-instance-1 ... for test instances, which is unexpected.
 
-FIX: If testInstancesFile is given and trainInstancesDir is the default and
-testInstancesDir is "", then make testInstancesDir = trainInstancesDir
+# FIXME: Use NA as default value for testInstancesFile/testInstancesDir.
+If testInstancesFile != NA and testInstancesDir == NA,
+then make testInstancesDir = trainInstancesDir. Maybe give a warning when doing this.
 
 
 #8 ------------------------------------------------------------
 
-We do not re-evaluate the elitist (using which.exe), but we do call target.evaluator on them. See this code in race.R:
+We do not re-evaluate the elitist (using which.exe), but we do call
+target.evaluator on them. See this code in race.R:
 
   # Execute commands
   if (length(which.exe) > 0) {
@@ -54,23 +74,6 @@ As a short-term fix, we could implement something like:
 
 If recovering and target-evaluator is in use, keep elites as elites, but re-run target-runner on them. (Perhaps we need a new .irace$ flag saying: first race from recovery).
 
-#7 ------------------------------------------------------------
-
-The semantics of recovery are not clear. Should it recover the exact parameters
-given to the original run? If so, then moving to a new execdir will mess up
-things. Should it allow changing parameters after recovery (that is, what to do
-if it finds a new scenario file with different values or it is passed
-additional command-line parameters?).
-
-One possible behavior could be: Recover everything as given originally; if new
-settings are given, either by a configuration file or command-line, override
-them; for settings that are still set to default values in the original,
-recompute the default (because overriden settings may influence the default of
-other settings). Report everything that is restored and overriden.
-
-This means recovery should happen much earlier, before reading
-command-line/scenario file.
-
 
 #6 ------------------------------------------------------------
 
@@ -97,6 +100,7 @@ is actually "5" so the comparison is lexicographic. How to solve this?
    ordinal parameters. Hopefully this will make obvious that these
    values are strings and cannot be compared with other numbers.
 
+This is already documented in the user-guide.
 
 
 ###############################################################

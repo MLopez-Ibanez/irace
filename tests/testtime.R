@@ -1,9 +1,9 @@
 library(irace)
-# Init .Rrandom.seed
-# options(error = utils::recover)
-x <- runif(1)
-prevstate <- .Random.seed
-set.seed(3)
+
+# Reproducible results
+seed <- sample(2^30, 1)
+cat("Seed: ", seed, "\n")
+set.seed(seed)
 
 target.runner <- function(experiment, scenario)
 {
@@ -31,5 +31,3 @@ time.irace <- function(...)
 
 time.irace(maxTime = 500)
 time.irace(maxTime = 1111)
-
-.Random.seed <- prevstate

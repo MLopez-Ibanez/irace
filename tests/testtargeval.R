@@ -1,5 +1,10 @@
 library(irace)
-set.seed(7)
+
+# Reproducible results
+seed <- sample(2^30, 1)
+cat("Seed: ", seed, "\n")
+set.seed(seed)
+
 target.runner <- function(experiment, scenario)
 {
   return(list(call = toString(experiment)))

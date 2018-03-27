@@ -1,3 +1,28 @@
+#' testConfigurations
+#'
+#' \code{testConfigurations} executes the given configurations on the
+#' testing instances specified in the scenario.
+#' 
+#' @param configurations a data frame containing the configurations (one per row).
+#' @param scenario Data structure containing \pkg{irace} settings.The data structure
+#' has to be the one returned by the function \code{\link{defaultScenario}} and
+#' \code{\link{readScenario}}.
+#' @param parameters A data structure similar to that provided
+#' by the \code{link{readParameters}} function.
+#'
+#' @return A list with the following elements:
+#'   \itemize{
+#'     \item{experiments}{Experiments results.}
+#'     \item{seeds}{Array of the instance seeds used in the experiments.}
+#'   }
+#'
+#' @details A test instance set must be provided through \code{scenario$testInstances}.
+#'
+#' @seealso
+#'  \code{\link{testing.main}}
+#' 
+#' @author Manuel López-Ibáñez
+#' @export
 testConfigurations <- function(configurations, scenario, parameters)
 {
   # We need to set up a default scenario (and repeat all checks) in case
@@ -9,6 +34,8 @@ testConfigurations <- function(configurations, scenario, parameters)
   
   # 2147483647 is the maximum value for a 32-bit signed integer.
   # We use replace = TRUE, because replace = FALSE allocates memory for each possible number.
+  ## FIXME: scenario$testInstances and scenario$instances behave differently,
+  ## we should unify them so that the seeds are also saved in scenario.
   instanceSeed <- sample.int(2147483647, size = length(testInstances), replace = TRUE)
   names(instanceSeed) <- instances.ID
   
@@ -16,25 +43,15 @@ testConfigurations <- function(configurations, scenario, parameters)
   values <- values[, parameters$names, drop = FALSE]
   switches <- parameters$switches[parameters$names]
 
+  bounds <- if (scenario$capping) rep(scenario$boundMax, nrow(configurations)) else NULL
   # If there is no ID (e.g., after using readConfigurations), then add it.
   if (! (".ID." %in% colnames(configurations))) {
     configurations$.ID. <- 1:nrow(configurations)
   }
   # Create experiment list
-  experiments <- vector("list", nrow(configurations) * length(testInstances))
-  ntest <- 1
-  for (i in 1:nrow(configurations)) {
-    for (j in 1:length(testInstances)) {
-      experiments[[ntest]] <- list(id.configuration = configurations[i, ".ID."],
-                                   id.instance  = instances.ID[j],
-                                   seed         = instanceSeed[j],
-                                   configuration = values[i, , drop = FALSE],
-                                   instance = testInstances[j],
-                                   switches = switches)
-      ntest <- ntest + 1
-    }
-  }
-
+  experiments <- createExperimentList(configurations, parameters,
+                                      testInstances, instances.ID, instanceSeed,
+                                      scenario, bounds)
   startParallel(scenario)
   on.exit(stopParallel())
 
@@ -54,9 +71,12 @@ testConfigurations <- function(configurations, scenario, parameters)
                         # dimnames = list(rownames, colnames)
                         dimnames = list (instances.ID, configurations$.ID.))
 
+  # FIXME: It would be much faster to get a vector cost, applyPAR to it, then assign it.
   for (i in seq_along(experiments)) {
+    cost <- target.output[[i]]$cost
+    if (scenario$capping) cost <- applyPAR(cost, scenario)
     testResults[rownames(testResults) == experiments[[i]]$id.instance,
-                colnames(testResults) == experiments[[i]]$id.configuration] <- target.output[[i]]$cost
+                colnames(testResults) == experiments[[i]]$id.configuration] <- cost
   }
   if (scenario$debugLevel >= 3) {
     irace.note ("Memory used at the end of testConfigurations():\n")

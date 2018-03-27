@@ -14,6 +14,8 @@
 
 @string{springer-berlin-ad = {Berlin, Germany}}
 
+@string{springer-cham-ad = {Cham, Switzerland}}
+
 @string{springer-lncs = {Springer, Heidelberg, Germany}}
 
 @string{iridia = {IRIDIA, Universit{\'e} Libre de Bruxelles, Belgium}}
@@ -23,23 +25,37 @@
 
 @string{acm-cs = {{ACM} Computing Surveys}}
 
+@string{jair = {Journal of Artificial Intelligence Research}}
+
+@string{joh = {Journal of Heuristics}}
+
 @string{orp = {Operations Research Perspectives}}
 
 @string{balaprakash = {  Prasanna Balaprakash }}
 
 @string{bartz-beielstein = { Thomas Bartz-Beielstein }}
 
+@string{battiti = { Roberto Battiti }}
+
 @string{birattari = { Mauro Birattari }}
+
+@string{bischl_b = { Bernd Bischl }}
 
 @string{chiarandini = { Marco Chiarandini }}
 
 @string{dubois-lacoste = { J{\'e}r{\'e}mie Dubois-Lacoste }}
+
+@string{fawcett = { Chris Fawcett }}
 
 @string{fonseca = { Carlos M. Fonseca }}
 
 @string{hamadi = { Youssef Hamadi }}
 
 @string{hoos = { Holger H. Hoos }}
+
+@string{hutter = { Frank Hutter }}
+
+@string{leyton-brown = { Kevin Leyton-Brown }}
 
 @string{lopez-ibanez = { Manuel L{\'o}pez-Ib{\'a}{\~n}ez }}
 
@@ -67,6 +83,17 @@
   keywords = {F-race, iterated F-race, irace, tuning}
 }
 
+@article{FawHoos2015ablation,
+  title = {Analysing Differences Between Algorithm Configurations
+                  through Ablation},
+  author = fawcett # and # hoos,
+  journal = joh,
+  pages = {431--458},
+  volume = 22,
+  number = 4,
+  year = 2016
+}
+
 @incollection{FonPaqLop06:hypervolume,
   author = fonseca # and # paquete # and # lopez-ibanez,
   title = {An improved dimension\hspace{0pt}-\hspace{0pt}sweep
@@ -89,6 +116,17 @@
                   experimental results show that the pruning
                   techniques used may reduce the time complexity
                   exponent even further.}
+}
+
+@article{HutHooLeyStu2009jair,
+  author = hutter # and # hoos # and # leyton-brown # and # stuetzle,
+  title = {{ParamILS:} An Automatic Algorithm Configuration
+                  Framework},
+  journal = jair,
+  year = 2009,
+  volume = 36,
+  pages = {267--306},
+  month = oct
 }
 
 @techreport{IRIDIA-2004-001,
@@ -155,9 +193,19 @@
   pages = {195--212}
 }
 
+@incollection{PerLopHooStu2017:lion,
+  author = perez_l # and # lopez-ibanez # and # hoos # and # stuetzle,
+  title = {An experimental study of adaptive capping in irace},
+  crossref = {LION2017},
+  pages = {235--250},
+  pdf = {PerLopHooStu2017lion.pdf},
+  doi = {10.1007/978-3-319-69404-7_17},
+  supplement = {http://iridia.ulb.ac.be/supp/IridiaSupp2016-007/}
+}
+
 @manual{R:mlr,
   title = {{\Rpackage{mlr}}: Machine Learning in \proglang{R}},
-  author = {Bernd Bischl and Michel Lang and Jakob Bossek and Leonard Judt and Jakob Richter and Tobias Kuehn and Erich Studerus},
+  author = bischl_b # and # {Michel Lang and Jakob Bossek and Leonard Judt and Jakob Richter and Tobias Kuehn and Erich Studerus},
   year = 2013,
   note = {\proglang{R} package},
   url = {http://cran.r-project.org/package=mlr}
@@ -205,5 +253,18 @@
   publisher = springer-lncs,
   editor = hamadi # and # schoenauer,
   volume = 7219
+}
+
+@book{LION2017,
+  title = {11th International Conference, LION 11, Nizhny Novgorod,
+                  Russia, June 19-21, 2017, Revised Selected Papers},
+  booktitle = {Learning and Intelligent Optimization, 11th International
+                  Conference, LION 11},
+  year = 2017,
+  editor = battiti # and # {Dmitri E. Kvasov} # and # {Yaroslav D. Sergeyev},
+  volume = 10556,
+  series = lncs,
+  publisher = springer,
+  address = springer-cham-ad
 }
 

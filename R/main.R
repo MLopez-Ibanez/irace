@@ -2,7 +2,7 @@
 # irace: An implementation in R of Iterated Race.
 # -------------------------------------------------------------------------
 #
-#  Copyright (C) 2010-2017
+#  Copyright (C) 2010-2018
 #  Manuel López-Ibáñez     <manuel.lopez-ibanez@manchester.ac.uk> 
 #  Jérémie Dubois-Lacoste  <jeremie.dubois-lacoste@ulb.ac.be>
 #  Leslie Perez Caceres    <leslie.perez.caceres@ulb.ac.be>
@@ -28,13 +28,18 @@
 # $Revision$
 # =========================================================================
 
+#' irace.license
+#'
+#' A character string containing the license information of \pkg{irace}.
+#' 
+#' @export
 ## __VERSION__ below will be replaced by the version defined in R/version.R
 ## This avoids constant conflicts within this file.
 irace.license <-
 '*******************************************************************************
 * irace: An implementation in R of Iterated Race
 * Version: __VERSION__
-* Copyright (C) 2010-2017
+* Copyright (C) 2010-2018
 * Manuel Lopez-Ibanez     <manuel.lopez-ibanez@manchester.ac.uk>
 * Jeremie Dubois-Lacoste  
 * Leslie Perez Caceres    <leslie.perez.caceres@ulb.ac.be>
@@ -54,86 +59,13 @@ cat.irace.license <- function()
   cat(sub("__VERSION__", irace.version, irace.license, fixed=TRUE))
 }
 
-# FIXME: In R > 3.0, this function can be replaced by read.table(text=)
-read.table.text <- function(text, header = TRUE, stringsAsFactors = FALSE, ...)
-{
-  con <- textConnection(text)
-  x <- read.table(con, header = header, stringsAsFactors = stringsAsFactors,
-                  ...)
-  close(con)
-  return(x)
-}
-
-# Non-variable options (such as --help and --version) have names starting with '.'
-# Variables that do not have a command-line option have description == ""
-# Types are b(oolean), i(nteger), s(tring), r(eal), p(ath), x (R object or no value)
-# FIXME: For i and r add their range.
-# FIXME: Align columns.
-# FIXME: make order of the parameters
-# FIXME: Add type for R functions.
-.irace.params.def <- read.table.text('
-name                       type short  long                           default            description
-.help                      x    "-h"   "--help"                       NA                 "Show this help." 
-.version                   x    "-v"   "--version"                    NA                 "Show irace package version."
-.check                     x    "-c"   "--check"                      NA                 "Check scenario."
-.onlytest                  p    ""     "--only-test"                  ""                 "Only test the configurations given in the file passed as argument."
-scenarioFile               p    "-s"   "--scenario"                   "./scenario.txt"   "File that describes the configuration scenario setup and other irace settings." 
-parameterFile              p    "-p"   "--parameter-file"             "./parameters.txt" "File that contains the description of the parameters to be tuned. See the template." 
-execDir                    p    ""     "--exec-dir"                   "./"               "Directory where the programs will be run." 
-logFile                    p    "-l"   "--log-file"                   "./irace.Rdata"    "File to save tuning results as an R dataset, either absolute path or relative to execDir." 
-recoveryFile               p    ""     "--recovery-file"              ""                 "Previously saved log file to recover the execution of irace, either absolute path or relative to the current directory.  If empty or NULL, recovery is not performed."
-instances                  s    ""     ""                             ""                 ""
-trainInstancesDir          p    ""     "--train-instances-dir"        "./Instances"      "Directory where tuning instances are located; either absolute path or relative to current directory." 
-trainInstancesFile         p    ""     "--train-instances-file"       ""                 "File containing a list of instances and optionally additional parameters for them." 
-configurationsFile         p    ""     "--configurations-file"        ""                 "File containing a list of initial configurations. If empty or NULL do not use a file."
-forbiddenExps              x    ""     ""                             ""                 ""
-forbiddenFile              p    ""     "--forbidden-file"             ""                 "File containing a list of logical expressions that cannot be true for any evaluated configuration. If empty or NULL, do not use a file."
-targetRunner               p    ""     "--target-runner"              "./target-runner"  "The script called for each configuration that launches the program to be tuned. See templates/."
-targetRunnerRetries        i    ""     "--target-runner-retries"      0                  "Number of times to retry a call to target-runner if the call failed."
-targetRunnerData           x    ""     ""                             ""                 "Optional data passed to targetRunner. This is ignored by the default targetRunner function, but it may be used by custom targetRunner functions to pass persistent data around."
-targetRunnerParallel       x    ""     ""                             ""                 ""
-targetEvaluator            p    ""     "--target-evaluator"           ""                 "Optional script that provides a numeric value for each configuration. See templates/target-evaluator.tmpl"
-maxExperiments             i    ""     "--max-experiments"            0                  "The maximum number of runs (invocations of targetRunner) that will be performed. It determines the maximum budget of experiments for the tuning."
-maxTime                    i    ""     "--max-time"                   0                  "Maximum total execution time for the executions of targetRunner (targetRunner must return two values: [cost] [time] )."
-budgetEstimation           r    ""     "--budget-estimation"          0.02               "Fraction of the budget used to estimate the mean computation time of a configuration."
-digits                     i    ""     "--digits"                     4                  "Indicates the number of decimal places to be considered for the real parameters." 
-debugLevel                 i    ""     "--debug-level"                0                  "A value of 0 silences all debug messages. Higher values provide more verbose debug messages." 
-nbIterations               i    ""     "--iterations"                 0                  "Number of iterations." 
-nbExperimentsPerIteration  i    ""     "--experiments-per-iteration"  0                  "Number of experiments per iteration." 
-sampleInstances            b    ""     "--sample-instances"           1                  "Sample the instances or take them always in the same order." 
-testType                   s    ""     "--test-type"                  "F-test"           "Specifies the statistical test type: F-test (Friedman test), t-test (pairwise t-tests with no correction), t-test-bonferroni (t-test with Bonferroni\'s correction for multiple comparisons), t-test-holm (t-test with Holm\'s correction for multiple comparisons)."
-firstTest                  i    ""     "--first-test"                 5                  "Specifies how many instances are seen before the first elimination test. It must be a multiple of eachTest."
-eachTest                   i    ""     "--each-test"                  1                  "Specifies how many instances are seen between elimination tests." 
-minNbSurvival              i    ""     "--min-survival"               0                  "The minimum number of configurations that should survive to continue one iteration." 
-nbConfigurations           i    ""     "--num-configurations"         0                  "The number of configurations that should be sampled and evaluated at each iteration."
-mu                         i    ""     "--mu"                         5                  "This value is used to determine the number of configurations to be sampled and evaluated at each iteration." 
-confidence                 r    ""     "--confidence"                 0.95               "Confidence level for the elimination test."
-deterministic              b    ""     "--deterministic"              0                  "If the target algorithm is deterministic, configurations will be evaluated only once per instance."
-seed                       i    ""     "--seed"                       NA                 "Seed of the random number generator (must be a positive integer, NA means use a random seed)." 
-parallel                   i    ""     "--parallel"                   0                  "Number of calls to targetRunner to execute in parallel. 0 or 1 mean disabled."
-loadBalancing              b    ""     "--load-balancing"             1                  "Enable/disable load-balancing when executing experiments in parallel. Load-balancing makes better use of computing resources, but increases communication overhead. If this overhead is large, disabling load-balancing may be faster."
-mpi                        b    ""     "--mpi"                        0                  "Enable/disable MPI. Use Rmpi to execute targetRunner in parallel (parameter parallel is the number of slaves)."
-batchmode                    s    ""     "--batchmode"                    0                 "Specify how irace waits for jobs to finish when targetRunner submits jobs to a batch cluster: sge, pbs, torque or slurm."
-softRestart                b    ""     "--soft-restart"               1                  "Enable/disable the soft restart strategy that avoids premature convergence of the probabilistic model."
-softRestartThreshold       r    ""     "--soft-restart-threshold"     NA                 "Soft restart threshold value for numerical parameters. If NA, it is computed as 10^-digits."
-testInstancesDir           p    ""     "--test-instances-dir"         ""                 "Directory where testing instances are located, either absolute or relative to current directory."
-testInstancesFile          p    ""     "--test-instances-file"        ""                 "File containing a list of test instances and optionally additional parameters for them."
-testInstances              x    ""     ""                             ""                 ""
-testNbElites               i    ""     "--test-num-elites"            1                  "Number of elite configurations returned by irace that will be tested if test instances are provided."
-testIterationElites        b    ""     "--test-iteration-elites"      0                  "Enable/disable testing the elite configurations found at each iteration."
-elitist                    b    "-e"   "--elitist"                    1                  "Enable/disable elitist irace."
-## MANUEL: These comments are not so clear.
-elitistNewInstances        i    ""     "--elitist-new-instances"      1                  "Number of instances added to the execution list before previous instances in elitist irace."
-elitistLimit               i    ""     "--elitist-limit"              2                  "Limit for the elitist race, number statistical test without elimination peformed. Use 0 for no limit."
-repairConfiguration        x    ""     ""                             ""                 "User-defined R function that takes a configuration generated by irace and repairs it."
-')
-rownames (.irace.params.def) <- .irace.params.def[,"name"]
-.irace.params.names <- rownames(.irace.params.def)[substring(rownames(.irace.params.def), 1, 1) != "."]
-## FIXME: If these values are special perhaps they should be saved in $state ?
-.irace.params.recover <- c("instances", "seed", "testInstances",
-                           # We need this because this data may mutate
-                           "targetRunnerData", "elitist", "deterministic")
-
+#' irace.usage
+#'
+#' \code{irace.usage}  This function prints all command-line options of \pkg{irace},
+#'   with the corresponding switches and a short description.
+#' 
+#' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
+#' @export
 irace.usage <- function ()
 {
   cat.irace.license()
@@ -150,6 +82,29 @@ irace.usage <- function ()
   }
 }
 
+#' irace.main
+#'
+#' \code{irace.main} is a higher-level interface to invoke \code{\link{irace}}.
+#' 
+#' @param scenario \code{\link{defaultScenario}}() The scenario setup of 
+#' \pkg{irace}.
+#' @param output.width 9999 The width that must be used for the screen
+#' output.
+#'
+#' @details  The function \code{irace.main} checks the correctness of the
+#' scenario, prints it, reads the parameter space from
+#' \code{scenario$parameterFile}, invokes \code{\link{irace}} and
+#' prints its results in various formatted ways. If you want a
+#' lower-level interface, please see function \code{\link{irace}}.
+#'
+#' @seealso
+#'  \code{\link{irace.cmdline}} a higher-level command-line interface to
+#'  \code{irace.main}.
+#'  \code{\link{readScenario}} to read the scenario setup from  a file.
+#'  \code{\link{defaultScenario}} to provide a default scenario for \pkg{irace}.
+#' 
+#' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
+#' @export
 irace.main <- function(scenario = defaultScenario(), output.width = 9999)
 {
   op <- options(width = output.width) # Do not wrap the output.
@@ -184,6 +139,9 @@ irace.main <- function(scenario = defaultScenario(), output.width = 9999)
   cat("# Best configurations as commandlines (first number is the configuration ID; same order as above):\n")
   configurations.print.command (eliteConfigurations, parameters)
   
+  if (scenario$postselection > 0) 
+    psRace(iraceLogFile=scenario$logFile, postselection=scenario$postselection, elites=TRUE)
+  
   if (length(eliteConfigurations) > 0 &&
       (scenario$testIterationElites != 0 || scenario$testNbElites != 0))
     testing.main(logFile = scenario$logFile)
@@ -191,6 +149,27 @@ irace.main <- function(scenario = defaultScenario(), output.width = 9999)
   invisible(eliteConfigurations)
 }
 
+#' testing.main
+#'
+#' \code{testing.main} executes the testing of the target 
+#' algorithm configurations found on an \pkg{irace} execution.
+#' 
+#' @param logFile Path to the .Rdata file produced by \pkg{irace}.
+#'
+#' @return Boolean. TRUE if the testing ended successfully otherwise, returns FALSE.
+#' 
+#' @details The function \code{testing.main} load the \code{logFile} and obtains
+#' the needed configurations according to the specified test. Use the 
+#' \code{scenario$testNbElites} to test N final elite configurations or use  
+#' \code{scenario$testIterationElites} to test the best configuration of each 
+#' iteration. A test instance set must be provided through \code{scenario$testInstancesDir} 
+#' and \code{testInstancesFile}.
+#'
+#' @seealso
+#'  \code{\link{defaultScenario}} to provide a default scenario for \pkg{irace}.
+#' 
+#' @author Manuel López-Ibáñez and Leslie Pérez Cáceres
+#' @export
 testing.main <- function(logFile)
 {
   if (is.null.or.empty(logFile)) {
@@ -283,6 +262,34 @@ testing.cmdline <- function(filename, scenario)
   return(iraceResults)
 }
 
+#' Test that the given irace scenario can be run.
+#'
+#' @description \code{checkIraceScenario} tests that the given irace scenario
+#'   can be run by checking the scenario settings provided and trying to run
+#'   the target-algorithm.
+#' 
+#' @param scenario Data structure containing \pkg{irace} settings.The data structure
+#' has to be the one returned by the function \code{\link{defaultScenario}} and
+#' \code{\link{readScenario}}.
+#' @param parameters Data structure containing the parameter definition. The data
+#' structure has to be the one returned by the function \code{\link{readParameters}}.
+#' See documentation of this function for details.
+#' 
+#' @details Provide the \code{parameters} argument only if the parameter list
+#'   should not be obtained from the parameter file given by the scenario. If
+#'   the parameter list is provided it will not be checked. This function will
+#'   try to execute the target-algorithm.
+#'
+#' @seealso
+#'  \describe{
+#'  \item{\code{\link{readScenario}}}{for reading a configuration scenario from a file.}
+#'  \item{\code{\link{printScenario}}}{prints the given scenario.}
+#'  \item{\code{\link{defaultScenario}}}{returns the default scenario settings of \pkg{irace}.}
+#'  \item{\code{\link{checkScenario}}}{to check that the scenario is valid.}
+#' }
+#' 
+#' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
+#' @export
 checkIraceScenario <- function(scenario, parameters = NULL)
 {
   irace.note ("Checking scenario\n")
@@ -300,13 +307,38 @@ checkIraceScenario <- function(scenario, parameters = NULL)
         "# Parameter file '", scenario$parameterFile, "' will be ignored\n", sep = "")
   }
 
-  cat("# Checking target execution.\n")
+  irace.note("Checking target execution.\n")
   if (checkTargetFiles(scenario = scenario, parameters = parameters))
-    cat("\n# Check succesful.\n")
+    irace.note("Check succesful.\n")
   else
-    cat("\n# Check unsuccesful.\n") 
+    irace.note("Check unsuccesful.\n") 
 }
 
+#' irace.cmdline
+#'
+#' \code{irace.cmdline} starts \pkg{irace} using the parameters
+#'  of the command line used to invoke R.
+#' 
+#' @param args \code{commandArgs(trailingOnly = TRUE)} The arguments 
+#' provided on the R command line as a character vector, e.g., 
+#' \code{c("--scenario", "scenario.txt", "-p", "parameters.txt")}.
+#' Using the  default value (not providing the parameter) is the 
+#' easiest way to call \code{irace.cmdline}.
+#' 
+#' @return None.
+#'
+#' @details The function reads the parameters given on the command line
+#' used to invoke R, finds the name of the scenario file,
+#'  initializes the scenario from the file (with the function
+#'  \link{readScenario}) and possibly from parameters passed on
+#'  the command line. It finally starts \pkg{irace} by calling
+#'  \link{irace.main}.
+#'
+#' @seealso
+#'  \code{\link{irace.main}} to start \pkg{irace} with a given scenario.
+#' 
+#' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
+#' @export
 irace.cmdline <- function(args = commandArgs (trailingOnly = TRUE))
 {
   # Function to read command-line arguments.
@@ -315,15 +347,15 @@ irace.cmdline <- function(args = commandArgs (trailingOnly = TRUE))
   readArg <- function(short = "", long = "") {
     pos <- c()
     if (length (short) > 0) {
-      pos <- grep (paste ("^", short, "$", sep=""), args)
+      pos <- grep (paste0("^", short, "$"), args)
       if (length (pos) == 0) {
-        pos <- grep (paste ("^", short, "=", sep=""), args)
+        pos <- grep (paste0("^", short, "="), args)
       }
     }
     if (length (long) > 0 && length (pos) == 0)  {
-      pos <- grep (paste ("^", long, "$", sep=""), args)
+      pos <- grep (paste0("^", long, "$"), args)
       if (length (pos) == 0) {
-        pos <- grep (paste ("^", long, "=", sep=""), args)
+        pos <- grep (paste0("^", long, "="), args)
       }
     }
     
@@ -357,7 +389,7 @@ irace.cmdline <- function(args = commandArgs (trailingOnly = TRUE))
     }
     return (x)
   }
-
+  
   # Handle the case where we are given a single character string like a
   # command-line.
   if (!missing(args) && length(args) == 1) {
