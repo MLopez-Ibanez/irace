@@ -13,7 +13,7 @@
 \usepackage{ifthen}
 \newboolean{Release}
 \setboolean{Release}{false}
-\setboolean{Release}{true}
+%\setboolean{Release}{true}
 \usepackage{calc}
 \usepackage{afterpage}
 \usepackage{algorithm,algorithmic}
@@ -1970,6 +1970,10 @@ id <- iraceResults$iterationElites[last]
 getConfigurationById(logFile = "irace-acotsp.Rdata", ids = id)
 @
 
+\item \code{rejectedConfigurations}: A vector containing the rejected configurations IDs. These 
+correspond to configurations that produced failed executions and were ignored by \irace during the
+configuration process. See \autoref{sec:reject} to enable the detection of such configurations.
+
 \item \code{experiments}: A matrix with configurations as columns and instances
 as rows. Column names correspond to the internal identifier of the configuration
 (\code{allConfigurations$.ID.}). The results of a particular
@@ -2558,7 +2562,16 @@ immediately rejects the failing configuration. This immediate rejection should
 be used with care according to the goals of the tuning. For example, a
 configuration that crashes on a particular instance, \eg by running out of
 memory, might still be considered acceptable if it gives very good results on
-other instances.
+other instances. The configurations which were rejected during the execution of \irace are saved
+in the Rdata output file (see \autoref{sec:output r}).
+\begin{xwarningbox}
+If you are using adaptive capping (\parameter{capping} is enabled) and the 
+configuration budget is specified in total execution time (\parameter{maxTime} option), 
+immediate rejected executions must provide the cost (which must be \code{Inf}) and the 
+execution time which will be used to calculate the used configuration budget. 
+Nevertheless, rejected configurations will be  excluded from the execution time estimation 
+and the execution bound calculation.
+\end{xwarningbox}
 
 \subsection{Ablation Analysis}\label{sec:ablation}
 

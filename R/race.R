@@ -421,18 +421,19 @@ instanceBound <- function(data, type="median")
 dom.elim <- function(results, elites, alive, scenario, minSurvival, eps = 1e-5)
 {
   irace.assert(sum(alive) >= minSurvival)
+  which.alive <- which(alive)
   
   # When there are no protected elites left, select the best configurations to
   # calculate the bounds. This is quite aggressive and another alternative
   # would be to disable dom.elim when elites == 0.
   if (length(elites) == 0) {
     # FIXME: We could restrict this to only results[, which.alive]
-    cmeans <- colMeans(results)
+    cmeans <- colMeans(results[,alive, drop=FALSE])
     # In the case we have only two alive configurations only one can be elite.
     if (sum(alive) <= 2)
-      elites <- which.min(cmeans)
+      elites <- which.alive[which.min(cmeans)]
     else
-      elites <- order(cmeans, na.last = TRUE, decreasing = FALSE)[1:minSurvival]
+      elites <- which.alive[order(cmeans, na.last = TRUE, decreasing = FALSE)[1:minSurvival]]
   }
   
   bound <- executionBound(results[, elites, drop = FALSE], type = scenario$cappingType)
@@ -467,6 +468,10 @@ final.execution.bound <- function(experimentsTime, elites, no.configurations,
   final.bounds <- rep(scenario$boundMax, no.configurations)
   total.time  <- current.task * scenario$boundMax
   elite.bound <- scenario$boundMax
+  # Elite candidates can have NA values due to the rejection 
+  if (length(elites) > 0)
+    elites <- elites[!is.na(experimentsTime[current.task,elites])]
+    
   # Only apply bounds when there is previous data
   if (length(elites) > 0 && length(which.exe) > 0) {
     # The elite membership is updated before calling this function to know 
@@ -563,6 +568,7 @@ race <- function(maxExp = 0,
   experimentLog <- matrix(nrow = 0, ncol = 4,
                           dimnames = list(NULL, c("instance", "configuration", "time", "bound")))
   alive <- rep(TRUE, no.configurations)
+  is.rejected <- rep(FALSE, no.configurations)
   
   ## FIXME: Remove argument checking. This must have been done by the caller.
   # Check argument: maxExp
@@ -639,14 +645,16 @@ race <- function(maxExp = 0,
     if (scenario$capping && elitistNewInstances != 0) {
       # FIXME: This should go into its own function.
       n.elite <- ncol(elite.data[["experiments"]])
+      alive.elites <- rep(TRUE, n.elite)
+      which.elites <- which(alive.elites)
       irace.note("Preliminary execution of ", n.elite,
                  " elite configuration(s) over ", elitistNewInstances, " instance(s).\n")
       for (k in 1:elitistNewInstances) {
-        output <- race.wrapper (configurations = configurations[1:n.elite, , drop = FALSE], 
+        output <- race.wrapper (configurations = configurations[which.elites, , drop = FALSE], 
                                 instance.idx = race.instances[k],
                                 bounds = rep(scenario$boundMax, n.elite),
-                                which.alive = 1:n.elite, 
-                                which.exe = 1:n.elite,
+                                which.alive = which.elites, 
+                                which.exe = which.elites,
                                 parameters = parameters, 
                                 scenario = scenario)
         # Extract results
@@ -661,17 +669,39 @@ race <- function(maxExp = 0,
         Results[k, 1:n.elite] <- vcost
         vtimes <- unlist(lapply(output, "[[", "time"))
         irace.assert(length(vtimes) == n.elite)
-        experimentsTime[k, 1:n.elite] <- vtimes
+        experimentsTime[k, which.elites] <- vtimes
         experimentLog <- rbind(experimentLog,
                                cbind(race.instances[k],
-                                     configurations[1:n.elite, ".ID."],
+                                     configurations[which.elites, ".ID."],
                                      vtimes,
                                      scenario$boundMax))     
         experimentsUsed <- experimentsUsed + n.elite
+        
+        # We remove elite configurations that are rejected given that
+        # is not possible to calculate the bounds
+        rejected <- is.infinite(Results[k, which.elites])
+        is.rejected[which.elites] <- rejected
+        alive.elites[which.elites] <- !rejected
+        which.elites <- which(alive.elites)
+        n.elite <- length(which.elites)
+
+      	# If all elite are eliminated we stop execution of initial instances
+      	if (n.elite < 1) {
+      	  irace.note ("All elite configurations are rejected. Execution of non-elite will be not bounded.\n")
+           break
+      	}
+      }
+      if (any(is.rejected)) {
+        irace.note ("Rejected elite configurations: ",
+                    paste0(configurations[is.rejected, ".ID."],
+                       collapse = ", ") , "\n")
+        alive[is.rejected] <- FALSE
       }
     }
     # Compute the elite membership
     is.elite <- colSums(!is.na(Results))
+    # Remove rejected configurations
+    is.elite[is.rejected] <- 0
   }
 
   best <- 0
@@ -690,7 +720,8 @@ race <- function(maxExp = 0,
     if (elitist
         # Filter configurations that do not need to be executed (elites).
         # This is valid only for previous iteration instances.
-        && !is.null(elite.data) && current.task <= elite.safe) {
+        #&& !is.null(elite.data) && current.task <= elite.safe) {
+        && any(is.elite > 0) && current.task <= elite.safe) {
       # Execute everything that is alive and not yet executed.
       which.exe <- which(alive & is.na(Results[current.task, ]))
       # LESLIE: This is the case in which there are only elite configurations alive
@@ -837,14 +868,15 @@ race <- function(maxExp = 0,
     ## Drop bad configurations.
     ## Infinite values denote immediate rejection of a configuration.
     rejected <- is.infinite(Results[current.task, alive])
+    is.rejected[alive] <- rejected
     if (any(rejected)) {
       irace.note ("Immediately rejected configurations: ",
                   paste0(configurations[which.alive[rejected], ".ID."],
                          collapse = ", ") , "\n")
-      is.elite[which.alive[rejected]] <- 0
+      is.elite[is.rejected] <- 0
       # All elites rejected.
       if (sum(is.elite > 0) == 0) elite.safe <- current.task - 1
-      alive[which.alive[rejected]] <- FALSE
+      alive[is.rejected] <- FALSE
       which.alive <- which(alive)
       nbAlive     <- length(which.alive)
       if (nbAlive == 0)
@@ -860,13 +892,14 @@ race <- function(maxExp = 0,
     test.dropped <- FALSE #if any candidates has been eliminated by testing
     cap.alive    <- test.alive <- alive
     
-
     ## Dominance elimination (Capping only).
     # The second condition can be false if we eliminated via immediate
     # rejection
     if (scenario$capping && sum(alive) > minSurvival) {
       # These two should be the same condition.
-      irace.assert((sum(is.elite > 0) == 0) == (current.task >= elite.safe))
+      # LESLIE: this condition is not true due to the rejection of configurations!
+      # the elite configurations can have less evaluations than elite.safe 
+      #irace.assert((sum(is.elite > 0) == 0) == (current.task >= elite.safe))
       cap.alive <- dom.elim(Results[1:current.task, , drop = FALSE],
                             # Get current elite configurations
                             elites = which(is.elite > 0),
@@ -900,7 +933,8 @@ race <- function(maxExp = 0,
     
     # Handle elites when elimination is performed.  The elite configurations
     # can be removed only when they have no more previously-executed instances.
-    irace.assert((sum(is.elite > 0) == 0) == (current.task >= elite.safe))
+    # LESLIE: I add this condition to the assert because due to initial rejection this might not be true always
+    #irace.assert((sum(is.elite > 0) == 0) == (current.task >= elite.safe))
     if (!is.null(elite.data) && current.task < elite.safe) {
       irace.assert (length(alive) == length(is.elite))
       alive <- alive | (is.elite > 0)
@@ -1019,5 +1053,6 @@ race <- function(maxExp = 0,
               experimentLog = experimentLog,
               experimentsUsed = experimentsUsed,
               nbAlive = nbAlive,
-              configurations = configurations))
+              configurations = configurations,
+              rejectedIDs = configurations[is.rejected, ".ID."]))
 }

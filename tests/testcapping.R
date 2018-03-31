@@ -184,3 +184,39 @@ time.cap.irace <- function(...)
 
 time.cap.irace(instances = c("ackley", "goldestein", "matyas", "himmelblau"), parallel = 2)
 
+
+## target runner ###########################################################
+target.runner.reject <- function(experiment, scenario)
+{
+  if (runif(1) <= 0.3) return (list(cost = -Inf, time=80, call = toString(experiment)))
+  return (target.runner(experiment, scenario))
+}
+
+## Run time function ########################################################
+time.cap.rej.irace <- function(...)
+{
+  args <- list(...)
+
+  parameters.table <- '
+   x "" r (0, 1.00)
+   y "" r (0, 1.00)
+   '  
+  parameters <- readParameters(text = parameters.table)
+
+  scenario <- list(targetRunner = target.runner.reject,
+                   maxTime = 10000, 
+                   capping = TRUE,
+                   boundMax = 80,  
+                   testType = "t-test")
+  scenario <- c(scenario, args)
+
+  scenario <- checkScenario (scenario)
+
+  confs <- irace(scenario = scenario, parameters = parameters)
+  best.conf <- getFinalElites(logFile = scenario$logFile, n = 1,
+                              drop.metadata = TRUE)
+  stopifnot(identical(removeConfigurationsMetaData(confs[1, , drop = FALSE]),
+                      best.conf))
+}
+
+time.cap.rej.irace(instances = c("ackley", "goldestein", "matyas", "himmelblau"), parallel = 2)

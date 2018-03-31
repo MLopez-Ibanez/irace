@@ -449,7 +449,8 @@ do.experiments <- function(configurations, ninstances, scenario, parameters)
     }
   }
   
-  return (list(experiments = Results, experimentLog = experimentLog))
+  rejectedIDs <- configurations[apply(is.infinite(Results),2 ,any), ".ID."]
+  return (list(experiments = Results, experimentLog = experimentLog, rejectedIDs=rejectedIDs))
 }
 
 ## Gets the elite configurations time matrix from the experiment log
@@ -690,6 +691,7 @@ irace <- function(scenario, parameters)
     experimentsUsedSoFar <- 0
     timeUsed <- 0
     timeEstimate <- NA 
+    rejectedIDs <- c()
 
     startParallel(scenario)
     on.exit(stopParallel(), add = TRUE)
@@ -704,6 +706,7 @@ irace <- function(scenario, parameters)
       ## discarding these configurations.
       ninstances <- scenario$firstTest
       estimationTime <- ceiling(scenario$maxTime * scenario$budgetEstimation)
+      timeEstimate <- scenario$boundMax
       irace.note("Estimating execution time using ", 100 * scenario$budgetEstimation,
                  "% of ", scenario$maxTime, " = ", estimationTime, "\n")
 
@@ -732,13 +735,23 @@ irace <- function(scenario, parameters)
         iraceResults$experimentLog <- rbind(iraceResults$experimentLog,
                                             cbind(rep(0, nrow(output$experimentLog)),
                                                   output$experimentLog)) 
-
-        timeUsed     <- sum(timeUsed, output$experimentLog[, "time"], na.rm = TRUE)
-        timeEstimate <- mean(iraceResults$experimentLog[, "time"], na.rm = TRUE)   
         
         iraceResults$experiments <- merge.matrix (iraceResults$experiments,
                                                   output$experiments)
         rownames(iraceResults$experiments) <- 1:nrow(iraceResults$experiments)
+                
+        rejectedIDs <- c(rejectedIDs, output$rejectedIDs)
+                
+        # For the used time we count the time reported in all configurations
+        # including rejected ones. 
+        timeUsed     <- sum(timeUsed, output$experimentLog[, "time"], na.rm = TRUE)
+        # In the rare case all configurations are eliminated we keep timeEstimate as 
+        # initially defined (boundMax)
+        if (nrow(allConfigurations) > length(rejectedIDs)){
+          timeEstimate <- mean(iraceResults$experimentLog[
+                                !(iraceResults$experimentLog[, "configuration"] %in% rejectedIDs), "time"], 
+                               na.rm = TRUE)   
+        }
         next.configuration <- nconfigurations + 1
         
         # Calculate how many new configurations:
@@ -754,6 +767,11 @@ irace <- function(scenario, parameters)
           nconfigurations <- min(1024, nconfigurations + new.conf)
         }
       }
+      
+      if (length(rejectedIDs) > 0) {
+        irace.note ("Immediately rejected configurations: ",
+                    paste0(rejectedIDs, collapse = ", ") , "\n")
+      }
   
       irace.note("Estimated execution time is ", timeEstimate, " based on ",
                  next.configuration - 1, " configurations and ",
@@ -763,7 +781,8 @@ irace <- function(scenario, parameters)
       remainingBudget <- round((scenario$maxTime - timeUsed) / timeEstimate)
 
       experimentsUsedSoFar <- experimentsUsedSoFar + nrow(iraceResults$experimentLog)
-      eliteConfigurations <- allConfigurations[1:(next.configuration - 1),]
+      #eliteConfigurations <- allConfigurations[1:(next.configuration - 1),]
+      eliteConfigurations <- allConfigurations[!(allConfigurations$.ID. %in% rejectedIDs), ,drop=FALSE]
 
       # Without elitist, the racing does not re-use the results computed during
       # the estimation.  This means that the time used during estimation needs
@@ -841,7 +860,8 @@ irace <- function(scenario, parameters)
                                nbIterations = nbIterations,
                                remainingBudget = remainingBudget,
                                timeUsed = timeUsed,
-                               timeEstimate = timeEstimate)
+                               timeEstimate = timeEstimate,
+                               rejectedConfigurations = rejectedIDs)
     # Consistency checks
     irace.assert(sum(!is.na(iraceResults$experiments)) == experimentsUsedSoFar)
     irace.assert(nrow(iraceResults$experimentLog) == experimentsUsedSoFar)
@@ -973,7 +993,7 @@ irace <- function(scenario, parameters)
     # Sample for the first time.
     if (indexIteration == 1) {
       # If we need more configurations, sample uniformly.
-      nbNewConfigurations <- nbConfigurations - nrow(allConfigurations)
+      nbNewConfigurations <- nbConfigurations - nrow(allConfigurations[!(allConfigurations$.ID. %in% rejectedIDs),,drop=FALSE])
       if (nbNewConfigurations > 0) {
         # Sample new configurations.
         if (debugLevel >= 1) {
@@ -989,7 +1009,8 @@ irace <- function(scenario, parameters)
                  newConfigurations)
         allConfigurations <- rbind(allConfigurations, newConfigurations)
         rownames(allConfigurations) <- allConfigurations$.ID.
-        raceConfigurations <- allConfigurations[1:nbConfigurations,]
+        raceConfigurations <- allConfigurations[!(allConfigurations$.ID. %in% rejectedIDs),]
+        #raceConfigurations <- allConfigurations[1:nbConfigurations,]
       } else if (nbNewConfigurations < 0) {
         # We let the user know that not all configurations will be used
         if (nbUserConfigurations > nbConfigurations) {
@@ -1002,8 +1023,9 @@ irace <- function(scenario, parameters)
         # time estimation is more than needed.
         if (nrow(eliteConfigurations) == nbConfigurations) {
           raceConfigurations <- eliteConfigurations
-        } else{
-          raceConfigurations <- allConfigurations[1:nbConfigurations,]
+        } else {
+          raceConfigurations <- allConfigurations[!(allConfigurations$.ID. %in% rejectedIDs),]
+          raceConfigurations <- raceConfigurations[1:nbConfigurations,]
         }
         
       }
@@ -1120,12 +1142,16 @@ irace <- function(scenario, parameters)
     # Merge new results
     iraceResults$experiments <- merge.matrix (iraceResults$experiments,
                                               raceResults$experiments)
+                                              
+    rejectedIDs <- c(rejectedIDs, raceResults$rejectedIDs)
 
     experimentsUsedSoFar <- experimentsUsedSoFar + raceResults$experimentsUsed
     # Update remaining budget
     if (scenario$maxTime > 0) { 
-      timeUsed <- sum (timeUsed, raceResults$experimentLog[,"time"], na.rm=TRUE)
-      timeEstimate <- mean(iraceResults$experimentLog[,"time"], na.rm=TRUE)
+      timeUsed <- sum (timeUsed, raceResults$experimentLog[,"time"], na.rm=TRUE)                                   
+      timeEstimate <- mean(iraceResults$experimentLog[
+                             !(iraceResults$experimentLog[, "configuration"] %in% rejectedIDs),"time"], 
+                           na.rm=TRUE)
       remainingBudget <- round((scenario$maxTime - timeUsed) / timeEstimate)
     } else {
       remainingBudget <- remainingBudget - raceResults$experimentsUsed
