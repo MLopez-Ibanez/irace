@@ -620,6 +620,13 @@ irace <- function(scenario, parameters)
     scenario <- checkScenario(scenario)
     startParallel(scenario)
     on.exit(stopParallel(), add = TRUE)
+    if (length(rejectedIDs)>0) {
+      if (is.null(scenario$forbiddenExps))
+        scenario$forbiddenExps <- exps
+      else
+        scenario$forbiddenExps <- c(scenario$forbiddenExps, exps)
+    }
+    
   } else { # Do not recover
     scenario <- irace.init (scenario)
     debugLevel <- scenario$debugLevel
@@ -692,6 +699,7 @@ irace <- function(scenario, parameters)
     timeUsed <- 0
     timeEstimate <- NA 
     rejectedIDs <- c()
+    rejectedExps <- c()
 
     startParallel(scenario)
     on.exit(stopParallel(), add = TRUE)
@@ -861,7 +869,8 @@ irace <- function(scenario, parameters)
                                remainingBudget = remainingBudget,
                                timeUsed = timeUsed,
                                timeEstimate = timeEstimate,
-                               rejectedConfigurations = rejectedIDs)
+                               rejectedConfigurations = rejectedIDs,
+                               rejectedExps = rejectedExps)
     # Consistency checks
     irace.assert(sum(!is.na(iraceResults$experiments)) == experimentsUsedSoFar)
     irace.assert(nrow(iraceResults$experimentLog) == experimentsUsedSoFar)
@@ -1142,8 +1151,17 @@ irace <- function(scenario, parameters)
     # Merge new results
     iraceResults$experiments <- merge.matrix (iraceResults$experiments,
                                               raceResults$experiments)
-                                              
-    rejectedIDs <- c(rejectedIDs, raceResults$rejectedIDs)
+                                             
+    if (length(raceResults$rejectedIDs)>0) {
+    	  rejectedIDs <- c(rejectedIDs, raceResults$rejectedIDs)
+      newExps <- buildForbiddenExp(configurations=allConfigurations[allConfigurations$.ID. %in% raceResults$rejectedIDs,],
+                                  parameters=parameters)
+      rejectedExps <- c(rejectedExps, newExps)
+      if (is.null(scenario$forbiddenExps))
+        scenario$forbiddenExps <- newExps
+      else
+        scenario$forbiddenExps <- c(scenario$forbiddenExps, newExps)
+    }
 
     experimentsUsedSoFar <- experimentsUsedSoFar + raceResults$experimentsUsed
     # Update remaining budget

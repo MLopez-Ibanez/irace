@@ -718,3 +718,39 @@ is.file.extension <- function(filename, ext)
 {
   return(substring(filename, nchar(filename) + 1 - nchar(ext)) == ext)
 }
+
+# This function returns the max index that is TRUE in vector x
+max.which <- function(x) {
+	return(max(which(x)))
+}
+
+buildForbiddenExp <- function(configurations, parameters) {
+  pnames <- parameters$names
+  types <- parameters$types
+  
+  lines <- c()
+  
+  for (k in 1:nrow(configurations)){
+  	values <- configurations[k,pnames] 
+    #irace.assert(length(values) == length(names))
+    line <- ""
+    sep <- ""
+    for (i in seq_along(values)) {
+      if (!is.na(values[i])) {
+    	    if (types[i] %in% c("i","r"))
+          e <- paste0("(", pnames[i]," == ", format(values[i], scientific=FALSE), ")")
+        else 
+          e <- paste0("(", pnames[i]," == \"", values[i] ,"\")")
+        line <- paste(line, sep, e)
+        sep <- "&"
+      }
+    }
+    lines <- c(lines, line)
+  }
+  exps <- parse(text = lines)
+  exps <- sapply(exps, function(x) substitute(is.na(x) | !(x), list(x = x)))
+  forbiddenExps <- sapply(exps, compiler::compile,
+                          options = list(suppressUndefined=TRUE))
+  return(forbiddenExps)
+  
+}
