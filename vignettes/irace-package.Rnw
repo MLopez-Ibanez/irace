@@ -13,7 +13,7 @@
 \usepackage{ifthen}
 \newboolean{Release}
 \setboolean{Release}{false}
-%\setboolean{Release}{true}
+\setboolean{Release}{true}
 \usepackage{calc}
 \usepackage{afterpage}
 \usepackage{algorithm,algorithmic}
@@ -525,66 +525,7 @@ For a step-by-step guide to create the scenario elements for your target algorit
 continue to \autoref{sec:step}. For an example execution of \irace using the
 \ACOTSP scenario go to \autoref{sec:example}.
 
-Once all the scenario elements are prepared you can execute \irace, either using the command-line wrappers provided by the package
- or directly from the \aR console:
 
-
-\begin{itemize}
-\item Execute \irace from the command-line as (on Windows, you should execute
-  \code{irace.bat}):
-
-%<<irace_cmd_exe0,engine='bash', eval=FALSE>>=
-\begin{lstlisting}[style=BashInputStyle]
-# $IRACE_HOME is the installation directory of irace.
-$IRACE_HOME/bin/irace --scenario scenario.txt
-\end{lstlisting}
-%@
-
-For this example we assume that the needed scenario files have been set
-properly in the \code{scenario.txt} file using the options described in
-\autoref{sec:irace options}. Most \irace options can be specified
-in the command line or directly in the \code{scenario.txt} file.
-
-\item Or execute \irace from the \aR console as:
-
-<<irace_R_exe0, eval=FALSE, prompt=FALSE>>=
-library("irace")
-parameters <- readParameters("parameters.txt")
-scenario <- readScenario(filename = "scenario.txt",
-                         scenario = defaultScenario())
-irace(scenario = scenario, parameters = parameters)
-@
-
-\end{itemize}
-
-The \irace executable provides an option (\parameter{-{}-check}) to check that the scenario is
-correctly defined. We recommend to perform a check every time
-you create a new scenario. When performing the check, \irace will
-verify that the scenario and parameter definitions are correct and
-will test the execution of the target algorithm. To check your scenario
-execute the following commands:
-
-\begin{itemize}
-\item From the command-line (on Windows, execute \code{irace.bat}):
-  
-%<<irace_check,engine='bash', eval=FALSE>>=
-\begin{lstlisting}[style=BashInputStyle]
-# $IRACE_HOME is the installation directory of irace.
-$IRACE_HOME/bin/irace --scenario scenario.txt --check
-\end{lstlisting}
-%@
-
-\item Or from the \aR console:
-
-<<irace_R_check, eval=FALSE, prompt=FALSE>>=
-library("irace")
-parameters <- readParameters("parameters.txt")
-scenario <- readScenario(filename = "scenario.txt",
-                         scenario = defaultScenario())
-checkIraceScenario(scenario = scenario, parameters = parameters)
-@
-
-\end{itemize}
 
 \subsection{Step-by-step setup guide}\label{sec:step}
 This section provides a guide to setup a basic execution of \irace. The
@@ -732,39 +673,73 @@ problems. For more information about the \parameter{targetRunner}, please see
         \end{enumerate}
 
       \item \textit{Optional}: Modify the \code{target-evaluator} file. This is rarely needed and the \code{target-runner} template does not use it. \autoref{sec:evaluator} explains when a \parameter{targetEvaluator} is needed and how to define it.
-
-\end{enumerate}
-
-Once the files have been prepared, you can execute \irace using the command-line or directly from the \aR console:
+        
+      \item The \irace executable provides an option (\parameter{-{}-check}) to
+        check that the scenario is correctly defined. We recommend to perform a
+        check every time you create a new scenario. When performing the check,
+        \irace will verify that the scenario and parameter definitions are
+        correct and will test the execution of the target algorithm. To check
+        your scenario execute the following commands:
 
 \begin{itemize}
-\item{
-\textbf{On the console}, call the command:
-%<<irace_cmd_exe,engine='bash', eval=FALSE>>=
+\item From the command-line (on Windows, execute \code{irace.bat}):
+  
+%<<irace_check,engine='bash', eval=FALSE>>=
 \begin{lstlisting}[style=BashInputStyle]
-cd ~/tuning/
-$IRACE_HOME/bin/irace
+# $IRACE_HOME is the installation directory of irace.
+$IRACE_HOME/bin/irace --scenario scenario.txt --check
 \end{lstlisting}
 %@
+
+\item Or from the \aR console:
+
+<<irace_R_check, eval=FALSE, prompt=FALSE>>=
+library("irace")
+scenario <- readScenario(filename = "scenario.txt",
+                         scenario = defaultScenario())
+checkIraceScenario(scenario = scenario)
+@
+
+\end{itemize}
+
+
+\item  Once all the scenario elements are prepared you can execute \irace, either using the command-line wrappers provided by the package
+ or directly from the \aR console:
+
+\begin{itemize}
+\item{%
+\textbf{From the command-line console}, call the command (on Windows, you should execute
+  \code{irace.bat}):
+\begin{lstlisting}[style=BashInputStyle]
+cd ~/tuning/
+# $IRACE_HOME is the installation directory of irace
+# By default, irace reads scenario.txt, you can specify a different file
+# with --scenario.
+$IRACE_HOME/bin/irace
+\end{lstlisting}
+For this example we assume that the needed scenario files have been set
+properly in the \code{scenario.txt} file using the options described in
+\autoref{sec:irace options}. Most \irace options can be specified
+in the command line or directly in the \code{scenario.txt} file.
 }
 \item{
-\textbf{On the \aR console}, open an \aR console and execute:
+\textbf{From the \aR console}, evaluate:
 
 <<irace_R_exe, eval=FALSE, prompt=FALSE>>=
 library("irace")
 # Go to the directory containing the scenario files
 setwd("~/tuning")
-# Create the R objects scenario and parameters
-parameters <- readParameters("parameters.txt")
 scenario <- readScenario(filename = "scenario.txt",
                          scenario = defaultScenario())
-irace(scenario = scenario, parameters = parameters)
+irace.main(scenario = scenario)
 @
 }
 \end{itemize}
 
 This will perform one run of \irace. See the output of \code{irace --help} in the command-line or \code{irace.usage()} in \aR for quick information on
 additional \irace parameters. For more information about \irace options, see \autoref{sec:irace options}.
+
+\end{enumerate}
 
 \begin{xwarningbox}
 Command-line options override the same options specified in the \code{scenario.txt} file.
@@ -848,10 +823,9 @@ $IRACE_HOME/bin/irace
 <<runexample2,prompt=FALSE,eval=FALSE>>=
 library("irace")
 setwd("~/tuning/")
-parameters <- readParameters("parameters-acotsp.txt")
 scenario <- readScenario(filename = "scenario.txt",
                          scenario = defaultScenario())
-irace(scenario = scenario, parameters = parameters)
+irace.main(scenario = scenario)
 @
 
 \end{enumerate}
