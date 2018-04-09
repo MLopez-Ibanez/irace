@@ -455,8 +455,8 @@ do.experiments <- function(configurations, ninstances, scenario, parameters)
 
 ## Gets the elite configurations time matrix from the experiment log
 ## FIXME: Make this function re-use previous matrix?
-generateTimeMatrix <- function(elites, experimentLog) {
-  
+generateTimeMatrix <- function(elites, experimentLog)
+{
   selectValues <- function(value) {
     aux <- selectedLog[selectedLog[,"instance"] == value,
                        c("configuration", "time", "bound"), drop=FALSE]
@@ -946,10 +946,10 @@ irace <- function(scenario, parameters)
       }
     }
     
-    # Reduce the number of elite configurations in the first iteration when needed.
-    # This is due to budget estimation. 
-    # NOTE: only in the first iteration is possible nbConfigurations==nrow(eliteConfigurations)
-    if (indexIteration==1 && nbConfigurations < nrow(eliteConfigurations)) {
+    # Reduce the number of elite configurations in the first iteration when
+    # needed.  This is due to budget estimation.  only in the first iteration
+    # is possible nbConfigurations == nrow(eliteConfigurations)
+    if (indexIteration == 1 && nbConfigurations < nrow(eliteConfigurations)) {
     	  eliteRanks <- overall.ranks(iraceResults$experiments, stat.test = scenario$testType)
       eliteConfigurations <- eliteConfigurations[order(eliteRanks), ]
       eliteConfigurations <- eliteConfigurations[1:nbConfigurations, ]
@@ -1002,6 +1002,7 @@ irace <- function(scenario, parameters)
     # Sample for the first time.
     if (indexIteration == 1) {
       # If we need more configurations, sample uniformly.
+      # FIXME: This is too expensive just to calculate nrow()
       nbNewConfigurations <- nbConfigurations - nrow(allConfigurations[!(allConfigurations$.ID. %in% rejectedIDs),,drop=FALSE])
       if (nbNewConfigurations > 0) {
         # Sample new configurations.
@@ -1021,7 +1022,7 @@ irace <- function(scenario, parameters)
         raceConfigurations <- allConfigurations[!(allConfigurations$.ID. %in% rejectedIDs),]
         #raceConfigurations <- allConfigurations[1:nbConfigurations,]
       } else if (nbNewConfigurations < 0) {
-        # We let the user know that not all configurations will be used
+        # We let the user know that not all configurations will be used.
         if (nbUserConfigurations > nbConfigurations) {
           catInfo("Only ", nbConfigurations,
                   " from the initial configurations will be used",

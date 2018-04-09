@@ -321,6 +321,8 @@ race.print.task <- function(Results,
                             bound = NULL)
 {
   time.diff <- difftime(Sys.time(), start.time, units = "secs")
+  # FIXME: Maybe better and faster if we only print seconds?
+  time.str <- format(.POSIXct(time.diff, tz="GMT"), "%H:%M:%S")
   if (is.null(bound))
     cat(sprintf("%11d|%11d|%11d|%#15.10g|%11d|%s",
                 instance,
@@ -328,8 +330,7 @@ race.print.task <- function(Results,
                 id.best,
                 mean.best,
                 experimentsUsed,
-                # FIXME: Maybe better and faster if we only print seconds?
-                format(.POSIXct(time.diff, tz="GMT"), "%H:%M:%S")))
+                time.str))
   else
     cat(sprintf("%11d|%8.2f|%11d|%11d|%#15.10g|%11d|%s",
                 instance,
@@ -338,8 +339,7 @@ race.print.task <- function(Results,
                 id.best,
                 mean.best,
                 experimentsUsed,
-                # FIXME: Maybe better and faster if we only print seconds?
-                format(.POSIXct(time.diff, tz="GMT"), "%H:%M:%S")))
+                time.str))
                 
   if (current.task > 1 && sum(alive) > 1) {
     conc <- concordance(Results[1:current.task, alive, drop = FALSE])
@@ -705,7 +705,7 @@ race <- function(maxExp = 0,
     # Compute the elite membership
     is.elite <- colSums(!is.na(Results))
     # Remove rejected configurations
-    is.elite[is.rejected] <- 0
+    is.elite[is.rejected] <- 0L
   }
 
   best <- 0
@@ -749,7 +749,7 @@ race <- function(maxExp = 0,
     if (current.task > first.test) {
     #if ((current.task > first.test && !scenario$capping) 
         # MANUEL: This is new and I'm not sure what it does.
-        # LESLIE: When using capping, we dont finish any execution until all 
+        # LESLIE: When using capping, we dont finish any race until all 
         # previous instances have been executed (this makes sure that all non-elite 
         # configurations execute all the previous instances)
     #    || (scenario$capping && (current.task > elite.safe))) {
@@ -879,11 +879,11 @@ race <- function(maxExp = 0,
     output <- race.wrapper (configurations = configurations[which.alive, , drop = FALSE],
                             instance.idx = race.instances[current.task],
                             # FIXME: Why are we computing bounds for configurations that are dead?
+                            # Also, do we use the final.bounds of which.alive or only the ones of which.exe?
                             bounds = final.bounds[which.alive],
                             which.alive = which.alive, which.exe = which.exe,
                             parameters = parameters, scenario = scenario)
 
-    
     # Extract results
     vcost <- unlist(lapply(output, "[[", "cost"))
     # If the experiment was executed or target.evaluator exists
