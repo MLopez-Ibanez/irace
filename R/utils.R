@@ -191,12 +191,32 @@ is.null.or.empty <- function(x)
   is.null(x) || (!suppressWarnings(is.na(x)) && length(x) == 1 && is.character(x) && x == "")
 }
 
+is.function.name <- function(FUN)
+{
+  # FIXME: Is there a simpler way to do this check?
+  is.function(FUN) ||
+    (!is.null(FUN) && !is.na(FUN) && as.character(FUN) != "" &&
+     !is.null(mget(as.character(FUN), envir = as.environment(-1),
+                   mode = "function", ifnotfound = list(NULL),
+                   inherits = TRUE)[[1]]))
+}
+
+get.function <- function(FUN)
+{
+  irace.assert(is.function.name(FUN))
+  if (is.function(FUN)) return(FUN)
+  # FIXME: Is there a simpler way to do this?
+  return(mget(FUN, envir = as.environment(-1),
+              mode = "function", ifnotfound = list(NULL),
+              inherits = TRUE)[[1]])
+}
+
 is.bytecode <- function(x) typeof(x) == "bytecode"
 
 bytecompile <- function(x)
 {
   if (is.bytecode(x)) return(x)
-  else return(compiler::cmpfun(x))
+  return(compiler::cmpfun(x))
 }
 
 strcat <- function(...)
@@ -313,16 +333,6 @@ path.rel2abs <- function (path, cwd = getwd())
   # We use normalizePath, which will further simplify the path if
   # the path exists.
   return (irace.normalize.path(path))
-}
-
-is.function.name <- function(FUN)
-{
-  # FIXME: Is there a simpler way to do this check?
-  is.function(FUN) ||
-  (!is.null(FUN) && !is.na(FUN) && as.character(FUN) != "" &&
-   !is.null(mget(as.character(FUN), envir = as.environment(-1),
-                 mode = "function", ifnotfound = list(NULL),
-                 inherits = TRUE)[[1]]))
 }
 
 # This function is used to trim potentially large strings for printing, since

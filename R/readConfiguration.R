@@ -349,7 +349,9 @@ checkScenario <- function(scenario = defaultScenario())
   
   if (is.null.or.empty(scenario$targetRunnerParallel)) {
     scenario$targetRunnerParallel <- NULL
-  } else if (!is.function.name(scenario$targetRunnerParallel)) {
+  } else if (is.function.name(scenario$targetRunnerParallel)) {
+    scenario$targetRunnerParallel <- get.function(scenario$targetRunnerParallel)
+  } else {
     irace.error("'targetRunnerParallel' must be a function")
   }
   
@@ -359,10 +361,11 @@ checkScenario <- function(scenario = defaultScenario())
     irace.error("'repairConfiguration' must be a function")
   } else {
     # Byte-compile it.
-    scenario$repairConfiguration <- bytecompile(scenario$repairConfiguration)
+    scenario$repairConfiguration <- bytecompile(get.function(scenario$repairConfiguration))
   }
 
   if (is.function.name(scenario$targetRunner)) {
+    scenario$targetRunner <- get.function(scenario$targetRunner)
     .irace$target.runner <- bytecompile(scenario$targetRunner)
   } else if (is.null(scenario$targetRunnerParallel)) {
     if (is.character(scenario$targetRunner)) {
@@ -379,6 +382,7 @@ checkScenario <- function(scenario = defaultScenario())
     scenario$targetEvaluator <- NULL
     .irace$target.evaluator <- NULL
   } else if (is.function.name(scenario$targetEvaluator)) {
+    scenario$targetEvaluator <- get.function(scenario$targetEvaluator)
     .irace$target.evaluator <- bytecompile(scenario$targetEvaluator)
   } else if (is.character(scenario$targetEvaluator)) {
     scenario$targetEvaluator <- path.rel2abs(scenario$targetEvaluator)
