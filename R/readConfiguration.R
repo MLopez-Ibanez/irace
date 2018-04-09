@@ -159,6 +159,36 @@ readConfigurationsFile <- function(filename, parameters, debugLevel = 0, text)
   }
   return (configurationTable)
 }
+# FIXME: It may be faster to create a single expression that concatenates all
+# the elements of forbidden using '|'
+checkForbidden <- function(configurations, forbidden)
+{
+  # We have to use a variable name that will never appear in
+  # configurations, so .FORBIDDEN .
+  for (.FORBIDDEN in forbidden) {
+    #print(.FORBIDDEN)
+    configurations <- subset(configurations, eval(.FORBIDDEN))
+    #print(configurations)
+    #print(str(configurations))
+    ## FIXME: This is normally called with a single configuration. Thus, it
+    ## would be faster to break as soon as nrow(configurations) < 1
+  }
+  #print(nrow(configurations))
+  return(configurations)
+}
+
+compile.forbidden <- function(x)
+{
+  if (is.bytecode(x)) return(x)
+  # When a is NA and we check a == 5, we would get NA, which is
+  # always FALSE, when we actually want to be TRUE, so we test
+  # is.na() first below.
+  
+  # We expect that there will be undefined variables, since the expressions
+  # will be evaluated within a data.frame later.
+  return(compiler::compile(substitute(is.na(x) | !(x), list(x = x)),
+                           options = list(suppressUndefined=TRUE)))
+}
 
 readForbiddenFile <- function(filename)
 {
@@ -166,24 +196,32 @@ readForbiddenFile <- function(filename)
   # FIXME: Using && or || instead of & and | will not work. Detect
   # this and give an error to the user.
 
-  # When a is NA and we check a == 5, we would get NA, which is
-  # always FALSE, when we actually want to be TRUE, so we test
-  # is.na() first below.
-  forbiddenExps <- sapply(forbiddenExps,
-                          function(x) substitute(is.na(x) | !(x), list(x = x)))
   # FIXME: Check that the parameter names that appear in forbidden
   # all appear in parameters$names to catch typos.
 
   # FIXME: Instead of a list, we should generate a single expression that is
   # the logical-OR of all elements of the list.
 
-  # Byte-compile them. We expect that there will be undefined variables, since
-  # the expressions will be evaluated within a data.frame later.
-  forbiddenExps <- sapply(forbiddenExps, compiler::compile,
-                          options = list(suppressUndefined=TRUE))
-  return(forbiddenExps)
+  # Byte-compile them.
+  return(sapply(forbiddenExps, compile.forbidden))
 }      
 
+buildForbiddenExp <- function(configurations, parameters)
+{
+  pnames <- parameters$names
+  lines <- c()
+  for (k in 1:nrow(configurations)) {
+    values <- as.list(configurations[k, pnames])
+    has.value <- !is.na(values)
+    values <- lapply(values[has.value], function(x) deparse(substitute(x, list(x=x))))
+    lines <- c(lines,
+               paste0("(", pnames[has.value]," == ", values, ")", collapse = "&"))
+  }
+  exps <- parse(text = lines)
+  # FIXME: We should save exps somewhere for verification
+  # print(exps)
+  return(sapply(exps, compile.forbidden))
+}
 
 #' readScenario
 #'

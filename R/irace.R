@@ -1,22 +1,3 @@
-
-# FIXME: It may be faster to create a single expression that concatenates all
-# the elements of forbidden using '|'
-checkForbidden <- function(configurations, forbidden)
-{
-  # We have to use a variable name that will never appear in
-  # configurations, so .FORBIDDEN .
-  for (.FORBIDDEN in forbidden) {
-    #print(.FORBIDDEN)
-    configurations <- subset(configurations, eval(.FORBIDDEN))
-    #print(configurations)
-    #print(str(configurations))
-    ## FIXME: This is normally called with a single configuration. Thus, it
-    ## would be faster to break as soon as nrow(configurations) < 1
-  }
-  #print(nrow(configurations))
-  return(configurations)
-}
-
 # Sets irace variables from a recovery file.  It is executed in the
 # parent environment which must be irace().
 #
@@ -449,8 +430,8 @@ do.experiments <- function(configurations, ninstances, scenario, parameters)
     }
   }
   
-  rejectedIDs <- configurations[apply(is.infinite(Results),2 ,any), ".ID."]
-  return (list(experiments = Results, experimentLog = experimentLog, rejectedIDs=rejectedIDs))
+  rejectedIDs <- configurations[apply(is.infinite(Results), 2, any), ".ID."]
+  return (list(experiments = Results, experimentLog = experimentLog, rejectedIDs = rejectedIDs))
 }
 
 ## Gets the elite configurations time matrix from the experiment log
