@@ -301,7 +301,8 @@ test.checkLogForbidden()
 
 test.instances <- function()
 {
-  scenario <- list(targetRunner = target.runner,
+  # Test that a function can be given as a string.
+  scenario <- list(targetRunner = "target.runner",
                    maxExperiments = 1000, seed = 1234567,
                    firstTest = 5,
                    deterministic = TRUE,
@@ -309,6 +310,7 @@ test.instances <- function()
   scenario <- checkScenario (scenario)
 }
 test.instances()
+
 
 test.similarConfigurations <- function()
 {
