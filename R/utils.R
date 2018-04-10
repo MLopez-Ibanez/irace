@@ -733,3 +733,5 @@ is.file.extension <- function(filename, ext)
 max.which <- function(x) {
 	return(max(which(x)))
 }
+
+"%!in%" <- function (x, table) match(x, table, nomatch = 0L) == 0L
