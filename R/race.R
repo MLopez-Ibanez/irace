@@ -640,13 +640,12 @@ race <- function(maxExp = 0,
                       colnames(elite.data[["time"]])] <- elite.data[["time"]]
     }
 
-    # Preliminary execution of elite configurations (capping only)
-    # this is done to calculate the execution bound of initial configurations
+    # Preliminary execution of elite configurations to calculate
+    # the execution bound of initial configurations (capping only).
     if (scenario$capping && elitistNewInstances != 0) {
       # FIXME: This should go into its own function.
       n.elite <- ncol(elite.data[["experiments"]])
-      alive.elites <- rep(TRUE, n.elite)
-      which.elites <- which(alive.elites)
+      which.elites <- which(rep(TRUE, n.elite))
       irace.note("Preliminary execution of ", n.elite,
                  " elite configuration(s) over ", elitistNewInstances, " instance(s).\n")
       for (k in 1:elitistNewInstances) {
@@ -678,42 +677,51 @@ race <- function(maxExp = 0,
         experimentsUsed <- experimentsUsed + n.elite
         
         # We remove elite configurations that are rejected given that
-        # is not possible to calculate the bounds
+        # is not possible to calculate the bounds.
         rejected <- is.infinite(Results[k, which.elites])
         is.rejected[which.elites] <- rejected
-        alive.elites[which.elites] <- !rejected
-        which.elites <- which(alive.elites)
+        which.elites <- which.elites[!rejected]
         n.elite <- length(which.elites)
 
-      	# If all elite are eliminated we stop execution of initial instances
-      	if (n.elite < 1) {
-      	  irace.note ("All elite configurations are rejected. Execution of non-elite will be not bounded.\n")
-           break
+      	# If all elite are eliminated we stop execution of initial instances.
+      	if (n.elite == 0L) {
+      	  irace.note ("All elite configurations are rejected. Execution of non-elites will be not bounded.\n")
+          break
       	}
       }
       if (any(is.rejected)) {
-        irace.note ("Rejected elite configurations: ",
+        irace.note ("Immediately rejected configurations: ",
                     paste0(configurations[is.rejected, ".ID."],
-                       collapse = ", ") , "\n")
+                           collapse = ", ") , "\n")
         alive[is.rejected] <- FALSE
-        if (n.elite>0)
-          elite.safe <- max(apply(!is.na(Results[,which.elites,drop=FALSE]),2,max.which))
+        # Calculate the maximum instance that has any non-NA value. 
+        if (n.elite > 0L)
+          elite.safe <- max(which(apply(!is.na(Results[, which.elites, drop=FALSE]), 1, any)))
         else 
           elite.safe <- 0L
       }
     }
-    # Compute the elite membership
+    # Compute the elite membership.
     is.elite <- colSums(!is.na(Results))
-    # Remove rejected configurations
+    # Remove rejected configurations.
     is.elite[is.rejected] <- 0L
   }
 
   best <- 0
   race.ranks <- c()
-  no.elimination <- 0 # number of tasks without elimination
+  no.elimination <- 0 # number of tasks without elimination.
   
   race.print.header(scenario$capping)
 
+# Remove one elite count from every configuration not executed.
+update.is.elite <- function(is.elite, which.exe)
+{
+  which.notexecuted <- setdiff(which(is.elite > 0), which.exe) 
+  is.elite[which.notexecuted] <- is.elite[which.notexecuted] - 1
+  irace.assert (all(is.elite >= 0))
+  return(is.elite)
+}
+  
   # Start main loop
   break.msg <- NULL
   for (current.task in seq_len (no.tasks)) {
@@ -721,22 +729,36 @@ race <- function(maxExp = 0,
     nbAlive     <- length(which.alive)
     which.exe   <- which.alive
 
-    if (elitist
-        # Filter configurations that do not need to be executed (elites).
-        # This is valid only for previous iteration instances.
-        #&& !is.null(elite.data) && current.task <= elite.safe) {
-        && any(is.elite > 0) && current.task <= elite.safe) {
+    if (elitist && any(is.elite > 0)) {
+      # Filter configurations that do not need to be executed (elites).
+      # This is valid only for previous iteration instances.
+      irace.assert(current.task <= elite.safe)
       # Execute everything that is alive and not yet executed.
       which.exe <- which(alive & is.na(Results[current.task, ]))
-      # LESLIE: This is the case in which there are only elite configurations alive
-      # and we are still in the previous instances execution, but we can still 
-      # continue with the race. (This is only possible because the early termination
-      # criterion is disabled)
-      # LESLIE: This we really need to discuss: when using capping, are we going to allow
-      # early termination?
-      if (length(which.exe) < 1) {
+      if (length(which.exe) == 0) {
+        is.elite <- update.is.elite(is.elite, which.exe)
+        # LESLIE: This is the case in which there are only elite configurations alive
+        # and we are still in the previous instances execution, but we can still 
+        # continue with the race. (This is only possible because the early termination
+        # criterion is disabled)
+        # LESLIE: This we really need to discuss: when using capping, are we going to allow
+        # early termination?
         # LESLIE: If we keep this and thus, the early termination, 
         # here we can print something to indicate we skip an instance...
+        # MANUEL: I think we should print the race.print.task() corresponding to this instance.
+        cat("|.|")
+        # FIXME: We need to calculate the best just as we do below. Create a function for doing that.
+        race.print.task(Results,
+                        race.instances[current.task],
+                        current.task,
+                        alive,
+                        configurations[best, ".ID."],
+                        # FIXME: This is the mean of the best, but perhaps it should
+                        # be the sum of ranks in the case of test == friedman?
+                        mean.best = mean(Results[1:current.task, best]),
+                        experimentsUsed,
+                        Sys.time(), 
+                        bound = NULL)
         next
       }
     }
@@ -812,60 +834,80 @@ race <- function(maxExp = 0,
         rownames(experimentsTime) <- race.instances[1:nrow(experimentsTime)]
       }
     }
-    
+
+    start.time <- Sys.time()
+  
     # Execution bounds calculation (capping only)
     final.bounds <- elite.bound <- NULL
-    # Calculate bounds for executing if needed
+    # Calculate bounds for executing if needed.
+    which.elite.exe <- intersect(which.exe, which(is.elite > 0))
+    irace.assert(setequal(which.elite.exe, which(is.elite & is.na(Results[current.task,]))))
     if (scenario$capping) {
-    	  # Pre-execute elite configurations that are not executed in the current instance
-    	  if (any(is.elite>0 & is.na(Results[current.task,]))) {
-    	  	to.exe <- which(is.elite & is.na(Results[current.task,]))
-    	    output <- race.wrapper (configurations = configurations[to.exe, , drop = FALSE], 
+      # Pre-execute elite configurations that are not yet executed in the current instance.
+      if (length(which.elite.exe)) {
+        # FIXME: This should go into its own function
+        output <- race.wrapper (configurations = configurations[which.elite.exe, , drop = FALSE], 
                                 instance.idx = race.instances[current.task],
-                                bounds = rep(scenario$boundMax, length(to.exe)),
-                                which.alive = to.exe, 
-                                which.exe = to.exe,
-                                parameters = parameters, 
+                                bounds = rep(scenario$boundMax, length(which.elite.exe)),
+                                # MANUEL: How does this work for target-evaluator?
+                                # We are telling race.wrapper that only some elites are alive!
+                                which.alive = which.elite.exe, 
+                                which.exe = which.elite.exe,
+                                parameters = parameters,
                                 scenario = scenario)
         # Extract results
         vcost <- unlist(lapply(output, "[[", "cost"))
-        irace.assert(length(vcost) == length(to.exe))
+        irace.assert(length(vcost) == length(which.elite.exe))
         vcost <- applyPAR(vcost, scenario)
-        Results[current.task, to.exe] <- vcost
+        Results[current.task, which.elite.exe] <- vcost
         vtimes <- unlist(lapply(output, "[[", "time"))
-        irace.assert(length(vtimes) == length(to.exe))
-        experimentsTime[current.task, to.exe] <- vtimes
+        irace.assert(length(vtimes) == length(which.elite.exe))
+        experimentsTime[current.task, which.elite.exe] <- vtimes
         experimentLog <- rbind(experimentLog,
                                cbind(race.instances[current.task],
-                                     configurations[to.exe, ".ID."],
+                                     configurations[which.elite.exe, ".ID."],
                                      vtimes,
-                                     scenario$boundMax))     
-        experimentsUsed <- experimentsUsed + length(to.exe)
-        is.elite[to.exe] <- is.elite[to.exe] + 1
+                                     scenario$boundMax))
+        experimentsUsed <- experimentsUsed + length(which.elite.exe)
+          
         # We remove elite configurations that are rejected given that
         # is not possible to calculate the bounds
-        rejected <- is.infinite(Results[current.task, to.exe])
+        rejected <- is.infinite(Results[current.task, which.elite.exe])
         if (any(rejected)) {
           irace.note ("Immediately rejected configurations: ",
-                  paste0(configurations[to.exe[rejected], ".ID."],
-                         collapse = ", ") , "\n")
-          is.rejected[to.exe] <- rejected
-          alive[to.exe] <- !rejected
-          which.alive <- which(alive) 
+                      paste0(configurations[which.elite.exe[rejected], ".ID."],
+                             collapse = ", ") , "\n")
+          is.rejected[which.elite.exe] <- rejected
           is.elite [is.rejected] <- 0
+          alive[which.elite.exe] <- !rejected
+          which.alive <- which(alive)
           nbAlive     <- length(which.alive)
-          if (nbAlive == 0)
+          if (nbAlive == 0L)
             irace.error("All configurations have been immediately rejected (all of them returned Inf) !")
-          if (any(is.elite>0))
-            elite.safe <- max(apply(!is.na(Results[,is.elite>0,drop=FALSE]),2,max.which))
+          if (any(is.elite > 0L))
+            elite.safe <- max(which(apply(!is.na(Results[, is.elite > 0, drop=FALSE]), 1, any)))
           else
-            elite.safe <- 0
+            elite.safe <- 0L
         }
-
-        which.exe <- which.exe[!(which.exe %in% to.exe)]
-        if (length(which.exe) < 1) next
-    	  }
-    	  
+        which.exe <- setdiff(which.exe, which.elite.exe)
+        if (length(which.exe) == 0L) {
+          is.elite <- update.is.elite(is.elite, which.elite.exe)
+          cat("|.!")
+          race.print.task(Results,
+                          race.instances[current.task],
+                          current.task,
+                          alive,
+                          configurations[best, ".ID."],
+                          # FIXME: This is the mean of the best, but perhaps it should
+                          # be the sum of ranks in the case of test == friedman?
+                          mean.best = mean(Results[1:current.task, best]),
+                          experimentsUsed,
+                          start.time, 
+                          bound = NULL)
+          next
+        }
+      }
+      
       all.bounds <- final.execution.bound(experimentsTime,
                                           elites = which(is.elite > 0),
                                           no.configurations, current.task,
@@ -874,7 +916,6 @@ race <- function(maxExp = 0,
       elite.bound <- all.bounds$elite.bound
     }
     
-    start.time <- Sys.time()
     # Execute experiments
     output <- race.wrapper (configurations = configurations[which.alive, , drop = FALSE],
                             instance.idx = race.instances[current.task],
@@ -917,30 +958,30 @@ race <- function(maxExp = 0,
                                  if (is.null(final.bounds)) NA else final.bounds[which.exe]))
 
     experimentsUsed <- experimentsUsed + length(which.exe)
-
-    # Remove one elite count from every configuration not executed.
-    which.notexecuted <- setdiff(which(is.elite > 0), which.exe) 
-    is.elite[which.notexecuted] <- is.elite[which.notexecuted] - 1
-    irace.assert (all(is.elite >= 0))    
+    # We update the elites that have been executed.
+    is.elite <- update.is.elite(is.elite, which.elite.exe)
 
     ## Drop bad configurations.
     ## Infinite values denote immediate rejection of a configuration.
     rejected <- is.infinite(Results[current.task, which.exe])
-    is.rejected[which.exe] <- rejected
     if (any(rejected)) {
       irace.note ("Immediately rejected configurations: ",
                   paste0(configurations[which.exe[rejected], ".ID."],
                          collapse = ", ") , "\n")
+      is.rejected[which.exe] <- rejected
       is.elite[is.rejected] <- 0
-      # All elites rejected.
-      if (sum(is.elite > 0) == 0) elite.safe <- current.task - 1
-      else elite.safe <- max(apply(!is.na(Results[,is.elite>0,drop=FALSE]),2,max.which))
       alive[is.rejected] <- FALSE
       which.alive <- which(alive)
       nbAlive     <- length(which.alive)
       if (nbAlive == 0)
         irace.error("All configurations have been immediately rejected (all of them returned Inf) !")
       # FIXME: Should we stop  if (nbAlive <= minSurvival) ???
+  
+      # All elites rejected.
+      if (any(is.elite > 0L))
+        elite.safe <- max(which(apply(!is.na(Results[, is.elite > 0, drop=FALSE]), 1, any)))
+      else
+        elite.safe <- 0L
     }
     irace.assert(!any(is.infinite(colMeans(Results[, alive, drop=FALSE]))))
     
@@ -955,10 +996,7 @@ race <- function(maxExp = 0,
     # The second condition can be false if we eliminated via immediate
     # rejection
     if (scenario$capping && sum(alive) > minSurvival) {
-      # These two should be the same condition.
-      # LESLIE: this condition is not true due to the rejection of configurations!
-      # the elite configurations can have less evaluations than elite.safe 
-      irace.assert((sum(is.elite > 0) == 0) == (current.task >= elite.safe))
+      irace.assert(!any(is.elite > 0) == (current.task >= elite.safe))
       cap.alive <- dom.elim(Results[1:current.task, , drop = FALSE],
                             # Get current elite configurations
                             elites = which(is.elite > 0),
@@ -992,16 +1030,15 @@ race <- function(maxExp = 0,
     
     # Handle elites when elimination is performed.  The elite configurations
     # can be removed only when they have no more previously-executed instances.
-    # LESLIE: I add this condition to the assert because due to initial rejection this might not be true always
-    irace.assert((sum(is.elite > 0) == 0) == (current.task >= elite.safe))
-    if (!is.null(elite.data) && current.task < elite.safe) {
+    irace.assert(!any(is.elite > 0) == (current.task >= elite.safe))
+    if (!is.null(elite.data) && any(is.elite > 0)) {
       irace.assert (length(alive) == length(is.elite))
       alive <- alive | (is.elite > 0)
     }
 
     # It may happen that the capping and the test eliminate together all
     # configurations. In that case, we only trust the capping elimination.
-    if (sum(alive) == 0 && scenario$capping) {
+    if (scenario$capping && !any(alive)) {
       if (scenario$debugLevel >= 2) {
         irace.note("Warning: Elimination tests have eliminated all configurations, keeping the capping results.\n")
         irace.note("Alive according to capping:", which(cap.alive), "\n")
@@ -1058,11 +1095,11 @@ race <- function(maxExp = 0,
                     experimentsUsed,
                     start.time, 
                     bound = elite.bound)
-
-
+    
     if (elitist) {
       # Compute number of statistical tests without eliminations.
-      if (current.task >= elite.safe
+      irace.assert(!any(is.elite > 0) == (current.task >= elite.safe))
+      if (!any(is.elite > 0)
           && current.task > first.test && (current.task %% each.test) == 0) {
         if (length(which.alive) == length(prev.alive)) {
           no.elimination <- no.elimination + 1
@@ -1078,7 +1115,8 @@ race <- function(maxExp = 0,
   # execution the race is finished with no executions.
   # FIXME: we should handle this better, maybe allowing irace to handle no elite 
   # in irace()
-  if (current.task==1 && !any(is.elite>0)) 
+  # MANUEL: I still don't understand how we reach this error if there are non-rejected elites.
+  if (current.task == 1 && !any(is.elite > 0)) 
     irace.error ("Maximum number configurations immediately rejected reached!")
 
   if (is.null(break.msg))

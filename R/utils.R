@@ -729,9 +729,5 @@ is.file.extension <- function(filename, ext)
   return(substring(filename, nchar(filename) + 1 - nchar(ext)) == ext)
 }
 
-# This function returns the max index that is TRUE in vector x
-max.which <- function(x) {
-	return(max(which(x)))
-}
-
+# Same as !(x %in% table)
 "%!in%" <- function (x, table) match(x, table, nomatch = 0L) == 0L
