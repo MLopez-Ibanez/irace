@@ -10,7 +10,7 @@ nsize <- 0.1
 ## Functions ##########################################################
 f_ackley <- function (x,y) {
   
-  # Trasfomation of parameter values 
+  # Transformation of parameter values 
   # from [0,1] to [vmin,vmax]
   vmin <- -5
   vmax <- 5
@@ -129,7 +129,7 @@ target.runner <- function(experiment, scenario)
 ## target runner ###########################################################
 target.runner.reject <- function(experiment, scenario)
 {
-  if (runif(1) <= 0.3) return (list(cost = -Inf, time=80, call = toString(experiment)))
+  if (runif(1) <= 0.05) return (list(cost = -Inf, time = 80, call = toString(experiment)))
   return (target.runner(experiment, scenario))
 }
 
@@ -149,7 +149,7 @@ cap.irace <- function(...)
                    boundMax = 80,
                    testType = "t-test",
                    parallel = 2)
-  scenario <- c(scenario, args)
+  scenario <- modifyList(scenario, args)
   scenario <- checkScenario (scenario)
 
   confs <- irace(scenario = scenario, parameters = parameters)

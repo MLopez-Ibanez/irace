@@ -54,7 +54,7 @@ target.runner.reject <- function(experiment, scenario)
 weights <- rnorm(200, mean = 0.9, sd = 0.02)
 
 ## Run function ########################################################
-sann.irace <- function(..., targetRunner = target.runner)
+sann.irace <- function(...)
 {
   args <- list(...)
 
@@ -64,9 +64,9 @@ sann.irace <- function(..., targetRunner = target.runner)
    '  
   parameters <- readParameters(text = parameters.table)
 
-  scenario <- list(targetRunner = targetRunner,
+  scenario <- list(targetRunner = target.runner,
                    maxExperiments = 1000, seed = 1234567)
-  scenario <- c(scenario, args)
+  scenario <- modifyList(scenario, args)
 
   scenario <- checkScenario (scenario)
 
@@ -263,9 +263,9 @@ x.r                       N:/tmp  N:/tmp/x.r
 }
 testwindows.path.rel2abs()
 
-test.checkForbidden <- function()
+test.checkForbidden <- function(param.file)
 {
-  params <- irace:::readParameters("parameters.txt")
+  params <- irace:::readParameters(param.file)
   confs <- irace:::readConfigurationsFile("configurations.txt", params)
   forbidden <- irace:::readForbiddenFile("forbidden.txt")
   exp.confs <- irace:::readConfigurationsFile(text='
@@ -279,25 +279,9 @@ NA        NA   "x3"   4.5   "low"
   rownames(confs) <- rownames(exp.confs) <- NULL
   stopifnot(identical(confs, exp.confs))
 }
-test.checkForbidden()
+test.checkForbidden("parameters.txt")
+test.checkForbidden("logparameters.txt")
 
-test.checkLogForbidden <- function()
-{
-  params <- irace:::readParameters("logparameters.txt")
-  confs <- irace:::readConfigurationsFile("configurations.txt", params)
-  forbidden <- irace:::readForbiddenFile("forbidden.txt")
-  exp.confs <- irace:::readConfigurationsFile(text='
-param1 param2 mode   real mutation
-5        NA    "x2"   4.0   "low"
-1        NA    "x2"   4.0   "low"
-5        6     "x1"   3.5   "low"
-NA        NA   "x3"   4.5   "low"
-', parameters = params)
-  confs <- irace:::checkForbidden(confs, forbidden)
-  rownames(confs) <- rownames(exp.confs) <- NULL
-  stopifnot(identical(confs, exp.confs))
-}
-test.checkLogForbidden()
 
 test.instances <- function()
 {
