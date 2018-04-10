@@ -554,7 +554,7 @@ race <- function(maxExp = 0,
                  scenario,
                  elitistNewInstances)
 {
-  race.env <- new.env()
+  race.env <- new.env(parent = emptyenv())
   # FIXME: We should take this from scenario. However, this value should be
   # zero for the first iteration.
   ## FIXME2: Probably, instead of this, we should keep elite.safe in the race.env.

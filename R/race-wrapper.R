@@ -5,7 +5,7 @@
 # FIXME: In fact, we should use this trick also in irace.R to avoid
 # pass-by-copy-on-write of huge matrices and data.frames and instead
 # pass-by-reference an environment containing those.
-.irace <- new.env()
+.irace <- new.env(parent = emptyenv())
 
 #' Generate a command-line representation of a configuration
 #'
