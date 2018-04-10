@@ -1083,7 +1083,8 @@ irace <- function(scenario, parameters)
       if (scenario$capping)
         elite.data[["time"]] <- generateTimeMatrix(elites = eliteConfigurations, 
                                                    experimentLog = iraceResults$experimentLog)
-      
+    }
+    
     .irace$next.instance <- max(nrow(iraceResults$experiments), 0) + 1
  
     # Add instances if needed
