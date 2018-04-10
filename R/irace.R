@@ -435,27 +435,20 @@ do.experiments <- function(configurations, ninstances, scenario, parameters)
 }
 
 ## Gets the elite configurations time matrix from the experiment log
-## FIXME: Make this function re-use previous matrix?
 generateTimeMatrix <- function(elites, experimentLog)
 {
-  selectValues <- function(value) {
-    aux <- selectedLog[selectedLog[,"instance"] == value,
-                       c("configuration", "time", "bound"), drop=FALSE]
-    # FIXME: I think this is the same as pmin(experimentLog[,"time"], experimentLog[,"bound"])
-    res <- apply(aux, 1, function(x) min(x["time"], x["bound"]))
-    resultsTime[value, as.character(aux[,"configuration"])] <<- res
-    #aux[,"time"]
-  }
-
-  # MANUEL: This is quite a hack, what is this trying to do?
-  environment(selectValues) <- environment()
-  selectedLog <- experimentLog[experimentLog[,"configuration"] %in% elites$.ID.,, drop=FALSE]
-  # FIXME: Are the instance IDs numeric?
-  instances <- 1:max(selectedLog[,"instance"])
-  resultsTime <- matrix(NA, nrow = length(instances), ncol = nrow(elites), 
-                        dimnames = list(instances, elites$.ID.))
-                  
-  sapply(instances, selectValues)
+  is.elite <- experimentLog[,"configuration"] %in% elites$.ID.
+  # Remove everything that we don't need.
+  experimentLog <- experimentLog[is.elite, c("configuration", "instance", "time", "bound"), drop = FALSE]
+  experimentLog[, "time"] <- pmin(experimentLog[,"time"], experimentLog[, "bound"])
+  # FIXME: It would be better to use spread() from tidyr
+  resultsTime <- reshape(as.data.frame(experimentLog), direction = "wide",
+                         idvar = "instance", timevar = "configuration",
+                         drop = "bound")
+  rownames(resultsTime) <- resultsTime$instance
+  resultsTime <- resultsTime[order(resultsTime$instance), , drop = FALSE]
+  colnames(resultsTime) <- substring(colnames(resultsTime), nchar("time.") + 1)
+  resultsTime <- as.matrix(resultsTime[, as.character(elites$.ID.), drop = FALSE])
   return(resultsTime)           
 }
 
@@ -601,13 +594,7 @@ irace <- function(scenario, parameters)
     scenario <- checkScenario(scenario)
     startParallel(scenario)
     on.exit(stopParallel(), add = TRUE)
-    if (length(rejectedIDs)>0) {
-      if (is.null(scenario$forbiddenExps))
-        scenario$forbiddenExps <- exps
-      else
-        scenario$forbiddenExps <- c(scenario$forbiddenExps, exps)
-    }
-    
+
   } else { # Do not recover
     scenario <- irace.init (scenario)
     debugLevel <- scenario$debugLevel
@@ -680,7 +667,6 @@ irace <- function(scenario, parameters)
     timeUsed <- 0
     timeEstimate <- NA 
     rejectedIDs <- c()
-    rejectedExps <- c()
 
     startParallel(scenario)
     on.exit(stopParallel(), add = TRUE)
@@ -850,8 +836,7 @@ irace <- function(scenario, parameters)
                                remainingBudget = remainingBudget,
                                timeUsed = timeUsed,
                                timeEstimate = timeEstimate,
-                               rejectedConfigurations = rejectedIDs,
-                               rejectedExps = rejectedExps)
+                               rejectedConfigurations = rejectedIDs)
     # Consistency checks
     irace.assert(sum(!is.na(iraceResults$experiments)) == experimentsUsedSoFar)
     irace.assert(nrow(iraceResults$experimentLog) == experimentsUsedSoFar)
@@ -1098,8 +1083,7 @@ irace <- function(scenario, parameters)
       if (scenario$capping)
         elite.data[["time"]] <- generateTimeMatrix(elites = eliteConfigurations, 
                                                    experimentLog = iraceResults$experimentLog)
-    }
-    
+      
     .irace$next.instance <- max(nrow(iraceResults$experiments), 0) + 1
  
     # Add instances if needed
@@ -1134,15 +1118,11 @@ irace <- function(scenario, parameters)
     iraceResults$experiments <- merge.matrix (iraceResults$experiments,
                                               raceResults$experiments)
                                              
-    if (length(raceResults$rejectedIDs)>0) {
-    	  rejectedIDs <- c(rejectedIDs, raceResults$rejectedIDs)
-      newExps <- buildForbiddenExp(configurations=allConfigurations[allConfigurations$.ID. %in% raceResults$rejectedIDs,],
-                                  parameters=parameters)
-      rejectedExps <- c(rejectedExps, newExps)
-      if (is.null(scenario$forbiddenExps))
-        scenario$forbiddenExps <- newExps
-      else
-        scenario$forbiddenExps <- c(scenario$forbiddenExps, newExps)
+    if (length(raceResults$rejectedIDs) > 0) {
+      rejectedIDs <- c(rejectedIDs, raceResults$rejectedIDs)
+      rejectedExps <- buildForbiddenExp(configurations = allConfigurations[allConfigurations$.ID. %in% raceResults$rejectedIDs,],
+                                  parameters = parameters)
+      scenario$forbiddenExps <- c(scenario$forbiddenExps, rejectedExps)
     }
 
     experimentsUsedSoFar <- experimentsUsedSoFar + raceResults$experimentsUsed
