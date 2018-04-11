@@ -2,7 +2,7 @@
 % Please edit documentation in R/parameterAnalysis.R
 \name{parameterFrequency}
 \alias{parameterFrequency}
-\title{parameterFrequency}
+\title{Plot of histogram of parameter values}
 \usage{
 parameterFrequency(configurations, parameters, rows = 4, cols = 3,
   filename = NULL, pdf.width = 12, col = "gray")
@@ -24,13 +24,12 @@ displayed but not saved.}
 
 \item{col}{Color of the bar plot.}
 }
-\value{
-A set of plots showing the Frequency of parameters values. 
- If a filename is provided this plots are saved in one or more files.
-}
 \description{
-\code{parameterFrequency} plots the frequency of the parameters values of 
- a set of target algorithm configurations.
+\code{parameterFrequency} plots the frequency of the parameters values in a
+ set of target algorithm configurations. It generates plots showing the
+ frequency of parameter values for each parameter, with \code{rows} *
+ \code{cols} parameters being shown per plot.  If a filename is provided the
+ plots are saved in one or more files.
 }
 \examples{
 \donttest{

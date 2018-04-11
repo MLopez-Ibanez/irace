@@ -1,7 +1,10 @@
-#' parameterFrequency
+#' Plot of histogram of parameter values
 #'
-#' \code{parameterFrequency} plots the frequency of the parameters values of 
-#'  a set of target algorithm configurations.
+#' \code{parameterFrequency} plots the frequency of the parameters values in a
+#'  set of target algorithm configurations. It generates plots showing the
+#'  frequency of parameter values for each parameter, with \code{rows} *
+#'  \code{cols} parameters being shown per plot.  If a filename is provided the
+#'  plots are saved in one or more files.
 #'   
 #' @param configurations Data frame containing target algorithms configurations 
 #'   in the format used by \pkg{irace}.
@@ -13,9 +16,6 @@
 #' @param pdf.width Width for the pdf file generated.
 #' @param col Color of the bar plot.
 #' 
-#' @return  A set of plots showing the Frequency of parameters values. 
-#'  If a filename is provided this plots are saved in one or more files.
-#'
 #' @examples
 #' \donttest{
 #'  ## To use data obtained by irace
@@ -47,6 +47,8 @@
 #
 # * how to resize the Window when filename == NULL to have a rows/cols aspect ratio.
 #
+# * use ggplot2 ?
+#
 # * add tests!
 #parameterFrequency(iraceResults$allConfigurations, iraceResults$parameters)
 #best <- colnames(experiments)[which(apply(experiments, 2, function(x) { sum(!is.na(x))}) > 5)]
@@ -62,6 +64,7 @@ parameterFrequency <- function(configurations, parameters,
   ylab.num <- "Probability density"
   
   def.par <- par(no.readonly = TRUE) # save default, for resetting...
+  on.exit(par(def.par), add = TRUE)  #- reset to default
 
   configurations <- removeConfigurationsMetaData(configurations)
 
@@ -73,7 +76,10 @@ parameterFrequency <- function(configurations, parameters,
   nplot <- 1
   cplot <- 1
   if (!is.null(filename)) {
+    # Remove possible ".pdf" extension.
+    filename <- sub(".pdf", "", filename, fixed = TRUE)
     pdf(file = paste0(filename, "-", cplot, ".pdf"), onefile = TRUE, width = pdf.width)
+    on.exit(dev.off(), add = TRUE)
   }
   par(mfrow=c(rows,cols))
   
@@ -125,9 +131,6 @@ parameterFrequency <- function(configurations, parameters,
     }
     nplot <- nplot + 1
   }
-
-  if (!is.null(filename)) dev.off()
-  par(def.par)  #- reset to default
 }
 
 # Function parcoordlabel plots parallel coordinates for categorical and
