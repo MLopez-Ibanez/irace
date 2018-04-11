@@ -143,6 +143,7 @@ writeLines(out.text, con = "../inst/templates/scenario.txt.tmpl")
 
 # Generate R code for options
 irace.params <- irace.params[, c("name", "type", "short", "long", "default", "description")]
+irace.params$description <- to.plain.text(irace.params$description)
 rownames (irace.params) <- irace.params[,"name"]
 irace.params.names <- rownames(irace.params)[substring(rownames(irace.params), 1, 1) != "."]
 
