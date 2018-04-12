@@ -2044,7 +2044,7 @@ If testing is performed, you can further analyze the resulting best
 configurations by performing statistical tests in \aR or just plotting the
 results:
 
-<<plot_test, fig.pos="tbp", fig.align="center", out.width='0.75\\textwidth', fig.cap="Boxplot of the testing results of the best configurations.", prompt=TRUE, eval=TRUE, comment="">>=
+<<plot_test, fig.pos="tbp", fig.align="center", fig.height = 3, fig.width = 6, out.width='0.85\\textwidth', fig.cap="Boxplot of the testing results of the best configurations.", prompt=TRUE, eval=TRUE, comment="">>=
 results <- iraceResults$testing$experiments
 # Wilcoxon paired test
 conf <- gl(ncol(results), # number of configurations
@@ -2052,9 +2052,8 @@ conf <- gl(ncol(results), # number of configurations
            labels = colnames(results))
 pairwise.wilcox.test (as.vector(results), conf, paired = TRUE, p.adj = "bonf")
 # Plot the results
-boxplot (iraceResults$testing$experiments,
-         ylab = "Solution cost",
-         xlab = "Configuration ID")
+irace:::configurationsBoxplot (iraceResults$testing$experiments,
+                               ylab = "Solution cost")
 @
 
 %%FIXME: should we add something like this?

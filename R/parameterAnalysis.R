@@ -472,4 +472,67 @@ getConfigurationByIteration <- function(iraceResults = NULL, logFile = NULL,
   return(configurations)
 }
 
+#' Creates box plots of the quality of configurations.
+#'
+#' @param experiments Matrix of performance of configurations (columns) over a set of instances (rows).
+#' @param title (\code{NULL}) Title for the plot.
+#' @param xlabel Label for the x axis.
+#' @param ylabel Label for the y axis.
+#' @param filename (\code{NULL}) Filename prefix to create a pdf file with the plot.
+#' 
+#' @return Box plot of the performance of the configurations.
+#'
+#' @author Manuel López-Ibáñez and Leslie Pérez Cáceres
+#' @export
+configurationsBoxplot <- function(experiments, title=NULL, 
+                                  xlabel="Configuration ID", ylabel="Performance", 
+                                  filename=NULL) {
+  
+  if (any(colSums(is.na(experiments)) > 0)) 
+    cat("INFO: There are NA values in the experiment results provided.\n")
+  
+  data.labels <- colnames(experiments)
+  if(is.null(data.labels)) data.labels <- 1:ncol(experiments)
+  
+  # These parameters could be exposed to configurate the plot
+  plot.mar <- c(7,11,4,1)
+  cex.axis <- 3
+  cex.main <- 3
+  plot.lwd <- 5
+  
+  if (!is.null(filename)) {
+    cat("INFO: Creating file", paste0(filename, ".pdf."),"\n")
+    cairo_pdf(file = paste0(filename,".pdf"), width=20, height=8)
+    x.add <- 2
+  } else {
+    plot.mar <- c(2.5,9,4,1)
+    plot.lwd <- 2
+    cex.axis <- 1
+    cex.main <- 1
+    x.add <- 0
+  }
+  
+  if (is.null(title)) plot.mar[3]<- 1
+  
+  par(las=1, mar=plot.mar, cex.axis=cex.axis, cex.main=cex.main, lwd=plot.lwd)
+  
+  boxplot(experiments, main=title, xaxt="n", outline=TRUE)
+  
+
+  for (i in 1:ncol(experiments)) {
+    mj <- jitter(rep(i,nrow(experiments)), factor=10/i)
+    points(mj, experiments[,i], pch=20, col=rgb(0,0,0,.2) , cex=5)
+    
+  }
+  
+  # X axis
+  axis(1, at=c(1:length(data.labels)), labels=data.labels, line = -0.5 + x.add, 
+       tick=FALSE, las=1, cex.axis=cex.axis)
+  mtext(xlabel, side=1, line=1.5 + 2*x.add, cex=cex.axis, las=0)
+  # Y axis
+  mtext(ylabel, side=2, line=5+1.8*x.add, cex=cex.axis, las=0)
+  
+  if (!is.null(filename)) dev.off()
+  
+}
 
