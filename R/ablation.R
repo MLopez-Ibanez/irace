@@ -343,7 +343,7 @@ ablation <- function(iraceLogFile = NULL, iraceResults = NULL,
 # This function takes an ablation log file and plots the results.
 plotAblation <- function (ab.log = NULL, abLogFile = NULL, iraceLogFile = NULL,
                           iraceResults = NULL, pdf.file = NULL, pdf.width = 20,
-                          mar = c(12,5,4,1))
+                          mar = par("mar"))
 {
   if (is.null(ab.log) && is.null(abLogFile) && is.null(iraceLogFile)) 
     irace.error("You must provide a log file or an ablation log object")
@@ -372,18 +372,23 @@ plotAblation <- function (ab.log = NULL, abLogFile = NULL, iraceLogFile = NULL,
     labels <- c(labels, label)
     last <- current
   }
+  
   if (!is.null(pdf.file)) {
     if (!is.file.extension(pdf.file, ".pdf"))
       pdf.file <- paste0(pdf.file, ".pdf")
     cat("Creating PDF file (", pdf.file, ")...")
     pdf(file = pdf.file, width = pdf.width,
         title = paste0("Ablation plot: ", pdf.file))
+    on.exit(dev.off(), add = TRUE)
   }
-  par(mar = mar, cex.axis = 1)
+
+  inches_to_lines <- (par("mar") / par("mai"))[1]
+  lab.width <- max(strwidth(labels, units = "inches")) * inches_to_lines
+  old.par <- par(mar = mar + c(lab.width - 2, 0, 0, 0), cex.axis = 1)
+  on.exit(par(old.par), add = TRUE)
+  
   plot(cand.means, xaxt = "n", xlab = "", ylab = "mean quality",
        type = "b", main = "Ablation")
   axis(1, at = 1:length(cand.means), labels = labels, las = 3)
-
-  if (!is.null(pdf.file)) dev.off()
 }
 
