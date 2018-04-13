@@ -122,6 +122,5 @@ iraceResults$scenario$logFile <- "./sann.rda"
 save(iraceResults, file="sann.rda")
 
 # Create log-ablation.Rdata
-ablation(iraceLogFile = "irace-acotsp.Rdata", src = 1, target = 60,
-         filename = NULL)
+ablation(iraceLogFile = "irace-acotsp.Rdata", src = 1, target = 60)
 
