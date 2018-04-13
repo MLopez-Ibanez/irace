@@ -5,9 +5,10 @@
 #' @name irace-package
 #' @docType package
 #' @import stats utils compiler
-#' @importFrom grDevices dev.new dev.off pdf
-#' @importFrom graphics abline axis barplot hist lines matplot par text plot
-#'
+#' @importFrom grDevices dev.new dev.off pdf cairo_pdf rgb
+#' @importFrom graphics abline axis barplot boxplot hist lines matplot mtext par plot points strwidth text
+#'  
+#' 
 #' @details  License: GPL (>= 2)
 #' 
 #' @author Maintainers: Manuel López-Ibáñez and Leslie Pérez Cáceres

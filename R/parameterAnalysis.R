@@ -487,7 +487,7 @@ getConfigurationByIteration <- function(iraceResults = NULL, logFile = NULL,
 configurationsBoxplot <- function(experiments, title = NULL, 
                                   xlabel = "Configuration ID",
                                   ylabel = "Performance", 
-                                  filename=NULL)
+                                  filename = NULL)
 {
   plot.jitter.points <- function(x, y, factor = 10 / x, pch = 20, ...)
     points(jitter(rep(x, length(y)), factor = factor),
@@ -502,9 +502,10 @@ configurationsBoxplot <- function(experiments, title = NULL,
   # These parameters could be exposed to configurate the plot
   
   if (!is.null(filename)) {
-    cat("Creating file", paste0(filename, ".pdf."),"\n")
+    filename <- paste0(filename, ".pdf.")
+    cat("Creating file", filename,"\n")
     # MANUEL: Why cairo_pdf =
-    cairo_pdf(file = paste0(filename, ".pdf"), width=20, height=8)
+    cairo_pdf(filename = filename, width=20, height=8)
     on.exit(dev.off(), add = TRUE)
     plot.mar <- c(7,11,4,1)
     plot.lwd <- 5
