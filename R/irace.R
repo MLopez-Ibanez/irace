@@ -816,6 +816,7 @@ irace <- function(scenario, parameters)
                    "# bound digits: ", scenario$boundDigits, "\n"),
           verbose = FALSE)
 
+  firstRace <- TRUE
   while (TRUE) {
     # Recovery info 
     iraceResults$state <- list(.Random.seed = get(".Random.seed", .GlobalEnv),
@@ -873,7 +874,7 @@ irace <- function(scenario, parameters)
               scenario$nbExperimentsPerIteration)
     
     # Compute the number of configurations for this race.
-    if (scenario$elitist && indexIteration > 1) {
+    if (scenario$elitist && !firstRace) {
       nOldInstances <- nrow(iraceResults$experiments)
       nbConfigurations <-
         computeNbConfigurations(currentBudget, indexIteration,
@@ -899,24 +900,17 @@ irace <- function(scenario, parameters)
         nbConfigurations <- scenario$nbConfigurations
       } else if (currentBudget < remainingBudget) {
         # We skip one iteration
+        catInfo("Not enough budget for this iteration, ",
+                "skipping to the next one.")
         indexIteration <- indexIteration + 1
         next
       } else {
         catInfo("Stopped because ",
-                "there is not enough budget to enforce the value of nbConfigurations")
+                "there is not enough budget to enforce the value of nbConfigurations.")
         return (eliteConfigurations)
       }
     }
     
-    # Reduce the number of elite configurations in the first iteration when
-    # needed.  This is due to budget estimation.  only in the first iteration
-    # is possible nbConfigurations == nrow(eliteConfigurations)
-    if (indexIteration == 1 && nbConfigurations < nrow(eliteConfigurations)) {
-    	  eliteRanks <- overall.ranks(iraceResults$experiments, stat.test = scenario$testType)
-      eliteConfigurations <- eliteConfigurations[order(eliteRanks), ]
-      eliteConfigurations <- eliteConfigurations[1:nbConfigurations, ]
-    } 
-
     # Stop if the number of configurations to test is NOT larger than the minimum.
     if (nbConfigurations <= minSurvival) {
       catInfo("Stopped because there is not enough budget left to race more than ",
@@ -925,16 +919,24 @@ irace <- function(scenario, parameters)
       return (eliteConfigurations)
     }
 
-    # Stop if  the number of configurations to produce is not greater than
-    # the number of elites.
-    if (nbConfigurations < nrow(eliteConfigurations) ||
-        (nbConfigurations == nrow(eliteConfigurations) && indexIteration > 1)) {
+
+    # If we have too many eliteConfigurations, reduce their number. This can
+    # happen before the first race due to the initial budget estimation.
+    if (firstRace) {
+      if (nbConfigurations < nrow(eliteConfigurations)) {
+        eliteRanks <- overall.ranks(iraceResults$experiments, stat.test = scenario$testType)
+        eliteConfigurations <- eliteConfigurations[order(eliteRanks), ]
+        eliteConfigurations <- eliteConfigurations[1:nbConfigurations, ]
+      }
+    } else if (nbConfigurations <= nrow(eliteConfigurations)) {
+      # Stop if  the number of configurations to produce is not greater than
+      # the number of elites.
       catInfo("Stopped because ",
               "there is not enough budget left to race newly sampled configurations")
       #(number of elites  + 1) * (mu + min(5, indexIteration)) > remainingBudget" 
       return (eliteConfigurations)
     }
-
+    
     if (scenario$elitist) {
       # The non-elite have to run up to the first test. The elites consume
       # budget at most up to the new instances.
@@ -962,7 +964,7 @@ irace <- function(scenario, parameters)
             
     iraceResults$softRestart[indexIteration] <- FALSE
     # Sample for the first time.
-    if (indexIteration == 1) {
+    if (firstRace) {
       # If we need more configurations, sample uniformly.
       nbNewConfigurations <- nbConfigurations - sum(allConfigurations$.ID. %!in% rejectedIDs)
       if (nbNewConfigurations > 0) {
@@ -989,8 +991,8 @@ irace <- function(scenario, parameters)
                   verbose = FALSE)
         }
         
-        # This is made only in case that the number of configurations used in the
-        # time estimation is more than needed.
+        # This is made only in case that the number of configurations used in
+        # the time estimation is more than needed.
         if (nrow(eliteConfigurations) == nbConfigurations) {
           raceConfigurations <- eliteConfigurations
         } else {
@@ -1012,18 +1014,16 @@ irace <- function(scenario, parameters)
       if (debugLevel >= 1) {
         irace.note("Sample ", nbNewConfigurations, " configurations from model\n")
       }
-
-      #cat("# ", format(Sys.time(), usetz=TRUE), " sampleModel()\n")
       newConfigurations <- sampleModel(parameters, eliteConfigurations,
-                                   model, nbNewConfigurations,
-                                   digits = scenario$digits,
-                                   forbidden = scenario$forbiddenExps,
-                                   repair = scenario$repairConfiguration)
-      #cat("# ", format(Sys.time(), usetz=TRUE), " sampleModel() DONE\n")
+                                       model, nbNewConfigurations,
+                                       digits = scenario$digits,
+                                       forbidden = scenario$forbiddenExps,
+                                       repair = scenario$repairConfiguration)
+
       # Set ID of the new configurations.
       newConfigurations <- cbind (.ID. = max(0, allConfigurations$.ID.) +
                                     1:nrow(newConfigurations), newConfigurations)
-      raceConfigurations <- rbind(eliteConfigurations[, 1:ncol(allConfigurations)],
+      raceConfigurations <- rbind(eliteConfigurations[, colnames(newConfigurations)],
                                   newConfigurations)
       rownames(raceConfigurations) <- raceConfigurations$.ID.
 
@@ -1051,7 +1051,7 @@ irace <- function(scenario, parameters)
           # Set ID of the new configurations.
           newConfigurations <- cbind (.ID. = max(0, allConfigurations$.ID.) + 
                                   1:nrow(newConfigurations), newConfigurations)
-          raceConfigurations <- rbind(eliteConfigurations[, 1:ncol(allConfigurations)],
+          raceConfigurations <- rbind(eliteConfigurations[, colnames(newConfigurations)],
                                       newConfigurations)
           rownames(raceConfigurations) <- raceConfigurations$.ID.
         }
@@ -1095,10 +1095,8 @@ irace <- function(scenario, parameters)
                          maxExp = currentBudget, 
                          minSurvival = minSurvival,
                          elite.data = elite.data,
-                         elitistNewInstances = if (indexIteration > 1)
-                                                 scenario$elitistNewInstances
-                                               else 0)
-
+                         elitistNewInstances = if (firstRace) 0
+                                               else scenario$elitistNewInstances)
     # Update experiments
     # LESLIE: Maybe we can think is make iraceResults an environment, so these values
     # can be updated in the race function.
@@ -1153,7 +1151,7 @@ irace <- function(scenario, parameters)
     iraceResults$iterationElites <- c(iraceResults$iterationElites, eliteConfigurations$.ID.[1])
     iraceResults$allElites[[indexIteration]] <- eliteConfigurations$.ID.
     
-    if (indexIteration == 1) {
+    if (firstRace) {
       if (debugLevel >= 1)  { irace.note("Initialise model\n") }
       model <- initialiseModel(parameters, eliteConfigurations, scenario$digits)
     }
@@ -1168,6 +1166,7 @@ irace <- function(scenario, parameters)
     }
 
     indexIteration <- indexIteration + 1
+    firstRace <- FALSE
     if (scenario$debugLevel >= 3) {
       irace.note ("Memory used in irace():\n")
       irace.print.memUsed()
