@@ -458,6 +458,10 @@ applyPAR <- function(results, scenario)
 
 ## This function calculates the execution time allowed for the executions
 ## of configurations based on previous execution times.
+## It returns a list with two elements: 
+## * elite.bound : value (ei. mean execution time or per instance execution time) 
+## used to calculate the maximimum exeuction time (final.bounds) for each configuration.
+## * final.bounds[i] : maximum execution time for candidate i on the current instance. 
 final.execution.bound <- function(experimentsTime, elites, no.configurations,
                                   current.task, which.exe, scenario)
 {
