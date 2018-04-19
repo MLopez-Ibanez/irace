@@ -105,7 +105,7 @@ irace.assert <- function(exp)
 irace.note <- function(...)
 {
   cat ("# ", format(Sys.time(), usetz=TRUE), ": ",
-       paste(..., sep = "", collapse = ""), sep = "")
+       paste0(..., collapse = ""), sep = "")
 }
 
 file.check <- function (file, executable = FALSE, readable = executable,
