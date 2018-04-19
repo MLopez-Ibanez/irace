@@ -94,7 +94,7 @@ numeric.configurations.equal <- function(x, configurations, parameters, threshol
 similarConfigurations <- function(configurations, parameters, threshold)
 {
   debug.level <- getOption(".irace.debug.level", 0)
-  if (debug.level >= 1) cat ("# Computing similarity of configurations .")
+  if (debug.level >= 1) irace.note ("Computing similarity of configurations .")
 
   # Create vectors of categorical and numerical
   p <- parameters$types %in% c("c","o")
