@@ -44,7 +44,7 @@ install:
 	cd $(BINDIR) && R CMD INSTALL $(INSTALL_FLAGS) $(PACKAGE)_$(PACKAGEVERSION).tar.gz
 
 quick-install: version
-	cd $(BINDIR) &&	R CMD build $(BUILD_FLAGS) --no-build-vignettes $(PACKAGEDIR) && R CMD INSTALL $(INSTALL_FLAGS) $(PACKAGE)_$(PACKAGEVERSION).tar.gz
+	cd $(BINDIR) &&	R CMD build $(BUILD_FLAGS) --no-vignettes --no-build-vignettes $(PACKAGEDIR) && R CMD INSTALL $(INSTALL_FLAGS) $(PACKAGE)_$(PACKAGEVERSION).tar.gz
 
 genoptions: R/irace-options.R vignettes/section/irace-options.tex scripts/irace_options_comment.R
 
@@ -135,7 +135,7 @@ bumpdate: version
 	@$(SED) 's/Date: .*/Date: $(DATE)/' $(PACKAGEDIR)/DESCRIPTION
 
 version :
-	@echo "#' irace.version\n#'\n#' A character string containing the version of \pkg{irace}.\n#'\n#' @export\nirace.version <- '$(REALVERSION)'" > $(PACKAGEDIR)/R/version.R
+	@echo -e "#' irace.version\n#'\n#' A character string containing the version of \\pkg{irace}.\n#'\n#' @export\nirace.version <- '$(REALVERSION)'" > $(PACKAGEDIR)/R/version.R
 	@$(SED) 's/Version:.*$$/Version: $(PACKAGEVERSION)/' $(PACKAGEDIR)/DESCRIPTION
 	@$(SED) 's/\\iraceversion}{.*}$$/\\iraceversion}{$(PACKAGEVERSION)}/' vignettes/$(PACKAGE)-package.Rnw
 
