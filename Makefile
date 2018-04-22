@@ -135,7 +135,7 @@ bumpdate: version
 	@$(SED) 's/Date: .*/Date: $(DATE)/' $(PACKAGEDIR)/DESCRIPTION
 
 version :
-	@echo -e "#' irace.version\n#'\n#' A character string containing the version of \\pkg{irace}.\n#'\n#' @export\nirace.version <- '$(REALVERSION)'" > $(PACKAGEDIR)/R/version.R
+	@printf "#' irace.version\n#'\n#' A character string containing the version of \\pkg{irace}.\n#'\n#' @export\nirace.version <- '$(REALVERSION)'\n" > $(PACKAGEDIR)/R/version.R
 	@$(SED) 's/Version:.*$$/Version: $(PACKAGEVERSION)/' $(PACKAGEDIR)/DESCRIPTION
 	@$(SED) 's/\\iraceversion}{.*}$$/\\iraceversion}{$(PACKAGEVERSION)}/' vignettes/$(PACKAGE)-package.Rnw
 
