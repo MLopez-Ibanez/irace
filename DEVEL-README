@@ -1,8 +1,52 @@
 README file for developers
 ===========================
 
+Subversion commands
+---------------------
+
+# Send your changes to the repository (for your branch only)
+svn ci -m "Explain your changes"
+# Update your local copy with changes in the repository (for your branch only)
+svn up 
+# See differences in your local copy (against your branch only)
+svn diff
+# See differences between branches
+svn diff ^/trunk .
+# Merge changes in trunk into your local copy
+svn merge ^/trunk .
+# Get help
+svn help
+
+
+Developing irace
+----------------
+
+* make build
+
+  Build irace
+
+* make install
+
+  Build and install the package
+  
+* make cran
+
+  Check that the build is acceptable by CRAN
+
+* make check
+
+  More thoroughly test the build
+
+* make quick-install
+
+  Do a minimal build and install that has as few requirements as
+  possible. Designed for installing on machines that are not used for
+  development, like IRIDIA's cluster.
+  
+  
+
 CHECKING:
-========
+-----------
 
 * ./check-reverse requires installing R package devtools, which
   requires Rcurl, which requires:
@@ -44,13 +88,14 @@ be listed in the Imports: field of DESCRIPTION.
 
 
 RELEASE Process:
-===============
+-----------------
 
 1. svn up
 
 2. make check # passes
 
 3. make cran  # passes
+
 
 4. make examples # Takes a few hours. Inspect the examples in the vignette.
 
