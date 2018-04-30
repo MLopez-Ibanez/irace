@@ -240,12 +240,11 @@ testing.cmdline <- function(filename, scenario)
   }
 
   # To save the logs
-  iraceResults <- list()
-  iraceResults$scenario <- scenario
-  iraceResults$irace.version <- irace.version
-  iraceResults$parameters <- parameters
-  iraceResults$allConfigurations <- allConfigurations
-  
+  iraceResults <- list(scenario = scenario,
+                       irace.version = irace.version,
+                       parameters = parameters,
+                       allConfigurations = allConfigurations)
+    
   irace.note ("Testing configurations (in the order given as input): \n")
   configurations.print(allConfigurations)  
   iraceResults$testing <- testConfigurations(allConfigurations, scenario, parameters)
