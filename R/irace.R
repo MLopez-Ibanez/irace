@@ -635,6 +635,7 @@ irace <- function(scenario, parameters)
     iraceResults$parameters <- parameters
     iraceResults$iterationElites <- NULL
     iraceResults$allElites <- list()
+    iraceResults$rejectedConfigurations <- NULL
     iraceResults$experiments <- matrix(nrow = 0, ncol = 0)
     iraceResults$experimentLog <- matrix(nrow = 0, ncol = 5,
                                          dimnames = list(NULL,
@@ -833,7 +834,7 @@ irace <- function(scenario, parameters)
                                remainingBudget = remainingBudget,
                                timeUsed = timeUsed,
                                timeEstimate = timeEstimate,
-                               rejectedConfigurations = rejectedIDs)
+                               rejectedIDs = rejectedIDs)
     # Consistency checks
     irace.assert(sum(!is.na(iraceResults$experiments)) == experimentsUsedSoFar)
     irace.assert(nrow(iraceResults$experimentLog) == experimentsUsedSoFar)
@@ -1112,6 +1113,7 @@ irace <- function(scenario, parameters)
                                              
     if (length(raceResults$rejectedIDs) > 0) {
       rejectedIDs <- c(rejectedIDs, raceResults$rejectedIDs)
+      iraceResults$rejectedConfigurations <- rejectedIDs
       rejectedExps <- buildForbiddenExp(
         configurations = allConfigurations[
           allConfigurations$.ID. %in% raceResults$rejectedIDs, , drop = FALSE],
