@@ -606,7 +606,6 @@ irace <- function(scenario, parameters)
   }
   
   scenario <- checkScenario(defaultScenario(scenario))
-  
   # Recover state from file?
   if (!is.null(scenario$recoveryFile)) {
     irace.note ("Resuming from file: '", scenario$recoveryFile,"'\n")
@@ -619,6 +618,7 @@ irace <- function(scenario, parameters)
 
   } else { # Do not recover
     scenario <- irace.init (scenario)
+    forbiddenExps <- scenario$forbiddenExps
     debugLevel <- scenario$debugLevel
     # Set options controlling debug level.
     # FIXME: This should be the other way around, the options set the debugLevel.
@@ -628,18 +628,18 @@ irace <- function(scenario, parameters)
     # Create a data frame of all configurations ever generated.
     allConfigurations <- allConfigurationsInit(scenario, parameters, debugLevel)
     nbUserConfigurations <- nrow(allConfigurations)
+  
     # To save the logs
-    iraceResults <- list()
-    iraceResults$scenario <- scenario
-    iraceResults$irace.version <- irace.version
-    iraceResults$parameters <- parameters
-    iraceResults$iterationElites <- NULL
-    iraceResults$allElites <- list()
-    iraceResults$rejectedConfigurations <- NULL
-    iraceResults$experiments <- matrix(nrow = 0, ncol = 0)
-    iraceResults$experimentLog <- matrix(nrow = 0, ncol = 5,
-                                         dimnames = list(NULL,
-                                           c("iteration", "instance", "configuration", "time", "bound")))
+    iraceResults <- list(
+      scenario = scenario,
+      irace.version = irace.version,
+      parameters = parameters,
+      allElites = list(),
+      experiments = matrix(nrow = 0, ncol = 0),
+      experimentLog = matrix(nrow = 0, ncol = 5,
+                              dimnames = list(NULL,
+                                              c("iteration", "instance", "configuration", "time", "bound")))
+    )
     model <- NULL
     nbConfigurations <- 0
     eliteConfigurations <- data.frame()
@@ -694,7 +694,7 @@ irace <- function(scenario, parameters)
           newConfigurations <- sampleUniform(parameters,
                                              nconfigurations - nrow(allConfigurations),
                                              digits = scenario$digits,
-                                             forbidden = scenario$forbiddenExps,
+                                             forbidden = forbiddenExps,
                                              repair = scenario$repairConfiguration)
           newConfigurations <-
             cbind (.ID. = max(0, allConfigurations$.ID.) + 1:nrow(newConfigurations),
@@ -714,6 +714,11 @@ irace <- function(scenario, parameters)
                                                   output$experiments)
         rownames(iraceResults$experiments) <- 1:nrow(iraceResults$experiments)
         rejectedIDs <- c(rejectedIDs, output$rejectedIDs)
+        iraceResults$rejectedConfigurations <- rejectedIDs
+        forbiddenExps <- c(forbiddenExps,
+                           buildForbiddenExp(configurations = allConfigurations[
+                                               allConfigurations$.ID. %in% output$rejectedIDs, , drop = FALSE],
+                                             parameters = parameters))
                 
         # For the used time, we count the time reported in all configurations
         # including rejected ones. 
@@ -834,7 +839,8 @@ irace <- function(scenario, parameters)
                                remainingBudget = remainingBudget,
                                timeUsed = timeUsed,
                                timeEstimate = timeEstimate,
-                               rejectedIDs = rejectedIDs)
+                               rejectedIDs = rejectedIDs,
+                               forbiddenExps = forbiddenExps)
     # Consistency checks
     irace.assert(sum(!is.na(iraceResults$experiments)) == experimentsUsedSoFar)
     irace.assert(nrow(iraceResults$experimentLog) == experimentsUsedSoFar)
@@ -976,7 +982,7 @@ irace <- function(scenario, parameters)
         }
         newConfigurations <- sampleUniform(parameters, nbNewConfigurations,
                                            digits = scenario$digits,
-                                           forbidden = scenario$forbiddenExps,
+                                           forbidden = forbiddenExps,
                                            repair = scenario$repairConfiguration)
         newConfigurations <-
           cbind (.ID. = max(0, allConfigurations$.ID.) + 1:nrow(newConfigurations),
@@ -1018,7 +1024,7 @@ irace <- function(scenario, parameters)
       newConfigurations <- sampleModel(parameters, eliteConfigurations,
                                        model, nbNewConfigurations,
                                        digits = scenario$digits,
-                                       forbidden = scenario$forbiddenExps,
+                                       forbidden = forbiddenExps,
                                        repair = scenario$repairConfiguration)
 
       # Set ID of the new configurations.
@@ -1046,7 +1052,7 @@ irace <- function(scenario, parameters)
           newConfigurations <- sampleModel(parameters, eliteConfigurations,
                                            model, nbNewConfigurations,
                                            digits = scenario$digits,
-                                           forbidden = scenario$forbiddenExps,
+                                           forbidden = forbiddenExps,
                                            repair = scenario$repairConfiguration)
           #cat("# ", format(Sys.time(), usetz=TRUE), " sampleModel() DONE\n")
           # Set ID of the new configurations.
@@ -1114,11 +1120,11 @@ irace <- function(scenario, parameters)
     if (length(raceResults$rejectedIDs) > 0) {
       rejectedIDs <- c(rejectedIDs, raceResults$rejectedIDs)
       iraceResults$rejectedConfigurations <- rejectedIDs
-      rejectedExps <- buildForbiddenExp(
-        configurations = allConfigurations[
-          allConfigurations$.ID. %in% raceResults$rejectedIDs, , drop = FALSE],
-        parameters = parameters)
-      scenario$forbiddenExps <- c(scenario$forbiddenExps, rejectedExps)
+      forbiddenExps <- c(forbiddenExps,
+                         buildForbiddenExp(
+                           configurations = allConfigurations[
+                             allConfigurations$.ID. %in% raceResults$rejectedIDs, , drop = FALSE],
+                           parameters = parameters))
     }
 
     experimentsUsedSoFar <- experimentsUsedSoFar + raceResults$experimentsUsed
