@@ -208,8 +208,11 @@ readForbiddenFile <- function(filename)
 
 buildForbiddenExp <- function(configurations, parameters)
 {
+  if (nrow(configurations) < 1) return(NULL)
+
   pnames <- parameters$names
   lines <- c()
+  # We cannot use apply() because it converts numeric to character.
   for (k in 1:nrow(configurations)) {
     values <- as.list(configurations[k, pnames])
     has.value <- !is.na(values)
