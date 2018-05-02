@@ -17,15 +17,14 @@
                                     (Manuel López-Ibáñez, Leslie Pérez Cáceres)
 
  * Last active parameter values of numerical parameters (i and r) are carried
-   by the sampling model. The element of the model list is now [std. dev.,last
-   value]. When a value must be assigned and the parameter was previously not
-   active, the sampling is performed around the last value.
-                                    (Leslie Pérez Cáceres, Manuel López-Ibáñez)
+   by the sampling model. When a value must be assigned and the parameter was
+   previously not active, the sampling is performed around the last value.
+                                   (Leslie Pérez Cáceres, Manuel López-Ibáñez)
 
  * R help pages are now generated with Roxygen2.
                                    (Leslie Pérez Cáceres, Manuel López-Ibáñez)
 
- * Document --version, --help, and --check in the user-guide.
+ * The user guide documents --version, --help, and --check.
                                                         (Manuel López-Ibáñez)
  
  * A return value of "Inf" from targetRunner/targetEvaluation results in the
