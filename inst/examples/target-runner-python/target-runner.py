@@ -62,8 +62,8 @@ exe = os.path.expanduser(exe)
 command = [exe] + fixed_params.split() + ["-i"] + [instance] + ["--seed"] + [seed] + cand_params
 
 # Define the stdout and stderr files.
-out_file = "c" + str(candidate_id) + "-" + str(instance_id) + ".stdout"
-err_file = "c" + str(candidate_id) + "-" + str(instance_id) + ".stderr"
+out_file = "c" + str(candidate_id) + "-" + str(instance_id) + str(seed) + ".stdout"
+err_file = "c" + str(candidate_id) + "-" + str(instance_id) + str(seed) + ".stderr"
 
 def target_runner_error(msg):
     now = datetime.datetime.now()
