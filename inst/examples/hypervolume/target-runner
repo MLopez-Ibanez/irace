@@ -35,8 +35,8 @@ INSTANCE="$4"
 shift 4 || error "Not enough parameters"
 CAND_PARAMS=$*
 
-STDOUT=c${CANDIDATE}-${INSTANCEID}.stdout
-STDERR=c${CANDIDATE}-${INSTANCEID}.stderr
+STDOUT=c${CANDIDATE}-${INSTANCEID}-${SEED}.stdout
+STDERR=c${CANDIDATE}-${INSTANCEID}-${SEED}.stderr
 
 # TODO: Use /tmp for all temporary files, i.e., put target-data under /tmp
 mkdir -p target-data

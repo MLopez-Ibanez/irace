@@ -33,12 +33,12 @@ TOTALCANDIDATES="$5"
 shift 5 || error "Not enough parameters"
 ALLIDS=$*
 
-STDOUT=c${CANDIDATE}-${INSTANCEID}.stdout
-STDERR=c${CANDIDATE}-${INSTANCEID}.stderr
+STDOUT=c${CANDIDATE}-${INSTANCEID}-${SEED}.stdout
+STDERR=c${CANDIDATE}-${INSTANCEID}-${SEED}.stderr
 
 ALLFILES=
 for FILENAME in $ALLIDS; do
-    ALLFILES="$ALLFILES c${FILENAME}-${INSTANCEID}.stdout"
+    ALLFILES="$ALLFILES c${FILENAME}-${INSTANCEID}-${SEED}.stdout"
 done
 
 # # This may be used to introduce a delay if there are filesystem
@@ -56,7 +56,7 @@ if [ -s "${STDOUT}" ]; then
     # You may need to update this to parse the output of your algorithm.
     COST=$(cat ${STDOUT} | grep -e '^[[:space:]]*[+-]\?[0-9]' | cut -f1)
     echo "$COST"
-    TODELETE=$(comm -23 <(ls -1 c*-${INSTANCEID}.* | sort) <(ls -1 $ALLFILES))
+    TODELETE=$(comm -23 <(ls -1 c*-${INSTANCEID}-${SEED}.* | sort) <(ls -1 $ALLFILES))
     # Comment out if you wish to keep all output files around
     echo "rm -f $TODELETE"
     exit 0

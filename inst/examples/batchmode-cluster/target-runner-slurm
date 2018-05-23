@@ -38,14 +38,14 @@ INSTANCE=$4
 shift 4 || error "Not enough parameters"
 CAND_PARAMS=$*
 
-STDOUT=c${CANDIDATE}-${INSTANCEID}.stdout
-STDERR=c${CANDIDATE}-${INSTANCEID}.stderr
+STDOUT=c${CANDIDATE}-${INSTANCEID}-${SEED}.stdout
+STDERR=c${CANDIDATE}-${INSTANCEID}-${SEED}.stderr
 
 # modify with the SLURM submission template
 sbatch 1> $tmpfile <<EOF
 #!/bin/bash
-#SBATCH --job-name=irace-$PPID-$CANDIDATE-${INSTANCEID}
-###SBATCH --output=test-$CANDIDATE-${INSTANCEID}.out
+#SBATCH --job-name=irace-$PPID-$CANDIDATE-${INSTANCEID}-${SEED}
+###SBATCH --output=test-$CANDIDATE-${INSTANCEID}-${SEED}.out
 #SBATCH --time=0-5:00:00
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1

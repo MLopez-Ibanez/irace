@@ -1063,7 +1063,7 @@ is invoked for each candidate configuration, passing as arguments:
 \renewcommand{\arraystretch}{1.2}
   \begin{tabularx}{1\linewidth}{@{}rX}
     \code{id.configuration}  & an alphanumeric string that uniquely identifies a configuration;\\
-    \code{id.instance} & an alphanumeric string that uniquely identifies a pair \code{(instance, seed)};\\
+    \code{id.instance} & an alphanumeric string that uniquely identifies an instance;\\
     \code{seed} & seed for the random number generator to be used for this evaluation, ignore the seed for deterministic algorithms;\\
     \code{instance} & string giving the instance to be used for this evaluation;\\
     \code{bound} & optional execution time bound. Only provided when adaptive capping is enabled, see \autoref{sec:capping};\\
@@ -1112,7 +1112,7 @@ list. The structure of the \code{experiment} list is as follows:
 \renewcommand{\arraystretch}{1.2}
   \begin{tabularx}{1\linewidth}{@{}rX}
  \code{id.configuration}  & an alphanumeric string that uniquely identifies a configuration;\\
-   \code{id.instance} & an alphanumeric string that uniquely identifies a pair \code{(instance, seed)};\\
+   \code{id.instance} & an alphanumeric string that uniquely identifies an instance;\\
    \code{seed} & seed to be used for this evaluation;\\
    \code{instance} & string giving the instance to be used for this evaluation;\\
    \code{bound} &  optional execution time bound;\\
@@ -1204,7 +1204,7 @@ is invoked for each candidate with the following arguments:
 \renewcommand{\arraystretch}{1.2}
   \begin{tabularx}{1\linewidth}{@{}rX}
  \code{id.configuration}  & an alphanumeric string that uniquely identifies a configuration;\\
-   \code{id.instance} & an alphanumeric string that uniquely identifies a pair \code{(instance, seed)};\\
+   \code{id.instance} & an alphanumeric string that uniquely identifies an instance;\\
    \code{seed} & seed to be used for this evaluation;\\
    \code{instance} & string giving the instance to be used for this evaluation;\\
    \code{num.configs} & number of alive candidate configurations;\\

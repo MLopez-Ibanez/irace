@@ -31,8 +31,8 @@ INSTANCE=$4
 shift 4 || error "Not enough parameters"
 CONFIG_PARAMS=$*
 
-STDOUT=c${CONFIG_ID}-${INSTANCE_ID}.stdout
-STDERR=c${CONFIG_ID}-${INSTANCE_ID}.stderr
+STDOUT=c${CONFIG_ID}-${INSTANCE_ID}-${SEED}.stdout
+STDERR=c${CONFIG_ID}-${INSTANCE_ID}-${SEED}.stderr
 
 if [ ! -x "${EXE}" ]; then
     error "${EXE}: not found or not executable (pwd: $(pwd))"

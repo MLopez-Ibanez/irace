@@ -10,7 +10,7 @@ target.runner.default(experiment, scenario)
 \item{experiment}{A list describing the experiment. It contains at least:
 \itemize{
  \item{id.configuration}{An alphanumeric string that uniquely identifies a configuration;}
- \item{id.instance}{An alphanumeric string that uniquely identifies a pair (instance, seed);}
+ \item{id.instance}{An alphanumeric string that uniquely identifies an instance;}
   \item{seed}{Seed for the random number generator to be used for
     this evaluation, ignore the seed for deterministic algorithms;}
   \item{instance}{String giving the instance to be used for this evaluation;}

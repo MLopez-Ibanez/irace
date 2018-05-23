@@ -67,7 +67,7 @@ createExperimentList <- function(configurations, parameters,
 
 ## Executes a list of configurations in a particular instance
 ## configurations: description having the id of the configuration
-## instance.idx: index of the instance that can be found in scenario$instances
+## instance.idx: index of the instance,seed pair in .irace$instancesList
 ## bounds: execution bounds (if needed).
 ## which.alive: index of the configurations that are still alive
 ## which.exe: index of the alive configurations that should be executed

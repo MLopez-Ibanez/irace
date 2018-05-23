@@ -53,8 +53,8 @@ TOTALCONFIGURATIONS="$5"
 shift 5 || error "Not enough parameters to $0"
 ALLIDS=$*
 
-STDOUT=c${CONFIGURATION}-${INSTANCEID}.stdout
-STDERR=c${CONFIGURATION}-${INSTANCEID}.stderr
+STDOUT=c${CONFIGURATION}-${INSTANCEID}-${SEED}.stdout
+STDERR=c${CONFIGURATION}-${INSTANCEID}-${SEED}.stderr
 
 calc_measure() {
     LIMITSFILE=limits-${INSTANCEID}.txt
@@ -73,7 +73,7 @@ cd target-data || error "cannot change to directory 'target-data'"
 
 ALLFILES=
 for FILENAME in ALLIDS; do
-    ALLFILES="$ALLFILES c${FILENAME}-${INSTANCEID}.stdout"
+    ALLFILES="$ALLFILES c${FILENAME}-${INSTANCEID}-${SEED}.stdout"
 done
 
 # First normalize output files, unless they are ready.
@@ -93,7 +93,7 @@ while ! ls ${ALLFILES}_nor &> /dev/null ; do
     calc_measure
     rm -f error.log
     # Comment out if you wish to keep all output files around
-    comm --output-delimiter=" " -23 <(ls -1 c*-*.* | sort) <(ls -1 ${ALLFILES//-${INSTANCEID}.stdout/-*.*} | sort) | xargs -r rm -f
+    comm --output-delimiter=" " -23 <(ls -1 c*-*.* | sort) <(ls -1 ${ALLFILES//-${INSTANCEID}-${SEED}.stdout/-*.*} | sort) | xargs -r rm -f
     break
 done
 

@@ -30,8 +30,8 @@ FOR /f "tokens=1-4*" %%a IN ("%*") DO (
 	SET candidate_parameters=%%e
 )
 
-SET "stdout=c%candidate%-%instance_id%.stdout"
-SET "stderr=c%candidate%-%instance_id%.stderr"
+SET "stdout=c%candidate%-%instance_id%-%seed%.stdout"
+SET "stderr=c%candidate%-%instance_id%-%seed%.stderr"
 
 :: If the program just prints a number, we can use 'exec' to avoid
 :: creating another process, but there can be no other commands after exec.

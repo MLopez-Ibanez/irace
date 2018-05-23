@@ -47,7 +47,7 @@ class Runner(object):
         self.candidate = candidate
         self.parameters = parameters
         self.max_tests = max_tests
-        self.filename_prefix = 'c' + str(candidate) + '-' + str(seed) + '-' + str(instanceid)
+        self.filename_prefix = 'c' + str(candidate) + '-' + str(instanceid) + '-' + str(seed) 
 
         # default exec function
         self.execute = self.execute1

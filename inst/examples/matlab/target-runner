@@ -32,8 +32,8 @@ INSTANCE=$4
 shift 4 ||  error "Not enough parameters"
 CAND_PARAMS=$*
 
-STDOUT=c${CANDIDATE}-${INSTANCEID}.stdout
-STDERR=c${CANDIDATE}-${INSTANCEID}.stderr
+STDOUT=c${CANDIDATE}-${INSTANCEID}-${SEED}.stdout
+STDERR=c${CANDIDATE}-${INSTANCEID}-${SEED}.stderr
 
 ## If the program just prints a number, we can use 'exec' to avoid
 ## creating another process, but there can be no other commands after exec.
@@ -44,7 +44,7 @@ STDERR=c${CANDIDATE}-${INSTANCEID}.stderr
 ## (If you wish to ignore segmentation faults you can use '{}' around
 ## the command.)
 ## This example assumes that CAND_PARAMS contains something like "A=10 B=5"
-$EXE ${FIXED_PARAMS} -r "INSTANCE=${INSTANCEID};${CAND_PARAMS// /;};RUN(INSTANCE,A,B);exit" < RUN.m 1> ${STDOUT} 2> ${STDERR}
+$EXE ${FIXED_PARAMS} -r "INSTANCE=${INSTANCEID};SEED=${SEED};${CAND_PARAMS// /;};RUN(INSTANCE,A,B);exit" < RUN.m 1> ${STDOUT} 2> ${STDERR}
 
 ## This may be used to introduce a delay if there are filesystem
 ## issues.

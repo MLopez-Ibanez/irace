@@ -33,8 +33,8 @@ TOTALCANDIDATES="$5"
 shift 5 || error "Not enough parameters"
 ALLIDS=$*
 
-STDOUT=c${CANDIDATE}-${INSTANCEID}.stdout
-STDERR=c${CANDIDATE}-${INSTANCEID}.stderr
+STDOUT=c${CANDIDATE}-${INSTANCEID}-${SEED}.stdout
+STDERR=c${CANDIDATE}-${INSTANCEID}-${SEED}.stderr
 
 
 # # This may be used to introduce a delay if there are filesystem

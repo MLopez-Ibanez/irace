@@ -193,7 +193,7 @@ ablation <- function(iraceLogFile = NULL, iraceResults = NULL,
   
   # Define variables needed                       
   results <- matrix(NA, ncol = 1, nrow = nrow(instances), 
-                    dimnames = list(seq(1,nrow(instances)), c(1)))
+                    dimnames = list(seq(1,nrow(instances)), 1))
   changes <- list()
   trajectory <- 1
   names(trajectory) <- "source"

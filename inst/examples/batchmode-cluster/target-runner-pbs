@@ -34,13 +34,13 @@ INSTANCE=$4
 shift 4 || error "Not enough parameters"
 CAND_PARAMS=$*
 
-STDOUT=c${CANDIDATE}-${INSTANCEID}.stdout
-STDERR=c${CANDIDATE}-${INSTANCEID}.stderr
+STDOUT=c${CANDIDATE}-${INSTANCEID}-${SEED}.stdout
+STDERR=c${CANDIDATE}-${INSTANCEID}-${SEED}.stderr
 
 # PBS just prints the jobID, so it should be good to go.
 exec qsub <<EOF
 #!/bin/bash
-#$ -N irace-$PPID-$CANDIDATE-${INSTANCEID}
+#$ -N irace-$PPID-$CANDIDATE-${INSTANCEID}-${SEED}
 #$ -l xeon5410
 # -l long
 #$ -m as
