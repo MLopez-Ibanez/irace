@@ -298,7 +298,8 @@ race.print.header <- function(capping)
      x No test is performed.
      - The test is performed and some configurations are discarded.
      = The test is performed but no configuration is discarded.
-     ! The test is performed and configurations could be discarded but elite configurations are preserved.\n")
+     ! The test is performed and configurations could be discarded but elite configurations are preserved.
+     . All alive configurations are elite and nothing is discarded\n")
   cat(sep = "", if (!capping) "
 +-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
 | |   Instance|      Alive|       Best|      Mean best| Exp so far|  W time|  rho|KenW|  Qvar|
@@ -752,6 +753,8 @@ update.is.elite <- function(is.elite, which.exe)
         # MANUEL: I think we should print the race.print.task() corresponding to this instance.
         cat("|.|")
         # FIXME: We need to calculate the best just as we do below. Create a function for doing that.
+        ## MANUEL: So what is the reason to not immediately terminate here? Is
+        ## there a reason to continue?
         race.print.task(Results,
                         race.instances[current.task],
                         current.task,
