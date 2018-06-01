@@ -14,6 +14,13 @@ WINBUILD_FTP_COMMANDS="user anonymous anonymous\nbinary\ncd R-release\nput $(PAC
 PDFLATEX=pdflatex -shell-escape -file-line-error -halt-on-error -interaction=nonstopmode "\input"
 SED=sed -i.bak
 
+Rversion=$(R --version | head -n -1 | grep -m 1 -o -e [0-9] | head -n 1)
+ifeq ($(Rversion),2)
+ NO_BUILD_VIGNETTES='--no-vignettes'
+else
+ NO_BUILD_VIGNETTES='--no-build-vignettes'
+endif
+
 ## Do we have svnversion?
 ifeq ($(shell sh -c 'which svnversion 1> /dev/null 2>&1 && echo y'),y)
   ## Is this a working copy?
@@ -44,7 +51,7 @@ install:
 	cd $(BINDIR) && R CMD INSTALL $(INSTALL_FLAGS) $(PACKAGE)_$(PACKAGEVERSION).tar.gz
 
 quick-install: version
-	cd $(BINDIR) &&	R CMD build $(BUILD_FLAGS) --no-vignettes --no-build-vignettes $(PACKAGEDIR) && R CMD INSTALL $(INSTALL_FLAGS) $(PACKAGE)_$(PACKAGEVERSION).tar.gz
+	cd $(BINDIR) &&	R CMD build $(BUILD_FLAGS) $(NO_BUILD_VIGNETTES)  $(PACKAGEDIR) && R CMD INSTALL $(INSTALL_FLAGS) $(PACKAGE)_$(PACKAGEVERSION).tar.gz
 
 genoptions: R/irace-options.R vignettes/section/irace-options.tex scripts/irace_options_comment.R
 
