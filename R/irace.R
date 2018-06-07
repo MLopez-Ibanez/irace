@@ -612,11 +612,13 @@ irace <- function(scenario, parameters)
     recoverFromFile(scenario$recoveryFile)
     # We call checkScenario again to fix any inconsistencies in the recovered
     # data.
+    firstRace <- FALSE
     scenario <- checkScenario(scenario)
     startParallel(scenario)
     on.exit(stopParallel(), add = TRUE)
 
   } else { # Do not recover
+    firstRace <- TRUE
     scenario <- irace.init (scenario)
     forbiddenExps <- scenario$forbiddenExps
     debugLevel <- scenario$debugLevel
@@ -822,7 +824,7 @@ irace <- function(scenario, parameters)
                    "# bound digits: ", scenario$boundDigits, "\n"),
           verbose = FALSE)
 
-  firstRace <- TRUE
+  
   while (TRUE) {
     # Recovery info 
     iraceResults$state <- list(.Random.seed = get(".Random.seed", .GlobalEnv),
