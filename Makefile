@@ -7,7 +7,6 @@ RDIR=~/
 INSTALL_FLAGS=
 BUILD_FLAGS=
 REALVERSION=$(PACKAGEVERSION).$(SVN_REV)
-DATE=$(shell date +%F)
 PACKAGEDIR=$(CURDIR)
 FTP_COMMANDS="user anonymous anonymous\nbinary\ncd incoming\nput $(PACKAGE)_$(PACKAGEVERSION).tar.gz\nquit\n"
 WINBUILD_FTP_COMMANDS="user anonymous anonymous\nbinary\ncd R-release\nput $(PACKAGE)_$(PACKAGEVERSION).tar.gz\nquit\n"
@@ -32,7 +31,7 @@ endif
 SVN_REV = $(shell sh -c 'cat svn_version 2> /dev/null')
 REVNUM = $(shell sh -c 'cat svn_version | tr -d -c "[:digit:]" 2> /dev/null')
 
-.PHONY : help build check clean install pdf rsync version bumpdate submit cran winbuild vignettes examples genoptions
+.PHONY : help build check clean install pdf rsync version submit cran winbuild vignettes examples genoptions
 
 help:
 	@echo "install    install the package"
@@ -61,7 +60,7 @@ R/irace-options.R vignettes/section/irace-options.tex scripts/irace_options_comm
 gendoc: 
 	R --slave -e 'library(devtools);document()'
 
-build : bumpdate genoptions gendoc clean
+build : genoptions gendoc clean
 	$(MAKE) releasevignette
 	@if grep -q @ $(PACKAGEDIR)/vignettes/$(PACKAGE)-package.bib; then true; \
 	else echo "error: vignettes/$(PACKAGE)-package.bib is empty: run 'make vignettes'"; false; fi
@@ -93,7 +92,7 @@ nonreleasevignette:
 	$(MAKE) vignettes/$(PACKAGE)-package.bib
 
 releasebuild: BUILD_FLAGS=--compact-vignettes=both
-releasebuild: bumpdate releasevignette
+releasebuild: releasevignette
 	cd $(BINDIR) &&	R CMD build $(BUILD_FLAGS) $(PACKAGEDIR) && tar -atvf $(PACKAGE)_$(PACKAGEVERSION).tar.gz
 
 cran : BUILD_FLAGS=--compact-vignettes=both
@@ -137,9 +136,6 @@ vignettes: version vignettes/$(PACKAGE)-package.Rnw vignettes/section/irace-opti
 
 pdf: install
 	cd $(BINDIR) &&	R CMD Rd2pdf --force --no-preview --batch --output=$(PACKAGE).pdf ~/R/x86_64-pc-linux-gnu-library/3.2/irace
-
-bumpdate: version
-	@$(SED) 's/Date: .*/Date: $(DATE)/' $(PACKAGEDIR)/DESCRIPTION
 
 version :
 	@printf "#' irace.version\n#'\n#' A character string containing the version of \\pkg{irace}.\n#'\n#' @export\nirace.version <- '$(REALVERSION)'\n" > $(PACKAGEDIR)/R/version.R
