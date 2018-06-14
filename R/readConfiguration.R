@@ -252,10 +252,6 @@ buildForbiddenExp <- function(configurations, parameters)
 #' 
 #' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
 #' @export
-# Reads scenario setup from filename and returns it as a list. Anything not
-# mentioned in the file is not present in the list (that is, it is NULL).
-# FIXME: Does passing an initial scenario actually work? It seems it gets
-# completely overriden by the loop below.
 readScenario <- function(filename = "", scenario = list())
 {
   # This function allows recursively including scenario files.
@@ -293,7 +289,7 @@ readScenario <- function(filename = "", scenario = list())
   } else {
     irace.error ("The scenario file ", shQuote(filename), " does not exist.")
   }
-  ## read scenario file variables
+  ## Read scenario file variables.
   # If these are given and relative, they should be relative to the
   # scenario file (except logFile, which is relative to execDir).
   pathParams <- setdiff(.irace.params.def[.irace.params.def[, "type"] == "p",
@@ -339,9 +335,8 @@ readScenario <- function(filename = "", scenario = list())
 #' 
 #' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
 #' @export
-## FIXME: This function should only do checks and return
-## TRUE/FALSE. There should be other function that does the various
-## transformations.
+## FIXME: This function should only do checks and return TRUE/FALSE. There
+## should be other function that does the various transformations.
 checkScenario <- function(scenario = defaultScenario())
 {
   quote.param <- function(name)
