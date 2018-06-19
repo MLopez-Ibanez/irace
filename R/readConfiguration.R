@@ -437,6 +437,12 @@ checkScenario <- function(scenario = defaultScenario())
     if (!is.null.or.empty(scenario$trainInstancesFile)) {
       scenario$trainInstancesFile <- path.rel2abs(scenario$trainInstancesFile)
     }
+    if (is.null.or.empty(scenario$trainInstancesDir)
+        && is.null.or.empty(scenario$trainInstancesFile))
+      irace.error("Both ", quote.param ("trainInstancesDir"), " and ",
+                  quote.param ("trainInstancesFile"),
+                  " are empty: No instances provided")
+    
     scenario$instances <-
       readInstances(instancesDir = scenario$trainInstancesDir,
                     instancesFile = scenario$trainInstancesFile)

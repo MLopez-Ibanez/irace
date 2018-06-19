@@ -44,7 +44,11 @@
  * Fixed '--parallel' bug in Windows that resulted in
    "Error in checkForRemoteErrors(val)"
                                                           (Manuel López-Ibáñez)
-                                                          
+
+ * Improve error message when no training instances are given.
+                                                          (Manuel López-Ibáñez)
+
+
 2.4
 
  * The output of irace now specifies in which order, if any, configurations are
