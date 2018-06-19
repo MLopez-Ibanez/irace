@@ -859,7 +859,8 @@ readInstances <- function(instancesDir = NULL, instancesFile = NULL)
     instances <- sub("#.*$", "", instances) # Remove comments
     instances <- sub("^[[:space:]]+", "", instances) # Remove leading whitespace
     instances <- instances[instances != ""] # Delete empty lines
-    if (is.null.or.empty(instances))
+    # FIXME: is.null.or.empty should handle length() == 0.
+    if (is.null.or.empty(instances) || length(instances) == 0)
       irace.error("No instances found in `", instancesFile, "'")
     if (!is.null.or.empty(instancesDir))
        instances <- paste0 (instancesDir, "/", instances)
