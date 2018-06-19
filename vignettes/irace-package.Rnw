@@ -1842,9 +1842,9 @@ statistical test:
 
 Other columns have the following meaning:
 \begin{description}
-  \item \code{instance}: Number of \code{(instance, seed)} pair executed. This number
+  \item \code{Instance}: Number of \code{(instance, seed)} pair executed. This number
 corresponds to the index of the list found in \code{state$.irace$instancesList}. See \autoref{sec:output r}
-for more information.
+for more information. This is different from the instance ID passed to \parameter{targetRunner}.
 \item \code{Bound}: Only when \parameter{capping} is enabled. Execution time used as bound
 for the execution of new candidate configurations. 
 \item \code{Alive}: Number of configurations that have not been
