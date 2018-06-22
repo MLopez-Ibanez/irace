@@ -1,6 +1,6 @@
 3.0  (22/06/2018)
 
-* irace now supports adaptive capping for computation time minimization.  The
+ * irace now supports adaptive capping for computation time minimization.  The
    default value of the testType irace option is t-test when adaptive capping
    is enabled. Please see the user-guide for details.
                                     (Leslie Pérez Cáceres, Manuel López-Ibáñez)
