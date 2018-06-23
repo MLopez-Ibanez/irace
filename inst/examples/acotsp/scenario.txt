@@ -19,6 +19,10 @@ trainInstancesDir = "./Instances"
 ## determines the (maximum) budget of experiments for the tuning.
 maxExperiments = 5000
 
+## File that contains a set of initial configurations. If empty or NULL,
+## all initial configurations are randomly generated.
+# configurationsFile = ""
+
 ## Indicates the number of decimal places to be considered for the
 ## real parameters.
 digits = 2
