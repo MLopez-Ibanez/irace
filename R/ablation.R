@@ -335,44 +335,61 @@ ablation <- function(iraceLogFile = NULL, iraceResults = NULL,
     save(ab.log, file = ablationLogFile)
   
   plotAblation(ab.log = ab.log, pdf.file = pdf.file,
-               pdf.width = pdf.width, mar = mar)
+               pdf.width = pdf.width, mar = mar, main = "Ablation")
   return(ab.log)
- 
 }
 
-# This function takes an ablation log file and plots the results.
-plotAblation <- function (ab.log = NULL, abLogFile = NULL, iraceLogFile = NULL,
-                          iraceResults = NULL, pdf.file = NULL, pdf.width = 20,
-                          mar = par("mar"))
+ablation.labels <- function(trajectory, configurations)
 {
-  if (is.null(ab.log) && is.null(abLogFile) && is.null(iraceLogFile)) 
-    irace.error("You must provide a log file or an ablation log object")
-  
-  if (is.null(ab.log) && !is.null(abLogFile)) {
-    load(abLogFile)
-  } else if (is.null(ab.log) && !is.null(iraceLogFile)) {
-    # FIXME: Do we really need this? Where do we save ab.log into iraceResults?
-    # LESLIE: We don't yet, this was in place just in case we wanted to offer it as
-    # an option after the execution of irace.
-    load(iraceLogFile)
-    ab.log <- iraceResults$ab.log
-  }
-	
-  results <- ab.log$experiments
-  trajectory <- ab.log$trajectory
-  changes <- ab.log$changes
-  
-  cand.means <- colMeans(results[, trajectory])
-  labels <- c("source")
-  last <- removeConfigurationsMetaData(ab.log$configurations[1, , drop=FALSE])
+  configurations <- removeConfigurationsMetaData(configurations[trajectory, , drop = FALSE])
+  labels <- names(trajectory)[1]
+  last <- configurations[1, , drop = FALSE]
+  param.names <- colnames(last)
   for (i in 2:length(trajectory)) {
-    current <- removeConfigurationsMetaData(ab.log$configurations[trajectory[i],,drop=FALSE])
-    pnames <- colnames(current)[which(current!=last)]
-    label <- paste(sapply(pnames, function(x) {paste0(x, "=", current[,x])}), collapse="\n")
-    labels <- c(labels, label)
+    current <- configurations[i, , drop = FALSE]
+    # select everything that is NOT NA now and was different or NA before.
+    select <- !is.na(current) & (is.na(last) | (current != last))
+    irace.assert(!anyNA(select))
+    labels <- c(labels,
+                paste0(param.names[select], "=", current[, select], collapse = "\n"))
     last <- current
   }
-  
+  return(labels)
+}
+
+#' Create plot from an ablation log
+#'
+#' @param ab.log Ablation log returned by \code{\link{ablation}}.
+#' @param abLogFile Rdata file containing the ablation log.
+#' @param pdf.file Output filename.
+#' @param pdf.width Width provided to create the pdf file.
+#' @param type Type of plots. Supported values are \code{"mean"} and
+#'   \code{"boxplot"}.
+#' @param mar Vector with the margins for the ablation plot.
+#' @param ylab Label of y-axis.
+#' @param ... Further graphical parameters may also be supplied as
+#'   arguments. See \code{plot.default}.
+#'
+#' @author Leslie Pérez Cáceres and Manuel López-Ibáñez
+#' @seealso \code{\link{ablation}}
+#' @export
+plotAblation <- function (ab.log = NULL, abLogFile = NULL,
+                          pdf.file = NULL, pdf.width = 20,
+                          type = c("mean", "boxplot"),
+                          mar = par("mar"),
+                          ylab = "Mean configuration cost", ...)
+{
+  type <- match.arg(type)
+  if (is.null(ab.log)) {
+    if (is.null(abLogFile))
+      irace.error("You must provide a log file or an ablation log object")
+    else {
+      load(abLogFile)
+      if (is.null(ab.log))
+        irace.error("abLogFile '", abLogFile, "' does not contain ab.log")
+    }
+  }
+
   if (!is.null(pdf.file)) {
     if (!is.file.extension(pdf.file, ".pdf"))
       pdf.file <- paste0(pdf.file, ".pdf")
@@ -381,14 +398,39 @@ plotAblation <- function (ab.log = NULL, abLogFile = NULL, iraceLogFile = NULL,
         title = paste0("Ablation plot: ", pdf.file))
     on.exit(dev.off(), add = TRUE)
   }
+  
+  trajectory <- ab.log$trajectory
+  configurations <- ab.log$configurations
+  # Generate labels
+  # FIXME: allow overriding these labels.
+  labels <- ablation.labels(trajectory, configurations)
 
   inches_to_lines <- (par("mar") / par("mai"))[1]
   lab.width <- max(strwidth(labels, units = "inches")) * inches_to_lines
   old.par <- par(mar = mar + c(lab.width - 2, 0, 0, 0), cex.axis = 1)
   on.exit(par(old.par), add = TRUE)
-  
-  plot(cand.means, xaxt = "n", xlab = "", ylab = "mean quality",
-       type = "b", main = "Ablation")
-  axis(1, at = 1:length(cand.means), labels = labels, las = 3)
-}
 
+  experiments <- ab.log$experiments
+  
+  # FIXME: We should also show the other alternatives at each step not just the
+  # one selected. See Leonardo's thesis.
+  ylim <- NULL
+  if (type == "boxplot") {
+    bx <- boxplot(experiments[, trajectory], plot=FALSE)
+    ylim <- range(ylim, bx$stats[is.finite(bx$stats)],
+                  bx$out[is.finite(bx$out)], 
+                  bx$conf[is.finite(bx$conf)])
+  }
+  costs.avg <- colMeans(experiments[, trajectory])
+    
+  plot(costs.avg, xaxt = "n", xlab = NA, ylab = ylab, ylim = ylim,
+       type = "b", pch = 19, ...,
+       panel.first = {
+         grid(nx = NA, ny = NULL, lwd = 2);
+         abline(h = c(costs.avg[1], tail(costs.avg, n = 1)),
+                col = "lightgray", lty = "dotted", lwd = 2) })
+  axis(1, at = 1:length(costs.avg), labels = labels, las = 3)
+  if (type == "boxplot") {
+    bxp(bx, show.names = FALSE, add = TRUE)
+  }
+}

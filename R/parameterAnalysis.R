@@ -486,7 +486,7 @@ getConfigurationByIteration <- function(iraceResults = NULL, logFile = NULL,
 #' @export
 configurationsBoxplot <- function(experiments, title = NULL, 
                                   xlabel = "Configuration ID",
-                                  ylabel = "Performance", 
+                                  ylabel = "Configuration cost", 
                                   filename = NULL)
 {
   plot.jitter.points <- function(x, y, factor = 10 / x, pch = 20, ...)
