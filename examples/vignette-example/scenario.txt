@@ -7,6 +7,7 @@ trainInstancesFile = "instances.txt"
 maxExperiments = 1000
 testInstancesDir = "./instances"
 testInstancesFile = "instances-test.txt"
+configurationsFile = "default.txt"
 testNbElites = 5
 testIterationElites = 1
 
