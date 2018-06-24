@@ -379,19 +379,17 @@ versions available depending on your operating system:
 \end{itemize}
 
 To install the package on GNU/Linux and OS X, you must execute the following
-command at the shell:
+command at the shell (replace \code{<package>} with the path to the downloaded file, either \code{irace_\iraceversion.tar.gz} or \code{irace_\iraceversion.zip}):
 %
 \begin{lstlisting}[style=BashInputStyle]
-# Replace <package> with the path to the downloaded file.
 R CMD INSTALL <package>
 \end{lstlisting}
 
 To install the package on Windows, open \aR and execute the following line on
-the \aR console:
+the \aR console (replace \code{<package>} with the path to the downloaded file \code{irace_\iraceversion.zip}):
 %\LESLIE{Check that this actually works on internet says that  this: \code{Rscript -e "install.packages('foo.zip', repos = NULL)"} also works}
-
+%
 <<install_win1,eval=FALSE, prompt=FALSE>>=
-# Replace <package> with the path to the downloaded file.
 install.packages("<package>", repos = NULL)
 @
 
@@ -2736,12 +2734,11 @@ If the path is set correctly and the problem persists, please check these instru
   <<faq3, eval=FALSE>>=
   library(Rmpi)
   mpi.spawn.Rslaves(nslaves = 10)
-  x <- mpi.applyLB(1:10, function(x) {
-    library(irace)
-    return(path.package("irace")) })
-         print(x)
-      @
-      Submit this program to the cluster (using \code{qsub}/\code{mpirun}) like you would submit \irace.
+  paths <- mpi.applyLB(1:10, function(x) {
+    library(irace); return(path.package("irace")) })
+  print(paths)
+  @
+  Submit this program to the cluster like you would submit \irace (using \code{qsub}, \code{mpirun} or whatever program is used to submit jobs to the cluster).
       
       \item In the script \code{bin/parallel-irace-mpi}, the function \code{irace\_main()} creates an MPI job for our cluster. 
       You may need to speak with the admin of your cluster and ask them how to best submit a job for MPI. There may be 
