@@ -60,7 +60,7 @@ R/irace-options.R vignettes/section/irace-options.tex scripts/irace_options_comm
 gendoc: 
 	R --slave -e 'library(devtools);document()'
 
-build : genoptions gendoc clean version
+build : version genoptions gendoc clean
 	$(MAKE) releasevignette
 	@if grep -q @ $(PACKAGEDIR)/vignettes/$(PACKAGE)-package.bib; then true; \
 	else echo "error: vignettes/$(PACKAGE)-package.bib is empty: run 'make vignettes'"; false; fi
