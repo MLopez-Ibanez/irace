@@ -4,6 +4,9 @@ BUGS: see BUGS file
 
 TODO R package:
 
+ * use devtools::release() to release
+   http://r-pkgs.had.co.nz/release.html#release-submission
+ 
  * Add inst/COPYRIGHTS. See race package.
 
  * Fix check-reverse so we can check reverse dependencies before
@@ -22,6 +25,9 @@ TODO General (in order of importance):
  * Various initialization modes Latin Hyper-cube, random, exhaustive,
    Hammersley point set, etc.
 
+ * Use https://cran.r-project.org/web/packages/optparse/index.html
+   to handle command-line options.
+   
  * In elitist irace, target-evaluator is always called on elite configurations,
    while the corresponding target-runner is called only once. Hence, the
    files/data required by target-evaluator must be kept around for future
@@ -138,9 +144,6 @@ TODO General (in order of importance):
  * race package has some recent updates. Check with Mauro what he
    changed.
 
- * Add --par integer >= 1 (PAR=), default 1: penalise timeouts or execution
-   failures with PAR * value.
-
  * Implement a regression testing testsuite to check that everything
    is working as expect before making a release. See:
 
@@ -234,6 +237,8 @@ TODO General (in order of importance):
 
 DONE:
 
+ * Add --par integer >= 1 (PAR=), default 1: penalise timeouts or execution
+   failures with PAR * value. [DONE by Leslie as boundPar]
 
  * Add example of logarithmic/parameter conversions in target-runner.
    [We now handle log conversion internally]
