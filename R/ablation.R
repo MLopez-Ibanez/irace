@@ -393,7 +393,7 @@ plotAblation <- function (ab.log = NULL, abLogFile = NULL,
   if (!is.null(pdf.file)) {
     if (!is.file.extension(pdf.file, ".pdf"))
       pdf.file <- paste0(pdf.file, ".pdf")
-    cat("Creating PDF file (", pdf.file, ")...")
+    cat(paste0("Creating PDF file '", pdf.file, "'\n"))
     pdf(file = pdf.file, width = pdf.width,
         title = paste0("Ablation plot: ", pdf.file))
     on.exit(dev.off(), add = TRUE)
