@@ -861,7 +861,8 @@ readInstances <- function(instancesDir = NULL, instancesFile = NULL)
     instances <- instances[instances != ""] # Delete empty lines
     # FIXME: is.null.or.empty should handle length() == 0.
     if (is.null.or.empty(instances) || length(instances) == 0)
-      irace.error("No instances found in `", instancesFile, "'")
+      irace.error("No instances found in '", instancesFile,
+                  "' (whitespace and comments starting with '#' are ignored)")
     if (!is.null.or.empty(instancesDir))
        instances <- paste0 (instancesDir, "/", instances)
   } else {
