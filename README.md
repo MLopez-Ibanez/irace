@@ -211,6 +211,7 @@ Usage
 ```bash
         $ cp $IRACE_HOME/templates/*.tmpl .
 ```
+
     where `$IRACE_HOME` is the path to the installation directory of
     `irace`. It can be obtained by doing:
 
@@ -245,6 +246,7 @@ Usage
 ```bash
         $ cd ~/tuning/ && $IRACE_HOME/bin/irace
 ```
+
     performs one run of Iterated Race. See the output of `irace --help` for
     additional irace parameters. Command-line parameters override the
     scenario setup specified in the `scenario.txt` file.
@@ -260,9 +262,9 @@ program
     $ cd ~/tuning/ && $IRACE_HOME/bin/parallel-irace N
 ```
 
-where N is the number of repetitions. By default, the execution
-directory of each run of irace will be set to `./execdir-dd`, where `dd` is a
-number padded with zeroes.
+where N is the number of repetitions. By default, the execution directory of
+each run of irace will be set to `./execdir-dd`, where `dd` is a number padded
+with zeroes.
 
 **Be careful**, `parallel-irace` will create these directories from
 scratch, deleting them first if they already exist.
@@ -280,7 +282,7 @@ parallel. See the [user guide](https://cran.r-project.org/package=irace/vignette
 License
 =======
 
-This software is Copyright (C) 2011-2017 Manuel López-Ibáñez and Jérémie
+This software is Copyright (C) 2011-2018 Manuel López-Ibáñez and Jérémie
 Dubois-Lacoste.
 
 This program is free software (software libre); you can redistribute it and/or
