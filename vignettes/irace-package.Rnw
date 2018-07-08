@@ -131,7 +131,7 @@
 \newcommand{\race}{\pkg{race}\xspace}
 \newcommand{\FRACE}{\text{F-Race}\xspace}
 \newcommand{\IFRACE}{\text{I/F-Race}\xspace}
-\newcommand{\iraceversion}{3.0}
+\newcommand{\iraceversion}{3.1}
 
 \newcommand{\Niter}{\ensuremath{N^\text{iter}}\xspace}
 \newcommand{\Nparam}{\ensuremath{{N^\text{param}}}\xspace}
@@ -833,7 +833,7 @@ irace.cmdline()
 
 
 
-\section{Defining a configuration scenario}
+\section{Defining a configuration scenario}\label{sec:scenario}
 \subsection{Target algorithm parameters} \label{sec:target parameters}
 
 The parameters of the target algorithm are defined by a parameter file as
@@ -1541,28 +1541,35 @@ parallel. There are four ways to parallelize a single run of \irace:
     Its value must be an \aR function that will be invoked by \irace as follows:
 
    <<targetRunnerParallel,prompt=FALSE, eval=FALSE>>=
-     targetRunnerParallel(experiments, exec.target.runner, scenario)
+   targetRunnerParallel(experiments, exec.target.runner, scenario, target.runner)
    @
    %
-   
-   where \code{experiments} is a list that contains elements with information
-   about configurations and instances to be executed (see \autoref{sec:runner}
-   for a description), \code{exec.target.runner} is the function within \irace
-   that takes care of executing \parameter{targetRunner}, check its output and,
-   possibly, retry in case of error (\parameter{targetRunnerRetries}) and
-   \code{scenario} is the scenario list. The \parameter{targetRunnerParallel}
-   function may call the given \code{exec.target.runner} for each element
-   in the \code{experiments} list. A trivial example would be:
+   where \code{scenario} is the list describing the configuration scenario
+   (\autoref{sec:scenario}); \code{experiments} is a list that describes the
+   configurations and instances to be executed (see \autoref{sec:runner} for a
+   description); \code{target.runner} is the function that calls the target
+   algorithm and it is the same as \parameter{targetRunner}, if the latter is a
+   function, or it is a call to \code{target.runner.default}, if
+   \parameter{targetRunner} is the path to an executable; and
+   \code{exec.target.runner} is an internal function within \irace that takes
+   care of executing \code{target.runner}, check its output and, possibly,
+   retry in case of error (see \parameter{targetRunnerRetries}). The
+   \parameter{targetRunnerParallel} function should call the given
+   \code{target.runner} function for each element in the \code{experiments}
+   list, possibly using \code{exec.target.runner} as a wrapper. A trivial
+   example would be:
    
    <<targetRunnerParallel2,prompt=FALSE, eval=FALSE>>=
    targetRunnerParallel <- function(experiments, exec.target.runner, scenario)
    {
-     return (lapply(experiments, exec.target.runner, scenario = scenario))
+     return (lapply(experiments, exec.target.runner, scenario = scenario,
+                    target.runner = target.runner))
    }
    @
    %
    However, the user is free to set up the calls in any way, perhaps
-   implementing its own replacement for \code{exec.target.runner}.
+   implementing its own replacement for \code{target.runner} and/or
+   \code{exec.target.runner}.
    
    The only requirement is that the \parameter{targetRunnerParallel} function
    must return a list of the same length as \code{experiments}, where each

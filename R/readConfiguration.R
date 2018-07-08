@@ -673,7 +673,7 @@ checkScenario <- function(scenario = defaultScenario())
 print.instances <- function(param, value)
 {
   cat (param, "= \"")
-  cat (value, sep=", ")
+  cat (value, sep = ", ")
   cat ("\"\n")
 }
 
@@ -890,22 +890,17 @@ checkTargetFiles <- function(scenario, parameters)
                                   forbidden = scenario$forbiddenExps,
                                   repair = scenario$repairConfiguration)
   configurations <- cbind (.ID. = conf.id, configurations)
-  
-  # Get info of the configuration
-  values <- removeConfigurationsMetaData(configurations)
-  values <- values[, parameters$names, drop = FALSE]
-  switches <- parameters$switches[parameters$names]
-    
-  # Create the experiment using the first instance
-  experiments <- list()
-  for (i in 1:nrow(configurations))
-    experiments[[i]] <- list (id.configuration = configurations[i, ".ID."],
-                              id.instance  = "instance1",
-                              bound = if (scenario$capping) scenario$boundMax else NULL,
-                              seed = 1234567,
-                              configuration = values[i, , drop = FALSE],
-                              instance = scenario$instances[1],
-                              switches = switches)
+
+  bounds <- if (scenario$capping)
+              rep(scenario$boundMax, length(configurations)) else NULL
+
+  experiments <- createExperimentList(configurations, parameters,
+                                      scenario$instances[1],
+                                      instances.ID = "instance1",
+                                      seeds = 1234567, scenario,
+                                      bounds = bounds)
+
+  # FIXME: Create a function try.call(err.msg,warn.msg, fun, ...)
   # Executing targetRunner
   cat("# Executing targetRunner (", nrow(configurations), "times)...\n")
   output <-  withCallingHandlers(

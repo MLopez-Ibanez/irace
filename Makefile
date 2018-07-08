@@ -1,4 +1,4 @@
-PACKAGEVERSION=3.0
+PACKAGEVERSION=3.1
 PACKAGE=$(shell sh -c 'grep -F "Package: " DESCRIPTION | cut -f2 -d" "')
 # FIXME: This Makefile only works with this BINDIR!
 BINDIR=$(CURDIR)/..
@@ -94,9 +94,10 @@ nonreleasevignette:
 releasebuild: BUILD_FLAGS=--compact-vignettes=both
 releasebuild: releasevignette
 	cd $(BINDIR) &&	R CMD build $(BUILD_FLAGS) $(PACKAGEDIR) && tar -atvf $(PACKAGE)_$(PACKAGEVERSION).tar.gz
-
-cran : BUILD_FLAGS=--compact-vignettes=both
-cran : build
+# Let's try to compact vignettes further
+	./scripts/recompact.sh $(BINDIR)/$(PACKAGE)_$(PACKAGEVERSION).tar.gz \
+		$(PACKAGE)/inst/doc/$(PACKAGE)-package.pdf
+cran : releasebuild
 	cd $(BINDIR) && _R_CHECK_FORCE_SUGGESTS_=false R CMD check --as-cran $(PACKAGE)_$(PACKAGEVERSION).tar.gz
 
 check: build

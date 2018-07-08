@@ -40,12 +40,12 @@
 #'   psRace(iraceLogFile="irace.Rdata", max.experiments=120)
 #' }
 #'
-#' @author Manuel López-Ibáñez and Leslie Pérez Cáceres
+#' @author Leslie Pérez Cáceres
 #' @export
 # This function executes a post selection race
 # elites: test all elites
-psRace <- function(iraceLogFile=NULL, iraceResults=NULL, conf.ids=NULL, postselection=NULL,
-                   max.experiments=NULL, elites=FALSE, seed=1234567)
+psRace <- function(iraceLogFile=NULL, iraceResults=NULL, conf.ids=NULL,
+                   postselection=NULL, max.experiments=NULL, elites=FALSE, seed=1234567)
 {
   # Input check
   if (is.null(iraceLogFile) && is.null(iraceResults)) 
@@ -57,24 +57,23 @@ psRace <- function(iraceLogFile=NULL, iraceResults=NULL, conf.ids=NULL, postsele
   
   # Load the data of the log file
   if (!is.null(iraceLogFile)) 
-  	load(iraceLogFile)
+    load(iraceLogFile)
  
   parameters <- iraceResults$parameters
   scenario   <- iraceResults$scenario
   
   # Get selected configurations
   if (!is.null(conf.ids)) {
-  	if (!all(conf.ids %in% iraceResults$allConfigurations$.ID.)) 
-  	  irace.error("Configuration ids provided", conf.ids,"cannot be found in the configurations.")
-  	configurations <- iraceResults$allConfigurations[iraceResults$allConfigurations$.ID.%in% conf.ids,,drop=FALSE] 	
+    if (!all(conf.ids %in% iraceResults$allConfigurations$.ID.)) 
+      irace.error("Configuration ids provided", conf.ids,"cannot be found in the configurations.")
+    configurations <- iraceResults$allConfigurations[iraceResults$allConfigurations$.ID.%in% conf.ids,,drop=FALSE] 	
   } else {
-  	if (elites)
-  	  configurations <- iraceResults$allConfigurations[unique(unlist(iraceResults$allElites)),]
-  	else
-      configurations <- iraceResults$allConfigurations[unique(iraceResults$iterationElites),]      
+    which.elites <- if (elites) unlist(iraceResults$allElites) else iraceResults$iterationElites
+    which.elites <- unique(which.elites)
+    configurations <- iraceResults$allConfigurations[which.elites, ]
   }
   
-  if (nrow(configurations)<=1)
+  if (nrow(configurations) <= 1)
     irace.error ("The number configurations should be > 1.")
 
   # LESLIE: Should we use testing instances?
@@ -83,8 +82,9 @@ psRace <- function(iraceLogFile=NULL, iraceResults=NULL, conf.ids=NULL, postsele
   .irace$instancesList <- instances
   .irace$next.instance <- 1
   # When capping is used we must pass maxBound
+  # MANUEL: Does this really work? It looks very strange.
   if (scenario$capping)
-  scenario$instances <- paste(scenario$instances, scenario$boundMax, sep=" ")
+    scenario$instances <- paste(scenario$instances, scenario$boundMax, sep=" ")
   
   scenario$elitist <- scenario$capping <- FALSE
   
@@ -92,10 +92,9 @@ psRace <- function(iraceLogFile=NULL, iraceResults=NULL, conf.ids=NULL, postsele
   # Calculate available budget
   # FIXME: add numerical checks
   if (is.null(max.experiments)) {
-    if (scenario$maxExperiments > 0) 
-       max.experiments <- ceiling(postselection*scenario$maxExperiments)
-    else
-       max.experiments <- ceiling(postselection*(scenario$maxTime/iraceResults$state$timeEstimate)) 
+    budget <- if (scenario$maxExperiments > 0)
+                scenario$maxExperiments else (scenario$maxTime/iraceResults$state$timeEstimate)
+    max.experiments <- ceiling(postselection *  budget)
   }
   
   cat("# configurations:", nrow(configurations), "\n")
@@ -104,8 +103,7 @@ psRace <- function(iraceLogFile=NULL, iraceResults=NULL, conf.ids=NULL, postsele
   cat("# available experiments:",max.experiments,"\n" )
   cat("# minSurvival: 1\n")
   
-  if (!is.null(seed))
-    set.seed(seed)
+  if (!is.null(seed)) set.seed(seed)
   # Should we fix the paramenters for the race?
   race.output <- race(maxExp = max.experiments,
                       minSurvival = 1,
@@ -114,10 +112,10 @@ psRace <- function(iraceLogFile=NULL, iraceResults=NULL, conf.ids=NULL, postsele
                       parameters = parameters,
                       scenario = scenario,
                       elitistNewInstances = 0)
-  experiments <-  race.output$experiments
+  experiments <- race.output$experiments
   
   elite.configurations <- extractElites(race.output$configurations,
-                                       min(race.output$nbAlive, 1))
+                                        min(race.output$nbAlive, 1))
   irace.note("Elite configurations (first number is the configuration ID;",
                " listed from best to worst according to the ",
                test.type.order.str(scenario$testType), "):\n")
@@ -132,7 +130,5 @@ psRace <- function(iraceLogFile=NULL, iraceResults=NULL, conf.ids=NULL, postsele
         
   if (!is.null(iraceLogFile))
     save(iraceResults, file=scenario$logFile)
-  else 
-    return(psrace.log)
-                      
+  return(psrace.log)
 }

@@ -1,5 +1,10 @@
 ------------------------------------------------------------*- mode: text -*-
 
+#12  ------------------------------------------------------------
+
+irace --check or checkIraceScenario do not work with targetRunnerParallel if
+the user does not use target.runner at all.
+
 #11 ------------------------------------------------------------
 
 The semantics of recovery are not clear. Should it recover the exact parameters

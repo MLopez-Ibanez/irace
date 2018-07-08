@@ -49,12 +49,13 @@ createExperimentList <- function(configurations, parameters,
   count <- 1
   for (i in seq_len(nrow(configurations))) {
     values_i <- values[i, , drop = FALSE]
-    for (j in seq_len(length(instances))) {
+    for (j in seq_along(instances)) {
       experiments[[count]] <- list (id.configuration = configurations.ID[i],
                                     id.instance  = instances.ID[j],
                                     seed = seeds[j],
                                     configuration = values_i,
-                                    instance = instances[j],
+                                    # mlr uses lists of objects as instances.
+                                    instance = instances[[j]],
                                     bound = bounds[count],
                                     switches = switches) 
       count <- count + 1 
@@ -84,7 +85,7 @@ race.wrapper <- function(configurations, instance.idx, bounds = NULL,
   # FIXME: Accessing 'seed' and 'instance' should be moved to createExperimentList.
   seed <- .irace$instancesList[instance.idx, "seed"]
   id.instance  <- .irace$instancesList[instance.idx, "instance"]
-  instance <- scenario$instances[[id.instance]]
+  instance <- scenario$instances[id.instance]
   # Experiment list to execute
   experiments <- createExperimentList(configurations,
                                       parameters, instances = instance,

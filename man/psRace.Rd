@@ -59,5 +59,5 @@ If \code{iraceLogFile} is provided this list object will be saved in \code{irace
 
 }
 \author{
-Manuel López-Ibáñez and Leslie Pérez Cáceres
+Leslie Pérez Cáceres
 }
