@@ -1,3 +1,7 @@
+
+ * Allow instances to be a list of arbitrary R objects (mlr bugfix)
+                                                         (Manuel López-Ibáñez)
+ 
 3.0  (05/07/2018)
 
  * irace now supports adaptive capping for computation time minimization.

@@ -384,6 +384,7 @@ executionBound <- function(data, type = "median")
   # This should never happen because the data used to obtain the execution
   # bound should be complete, that is, the bounding configurations should have
   # been executed on all previous instances.
+  
   irace.assert (all(!is.na(data)))
   bound <- switch (type,
                    median = median(colMeans(data)),
@@ -430,7 +431,7 @@ dom.elim <- function(results, elites, alive, scenario, minSurvival, eps = 1e-5)
   # would be to disable dom.elim when elites == 0.
   if (length(elites) == 0) {
     # FIXME: We could restrict this to only results[, which.alive]
-    cmeans <- colMeans(results[,alive, drop=FALSE])
+    cmeans <- colMeans(results[, alive, drop = FALSE])
     # In the case we have only two alive configurations only one can be elite.
     if (sum(alive) <= 2)
       elites <- which.alive[which.min(cmeans)]
@@ -439,7 +440,7 @@ dom.elim <- function(results, elites, alive, scenario, minSurvival, eps = 1e-5)
   }
   
   bound <- executionBound(results[, elites, drop = FALSE], type = scenario$cappingType)
-
+  # FIXME: This is duplicated above.
   which.alive <- which(alive)
   cmeans <- colMeans(results[, which.alive, drop = FALSE])
   irace.assert(!all(is.na(cmeans))) # Only NA values when calculating mean for dominance.
