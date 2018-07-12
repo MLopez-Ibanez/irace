@@ -12,4 +12,5 @@ test_that("mlr", {
   n = 30
   ctrl = makeTuneControlIrace(maxExperiments = n, nbIterations = 1L, minNbSurvival = 1)
   tr = tuneParams(lrn, iris.task, hout, par.set = ps, control = ctrl)
+  expect_true(TRUE)
 })

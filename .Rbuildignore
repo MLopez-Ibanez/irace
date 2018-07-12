@@ -46,4 +46,5 @@ DEVEL-README
 ^vignettes/_region_.tex
 ^web
 ^scripts
+^tests/testthat/nocran-*
 
