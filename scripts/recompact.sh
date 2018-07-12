@@ -19,8 +19,8 @@ if [ $? -ne 0 ]; then
     echo "$0: cannot overwrite $PDFFILE"
     exit 1
 fi
-tar -acf "$TARGZFILE" .
-tar -atvf "$TARGZFILE" .
+tar -acf "$TARGZFILE" *
+tar -atvf "$TARGZFILE"
 if [ $? -ne 0 ]; then
     echo "$0: something failed !"
     exit 1
