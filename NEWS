@@ -1,3 +1,4 @@
+3.1
 
  * Allow instances to be a list of arbitrary R objects (mlr bugfix)
                                                          (Manuel López-Ibáñez)
