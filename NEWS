@@ -1,6 +1,8 @@
 3.1
 
- * Allow instances to be a list of arbitrary R objects (mlr bugfix)
+ * Use testthat for unit testing.                        (Manuel López-Ibáñez)
+
+ * Allow instances to be a list of arbitrary R objects (mlr bugfix).
                                                          (Manuel López-Ibáñez)
  
 3.0  (05/07/2018)
