@@ -75,30 +75,31 @@ irace.dump.frames <- function()
 # Print an internal fatal error message that signals a bug in irace.
 irace.internal.error <- function(...)
 {
-  traceback(1)
   op <- options(warning.length = 8170,
                 error = if (interactive()) utils::recover
                         else irace.dump.frames)
   on.exit(options(op))
+  # 6 to not show anything below irace.assert()
+  bt <- capture.output(traceback(6))
+  msg <- paste(sep = '\n', paste0(bt, collapse= "\n"),
+               paste0(..., collapse = "\n"))
   warnings()
-  stop (.irace.prefix, ..., "\n", .irace.bug.report, call. = TRUE)
+  stop (.irace.prefix, msg, "\n", .irace.bug.report, call. = TRUE)
   invisible()
 }
 
-irace.assert <- function(exp)
+irace.assert <- function(exp, eval.after = NULL)
 {
+  # FIXME: It would be great if we could save into a file the state of
+  # the function that called this one.
   if (exp) return(invisible())
   mc <- match.call()[[2]]
   msg <- paste0(deparse(mc), " is not TRUE\n", .irace.bug.report)
-  # FIXME: It would be great if we could save into a file the state of
-  # the function that called this one.
-  traceback(1)
-  op <- options(warning.length = 8170,
-                error = if (interactive()) utils::recover
-                        else irace.dump.frames)
-  on.exit(options(op))
-  warnings()
-  stop (msg)
+  if (!is.null(eval.after)) {
+    msg.after <- eval.parent(capture.output(eval.after))
+    msg <- paste0(msg, "\n", msg.after)
+  }
+  irace.internal.error(msg)
   invisible()
 }
 

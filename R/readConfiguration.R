@@ -360,7 +360,7 @@ checkScenario <- function(scenario = defaultScenario())
   scenario$execDir <- path.rel2abs(scenario$execDir)
   file.check (scenario$execDir, isdir = TRUE,
               text = paste0("execution directory ", quote.param("execDir")))
-  
+  options(.irace.execdir = scenario$execDir)
   if (!is.null.or.empty(scenario$logFile)) {
     scenario$logFile <- path.rel2abs(scenario$logFile, cwd = scenario$execDir)
     file.check(scenario$logFile, writeable = TRUE,

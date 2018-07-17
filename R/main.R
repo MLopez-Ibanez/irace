@@ -112,7 +112,6 @@ irace.main <- function(scenario = defaultScenario(), output.width = 9999)
 
   scenario <- checkScenario (scenario)
   debug.level <- scenario$debugLevel
-  options(.irace.execdir = scenario$execDir)
   
   if (debug.level >= 1) {
     op.debug <- options(warning.length = 8170,
