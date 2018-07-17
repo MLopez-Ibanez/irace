@@ -336,6 +336,36 @@ path.rel2abs <- function (path, cwd = getwd())
   return (irace.normalize.path(path))
 }
 
+#' Modify all paths of a scenario consistently. Useful when moving a scenario
+#' from one computer to another.
+#'
+#' @param scenario list containing \pkg{irace} settings.The data structure has
+#'   to be the one returned by the function \code{\link{defaultScenario}} and
+#'   \code{\link{readScenario}}.
+#' @param from character string containing a regular expression (or character
+#'   string for \code{fixed = TRUE}) to be matched.
+#' @param to the replacement string.character string. For \code{fixed = FALSE}
+#'   this can include backreferences \code{"\1"} to \code{"\9"} to
+#'   parenthesized subexpressions of \code{from}.
+#' @param fixed logical.  If \code{TRUE}, \code{from} is a string to be matched
+#'   as is.
+#' @return The updated scenario
+#' @examples
+#' \dontrun{
+#' scenario <- readScenario(filename = "scenario.txt")
+#' scenario <- scenario.update.paths(scenario, from = "/home/manuel/", to = "/home/leslie")
+#' }
+#' @seealso \code{\link[base]{grep}}
+#' 
+scenario.update.paths <- function(scenario, from, to, fixed = TRUE)
+{
+  pathParams <- .irace.params.def[.irace.params.def[, "type"] == "p", "name"]
+  # Only consider the ones that actually appear in scenario.
+  pathParams <- intersect(pathParams, names(scenario))
+  scenario[pathParams] <- lapply(scenario[pathParams], sub, pattern = from, replacement = to, fixed = fixed)
+  return(scenario)
+}
+
 # This function is used to trim potentially large strings for printing, since
 # the maximum error/warning length is 8170 characters (R 3.0.2)
 strlimit <- function(str, limit = 5000)

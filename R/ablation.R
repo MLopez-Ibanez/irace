@@ -120,24 +120,27 @@ ablation <- function(iraceLogFile = NULL, iraceResults = NULL,
                      pdf.file = NULL, pdf.width = 20, mar = c(12,5,4,1),
                      debugLevel = NULL)
 {
+  # FIXME: The previous seed needs to be saved and restored at the end.
+  set.seed(seed)
+
   # Input check
   if (is.null(iraceLogFile) && is.null(iraceResults)) 
     irace.error("You must provide a Rdata file or an iraceResults object.")
   if (!(type %in% c("full", "racing")))
     irace.error("Type of ablation", type, "not recognized.") 
-                      	
-  irace.note ("Starting ablation:\n# Seed:", seed, "\n")
-   
+
   # Load the data of the log file
   if (!is.null(iraceLogFile)) load(iraceLogFile)
     
   if (is.null(src)) src <- 1
   if (is.null(target)) target <- iraceResults$iterationElites[length(iraceResults$iterationElites)]
-  
-  if (!(src %in% iraceResults$allConfigurations$.ID.))
+
+  irace.note ("Starting ablation from ", src, " to ", target, " :\n# Seed:", seed, "\n")
+
+  if (src %!in% iraceResults$allConfigurations$.ID.)
     irace.error("Source configuration ID (", src, ") cannot be found")
     
-  if (!(target %in% iraceResults$allConfigurations$.ID.))
+  if (target %!in% iraceResults$allConfigurations$.ID.)
     irace.error("Target configuration ID (", target, ") cannot be found")
   
   src.configuration <- iraceResults$allConfigurations[src, , drop = FALSE]
@@ -146,17 +149,13 @@ ablation <- function(iraceLogFile = NULL, iraceResults = NULL,
   parameters <- iraceResults$parameters
   scenario   <- iraceResults$scenario
   
-  if (!is.null(ablationLogFile))
-    scenario$logFile <- ablationLogFile
+  if (!is.null(ablationLogFile)) scenario$logFile <- ablationLogFile
   if (!is.null(debugLevel)) scenario$debugLevel <- debugLevel
   
   scenario <- checkScenario (scenario)
   
   startParallel(scenario)
   on.exit(stopParallel(), add = TRUE)
-
-  # FIXME: The previous seed needs to be saved and restored at the end.
-  set.seed(seed)
 
   # LESLIE: we should decide how to select the instances to perform the ablation
   # for now we generate an instace list with one instance.
@@ -175,7 +174,7 @@ ablation <- function(iraceLogFile = NULL, iraceResults = NULL,
   if (is.null(ab.params)) {
     ab.params <-  parameters$names
   } else if (!all(ab.params %in% parameters$names)) {
-  	  irace.error("Some of the parameters provided are not defined in the parameters object.")
+    irace.error("Some of the parameters provided are not defined in the parameters object.")
   }  
   # Select parameters that are different in both configurations
   neq.params <- which(src.configuration[,ab.params] != target.configuration[,ab.params])
@@ -323,7 +322,7 @@ ablation <- function(iraceLogFile = NULL, iraceResults = NULL,
   # complete, how should we do the plots?
   # MANUEL: Do not plot anything that was discarded
   
-  # Save final log
+  # Save final log.
   ab.log <- list(configurations  = all.configurations,
                  instances   = instances, 
                  experiments = results, 
