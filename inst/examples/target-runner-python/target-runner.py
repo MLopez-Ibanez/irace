@@ -42,7 +42,7 @@ def parse_output(out):
         return "No match"
 
 if len(sys.argv) < 5:
-    print "\nUsage: ./target-runner.py <candidate_id> <instance_id> <seed> <instance_path_name> <list of parameters>\n"
+    print("\nUsage: ./target-runner.py <candidate_id> <instance_id> <seed> <instance_path_name> <list of parameters>\n")
     sys.exit(1)
 
 # Get the parameters as command line arguments.
