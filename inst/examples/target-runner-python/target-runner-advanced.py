@@ -60,7 +60,7 @@ class Runner(object):
         try :
             hdlr = logging.FileHandler(filename, delay=True)
         except OSError as e:
-            print "Current working dir : %s" % os.getenv('PWD')
+            print("Current working dir : %s" % os.getenv('PWD'))
             raise
         formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
         hdlr.setFormatter(formatter)
@@ -371,7 +371,7 @@ def parse_output(out):
 if __name__=='__main__':
 
     if len(sys.argv) < 5:
-        print "\nUsage: " + __file__ + " <candidate_id> <instance_id> <seed> <instance_path_name> <list of parameters>\n"
+        print("\nUsage: " + __file__ + " <candidate_id> <instance_id> <seed> <instance_path_name> <list of parameters>\n")
         sys.exit(1)
     
     bindir = get_execdir()

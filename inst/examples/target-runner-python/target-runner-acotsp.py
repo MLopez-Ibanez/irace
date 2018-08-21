@@ -42,15 +42,15 @@ def parse_output(out):
         return "No match"
 
 if len(sys.argv) < 5:
-    print("\nUsage: ./target-runner.py <candidate_id> <instance_id> <seed> <instance_path_name> <list of parameters>\n")
+    print("\nUsage: ./target-runner.py <configuration_id> <instance_id> <seed> <instance_path_name> <list of parameters>\n")
     sys.exit(1)
 
 # Get the parameters as command line arguments.
-candidate_id = sys.argv[1]
+configuration_id = sys.argv[1]
 instance_id = sys.argv[2]
 seed = sys.argv[3]
 instance = sys.argv[4]
-cand_params = sys.argv[5:]
+conf_params = sys.argv[5:]
 
 # Build the command, run it and save the output to a file,
 # to parse the result from it.
@@ -59,11 +59,11 @@ cand_params = sys.argv[5:]
 #
 # Exit with error if something went wrong in the execution.
 exe = os.path.expanduser(exe)
-command = [exe] + fixed_params.split() + ["-i"] + [instance] + ["--seed"] + [seed] + cand_params
+command = [exe] + fixed_params.split() + ["-i"] + [instance] + ["--seed"] + [seed] + conf_params
 
 # Define the stdout and stderr files.
-out_file = "c" + str(candidate_id) + "-" + str(instance_id) + str(seed) + ".stdout"
-err_file = "c" + str(candidate_id) + "-" + str(instance_id) + str(seed) + ".stderr"
+out_file = "c" + str(configuration_id) + "-" + str(instance_id) + str(seed) + ".stdout"
+err_file = "c" + str(configuration_id) + "-" + str(instance_id) + str(seed) + ".stderr"
 
 def target_runner_error(msg):
     now = datetime.datetime.now()

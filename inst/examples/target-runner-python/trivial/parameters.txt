@@ -1,0 +1,4 @@
+param1 "--param1 " r (1,100)   | ptype == "a"
+param2 "--param2 " i (200,300) | ptype == "b"
+ptype  "--ptype " c ("a","b")
+
