@@ -894,6 +894,8 @@ checkTargetFiles <- function(scenario, parameters)
   bounds <- if (scenario$capping)
               rep(scenario$boundMax, length(configurations)) else NULL
 
+  # FIXME: We should sample the instance unless disabled explicitly by the
+  # user.
   experiments <- createExperimentList(configurations, parameters,
                                       scenario$instances[1],
                                       instances.ID = "instance1",
