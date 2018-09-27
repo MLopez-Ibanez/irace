@@ -28,4 +28,6 @@ scenario <- list(targetRunner = target.runner,
                  maxExperiments = 200, instances = runif(100))
 scenario <- checkScenario (scenario)
 
+irace:::checkTargetFiles(scenario = scenario, parameters = parameters)
+
 irace(scenario = scenario, parameters = parameters)

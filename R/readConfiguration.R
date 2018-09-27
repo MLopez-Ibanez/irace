@@ -892,7 +892,7 @@ checkTargetFiles <- function(scenario, parameters)
   configurations <- cbind (.ID. = conf.id, configurations)
 
   bounds <- if (scenario$capping)
-              rep(scenario$boundMax, length(configurations)) else NULL
+              rep(scenario$boundMax, nrow(configurations)) else NULL
 
   # FIXME: We should sample the instance unless disabled explicitly by the
   # user.

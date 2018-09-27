@@ -152,6 +152,8 @@ cap.irace <- function(...)
   scenario <- modifyList(scenario, args)
   scenario <- checkScenario (scenario)
 
+  irace:::checkTargetFiles(scenario = scenario, parameters = parameters)
+  
   confs <- irace(scenario = scenario, parameters = parameters)
   best.conf <- getFinalElites(logFile = scenario$logFile, n = 1,
                               drop.metadata = TRUE)

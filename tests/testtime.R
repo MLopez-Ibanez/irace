@@ -26,6 +26,9 @@ time.irace <- function(...)
   scenario <- list(targetRunner = target.runner, instances = weights, seed = 1234567)
   scenario <- c(scenario, args)
   scenario <- checkScenario (scenario)
+
+  irace:::checkTargetFiles(scenario = scenario, parameters = parameters)
+  
   irace(scenario = scenario, parameters = parameters)
 }
 
