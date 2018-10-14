@@ -34,9 +34,9 @@ error_sleep() {
 }
 
 NORMALIZATION_RANGE="'1 2'"
-REFERENCE_POINT="'1.1 1.1'"
+REFERENCE_POINT="'2.1 2.1'"
 
-# A program that normalizes all _dat files to [0, 1]
+# A program that normalizes all .stdout files to normalization range
 # (optional, not included).
 NORMALIZE="~/bin/nondominated --verbose -n $NORMALIZATION_RANGE -s '_nor'"
 UPDATELIMITS="2>&1 | grep -E 'minimum|maximum'  | sed  's/:/:\n/'"
