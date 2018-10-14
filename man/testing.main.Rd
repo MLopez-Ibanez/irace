@@ -7,22 +7,23 @@
 testing.main(logFile)
 }
 \arguments{
-\item{logFile}{Path to the .Rdata file produced by \pkg{irace}.}
+\item{logFile}{Path to the \code{.Rdata} file produced by \pkg{irace}.}
 }
 \value{
-Boolean. TRUE if the testing ended successfully otherwise, returns FALSE.
+Boolean. TRUE if the testing ended successfully otherwise, returns
+  FALSE.
 }
 \description{
 \code{testing.main} executes the testing of the target 
 algorithm configurations found on an \pkg{irace} execution.
 }
 \details{
-The function \code{testing.main} load the \code{logFile} and obtains
-the needed configurations according to the specified test. Use the 
-\code{scenario$testNbElites} to test N final elite configurations or use  
-\code{scenario$testIterationElites} to test the best configuration of each 
-iteration. A test instance set must be provided through \code{scenario$testInstancesDir} 
-and \code{testInstancesFile}.
+The function \code{testing.main} loads the \code{logFile} and
+  obtains the needed configurations according to the specified test. Use the
+  \code{scenario$testNbElites} to test N final elite configurations or use
+  \code{scenario$testIterationElites} to test the best configuration of each
+  iteration. A test instance set must be provided through
+  \code{scenario$testInstancesDir} and \code{testInstancesFile}.
 }
 \seealso{
 \code{\link{defaultScenario}} to provide a default scenario for \pkg{irace}.
