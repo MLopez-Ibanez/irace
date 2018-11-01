@@ -562,6 +562,14 @@ update.is.elite <- function(is.elite, which.exe)
   return(is.elite)
 }
 
+update.elite.safe <- function(Results, is.elite)
+{
+  if (any(is.elite > 0L))
+    return(max(which(apply(!is.na(Results[, is.elite > 0, drop=FALSE]), 1, any))))
+  # All elites rejected.
+  return(0L)
+}
+
 race <- function(maxExp = 0,
                  minSurvival = 1,
                  elite.data = NULL,
@@ -715,7 +723,8 @@ race <- function(maxExp = 0,
                     paste0(configurations[is.rejected, ".ID."],
                            collapse = ", ") , "\n")
         alive[is.rejected] <- FALSE
-        # Calculate the maximum instance that has any non-NA value. 
+        # Calculate the maximum instance that has any non-NA value.
+        # FIXME: Use update.elite.safe()
         if (n.elite > 0L)
           elite.safe <- max(which(apply(!is.na(Results[, which.elites, drop=FALSE]), 1, any)))
         else 
@@ -898,10 +907,7 @@ race <- function(maxExp = 0,
           nbAlive     <- length(which.alive)
           if (nbAlive == 0L)
             irace.error("All configurations have been immediately rejected (all of them returned Inf) !")
-          if (any(is.elite > 0L))
-            elite.safe <- max(which(apply(!is.na(Results[, is.elite > 0, drop=FALSE]), 1, any)))
-          else
-            elite.safe <- 0L
+          elite.safe <- update.elite.safe(Results, is.elite)
         }
         which.exe <- setdiff(which.exe, which.elite.exe)
         if (length(which.exe) == 0L) {
@@ -990,12 +996,7 @@ race <- function(maxExp = 0,
       if (nbAlive == 0)
         irace.error("All configurations have been immediately rejected (all of them returned Inf) !")
       # FIXME: Should we stop  if (nbAlive <= minSurvival) ???
-  
-      # All elites rejected.
-      if (any(is.elite > 0L))
-        elite.safe <- max(which(apply(!is.na(Results[, is.elite > 0, drop=FALSE]), 1, any)))
-      else
-        elite.safe <- 0L
+      elite.safe <- update.elite.safe(Results, is.elite)  
     }
     irace.assert(!any(is.infinite(colMeans(Results[, alive, drop=FALSE]))))
     
