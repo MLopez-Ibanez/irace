@@ -669,13 +669,6 @@ checkScenario <- function(scenario = defaultScenario())
   return (scenario)
 }
 
-print.instances <- function(param, value)
-{
-  cat (param, "= \"")
-  cat (value, sep = ", ")
-  cat ("\"\n")
-}
-
 #' Prints the given scenario
 #'
 #' @param scenario A list where tagged elements correspond to scenario
@@ -695,15 +688,7 @@ printScenario <- function(scenario)
 {
   cat("## irace scenario:\n")
   for (param in .irace.params.names) {
-    
-    # Special case for instances
-    if (param == "instances" || param == "testInstances") {
-      print.instances (param, scenario[[param]])
-    } else {# All other parameters (no vector, but can be functions)
-      # FIXME: Perhaps deparse() is not the right way to do this?
-      # FIXME: Perhaps toString() ?
-      cat(param, "=", deparse(scenario[[param]]), "\n")
-    }
+    cat(param, " = ", deparse(scenario[[param]]), "\n", sep = "")
   }
   cat("## end of irace scenario\n")
 }
