@@ -357,6 +357,10 @@ irace.init <- function(scenario)
     scenario$seed <- trunc(runif(1, 1, .Machine$integer.max))
   }
   set.seed(scenario$seed)
+  if (scenario$debugLevel > 2) {
+    irace.note("RNGkind: ", paste0(RNGkind(), collapse = " "), "\n")
+    irace.note(".Random.seed: ", paste0(.Random.seed, collapse = ", "), "\n")
+  }
   return(scenario)
 }
 
