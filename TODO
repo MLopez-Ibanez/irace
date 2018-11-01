@@ -4,6 +4,11 @@ BUGS: see BUGS file
 
 TODO R package:
 
+ * Use
+   https://github.com/seandavi/F1000R_BiocWorkflows/blob/master/rnwConversion/processesRnw.R
+   to convert the user-guide to Rmarkdown, then use pkgdown to generate a nice
+   website.
+
  * use devtools::release() to release
    http://r-pkgs.had.co.nz/release.html#release-submission
  
