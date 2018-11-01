@@ -466,8 +466,7 @@ checkScenario <- function(scenario = defaultScenario())
   if (!is.null(scenario$testInstances)
       && is.null(names(scenario$testInstances))) {
     # Create unique IDs for testInstances
-    names (scenario$testInstances) <-
-      paste0(1:length(scenario$testInstances), "t")
+    names(scenario$testInstances) <- paste0(1:length(scenario$testInstances), "t")
   }
   
   # Configurations file
