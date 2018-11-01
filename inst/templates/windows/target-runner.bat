@@ -1,3 +1,4 @@
+@echo off
 ::##############################################################################
 :: BAT version of target-runner for Windows.
 :: Contributed by Andre de Souza Andrade <andre.andrade@uniriotec.br>.
@@ -16,7 +17,6 @@
 :: This script should print one numerical value: the cost that must be minimized.
 :: Exit with 0 if no error, with 1 in case of error
 ::##############################################################################
-@echo off
 
 :: Please change the EXE and FIXED_PARAMS to the correct ones
 SET "exe=D:\bin\program"
@@ -33,20 +33,27 @@ FOR /f "tokens=1-4*" %%a IN ("%*") DO (
 SET "stdout=c%candidate%-%instance_id%-%seed%.stdout"
 SET "stderr=c%candidate%-%instance_id%-%seed%.stderr"
 
-:: If the program just prints a number, we can use 'exec' to avoid
-:: creating another process, but there can be no other commands after exec.
-::
-:: %exe %fixed_params% -i %instance% --seed %seed% %candidate_parameters%
-:: exit 0
-:: 
-:: Otherwise, save the output to a file, and parse the result from it.
+:: :: FIXME: How to implement this in BAT ?
+::if not exist %exe% error "%exe%: not found or not executable (pwd: %(pwd))"
+
+:: Save  the output to a file, and parse the result from it.
 
 %exe% %fixed_params% -i %instance% --seed %seed% %candidate_parameters% 1>%stdout% 2>%stderr%
+
+
+:: :: This may be used to introduce a delay if there are filesystem
+:: :: issues.
+:: setlocal EnableDelayedExpansion
+:: :loop
+:: for /f %%i in ("%stdout%") do set size=%%~zi
+:: if "%size%" NEQ "0" (goto endloop)
+:: waitfor false /t 10 >nul
+:: goto loop
+:: :endloop
 
 :: This is an example of reading a number from the output.
 :: It assumes that the objective value is the first number in
 :: the first column of the last line of the output.
-
 setlocal EnableDelayedExpansion
 set "cmd=findstr /R /N "^^" %stdout% | find /C ":""
 for /f %%a in ('!cmd!') do set numberlines=%%a
@@ -54,5 +61,6 @@ set /a lastline=%numberlines%-1
 for /f "tokens=3" %%F in ('more +%lastline% %stdout%') do set COST=%%F
 echo %COST%
 
-::del %stdout% %stderr%
+:: Un-comment this if you want to delete temporary files.
+:: del %stdout% %stderr%
 exit 0
