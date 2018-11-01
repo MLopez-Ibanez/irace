@@ -12,10 +12,6 @@ irace.reload.debug <- function(package = "irace")
 
 .irace.prefix <- "== irace == "
 
-.irace.bug.report <-
-  paste("An unexpected condition occurred.",
-        "Please report this bug to the authors of the irace package <http://iridia.ulb.ac.be/irace>")
-
 irace.print.memUsed <- function(objects)
 {
   object.size.kb <- function (name, envir) {
@@ -75,6 +71,10 @@ irace.dump.frames <- function()
 # Print an internal fatal error message that signals a bug in irace.
 irace.internal.error <- function(...)
 {
+  .irace.bug.report <-
+    paste0("An unexpected condition occurred. ",
+           "Please report this bug to the authors of the irace package <http://iridia.ulb.ac.be/irace>")
+
   op <- options(warning.length = 8170,
                 error = if (interactive()) utils::recover
                         else irace.dump.frames)
@@ -94,7 +94,7 @@ irace.assert <- function(exp, eval.after = NULL)
   # the function that called this one.
   if (exp) return(invisible())
   mc <- match.call()[[2]]
-  msg <- paste0(deparse(mc), " is not TRUE\n", .irace.bug.report)
+  msg <- paste0(deparse(mc), " is not TRUE\n")
   if (!is.null(eval.after)) {
     msg.after <- eval.parent(capture.output(eval.after))
     msg <- paste0(msg, "\n", msg.after)
@@ -454,6 +454,8 @@ merge.matrix <- function(x, y)
                     dimnames = list(new.rows, colnames(x))))
   # Update
   x[rownames(y), colnames(y)] <- y
+  # There must be a non-NA entry for each instance.
+  irace.assert(all(apply(!is.na(x), 1, any)))
   return(x)
 }
 

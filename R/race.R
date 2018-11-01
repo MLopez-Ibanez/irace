@@ -553,6 +553,15 @@ overall.ranks <- function(x, stat.test)
   return(ranks)
 }
 
+# Remove one elite count from every configuration not executed.
+update.is.elite <- function(is.elite, which.exe)
+{
+  which.notexecuted <- setdiff(which(is.elite > 0), which.exe) 
+  is.elite[which.notexecuted] <- is.elite[which.notexecuted] - 1
+  irace.assert (all(is.elite >= 0))
+  return(is.elite)
+}
+
 race <- function(maxExp = 0,
                  minSurvival = 1,
                  elite.data = NULL,
@@ -620,6 +629,11 @@ race <- function(maxExp = 0,
     elite.safe <- 0L
     elite.instances.ID <- NULL
   } else {
+    # There must be a non-NA entry for each instance.
+    irace.assert(all(apply(!is.na(elite.data$experiments), 1, any)))
+    # There must be a non-NA entry for each configuration.
+    irace.assert(all(apply(!is.na(elite.data$experiments), 2, any)))
+    
     # elite.safe: maximum instance number for which any configuration may be
     # considered elite. After evaluating this instance, no configuration is
     # elite.
@@ -720,15 +734,6 @@ race <- function(maxExp = 0,
   
   race.print.header(scenario$capping)
 
-# Remove one elite count from every configuration not executed.
-update.is.elite <- function(is.elite, which.exe)
-{
-  which.notexecuted <- setdiff(which(is.elite > 0), which.exe) 
-  is.elite[which.notexecuted] <- is.elite[which.notexecuted] - 1
-  irace.assert (all(is.elite >= 0))
-  return(is.elite)
-}
-  
   # Start main loop
   break.msg <- NULL
   for (current.task in seq_len (no.tasks)) {
@@ -1162,6 +1167,9 @@ update.is.elite <- function(is.elite, which.exe)
 
   # nrow(Results) may be smaller, equal or larger than current.task.
   irace.assert(nrow(experimentLog) == experimentsUsed)
+
+  # There must be a non-NA entry for each instance.
+  irace.assert(all(apply(!is.na(Results), 1, any)))
   
   return(list(experiments = Results,
               experimentLog = experimentLog,

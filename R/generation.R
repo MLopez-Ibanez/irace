@@ -76,7 +76,7 @@ sampleUniform <- function (parameters, nbConfigurations, digits,
           possibleValues <- parameters$domain[[currentParameter]]
           newVal <- sample(possibleValues, 1)
         } else {
-          stop (.irace.bug.report);
+          irace.internal.error("Unexpected condition in sampleUniform")
         }
         configuration[[p]] <- newVal
       }
@@ -188,7 +188,7 @@ sampleModel <- function (parameters, eliteConfigurations, model,
           possibleValues <- paramDomain(currentParameter, parameters)
           newVal <- sample(x = possibleValues, size = 1, prob = probVector)
         } else {
-          stop (.irace.bug.report)
+          irace.internal.error("Unexpected condition in sampleModel")
         }
         configuration[[p]] <- newVal
       }
