@@ -81,10 +81,10 @@ irace.internal.error <- function(...)
   on.exit(options(op))
   # 6 to not show anything below irace.assert()
   bt <- capture.output(traceback(6))
-  msg <- paste(sep = '\n', paste0(bt, collapse= "\n"),
-               paste0(..., collapse = "\n"))
   warnings()
-  stop (.irace.prefix, msg, "\n", .irace.bug.report, call. = TRUE)
+  stop (.irace.prefix, paste0(..., collapse = "\n"),
+        paste0(bt, collapse= "\n"), "\n",
+        .irace.prefix, "\n", .irace.bug.report, call. = FALSE)
   invisible()
 }
 
