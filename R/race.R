@@ -1137,6 +1137,10 @@ race <- function(maxExp = 0,
   if (is.null(break.msg))
     break.msg <- paste0("all instances (", no.tasks, ") evaluated")
 
+  # If we stop the loop before we see all new instances, there may be gaps in
+  # Results. Remove those rows.
+  Results <- Results[apply(!is.na(Results), 1, any), , drop = FALSE]
+  
   race.ranks <- overall.ranks(Results[, alive, drop = FALSE], stat.test = stat.test)
   best <- which.alive[which.min(race.ranks)]
 
@@ -1169,9 +1173,6 @@ race <- function(maxExp = 0,
   # nrow(Results) may be smaller, equal or larger than current.task.
   irace.assert(nrow(experimentLog) == experimentsUsed)
 
-  # There must be a non-NA entry for each instance.
-  irace.assert(all(apply(!is.na(Results), 1, any)))
-  
   return(list(experiments = Results,
               experimentLog = experimentLog,
               experimentsUsed = experimentsUsed,
