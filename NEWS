@@ -1,3 +1,13 @@
+
+ * New function scenario.update.paths()                 (Manuel López-Ibáñez)
+ 
+ * Fix assert failure that may happen when elitistNewInstances is larger than
+   firstTest.                                           (Manuel López-Ibáñez)
+   
+ * fixed bug in checkTargetFiles() (--check) with capping.
+                                                        (Leslie Pérez Cáceres)
+ 
+ 
 3.1  (12/07/2018)
 
  * Use testthat for unit testing.                        (Manuel López-Ibáñez)
