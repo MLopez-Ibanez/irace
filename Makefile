@@ -31,7 +31,7 @@ endif
 SVN_REV = $(shell sh -c 'cat svn_version 2> /dev/null')
 REVNUM = $(shell sh -c 'cat svn_version | tr -d -c "[:digit:]" 2> /dev/null')
 
-.PHONY : help build check clean install pdf rsync version submit cran winbuild vignettes examples genoptions
+.PHONY : help build check clean install pdf rsync version submit cran winbuild vignettes examples genoptions pkgdown
 
 help:
 	@echo "install    install the package"
@@ -59,6 +59,9 @@ R/irace-options.R vignettes/section/irace-options.tex scripts/irace_options_comm
 
 gendoc: 
 	R --slave -e 'library(devtools);document()'
+
+pkgdown: gendoc
+	R --slave -e 'pkgdown::build_site(run_dont_run = TRUE)'
 
 build : version genoptions gendoc clean
 	$(MAKE) releasevignette

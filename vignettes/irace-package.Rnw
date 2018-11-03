@@ -2662,7 +2662,7 @@ irace. This is done, for example, when maximizing the hypervolume (see the last
 lines in \IRACEHOME{/examples/hypervolume/target-evaluator}).
 
 
-\subsection[Is it possible to configure a MATLAB algorithm with irace?]%
+\subsection[Is it possible to configure a MATLAB algorithm with irace?]
 {Is it possible to configure a \MATLAB algorithm with \irace ?}
 
 Definitely. There are three main ways to achieve this:
