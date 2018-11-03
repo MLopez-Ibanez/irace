@@ -1,5 +1,5 @@
-library(irace)
 context("path.rel2abs")
+
 test_that("test.path.rel2abs", {
   # Try to set wd; otherwise fail silently.
   old.cwd <- getwd()

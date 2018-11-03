@@ -1,5 +1,5 @@
-library(irace)
 context("mlr")
+
 test_that("mlr", {
   skip_on_cran()
   suppressWarnings(library(mlr))

@@ -198,19 +198,15 @@ is.function.name <- function(FUN)
   # FIXME: Is there a simpler way to do this check?
   is.function(FUN) ||
     (!is.null(FUN) && !is.na(FUN) && as.character(FUN) != "" &&
-     !is.null(mget(as.character(FUN), envir = as.environment(-1),
-                   mode = "function", ifnotfound = list(NULL),
-                   inherits = TRUE)[[1]]))
+     !is.null(get.function(FUN)))
 }
 
 get.function <- function(FUN)
 {
-  irace.assert(is.function.name(FUN))
   if (is.function(FUN)) return(FUN)
-  # FIXME: Is there a simpler way to do this?
-  return(mget(FUN, envir = as.environment(-1),
-              mode = "function", ifnotfound = list(NULL),
-              inherits = TRUE)[[1]])
+  FUN <- dynGet(as.character(FUN), ifnotfound = NULL, inherits = TRUE)
+  if (is.function(FUN)) return(FUN)
+  return (NULL)
 }
 
 is.bytecode <- function(x) typeof(x) == "bytecode"

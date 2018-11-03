@@ -1,9 +1,6 @@
-library(irace)
+context("irace")
 
-# Reproducible results
-seed <- sample(2^30, 1)
-cat("Seed: ", seed, "\n")
-set.seed(seed)
+source("common.R")
 
 ## Functions ##########################################################
 f_rosenbrock <- function (x) {
@@ -50,9 +47,6 @@ target.runner.reject <- function(experiment, scenario)
   return (target.runner(experiment, scenario))
 }
 
-
-weights <- rnorm(200, mean = 0.9, sd = 0.02)
-
 ## Run function ########################################################
 sann.irace <- function(...)
 {
@@ -67,53 +61,37 @@ sann.irace <- function(...)
   scenario <- list(targetRunner = target.runner,
                    maxExperiments = 1000, seed = 1234567)
   scenario <- modifyList(scenario, args)
-
   scenario <- checkScenario (scenario)
 
   confs <- irace(scenario = scenario, parameters = parameters)
   best.conf <- getFinalElites(logFile = scenario$logFile, n = 1,
                               drop.metadata = TRUE)
-  stopifnot(identical(removeConfigurationsMetaData(confs[1, , drop = FALSE]),
-                      best.conf))
+  expect_identical(removeConfigurationsMetaData(confs[1, , drop = FALSE]),
+                   best.conf)
 }
 
-sann.irace(instances = weights, parallel = 2, targetRunner = target.runner.reject)
+test_that("parallel", {
 
-sann.irace(instances = weights, parallel = 2)
+  # Reproducible results
+  generate.set.seed()
+  weights <- rnorm(200, mean = 0.9, sd = 0.02)
+  sann.irace(instances = weights, parallel = 2)
+})
 
-sann.irace(deterministic = TRUE, instances = weights[1:7])
+test_that("parallel reject", {
 
+  # Reproducible results
+  generate.set.seed()
+  weights <- rnorm(200, mean = 0.9, sd = 0.02)
+  sann.irace(instances = weights, parallel = 2, targetRunner = target.runner.reject)
+})
 
+test_that("deterministic", {
 
-test.checkForbidden <- function(param.file)
-{
-  params <- irace:::readParameters(param.file)
-  confs <- irace:::readConfigurationsFile("configurations.txt", params)
-  forbidden <- irace:::readForbiddenFile("forbidden.txt")
-  exp.confs <- irace:::readConfigurationsFile(text='
-param1 param2 mode   real mutation
-5        NA    "x2"   4.0   "low"
-1        NA    "x2"   4.0   "low"
-5        6     "x1"   3.5   "low"
-NA        NA   "x3"   4.5   "low"
-', parameters = params)
-  confs <- irace:::checkForbidden(confs, forbidden)
-  rownames(confs) <- rownames(exp.confs) <- NULL
-  stopifnot(identical(confs, exp.confs))
-}
-test.checkForbidden("parameters.txt")
-test.checkForbidden("logparameters.txt")
+  # Reproducible results
+  generate.set.seed()
+  weights <- rnorm(200, mean = 0.9, sd = 0.02)
+  sann.irace(deterministic = TRUE, instances = weights[1:7])
+})
 
-
-test.instances <- function()
-{
-  # Test that a function can be given as a string.
-  scenario <- list(targetRunner = "target.runner",
-                   maxExperiments = 1000, seed = 1234567,
-                   firstTest = 5,
-                   deterministic = TRUE,
-                   trainInstancesFile = "train-instances.txt")
-  scenario <- checkScenario (scenario)
-}
-test.instances()
 

@@ -1,16 +1,47 @@
-library(irace)
 context("bugs")
+
 test_that("bug_large_new_instances", {
   skip_on_cran()
 
   load("bug_large_new_instances.Rdata", verbose = TRUE)
+
   scenario$targetRunner <- function(experiment, scenario) {
-    instancesList <- dynGet("saved_instances_list", inherits = TRUE)
-    experiments <- dynGet("saved_experiments", inherits = TRUE)
-    row <- which(instancesList$instance == experiment$id.instance
-                 & instancesList$seed == experiment$seed)
-    return(list(cost = experiments[row, experiment$id.configuration]))
+    saved_instances_list <- dynGet("saved_instances_list", inherits = TRUE)
+    saved_experiments <- dynGet("saved_experiments", inherits = TRUE)
+    row <- which(saved_instances_list[, "instance"] == experiment[["id.instance"]]
+                 & saved_instances_list[, "seed"] == experiment[["seed"]])
+    return(list(cost = saved_experiments[row, experiment[["id.configuration"]] ]))
   }
   confs <- irace(scenario = scenario, parameters = parameters)
-  expect_true(nrow(confs) > 0)
+  expect_more_than(nrow(confs), 0)
+})
+
+test_that("target.runner as string", {
+
+  target.runner.local <- function(experiment, scenario) return(list(cost=1L))
+
+  expect_true(irace:::is.function.name("target.runner.local"))
+
+  # Test that a function can be given as a string.
+  scenario <- list(targetRunner = "target.runner.local",
+                   instances = 1:10, maxExperiments = 1000)
+  scenario <- checkScenario (scenario)
+
+  expect_equal(scenario$targetRunner, target.runner.local)
+  expect_is(scenario$targetRunner, "function")
+})
+
+target.runner.global <- function(experiment, scenario) return(list(cost=1L))
+
+test_that("target.runner as string (global)", {
+
+  expect_true(irace:::is.function.name("target.runner.global"))
+
+  # Test that a function can be given as a string.
+  scenario <- list(targetRunner = "target.runner.global",
+                   instances = 1:10, maxExperiments = 1000)
+  scenario <- checkScenario (scenario)
+
+  expect_equal(scenario$targetRunner, target.runner.global)
+  expect_is(scenario$targetRunner, "function")
 })

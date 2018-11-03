@@ -30,6 +30,8 @@ TODO General (in order of importance):
  * Various initialization modes Latin Hyper-cube, random, exhaustive,
    Hammersley point set, etc.
 
+ * Use saveRDS/readRDS instead of load/save to avoid overriding userspace.
+ 
  * Use https://cran.r-project.org/web/packages/optparse/index.html
    to handle command-line options.
    
@@ -46,8 +48,6 @@ TODO General (in order of importance):
  * crayon: Colored Terminal Output
    https://cran.r-project.org/package=crayon
     
- * Use testthat package for testing: http://r-pkgs.had.co.nz/tests.html
- 
  * The truncated normal distribution actually gives more probability to the
    side further away from the mean (that is, the integral of the PDF is larger
    on the side where the distance is larger from the mean). This is not really
@@ -242,6 +242,9 @@ TODO General (in order of importance):
 
 DONE:
 
+ * Use testthat package for testing: http://r-pkgs.had.co.nz/tests.html
+   [DONE by Manuel]
+ 
  * Add --par integer >= 1 (PAR=), default 1: penalise timeouts or execution
    failures with PAR * value. [DONE by Leslie as boundPar]
 

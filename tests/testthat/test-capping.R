@@ -1,9 +1,6 @@
-library(irace)
+context("Capping")
 
-# Reproducible results
-seed <- sample(2^30,1)
-cat("Seed: ", seed, "\n")
-set.seed(seed)
+source("common.R")
 
 nsize <- 0.1
 
@@ -157,11 +154,24 @@ cap.irace <- function(...)
   confs <- irace(scenario = scenario, parameters = parameters)
   best.conf <- getFinalElites(logFile = scenario$logFile, n = 1,
                               drop.metadata = TRUE)
-  stopifnot(identical(removeConfigurationsMetaData(confs[1, , drop = FALSE]),
-                      best.conf))
+  expect_identical(removeConfigurationsMetaData(confs[1, , drop = FALSE]),
+                   best.conf)
 }
 
-cap.irace(maxExperiments = 1000)
-cap.irace(maxTime = 50000)
-cap.irace(targetRunner = target.runner.reject, maxTime = 10000)
+test_that("cap.irace maxExperiments = 1000", {
+
+  generate.set.seed()
+  cap.irace(maxExperiments = 1000)
+})
+
+test_that("cap.irace maxExperiments = 50000", {
+  generate.set.seed()
+  cap.irace(maxExperiments = 50000)
+})
+
+test_that("cap.irace targetRunner = target.runner.reject, maxTime = 10000", {
+  generate.set.seed()
+  cap.irace(targetRunner = target.runner.reject, maxTime = 10000)
+})
+
 
