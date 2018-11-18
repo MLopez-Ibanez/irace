@@ -71,7 +71,7 @@ sann.irace <- function(...)
 }
 
 test_that("parallel", {
-
+  skip_on_cran()
   # Reproducible results
   generate.set.seed()
   weights <- rnorm(200, mean = 0.9, sd = 0.02)
@@ -87,6 +87,7 @@ test_that("parallel reject", {
 })
 
 test_that("deterministic", {
+  skip_on_cran()
 
   # Reproducible results
   generate.set.seed()

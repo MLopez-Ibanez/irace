@@ -10,6 +10,7 @@ target.runner <- function(experiment, scenario)
   time <- abs(rnorm(1, mean=(tmax+temp)/10))
   return(list(cost = time, time = time, call = toString(experiment)))
 }
+
 time.irace <- function(...)
 {
   args <- list(...)
@@ -35,6 +36,7 @@ test_that("maxTime 500", {
 })
 
 test_that("maxTime 500", {
+  skip_on_cran()
   generate.set.seed()
   time.irace(maxTime = 1111)
 })
