@@ -20,6 +20,7 @@ DEVEL-README
 ^devel-tests
 ^dist\.sh$
 ^doc$
+^docs$
 ^examples
 ^hooks/hook-evaluate
 ^hooks/hook-run
@@ -29,6 +30,7 @@ DEVEL-README
 ^irace-Ex.R
 ^irace\.Rdata
 ^parameters\.txt
+^pkgdown$
 ^scenario\.txt$
 ^svn_version
 ^testing
