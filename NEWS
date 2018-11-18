@@ -7,7 +7,7 @@
  * New function `scenario.update.paths()`                (Manuel López-Ibáñez)
  
  * Fix assert failure that may happen when `elitistNewInstances` is larger than
-   `firstTest`.                                           (Manuel López-Ibáñez)
+   `firstTest`. Reported by Jose Riveaux.                (Manuel López-Ibáñez)
    
  * fixed bug in `checkTargetFiles()` (`--check`) with capping.
                                                         (Leslie Pérez Cáceres)
