@@ -48,14 +48,20 @@ target.runner.reject <- function(experiment, scenario)
 }
 
 ## Run function ########################################################
-sann.irace <- function(...)
+sann.irace <- function(log.param=FALSE, ...)
 {
   args <- list(...)
 
-  parameters.table <- '
-   tmax "" i (1, 5000)
-   temp "" r (0, 100)
-   '  
+  if (log.param)
+     parameters.table <- '
+       tmax "" i.log (1, 5000)
+       temp "" r,log (0, 100)
+       '      
+  else
+     parameters.table <- '
+       tmax "" i (1, 5000)
+       temp "" r (0, 100)
+     '  
   parameters <- readParameters(text = parameters.table)
 
   scenario <- list(targetRunner = target.runner,
@@ -94,5 +100,14 @@ test_that("deterministic", {
   weights <- rnorm(200, mean = 0.9, sd = 0.02)
   sann.irace(deterministic = TRUE, instances = weights[1:7])
 })
+
+test_that("log", {
+  skip_on_cran()
+  # Reproducible results
+  generate.set.seed()
+  weights <- rnorm(200, mean = 0.9, sd = 0.02)
+  sann.irace(log.param=TRUE, instances = weights)
+})
+
 
 

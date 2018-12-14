@@ -116,7 +116,7 @@ updateModel <- function (parameters, eliteConfigurations, oldModel,
         # Not really a vector but stdDev factor
         newProbVector <- probVector[1] * ((1 / nbNewConfigurations)^(1 / parameters$nbVariable))
         if (transform == "log") {
-          probVector[1] <- log(probVector[1] / newProbVector)
+          probVector[1] <- max(log(probVector[1] / newProbVector), 1/(10^scenario$digits))
         } else {
           probVector[1] <- newProbVector
         }
