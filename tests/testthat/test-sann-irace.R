@@ -54,7 +54,7 @@ sann.irace <- function(log.param=FALSE, ...)
 
   if (log.param)
      parameters.table <- '
-       tmax "" i.log (1, 5000)
+       tmax "" i,log (1, 5000)
        temp "" r,log (0, 100)
        '      
   else
