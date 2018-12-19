@@ -182,6 +182,11 @@ is.na.nowarn <- function(x)
   length(x) == 1 && suppressWarnings(is.na(x))
 }
 
+is.na.or.empty <- function(x)
+{
+  (length(x) == 0) || is.na.nowarn(x)
+}
+
 is.null.or.na <- function(x)
 {
   is.null(x) || is.na.nowarn(x)

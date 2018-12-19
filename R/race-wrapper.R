@@ -247,13 +247,13 @@ check.output.target.runner <- function (output, scenario)
   err.msg <- output$error
   if (is.null(err.msg)) {
     if (!is.null (output$cost)) {
-      if (is.na.nowarn(output$cost)) {
+      if (is.na.or.empty(output$cost)) {
         err.msg <- "The cost returned by targetRunner is not numeric!"
       }
     }
 
     if (!is.null (output$time)) {
-      if (is.na.nowarn(output$time)) {
+      if (is.na.or.empty(output$time)) {
         err.msg <- paste0("The time returned by targetRunner is not numeric!")
       } else if (is.infinite(output$time)) {
         err.msg <- paste0("The time returned by targetRunner is not finite!")
