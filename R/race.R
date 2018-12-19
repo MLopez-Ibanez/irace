@@ -1064,7 +1064,7 @@ race <- function(maxExp = 0,
     
     # Output the result of the elimination test
     if (cap.dropped || test.dropped) {
-      if (prev.sum.alive != sum(alive)) cat("|!|") else cat("|-|")
+      if (prev.sum.alive != sum(alive)) cat("|-|") else cat("|!|")
     } else if (cap.done || test.done) { 
       cat("|=|") 
     } else {
