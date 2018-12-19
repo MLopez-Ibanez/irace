@@ -1,15 +1,16 @@
+ * Fix symbol printed in elimination test.               (Manuel López-Ibáñez)
 
  * Use `dynGet()` to find `targetRunner` and `targetEvaluator`.
                                                          (Manuel López-Ibáñez)
  
- * All tests now use `testthat`.                          (Manuel López-Ibáñez)
+ * All tests now use `testthat`.                         (Manuel López-Ibáñez)
  
  * New function `scenario.update.paths()`                (Manuel López-Ibáñez)
  
  * Fix assert failure that may happen when `elitistNewInstances` is larger than
    `firstTest`. Reported by Jose Riveaux.                (Manuel López-Ibáñez)
    
- * fixed bug in `checkTargetFiles()` (`--check`) with capping.
+ * Fix bug in `checkTargetFiles()` (`--check`) with capping.
                                                         (Leslie Pérez Cáceres)
  
  
