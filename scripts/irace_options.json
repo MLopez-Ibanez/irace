@@ -579,7 +579,7 @@
     "short": "",
     "long": "--bound-par",
     "default": 1,
-       "vignettes": "Penalty used for PARX. This value is used to penalize timed out executions, see \\autoref{sec:capping}.",
+    "vignettes": "Penalty used for PARX. This value is used to penalize timed out executions, see \\autoref{sec:capping}.",
     "section": "Adaptive capping",
     "description": "Penalization constant for timed out executions (executions that reach \\code{boundMax} execution time)."
   },
