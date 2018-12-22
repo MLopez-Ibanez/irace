@@ -4,14 +4,14 @@ fixDependenciesWithReference <- function(configuration, ref.configuration, param
 {
   # Search parameters that need a value
   changed <- c()
-  for (pname in parameters[["names"]]) {
-    if (parameters[["isFixed"]][pname]) next
+  for (pname in names(which(!parameters[["isFixed"]]))) {
     # If dependent parameter has been activated, set the value of the reference.
     if (is.na(configuration[,pname]) && conditionsSatisfied(parameters, configuration, pname)) {
        if (!is.null(ref.configuration)) {
          configuration[,pname] <- ref.configuration[pname]
        } 
        changed <- c(changed, pname)
+       # MANUEL: Why do we need to recurse here?
        aux <- fixDependenciesWithReference(configuration=configuration, ref.configuration=ref.configuration, parameters)
        changed <- c(changed, aux$changed)
        configuration <- aux$configuration
