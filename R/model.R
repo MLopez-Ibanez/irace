@@ -113,13 +113,7 @@ updateModel <- function (parameters, eliteConfigurations, oldModel,
         }
       } else {
         irace.assert(type %in% c("i", "r", "o"))
-        # Not really a vector but stdDev factor
-        newProbVector <- probVector[1] * ((1 / nbNewConfigurations)^(1 / parameters$nbVariable))
-        if (transform == "log") {
-          probVector[1] <- max(log(probVector[1] / newProbVector), 1/(10^scenario$digits))
-        } else {
-          probVector[1] <- newProbVector
-        }
+        probVector[1] <- probVector[1] * ((1 / nbNewConfigurations)^(1 / parameters$nbVariable))
       }
       newModel[[currentParameter]][[idCurrentConfiguration]] <- probVector
     }
@@ -168,12 +162,9 @@ restartConfigurations <- function (configurations, restart.ids, model, parameter
           value <- (length(parameters$domain[[param]]) - 1) / 2
         }
         # Bring back the value 2 iterations or to the second iteration value.
-        model[[param]][[id]][1] <-
-          min(model[[param]][[id]][1] * (nbConfigurations^(2 / parameters$nbVariable)),
-              value[1] * ((1 / nbConfigurations)^(1 / parameters$nbVariable)))
-        if (parameters$transform[[param]] == "log") {
-            model[[param]][[id]][1] <- log(model[[param]][[id]][1])
-        }
+        stdev <- model[[param]][[id]][1]
+        model[[param]][[id]][1] <- min(stdev * (nbConfigurations^(2 / parameters$nbVariable)),
+                                       value[1] * ((1 / nbConfigurations)^(1 / parameters$nbVariable)))
       }
     }
   }

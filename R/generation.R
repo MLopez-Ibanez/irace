@@ -259,7 +259,7 @@ sample.numeric.log <- function(type, lowerBound, upperBound, trLower, trUpper,
   } else {
     # sample from model
     trMean <- transform.log(mean, lowerBound)
-    newVal <- rtnorm(1, trMean, abs(stdDev), trLower, trUpper)
+    newVal <- rtnorm(1, trMean, stdDev, trLower, trUpper)
   }
   newVal <- exp(newVal)
   newVal <- if (type == "i") round(newVal) else round(newVal, digits)

@@ -1,3 +1,6 @@
+ * Fix several bugs with 'log' parameters.
+                                    (Leslie Pérez Cáceres, Manuel López-Ibáñez)
+                                    
  * New option `aclib=` (`--aclib 1`) enables compatibility with the
    GenericWrapper4AC (https://github.com/automl/GenericWrapper4AC/) used by
    AClib (http://aclib.net/). This is EXPERIMENTAL.
