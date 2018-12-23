@@ -108,7 +108,7 @@ check: build
 
 clean: 
 	cd $(PACKAGEDIR) && ($(RM) ./$(PACKAGE)-Ex.R ./src/*.o ./src/*.so; \
-		find . -name '*.orig' | xargs $(RM) )
+		find . -name '*.orig' -o -name '.Rhistory' | xargs $(RM) )
 
 ## FIXME: building the vignettes is a bit complicated and sometimes fails.
 # If \setboolean{Release}{false}, entries are taken from optbib and everything
