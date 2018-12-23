@@ -276,7 +276,7 @@ DONE:
    for PBS and SGE in examples/.
    [DONE by Manuel]
 
-* Move the README information to the TR (vignette) to avoid duplication.
+ * Move the README information to the TR (vignette) to avoid duplication.
    [DONE by Leslie, Manuel]
 
  * Pass to target-runner/hook-evaluate an instance index that uniquely
