@@ -638,7 +638,8 @@ race <- function(maxExp = 0,
     elite.instances.ID <- NULL
   } else {
     # There must be a non-NA entry for each instance.
-    irace.assert(all(apply(!is.na(elite.data$experiments), 1, any)))
+    irace.assert(all(apply(!is.na(elite.data$experiments), 1, any)),
+                 eval.after = { print(elite.data$experiments)})
     # There must be a non-NA entry for each configuration.
     irace.assert(all(apply(!is.na(elite.data$experiments), 2, any)))
     

@@ -21,7 +21,7 @@ initialiseModel <- function (parameters, configurations, digits)
     param <- list()
     if (type == "c") {
       value <- rep((1 / nbValues), nbValues)
-    } else if (type == "i" || type == "r") {
+    } else if (type %in% c("i","r")) {
       value <- init.model.numeric(currentParameter, parameters, type, digits)
     } else {
       irace.assert(type == "o")
@@ -30,7 +30,7 @@ initialiseModel <- function (parameters, configurations, digits)
     for (indexConfig in seq_len(nbConfigurations)) {
       idCurrentConfig <- as.character(configurations[indexConfig, ".ID."])
       # Assign current parameter value to model
-      if (type == "i" || type == "r") {
+      if (type %in% c("i","r")) {
         value[2] <- configurations[indexConfig, currentParameter]
       }
       param[[idCurrentConfig]] <- value
@@ -73,7 +73,7 @@ updateModel <- function (parameters, eliteConfigurations, oldModel,
         idParent <- as.character(idParent)
         # cat("The parent found is ", idParent, "\n")
         probVector <- oldModel[[currentParameter]][[idParent]]
-        #Change the current parameter value of the model
+        # Change the current parameter value of the model
         if (type %in% c("i", "r") &&
             !is.na(eliteConfigurations[idCurrentConfiguration,currentParameter]))
           probVector[2] <- eliteConfigurations[idCurrentConfiguration,currentParameter]
@@ -185,25 +185,19 @@ restartConfigurations <- function (configurations, restart.ids, model, parameter
 # standard deviation and second the last known value (initially NA)
 init.model.numeric <- function(param, parameters, type, digits)
 {
-  lowerBound <- paramLowerBound(param, parameters)
-  upperBound <- paramUpperBound(param, parameters)
-  transform <- parameters$transform[[param]]
-  if (transform == "log") {
-    trRange <- range.transform.log(lowerBound, upperBound, digits)
-    trLb <- trRange[["trLowerBound"]]
-    trUb <- trRange[["trUpperBound"]]
-    value <- exp((trLb - trUb) / 2)
-    value <- round(value)
-    value <- check.transform.log(value, lowerBound, upperBound)
-  } else {
-    value <- (upperBound - lowerBound) / 2
+  lower <- paramLowerBound(param, parameters)
+  upper <- paramUpperBound(param, parameters)
+  transf <- parameters$transform[[param]]
+  if (transf == "log") {
+    lower <- attr(transf, "lower") 
+    upper <- attr(transf, "upper")
   }
-  if (type == "i") {
-    value <- round(value)
-  } else {
-    value <- round(value, digits)
-  }
- # 
-  model <- c(value, NA)
-  return(model)
+  value <- (upper - lower) / 2
+
+  if (transf == "log") value <- exp(value)
+  
+  if (type == "i") digits <- 0
+  value <- round(value, digits)
+  irace.assert(is.finite(value))
+  return(c(value, NA))
 }

@@ -37,25 +37,24 @@ x1 "" r (0,1)
 })
 
 test_that("targetRunnerData", {
-
-targetRunnerParallel = function(experiments, exec.target.runner, scenario, target.runner) {
-  cat("a = ", scenario$targetRunnerData$a,
-      ", b = ", scenario$targetRunnerData$b, "\n", sep = "")
-  # get our param settings that irace should try
-  cands = lapply(experiments, "[[", "configuration")
-  # fabricate some random fitness vals
-  ys = rnorm(length(cands))
-  ys = lapply(ys, function(y) list(cost = y, time = NA_real_))
-  return(ys)
-}
-parameters = readParameters(text='
+  targetRunnerParallel = function(experiments, exec.target.runner, scenario, target.runner) {
+    cat("a = ", scenario$targetRunnerData$a,
+        ", b = ", scenario$targetRunnerData$b, "\n", sep = "")
+    # get our param settings that irace should try
+    cands = lapply(experiments, "[[", "configuration")
+    # fabricate some random fitness vals
+    ys = rnorm(length(cands))
+    ys = lapply(ys, function(y) list(cost = y, time = NA_real_))
+    return(ys)
+  }
+  parameters = readParameters(text='
 x "x" i (1,2)
 ')
-expect_output(
-  irace(scenario = list(targetRunnerParallel = targetRunnerParallel,
-                        instances = lapply(1:5, function(i) 10),
-                        targetRunnerData = list(a=1, b=2),
-                        maxExperiments = 500),
-                        parameters = parameters),
-        "a = 1, b = 2")
+  expect_output(
+    irace(scenario = list(targetRunnerParallel = targetRunnerParallel,
+                          instances = lapply(1:5, function(i) 10),
+                          targetRunnerData = list(a=1, b=2),
+                          maxExperiments = 500),
+          parameters = parameters),
+    "a = 1, b = 2")
 })

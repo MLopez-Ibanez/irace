@@ -70,9 +70,9 @@ sampleUniform <- function (parameters, nbConfigurations, digits,
           # We don't even need to sample, there is only one possible value !
           newVal <- get.fixed.value (currentParameter, parameters)
           # The parameter is not a fixed and should be sampled          
-        } else if (currentType == "i" || currentType == "r") {
+        } else if (currentType %in% c("i","r")) {
           newVal <- sample.numerical(currentParameter, parameters, currentType, digits)
-        } else if (currentType == "c" || currentType == "o") {
+        } else if (currentType %in% c("c","o")) {
           possibleValues <- parameters$domain[[currentParameter]]
           newVal <- sample(possibleValues, 1)
         } else {
@@ -150,9 +150,8 @@ sampleModel <- function (parameters, eliteConfigurations, model,
           # If there is not value we obtain it from the model
           if (is.na(mean)) mean <- model[[currentParameter]][[as.character(idEliteParent)]][2]
           if (is.na(mean)) {
-            # The elite parent does not have any value for this
-            # parameter, let's sample uniformly.
-            ## FIXME: We should save the last used parameter in the model and use it here.
+            # The elite parent does not have any value for this parameter,
+            # let's sample uniformly.
             newVal <- sample.numerical(currentParameter, parameters, currentType, digits)
           } else {
             stdDev <- model[[currentParameter]][[as.character(idEliteParent)]][1]
@@ -216,17 +215,20 @@ sample.numerical <- function(param, parameters, type, digits, mean = NULL, stdDe
 {
   lowerBound <- paramLowerBound(param, parameters)
   upperBound <- paramUpperBound(param, parameters)
-  transform <- parameters$transform[[param]]
-
-  if (transform == "log") {
-    value <- sample.numeric.log(type, lowerBound, upperBound, digits, mean, stdDev)
+  transf <- parameters$transform[[param]]
+  print(str(transf))
+  if (transf == "log") {
+    trLower <- attr(transf, "lower") 
+    trUpper <- attr(transf, "upper")
+    value <- sample.numeric.log(type, lowerBound, upperBound, trLower, trUpper,
+                                digits, mean, stdDev)
   } else {
-    value <- sample.numeric.norm(type, lowerBound, upperBound, digits, mean, stdDev)
+    value <- sample.numeric.none(type, lowerBound, upperBound, digits, mean, stdDev)
   }
   return(value)
 }
 
-sample.numeric.norm <- function(type, lowerBound, upperBound, digits, mean, stdDev)
+sample.numeric.none <- function(type, lowerBound, upperBound, digits, mean, stdDev)
 {
   if (type == "i") {
     if (is.null(mean)) {
@@ -240,81 +242,51 @@ sample.numeric.norm <- function(type, lowerBound, upperBound, digits, mean, stdD
     irace.assert(type == "r")
     if (is.null(mean)) {
       # real uniform
-      newVal <- runif(1, min = as.double(lowerBound), max = as.double(upperBound))
+      newVal <- runif(1, min = lowerBound, max = upperBound)
     } else {
       # real from model
-      newVal <- round(rtnorm(1, mean, stdDev, lowerBound, upperBound), digits)
+      newVal <- rtnorm(1, mean, stdDev, lowerBound, upperBound)
     }
     newVal <- round(newVal, digits)
   }
   return(newVal)
 }
 
-sample.numeric.log <- function(type, lowerBound, upperBound, digits, mean, stdDev)
+sample.numeric.log <- function(type, lowerBound, upperBound, trLower, trUpper,
+                               digits, mean, stdDev)
 {
   if (is.null(mean)) {
-    trRange <- range.transform.log(lowerBound, upperBound, digits)
-  } else {
-    trRange <- range.transform.log(lowerBound, upperBound, digits, mean)
-  }
-  trLb <- trRange[["trLowerBound"]]
-  trUb <- trRange[["trUpperBound"]]
-  trMean <- trRange[["trMean"]]
-  
-  if (is.null(mean)) {
-    # uniform
-    newVal <- exp(runif(1, min = as.double(trLb), max = as.double(trUb)))
+    newVal <- runif(1, min = trLower, max = trUpper)
   } else {
     # sample from model
-    newVal <- exp(rtnorm(1, trMean, abs(stdDev), trLb, trUb)) 
+    trMean <- transform.log(mean, lowerBound)
+    newVal <- rtnorm(1, trMean, abs(stdDev), trLower, trUpper)
   }
-
-  if (type == "i") {
-    newVal <- round(newVal)
-  } else {
-    newVal <- round(newVal, digits)
-  }
-
-  newVal <- check.transform.log(newVal, lowerBound, upperBound)
+  newVal <- exp(newVal)
+  newVal <- if (type == "i") round(newVal) else round(newVal, digits)
+  newVal <- check.transformed.log(newVal, lowerBound, upperBound)
   return(newVal)
 }
 
-# Transform the range [LB,UB] into [log(LB),log(UB)].
-# It needs to pay attention to shift the range in the
-# positive domain if LB <= 0. The mean is also transformed
-# (if provided, otherwise it can be ignored).
-# A similar check will be required after applying the
-# transformation (see function check.transform.log() ).
-range.transform.log <- function(lowerBound, upperBound, digits, mean = 1)
+# Shift the value in the positive domain if LB <= 0.  A similar check will be
+# required after applying the transformation (see function
+# check.transformed.log() ).
+transform.log <- function(value, lowerBound)
 {
   # cannot compute log(0)
-  if (lowerBound <= 0) {
-    trLowerBound <- -digits
-    trUpperBound <- log(upperBound - lowerBound)
-    trMean <- log(mean + lowerBound)
-  } else {
-    trLowerBound <- log(lowerBound)
-    trUpperBound <- log(upperBound)
-    trMean <- log(mean)
-  }
-  return(list(trLowerBound = trLowerBound,
-              trUpperBound = trUpperBound,
-              trMean = trMean))
+  if (lowerBound <= 0) return(log(value + lowerBound))
+  return (log(value))
 }
 
 # Adjust the sampled value if the lower bound is <=0, and
 # check that it does not fall outside the allowed range.
-check.transform.log <- function(newVal, lowerBound, upperBound)
+check.transformed.log <- function(newVal, lowerBound, upperBound)
 {
-  # check if LB was negative, then readjust
+  # Check if LB was not positive, then readjust
   if (lowerBound <= 0) {
     newVal <- newVal + lowerBound
   }
-  # never too sure
-  if (newVal < lowerBound) {
-    newVal <- lowerBound
-  } else if (newVal > upperBound) {
-    newVal <- upperBound
-  }
-  return(newVal)
+  irace.assert(is.finite(newVal))
+  # Enforce bounds.
+  return (min(max(newVal, lowerBound), upperBound))
 }

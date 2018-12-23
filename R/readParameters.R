@@ -203,7 +203,8 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
                      switches = c(),
                      domain = list(),
                      conditions = list(),
-                     isFixed = c())
+                     isFixed = c(),
+                     transform = list())
 
   conditions <- list()
   lines <- readLines(con = file)
@@ -270,7 +271,7 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
     }
 
     param.value <- string2vector(param.value)
-    if (param.type == "r" || param.type == "i") {
+    if (param.type %in% c("r","i")) {
       param.value <- suppressWarnings(as.numeric(param.value))
       if (any(is.na(param.value)) || length(param.value) != 2) {
         errReadParameters (filename, nbLines, NULL,
@@ -301,6 +302,30 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
       }
     }
 
+    # FIXME: What happens if both bounds are negative?
+    transform.domain <- function(transf, lower, upper)
+    {
+      if (transf == "") return(transf)
+      if (transf == "log") {
+        # cannot compute log(0)
+        if (lower <= 0) {
+          trLower <- -digits
+          trUpper <- log(upper - lower)
+        } else {
+          trLower <- log(lower)
+          trUpper <- log(upper)
+        }
+        irace.assert(is.finite(trLower))
+        irace.assert(is.finite(trUpper))
+        attr(transf, "lower") <- trLower
+        attr(transf, "upper") <- trUpper
+        return(transf)
+      }
+      irace.internal.error("unrecognized transformation type")
+    }
+    
+    param.transform <- transform.domain(param.transform, param.value[1], param.value[2])
+        
     count <- count + 1
     parameters$names[[count]] <- param.name
     parameters$switches[[count]] <- param.switch

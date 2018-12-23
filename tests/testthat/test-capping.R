@@ -159,7 +159,6 @@ cap.irace <- function(...)
 }
 
 test_that("cap.irace maxExperiments = 1000", {
-
   generate.set.seed()
   cap.irace(maxExperiments = 1000)
 })
