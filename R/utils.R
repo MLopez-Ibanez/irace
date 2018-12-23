@@ -192,10 +192,9 @@ is.null.or.na <- function(x)
   is.null(x) || is.na.nowarn(x)
 }
 
-# FIXME: This should also return TRUE when length(x) == 0
 is.null.or.empty <- function(x)
 {
-  is.null(x) || (!suppressWarnings(is.na(x)) && length(x) == 1 && is.character(x) && x == "")
+  (length(x) == 0) || (!suppressWarnings(is.na(x)) && length(x) == 1 && is.character(x) && x == "")
 }
 
 is.function.name <- function(FUN)
