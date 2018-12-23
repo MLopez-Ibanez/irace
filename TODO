@@ -23,6 +23,17 @@ TODO R package:
 
 TODO General (in order of importance):
 
+ * maxBound should a floating-point number. 
+
+ * Write a report at the end that checks if the instances are homogeneous and
+   suggests clusters and sub-configurations. One possibility is to replace
+   missing data with the mean of the row (across configurations), such that the
+   metric is optimistic. Create a diagnostic scatter-plot of training versus
+   testing.
+
+ * Automatic split training and testing instances given a
+   percentage. Stratified version that takes into account features.
+    
  * Fix all FIXMEs.
 
  * Fix bugs in BUGS file.
@@ -177,6 +188,14 @@ TODO General (in order of importance):
  * Use the options() mechanism of R, that is,
    options(irace.debug.level = 1) and getOption("irace.debug.level").
 
+ * Add some criteria for the debug levels. For example:
+
+   debug-level 1 -> print one-time info about internal parameters, steps and decisions
+   debug-level 2 -> also print what is executed and received by irace (messes
+   up the output slightly)
+   debug-level 3 -> internal information such as memory use
+   debug-level 4 -> extra verbose internal information
+   
  * It may be possible to byte-compile the conditions as they are read.
    This may speed-up conditionsSatisfied().
 
