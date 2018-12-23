@@ -17,16 +17,16 @@
 "testInstancesFile", "testInstances", "testNbElites", "testIterationElites", 
 "elitist", "elitistNewInstances", "elitistLimit", "repairConfiguration", 
 "capping", "cappingType", "boundType", "boundMax", "boundDigits", 
-"boundPar", "boundAsTimeout", "postselection"), type = c("x", 
+"boundPar", "boundAsTimeout", "postselection", "aclib"), type = c("x", 
 "x", "x", "p", "p", "p", "p", "p", "p", "s", "p", "p", "p", "x", 
 "p", "p", "i", "x", "x", "p", "i", "i", "r", "i", "i", "i", "i", 
 "b", "s", "i", "i", "i", "i", "i", "r", "b", "i", "i", "b", "b", 
 "s", "b", "r", "p", "p", "x", "i", "b", "b", "i", "i", "x", "b", 
-"s", "s", "i", "i", "i", "b", "r"), short = c("-h", "-v", "-c", 
-"", "-s", "-p", "", "-l", "", "", "", "", "", "", "", "", "", 
+"s", "s", "i", "i", "i", "b", "r", "b"), short = c("-h", "-v", 
+"-c", "", "-s", "-p", "", "-l", "", "", "", "", "", "", "", "", 
 "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", 
-"", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "-e", 
-"", "", "", "", "", "", "", "", "", "", ""), long = c("--help", 
+"", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", 
+"-e", "", "", "", "", "", "", "", "", "", "", "", ""), long = c("--help", 
 "--version", "--check", "--only-test", "--scenario", "--parameter-file", 
 "--exec-dir", "--log-file", "--recovery-file", "", "--train-instances-dir", 
 "--train-instances-file", "--configurations-file", "", "--forbidden-file", 
@@ -41,14 +41,14 @@
 "--test-iteration-elites", "--elitist", "--elitist-new-instances", 
 "--elitist-limit", "", "--capping", "--capping-type", "--bound-type", 
 "--bound-max", "--bound-digits", "--bound-par", "--bound-as-timeout", 
-"--postselection"), default = c(NA, NA, NA, "", "./scenario.txt", 
+"--postselection", "--aclib"), default = c(NA, NA, NA, "", "./scenario.txt", 
 "./parameters.txt", "./", "./irace.Rdata", "", "", "./Instances", 
 "", "", "", "", "./target-runner", "0", "", "", "", "0", "0", 
 "0.02", "4", "0", "0", "0", "1", "F-test", "5", "1", "0", "0", 
 "5", "0.95", "0", NA, "0", "1", "0", "0", "1", "", "", "", "", 
 "1", "0", "1", "1", "2", "", "0", "median", "candidate", "0", 
-"0", "1", "1", "0"), description = c("Show this help.", "Show irace package version.", 
-"Check scenario.", "Only test the configurations given in the file passed as argument.", 
+"0", "1", "1", "0", "0"), description = c("Show this help.", 
+"Show irace package version.", "Check scenario.", "Only test the configurations given in the file passed as argument.", 
 "File that describes the configuration scenario setup and other irace settings.", 
 "File that contains the description of the parameters of the target algorithm.", 
 "Directory where the programs will be run.", "File to save tuning results as an R dataset, either absolute path or relative to execDir.", 
@@ -96,7 +96,8 @@
 "Precision used for calculating the execution time. It must be specified when capping is enabled.", 
 "Penalization constant for timed out executions (executions that reach boundMax execution time).", 
 "Replace the configuration cost of bounded executions with boundMax.", 
-"Percentage of the configuration budget used to perform a postselection race of the best configurations of each iteration after the execution of irace."
+"Percentage of the configuration budget used to perform a postselection race of the best configurations of each iteration after the execution of irace.", 
+"Enable/disable AClib mode. This option enables compatibility with GenericWrapper4AC as targetRunner script."
 )), .Names = c("name", "type", "short", "long", "default", "description"
 ), row.names = c(".help", ".version", ".check", ".onlytest", 
 "scenarioFile", "parameterFile", "execDir", "logFile", "recoveryFile", 
@@ -111,7 +112,7 @@
 "testInstancesFile", "testInstances", "testNbElites", "testIterationElites", 
 "elitist", "elitistNewInstances", "elitistLimit", "repairConfiguration", 
 "capping", "cappingType", "boundType", "boundMax", "boundDigits", 
-"boundPar", "boundAsTimeout", "postselection"), class = "data.frame")
+"boundPar", "boundAsTimeout", "postselection", "aclib"), class = "data.frame")
 .irace.params.names <- c("scenarioFile", "parameterFile", "execDir", "logFile", "recoveryFile", 
 "instances", "trainInstancesDir", "trainInstancesFile", "configurationsFile", 
 "forbiddenExps", "forbiddenFile", "targetRunner", "targetRunnerRetries", 
@@ -124,7 +125,7 @@
 "testInstancesFile", "testInstances", "testNbElites", "testIterationElites", 
 "elitist", "elitistNewInstances", "elitistLimit", "repairConfiguration", 
 "capping", "cappingType", "boundType", "boundMax", "boundDigits", 
-"boundPar", "boundAsTimeout", "postselection")
+"boundPar", "boundAsTimeout", "postselection", "aclib")
 ## FIXME: If these values are special perhaps they should be saved in $state ?
 .irace.params.recover <- c("instances", "seed", "testInstances",
                            # We need this because this data may mutate

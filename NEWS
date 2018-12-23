@@ -1,3 +1,11 @@
+ * New option `aclib=` (`--aclib 1`) enables compatibility with the
+   GenericWrapper4AC (https://github.com/automl/GenericWrapper4AC/) used by
+   AClib (http://aclib.net/). This is EXPERIMENTAL.
+                                                         (Manuel López-Ibáñez)
+                                                         
+ * Fix printing of output when capping is enabled.
+                                                         (Manuel López-Ibáñez)
+ 
  * `checkTargetFiles()` (`--check`) samples an instance unless
    `sampleInstances` is FALSE.                           (Manuel López-Ibáñez)
    

@@ -316,6 +316,78 @@ exec.target.runner <- function(experiment, scenario, target.runner)
   return (output)
 }
 
+parse.aclib.output <- function(outputRaw)
+{
+  outputRaw <- paste0(outputRaw, collapse = "\n")
+  text <- regmatches(outputRaw,
+                     regexec("Result of this algorithm run:\\s*\\{(.+)\\}\\s*\n",
+                             outputRaw))[[1]][2]
+  aclib.match <- function(text, key, value) {
+    pattern <- paste0('"', key, '":\\s*', value)
+    return(regmatches(text, regexec(pattern, text))[[1]][2])
+  }
+  cost <- runtime <- error <- NULL
+  # AClib wrappers print:
+  # Result of this algorithm run:  {"status": "SUCCESS", "cost": cost, "runtime": time }
+  # FIXME: This is not very robust. If we are going to be using jsonlite, then we can simply do:
+  # jsonlite::fromJSON('{\"misc\": \"\", \"runtime\": 164.14, \"status\": \"SUCCESS\", \"cost\": \"0.121340\"}')
+  status <- aclib.match(text, "status", '"([^"]+)"')
+  if (!is.character(status)) {
+    error <- paste0("Not valid AClib output")
+  } else if (status %in% c("SUCCESS", "TIMEOUT")) {
+    cost <- aclib.match(text, "cost", "([^[:space:],}]+)")
+    cost <- suppressWarnings(as.numeric(cost))
+    runtime <- aclib.match(text, "runtime", "([^[:space:],}]+)")
+    runtime <- suppressWarnings(as.numeric(runtime))
+    if (is.null.or.na(cost) && is.null.or.na(runtime))
+      error <- paste0("Not valid cost or runtime in AClib output")
+  } else if (status %in% c("CRASHED", "ABORT")) {
+    # FIXME: Implement ABORT semantics of fatal error
+    error <- paste0("targetRunner returned status (", status, ")")
+  } else {
+    error <- paste0("Not valid AClib output status (", status, ")")
+  }
+  return(list(status = status, cost = cost, time = runtime, error = error))
+}
+
+target.runner.aclib <- function(experiment, scenario)
+{
+  configuration.id <- experiment$id.configuration
+  instance.id      <- experiment$id.instance
+  seed             <- experiment$seed
+  configuration    <- experiment$configuration
+  instance         <- experiment$instance
+  switches         <- experiment$switches
+  bound            <- experiment$bound
+  
+  debugLevel   <- scenario$debugLevel
+  targetRunner <- scenario$targetRunner
+  if (as.logical(file.access(targetRunner, mode = 1))) {
+    irace.error ("targetRunner ", shQuote(targetRunner), " cannot be found or is not executable!\n")
+  }
+
+  has_value <- !is.na(configuration)
+  # <executable> [<arg>] [<arg>] ... [--cutoff <cutoff time>] [--instance <instance name>] 
+  # [--seed <seed>] --config [-param_name_1 value_1] [-param_name_2 value_2] ...
+  args <- paste("--instance", instance, "--seed", seed, "--config",
+                paste0("-", switches[has_value], " ", configuration[has_value],
+                       collapse = " "))
+  if (!is.null.or.na(bound))
+    args <- paste("--cutoff", bound, args)
+  
+  output <- runcommand(targetRunner, args, configuration.id, debugLevel)
+
+  err.msg <- output$error
+  if (is.null(err.msg)) {
+    return(c(parse.aclib.output (output$output),
+             list(outputRaw = output$output, call = paste(targetRunner, args))))
+  }
+  
+  return(list(cost = NULL, time = NULL, error = err.msg,
+              outputRaw = output$output, call = paste(targetRunner, args)))
+}
+
+
 #' target.runner.default
 #'
 #' \code{target.runner.default} is the default targetRunner function. 

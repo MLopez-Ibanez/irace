@@ -602,5 +602,14 @@
       "description": "Percentage of the configuration budget used to perform a postselection race of the best configurations of each iteration after the execution of irace.",
         "vignettes": "Percentage of the configuration budget used to perform a postselection race of the best configurations of each iteration after the execution of \\irace. See \\autoref{sec:postselection}.",
     "section": "General options"
+  },
+  {
+      "name": "aclib",
+      "type": "b",
+      "short": "",
+      "long": "--aclib",
+      "default": 0,
+      "section": "General options",
+      "description": "Enable/disable AClib mode. This option enables compatibility with GenericWrapper4AC as targetRunner script."
   }
 ]

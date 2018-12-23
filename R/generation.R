@@ -216,7 +216,6 @@ sample.numerical <- function(param, parameters, type, digits, mean = NULL, stdDe
   lowerBound <- paramLowerBound(param, parameters)
   upperBound <- paramUpperBound(param, parameters)
   transf <- parameters$transform[[param]]
-  print(str(transf))
   if (transf == "log") {
     trLower <- attr(transf, "lower") 
     trUpper <- attr(transf, "upper")
