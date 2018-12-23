@@ -312,7 +312,7 @@ race.print.header <- function(capping)
 ")
 }
 
-race.print.task <- function(Results,
+race.print.task <- function(res.symb, Results,
                             instance,
                             current.task,
                             alive,
@@ -320,29 +320,17 @@ race.print.task <- function(Results,
                             mean.best,
                             experimentsUsed,
                             start.time,
-                            bound = NULL)
+                            bound, capping)
 {
   time.diff <- difftime(Sys.time(), start.time, units = "secs")
   # FIXME: Maybe better and faster if we only print seconds?
   time.str <- format(.POSIXct(time.diff, tz="GMT"), "%H:%M:%S")
-  if (is.null(bound))
-    cat(sprintf("%11d|%11d|%11d|%#15.10g|%11d|%s",
-                instance,
-                sum(alive),
-                id.best,
-                mean.best,
-                experimentsUsed,
-                time.str))
-  else
-    cat(sprintf("%11d|%8.2f|%11d|%11d|%#15.10g|%11d|%s",
-                instance,
-                bound,
-                sum(alive),
-                id.best,
-                mean.best,
-                experimentsUsed,
-                time.str))
-                
+  cat(sprintf("|%s|%11d|", res.symb, instance))
+  if (capping) cat(sprintf("%8.2f|", if(is.null(bound)) NA else bound))
+  cat(sprintf("%11d|%11d|%#15.10g|%11d|%s",
+              sum(alive), id.best, mean.best, experimentsUsed,
+              time.str))
+  
   if (current.task > 1 && sum(alive) > 1) {
     conc <- concordance(Results[1:current.task, alive, drop = FALSE])
     qvar <- dataVariance(Results[1:current.task, alive, drop = FALSE])
@@ -763,26 +751,17 @@ race <- function(maxExp = 0,
         # and we are still in the previous instances execution, but we can still 
         # continue with the race. (This is only possible because the early termination
         # criterion is disabled)
-        # LESLIE: This we really need to discuss: when using capping, are we going to allow
-        # early termination?
-        # LESLIE: If we keep this and thus, the early termination, 
-        # here we can print something to indicate we skip an instance...
-        # MANUEL: I think we should print the race.print.task() corresponding to this instance.
-        cat("|.|")
         # FIXME: We need to calculate the best just as we do below. Create a function for doing that.
         ## MANUEL: So what is the reason to not immediately terminate here? Is
         ## there a reason to continue?
-        race.print.task(Results,
-                        race.instances[current.task],
-                        current.task,
-                        alive,
+        race.print.task(".", Results, race.instances[current.task],
+                        current.task, alive,
                         configurations[best, ".ID."],
                         # FIXME: This is the mean of the best, but perhaps it should
                         # be the sum of ranks in the case of test == friedman?
                         mean.best = mean(Results[1:current.task, best]),
-                        experimentsUsed,
-                        Sys.time(), 
-                        bound = NULL)
+                        experimentsUsed, Sys.time(), 
+                        bound = NA, scenario$capping)
         next
       }
     }
@@ -913,18 +892,14 @@ race <- function(maxExp = 0,
         which.exe <- setdiff(which.exe, which.elite.exe)
         if (length(which.exe) == 0L) {
           is.elite <- update.is.elite(is.elite, which.elite.exe)
-          cat("|.!")
-          race.print.task(Results,
-                          race.instances[current.task],
-                          current.task,
-                          alive,
+          race.print.task(".", Results, race.instances[current.task],
+                          current.task, alive,
                           configurations[best, ".ID."],
                           # FIXME: This is the mean of the best, but perhaps it should
                           # be the sum of ranks in the case of test == friedman?
                           mean.best = mean(Results[1:current.task, best]),
-                          experimentsUsed,
-                          start.time, 
-                          bound = NULL)
+                          experimentsUsed, start.time, 
+                          bound = NA, scenario$capping)
           next
         }
       }
@@ -1064,13 +1039,9 @@ race <- function(maxExp = 0,
     }
     
     # Output the result of the elimination test
-    if (cap.dropped || test.dropped) {
-      if (prev.sum.alive != sum(alive)) cat("|-|") else cat("|!|")
-    } else if (cap.done || test.done) { 
-      cat("|=|") 
-    } else {
-      cat("|x|")
-    }
+    res.symb <- if (cap.dropped || test.dropped) {
+                  if (prev.sum.alive != sum(alive)) "-" else "!"
+                } else if (cap.done || test.done) "=" else "x"
     
     # Rank alive configurations: order all configurations (eliminated or not)
     # LESLIE: we have to make the ranking outside: we can have configurations eliminated by capping
@@ -1100,17 +1071,14 @@ race <- function(maxExp = 0,
     race.ranks <- race.ranks[which.alive]
     irace.assert(length(race.ranks) == sum(alive))
 
-    race.print.task(Results,
-                    race.instances[current.task],
-                    current.task,
-                    alive,
+    race.print.task(res.symb, Results, race.instances[current.task],
+                    current.task, alive,
                     configurations[best, ".ID."],
                     # FIXME: This is the mean of the best, but perhaps it should
                     # be the sum of ranks in the case of test == friedman?
                     mean.best = mean(Results[1:current.task, best]),
-                    experimentsUsed,
-                    start.time, 
-                    bound = elite.bound)
+                    experimentsUsed, start.time, 
+                    bound = elite.bound, scenario$capping)
     
     if (elitist) {
       # Compute number of statistical tests without eliminations.
