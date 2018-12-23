@@ -35,6 +35,7 @@ createExperimentList <- function(configurations, parameters,
                                  instances, instances.ID, seeds,
                                  scenario, bounds = NULL)
 {
+  instances <- instances[instances.ID]
   experiments <- vector("list", nrow(configurations) * length(instances))
   configurations.ID <- configurations[, ".ID."]
   pnames <- parameters$names
@@ -85,10 +86,9 @@ race.wrapper <- function(configurations, instance.idx, bounds = NULL,
   # FIXME: Accessing 'seed' and 'instance' should be moved to createExperimentList.
   seed <- .irace$instancesList[instance.idx, "seed"]
   id.instance  <- .irace$instancesList[instance.idx, "instance"]
-  instance <- scenario$instances[id.instance]
   # Experiment list to execute
-  experiments <- createExperimentList(configurations,
-                                      parameters, instances = instance,
+  experiments <- createExperimentList(configurations, parameters,
+                                      instances = scenario$instances,
                                       instances.ID = id.instance,
                                       seeds = seed, scenario, bounds = bounds)
 

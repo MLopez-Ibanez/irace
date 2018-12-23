@@ -360,7 +360,6 @@ exec.target.runner <- function(experiment, scenario, target.runner)
 #' @export
 target.runner.default <- function(experiment, scenario)
 {
-  debugLevel       <- scenario$debugLevel
   configuration.id <- experiment$id.configuration
   instance.id      <- experiment$id.instance
   seed             <- experiment$seed
@@ -369,6 +368,7 @@ target.runner.default <- function(experiment, scenario)
   switches         <- experiment$switches
   bound            <- experiment$bound
   
+  debugLevel   <- scenario$debugLevel
   targetRunner <- scenario$targetRunner
   if (as.logical(file.access(targetRunner, mode = 1))) {
     irace.error ("targetRunner ", shQuote(targetRunner), " cannot be found or is not executable!\n")

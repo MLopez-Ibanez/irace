@@ -201,9 +201,8 @@ ablation <- function(iraceLogFile = NULL, iraceResults = NULL,
   ## FIXME: We may already have these experiments in the logFile!
   experiments <- createExperimentList(configurations = rbind(src.configuration, target.configuration), 
                                       parameters = parameters,
-                                      instances = scenario$instances[instances[,"instance"]],
-                                      # FIXME: We should create/use unique IDs for these instances.
-                                      instances.ID = 1:nrow(instances),
+                                      instances = scenario$instances,
+                                      instances.ID = instances[, "instance"],
                                       seeds = instances[, "seed"],
                                       scenario = scenario) # FIXME: No bound ???
   irace.note("Executing source and target configurations on the given instances...\n")

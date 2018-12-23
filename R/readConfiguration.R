@@ -868,7 +868,7 @@ checkTargetFiles <- function(scenario, parameters)
 {
   result <- TRUE
   ## Create two random configurations
-  conf.id <- c("testConfig1","testConfig2")
+  conf.id <- c("testConfig1", "testConfig2")
   configurations <- sampleUniform(parameters, length(conf.id),
                                   digits = scenario$digits,
                                   forbidden = scenario$forbiddenExps,
@@ -878,13 +878,11 @@ checkTargetFiles <- function(scenario, parameters)
   bounds <- if (scenario$capping)
               rep(scenario$boundMax, nrow(configurations)) else NULL
 
-  # FIXME: We should sample the instance unless disabled explicitly by the
-  # user.
-  experiments <- createExperimentList(configurations, parameters,
-                                      scenario$instances[1],
-                                      instances.ID = "instance1",
-                                      seeds = 1234567, scenario,
-                                      bounds = bounds)
+  instances.ID <- if (scenario$sampleInstances)
+                    sample.int(length(scenario$instances), 1) else 1
+  experiments <- createExperimentList(
+    configurations, parameters, instances = scenario$instances,
+    instances.ID = instances.ID, seeds = 1234567, scenario, bounds = bounds)
 
   # FIXME: Create a function try.call(err.msg,warn.msg, fun, ...)
   # Executing targetRunner
