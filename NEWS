@@ -1,3 +1,6 @@
+ * `checkTargetFiles()` (`--check`) samples an instance unless
+   `sampleInstances` is FALSE.                           (Manuel López-Ibáñez)
+   
  * Fix symbol printed in elimination test.               (Manuel López-Ibáñez)
 
  * Use `dynGet()` to find `targetRunner` and `targetEvaluator`.
