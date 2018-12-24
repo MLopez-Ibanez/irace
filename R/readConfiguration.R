@@ -351,7 +351,21 @@ checkScenario <- function(scenario = defaultScenario())
   dups <- anyDuplicated(names(scenario))
   if (dups > 0)
     irace.error("scenario contains duplicated entries: ", names(scenario)[dups])
-  
+
+  # Boolean control parameters.
+  as.boolean.param <- function(x, name)
+  {
+    x <- as.integer(x)
+    if (is.na (x) || (x != 0 && x != 1)) {
+      irace.error (quote.param(name), " must be either 0 or 1.")
+    }
+    return(as.logical(x))
+  }
+  boolParams <- .irace.params.def[.irace.params.def[, "type"] == "b", "name"]
+  for (p in boolParams) {
+    scenario[[p]] <- as.boolean.param (scenario[[p]], p)
+  }
+
   ## Check that everything is fine with external parameters
   # Check that the files exist and are readable.
   scenario$parameterFile <- path.rel2abs(scenario$parameterFile)
@@ -567,20 +581,6 @@ checkScenario <- function(scenario = defaultScenario())
     scenario$softRestartThreshold <- 10^(- scenario$digits)
   }
   
-  # Boolean control parameters
-  as.boolean.param <- function(x, name)
-  {
-    x <- as.integer(x)
-    if (is.na (x) || (x != 0 && x != 1)) {
-      irace.error (quote.param(name), " must be either 0 or 1.")
-    }
-    return(as.logical(x))
-  }
-  boolParams <- .irace.params.def[.irace.params.def[, "type"] == "b", "name"]
-  for (p in boolParams) {
-    scenario[[p]] <- as.boolean.param (scenario[[p]], p)
-  }
-
   if (scenario$deterministic &&
       scenario$firstTest > length(scenario$instances)) {
     irace.error("When deterministic == TRUE, the number of instances (",
