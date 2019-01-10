@@ -184,8 +184,6 @@ init.model.numeric <- function(param, parameters, type, digits)
     upper <- attr(transf, "upper")
   }
   value <- (upper - lower) / 2
-
-  if (transf == "log") value <- exp(value)
   
   if (type == "i") digits <- 0
   value <- round(value, digits)
