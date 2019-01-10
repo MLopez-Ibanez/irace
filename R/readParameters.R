@@ -309,7 +309,7 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
       if (transf == "log") {
         # cannot compute log(0)
         if (lower <= 0) {
-          trLower <- -digits
+          trLower <- log(10^-digits)
           trUpper <- log(upper - lower)
         } else {
           trLower <- log(lower)
