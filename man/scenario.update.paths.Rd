@@ -2,13 +2,12 @@
 % Please edit documentation in R/utils.R
 \name{scenario.update.paths}
 \alias{scenario.update.paths}
-\title{Modify all paths of a scenario consistently. Useful when moving a scenario
-from one computer to another.}
+\title{Update filesystem paths of a scenario consistently.}
 \usage{
 scenario.update.paths(scenario, from, to, fixed = TRUE)
 }
 \arguments{
-\item{scenario}{list containing \pkg{irace} settings.The data structure has
+\item{scenario}{list containing \pkg{irace} settings. The data structure has
 to be the one returned by the function \code{\link{defaultScenario}} and
 \code{\link{readScenario}}.}
 
@@ -26,8 +25,8 @@ as is.}
 The updated scenario
 }
 \description{
-Modify all paths of a scenario consistently. Useful when moving a scenario
-from one computer to another.
+This function should be used to change the filesystem paths stored in a
+scenario object. Useful when moving a scenario from one computer to another.
 }
 \examples{
 \dontrun{

@@ -337,10 +337,12 @@ path.rel2abs <- function (path, cwd = getwd())
   return (irace.normalize.path(path))
 }
 
-#' Modify all paths of a scenario consistently. Useful when moving a scenario
-#' from one computer to another.
+#' Update filesystem paths of a scenario consistently.
 #'
-#' @param scenario list containing \pkg{irace} settings.The data structure has
+#' This function should be used to change the filesystem paths stored in a
+#' scenario object. Useful when moving a scenario from one computer to another.
+#'
+#' @param scenario list containing \pkg{irace} settings. The data structure has
 #'   to be the one returned by the function \code{\link{defaultScenario}} and
 #'   \code{\link{readScenario}}.
 #' @param from character string containing a regular expression (or character
@@ -357,7 +359,7 @@ path.rel2abs <- function (path, cwd = getwd())
 #' scenario <- scenario.update.paths(scenario, from = "/home/manuel/", to = "/home/leslie")
 #' }
 #' @seealso \code{\link[base]{grep}}
-#' 
+#' @export
 scenario.update.paths <- function(scenario, from, to, fixed = TRUE)
 {
   pathParams <- .irace.params.def[.irace.params.def[, "type"] == "p", "name"]
