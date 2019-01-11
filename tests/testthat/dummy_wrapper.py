@@ -8,11 +8,12 @@ This requires the installation of https://github.com/automl/GenericWrapper4AC
 
 @author:     Manuel López-Ibáñez
 @copyright:  2018
-@license:    GPL
+@license:    BSD
 @contact:    manuel.lopez-ibanez@manchester.ac.uk
 '''
 
 import json
+import traceback
 
 from genericWrapper4AC.generic_wrapper import AbstractWrapper
 
@@ -56,12 +57,12 @@ class DummyWrapper(AbstractWrapper):
                     output = dict(status = status, cost = cost)
                 elif ins == "time":
                     cutoff = float(argmap["cutoff"])
-                    output = dict(status = status, runtime = runtime)
+                    output = dict(status=status, runtime=min(cutoff,runtime))
                 elif ins == "cost+time":
                     cutoff = float(argmap["cutoff"])
-                    output = dict(status = status, cost = cost, runtime = runtime)
-                return output
+                    output = dict(status=status, cost=cost, runtime=min(cutoff,runtime))
             except ValueError:
+                traceback.print_exc()
                 pass
 
         return output
