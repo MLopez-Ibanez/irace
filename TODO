@@ -23,6 +23,12 @@ TODO R package:
 
 TODO General (in order of importance):
 
+ * Sensitivity analysis: try values around the best configuration found, one at
+   a time.
+
+ * Give priority to user-provided configurations or to default/preferred
+   parameter values when choosing between similarly performing configurations.
+
  * maxBound should a floating-point number. 
 
  * Write a report at the end that checks if the instances are homogeneous and
