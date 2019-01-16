@@ -8,12 +8,12 @@
 #' has to be the one returned by the function \code{\link{defaultScenario}} and
 #' \code{\link{readScenario}}.
 #' @param parameters A data structure similar to that provided
-#' by the \code{link{readParameters}} function.
+#' by the \code{\link{readParameters}} function.
 #'
 #' @return A list with the following elements:
-#'   \itemize{
-#'     \item{experiments}{Experiments results.}
-#'     \item{seeds}{Array of the instance seeds used in the experiments.}
+#'   \describe{
+#'     \item{\code{experiments}}{Experiments results.}
+#'     \item{\code{seeds}}{Array of the instance seeds used in the experiments.}
 #'   }
 #'
 #' @details A test instance set must be provided through \code{scenario$testInstances}.

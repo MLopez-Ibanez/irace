@@ -21,23 +21,23 @@ then parameters are read from the value of text via a text connection.}
 \value{
 A list containing the definitions of the parameters read. The list is
  structured as follows:
-  \itemize{
-    \item{names}{Vector that contains the names of the parameters.}
-    \item{types}{Vector that contains the type of each parameter 'i', 'c', 'r', 'o'.
+  \describe{
+    \item{\code{names}}{Vector that contains the names of the parameters.}
+    \item{\code{types}}{Vector that contains the type of each parameter 'i', 'c', 'r', 'o'.
       Numerical parameters can be sampled in a log-scale with 'i,log' and 'r,log'
       (no spaces).}
-    \item{switches}{Vector that contains the switches to be used for the
+    \item{\code{switches}}{Vector that contains the switches to be used for the
       parameters on the command line.}
-    \item{domain}{List of vectors, where each vector may contain two
+    \item{\code{domain}}{List of vectors, where each vector may contain two
       values (minimum, maximum) for real and integer parameters, or
       possibly more for categorical parameters.}
-    \item{conditions}{List of R logical expressions, with variables
+    \item{\code{conditions}}{List of R logical expressions, with variables
       corresponding to parameter names.}
-    \item{isFixed}{Logical vectors that specifies which parameter is fixed
+    \item{\code{isFixed}}{Logical vectors that specifies which parameter is fixed
       and, thus, it does not need to be tuned.}
-    \item{nbParameters}{An integer, the total number of parameters.}
-    \item{nbFixed}{An integer, the number of parameters with a fixed value.}
-    \item{nbVariable}{Number of variable (to be tuned) parameters.}
+    \item{\code{nbParameters}}{An integer, the total number of parameters.}
+    \item{\code{nbFixed}}{An integer, the number of parameters with a fixed value.}
+    \item{\code{nbVariable}}{Number of variable (to be tuned) parameters.}
   }
 }
 \description{

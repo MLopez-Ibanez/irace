@@ -14,13 +14,13 @@ has to be the one returned by the function \code{\link{defaultScenario}} and
 \code{\link{readScenario}}.}
 
 \item{parameters}{A data structure similar to that provided
-by the \code{link{readParameters}} function.}
+by the \code{\link{readParameters}} function.}
 }
 \value{
 A list with the following elements:
-  \itemize{
-    \item{experiments}{Experiments results.}
-    \item{seeds}{Array of the instance seeds used in the experiments.}
+  \describe{
+    \item{\code{experiments}}{Experiments results.}
+    \item{\code{seeds}}{Array of the instance seeds used in the experiments.}
   }
 }
 \description{
