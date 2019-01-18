@@ -15,7 +15,7 @@ Authors@R: c(person("Manuel", "López-Ibáñez", role = c("aut", "cre"),
              person("Mauro", "Birattari", role = "aut"),
              person("Eric", "Yuan", role = "ctb"),
              person("Prasanna", "Balaprakash", role = "ctb"))
-Depends: R (>= 2.15.0)
+Depends: R (>= 3.2.0)
 Imports:
         stats,
         utils,

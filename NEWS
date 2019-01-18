@@ -15,6 +15,7 @@
  * Fix symbol printed in elimination test.               (Manuel López-Ibáñez)
 
  * Use `dynGet()` to find `targetRunner` and `targetEvaluator`.
+   As a result, we now require R >= 3.2.
                                                          (Manuel López-Ibáñez)
  
  * All tests now use `testthat`.                         (Manuel López-Ibáñez)
