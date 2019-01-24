@@ -602,8 +602,7 @@ target algorithm; the default value is the current directory.
 %\item[\parameter{logFile}] (\code{--log-file}): a file the name of the results \aR data file that produces \irace.
 \item[\parameter{maxExperiments}] (\code{--max-experiments}): the maximum number of executions
 of the target algorithm that \irace will perform.
-\item[\parameter{maxTime}] (\code{--max-time}): the total maximum execution time of the target 
-algorithm. Note that you must provide either \parameter{maxTime} or \parameter{maxExperiments}.
+\item[\parameter{maxTime}] (\code{--max-time}): maximum total execution time in seconds for the executions of \code{targetRunner}. In this case, \code{targetRunner} must return two values: cost and time. Note that you must provide either \parameter{maxTime} or \parameter{maxExperiments}.
 \end{description}
 For setting the tuning budget see \autoref{sec:budget}. For more information on \irace options and their default values, see \autoref{sec:irace options}.
 
