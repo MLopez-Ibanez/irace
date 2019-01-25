@@ -728,7 +728,7 @@ runcommand <- function(command, args, id, debugLevel)
     return(list(output = output, error = err))
   }
   if (debugLevel >= 2L) {
-    irace.note ("DONE (", id, ") Elapsed: ",
+    irace.note ("DONE (", id, ") Elapsed wall-clock seconds: ",
                 formatC(proc.time()["elapsed"] - elapsed,
                         format = "f", digits = 2), "\n")
   }
