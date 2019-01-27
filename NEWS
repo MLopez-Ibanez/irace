@@ -1,3 +1,4 @@
+ 
  * Fix several bugs with 'log' parameters.
                                     (Leslie Pérez Cáceres, Manuel López-Ibáñez)
                                     
@@ -27,6 +28,9 @@
    
  * Fix bug in `checkTargetFiles()` (`--check`) with capping.
                                                         (Leslie Pérez Cáceres)
+
+ * Clarify a few errors/warnings when maxTime > 0.
+                     (Manuel López-Ibáñez, suggested by Haroldo Gambini Santos) 
  
  
 3.1  (12/07/2018)

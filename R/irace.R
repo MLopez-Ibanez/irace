@@ -234,7 +234,7 @@ computeTerminationOfRace <- function(nbParameters)
 ## Compute the minimum budget required, and exit early in case the
 ## budget given by the user is insufficient.
 checkMinimumBudget <- function(remainingBudget, minSurvival, nbIterations,
-                               scenario)
+                               timeEstimate, scenario)
 {
   eachTest <- scenario$eachTest
   Tnew <- scenario$elitistNewInstances
@@ -304,13 +304,17 @@ checkMinimumBudget <- function(remainingBudget, minSurvival, nbIterations,
   }
      
   if (remainingBudget < minimumBudget) {
-    if (scenario$maxTime == 0 || nbIterations == 1)
+    if (scenario$maxTime == 0) {
       irace.error("Insufficient budget: ",
                   "With the current settings, irace will require a value of ",
-                  "'maxExperiments' of at least '",  minimumBudget, "'. ",
-                  "You can either increase the budget, ",
-                  "or set a smaller value of either 'minNbSurvival' ",
-                  "or 'nbIterations'")
+                  "'maxExperiments' of at least '",  minimumBudget, "'.")
+    } else if (nbIterations == 1) {
+      irace.error("Insufficient budget: ",
+                  "With the current settings and estimated time per run (",
+                  timeEstimate,
+                  ") irace will require a value of ",
+                  "'maxTime' of at least '",  minimumBudget * timeEstimate, "'.")
+    }
     return(FALSE)
   }
   return(TRUE)
@@ -789,13 +793,14 @@ irace <- function(scenario, parameters)
     repeat {
       if (scenario$maxTime == 0
           || checkMinimumBudget (remainingBudget, minSurvival, nbIterations,
-                                 scenario = scenario)) {
+                                 timeEstimate, scenario = scenario)) {
         break;
       }
-      irace.note("\nWarning:",
-                 " with the current settings and estimated time per run,",
-                 " irace will not have enough budget to execute the minimum",
-                 " number of iterations.",
+      irace.note("Warning:",
+                 " with the current settings and estimated time per run (",
+                 timeEstimate,
+                 ") irace will not have enough budget to execute the minimum",
+                 " number of iterations (", nbIterations, "). ",
                  " Execution will continue by assuming that the estimated time",
                  " is too high and reducing the minimum number of iterations,",
                  " however, if the estimation was correct or too low,",
