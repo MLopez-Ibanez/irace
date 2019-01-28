@@ -2303,26 +2303,31 @@ use the \parameter{boundMax} option. The final execution bound ($k_i^j$) is calc
 Additionally, the \parameter{boundDigits} option defines the precision of the time bound
 provided by \irace, the default setting is 0.  
 
-Timed out executions occur when the maximum execution bound (\parameter{boundMax}) is reached and the 
-algorithm has not achieved successful termination or a defined quality goal.
-In this cases, is common practice to apply a penalty known as PARX, in which timeouts 
-are penalized by multiplying  \parameter{boundMax} by a constant $X$. Using the \parameter{boundPar} option is possible to define the 
-constant $X$ to penalize timed out executions. Bounded executions are executions that do not 
-achieve successful termination or a defined quality goal in the execution time provided by \irace, 
-which is smaller than \parameter{boundMax}. The \parameter{boundAsTimeout} option replaces
-the evaluation of bounded executions by the \parameter{boundMax} value. More details about the implementation of adaptive capping can be found in \citet{PerLopHooStu2017:lion}.   
-
+Timed out executions occur when the maximum execution bound
+(\parameter{boundMax}) is reached and the algorithm has not achieved successful
+termination or a defined quality goal.  In this case, it is a common practice
+to apply a penalty known as PARX, in which timeouts are penalized by
+multiplying \parameter{boundMax} by a constant $X$. The constant $X$ may be set
+using the \parameter{boundPar} option. Bounded executions are executions that
+do not achieve successful termination or a defined quality goal in the
+execution bound ($k_i^j$) set by \irace, which is smaller than
+\parameter{boundMax}. The \parameter{boundAsTimeout} option replaces the
+evaluation of bounded executions by the \parameter{boundMax} value. More
+details about the implementation of adaptive capping can be found in
+\citet{PerLopHooStu2017:lion}.
 
 \begin{xwarningbox}
-Note that bounded executions  are not timed out executions and thus, they will not be penalized by PARX. 
+Note that bounded executions are not timed out executions and thus, they will not be penalized by PARX. 
 \end{xwarningbox}
 
 
 \begin{xwarningbox}
-Penalized evaluations of timed out and bounded executions are only used for the elimination tests and
-the comparison between the quality of configurations. \Irace only uses raw execution times to calculate 
-executions bounds. These must be provided by the target runner or target evaluator as described in 
-\autoref{sec:runner} and \autoref{sec:evaluator} . 
+  Penalized evaluations of timed out and bounded executions are only used for
+  the elimination tests and the comparison between the quality of
+  configurations. To calculate execution bounds and computation budget
+  consumed, \irace uses only unpenalized execution times. The unpenalized
+  execution time must be provided by the target runner or target evaluator as
+  described in \autoref{sec:runner} and \autoref{sec:evaluator} .
 \end{xwarningbox}
 
 
