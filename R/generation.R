@@ -135,7 +135,6 @@ sampleModel <- function (parameters, eliteConfigurations, model,
         # should fix this or make it impossible to confuse them.
         currentParameter <- namesParameters[p]
         currentType <- parameters$types[[currentParameter]]
-        transform <- parameters$transform[[currentParameter]]
         if (!conditionsSatisfied(parameters, configuration, currentParameter)) {
           # Some conditions are unsatisfied.
           # Should be useless, NA is ?always? assigned when matrix created
@@ -258,34 +257,37 @@ sample.numeric.log <- function(type, lowerBound, upperBound, trLower, trUpper,
     newVal <- runif(1, min = trLower, max = trUpper)
   } else {
     # sample from model
-    trMean <- transform.log(mean, lowerBound)
+    trMean <- transform.log(mean, lowerBound, digits)
     newVal <- rtnorm(1, trMean, stdDev, trLower, trUpper)
   }
   newVal <- exp(newVal)
+  newVal <- check.transformed.log(newVal, lowerBound, upperBound, digits)
   newVal <- if (type == "i") round(newVal) else round(newVal, digits)
-  newVal <- check.transformed.log(newVal, lowerBound, upperBound)
   return(newVal)
 }
 
 # Shift the value in the positive domain if LB <= 0.  A similar check will be
 # required after applying the transformation (see function
 # check.transformed.log() ).
-transform.log <- function(value, lowerBound)
+transform.log <- function(value, lowerBound, digits)
 {
-  # cannot compute log(0)
-  if (lowerBound <= 0) return(log(value + lowerBound))
+  # If LB <= 0, we cannot compute log(0), so we have to translate it to the
+  # positive domain.
+  if (lowerBound <= 0) 
+    value <- value - lowerBound + 10^-digits
+  irace.assert(value > 0)
   return (log(value))
 }
 
 # Adjust the sampled value if the lower bound is <=0, and
 # check that it does not fall outside the allowed range.
-check.transformed.log <- function(newVal, lowerBound, upperBound)
+check.transformed.log <- function(value, lowerBound, upperBound, digits)
 {
   # Check if LB was not positive, then readjust
-  if (lowerBound <= 0) {
-    newVal <- newVal + lowerBound
-  }
-  irace.assert(is.finite(newVal))
+  if (lowerBound <= 0)
+    value <- value + lowerBound - 10^-digits
+  
+  irace.assert(is.finite(value))
   # Enforce bounds.
-  return (min(max(newVal, lowerBound), upperBound))
+  return (min(max(value, lowerBound), upperBound))
 }

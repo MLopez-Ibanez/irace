@@ -184,9 +184,6 @@ init.model.numeric <- function(param, parameters, type, digits)
     upper <- attr(transf, "upper")
   }
   value <- (upper - lower) / 2
-  
-  if (type == "i") digits <- 0
-  value <- round(value, digits)
   irace.assert(is.finite(value))
   return(c(value, NA))
 }
