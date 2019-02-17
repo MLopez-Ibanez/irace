@@ -302,7 +302,7 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
       }
     }
 
-    # FIXME: What happens if both bounds are negative?
+    # FIXME: If both are negative, we should sample in the positive space and negate
     transform.domain <- function(transf, lower, upper)
     {
       if (transf == "") return(transf)
@@ -311,7 +311,7 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
         if (lower <= 0) {
           # so we translate to [10^-digits, log(upper - lower) + 10^-digits]
           trLower <- log(10^-digits)
-          trUpper <- log(upper - lower) + trLower
+          trUpper <- log(upper - lower) + 10^-digits
         } else {
           trLower <- log(lower)
           trUpper <- log(upper)

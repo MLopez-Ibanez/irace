@@ -53,8 +53,7 @@ updateModel <- function (parameters, eliteConfigurations, oldModel,
 
     for (currentParameter in parameters$names[!parameters$isFixed]) {
       type <- parameters$types[[currentParameter]]
-      transform <- parameters$transform[[currentParameter]]
-
+      
       ## If the elite is older than the current iteration, it has
       ## its own model that has evolved with time. If the elite is
       ## new (generated in the current iteration), it does not have

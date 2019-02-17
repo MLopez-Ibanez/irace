@@ -65,7 +65,6 @@ sampleUniform <- function (parameters, nbConfigurations, digits,
         # same order as namesParameters, because we sample in the order of the
         # conditions.
         currentType <- parameters$types[[currentParameter]]
-        transform <- parameters$transform[[currentParameter]]
         if (isFixed(currentParameter, parameters)) {
           # We don't even need to sample, there is only one possible value !
           newVal <- get.fixed.value (currentParameter, parameters)
@@ -288,6 +287,7 @@ check.transformed.log <- function(value, lowerBound, upperBound, digits)
     value <- value + lowerBound - 10^-digits
   
   irace.assert(is.finite(value))
+  # FIXME: This should not be necessary?
   # Enforce bounds.
   return (min(max(value, lowerBound), upperBound))
 }
