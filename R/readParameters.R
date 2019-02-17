@@ -303,6 +303,7 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
     }
 
     # FIXME: If both are negative, we should sample in the positive space and negate
+    # FIXME: For integers and lower <= 0, we should have trLower = log(1) = 0 
     transform.domain <- function(transf, lower, upper)
     {
       if (transf == "") return(transf)

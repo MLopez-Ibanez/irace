@@ -32,10 +32,13 @@ target.runner <- function(experiment, scenario)
     weight <- instance
     return(weight * f_rastrigin(x) + (1 - weight) * f_rosenbrock(x))
   }
+  tmax = 1 + as.numeric(configuration[["tmax"]])
+  temp = 11.0 + as.numeric(configuration[["temp"]])
+  stopifnot(tmax > 0)
+  stopifnot(temp > 0)
+  
   res <- optim(par, fn, method = "SANN", 
-               control = list(maxit = 10,
-                 tmax = as.numeric(configuration[["tmax"]]), 
-                 temp = as.numeric(configuration[["temp"]])))
+               control = list(maxit = 10, tmax = tmax, temp = temp))
   result <- list(cost = res$value, call = toString(experiment))
   return(result)
 }
@@ -52,15 +55,16 @@ sann.irace <- function(log.param=FALSE, ...)
 {
   args <- list(...)
 
+  # tmax and temp must be > 0
   if (log.param)
      parameters.table <- '
-       tmax "" i (1, 5000)
-       temp "" r,log (0, 100)
+       tmax "" i,log (0, 4999)
+       temp "" r,log (-10, 89)
        '      
   else
      parameters.table <- '
-       tmax "" i (1, 5000)
-       temp "" r (0, 100)
+       tmax "" i (0, 4999)
+       temp "" r (-10, 89)
      '  
   parameters <- readParameters(text = parameters.table)
 
