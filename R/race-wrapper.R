@@ -97,7 +97,7 @@ target.error <- function(err.msg, output, scenario, target.runner.call,
       "This is not a bug in irace, but means that something failed when",
       " running the command(s) above or they were terminated before completion.",
       " Try to run the command(s) above from the execution directory '",
-      scenario$execDir, "' to investigate the issue.")
+      scenario$execDir, "' to investigate the issue.\nSee also Appendix B (targetRunner troubleshooting checklist) of the User Guide (https://cran.r-project.org/package=irace/vignettes/irace-package.pdf)")
   }
   irace.error(err.msg, "\n", .irace.prefix,
               "The output was:\n", paste(output$outputRaw, collapse = "\n"),
