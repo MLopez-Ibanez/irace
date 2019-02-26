@@ -1,0 +1,35 @@
+language: python
+
+matrix:
+
+  include:
+  - os: linux
+    env: PYTHON_VERSION="3.7" COVERAGE="true" MINICONDA_URL="https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh"
+
+cache:
+  directories:
+    - $HOME/.cache/pip
+  pip: true
+
+sudo: false
+
+before_cache:
+  - rm -f $HOME/.cache/pip/log/debug.log
+
+before_install:
+  - sudo apt-get install -y libnuma-dev
+  - wget $MINICONDA_URL -O miniconda.sh
+  - bash miniconda.sh -b -p $HOME/miniconda
+  - export PATH="$HOME/miniconda/bin:$PATH"
+  - if [[ `which conda` ]]; then echo 'Conda installation successful'; else exit 1; fi
+  - conda create -n testenv --yes python=$PYTHON_VERSION pip wheel nose #gxx_linux-64 gcc_linux-64
+  - source activate testenv
+
+install:
+  - pip install pep8 codecov
+  - pip install nose numpy scipy scikit-learn
+  - python setup.py install
+
+# command to run tests, e.g. python setup.py test
+script:
+  - nosetests
