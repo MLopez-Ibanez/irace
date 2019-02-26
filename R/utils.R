@@ -715,6 +715,8 @@ runcommand <- function(command, args, id, debugLevel)
                err <<- c(err, paste(conditionMessage(w), collapse="\n"))
                invokeRestart("muffleWarning")
              })
+  if (is.null(output))
+    output <- ""
   # If the command could not be run an R error is generated.  If ‘command’
   # runs but gives a non-zero exit status this will be reported with a
   # warning and in the attribute ‘"status"’ of the result: an attribute
@@ -722,7 +724,7 @@ runcommand <- function(command, args, id, debugLevel)
   if (!is.null(err)) {
     err <- paste(err, collapse = "\n")
     if (!is.null(attr(output, "errmsg")))
-      output <- paste(sep = "\n", attr(output, "errmsg"))
+      err <- paste(sep = "\n", err, attr(output, "errmsg"))
     if (debugLevel >= 2L)
       irace.note ("ERROR (", id, "): ", err, "\n")
     return(list(output = output, error = err))
