@@ -4,8 +4,8 @@
 \alias{getConfigurationByIteration}
 \title{Returns the configurations by the iteration in which they were executed.}
 \usage{
-getConfigurationByIteration(iraceResults = NULL, logFile = NULL, iterations,
-  drop.metadata = FALSE)
+getConfigurationByIteration(iraceResults = NULL, logFile = NULL,
+  iterations, drop.metadata = FALSE)
 }
 \arguments{
 \item{iraceResults}{(\code{NULL}) Object created by \pkg{irace} and saved in \code{scenario$logFile}.}

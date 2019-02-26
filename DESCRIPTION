@@ -31,4 +31,4 @@ URL: http://iridia.ulb.ac.be/irace
 ByteCompile: yes
 LazyData: yes
 Encoding: UTF-8
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.1

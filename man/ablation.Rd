@@ -5,8 +5,9 @@
 \title{Performs ablation between two configurations.}
 \usage{
 ablation(iraceLogFile = NULL, iraceResults = NULL, src = NULL,
-  target = NULL, ab.params = NULL, n.instances = NULL, type = "full",
-  seed = 1234567, ablationLogFile = "log-ablation.Rdata", pdf.file = NULL,
+  target = NULL, ab.params = NULL, n.instances = NULL,
+  type = "full", seed = 1234567,
+  ablationLogFile = "log-ablation.Rdata", pdf.file = NULL,
   pdf.width = 20, mar = c(12, 5, 4, 1), debugLevel = NULL)
 }
 \arguments{
