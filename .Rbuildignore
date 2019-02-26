@@ -49,4 +49,4 @@ DEVEL-README
 ^web
 ^scripts
 ^tests/testthat/test-nocran-*
-
+^GenericWrapper4AC/
