@@ -2095,9 +2095,9 @@ parallelCoordinatesPlot (conf, iraceResults$parameters,
 
 %%% FIXME: This plot is completely misleading. We should either calculate the
 %%% performance over the whole training set, or find a way to plot the
-%%% performance estimated by irace as a confidence interval so that more
-%%% evaluations. Or simply plot a heatmap of instances x best-of-each
-%%% iteration.
+%%% performance estimated by irace as a confidence interval to account for
+%%% different number of instances. Or simply plot a heatmap of instances x
+%%% best-of-each iteration.
 \hide{It is also possible to plot the performance evolution of the best-so-far configuration over the number of experiments as follows:
 %% <<trainEvo, fig.pos="tbp", fig.align="center", out.width='0.75\\textwidth', fig.cap="Training set performance of the best-so-far configuration over number of experiments.", prompt=FALSE, eval=TRUE, comment="">>=
 # Get number of iterations
