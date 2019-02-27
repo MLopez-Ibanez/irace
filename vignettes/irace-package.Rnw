@@ -2093,14 +2093,17 @@ parallelCoordinatesPlot (conf, iraceResults$parameters,
                          hierarchy = FALSE)
 @
 
-
-It is also possible to plot the performance evolution of the best-so-far configuration over the number of experiments as follows:
-<<trainEvo, fig.pos="tbp", fig.align="center", out.width='0.75\\textwidth', fig.cap="Training set performance of the best-so-far configuration over number of experiments.", prompt=FALSE, eval=TRUE, comment="">>=
+%%% FIXME: This plot is completely misleading. We should either calculate the
+%%% performance over the whole training set, or find a way to plot the
+%%% performance estimated by irace as a confidence interval so that more
+%%% evaluations. Or simply plot a heatmap of instances x best-of-each
+%%% iteration.
+\hide{It is also possible to plot the performance evolution of the best-so-far configuration over the number of experiments as follows:
+%% <<trainEvo, fig.pos="tbp", fig.align="center", out.width='0.75\\textwidth', fig.cap="Training set performance of the best-so-far configuration over number of experiments.", prompt=FALSE, eval=TRUE, comment="">>=
 # Get number of iterations
 iters <- unique(iraceResults$experimentLog[, "iteration"])
 # Get number of experiments (runs of target-runner) up to each iteration
-fes <- cumsum(sapply(iters, function(k)
-  sum(iraceResults$experimentLog[, "iteration"] == k)))
+fes <- cumsum(table(iraceResults$experimentLog[,"iteration"]))
 # Get the mean value of all experiments executed up to each iteration
 # for the best configuration of that iteration.
 values <- sapply(iters, function(k) {
@@ -2114,24 +2117,23 @@ values <- sapply(iters, function(k) {
 plot(fes, values, type="s", xlab = "Number of runs of the target algorithm",
      ylab = "Estimated mean value over whole training set")
 points(fes, values)
-@
+}
 
-We can do the same, but using the performance on the test set:
-<<testEvo, fig.pos="tbp", fig.align="center", out.width='0.75\\textwidth', fig.cap="Testing set performance of the best-so-far configuration over number of experiments.", prompt=FALSE, eval=TRUE, comment="">>=
+It is also possible to plot the performance on the test set of the best-so-far configuration over the number of experiments as follows:
+<<testEvo, fig.pos="tbp", fig.align="center", out.width='0.75\\textwidth', fig.cap="Testing set performance of the best-so-far configuration over number of experiments. Label of each point is the configuration ID.", prompt=FALSE, eval=TRUE, comment="">>=
 # Get number of iterations
 iters <- unique(iraceResults$experimentLog[, "iteration"])
 # Get number of experiments (runs of target-runner) up to each iteration
-fes <- cumsum(sapply(iters, function(k)
-  sum(iraceResults$experimentLog[, "iteration"] == k)))
+fes <- cumsum(table(iraceResults$experimentLog[,"iteration"]))
 # Get the mean value of all experiments executed up to each iteration
 # for the best configuration of that iteration.
-values <- sapply(iters, function(k) 
-  mean(iraceResults$testing$experiments[
-                            , as.character(iraceResults$iterationElites[k])]))
+elites <- as.character(iraceResults$iterationElites)
+values <- colMeans(iraceResults$testing$experiments[, elites])
 plot(fes, values, type = "s",
      xlab = "Number of runs of the target algorithm",
      ylab = "Mean value over testing set")
 points(fes, values)
+text(fes, values, elites, pos = 1)
 @
 
 The \irace package also provides an implementation of the ablation
