@@ -23,6 +23,8 @@ TODO R package:
 
 TODO General (in order of importance):
 
+ * Avoid duplicated elites.
+ 
  * Sensitivity analysis: try values around the best configuration found, one at
    a time.
 
