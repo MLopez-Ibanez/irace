@@ -167,7 +167,7 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
                       "One parameter of this cycle is '", rootParam, "'")
         
         # The following line detects a missing definition
-        if (!child %in% names(conditionsTree))
+        if (child %!in% names(conditionsTree))
           irace.error("A parameter definition is missing! ",
                       "Check definition of parameters.\n",
                       "Parameter '", paramName,
@@ -197,7 +197,35 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
     irace.error (paste0 (...),
                  " at ", filename, ", line ", line, context)
   }
-  
+
+  transform.domain <- function(transf, lower, upper, type)
+  {
+    if (transf == "") return(transf)
+    if (transf == "log") {
+      # cannot compute log(0)
+      if (all(c(lower,upper) < 0)) {
+        upper <- -lower
+        lower <- -upper
+      }
+      ## cat(paste0("upper:", upper))
+      ## cat(paste0("lower:", lower))
+      ## irace.assert(upper != -1)
+      # Reject log if domain contains zero
+      if (any(c(lower,upper) <= 0)) return(NULL)
+      
+      trLower <- log(lower)
+      # +1 to adjust before floor()
+      trUpper <- if (type == "i") log(upper + 1) else log(upper)
+      
+      irace.assert(is.finite(trLower))
+      irace.assert(is.finite(trUpper))
+      attr(transf, "lower") <- trLower
+      attr(transf, "upper") <- trUpper
+      return(transf)
+    }
+    irace.internal.error("unrecognized transformation type '", transf, "'")
+  }
+    
   parameters <- list(names = c(),
                      types = c(),
                      switches = c(),
@@ -250,7 +278,7 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
         filename, nbLines, line,
         "parameter type must be a single character in {'c','i','r','o'}, ",
         "with 'i', 'r' optionally followed by ',log' (no spaces in between) ",
-        "to sample using a logarithmic scale,")
+        "to sample using a logarithmic scale")
     } else if (param.type == "i,log") {
       param.type <- "i"
       param.transform <- "log"
@@ -292,6 +320,13 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
                            "for parameter type 'i' values must be integers (",
                            result$match, ") for parameter '", param.name, "'")
       }
+
+      param.transform <- transform.domain(param.transform,
+                                          param.value[1], param.value[2], param.type)
+      if (is.null(param.transform)) {
+        errReadParameters (filename, nbLines, NULL, "The domain of parameter '",
+                           param.name, "' of type 'log' cannot contain zero")
+      }
     } else {
       dups <- duplicated(param.value)
       if (any(dups)) {
@@ -302,32 +337,6 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
       }
     }
 
-    # FIXME: If both are negative, we should sample in the positive space and negate
-    # FIXME: For integers and lower <= 0, we should have trLower = log(1) = 0 
-    transform.domain <- function(transf, lower, upper)
-    {
-      if (transf == "") return(transf)
-      if (transf == "log") {
-        # cannot compute log(0)
-        if (lower <= 0) {
-          # so we translate to [10^-digits, log(upper - lower) + 10^-digits]
-          trLower <- log(10^-digits)
-          trUpper <- log(upper - lower) + 10^-digits
-        } else {
-          trLower <- log(lower)
-          trUpper <- log(upper)
-        }
-        irace.assert(is.finite(trLower))
-        irace.assert(is.finite(trUpper))
-        attr(transf, "lower") <- trLower
-        attr(transf, "upper") <- trUpper
-        return(transf)
-      }
-      irace.internal.error("unrecognized transformation type")
-    }
-    
-    param.transform <- transform.domain(param.transform, param.value[1], param.value[2])
-        
     count <- count + 1
     parameters$names[[count]] <- param.name
     parameters$switches[[count]] <- param.switch

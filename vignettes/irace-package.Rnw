@@ -865,7 +865,7 @@ types supported by \irace are the following:
 \item \textit{Integer} parameters are numerical parameters that can take only
   integer values within the given range. Their range is specified as the range
   of real parameters and they can also be optionally sampled on a
-  logarithmic scale.
+  logarithmic scale (base $e$).
 
 \item \textit{Categorical} parameters are defined by a set of possible values
   specified as `\code{(<value 1>,} \code{...,} \code{<value n>)}'. The values
@@ -934,7 +934,7 @@ where each field is defined as follows:
                     \textit{integer}, \textit{real}, \textit{ordinal} or
                     \textit{categorical}, given as a single letter: `\code{i}',
                     `\code{r}', `\code{o}' or `\code{c}'. Numerical parameters
-                    can be sampled using a logarithmic scale with '\code{i,log}' and
+                    can be sampled using a natural logarithmic scale with '\code{i,log}' and
                     '\code{r,log}' (without spaces) for integer and real
                     parameters, respectively.\\
                     %
@@ -1004,7 +1004,7 @@ The structure of the parameter list that is created is as follows:
    and, thus, it does not need to be tuned.\\
     \code{transform}    & Vector that contains the transformation of each parameter. Currently, it
       can take values \code{``''} (no transformation, default) of \code{``log''}
-      (logarithmic transformation).\\
+      (natural logarithmic transformation).\\
     \code{nbParameters} & An integer, the total number of parameters.\\
     \code{nbFixed}      & An integer, the number of parameters with a fixed value.\\
     \code{nbVariable}   & Number of variable (i.e., to be tuned) parameters.\\

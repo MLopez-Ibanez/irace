@@ -1,5 +1,7 @@
  
- * Fix several bugs with 'log' parameters.
+ * Completely re-implement 'log' parameters to fix several bugs. Domains that
+   contain zero are now rejected. Values from negative domains are treated as
+   positive, then negated.
                                     (Leslie Pérez Cáceres, Manuel López-Ibáñez)
                                     
  * New option `aclib=` (`--aclib 1`) enables compatibility with the

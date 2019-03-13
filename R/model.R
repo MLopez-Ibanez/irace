@@ -22,7 +22,7 @@ initialiseModel <- function (parameters, configurations, digits)
     if (type == "c") {
       value <- rep((1 / nbValues), nbValues)
     } else if (type %in% c("i","r")) {
-      value <- init.model.numeric(currentParameter, parameters, type, digits)
+      value <- init.model.numeric(currentParameter, parameters)
     } else {
       irace.assert(type == "o")
       value <- (nbValues - 1) / 2
@@ -153,7 +153,7 @@ restartConfigurations <- function (configurations, restart.ids, model, parameter
         model[[param]][[id]] <- probVector / sum(probVector)
       } else {
         if (type == "i" || type == "r") {
-          value <- init.model.numeric(param, parameters, type, digits)
+          value <- init.model.numeric(param, parameters)
           # We keep the value of the configuration as last known
           value[2] <- configurations[id, param]
         } else {
@@ -173,16 +173,16 @@ restartConfigurations <- function (configurations, restart.ids, model, parameter
 # Initialise model in case of numerical variables.
 # it retuns an array size 2, first number indicates the 
 # standard deviation and second the last known value (initially NA)
-init.model.numeric <- function(param, parameters, type, digits)
+init.model.numeric <- function(param, parameters)
 {
   lower <- paramLowerBound(param, parameters)
   upper <- paramUpperBound(param, parameters)
   transf <- parameters$transform[[param]]
   if (transf == "log") {
-    lower <- attr(transf, "lower") 
-    upper <- attr(transf, "upper")
+    lower <- 0
+    upper <- 1
   }
-  value <- (upper - lower) / 2
+  value <- (upper - lower) / 2.0
   irace.assert(is.finite(value))
   return(c(value, NA))
 }

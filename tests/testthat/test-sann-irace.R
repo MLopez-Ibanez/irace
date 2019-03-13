@@ -58,13 +58,13 @@ sann.irace <- function(log.param=FALSE, ...)
   # tmax and temp must be > 0
   if (log.param)
      parameters.table <- '
-       tmax "" i,log (0, 4999)
-       temp "" r,log (-10, 89)
+       tmax "" i,log (1, 5000)
+       temp "" r,log (1, 100)
        '      
   else
      parameters.table <- '
-       tmax "" i (0, 4999)
-       temp "" r (-10, 89)
+       tmax "" i (1, 5000)
+       temp "" r (1, 100)
      '  
   parameters <- readParameters(text = parameters.table)
 

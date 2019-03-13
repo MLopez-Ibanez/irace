@@ -69,8 +69,10 @@ sampleUniform <- function (parameters, nbConfigurations, digits,
           # We don't even need to sample, there is only one possible value !
           newVal <- get.fixed.value (currentParameter, parameters)
           # The parameter is not a fixed and should be sampled          
-        } else if (currentType %in% c("i","r")) {
-          newVal <- sample.numerical(currentParameter, parameters, currentType, digits)
+        } else if (currentType == "i") {
+          newVal <- sample.unif(currentParameter, parameters, currentType)
+        } else if (currentType == "r") {
+          newVal <- sample.unif(currentParameter, parameters, currentType, digits)
         } else if (currentType %in% c("c","o")) {
           possibleValues <- parameters$domain[[currentParameter]]
           newVal <- sample(possibleValues, 1)
@@ -150,10 +152,11 @@ sampleModel <- function (parameters, eliteConfigurations, model,
           if (is.na(mean)) {
             # The elite parent does not have any value for this parameter,
             # let's sample uniformly.
-            newVal <- sample.numerical(currentParameter, parameters, currentType, digits)
+            newVal <- sample.unif(currentParameter, parameters, currentType, digits)
+                                                                                             
           } else {
             stdDev <- model[[currentParameter]][[as.character(idEliteParent)]][1]
-            newVal <- sample.numerical(currentParameter, parameters, currentType, digits, mean, stdDev)
+            newVal <- sample.norm(mean, stdDev, currentParameter, parameters, currentType, digits)
           }
         } else if (currentType == "o") {
           possibleValues <- paramDomain(currentParameter, parameters)  
@@ -208,86 +211,62 @@ sampleModel <- function (parameters, eliteConfigurations, model,
   return (newConfigurations)
 }
 
+transform.from.log <- function(x, transf, lowerBound, upperBound)
+{
+  trLower <- attr(transf, "lower") 
+  trUpper <- attr(transf, "upper")
+  x <- exp(trLower + (trUpper - trLower) * x)
+  if (lowerBound < 0) return (-x)
+  return(x)
+}
+
+transform.to.log <- function(x, transf, lowerBound, upperBound)
+{
+  trLower <- attr(transf, "lower") 
+  trUpper <- attr(transf, "upper")
+  if (lowerBound < 0) x <- -x
+  return((log(x) - trLower)/(trUpper - trLower))
+}
+
 # Sample value for a numerical parameter.
-sample.numerical <- function(param, parameters, type, digits, mean = NULL, stdDev = NULL)
+# integer uniform
+sample.unif <- function(param, parameters, type, digits = NULL)
 {
   lowerBound <- paramLowerBound(param, parameters)
   upperBound <- paramUpperBound(param, parameters)
   transf <- parameters$transform[[param]]
   if (transf == "log") {
-    trLower <- attr(transf, "lower") 
-    trUpper <- attr(transf, "upper")
-    value <- sample.numeric.log(type, lowerBound, upperBound, trLower, trUpper,
-                                digits, mean, stdDev)
-  } else {
-    value <- sample.numeric.none(type, lowerBound, upperBound, digits, mean, stdDev)
+    value <- runif(1, min = 0, max = 1)
+    value <- transform.from.log(value, transf, lowerBound, upperBound)
+  } else if (type == "i") {
+    # +1 for correct rounding before floor()
+    value <- runif(1, min = lowerBound, max = 1 + upperBound)
+  } else { # type == "r"
+    value <- runif(1, min = lowerBound, max = upperBound)    
   }
+  value <- if (type == "i") floor(value) else round(value, digits)
+  irace.assert(is.finite(value))
+  irace.assert(value >= lowerBound && value <= upperBound)
   return(value)
 }
 
-sample.numeric.none <- function(type, lowerBound, upperBound, digits, mean, stdDev)
+sample.norm <- function(mean, sd, param, parameters, type, digits = NULL)
 {
-  if (type == "i") {
-    if (is.null(mean)) {
-      # integer uniform
-      newVal <- floor(runif(1, min = lowerBound, max = 1 + upperBound))
-    } else {
-      # integer from model
-      newVal <- round(rtnorm(1, mean + 0.5, stdDev, lowerBound, upperBound + 1) - 0.5)
-    }
-  } else {
-    irace.assert(type == "r")
-    if (is.null(mean)) {
-      # real uniform
-      newVal <- runif(1, min = lowerBound, max = upperBound)
-    } else {
-      # real from model
-      newVal <- rtnorm(1, mean, stdDev, lowerBound, upperBound)
-    }
-    newVal <- round(newVal, digits)
+  lowerBound <- paramLowerBound(param, parameters)
+  upperBound <- paramUpperBound(param, parameters)
+  transf <- parameters$transform[[param]]
+  if (transf == "log") {
+    trMean <- transform.to.log(mean, transf, lowerBound, upperBound)
+    # FIXME: How to correctly adjust the sampling before the rounding?
+    value <- rtnorm(1, trMean, sd, lower = 0, upper = 1)
+    value <- transform.from.log(value, transf, lowerBound, upperBound)
+  } else if (type == "i") {
+    value <- rtnorm(1, mean + 0.5, sd, lowerBound, upperBound + 1) - 0.5
+  } else { # type == "r"
+    value <- rtnorm(1, mean, sd, lowerBound, upperBound)
   }
-  return(newVal)
-}
-
-sample.numeric.log <- function(type, lowerBound, upperBound, trLower, trUpper,
-                               digits, mean, stdDev)
-{
-  if (is.null(mean)) {
-    newVal <- runif(1, min = trLower, max = trUpper)
-  } else {
-    # sample from model
-    trMean <- transform.log(mean, lowerBound, digits)
-    newVal <- rtnorm(1, trMean, stdDev, trLower, trUpper)
-  }
-  newVal <- exp(newVal)
-  newVal <- check.transformed.log(newVal, lowerBound, upperBound, digits)
-  newVal <- if (type == "i") round(newVal) else round(newVal, digits)
-  return(newVal)
-}
-
-# Shift the value in the positive domain if LB <= 0.  A similar check will be
-# required after applying the transformation (see function
-# check.transformed.log() ).
-transform.log <- function(value, lowerBound, digits)
-{
-  # If LB <= 0, we cannot compute log(0), so we have to translate it to the
-  # positive domain.
-  if (lowerBound <= 0) 
-    value <- value - lowerBound + 10^-digits
-  irace.assert(value > 0)
-  return (log(value))
-}
-
-# Adjust the sampled value if the lower bound is <=0, and
-# check that it does not fall outside the allowed range.
-check.transformed.log <- function(value, lowerBound, upperBound, digits)
-{
-  # Check if LB was not positive, then readjust
-  if (lowerBound <= 0)
-    value <- value + lowerBound - 10^-digits
-  
+  value <- if (type == "i") round(value) else round(value, digits)
   irace.assert(is.finite(value))
-  # FIXME: This should not be necessary?
-  # Enforce bounds.
-  return (min(max(value, lowerBound), upperBound))
+  irace.assert(value >= lowerBound && value <= upperBound)
+  return(value)
 }
