@@ -14,6 +14,8 @@ TODO R package:
  
  * Add inst/COPYRIGHTS. See race package.
 
+ * How to run individual tests from the make. Check testthat documentation.
+ 
  * Fix check-reverse so we can check reverse dependencies before
    uploading to CRAN.
 
@@ -39,8 +41,8 @@ TODO General (in order of importance):
    metric is optimistic. Create a diagnostic scatter-plot of training versus
    testing.
 
- * Automatic split training and testing instances given a
-   percentage. Stratified version that takes into account features.
+ * Automatic split training and testing instances given a percentage.
+   Stratified version that takes into account features.
     
  * Fix all FIXMEs.
 
