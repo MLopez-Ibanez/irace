@@ -105,7 +105,7 @@ cran : releasebuild
 
 check: build
 ifdef TEST
-	_R_CHECK_FORCE_SUGGESTS_=false NOT_CRAN=true R --slave -e 'library(testthat);library(irace);test_dir(path="./tests/testthat/", filter="$(TEST)")'
+	_R_CHECK_FORCE_SUGGESTS_=false NOT_CRAN=true R --slave -e 'devtools::test(filter="$(TEST)")'
 else
 	test -d ./GenericWrapper4AC/build || (cd genericWrapper4AC && python3 setup.py install --user)
 	cd $(BINDIR) && (_R_CHECK_FORCE_SUGGESTS_=false NOT_CRAN=true R CMD check --run-donttest --timings $(PACKAGE)_$(PACKAGEVERSION).tar.gz; cat $(PACKAGE).Rcheck/$(PACKAGE)-Ex.timings)
