@@ -69,6 +69,7 @@ cat.irace.license <- function()
 irace.usage <- function ()
 {
   cat.irace.license()
+  cat ("# installed at: ", system.file(package="irace"), "\n", sep = "")
 
   for (i in seq_len(nrow(.irace.params.def))) {
     short <- .irace.params.def[i,"short"]
