@@ -38,6 +38,7 @@ help:
 	@echo "quick-install  install the package without rebuilding the vignettes"
 	@echo "build      build the package as a tar.gz file"
 	@echo "check      build the package and run 'R CMD check'"
+	@echo "check TEST=x  run test called test-x.R"
 	@echo "rsync      copy the package and install it on $(RNODE)"
 	@echo "cran       build the package and run 'R CMD check --as-cran'"
 	@echo "winbuild   submit the package to the windows builder service"
