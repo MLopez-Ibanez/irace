@@ -65,11 +65,11 @@ parse.output <- function(outputRaw, verbose)
   output <- outputRaw
   # strsplit crashes if outputRaw == character(0)
   if (length(outputRaw) > 0) {
+    outputRaw <- paste0(outputRaw, collapse = "\n")
     output <- strsplit(trim(outputRaw), "[[:space:]]+")[[1]]
   }
   # suppressWarnings to avoid messages about NAs introduced by coercion
-  output <- suppressWarnings (as.numeric (output))
-  return (output)
+  return(suppressWarnings (as.numeric (output)))
 }
 
 target.error <- function(err.msg, output, scenario, target.runner.call,
@@ -201,7 +201,6 @@ target.evaluator.default <- function(experiment, num.configurations, all.conf.id
   seed             <- experiment$seed
   instance         <- experiment$instance
 
-  execDir <- scenario$execDir
   debugLevel <- scenario$debugLevel
   targetEvaluator <- scenario$targetEvaluator
   if (as.logical(file.access(targetEvaluator, mode = 1))) {
@@ -209,7 +208,7 @@ target.evaluator.default <- function(experiment, num.configurations, all.conf.id
                  "cannot be found or is not executable!\n")
   }
 
-  cwd <- setwd (execDir)
+  cwd <- setwd (scenario$execDir)
   # FIXME: I think we don't even need to paste the args, since system2 handles this by itself.
   args <- paste(configuration.id, instance.id, seed, instance, num.configurations, all.conf.id)
   output <- runcommand(targetEvaluator, args, configuration.id, debugLevel)

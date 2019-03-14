@@ -1,4 +1,11 @@
  
+ * irace will now complain if the output of target-runner or target-evaluator
+   contains extra lines even if the first line of output is correct. This is to
+   avoid parsing the wrong output. Unfortunately, this may break setups that
+   relied on this behavior. The solution is to only print the output that irace
+   expects. 
+                                                        (Manuel López-Ibáñez))
+   
  * Completely re-implement 'log' parameters to fix several bugs. Domains that
    contain zero are now rejected. Values from negative domains are treated as
    positive, then negated.
