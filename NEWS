@@ -1,6 +1,5 @@
 
- * Print where irace is installed with --help 
-                                                        (Manuel López-Ibáñez)
+ * Print where irace is installed with --help.          (Manuel López-Ibáñez)
                                                         
  * irace will now complain if the output of target-runner or target-evaluator
    contains extra lines even if the first line of output is correct. This is to

@@ -36,23 +36,22 @@
 ## __VERSION__ below will be replaced by the version defined in R/version.R
 ## This avoids constant conflicts within this file.
 irace.license <-
-'*******************************************************************************
-* irace: An implementation in R of Iterated Race
-* Version: __VERSION__
-* Copyright (C) 2010-2018
-* Manuel Lopez-Ibanez     <manuel.lopez-ibanez@manchester.ac.uk>
-* Jeremie Dubois-Lacoste  
-* Leslie Perez Caceres    <leslie.perez.caceres@ulb.ac.be>
-*
-* This is free software, and you are welcome to redistribute it under certain
-* conditions.  See the GNU General Public License for details. There is NO
-* WARRANTY; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-*
-* irace builds upon previous code from the race package:
-*
-* race: Racing methods for the selection of the best
-* Copyright (C) 2003 Mauro Birattari
-*******************************************************************************
+'#------------------------------------------------------------------------------
+# irace: An implementation in R of (Elitist) Iterated Racing
+# Version: __VERSION__
+# Copyright (C) 2010-2019
+# Manuel Lopez-Ibanez     <manuel.lopez-ibanez@manchester.ac.uk>
+# Jeremie Dubois-Lacoste  
+# Leslie Perez Caceres    <leslie.perez.caceres@ulb.ac.be>
+#
+# This is free software, and you are welcome to redistribute it under certain
+# conditions.  See the GNU General Public License for details. There is NO
+# WARRANTY; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+#
+# irace builds upon previous code from the race package:
+#     race: Racing methods for the selection of the best
+#     Copyright (C) 2003 Mauro Birattari
+#------------------------------------------------------------------------------
 '
 cat.irace.license <- function()
 {
