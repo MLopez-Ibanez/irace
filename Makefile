@@ -59,7 +59,7 @@ R/irace-options.R vignettes/section/irace-options.tex scripts/irace_options_comm
 	cd scripts && R --slave -f generate-options.R && cd ..
 
 gendoc: 
-	R --slave -e 'library(devtools);document()'
+	R --slave -e 'devtools::document()'
 
 pkgdown: gendoc
 	R --slave -e 'pkgdown::build_site(run_dont_run = TRUE)'
@@ -160,8 +160,7 @@ endif
 ifndef RNODE
 	@echo "ERROR: You must specify a remote node (e.g., RNODE=majorana)"
 	@exit 1
-endif
-ifdef RNODE
+else
 	rsync -rlp -CIzc -L --delete --copy-unsafe-links --exclude=.svn --exclude=/examples/ --progress --relative \
 	.     \
 	$(RNODE):$(RDIR)/$(PACKAGE)/
