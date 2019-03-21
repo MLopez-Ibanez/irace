@@ -25,6 +25,10 @@ TODO R package:
 
 TODO General (in order of importance):
 
+ * Use both cost and time to calculate wins, then use a prop.test
+   prop.test(x=c(sum(x <0.5),sum(y<0.5)), n=c(length(x), length(y)))
+
+   The Fisher Exact probability test is an excellent non-parametric technique for comparing proportions, when the two independent samples are small in size.
  * Avoid duplicated elites.
  
  * Sensitivity analysis: try values around the best configuration found, one at

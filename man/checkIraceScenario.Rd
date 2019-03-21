@@ -15,6 +15,10 @@ has to be the one returned by the function \code{\link{defaultScenario}} and
 structure has to be the one returned by the function \code{\link{readParameters}}.
 See documentation of this function for details.}
 }
+\value{
+returns \code{TRUE} if succesful and gives an error and returns
+\code{FALSE} otherwise.
+}
 \description{
 \code{checkIraceScenario} tests that the given irace scenario
   can be run by checking the scenario settings provided and trying to run

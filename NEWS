@@ -1,4 +1,8 @@
 
+
+ * 'irace --check' will exit with code 1 if the check is unsuccessful
+                                                        (Manuel López-Ibáñez)
+
  * Print where irace is installed with --help.          (Manuel López-Ibáñez)
                                                         
  * irace will now complain if the output of target-runner or target-evaluator

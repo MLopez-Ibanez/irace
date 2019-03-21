@@ -273,6 +273,9 @@ testing.cmdline <- function(filename, scenario)
 #' @param parameters Data structure containing the parameter definition. The data
 #' structure has to be the one returned by the function \code{\link{readParameters}}.
 #' See documentation of this function for details.
+#'
+#' @return returns \code{TRUE} if succesful and gives an error and returns
+#' \code{FALSE} otherwise.
 #' 
 #' @details Provide the \code{parameters} argument only if the parameter list
 #'   should not be obtained from the parameter file given by the scenario. If
@@ -307,10 +310,13 @@ checkIraceScenario <- function(scenario, parameters = NULL)
   }
 
   irace.note("Checking target execution.\n")
-  if (checkTargetFiles(scenario = scenario, parameters = parameters))
+  if (checkTargetFiles(scenario = scenario, parameters = parameters)) {
     irace.note("Check succesful.\n")
-  else
-    irace.note("Check unsuccesful.\n") 
+    return(TRUE)
+  } else {
+    irace.error("Check unsuccessful.\n")
+    return(FALSE)
+  }
 }
 
 #' irace.cmdline
