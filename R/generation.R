@@ -172,11 +172,17 @@ sampleModel <- function (parameters, eliteConfigurations, model,
             # values to determine the equivalent integer.
             mean <- match(value, possibleValues) # Return index of value in array
             stdDev <- model[[currentParameter]][[as.character(idEliteParent)]]
-            
+
             # Sample with truncated normal distribution as an integer.
-            newValAsInt <- round(rtnorm(1, mean + 0.5, stdDev, 1,
-                                        length(possibleValues) + 1) - 0.5)
+            # See sample.norm() for an explanation.
+            newValAsInt <- trunc(rtnorm(1, mean + 0.5, stdDev, lower = 1,
+                                        upper = length(possibleValues) + 1L))
+
+            # The probability of this happening is very small, but it can happen.
+            if (newValAsInt == length(possibleValues) + 1L)
+              newValAsInt <- length(possibleValues)
             
+            irace.assert(value >= 1L && value <= length(possibleValues))
             # Get back to categorical values, find the one corresponding to the
             # newVal
             newVal <- possibleValues[newValAsInt]
@@ -227,6 +233,59 @@ transform.to.log <- function(x, transf, lowerBound, upperBound)
   if (lowerBound < 0) x <- -x
   return((log(x) - trLower)/(trUpper - trLower))
 }
+## How to sample integer values?
+#
+# The problem: If have an integer with domain [1,3] and we sample a real value
+# and round, then there are more chances of getting 2 than 1 or 3:
+# [1, 1,5) -> 1
+# [1.5, 2,5) -> 2
+# [2.5, 3) -> 3
+#
+# The solution: Sample in [1, 4], then truncate:
+# [1, 2) -> 1
+# [2, 3) -> 2
+# [3, 4) -> 3
+#
+# Issue 1: We could get 4, so in that case we set it to 3.
+#
+# Issue 2: When sampling from a truncated normal distribution, the extremes are
+# not symmetric.
+#
+# nsamples <- 100000
+# table(trunc(rtnorm(nsamples, mean=1, sd=1, lower=1,upper=4)))/nsamples
+# table(trunc(rtnorm(nsamples, mean=3, sd=1, lower=1,upper=4)))/nsamples
+#
+# To make them symmetric, we translate by 0.5, so that the mean is at the
+# actual center of the interval that will produce the same value after
+# truncation, e.g., given an integer value of 1, then mean=1.5, which is at the
+# center of [1,2).
+#
+# nsamples <- 100000
+# table(trunc(rtnorm(nsamples, mean=1, sd=1, lower=1,upper=4)))/nsamples
+# table(trunc(rtnorm(nsamples, mean=3, sd=1, lower=1,upper=4)))/nsamples
+#
+# The above reasoning also works for log-transformed domains, because the
+# truncation happens in the original domain, not in the log-transformed one,
+# except for the case of log-transformed negative domains, where we have to
+# translate by -0.5.
+# 
+numeric.value.round <- function(type, value, lowerBound, upperBound, digits)
+{  
+  irace.assert(is.finite(value))
+  if (type == "i") {
+    value <- trunc(value)
+    upperBound <- upperBound - 1L # undo the above for the assert
+    # The probability of this happening is very small, but it could happen.
+    if (value == upperBound + 1L) 
+      value <- upperBound
+    else if (value == lowerBound - 1L) # This may happen for negative log-transformed
+      value <- lowerBound
+  } else
+    value <- round(value, digits)
+
+  irace.assert(value >= lowerBound && value <= upperBound)
+  return (value)
+}
 
 # Sample value for a numerical parameter.
 # integer uniform
@@ -235,18 +294,17 @@ sample.unif <- function(param, parameters, type, digits = NULL)
   lowerBound <- paramLowerBound(param, parameters)
   upperBound <- paramUpperBound(param, parameters)
   transf <- parameters$transform[[param]]
+  if (type == "i") {
+    # +1 for correct rounding before trunc()
+    upperBound <- 1L + upperBound
+  }
   if (transf == "log") {
     value <- runif(1, min = 0, max = 1)
     value <- transform.from.log(value, transf, lowerBound, upperBound)
-  } else if (type == "i") {
-    # +1 for correct rounding before floor()
-    value <- runif(1, min = lowerBound, max = 1 + upperBound)
-  } else { # type == "r"
+  } else {
     value <- runif(1, min = lowerBound, max = upperBound)    
   }
-  value <- if (type == "i") floor(value) else round(value, digits)
-  irace.assert(is.finite(value))
-  irace.assert(value >= lowerBound && value <= upperBound)
+  value <- numeric.value.round(type, value, lowerBound, upperBound, digits)
   return(value)
 }
 
@@ -255,18 +313,23 @@ sample.norm <- function(mean, sd, param, parameters, type, digits = NULL)
   lowerBound <- paramLowerBound(param, parameters)
   upperBound <- paramUpperBound(param, parameters)
   transf <- parameters$transform[[param]]
+  if (type == "i") {
+    upperBound <- 1L + upperBound
+    # Because negative domains are log-transformed to positive domains.
+    if (transf == "log" && mean < 0) {
+      mean <- mean - 0.5
+    } else
+      mean <- mean + 0.5
+  }
+  
   if (transf == "log") {
     trMean <- transform.to.log(mean, transf, lowerBound, upperBound)
-    # FIXME: How to correctly adjust the sampling before the rounding?
     value <- rtnorm(1, trMean, sd, lower = 0, upper = 1)
     value <- transform.from.log(value, transf, lowerBound, upperBound)
-  } else if (type == "i") {
-    value <- rtnorm(1, mean + 0.5, sd, lowerBound, upperBound + 1) - 0.5
-  } else { # type == "r"
+  } else {
     value <- rtnorm(1, mean, sd, lowerBound, upperBound)
   }
-  value <- if (type == "i") round(value) else round(value, digits)
-  irace.assert(is.finite(value))
-  irace.assert(value >= lowerBound && value <= upperBound)
+
+  value <- numeric.value.round(type, value, lowerBound, upperBound, digits)
   return(value)
 }

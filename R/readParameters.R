@@ -214,7 +214,7 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
       if (any(c(lower,upper) <= 0)) return(NULL)
       
       trLower <- log(lower)
-      # +1 to adjust before floor()
+      # +1 to adjust before trunc()
       trUpper <- if (type == "i") log(upper + 1) else log(upper)
       
       irace.assert(is.finite(trLower))
