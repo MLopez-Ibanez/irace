@@ -175,7 +175,7 @@ sampleModel <- function (parameters, eliteConfigurations, model,
 
             # Sample with truncated normal distribution as an integer.
             # See sample.norm() for an explanation.
-            newValAsInt <- trunc(rtnorm(1, mean + 0.5, stdDev, lower = 1,
+            newValAsInt <- floor(rtnorm(1, mean + 0.5, stdDev, lower = 1,
                                         upper = length(possibleValues) + 1L))
 
             # The probability of this happening is very small, but it can happen.
@@ -235,25 +235,32 @@ transform.to.log <- function(x, transf, lowerBound, upperBound)
 }
 ## How to sample integer values?
 #
-# The problem: If have an integer with domain [1,3] and we sample a real value
+# The problem: If we have an integer with domain [1,3] and we sample a real value
 # and round, then there are more chances of getting 2 than 1 or 3:
 # [1, 1,5) -> 1
 # [1.5, 2,5) -> 2
 # [2.5, 3) -> 3
 #
-# The solution: Sample in [1, 4], then truncate:
+# The solution: Sample in [lowerbound, upperbound + 1], that is, [1, 4], then floor():
 # [1, 2) -> 1
 # [2, 3) -> 2
 # [3, 4) -> 3
 #
-# Issue 1: We could get 4, so in that case we set it to 3.
+# Why floor() and not trunc()?
+# Because trunc(-1.5) -> -1, while floor(-1.5) -> -2, so for a domain [-3,-1]:
+#
+# [-3, -2) -> -3
+# [-2, -1) -> -2
+# [-1, 0)  -> -1
+#
+# Issue 1: We can sample 4 (upperbound + 1). In that case, we return 3.
 #
 # Issue 2: When sampling from a truncated normal distribution, the extremes are
 # not symmetric.
 #
 # nsamples <- 100000
-# table(trunc(rtnorm(nsamples, mean=1, sd=1, lower=1,upper=4)))/nsamples
-# table(trunc(rtnorm(nsamples, mean=3, sd=1, lower=1,upper=4)))/nsamples
+# table(floor(rtnorm(nsamples, mean=1, sd=1, lower=1,upper=4)))/nsamples
+# table(floor(rtnorm(nsamples, mean=3, sd=1, lower=1,upper=4)))/nsamples
 #
 # To make them symmetric, we translate by 0.5, so that the mean is at the
 # actual center of the interval that will produce the same value after
@@ -261,11 +268,11 @@ transform.to.log <- function(x, transf, lowerBound, upperBound)
 # center of [1,2).
 #
 # nsamples <- 100000
-# table(trunc(rtnorm(nsamples, mean=1, sd=1, lower=1,upper=4)))/nsamples
-# table(trunc(rtnorm(nsamples, mean=3, sd=1, lower=1,upper=4)))/nsamples
+# table(floor(rtnorm(nsamples, mean=1.5, sd=1, lower=1,upper=4)))/nsamples
+# table(floor(rtnorm(nsamples, mean=3.5, sd=1, lower=1,upper=4)))/nsamples
 #
-# The above reasoning also works for log-transformed domains, because the
-# truncation happens in the original domain, not in the log-transformed one,
+# The above reasoning also works for log-transformed domains, because 
+# floor() happens in the original domain, not in the log-transformed one,
 # except for the case of log-transformed negative domains, where we have to
 # translate by -0.5.
 # 
@@ -273,7 +280,7 @@ numeric.value.round <- function(type, value, lowerBound, upperBound, digits)
 {  
   irace.assert(is.finite(value))
   if (type == "i") {
-    value <- trunc(value)
+    value <- floor(value)
     upperBound <- upperBound - 1L # undo the above for the assert
     # The probability of this happening is very small, but it could happen.
     if (value == upperBound + 1L) 
@@ -288,14 +295,13 @@ numeric.value.round <- function(type, value, lowerBound, upperBound, digits)
 }
 
 # Sample value for a numerical parameter.
-# integer uniform
 sample.unif <- function(param, parameters, type, digits = NULL)
 {
   lowerBound <- paramLowerBound(param, parameters)
   upperBound <- paramUpperBound(param, parameters)
   transf <- parameters$transform[[param]]
   if (type == "i") {
-    # +1 for correct rounding before trunc()
+    # +1 for correct rounding before floor()
     upperBound <- 1L + upperBound
   }
   if (transf == "log") {
