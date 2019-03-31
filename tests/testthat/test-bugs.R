@@ -13,7 +13,7 @@ test_that("bug_large_new_instances", {
     return(list(cost = saved_experiments[row, experiment[["id.configuration"]] ]))
   }
   confs <- irace(scenario = scenario, parameters = parameters)
-  expect_more_than(nrow(confs), 0)
+  expect_gt(nrow(confs), 0L)
 })
 
 test_that("target.runner as string", {

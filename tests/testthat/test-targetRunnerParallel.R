@@ -33,7 +33,7 @@ x1 "" r (0,1)
                        targetRunnerParallel = targetRunnerParallel,
                        instances = instances, logFile = log.file)
    confs <- irace(scenario = tuner.config, parameters = parameters)
-   expect_more_than(nrow(confs), 0)
+   expect_gt(nrow(confs), 0L)
 })
 
 test_that("targetRunnerData", {

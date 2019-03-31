@@ -26,7 +26,7 @@ time.irace <- function(...)
   irace:::checkTargetFiles(scenario = scenario, parameters = parameters)
   
   confs <- irace(scenario = scenario, parameters = parameters)
-  expect_more_than(nrow(confs), 0)
+  expect_gt(nrow(confs), 0L)
 }
 
 
