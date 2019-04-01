@@ -204,7 +204,8 @@ ablation <- function(iraceLogFile = NULL, iraceResults = NULL,
                                       instances = scenario$instances,
                                       instances.ID = instances[, "instance"],
                                       seeds = instances[, "seed"],
-                                      scenario = scenario) # FIXME: No bound ???
+                                      scenario = scenario,
+                                      bounds = scenario$boundMax)
   irace.note("Executing source and target configurations on the given instances...\n")
   target.output <- execute.experiments(experiments, scenario)
   if (!is.null(scenario$targetEvaluator))

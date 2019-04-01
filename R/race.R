@@ -910,6 +910,8 @@ race <- function(maxExp = 0,
                                           which.exe, scenario)
       final.bounds <- all.bounds$final.bounds
       elite.bound <- all.bounds$elite.bound
+    } else {
+      final.bounds <- rep(scenario$boundMax, no.configurations)
     }
     
     # Execute experiments
