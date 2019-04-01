@@ -410,7 +410,7 @@ addInstances <- function(scenario, instancesList, n.instances)
 do.experiments <- function(configurations, ninstances, scenario, parameters)
 {
   output <- lapply(1:ninstances, race.wrapper, configurations = configurations, 
-                   bounds = rep(scenario$boundMax, nrow(configurations),
+                   bounds = rep(scenario$boundMax, nrow(configurations)),
                    which.alive = 1:nrow(configurations), which.exe = 1:nrow(configurations), 
                    parameters = parameters, scenario = scenario)
                                         
@@ -733,7 +733,7 @@ irace <- function(scenario, parameters)
         timeUsed <- sum(timeUsed, output$experimentLog[, "time"], na.rm = TRUE)
         # User should return time zero for rejectedIDs.
         boundEstimate <- mean(iraceResults$experimentLog[, "time"], na.rm = TRUE)
-        if (boundEstimate <= 0) {
+        if (boundEstimate <= 0)
           boundEstimate <- if (!is.null(scenario$boundMax)) scenario$boundMax else 1.0
         
         next.configuration <- nconfigurations + 1L
@@ -829,8 +829,7 @@ irace <- function(scenario, parameters)
                    "# par bound: ", scenario$boundPar, "\n", 
                    "# bound digits: ", scenario$boundDigits, "\n")
           else if (!is.null(scenario$boundMax))
-            "# maxBound: ", scenario$boundMax, "\n",
-            
+            paste0("# maxBound: ", scenario$boundMax, "\n"),
           verbose = FALSE)
 
   
