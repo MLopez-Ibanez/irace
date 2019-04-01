@@ -637,12 +637,17 @@ checkScenario <- function(scenario = defaultScenario())
                    "' of ", quote.param("boundType"),
                    ", valid values are: ",
                    paste0(valid.types, collapse = ", "))
-    }    
+    }
     
     if (scenario$boundPar < 1)
       irace.error("Invalid value boundPar (", scenario$boundPar,
                   ") must be >= 1")
+  } else { # no capping
+    if (scenario$boundMax <= 0 || is.na(scenario$boundMax))
+      scenario$boundMax <- NULL
   }
+
+
   
   if (is.null.or.empty(scenario$testType) || 
       is.null.or.na(scenario$testType) || 
@@ -877,8 +882,7 @@ checkTargetFiles <- function(scenario, parameters)
                                   repair = scenario$repairConfiguration)
   configurations <- cbind (.ID. = conf.id, configurations)
 
-  bounds <- if (scenario$capping)
-              rep(scenario$boundMax, nrow(configurations)) else NULL
+  bounds <- rep(scenario$boundMax, nrow(configurations))
 
   instances.ID <- if (scenario$sampleInstances)
                     sample.int(length(scenario$instances), 1) else 1

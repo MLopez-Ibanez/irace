@@ -81,9 +81,8 @@ psRace <- function(iraceLogFile=NULL, iraceResults=NULL, conf.ids=NULL,
   instances <- generateInstances(scenario, 1000)
   .irace$instancesList <- instances
   .irace$next.instance <- 1
-  # When capping is used we must pass maxBound
   # MANUEL: Does this really work? It looks very strange.
-  if (scenario$capping)
+  if (!is.null(scenario$boundMax))
     scenario$instances <- paste(scenario$instances, scenario$boundMax, sep=" ")
   
   scenario$elitist <- scenario$capping <- FALSE

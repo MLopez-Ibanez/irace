@@ -1,4 +1,6 @@
 
+ * It is possible to specify boundMax without capping.
+                                    (Leslie Pérez Cáceres, Manuel López-Ibáñez) 
 
  * 'irace --check' will exit with code 1 if the check is unsuccessful
                                                         (Manuel López-Ibáñez)

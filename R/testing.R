@@ -45,7 +45,7 @@ testConfigurations <- function(configurations, scenario, parameters)
   values <- values[, parameters$names, drop = FALSE]
   switches <- parameters$switches[parameters$names]
 
-  bounds <- if (scenario$capping) rep(scenario$boundMax, nrow(configurations)) else NULL
+  bounds <- rep(scenario$boundMax, nrow(configurations))
   # If there is no ID (e.g., after using readConfigurations), then add it.
   if (! (".ID." %in% colnames(configurations))) {
     configurations$.ID. <- 1:nrow(configurations)
