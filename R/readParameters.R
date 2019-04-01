@@ -202,15 +202,7 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
   {
     if (transf == "") return(transf)
     if (transf == "log") {
-      # cannot compute log(0)
-      if (all(c(lower,upper) < 0)) {
-        upper <- -lower
-        lower <- -upper
-      }
-      ## cat(paste0("upper:", upper))
-      ## cat(paste0("lower:", lower))
-      ## irace.assert(upper != -1)
-      # Reject log if domain contains zero
+      # Reject log if domain contains zero or negative values
       if (any(c(lower,upper) <= 0)) return(NULL)
       
       trLower <- log(lower)

@@ -222,7 +222,6 @@ transform.from.log <- function(x, transf, lowerBound, upperBound)
   trLower <- attr(transf, "lower") 
   trUpper <- attr(transf, "upper")
   x <- exp(trLower + (trUpper - trLower) * x)
-  if (lowerBound < 0) return (-x)
   return(x)
 }
 
@@ -230,7 +229,6 @@ transform.to.log <- function(x, transf, lowerBound, upperBound)
 {
   trLower <- attr(transf, "lower") 
   trUpper <- attr(transf, "upper")
-  if (lowerBound < 0) x <- -x
   return((log(x) - trLower)/(trUpper - trLower))
 }
 ## How to sample integer values?
@@ -283,10 +281,8 @@ numeric.value.round <- function(type, value, lowerBound, upperBound, digits)
     value <- floor(value)
     upperBound <- upperBound - 1L # undo the above for the assert
     # The probability of this happening is very small, but it could happen.
-    if (value == upperBound + 1L) 
+    if (value == upperBound + 1L)
       value <- upperBound
-    else if (value == lowerBound - 1L) # This may happen for negative log-transformed
-      value <- lowerBound
   } else
     value <- round(value, digits)
 
@@ -322,10 +318,7 @@ sample.norm <- function(mean, sd, param, parameters, type, digits = NULL)
   if (type == "i") {
     upperBound <- 1L + upperBound
     # Because negative domains are log-transformed to positive domains.
-    if (transf == "log" && mean < 0) {
-      mean <- mean - 0.5
-    } else
-      mean <- mean + 0.5
+    mean <- mean + 0.5
   }
   
   if (transf == "log") {
