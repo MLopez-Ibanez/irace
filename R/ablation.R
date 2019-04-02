@@ -316,7 +316,7 @@ ablation <- function(iraceLogFile = NULL, iraceResults = NULL,
   best.ids <- which.min(cranks)
   best.configuration <- all.configurations[trajectory[best.ids[1]],,drop=FALSE]
   irace.note("Final best configuration:\n")
-  print(best.configuration)
+  configurations.print(best.configuration)
   
   # LESLIE: If we use racing we can have a matrix of results that is not
   # complete, how should we do the plots?
@@ -392,7 +392,7 @@ plotAblation <- function (ab.log = NULL, abLogFile = NULL,
   if (!is.null(pdf.file)) {
     if (!is.file.extension(pdf.file, ".pdf"))
       pdf.file <- paste0(pdf.file, ".pdf")
-    cat(paste0("Creating PDF file '", pdf.file, "'\n"))
+    cat("Creating PDF file '", pdf.file, "'\n", sep="")
     pdf(file = pdf.file, width = pdf.width,
         title = paste0("Ablation plot: ", pdf.file))
     on.exit(dev.off(), add = TRUE)

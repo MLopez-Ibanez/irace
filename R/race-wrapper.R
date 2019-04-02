@@ -49,7 +49,8 @@ buildCommandLine <- function(values, switches)
   for (i in seq_along(values)) {
     value <- values[i]
     if (!is.na(value)) {
-        command <- paste0(command, " ", switches[i], format(value, scientific=FALSE))
+      command <- paste0(command, " ", switches[i],
+                        format(value, digits=15, scientific=FALSE))
     }
   }
   return(command)

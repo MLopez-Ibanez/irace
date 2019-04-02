@@ -1,4 +1,7 @@
-
+ * Values of real-valued parameter are now printed with sufficient precision to
+   satisfy 'digits' (up to digits=15).
+                                                        (Manuel López-Ibáñez)
+                                                        
  * It is possible to specify boundMax without capping.
                                     (Leslie Pérez Cáceres, Manuel López-Ibáñez) 
 

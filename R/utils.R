@@ -525,7 +525,7 @@ configurations.print <- function(configurations, metadata = FALSE)
   if (!metadata) {
     configurations <- removeConfigurationsMetaData(configurations)
   } 
-  print(as.data.frame(configurations, stringsAsFactors = FALSE))
+  print(as.data.frame(configurations, stringsAsFactors = FALSE), digits = 15)
 }
 
 #' Print configurations as command-line strings.

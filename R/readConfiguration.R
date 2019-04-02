@@ -51,7 +51,7 @@ readConfigurationsFile <- function(filename, parameters, debugLevel = 0, text)
   # Print the table that has been read.
   if (debugLevel >= 2) {
     cat("# Read ", nbConfigurations, " configurations from file '", filename, "'\n", sep="")
-    print(as.data.frame(configurationTable, stringAsFactor = FALSE))
+    print(as.data.frame(configurationTable, stringAsFactor = FALSE), digits=15)
   }
 
   namesParameters <- names(parameters$conditions)
@@ -541,6 +541,12 @@ checkScenario <- function(scenario = defaultScenario())
     }
     scenario$mu <- scenario$firstTest
   }
+
+  # AClib benchmarks use 15 digits
+  if (scenario$aclib)
+    scenario$digits <- 15
+  if (scenario$digits > 15 || scenario$digits <= 0)
+    irace.error (quote.param ("digits"), " must be within [1,15].")
   
   # Real [0, 1] control parameters
   realParams <- .irace.params.def[.irace.params.def[, "type"] == "r", "name"]
@@ -909,7 +915,7 @@ checkTargetFiles <- function(scenario, parameters)
 
   if (scenario$debugLevel >= 1) {
     cat ("# targetRunner returned:\n")
-    print(output)
+    print(output, digits = 15)
   }
   
   irace.assert(is.null(scenario$targetEvaluator) == is.null(.irace$target.evaluator))
@@ -931,7 +937,7 @@ checkTargetFiles <- function(scenario, parameters)
                    invokeRestart("muffleWarning")})
     if (scenario$debugLevel >= 1) {
       cat ("# targetEvaluator returned:\n")
-      print(output)
+      print(output, digits = 15)
     }
   }
   return(result)

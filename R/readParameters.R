@@ -417,6 +417,6 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
   parameters$nbParameters <- length(parameters$names)
   parameters$nbFixed <- sum(parameters$isFixed == TRUE)
   parameters$nbVariable <- sum(parameters$isFixed == FALSE)
-  if (debugLevel >= 2) print(parameters)
+  if (debugLevel >= 2) print(parameters, digits = 15)
   return (parameters)
 }

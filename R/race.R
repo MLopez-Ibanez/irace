@@ -351,7 +351,7 @@ race.print.footer <- function(bestconf, mean.best, break.msg, debug.level, cappi
       sprintf("Best-so-far configuration: %11d", bestconf[1, ".ID."]),
       sprintf("    mean value: %#15.10g", mean.best), "\n",
       "Description of the best-so-far configuration:\n")
-  print(bestconf)
+  configurations.print(bestconf, metadata = TRUE)
   cat("\n")
 }
 
