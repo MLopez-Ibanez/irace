@@ -262,7 +262,16 @@ readScenario <- function(filename = "", scenario = list())
       irace.error ("The scenario file ", shQuote(rfilename), " included from ",
                    shQuote(topfile), " does not exist.")
     }
-    source(rfilename, local = envir., chdir = TRUE)
+    handle.source.error <- function(e) {
+      irace.error("Reading scenario file ", shQuote(rfilename),
+                  " included from ", shQuote(topfile),
+                  " produced the following errors or warnings:\n",
+                  paste0(conditionMessage(e), collapse="\n"))
+      return(NULL)
+    }
+    withCallingHandlers(
+      tryCatch(source(rfilename, local = envir., chdir = TRUE),
+               error = handle.source.error, warning = handle.source.error))
   }
 
   # First find out which file...
@@ -284,7 +293,15 @@ readScenario <- function(filename = "", scenario = list())
     if (debug.level >= 1)
       cat ("# Reading scenario file", shQuote(filename), ".......")
     # chdir = TRUE to allow recursive sourcing.
-    source(filename, local = TRUE, chdir = TRUE)
+    handle.source.error <- function(e) {
+      irace.error("Reading scenario file ", shQuote(filename),
+                  " produced the following errors or warnings:\n",
+                  paste0(conditionMessage(e), collapse="\n"))
+      return(NULL)
+    }
+    withCallingHandlers(
+      tryCatch(source(filename, local = TRUE, chdir = TRUE),
+               error = handle.source.error, warning = handle.source.error))
     if (debug.level >= 1) cat (" done!\n")
   } else {
     irace.error ("The scenario file ", shQuote(filename), " does not exist.")
