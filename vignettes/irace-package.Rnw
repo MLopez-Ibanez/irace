@@ -334,7 +334,7 @@ algorithms.
 
 \subsection{System requirements}
 \begin{itemize}
-\item \aR ($\text{version} \geq 2.15$) is required for running irace, but you don't
+\item \aR ($\text{version} \geq 3.2.0$) is required for running irace, but you don't
   need to know the \aR language to use it.  \aR is freely available and you can
   download it from the \aR project website
   (\url{https://www.r-project.org}). See \autoref{sec:installation} for a
