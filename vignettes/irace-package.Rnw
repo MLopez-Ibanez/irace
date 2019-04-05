@@ -2473,18 +2473,14 @@ interval as follows:
 \begin{minipage}{0.8\linewidth}
 \begin{CodeInput}
 # name    label   type   range
-p1        "-p "   r      (0.0,1.0)
-s1        "-s "   r      (0.0,1.0)
+p        "-p "    i      (1,100)
+s_f      "-s "   r      (0.0,1.0)
 \end{CodeInput}
 \end{minipage}
 \end{center}
 %
-and the values must be further processed in \parameter{targetRunner}. For
-example, if the surrogate parameter \code{p1}  has value 0.5, mapping it to the
-original interval of $[1,100]$, we obtain a value of $\text{\code{p}} =
-51$. More than one value of the surrogate parameter (\eg 0.501 and 0.502)
-result in the same final value. Parameter \code{s} has an interval that depends
-on the final value of parameter \code{p}, if the surrogate parameter \code{s1} has value 0.3, it must be mapped to the interval $[1, 51]$, giving a value of $\text{\code{s}} = 16$.
+and \parameter{targetRunner} must calculate the actual value of \code{s} as $\min(\max(\text{round}(\code{s_f}\cdot \code{p}, 1)), 100)$. For
+example, if the parameter \code{p}  has value 50 and the surrogate parameter \code{s_f} has value 0.3, then \code{s} will have value 15.
 
 The processing within \parameter{targetRunner} can also split and join
 parameters. For example, assume the following parameters:
@@ -2505,9 +2501,8 @@ $\texttt{m}\cdot 10^\texttt{e}$ for another parameter
 \code{-m} and \code{-e}, computing the strength value and passing the parameter
 \code{--strength} together with its value to the target algorithm.
 
-More complex parameter space constraints may be implemented by means of
-the \parameter{repairConfiguration} function
-(\autoref{sec:repairconf})
+More complex parameter space constraints may be implemented by means of the
+\parameter{repairConfiguration} function (\autoref{sec:repairconf}).
 
 
 \subsection{Unreliable target algorithms and immediate rejection}\label{sec:reject}
