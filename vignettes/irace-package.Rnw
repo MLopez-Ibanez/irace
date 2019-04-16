@@ -2479,8 +2479,8 @@ s_f      "-s "   r      (0.0,1.0)
 \end{minipage}
 \end{center}
 %
-and \parameter{targetRunner} must calculate the actual value of \code{s} as $\min(\max(\text{round}(\code{s_f}\cdot \code{p}, 1)), 100)$. For
-example, if the parameter \code{p}  has value 50 and the surrogate parameter \code{s_f} has value 0.3, then \code{s} will have value 15.
+and \parameter{targetRunner} must calculate the actual value of \code{s} as $\min(\max(\text{round}(\text{\code{s\_f}}\cdot \text{\code{p}}, 1)), 100)$. For
+example, if the parameter \code{p}  has value 50 and the surrogate parameter \code{s\_f} has value 0.3, then \code{s} will have value 15.
 
 The processing within \parameter{targetRunner} can also split and join
 parameters. For example, assume the following parameters:
