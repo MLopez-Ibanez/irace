@@ -1,15 +1,13 @@
 #!/usr/bin/env Rscript
 # Check reverse dependencies
+# You need to install:
+# sudo apt install default-jdk
+#
 require("devtools")
+#devtools.revdep.libpath = "/tmp/irace.revdep"
 devtools.revdep.libpath = "../irace.revdep"
 options(devtools.revdep.libpath = devtools.revdep.libpath)
 if (!dir.exists(devtools.revdep.libpath)) dir.create(devtools.revdep.libpath)
-revdep_check_resume()
-# This fails with:
-
-## trying URL 'https://cran.rstudio.com/src/contrib/rJava_0.9-9.tar.gz'
-## Content type 'application/x-gzip' length 660454 bytes (644 KB)
-## ==================================================
-## downloaded 644 KB
-
-## Error: Command failed (1)
+#revdep_check_resume()
+revdep_check_reset()
+revdep_check()

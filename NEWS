@@ -1,3 +1,5 @@
+3.2 (18/04/2019)
+
  * Values of real-valued parameter are now printed with sufficient precision to
    satisfy `digits` (up to `digits=15`).
                                                         (Manuel López-Ibáñez)
