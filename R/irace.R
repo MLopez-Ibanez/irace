@@ -331,7 +331,7 @@ startParallel <- function(scenario)
       mpiInit(parallel, scenario$debugLevel)
     } else {
       requireNamespace("parallel", quietly = TRUE)
-      if (.Platform$OS.type == 'windows') {
+      if (.Platform$OS.type == 'windows' && is.null(.irace$cluster)) {
         .irace$cluster <- parallel::makeCluster(parallel)
         # In Windows, this needs to be exported, or we get:
         ## Error in checkForRemoteErrors(val) : 

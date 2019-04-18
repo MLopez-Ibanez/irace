@@ -1,5 +1,7 @@
 3.2 (18/04/2019)
 
+ * Fix `irace --check --parallel 2` on Windows.         (Manuel López-Ibáñez)
+                                                         
  * Values of real-valued parameter are now printed with sufficient precision to
    satisfy `digits` (up to `digits=15`).
                                                         (Manuel López-Ibáñez)

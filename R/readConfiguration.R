@@ -913,6 +913,9 @@ checkTargetFiles <- function(scenario, parameters)
     configurations, parameters, instances = scenario$instances,
     instances.ID = instances.ID, seeds = 1234567, scenario, bounds = bounds)
 
+  startParallel(scenario)
+  on.exit(stopParallel(), add = TRUE)
+
   # FIXME: Create a function try.call(err.msg,warn.msg, fun, ...)
   # Executing targetRunner
   cat("# Executing targetRunner (", nrow(configurations), "times)...\n")
