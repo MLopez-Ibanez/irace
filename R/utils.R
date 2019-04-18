@@ -194,7 +194,7 @@ is.null.or.na <- function(x)
 
 is.null.or.empty <- function(x)
 {
-  (length(x) == 0) || (!suppressWarnings(is.na(x)) && length(x) == 1 && is.character(x) && x == "")
+  (length(x) == 0) || (length(x) == 1 && !suppressWarnings(is.na(x)) && is.character(x) && x == "")
 }
 
 is.function.name <- function(FUN)
