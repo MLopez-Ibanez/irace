@@ -2,9 +2,8 @@
 # Check reverse dependencies
 # You need to install:
 # sudo apt install default-jdk
-#
+# sudo R CMD javareconf
 require("devtools")
-#devtools.revdep.libpath = "/tmp/irace.revdep"
 devtools.revdep.libpath = "../irace.revdep"
 options(devtools.revdep.libpath = devtools.revdep.libpath)
 if (!dir.exists(devtools.revdep.libpath)) dir.create(devtools.revdep.libpath)
