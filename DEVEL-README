@@ -101,7 +101,7 @@ RELEASE Process:
 
 5. make releasebuild # Inspect the output for strange files!
 
-6. make winbuild # passes. Wait for email and check logs!
+6. make winbuild # passes. Wait for the 2 emails and check logs!
 
 7. Update NEWS (add version number on top)
 

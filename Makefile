@@ -9,7 +9,8 @@ BUILD_FLAGS=
 REALVERSION=$(PACKAGEVERSION).$(SVN_REV)
 PACKAGEDIR=$(CURDIR)
 FTP_COMMANDS="user anonymous anonymous\nbinary\ncd incoming\nput $(PACKAGE)_$(PACKAGEVERSION).tar.gz\nquit\n"
-WINBUILD_FTP_COMMANDS="user anonymous anonymous\nbinary\ncd R-release\nput $(PACKAGE)_$(PACKAGEVERSION).tar.gz\nquit\n"
+WINBUILD_DEVEL_FTP_COMMANDS="user anonymous anonymous\nbinary\ncd R-devel\nput $(PACKAGE)_$(PACKAGEVERSION).tar.gz\nquit\n"
+WINBUILD_REL_FTP_COMMANDS="user anonymous anonymous\nbinary\ncd R-release\nput $(PACKAGE)_$(PACKAGEVERSION).tar.gz\nquit\n"
 PDFLATEX=pdflatex -shell-escape -file-line-error -halt-on-error -interaction=nonstopmode "\input"
 SED=sed -i.bak
 
@@ -174,9 +175,10 @@ submit:
 	cd $(BINDIR) && echo $(FTP_COMMANDS) | ftp -v -e -g -i -n cran.r-project.org
 	@echo "Don't forget to send email to cran@r-project.org !"
 
-winbuild:
+winbuild: releasebuild
 	@echo "Winbuild: http://win-builder.r-project.org/"
-	cd $(BINDIR) && echo $(WINBUILD_FTP_COMMANDS) | ftp -v -p -e -g -i -n win-builder.r-project.org
+	cd $(BINDIR) && echo $(WINBUILD_DEVEL_FTP_COMMANDS) | ftp -v -p -e -g -i -n win-builder.r-project.org
+	cd $(BINDIR) && echo $(WINBUILD_REL_FTP_COMMANDS) | ftp -v -p -e -g -i -n win-builder.r-project.org
 
 examples: install
 	@echo "*** Makefile: Regenerating data for vignettes and examples. This will take time..."
