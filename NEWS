@@ -1,4 +1,4 @@
-3.2 (18/04/2019)
+3.2 (24/04/2019)
 
  * Fix `irace --check --parallel 2` on Windows.         (Manuel López-Ibáñez)
                                                          
