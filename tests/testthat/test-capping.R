@@ -1,6 +1,5 @@
 context("Capping")
-
-source("common.R")
+withr::with_output_sink("test-capping.Rout", {
 
 nsize <- 0.1
 
@@ -165,7 +164,7 @@ test_that("cap.irace maxExperiments = 1000", {
 
 test_that("cap.irace maxExperiments = 50000", {
   generate.set.seed()
-  cap.irace(maxExperiments = 50000)
+  cap.irace(maxTime = 50000)
 })
 
 test_that("cap.irace targetRunner = target.runner.reject, maxTime = 10000", {
@@ -174,3 +173,4 @@ test_that("cap.irace targetRunner = target.runner.reject, maxTime = 10000", {
 })
 
 
+}) # withr::with_output_sink()

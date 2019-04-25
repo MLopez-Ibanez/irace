@@ -1,6 +1,7 @@
 context("irace")
 
-source("common.R")
+withr::with_output_sink("test-sann-irace.Rout", {
+
 
 ## Functions ##########################################################
 f_rosenbrock <- function (x) {
@@ -115,3 +116,4 @@ test_that("log", {
 
 
 
+}) # withr::with_output_sink()

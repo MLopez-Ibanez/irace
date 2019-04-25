@@ -1,6 +1,6 @@
 context("targeteval")
 
-source("common.R")
+withr::with_output_sink("test-targeteval.Rout", {
 
 test_that("target.evaluator", {
 
@@ -28,3 +28,6 @@ algorithm       "--"                 c          (as,mmas,eas,ras,acs)
    confs <- irace(scenario = scenario, parameters = parameters)
    expect_gt(nrow(confs), 0L)
 })
+
+
+}) # withr::with_output_sink()

@@ -324,7 +324,7 @@ race.print.task <- function(res.symb, Results,
 {
   elapsed_wctime_str <- function(now, start) {
     if (now <= start) return("00:00:00")
-    elapsed <- difftime(now, start.time, units = "secs")
+    elapsed <- difftime(now, start, units = "secs")
     # FIXME: Maybe better and faster if we only print seconds?
     return(format(.POSIXct(elapsed, tz="GMT"), "%H:%M:%S"))
   }

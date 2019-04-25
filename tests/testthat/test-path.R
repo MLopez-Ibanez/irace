@@ -1,5 +1,7 @@
 context("path.rel2abs")
 
+withr::with_output_sink("test-path.Rout", {
+
 test_that("test.path.rel2abs", {
   # Try to set wd; otherwise fail silently.
   old.cwd <- getwd()
@@ -178,3 +180,4 @@ x.r                       N:/tmp  N:/tmp/x.r
   }
 })
 
+}) # with_output_sink()

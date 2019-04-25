@@ -1,13 +1,13 @@
 context("irace")
 
-source("common.R")
+withr::with_output_sink("test-maxTime.Rout", {
 
 target.runner <- function(experiment, scenario)
 {
   configuration     <- experiment$configuration
   tmax <-  as.numeric(configuration[["tmax"]]) 
   temp <-  as.numeric(configuration[["temp"]])
-  time <- abs(rnorm(1, mean=(tmax+temp)/10))
+  time <- max(1, abs(rnorm(1, mean=(tmax+temp)/10)))
   return(list(cost = time, time = time, call = toString(experiment)))
 }
 
@@ -40,3 +40,5 @@ test_that("maxTime 500", {
   generate.set.seed()
   time.irace(maxTime = 1111)
 })
+
+}) # withr::with_output_sink()

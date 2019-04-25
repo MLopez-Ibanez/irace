@@ -1,5 +1,7 @@
 context("similarConfigurations")
 
+withr::with_output_sink("test-similar.Rout", {
+
 test_that("similarConfigurations", {
 
   parameters <- irace:::readParameters(text = '
@@ -40,3 +42,4 @@ c3 "" c ("a","b")
     as.integer(c(1,2,6,10,11,12)))
 })
 
+}) # withr::with_output_sink()

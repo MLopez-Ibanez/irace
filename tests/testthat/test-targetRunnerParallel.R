@@ -1,4 +1,5 @@
 context("targetRunnerParallel")
+withr::with_output_sink("test-targetRunnerParallel.Rout", {
 
 test_that("targetRunnerParallel", {
 
@@ -58,3 +59,5 @@ x "x" i (1,2)
           parameters = parameters),
     "a = 1, b = 2")
 })
+
+}) # with_output_sink()

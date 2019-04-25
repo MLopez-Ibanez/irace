@@ -1,5 +1,7 @@
 context("mlr")
 
+withr::with_output_sink("test-nocran-mlr.Rout", {
+
 test_that("mlr", {
   skip_on_cran()
   suppressWarnings(library(mlr))
@@ -14,3 +16,4 @@ test_that("mlr", {
   tr = tuneParams(lrn, iris.task, hout, par.set = ps, control = ctrl)
   expect_true(TRUE)
 })
+}) # withr::with_output_sink()
