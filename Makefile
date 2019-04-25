@@ -114,7 +114,8 @@ else
 endif
 
 clean: 
-	cd $(PACKAGEDIR) && ($(RM) ./$(PACKAGE)-Ex.R ./src/*.o ./src/*.so; \
+	cd $(PACKAGEDIR) && ($(RM) ./$(PACKAGE)-Ex.R ./src/*.o ./src/*.so \
+		tests/testthat/*.log tests/testthat/*.Rout tests/testthat/irace.Rdata; \
 		find . -name '*.orig' -o -name '.Rhistory' | xargs $(RM) )
 
 ## FIXME: building the vignettes is a bit complicated and sometimes fails.
