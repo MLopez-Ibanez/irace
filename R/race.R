@@ -322,14 +322,17 @@ race.print.task <- function(res.symb, Results,
                             start.time,
                             bound, capping)
 {
-  time.diff <- difftime(Sys.time(), start.time, units = "secs")
-  # FIXME: Maybe better and faster if we only print seconds?
-  time.str <- format(.POSIXct(time.diff, tz="GMT"), "%H:%M:%S")
+  elapsed_wctime_str <- function(now, start) {
+    if (now <= start) return("00:00:00")
+    elapsed <- difftime(now, start.time, units = "secs")
+    # FIXME: Maybe better and faster if we only print seconds?
+    return(format(.POSIXct(elapsed, tz="GMT"), "%H:%M:%S"))
+  }
+  time_str <- elapsed_wctime_str(Sys.time(), start.time)
   cat(sprintf("|%s|%11d|", res.symb, instance))
   if (capping) cat(sprintf("%8.2f|", if(is.null(bound)) NA else bound))
   cat(sprintf("%11d|%11d|%#15.10g|%11d|%s",
-              sum(alive), id.best, mean.best, experimentsUsed,
-              time.str))
+              sum(alive), id.best, mean.best, experimentsUsed, time_str))
   
   if (current.task > 1 && sum(alive) > 1) {
     conc <- concordance(Results[1:current.task, alive, drop = FALSE])

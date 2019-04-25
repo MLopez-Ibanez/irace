@@ -1,3 +1,6 @@
+ * Do not print "23:59:59" when wall-clock time is actually close to zero.
+                                                        (Manuel López-Ibáñez)
+
 3.2 (24/04/2019)
 
  * Fix `irace --check --parallel 2` on Windows.         (Manuel López-Ibáñez)
