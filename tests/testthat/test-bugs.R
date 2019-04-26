@@ -1,7 +1,5 @@
 context("bugs")
 
-withr::with_output_sink("test-bugs.Rout", {
-
 test_that("bug_large_new_instances", {
   skip_on_cran()
 
@@ -48,4 +46,3 @@ test_that("target.runner as string (global)", {
   expect_is(scenario$targetRunner, "function")
 })
 
-}) # withr::with_output_sink()

@@ -1,7 +1,5 @@
-context("GenericWrapper4AC")
-
 # This requires the installation of https://github.com/automl/GenericWrapper4AC
-withr::with_output_sink("test-GenericWrapper4AC.Rout", {
+context("GenericWrapper4AC")
 
 test_that("GenericWrapper4AC", {
   skip_on_cran()
@@ -121,5 +119,3 @@ test_that("GenericWrapper4AC", {
   expect_error(irace:::execute.experiments(experiments, scenario), "ABORT")
 
 })
-
-}) # withr::with_output_sink()

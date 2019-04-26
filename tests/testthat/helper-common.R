@@ -6,3 +6,9 @@ generate.set.seed <- function()
   set.seed(seed)
 }
 
+test_irace_detectCores <- function()
+{
+  if (identical(Sys.getenv("NOT_CRAN"), "true"))
+    return(parallel::detectCores())
+  return(1L)
+}

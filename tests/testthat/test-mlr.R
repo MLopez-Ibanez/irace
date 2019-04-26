@@ -1,19 +1,16 @@
 context("mlr")
 
-withr::with_output_sink("test-nocran-mlr.Rout", {
-
 test_that("mlr", {
   skip_on_cran()
-  suppressWarnings(library(mlr))
+  suppressWarnings(skip_if_not_installed("mlr", minimum_version = "2.14.1"))
 
-  ps = makeParamSet(
-    makeNumericParam("cp", lower = 0.1, upper = 1),
-    makeIntegerParam("minsplit", lower = 1, upper = 10)
+  ps = mlr::makeParamSet(
+    mlr::makeNumericParam("cp", lower = 0.1, upper = 1),
+    mlr::makeIntegerParam("minsplit", lower = 1, upper = 10)
   )
-  lrn = makeLearner("classif.rpart")
+  lrn = mlr::makeLearner("classif.rpart")
   n = 30
-  ctrl = makeTuneControlIrace(maxExperiments = n, nbIterations = 1L, minNbSurvival = 1)
-  tr = tuneParams(lrn, iris.task, hout, par.set = ps, control = ctrl)
+  ctrl = mlr::makeTuneControlIrace(maxExperiments = n, nbIterations = 1L, minNbSurvival = 1)
+  tr = mlr::tuneParams(lrn, iris.task, hout, par.set = ps, control = ctrl)
   expect_true(TRUE)
 })
-}) # withr::with_output_sink()

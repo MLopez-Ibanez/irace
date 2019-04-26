@@ -1,14 +1,12 @@
 context("path.rel2abs")
 
-withr::with_output_sink("test-path.Rout", {
-
 test_that("test.path.rel2abs", {
   # Try to set wd; otherwise fail silently.
   old.cwd <- getwd()
-  if (is.null(old.cwd)) return(TRUE)
+  skip_if(is.null(old.cwd))
   on.exit(setwd(old.cwd), add = TRUE)
-  try (setwd("/tmp"))
-  if (getwd() != "/tmp") return(TRUE)
+
+  tryCatch(setwd("/x"), error = function(e) { skip(e) })
   
   testcases <- read.table(text='
 "."                         "/tmp"  "/tmp"
@@ -180,4 +178,3 @@ x.r                       N:/tmp  N:/tmp/x.r
   }
 })
 
-}) # with_output_sink()

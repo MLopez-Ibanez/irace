@@ -86,7 +86,7 @@ test_that("parallel", {
   # Reproducible results
   generate.set.seed()
   weights <- rnorm(200, mean = 0.9, sd = 0.02)
-  sann.irace(instances = weights, parallel = 2)
+  sann.irace(instances = weights, parallel = test_irace_detectCores())
 })
 
 test_that("parallel reject", {
@@ -94,12 +94,11 @@ test_that("parallel reject", {
   # Reproducible results
   generate.set.seed()
   weights <- rnorm(200, mean = 0.9, sd = 0.02)
-  sann.irace(instances = weights, parallel = 2, targetRunner = target.runner.reject)
+  sann.irace(instances = weights, parallel = test_irace_detectCores(), targetRunner = target.runner.reject)
 })
 
 test_that("deterministic", {
   skip_on_cran()
-
   # Reproducible results
   generate.set.seed()
   weights <- rnorm(200, mean = 0.9, sd = 0.02)

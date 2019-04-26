@@ -1,7 +1,5 @@
 context("Test forbidden")
 
-withr::with_output_sink("test-forbidden.Rout", {
-
 test_that("checkForbidden", {
   
 test.checkForbidden <- function(param.file)
@@ -24,4 +22,3 @@ NA        NA   "x3"   4.5   "low"
   test.checkForbidden("logparameters.txt")
 })
 
-}) # withr::with_output_sink()

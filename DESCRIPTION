@@ -24,7 +24,9 @@ Suggests:
         Rmpi (>= 0.6.0),
         parallel,
         knitr,
-        testthat
+        testthat,
+        withr,
+        mlr
 VignetteBuilder: knitr
 License: GPL (>= 2)
 URL: http://iridia.ulb.ac.be/irace

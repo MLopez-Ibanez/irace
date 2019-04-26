@@ -144,7 +144,7 @@ cap.irace <- function(...)
                    capping = TRUE,
                    boundMax = 80,
                    testType = "t-test",
-                   parallel = 2)
+                   parallel = test_irace_detectCores())
   scenario <- modifyList(scenario, args)
   scenario <- checkScenario (scenario)
 
@@ -168,6 +168,7 @@ test_that("cap.irace maxExperiments = 50000", {
 })
 
 test_that("cap.irace targetRunner = target.runner.reject, maxTime = 10000", {
+  skip_on_cran() # This sometimes fails randomly
   generate.set.seed()
   cap.irace(targetRunner = target.runner.reject, maxTime = 10000)
 })
