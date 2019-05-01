@@ -188,7 +188,13 @@ If the installation directory of `irace` is `C:/R/irace/`, you can invoke
 `irace` by opening a terminal (launch the program `cmd.exe`) and executing:
 
 ```bash
-    C:\> C:\R\irace\bin\irace.bat --help
+    C:\> C:\R\irace\bin\x64\irace.exe --help
+```
+
+or if you are in a 32-bits system, executing:
+
+```bash
+    C:\> C:\R\irace\bin\i386\irace.exe --help
 ```
 
 You can also launch irace by opening the R console and executing:

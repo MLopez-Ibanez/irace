@@ -340,9 +340,8 @@ algorithms.
   (\url{https://www.r-project.org}). See \autoref{sec:installation} for a
   quick installation guide of \aR.
 
-\item For GNU/Linux and OS X, the command-line executables \code{irace} and
-  \code{parallel-irace} require GNU Bash. There is also an \code{irace.bat} for
-  Windows. Individual examples may require additional software.
+\item For GNU/Linux and OS X, the command-line executable
+  \code{parallel-irace} requires GNU Bash.  Individual examples may require additional software.
 \end{itemize}
 
 \subsection{\irace installation} \label{sec:irace install}
@@ -480,7 +479,7 @@ irace --help
 On Windows, you need to add both \aR and the installation path of \irace to the
 environment variable \code{PATH}. To edit the \code{PATH}, search for
 ``Environment variables'' in the control panel, edit \code{PATH} and add
-a string similar to \path{C:\R_PATH\bin;C:\IRACE_HOME\bin} where \code{R_PATH}
+a string similar to \path{C:\R_PATH\bin;C:\IRACE_HOME\bin\x64\} where \code{R_PATH}
 is the installation path of \aR and \code{IRACE_HOME} is the installation path
 of \irace. If \irace was installed locally, you also need to edit the
 environment variable \code{R_LIBS} to add \code{R_LIBS_USER}. Then, open a new
@@ -488,7 +487,7 @@ terminal (run program \code{cmd.exe}) and launch \irace as:
 %
 %<<win_irace_help,engine='bash',eval=FALSE>>=
 \begin{lstlisting}[style=BashInputStyle]
-irace.bat --help
+irace.exe --help
 \end{lstlisting}
 %@
 
@@ -708,7 +707,7 @@ checkIraceScenario(scenario = scenario)
 \begin{itemize}
 \item{%
 \textbf{From the command-line console}, call the command (on Windows, you should execute
-  \code{irace.bat}):
+  \code{irace.exe}):
 \begin{lstlisting}[style=BashInputStyle]
 cd ~/tuning/
 # $IRACE_HOME is the installation directory of irace

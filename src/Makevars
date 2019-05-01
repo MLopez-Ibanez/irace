@@ -1,0 +1,15 @@
+# 							-*- mode: makefile -*-
+SOURCES = iracexe/irace.c
+OBJECTS = $(SOURCES:.c=.o)
+EXE=
+
+all: iracexe/irace$(EXE)
+
+iracexe/irace$(EXE): iracexe/irace.o
+	$(CC) $(PKG_CPPFLAGS) $(CFLAGS)  $<  -o $@
+
+clean:
+	$(RM) -f iracexe/*.o iracexe/irace$(EXE)
+
+
+
