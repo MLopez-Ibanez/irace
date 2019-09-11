@@ -96,10 +96,10 @@ nonreleasevignette:
 	$(MAKE) vignettes
 	$(MAKE) vignettes/$(PACKAGE)-package.bib
 
-releasebuild: BUILD_FLAGS=--compact-vignettes=both
+releasebuild: BUILD_FLAGS=--compact-vignettes=qpdf
 releasebuild: releasevignette
 	cd $(BINDIR) &&	R CMD build $(BUILD_FLAGS) $(PACKAGEDIR) && tar -atvf $(PACKAGE)_$(PACKAGEVERSION).tar.gz
-# Let's try to compact vignettes further
+# Let's try to compact vignettes further (not needed for R > 3.6.1)
 	./scripts/recompact.sh $(BINDIR)/$(PACKAGE)_$(PACKAGEVERSION).tar.gz \
 		$(PACKAGE)/inst/doc/$(PACKAGE)-package.pdf
 cran : releasebuild
