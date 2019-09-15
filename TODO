@@ -14,8 +14,6 @@ TODO R package:
  
  * Add inst/COPYRIGHTS. See race package.
 
- * How to run individual tests from the make. Check testthat documentation.
- 
  * Fix check-reverse so we can check reverse dependencies before
    uploading to CRAN.
 
@@ -214,7 +212,8 @@ TODO General (in order of importance):
    debug-level 4 -> extra verbose internal information
    
  * It may be possible to byte-compile the conditions as they are read.
-   This may speed-up conditionsSatisfied().
+   This may speed up conditionsSatisfied(). However, compiled TRUE conditions
+   are slower than byte-compiled, so it doesn't seem a big gain to compile those. 
 
  * JEREMIE: I would like to try a version of I-Race with a kind of
    bounding in the probability vectors, something equivalent somehow
@@ -277,6 +276,9 @@ TODO General (in order of importance):
 ------------------------------------------------------------------------------
 
 DONE:
+
+ * How to run individual tests from the make. Check testthat documentation.
+   [DONE by Manuel]
 
  * Use testthat package for testing: http://r-pkgs.had.co.nz/tests.html
    [DONE by Manuel]
