@@ -7,8 +7,8 @@
 #' @param scenario Data structure containing \pkg{irace} settings.The data structure
 #' has to be the one returned by the function \code{\link{defaultScenario}} and
 #' \code{\link{readScenario}}.
-#' @param parameters A data structure similar to that provided
-#' by the \code{\link{readParameters}} function.
+#' @param parameters Data structure containing the parameter definition. The data 
+#'   structure has to be the one returned by the function \code{\link{readParameters}}.
 #'
 #' @return A list with the following elements:
 #'   \describe{

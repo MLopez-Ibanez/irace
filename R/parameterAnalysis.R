@@ -8,7 +8,8 @@
 #'   
 #' @param configurations Data frame containing target algorithms configurations 
 #'   in the format used by \pkg{irace}.
-#' @param parameters List of target algorithm parameters in the \pkg{irace} format.
+#' @param parameters A data structure similar to that provided by the 
+#' \code{\link{readParameters}} function.
 #' @param rows Number of plots per column.
 #' @param cols Number of plots per row.
 #' @param filename Filename prefix to generate the plots. If \code{NULL} the plot 
@@ -210,7 +211,8 @@ parcoordlabel <- function (configurations, parameters, col = "green", lty = 1,
 #'   
 #' @param configurations Data frame containing target algorithms configurations 
 #'   in the format used by \pkg{irace}.
-#' @param parameters List of target algorithm parameters in the \pkg{irace} format.
+#' @param parameters A data structure similar to that provided by the 
+#' \code{\link{readParameters}} function.
 #' @param param_names Parameters names that should be included. Default: parameters$names.
 #' @param hierarchy If \code{TRUE} conditional parameters will be displayed in a different 
 #'   plot. Default \code{TRUE}.

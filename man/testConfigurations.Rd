@@ -13,8 +13,8 @@ testConfigurations(configurations, scenario, parameters)
 has to be the one returned by the function \code{\link{defaultScenario}} and
 \code{\link{readScenario}}.}
 
-\item{parameters}{A data structure similar to that provided
-by the \code{\link{readParameters}} function.}
+\item{parameters}{Data structure containing the parameter definition. The data 
+structure has to be the one returned by the function \code{\link{readParameters}}.}
 }
 \value{
 A list with the following elements:

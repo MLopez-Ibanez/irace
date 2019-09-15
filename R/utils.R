@@ -534,8 +534,8 @@ configurations.print <- function(configurations, metadata = FALSE)
 #' command-line.
 #' 
 #' @param configurations a data frame containing the configurations (one per row).
-#' @param parameters A data structure similar to that provided by the 
-#' \code{\link{readParameters}} function.
+#' @param parameters Data structure containing the parameter definition. The data 
+#'   structure has to be the one returned by the function \code{\link{readParameters}}.
 #' 
 #' @return None.
 #'

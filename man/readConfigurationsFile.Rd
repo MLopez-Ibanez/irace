@@ -9,7 +9,8 @@ readConfigurationsFile(filename, parameters, debugLevel = 0, text)
 \arguments{
 \item{filename}{A filename from which the configurations should be read.}
 
-\item{parameters}{List of target algorithm parameters in the \pkg{irace} format.}
+\item{parameters}{A data structure similar to that provided by the 
+\code{\link{readParameters}} function.}
 
 \item{debugLevel}{Level of debug. Default: 0.}
 

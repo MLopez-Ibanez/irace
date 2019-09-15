@@ -64,8 +64,19 @@ Either 'file' or 'text' must be given. If 'file' is given, the
 }
 \examples{
  ## Read the parameters directly from text
- parameters.table <- 'tmax "" i (2, 10)
- temp "" r (10, 50)
+ parameters.table <- '
+ # name       switch           type values               [conditions (using R syntax)]
+ algorithm    "--"             c    (as,mmas,eas,ras,acs)
+ localsearch  "--localsearch " c    (0, 1, 2, 3)
+ alpha        "--alpha "       r    (0.00, 5.00)
+ beta         "--beta "        r    (0.00, 10.00)
+ rho          "--rho  "        r    (0.01, 1.00)
+ ants         "--ants "        i            (5, 100)
+ q0           "--q0 "          r    (0.0, 1.0)           | algorithm == "acs"
+ rasrank      "--rasranks "    i    (1, 100)             | algorithm == "ras"
+ elitistants  "--elitistants " i    (1, 750)             | algorithm == "eas"
+ nnls         "--nnls "        i    (5, 50)              | localsearch \%in\% c(1,2,3)
+ dlb          "--dlb "         c    (0, 1)               | localsearch \%in\% c(1,2,3)
  '
  parameters <- readParameters(text=parameters.table)
  parameters

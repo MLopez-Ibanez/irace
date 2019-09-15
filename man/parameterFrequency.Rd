@@ -11,7 +11,8 @@ parameterFrequency(configurations, parameters, rows = 4, cols = 3,
 \item{configurations}{Data frame containing target algorithms configurations 
 in the format used by \pkg{irace}.}
 
-\item{parameters}{List of target algorithm parameters in the \pkg{irace} format.}
+\item{parameters}{A data structure similar to that provided by the 
+\code{\link{readParameters}} function.}
 
 \item{rows}{Number of plots per column.}
 

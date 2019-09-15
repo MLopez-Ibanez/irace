@@ -12,7 +12,8 @@ parallelCoordinatesPlot(configurations, parameters,
 \item{configurations}{Data frame containing target algorithms configurations 
 in the format used by \pkg{irace}.}
 
-\item{parameters}{List of target algorithm parameters in the \pkg{irace} format.}
+\item{parameters}{A data structure similar to that provided by the 
+\code{\link{readParameters}} function.}
 
 \item{param_names}{Parameters names that should be included. Default: parameters$names.}
 

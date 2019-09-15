@@ -5,7 +5,8 @@
 #'  to match the parameters description provided.
 #' 
 #' @param filename A filename from which the configurations should be read.
-#' @param parameters List of target algorithm parameters in the \pkg{irace} format.
+#' @param parameters A data structure similar to that provided by the 
+#' \code{\link{readParameters}} function.
 #' @param debugLevel Level of debug. Default: 0.
 #' @param text (optional) Character string: if file is not supplied and this is,
 #'  then parameters are read from the value of text via a text connection.

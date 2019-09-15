@@ -9,8 +9,8 @@ configurations.print.command(configurations, parameters)
 \arguments{
 \item{configurations}{a data frame containing the configurations (one per row).}
 
-\item{parameters}{A data structure similar to that provided by the 
-\code{\link{readParameters}} function.}
+\item{parameters}{Data structure containing the parameter definition. The data 
+structure has to be the one returned by the function \code{\link{readParameters}}.}
 }
 \value{
 None.
