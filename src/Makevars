@@ -1,15 +1,13 @@
 # 							-*- mode: makefile -*-
+EXE=
 SOURCES = iracebin/irace.c
 OBJECTS = $(SOURCES:.c=.o)
-EXE=
+iraceEXE= iracebin/irace$(EXE)
 
-all: iracebin/irace$(EXE)
+all: $(iraceEXE)
 
-iracebin/irace$(EXE): iracebin/irace.o
+$(iraceEXE): iracebin/irace.o
 	$(CC) $(PKG_CPPFLAGS) $(CFLAGS)  $<  -o $@
 
 clean:
-	$(RM) -f iracebin/*.o iracebin/irace$(EXE)
-
-
-
+	$(RM) -f iracebin/*.o $(iraceEXE)

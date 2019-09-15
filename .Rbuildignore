@@ -33,6 +33,8 @@ DEVEL-README
 ^pkgdown$
 ^revdep$
 ^scenario\.txt$
+^src/iracebin/irace$
+^src/iracebin/irace.exe$
 ^svn_version
 ^testing
 ^tmp
