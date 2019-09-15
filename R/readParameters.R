@@ -55,8 +55,19 @@
 #'
 #' @examples
 #'  ## Read the parameters directly from text
-#'  parameters.table <- 'tmax "" i (2, 10)
-#'  temp "" r (10, 50)
+#'  parameters.table <- '
+#'  # name       switch           type values               [conditions (using R syntax)]
+#'  algorithm    "--"             c    (as,mmas,eas,ras,acs)
+#'  localsearch  "--localsearch " c    (0, 1, 2, 3)
+#'  alpha        "--alpha "       r    (0.00, 5.00)
+#'  beta         "--beta "        r    (0.00, 10.00)
+#'  rho          "--rho  "        r    (0.01, 1.00)
+#'  ants         "--ants "        i            (5, 100)
+#'  q0           "--q0 "          r    (0.0, 1.0)           | algorithm == "acs"
+#'  rasrank      "--rasranks "    i    (1, 100)             | algorithm == "ras"
+#'  elitistants  "--elitistants " i    (1, 750)             | algorithm == "eas"
+#'  nnls         "--nnls "        i    (5, 50)              | localsearch %in% c(1,2,3)
+#'  dlb          "--dlb "         c    (0, 1)               | localsearch %in% c(1,2,3)
 #'  '
 #'  parameters <- readParameters(text=parameters.table)
 #'  parameters
@@ -142,17 +153,16 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
   # Subordinate parameter: ordering of the parameters according to
   # conditions hierarchy
   # *  The conditions hierarchy is an acyclic directed graph.
-  #    Functions treeLevel() and treeLevelAux() compute an order on vertex s.t:
+  #    Function treeLevel() computes an order on vertex s.t:
   #    level(A) > level(B)  <=>  There is an arc A ---> B
   #    (A depends on B to be activated)
   # *  If a cycle is detected, execution is stopped
   # *  If a parameter depends on another one not defined, execution is stopped
-  treeLevelAux <- function(paramName, conditionsTree, rootParam)
+  treeLevel <- function(paramName, varsTree, rootParam = paramName)
   {
-    ## FIXME: In R 3.2, all.vars does not work with byte-compiled expressions,
-    ## thus we do not byte-compile them; but we could use
-    ## all.vars(.Internal(disassemble(condition))[[3]][[1]])
-    vars <- all.vars (conditionsTree[[paramName]])
+    # The last parameter is used to record the root parameter of the
+    # recursive call in order to detect the presence of cycles.
+    vars <- varsTree[[paramName]]
     if (length(vars) == 0) {
       return (1) # This parameter does not have conditions
     } else {
@@ -167,26 +177,19 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
                       "One parameter of this cycle is '", rootParam, "'")
         
         # The following line detects a missing definition
-        if (child %!in% names(conditionsTree))
+        if (child %!in% names(varsTree))
           irace.error("A parameter definition is missing! ",
                       "Check definition of parameters.\n",
                       "Parameter '", paramName,
                       "' depends on '", child, "' which is not defined.")
         
-        level <- treeLevelAux(child, conditionsTree, rootParam)
+        level <- treeLevel(child, varsTree, rootParam)
         if (level > maxChildLevel)
           maxChildLevel <- level
       }
       level <- maxChildLevel + 1
     }
     return (level)
-  }
-
-  treeLevel <- function(paramName, conditionsTree)
-  {
-    # The last parameter is used to record the root parameter of the
-    # recursive call in order to detect the presence of cycles.
-    return (treeLevelAux(paramName, conditionsTree, paramName))
   }
 
   errReadParameters <- function(filename, line, context, ...)
@@ -385,17 +388,19 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
     irace.error("No parameter definition found: ",
                 "check that the parameter file is not empty")
   }
+
+  # Obtain the variables in each condition
+  ## FIXME: In R 3.2, all.vars does not work with byte-compiled expressions,
+  ## thus we do not byte-compile them; but we could use
+  ## all.vars(.Internal(disassemble(condition))[[3]][[1]])
+  parameters$depends <- lapply(conditions, all.vars)
   # Sort parameters in 'conditions' in the proper order according to
   # conditions
-  hierarchyLevel <- c()
-  for (paramName in parameters$names)
-    hierarchyLevel <- c(hierarchyLevel, treeLevel(paramName, conditions))
-
-  # FIXME: Check that the parameter names that appear in the
-  # conditions all appear in names to catch typos.
-  parameters$conditions <- conditions[order(hierarchyLevel)]
+  hierarchyLevel <- sapply(parameters$names, treeLevel,
+                           varsTree = parameters$depends)
   parameters$hierarchy <- hierarchyLevel
-
+  parameters$conditions <- conditions[order(hierarchyLevel)]
+  
   names(parameters$types) <- 
     names(parameters$switches) <- 
       names(parameters$domain) <- 
@@ -405,14 +410,15 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
 
   # Print the hierarchy vector:
   if (debugLevel >= 1) {
-    cat ("# --- Hierarchy vector ---\n",
-         "# Param : Level\n",
-         paste(names(parameters$hierarchy), ":",
-               parameters$hierarchy, collapse = "\n"),
-         "\n# ------------------------\n", sep = "")
+    cat ("# --- Parameters Hierarchy ---\n")
+    print(data.frame(Parameter = paste0(names(parameters$hierarchy)),
+                     Level = parameters$hierarchy,
+                     "Depends on" = sapply(parameters$depends, paste0, collapse=", ")),
+                     row.names=NULL)
+    cat("\n# ------------------------\n")
   }
 
-  irace.assert(length(conditions) == length(parameters$names))
+  irace.assert(length(parameters$conditions) == length(parameters$names))
 
   parameters$nbParameters <- length(parameters$names)
   parameters$nbFixed <- sum(parameters$isFixed == TRUE)
