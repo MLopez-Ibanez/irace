@@ -2709,7 +2709,6 @@ wrong with your target algorithm. Once you have fixed the bugs, you should
 remove the use of \code{valgrind}.
 
 
-
 \subsection{My program may be buggy and run into an infinite loop. Is it possible to set a maximum timeout?}\label{faq:timeout}
 
 We are not aware of any way to achieve this using \aR. However, in
@@ -2756,6 +2755,14 @@ If the path is set correctly and the problem persists, please check these instru
 
 This is a bug in \aR 3.2.0 on Windows. The solution is to update your version of
 \aR.
+
+\subsection{Warning: \code{In read.table(filename,}  \code{header = TRUE,} \code{colClasses = "character",} \code{: incomplete final line found by} \ldots}
+
+This is a warning given by \aR when the last line of an input file does not
+finish with the newline character. The warning is harmless and can be
+ignored. If you want to suppress it, just open the file and press the
+\code{ENTER} key at the end of the last line of the file.
+
 
 \subsection{How are relative filesystem paths interpreted by \irace?}\label{faq:relpaths}
 
