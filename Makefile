@@ -146,8 +146,8 @@ vignettes: version vignettes/$(PACKAGE)-package.Rnw vignettes/section/irace-opti
 # Rscript -e "library(knitr); knit('$(PACKAGE)-package.Rnw', output='$(PACKAGE)-package.tex', quiet = TRUE)" \
 # && $(PDFLATEX) $(PACKAGE)-package.tex && bibtex $(PACKAGE)-package && $(PDFLATEX) $(PACKAGE)-package.tex && $(PDFLATEX) $(PACKAGE)-package.tex && $(RM) $(PACKAGE)-package.tex
 
-pdf: install
-	cd $(BINDIR) &&	R CMD Rd2pdf --force --no-preview --batch --output=$(PACKAGE).pdf ~/R/x86_64-pc-linux-gnu-library/3.2/irace
+pdf: build
+	R CMD Rd2pdf --force --no-preview --batch --output=$(BINDIR)/$(PACKAGE)_$(PACKAGEVERSION).pdf $(PACKAGEDIR)/
 
 version :
 	@printf "#' irace.version\n#'\n#' A character string containing the version of \\pkg{irace}.\n#'\n#' @export\nirace.version <- '$(REALVERSION)'\n" > $(PACKAGEDIR)/R/version.R
