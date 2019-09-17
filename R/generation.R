@@ -182,7 +182,7 @@ sampleModel <- function (parameters, eliteConfigurations, model,
             if (newValAsInt == length(possibleValues) + 1L)
               newValAsInt <- length(possibleValues)
             
-            irace.assert(value >= 1L && value <= length(possibleValues))
+            irace.assert(newValAsInt >= 1L && newValAsInt <= length(possibleValues))
             # Get back to categorical values, find the one corresponding to the
             # newVal
             newVal <- possibleValues[newValAsInt]

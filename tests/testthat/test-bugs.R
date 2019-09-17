@@ -46,3 +46,15 @@ test_that("target.runner as string (global)", {
   expect_is(scenario$targetRunner, "function")
 })
 
+
+test_that("ordered assert", {
+  library(irace)
+  parameters <- readParameters(text='
+x "" o (a,b,c,d)
+')
+  confs <- irace:::sampleUniform(parameters, 1, 0)
+  confs$.ID. <- 1
+  model <- irace:::initialiseModel(parameters, confs, 0)
+  confs <- irace:::sampleModel(parameters, confs, model, 1, 0)
+  expect_true(confs$x %in% parameters$domain$x)
+})

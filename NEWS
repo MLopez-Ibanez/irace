@@ -1,3 +1,6 @@
+ * Fix invalid assert with ordered parameters.
+                                                (Leslie Pérez Cáceres)
+                                                
  * The `irace` executable (`irace.exe` on Windows) is a compiled binary instead
    of a script. On Windows, `irace.exe` replaces `irace.bat`
 
