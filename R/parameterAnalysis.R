@@ -141,9 +141,10 @@ parcoordlabel <- function (configurations, parameters, col = "green", lty = 1,
                            lblcol="blue", title="Parameters parallel coordinates", ...)
 {
   replace.cat <- function(y, vals){
+    x <- rep(NA, length(y))
     for(i in 1:length(vals))
-      y[y %in% vals[i]] <- i
-    return(y)
+      x[y %in% vals[i]] <- i
+    return(x)
   }
     
   replace.na <- function(x,r) {
