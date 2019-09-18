@@ -163,32 +163,30 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
     # The last parameter is used to record the root parameter of the
     # recursive call in order to detect the presence of cycles.
     vars <- varsTree[[paramName]]
-    if (length(vars) == 0) {
-      return (1) # This parameter does not have conditions
-    } else {
-      # This parameter has some conditions
-      # Recursive call: level <- MAX( level(m) : m in children )
-      maxChildLevel <- 0
-      for (child in vars) {
-        # The following line detects cycles
-        if (child == rootParam)
-          irace.error("A cycle detected in subordinate parameters! ",
-                      "Check definition of conditions.\n",
-                      "One parameter of this cycle is '", rootParam, "'")
+    if (length(vars) == 0) return (1) # This parameter does not have conditions
+
+    # This parameter has some conditions
+    # Recursive call: level <- MAX( level(m) : m in children )
+    maxChildLevel <- 0
+    for (child in vars) {
+      # The following line detects cycles
+      if (child == rootParam)
+        irace.error("A cycle detected in subordinate parameters! ",
+                    "Check definition of conditions.\n",
+                    "One parameter of this cycle is '", rootParam, "'")
+      
+      # The following line detects a missing definition
+      if (child %!in% names(varsTree))
+        irace.error("A parameter definition is missing! ",
+                    "Check definition of parameters.\n",
+                    "Parameter '", paramName,
+                    "' depends on '", child, "' which is not defined.")
         
-        # The following line detects a missing definition
-        if (child %!in% names(varsTree))
-          irace.error("A parameter definition is missing! ",
-                      "Check definition of parameters.\n",
-                      "Parameter '", paramName,
-                      "' depends on '", child, "' which is not defined.")
-        
-        level <- treeLevel(child, varsTree, rootParam)
-        if (level > maxChildLevel)
-          maxChildLevel <- level
-      }
-      level <- maxChildLevel + 1
+      level <- treeLevel(child, varsTree, rootParam)
+      if (level > maxChildLevel)
+        maxChildLevel <- level
     }
+    level <- maxChildLevel + 1
     return (level)
   }
 
