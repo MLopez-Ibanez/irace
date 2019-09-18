@@ -367,7 +367,8 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
                            "expected condition after '|'")
       # FIXME: Provide a better error for invalid conditions like "a 2 0"
       conditions[[param.name]] <- NA
-      try(conditions[[param.name]] <- parse(text=result$match))
+      # keep.source = FALSE avoids adding useless attributes.
+      try(conditions[[param.name]] <- parse(text=result$match, keep.source = FALSE))
       if (!is.expression (conditions[[param.name]]))
         errReadParameters (filename, nbLines, line,
                            "invalid condition after '|'")
