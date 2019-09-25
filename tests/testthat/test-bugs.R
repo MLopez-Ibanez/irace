@@ -1,5 +1,7 @@
 context("bugs")
 
+withr::with_output_sink("test-bugs.Rout", {
+
 test_that("bug_large_new_instances", {
   skip_on_cran()
 
@@ -58,3 +60,6 @@ x "" o (a,b,c,d)
   confs <- irace:::sampleModel(parameters, confs, model, 1, 0)
   expect_true(confs$x %in% parameters$domain$x)
 })
+
+}) # withr::with_output_sink()
+
