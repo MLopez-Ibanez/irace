@@ -109,7 +109,7 @@ check: build
 ifdef TEST
 	_R_CHECK_FORCE_SUGGESTS_=false NOT_CRAN=true R --slave -e 'devtools::test(filter="$(TEST)")'
 else
-	test -d ./GenericWrapper4AC/build || (cd genericWrapper4AC && python3 setup.py install --user)
+	test -d ./GenericWrapper4AC/build || (cd GenericWrapper4AC && python3 setup.py install --user)
 	cd $(BINDIR) && (_R_CHECK_FORCE_SUGGESTS_=false NOT_CRAN=true R CMD check --run-donttest --timings $(PACKAGE)_$(PACKAGEVERSION).tar.gz; cat $(PACKAGE).Rcheck/$(PACKAGE)-Ex.timings)
 endif
 
