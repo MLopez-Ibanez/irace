@@ -103,7 +103,7 @@ releasebuild: releasevignette
 	./scripts/recompact.sh $(BINDIR)/$(PACKAGE)_$(PACKAGEVERSION).tar.gz \
 		$(PACKAGE)/inst/doc/$(PACKAGE)-package.pdf
 cran : releasebuild
-	cd $(BINDIR) && _R_CHECK_FORCE_SUGGESTS_=false R CMD check --as-cran $(PACKAGE)_$(PACKAGEVERSION).tar.gz
+	cd $(BINDIR) && _R_CHECK_FORCE_SUGGESTS_=false _R_CHECK_CRAN_INCOMING_=0 R CMD check --as-cran $(PACKAGE)_$(PACKAGEVERSION).tar.gz
 
 check: build
 ifdef TEST
