@@ -772,10 +772,12 @@ is.file.extension <- function(filename, ext)
 
 irace_save_logfile <- function(iraceResults, scenario)
 {
-  if (is.null.or.empty(scenario$logFile)) invisible()
+  if (is.null.or.empty(scenario$logFile)) return(invisible())
   cwd <- setwd(scenario$execDir)
   # FIXME: Use saveRDS
   # FIXME: Bump to version=3 when we bump the minimum R version to >=3.6
+  print(scenario$logFile)
+  print(is.null.or.empty(scenario$logFile))
   save (iraceResults, file = scenario$logFile, version = 2)
   setwd (cwd)
 }
