@@ -16,7 +16,7 @@ iraceResults$scenario$testInstances <-
   paste0(iraceResults$scenario$testInstancesDir, "/",
          basename(iraceResults$scenario$testInstances))
 
-save(iraceResults, file = "irace-acotsp.Rdata")
+save(iraceResults, file = "irace-acotsp.Rdata", version = 2)
 
 ###############################
 ### Small example file
@@ -38,7 +38,7 @@ output[[1]] <- list(cost=iraceResults$experiments[1,1], time=as.numeric(iraceRes
 output[[2]] <- list(cost=iraceResults$experiments[1,2], time=as.numeric(iraceResults$experimentLog[2,"time"]))
 
 # save in the folder
-save(experiment, output, file="examples.Rdata")
+save(experiment, output, file="examples.Rdata", version = 2)
 
 library(irace)
 
@@ -119,7 +119,7 @@ irace(scenario = scenario, parameters = parameters)
 load("sann.rda")
 iraceResults$scenario$execDir <- "./"
 iraceResults$scenario$logFile <- "./sann.rda"
-save(iraceResults, file="sann.rda")
+save(iraceResults, file="sann.rda", version = 2)
 
 # Create log-ablation.Rdata
 ablation(iraceLogFile = "irace-acotsp.Rdata", src = 1, target = 60)

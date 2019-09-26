@@ -1,3 +1,6 @@
+ * Rdata files are saved in version 2 to keep compatibility with older R
+   versions.
+                                                   (Manuel López-Ibáñez)
  * Fix invalid assert with ordered parameters.
                                                 (Leslie Pérez Cáceres)
                                                 

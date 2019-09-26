@@ -211,7 +211,7 @@ testing.main <- function(logFile)
   print(iraceResults$testing$experiments)
   
   cwd <- setwd(scenario$execDir)
-  save (iraceResults, file = scenario$logFile)
+  save (iraceResults, file = scenario$logFile, version = 2)
   setwd (cwd)
 
   irace.note ("Finished testing\n")
@@ -254,7 +254,7 @@ testing.cmdline <- function(filename, scenario)
   print(iraceResults$testing$experiments)
   if (!is.null.or.empty(scenario$logFile)) {
     cwd <- setwd(scenario$execDir)
-    save (iraceResults, file = scenario$logFile)
+    save (iraceResults, file = scenario$logFile, version = 2)
     setwd(cwd)
   }
   irace.note ("Finished testing\n")

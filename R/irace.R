@@ -859,7 +859,7 @@ irace <- function(scenario, parameters)
     iraceResults$allConfigurations <- allConfigurations
     if (!is.null.or.empty(scenario$logFile)) {
       cwd <- setwd(scenario$execDir)
-      save (iraceResults, file = scenario$logFile)
+      save (iraceResults, file = scenario$logFile, version = 2)
       setwd(cwd)
     }
 

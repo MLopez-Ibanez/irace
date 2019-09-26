@@ -276,7 +276,7 @@ ablation <- function(iraceLogFile = NULL, iraceResults = NULL,
                  trajectory  = trajectory, 
                  changes     = changes)
     if (!is.null(ablationLogFile))
-      save(ab.log, file = ablationLogFile)
+      save(ab.log, file = ablationLogFile, version = 2)
     
     # Get the best configuration based on the criterion of irace
     # MANUEL: Doesn't race.output already give you all this info???
@@ -331,7 +331,7 @@ ablation <- function(iraceLogFile = NULL, iraceResults = NULL,
                  best = best.configuration)
 
   if (!is.null(ablationLogFile))
-    save(ab.log, file = ablationLogFile)
+    save(ab.log, file = ablationLogFile, version = 2)
   
   plotAblation(ab.log = ab.log, pdf.file = pdf.file,
                pdf.width = pdf.width, mar = mar, main = "Ablation")
