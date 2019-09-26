@@ -857,11 +857,7 @@ irace <- function(scenario, parameters)
 
     ## Save to the log file
     iraceResults$allConfigurations <- allConfigurations
-    if (!is.null.or.empty(scenario$logFile)) {
-      cwd <- setwd(scenario$execDir)
-      save (iraceResults, file = scenario$logFile, version = 2)
-      setwd(cwd)
-    }
+    irace_save_logfile(iraceResults, scenario)
 
     if (remainingBudget <= 0) {
       catInfo("Stopped because budget is exhausted")

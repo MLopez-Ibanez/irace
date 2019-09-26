@@ -769,3 +769,13 @@ is.file.extension <- function(filename, ext)
 
 # Same as !(x %in% table)
 "%!in%" <- function (x, table) match(x, table, nomatch = 0L) == 0L
+
+irace_save_logfile <- function(iraceResults, scenario)
+{
+  if (is.null.or.empty(scenario$logFile)) invisible()
+  cwd <- setwd(scenario$execDir)
+  # FIXME: Use saveRDS
+  # FIXME: Bump to version=3 when we bump the minimum R version to >=3.6
+  save (iraceResults, file = scenario$logFile, version = 2)
+  setwd (cwd)
+}

@@ -128,6 +128,6 @@ psRace <- function(iraceLogFile=NULL, iraceResults=NULL, conf.ids=NULL,
   iraceResults$psrace.log <- psrace.log        
         
   if (!is.null(iraceLogFile))
-    save(iraceResults, file=scenario$logFile, version = 2)
+    irace_save_logfile(iraceResults, scenario)
   return(psrace.log)
 }
