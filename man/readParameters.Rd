@@ -33,7 +33,7 @@ A list containing the definitions of the parameters read. The list is
       possibly more for categorical parameters.}
     \item{\code{conditions}}{List of R logical expressions, with variables
       corresponding to parameter names.}
-    \item{\code{isFixed}}{Logical vectors that specifies which parameter is fixed
+    \item{\code{isFixed}}{Logical vector that specifies which parameter is fixed
       and, thus, it does not need to be tuned.}
     \item{\code{nbParameters}}{An integer, the total number of parameters.}
     \item{\code{nbFixed}}{An integer, the number of parameters with a fixed value.}
@@ -79,7 +79,7 @@ Either 'file' or 'text' must be given. If 'file' is given, the
  dlb          "--dlb "         c    (0, 1)               | localsearch \%in\% c(1,2,3)
  '
  parameters <- readParameters(text=parameters.table)
- parameters
+ str(parameters)
 
 }
 \author{

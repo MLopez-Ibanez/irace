@@ -29,7 +29,7 @@
 #'       possibly more for categorical parameters.}
 #'     \item{\code{conditions}}{List of R logical expressions, with variables
 #'       corresponding to parameter names.}
-#'     \item{\code{isFixed}}{Logical vectors that specifies which parameter is fixed
+#'     \item{\code{isFixed}}{Logical vector that specifies which parameter is fixed
 #'       and, thus, it does not need to be tuned.}
 #'     \item{\code{nbParameters}}{An integer, the total number of parameters.}
 #'     \item{\code{nbFixed}}{An integer, the number of parameters with a fixed value.}
@@ -70,7 +70,7 @@
 #'  dlb          "--dlb "         c    (0, 1)               | localsearch %in% c(1,2,3)
 #'  '
 #'  parameters <- readParameters(text=parameters.table)
-#'  parameters
+#'  str(parameters)
 #' 
 #' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
 #' @export
@@ -321,8 +321,8 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
                            param.name, "' of type 'log' cannot contain zero")
       }
     } else {
-      dups <- duplicated(param.value)
-      if (any(dups)) {
+      if (anyDuplicated(param.value)) {
+        dups <- duplicated(param.value)
         errReadParameters (filename, nbLines, NULL,
                            "duplicated values (",
                            paste0('\"', param.value[dups], "\"", collapse = ', '),
@@ -337,9 +337,8 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
     parameters$domain[[count]] <- param.value
     parameters$transform[[count]] <- param.transform
 
-    parameters$isFixed[[count]] <-
-      isFixed (type = param.type,
-               domain = parameters$domain[[count]])
+    parameters$isFixed[[count]] <- isFixed(type = param.type,
+                                           domain = parameters$domain[[count]])
     # Reject non-categorical fixed parameters. They are often the
     # result of a user error.
     if (parameters$isFixed[[count]]) {
