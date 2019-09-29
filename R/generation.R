@@ -69,15 +69,12 @@ sampleUniform <- function (parameters, nbConfigurations, digits,
           # We don't even need to sample, there is only one possible value !
           newVal <- get.fixed.value (currentParameter, parameters)
           # The parameter is not a fixed and should be sampled          
-        } else if (currentType == "i") {
-          newVal <- sample.unif(currentParameter, parameters, currentType)
-        } else if (currentType == "r") {
+        } else if (currentType %in% c("i", "r")) {
           newVal <- sample.unif(currentParameter, parameters, currentType, digits)
-        } else if (currentType %in% c("c","o")) {
+        } else {
+          irace.assert(currentType %in% c("c","o"))
           possibleValues <- parameters$domain[[currentParameter]]
           newVal <- sample(possibleValues, 1)
-        } else {
-          irace.internal.error("Unexpected condition in sampleUniform")
         }
         configuration[[p]] <- newVal
       }
