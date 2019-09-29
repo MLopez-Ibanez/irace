@@ -183,7 +183,7 @@ winbuild: releasebuild
 
 examples: install
 	@echo "*** Makefile: Regenerating data for vignettes and examples. This will take time..."
-	cd examples/vignette-example/ && nice -n 19 $(PACKAGEDIR)/inst/bin/$(PACKAGE) --parallel 2 | tee irace-acotsp-stdout.txt \
+	cd examples/vignette-example/ && nice -n 19 $(PACKAGEDIR)/src/iracebin/$(PACKAGE) --parallel 2 | tee irace-acotsp-stdout.txt \
 		&& R --vanilla --slave --file=create-example-file.R
 	cp examples/vignette-example/*.Rdata examples/vignette-example/irace-acotsp-stdout.txt vignettes/
 	$(MAKE) vignettes
