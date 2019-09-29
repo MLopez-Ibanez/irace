@@ -23,6 +23,11 @@ maxExperiments = 5000
 ## all initial configurations are randomly generated.
 # configurationsFile = ""
 
+## File that contains a list of logical expressions that cannot be TRUE
+## for any evaluated configuration. If empty or NULL, do not use forbidden
+## expressions.
+forbiddenFile = "forbidden.txt"
+
 ## Indicates the number of decimal places to be considered for the
 ## real parameters.
 digits = 2
