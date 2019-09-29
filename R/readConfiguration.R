@@ -181,14 +181,19 @@ checkForbidden <- function(configurations, forbidden)
 compile.forbidden <- function(x)
 {
   if (is.bytecode(x)) return(x)
+  # If we are given an expression, it must be a single one.
+  irace.assert(is.language(x) && (!is.expression(x) || length(x) == 1))
+  if (is.expression(x)) x <- x[[1]]
   # When a is NA and we check a == 5, we would get NA, which is
   # always FALSE, when we actually want to be TRUE, so we test
   # is.na() first below.
   
   # We expect that there will be undefined variables, since the expressions
   # will be evaluated within a data.frame later.
-  return(compiler::compile(substitute(is.na(x) | !(x), list(x = x)),
-                           options = list(suppressUndefined=TRUE)))
+  exp <- compiler::compile(substitute(is.na(x) | !(x), list(x = x)),
+                           options = list(suppressUndefined=TRUE))
+  attr(exp, "source") <- as.character(as.expression(x))
+  return(exp)
 }
 
 readForbiddenFile <- function(filename)
@@ -222,7 +227,6 @@ buildForbiddenExp <- function(configurations, parameters)
                paste0("(", pnames[has.value]," == ", values, ")", collapse = "&"))
   }
   exps <- parse(text = lines)
-  # FIXME: We should save exps somewhere for verification
   # print(exps)
   return(sapply(exps, compile.forbidden))
 }
@@ -718,7 +722,11 @@ printScenario <- function(scenario)
 {
   cat("## irace scenario:\n")
   for (param in .irace.params.names) {
-    cat(param, " = ", deparse(scenario[[param]]), "\n", sep = "")
+    if (param == "forbiddenExps")
+      extra <- paste0(" = expression(", paste0(collapse=", ",
+                                  sapply(scenario[[param]], attr, "source")), ")")
+    else extra <- ""
+    cat(param, " = ", deparse(scenario[[param]]), extra, "\n", sep = "")
   }
   cat("## end of irace scenario\n")
 }
