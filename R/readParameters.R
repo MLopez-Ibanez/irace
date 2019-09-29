@@ -199,13 +199,17 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
                  " at ", filename, ", line ", line, context)
   }
 
-  transform.domain <- function(transf, lower, upper, type)
+  transform.domain <- function(transf, domain, type)
   {
     if (transf == "") return(transf)
+
+    lower <- domain[1]
+    upper <- domain[2]
+
     if (transf == "log") {
       # Reject log if domain contains zero or negative values
-      if (any(c(lower,upper) <= 0)) return(NULL)
-      
+      if (any(domain <= 0)) return(NULL)
+
       trLower <- log(lower)
       # +1 to adjust before floor()
       trUpper <- if (type == "i") log(upper + 1) else log(upper)
@@ -314,8 +318,7 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
                            result$match, ") for parameter '", param.name, "'")
       }
 
-      param.transform <- transform.domain(param.transform,
-                                          param.value[1], param.value[2], param.type)
+      param.transform <- transform.domain(param.transform, param.value, param.type)
       if (is.null(param.transform)) {
         errReadParameters (filename, nbLines, NULL, "The domain of parameter '",
                            param.name, "' of type 'log' cannot contain zero")
