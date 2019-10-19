@@ -29,6 +29,7 @@ DEVEL-README
 ^inst/doc/auto
 ^irace-Ex.R
 ^irace\.Rdata
+^man-roxygen$
 ^parameters\.txt
 ^pkgdown$
 ^revdep$
