@@ -5,11 +5,9 @@
 #'  to match the parameters description provided.
 #' 
 #' @param filename A filename from which the configurations should be read.
-#' @param parameters A data structure similar to that provided by the 
-#' \code{\link{readParameters}} function.
-#' @param debugLevel Level of debug. Default: 0.
-#' @param text (optional) Character string: if file is not supplied and this is,
-#'  then parameters are read from the value of text via a text connection.
+#' @template arg_parameters
+#' @template arg_debuglevel
+#' @template arg_text
 #' 
 #' @return A data frame containing the obtained configurations. 
 #'   Each row of the data frame is a candidate configuration, 
@@ -236,14 +234,12 @@ buildForbiddenExp <- function(configurations, parameters)
 #' \code{readScenario} reads the scenario to be used by 
 #' \pkg{irace} from a file.
 #' 
-#' @param filename A filename from which the scenario will be
-#'     read. If empty, the default \code{scenarioFile} is used.
-#'     An example scenario file is provided in
-#'     \code{system.file(package="irace", "templates/scenario.txt.tmpl")}.
-#' @param scenario A list where tagged elements correspond to scenario
-#'     settings for \pkg{irace}. This is an initial scenario that is
-#'     overwritten for every parameter specified in the file to be read.
-#' 
+#' @param filename (\code{character(1)}) \cr  A filename from which the scenario will be read. If empty,
+#'   the default \code{scenarioFile} is used.  An example scenario file is
+#'   provided in \code{system.file(}\code{package="irace",} \code{"templates/scenario.txt.tmpl")}.
+#' @templateVar arg_appendix This is an initial scenario that is overwritten for every parameter specified in the file to be read.
+#' @template arg_scenario
+#'  
 #' @return The scenario list read from the file. The scenario parameter not
 #'   present in the file are not present in the list, that is, they are
 #'   \code{NULL}.
@@ -334,8 +330,7 @@ readScenario <- function(filename = "", scenario = list())
 #' \code{checkScenario} takes a (possibly incomplete) scenario setup of
 #' \pkg{irace}, checks for errors and transforms it into a valid scenario.
 #' 
-#' @param scenario A list where tagged elements correspond to scenario
-#' settings of \pkg{irace}.
+#' @template arg_scenario
 #' 
 #' @return The scenario received as a parameter, possibly corrected. Unset
 #' scenario settings are set to their default values.
@@ -705,8 +700,7 @@ checkScenario <- function(scenario = defaultScenario())
 
 #' Prints the given scenario
 #'
-#' @param scenario A list where tagged elements correspond to scenario
-#'    settings of \pkg{irace}.
+#' @template arg_scenario
 #' 
 #' @seealso
 #'  \describe{
@@ -735,8 +729,7 @@ printScenario <- function(scenario)
 #'
 #' Return scenario with default values.
 #' 
-#' @param scenario A list where tagged elements correspond to scenario
-#' settings of \pkg{irace}.
+#' @template arg_scenario
 #' 
 #' @return A list indexed by the \pkg{irace} parameter names,
 #' containing the default values for each parameter, except for those

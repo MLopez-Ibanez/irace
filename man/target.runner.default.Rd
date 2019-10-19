@@ -21,7 +21,9 @@ target.runner.default(experiment, scenario)
     of parameters used in \code{configuration}.}
 }}
 
-\item{scenario}{Options passed when invoking \pkg{irace}.}
+\item{scenario}{(\code{list()}) \cr Data structure containing \pkg{irace}
+settings. The data structure has to be the one returned by the function
+\code{\link{defaultScenario}} and \code{\link{readScenario}}.}
 }
 \value{
 If \code{targetEvaluator} is \code{NULL}, then the \code{targetRunner}

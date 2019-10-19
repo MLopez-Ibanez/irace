@@ -6,10 +6,8 @@
 #'  \code{cols} parameters being shown per plot.  If a filename is provided the
 #'  plots are saved in one or more files.
 #'   
-#' @param configurations Data frame containing target algorithms configurations 
-#'   in the format used by \pkg{irace}.
-#' @param parameters A data structure similar to that provided by the 
-#' \code{\link{readParameters}} function.
+#' @template arg_configurations
+#' @template arg_parameters
 #' @param rows Number of plots per column.
 #' @param cols Number of plots per row.
 #' @param filename Filename prefix to generate the plots. If \code{NULL} the plot 
@@ -210,10 +208,8 @@ parcoordlabel <- function (configurations, parameters, col = "green", lty = 1,
 #' \code{parallelCoordinatesPlot}  plots a set of parameter configurations in 
 #'   parallel coordinates.
 #'   
-#' @param configurations Data frame containing target algorithms configurations 
-#'   in the format used by \pkg{irace}.
-#' @param parameters A data structure similar to that provided by the 
-#' \code{\link{readParameters}} function.
+#' @template arg_configurations
+#' @template arg_parameters
 #' @param param_names Parameters names that should be included. Default: parameters$names.
 #' @param hierarchy If \code{TRUE} conditional parameters will be displayed in a different 
 #'   plot. Default \code{TRUE}.

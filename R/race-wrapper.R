@@ -171,7 +171,7 @@ exec.target.evaluator <- function (experiment, num.configurations, all.conf.id,
 #'    }
 #' @param num.configurations Number of  configurations alive in the race.
 #' @param all.conf.id Vector of configuration IDs of the alive configurations.
-#' @param scenario Options passed when invoking \pkg{irace}.
+#' @template arg_scenario
 #' @param target.runner.call String describing the call to \code{targetRunner} that
 #'    corresponds to this call to \code{targetEvaluator}. This is used for
 #'    providing extra information to the user, for example, in case
@@ -407,7 +407,7 @@ target.runner.aclib <- function(experiment, scenario)
 #'      \item{\code{switches}}{Vector of parameter switches (labels) in the order
 #'        of parameters used in \code{configuration}.}
 #'    }
-#' @param scenario Options passed when invoking \pkg{irace}.
+#' @template arg_scenario
 #' 
 #' @return If \code{targetEvaluator} is \code{NULL}, then the \code{targetRunner}
 #'  function must return a list with at least one element \code{"cost"},

@@ -7,14 +7,14 @@
 readScenario(filename = "", scenario = list())
 }
 \arguments{
-\item{filename}{A filename from which the scenario will be
-read. If empty, the default \code{scenarioFile} is used.
-An example scenario file is provided in
-\code{system.file(package="irace", "templates/scenario.txt.tmpl")}.}
+\item{filename}{(\code{character(1)}) \cr  A filename from which the scenario will be read. If empty,
+the default \code{scenarioFile} is used.  An example scenario file is
+provided in \code{system.file(}\code{package="irace",} \code{"templates/scenario.txt.tmpl")}.}
 
-\item{scenario}{A list where tagged elements correspond to scenario
-settings for \pkg{irace}. This is an initial scenario that is
-overwritten for every parameter specified in the file to be read.}
+\item{scenario}{(\code{list()}) \cr Data structure containing \pkg{irace}
+settings. The data structure has to be the one returned by the function
+\code{\link{defaultScenario}} and \code{\link{readScenario}}.
+This is an initial scenario that is overwritten for every parameter specified in the file to be read.}
 }
 \value{
 The scenario list read from the file. The scenario parameter not

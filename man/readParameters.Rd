@@ -7,16 +7,16 @@
 readParameters(file, digits = 4, debugLevel = 0, text)
 }
 \arguments{
-\item{file}{(optional) Character string: the name of the file 
-containing the definitions of theparameters to be tuned.}
+\item{file}{(\code{character(1)}) \cr The name of the file 
+containing the definitions of the parameters to be tuned.}
 
 \item{digits}{The number of decimal places to be considered for the
 real parameters.}
 
-\item{debugLevel}{Integer: the debug level to increase the amount of output.}
+\item{debugLevel}{(\code{integer(1)}) \cr Larger values produce more verbose output.}
 
-\item{text}{(optional) Character string: if file is not supplied and this is,
-then parameters are read from the value of text via a text connection.}
+\item{text}{(\code{character(1)}) \cr If \code{file} is not supplied and this is,
+then parameters are read from the value of \code{text} via a text connection.}
 }
 \value{
 A list containing the definitions of the parameters read. The list is

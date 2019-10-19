@@ -9,11 +9,12 @@ parallelCoordinatesPlot(configurations, parameters,
   pdf.width = 14, mar = c(8, 1, 4, 1))
 }
 \arguments{
-\item{configurations}{Data frame containing target algorithms configurations 
-in the format used by \pkg{irace}.}
+\item{configurations}{(\code{data.frame}) \cr Parameter configurations of the
+target algorithm (one per row).}
 
-\item{parameters}{A data structure similar to that provided by the 
-\code{\link{readParameters}} function.}
+\item{parameters}{(\code{list()}) \cr Data structure containing the parameter
+space definition. The data structure has to similar to the one returned by the
+function \code{\link{readParameters}}.}
 
 \item{param_names}{Parameters names that should be included. Default: parameters$names.}
 

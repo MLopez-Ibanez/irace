@@ -7,10 +7,12 @@
 configurations.print.command(configurations, parameters)
 }
 \arguments{
-\item{configurations}{a data frame containing the configurations (one per row).}
+\item{configurations}{(\code{data.frame}) \cr Parameter configurations of the
+target algorithm (one per row).}
 
-\item{parameters}{Data structure containing the parameter definition. The data 
-structure has to be the one returned by the function \code{\link{readParameters}}.}
+\item{parameters}{(\code{list()}) \cr Data structure containing the parameter
+space definition. The data structure has to similar to the one returned by the
+function \code{\link{readParameters}}.}
 }
 \value{
 None.

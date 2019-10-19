@@ -42,9 +42,7 @@ ablation results.}
 
 \item{mar}{Vector with the margins for the ablation plot.}
 
-\item{debugLevel}{Integer value. Larger values produce more verbose
-output. By default, the debugLevel given by the \code{iraceLogFile} /
-\code{iraceResults}.}
+\item{debugLevel}{(\code{integer(1)}) \cr Larger values produce more verbose output.}
 }
 \value{
 A list containing the following elements:

@@ -7,9 +7,9 @@
 scenario.update.paths(scenario, from, to, fixed = TRUE)
 }
 \arguments{
-\item{scenario}{list containing \pkg{irace} settings. The data structure has
-to be the one returned by the function \code{\link{defaultScenario}} and
-\code{\link{readScenario}}.}
+\item{scenario}{(\code{list()}) \cr Data structure containing \pkg{irace}
+settings. The data structure has to be the one returned by the function
+\code{\link{defaultScenario}} and \code{\link{readScenario}}.}
 
 \item{from}{character string containing a regular expression (or character
 string for \code{fixed = TRUE}) to be matched.}

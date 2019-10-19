@@ -1,19 +1,14 @@
-#########################################################
-## READ DEFINITION OF PARAMETERS FROM A FILE
-#########################################################
-
 #' readParameters
 #'
 #' \code{readParameters} reads the parameters to be tuned by 
 #' \pkg{irace} from a file or directly from a character string.
 #' 
-#' @param file (optional) Character string: the name of the file 
-#'  containing the definitions of theparameters to be tuned.
+#' @param file (\code{character(1)}) \cr The name of the file 
+#'  containing the definitions of the parameters to be tuned.
 #' @param digits The number of decimal places to be considered for the
 #'  real parameters.
-#' @param debugLevel Integer: the debug level to increase the amount of output.
-#' @param text (optional) Character string: if file is not supplied and this is,
-#'  then parameters are read from the value of text via a text connection.
+#' @template arg_debuglevel
+#' @template arg_text
 #' 
 #' @return A list containing the definitions of the parameters read. The list is
 #'  structured as follows:
@@ -74,7 +69,6 @@
 #' 
 #' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
 #' @export
-# Main function to read the parameters definition from a file
 readParameters <- function (file, digits = 4, debugLevel = 0, text)
 {
   if (missing(file) && !missing(text)) {

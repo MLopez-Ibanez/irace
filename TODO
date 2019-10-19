@@ -23,6 +23,8 @@ TODO R package:
 
 TODO General (in order of importance):
 
+ * Federico's implementation of DAG / Complexity metric.
+ 
  * https://github.com/ndangtt/irace-to-pimp
  
  * Use both cost and time to calculate wins, then use a prop.test

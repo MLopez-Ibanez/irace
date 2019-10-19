@@ -7,7 +7,8 @@
 removeConfigurationsMetaData(configurations)
 }
 \arguments{
-\item{configurations}{A matrix containg the configurations, one per row.}
+\item{configurations}{(\code{data.frame}) \cr Parameter configurations of the
+target algorithm (one per row).}
 }
 \value{
 The same matrix without the "metadata".

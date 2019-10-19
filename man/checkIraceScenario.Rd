@@ -7,13 +7,13 @@
 checkIraceScenario(scenario, parameters = NULL)
 }
 \arguments{
-\item{scenario}{Data structure containing \pkg{irace} settings.The data structure
-has to be the one returned by the function \code{\link{defaultScenario}} and
-\code{\link{readScenario}}.}
+\item{scenario}{(\code{list()}) \cr Data structure containing \pkg{irace}
+settings. The data structure has to be the one returned by the function
+\code{\link{defaultScenario}} and \code{\link{readScenario}}.}
 
-\item{parameters}{Data structure containing the parameter definition. The data
-structure has to be the one returned by the function \code{\link{readParameters}}.
-See documentation of this function for details.}
+\item{parameters}{(\code{list()}) \cr Data structure containing the parameter
+space definition. The data structure has to similar to the one returned by the
+function \code{\link{readParameters}}.}
 }
 \value{
 returns \code{TRUE} if succesful and gives an error and returns

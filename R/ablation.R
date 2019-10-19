@@ -78,9 +78,7 @@ generateAblation <- function(initial.configuration, final.configuration,
 #'   ablation results.
 #' @param pdf.width Width provided to create the pdf file.
 #' @param mar Vector with the margins for the ablation plot.
-#' @param debugLevel Integer value. Larger values produce more verbose
-#'   output. By default, the debugLevel given by the \code{iraceLogFile} /
-#'   \code{iraceResults}.
+#' @template arg_debuglevel
 #'
 #' @references
 #' C. Fawcett and H. H. Hoos. Analysing differences between algorithm

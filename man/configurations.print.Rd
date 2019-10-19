@@ -7,7 +7,8 @@
 configurations.print(configurations, metadata = FALSE)
 }
 \arguments{
-\item{configurations}{a data frame containing the configurations (one per row).}
+\item{configurations}{(\code{data.frame}) \cr Parameter configurations of the
+target algorithm (one per row).}
 
 \item{metadata}{A Boolean specifying whether to print the metadata or
 not. The metadata are data for the configurations (additionally to the

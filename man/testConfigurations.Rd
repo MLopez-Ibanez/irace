@@ -7,14 +7,16 @@
 testConfigurations(configurations, scenario, parameters)
 }
 \arguments{
-\item{configurations}{a data frame containing the configurations (one per row).}
+\item{configurations}{(\code{data.frame}) \cr Parameter configurations of the
+target algorithm (one per row).}
 
-\item{scenario}{Data structure containing \pkg{irace} settings.The data structure
-has to be the one returned by the function \code{\link{defaultScenario}} and
-\code{\link{readScenario}}.}
+\item{scenario}{(\code{list()}) \cr Data structure containing \pkg{irace}
+settings. The data structure has to be the one returned by the function
+\code{\link{defaultScenario}} and \code{\link{readScenario}}.}
 
-\item{parameters}{Data structure containing the parameter definition. The data 
-structure has to be the one returned by the function \code{\link{readParameters}}.}
+\item{parameters}{(\code{list()}) \cr Data structure containing the parameter
+space definition. The data structure has to similar to the one returned by the
+function \code{\link{readParameters}}.}
 }
 \value{
 A list with the following elements:

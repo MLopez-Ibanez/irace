@@ -26,7 +26,7 @@ Suggests:
         knitr,
         testthat,
         withr,
-        mlr
+        mlr (>= 2.15.0)
 VignetteBuilder: knitr
 License: GPL (>= 2)
 URL: http://iridia.ulb.ac.be/irace

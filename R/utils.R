@@ -342,9 +342,7 @@ path.rel2abs <- function (path, cwd = getwd())
 #' This function should be used to change the filesystem paths stored in a
 #' scenario object. Useful when moving a scenario from one computer to another.
 #'
-#' @param scenario list containing \pkg{irace} settings. The data structure has
-#'   to be the one returned by the function \code{\link{defaultScenario}} and
-#'   \code{\link{readScenario}}.
+#' @template arg_scenario
 #' @param from character string containing a regular expression (or character
 #'   string for \code{fixed = TRUE}) to be matched.
 #' @param to the replacement string.character string. For \code{fixed = FALSE}
@@ -487,7 +485,7 @@ extractElites <- function(configurations, nbElites)
 #' the configurations, to output only the values for the parameters
 #' of the configuration without data possibly useless to the user.
 #'   
-#' @param configurations A matrix containg the configurations, one per row.
+#' @template arg_configurations
 #' 
 #' @return The same matrix without the "metadata".
 #'    
@@ -507,7 +505,7 @@ removeConfigurationsMetaData <- function(configurations)
 
 #' Print configurations as a data frame
 #' 
-#' @param configurations a data frame containing the configurations (one per row).
+#' @template arg_configurations
 #' @param metadata A Boolean specifying whether to print the metadata or
 #' not. The metadata are data for the configurations (additionally to the
 #' value of each parameter) used by \pkg{irace}.
@@ -533,9 +531,8 @@ configurations.print <- function(configurations, metadata = FALSE)
 #' Prints configurations after converting them into a representation for the
 #' command-line.
 #' 
-#' @param configurations a data frame containing the configurations (one per row).
-#' @param parameters Data structure containing the parameter definition. The data 
-#'   structure has to be the one returned by the function \code{\link{readParameters}}.
+#' @template arg_configurations
+#' @template arg_parameters
 #' 
 #' @return None.
 #'

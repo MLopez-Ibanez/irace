@@ -9,13 +9,14 @@ readConfigurationsFile(filename, parameters, debugLevel = 0, text)
 \arguments{
 \item{filename}{A filename from which the configurations should be read.}
 
-\item{parameters}{A data structure similar to that provided by the 
-\code{\link{readParameters}} function.}
+\item{parameters}{(\code{list()}) \cr Data structure containing the parameter
+space definition. The data structure has to similar to the one returned by the
+function \code{\link{readParameters}}.}
 
-\item{debugLevel}{Level of debug. Default: 0.}
+\item{debugLevel}{(\code{integer(1)}) \cr Larger values produce more verbose output.}
 
-\item{text}{(optional) Character string: if file is not supplied and this is,
-then parameters are read from the value of text via a text connection.}
+\item{text}{(\code{character(1)}) \cr If \code{file} is not supplied and this is,
+then parameters are read from the value of \code{text} via a text connection.}
 }
 \value{
 A data frame containing the obtained configurations. 

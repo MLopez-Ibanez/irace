@@ -7,8 +7,9 @@
 defaultScenario(scenario = list())
 }
 \arguments{
-\item{scenario}{A list where tagged elements correspond to scenario
-settings of \pkg{irace}.}
+\item{scenario}{(\code{list()}) \cr Data structure containing \pkg{irace}
+settings. The data structure has to be the one returned by the function
+\code{\link{defaultScenario}} and \code{\link{readScenario}}.}
 }
 \value{
 A list indexed by the \pkg{irace} parameter names,

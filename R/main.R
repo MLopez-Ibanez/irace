@@ -86,9 +86,9 @@ irace.usage <- function ()
 #'
 #' \code{irace.main} is a higher-level interface to invoke \code{\link{irace}}.
 #' 
-#' @param scenario \code{\link{defaultScenario}}() The scenario setup of 
-#' \pkg{irace}.
-#' @param output.width 9999 The width that must be used for the screen
+#' @template arg_scenario
+#' 
+#' @param output.width (\code{integer(1)}) The width that must be used for the screen
 #' output.
 #'
 #' @details  The function \code{irace.main} checks the correctness of the
@@ -97,6 +97,8 @@ irace.usage <- function ()
 #' prints its results in various formatted ways. If you want a
 #' lower-level interface, please see function \code{\link{irace}}.
 #'
+#' @templateVar return_invisible TRUE
+#' @template return_irace
 #' @seealso
 #'  \code{\link{irace.cmdline}} a higher-level command-line interface to
 #'  \code{irace.main}.
@@ -105,7 +107,7 @@ irace.usage <- function ()
 #' 
 #' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
 #' @export
-irace.main <- function(scenario = defaultScenario(), output.width = 9999)
+irace.main <- function(scenario = defaultScenario(), output.width = 9999L)
 {
   op <- options(width = output.width) # Do not wrap the output.
   on.exit(options(op), add = TRUE)
@@ -260,12 +262,8 @@ testing.cmdline <- function(filename, scenario)
 #'   can be run by checking the scenario settings provided and trying to run
 #'   the target-algorithm.
 #' 
-#' @param scenario Data structure containing \pkg{irace} settings.The data structure
-#' has to be the one returned by the function \code{\link{defaultScenario}} and
-#' \code{\link{readScenario}}.
-#' @param parameters Data structure containing the parameter definition. The data
-#' structure has to be the one returned by the function \code{\link{readParameters}}.
-#' See documentation of this function for details.
+#' @template arg_scenario
+#' @template arg_parameters
 #'
 #' @return returns \code{TRUE} if succesful and gives an error and returns
 #' \code{FALSE} otherwise.
@@ -317,21 +315,22 @@ checkIraceScenario <- function(scenario, parameters = NULL)
 #' \code{irace.cmdline} starts \pkg{irace} using the parameters
 #'  of the command line used to invoke R.
 #' 
-#' @param args \code{commandArgs(trailingOnly = TRUE)} The arguments 
+#' @param args (\code{character()}) \cr The arguments 
 #' provided on the R command line as a character vector, e.g., 
 #' \code{c("--scenario", "scenario.txt", "-p", "parameters.txt")}.
 #' Using the  default value (not providing the parameter) is the 
 #' easiest way to call \code{irace.cmdline}.
 #' 
-#' @return None.
-#'
 #' @details The function reads the parameters given on the command line
 #' used to invoke R, finds the name of the scenario file,
 #'  initializes the scenario from the file (with the function
-#'  \link{readScenario}) and possibly from parameters passed on
+#'  \code{\link{readScenario}}) and possibly from parameters passed on
 #'  the command line. It finally starts \pkg{irace} by calling
-#'  \link{irace.main}.
+#'  \code{\link{irace.main}}.
 #'
+#' @templateVar return_invisible TRUE
+#' @template return_irace
+#' 
 #' @seealso
 #'  \code{\link{irace.main}} to start \pkg{irace} with a given scenario.
 #' 

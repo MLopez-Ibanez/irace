@@ -26,7 +26,9 @@ target.evaluator.default(experiment, num.configurations, all.conf.id,
 
 \item{all.conf.id}{Vector of configuration IDs of the alive configurations.}
 
-\item{scenario}{Options passed when invoking \pkg{irace}.}
+\item{scenario}{(\code{list()}) \cr Data structure containing \pkg{irace}
+settings. The data structure has to be the one returned by the function
+\code{\link{defaultScenario}} and \code{\link{readScenario}}.}
 
 \item{target.runner.call}{String describing the call to \code{targetRunner} that
 corresponds to this call to \code{targetEvaluator}. This is used for

@@ -8,11 +8,12 @@ parameterFrequency(configurations, parameters, rows = 4, cols = 3,
   filename = NULL, pdf.width = 12, col = "gray")
 }
 \arguments{
-\item{configurations}{Data frame containing target algorithms configurations 
-in the format used by \pkg{irace}.}
+\item{configurations}{(\code{data.frame}) \cr Parameter configurations of the
+target algorithm (one per row).}
 
-\item{parameters}{A data structure similar to that provided by the 
-\code{\link{readParameters}} function.}
+\item{parameters}{(\code{list()}) \cr Data structure containing the parameter
+space definition. The data structure has to similar to the one returned by the
+function \code{\link{readParameters}}.}
 
 \item{rows}{Number of plots per column.}
 

@@ -3,12 +3,9 @@
 #' \code{testConfigurations} executes the given configurations on the
 #' testing instances specified in the scenario.
 #' 
-#' @param configurations a data frame containing the configurations (one per row).
-#' @param scenario Data structure containing \pkg{irace} settings.The data structure
-#' has to be the one returned by the function \code{\link{defaultScenario}} and
-#' \code{\link{readScenario}}.
-#' @param parameters Data structure containing the parameter definition. The data 
-#'   structure has to be the one returned by the function \code{\link{readParameters}}.
+#' @template arg_configurations
+#' @template arg_scenario
+#' @template arg_parameters
 #'
 #' @return A list with the following elements:
 #'   \describe{
