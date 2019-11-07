@@ -7,11 +7,11 @@ test_that("mlr", {
 
   ps = ParamHelpers::makeParamSet(
     ParamHelpers::makeNumericParam("cp", lower = 0.1, upper = 1),
-    ParamHelpers::makeIntegerParam("minsplit", lower = 1, upper = 10)
-  )
+    ParamHelpers::makeIntegerParam("minsplit", lower = 1, upper = 10))
+
   lrn = mlr::makeLearner("classif.rpart")
-  n = 30
-  ctrl = mlr::makeTuneControlIrace(maxExperiments = n, nbIterations = 1L, minNbSurvival = 1)
+  
+  ctrl = mlr::makeTuneControlIrace(maxExperiments = 30, nbIterations = 1L, minNbSurvival = 1)
   tr = mlr::tuneParams(lrn, mlr::iris.task, mlr::hout, par.set = ps, control = ctrl)
   expect_true(TRUE)
 })
