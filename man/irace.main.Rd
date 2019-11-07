@@ -32,7 +32,7 @@ The \code{iraceResults} object is a list with the following structure:
 \describe{
 
 \item{\code{scenario}}{The scenario R object containing the \pkg{irace}
-options used for the execution. See \code{\link{defaultScenario}} help
+options used for the execution. See \code{\link{defaultScenario}}
 for more information.}
 
 \item{\code{parameters}}{The parameters R object containing the
