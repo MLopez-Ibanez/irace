@@ -360,6 +360,25 @@ checkScenario <- function(scenario = defaultScenario())
   {
     return(paste0("'", name, "' (", .irace.params.def[name, "long"], ")"))
   }
+
+  as.boolean.param <- function(x, name)
+  {
+    x <- as.integer(x)
+    if (is.na (x) || (x != 0 && x != 1)) {
+      irace.error (quote.param(name), " must be either 0 or 1.")
+    }
+    return(as.logical(x))
+  }
+
+  check.valid.param <- function(x, valid)
+  {
+    if (scenario[[x]] %!in% valid) {
+      irace.error ("Invalid value '", scenario[[x]], "' of ",
+                   quote.param(x), ", valid values are: ",
+                   paste0(valid, collapse = ", "))
+    }
+  }
+  
   
   # Fill possible unset (NULL) with default settings.
   scenario <- defaultScenario (scenario)
@@ -370,14 +389,6 @@ checkScenario <- function(scenario = defaultScenario())
     irace.error("scenario contains duplicated entries: ", names(scenario)[dups])
 
   # Boolean control parameters.
-  as.boolean.param <- function(x, name)
-  {
-    x <- as.integer(x)
-    if (is.na (x) || (x != 0 && x != 1)) {
-      irace.error (quote.param(name), " must be either 0 or 1.")
-    }
-    return(as.logical(x))
-  }
   boolParams <- .irace.params.def[.irace.params.def[, "type"] == "b", "name"]
   for (p in boolParams) {
     scenario[[p]] <- as.boolean.param (scenario[[p]], p)
@@ -621,13 +632,7 @@ checkScenario <- function(scenario = defaultScenario())
   if (scenario$batchmode != 0) {
     scenario$batchmode <- tolower(scenario$batchmode)
     # FIXME: We should encode options in the large table in main.R
-    valid.batchmode <- c("sge", "pbs", "torque", "slurm")
-    if (!(scenario$batchmode %in% valid.batchmode)) {
-      irace.error ("Invalid value '", scenario$batchmode,
-                   "' of ", quote.param("batchmode"),
-                   ", valid values are: ",
-                   paste0(valid.batchmode, collapse = ", "))
-    }
+    check.valid.param("batchmode", valid = c("sge", "pbs", "torque", "slurm"))
   }
   # Currently batchmode requires a targetEvaluator
   if (scenario$batchmode != 0 && is.null(scenario$targetEvaluator)) {
@@ -646,22 +651,10 @@ checkScenario <- function(scenario = defaultScenario())
     if (scenario$boundMax <= 0) 
       irace.error("When capping == TRUE, boundMax (", scenario$boundMax,
                   ") must be > 0")
-    valid.types <- c("median", "mean", "worst", "best")
-    if (!(scenario$cappingType %in% valid.types)) {
-      irace.error ("Invalid value '", scenario$cappingType,
-                   "' of ", quote.param("cappingType"),
-                   ", valid values are: ",
-                   paste0(valid.types, collapse = ", "))
-    }
-    
-    valid.types <- c("instance", "candidate")
-    if (!(scenario$boundType %in% valid.types)) {
-      irace.error ("Invalid value '", scenario$boundType,
-                   "' of ", quote.param("boundType"),
-                   ", valid values are: ",
-                   paste0(valid.types, collapse = ", "))
-    }
-    
+    check.valid.param("cappingType",
+                      valid = c("median", "mean", "worst", "best"))
+    check.valid.param("boundType", valid = c("instance", "candidate"))
+        
     if (scenario$boundPar < 1)
       irace.error("Invalid value boundPar (", scenario$boundPar,
                   ") must be >= 1")
@@ -689,12 +682,9 @@ checkScenario <- function(scenario = defaultScenario())
            "t.holm" = "t.holm",
            "t-test-bonferroni" =, # Fall-through,
            "t.bonferroni" = "t.bonferroni",
-           irace.error ("Invalid value '", scenario$testType,
-                        "' of ", quote.param("testType"),
-                        ", valid values are: ",
-                        "F-test, t-test, t-test-holm, t-test-bonferroni"))
-                        
-
+           check.valid.param("testType",
+                             c("F-test, t-test, t-test-holm, t-test-bonferroni")))
+  
   return (scenario)
 }
 
