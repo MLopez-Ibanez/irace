@@ -1,0 +1,27 @@
+sp.var.dec.heur              "--sp-var-dec-heur "                  c (0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19)     # Originally, 3,4,9,10 not used following Domgoj's advice. 20 requires modular arithmetic input format
+sp.learned.clause.sort.heur  "--sp-learned-clause-sort-heur "      c (0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19)     # All values make sense here. 20 requires modular arithmetic input format
+sp.orig.clause.sort.heur     "--sp-orig-clause-sort-heur "         c (0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19)     # All values make sense here. 20 requires modular arithmetic input format
+sp.res.order.heur            "--sp-res-order-heur "                c (0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19)  | sp.resolution != 0  # All values make sense here. 20 requires modular arithmetic input format 
+sp.clause.del.heur           "--sp-clause-del-heur "               c (0,1,2)      # All values make sense here.
+sp.phase.dec.heur            "--sp-phase-dec-heur "                c (0,1,2,3,4,5,6)      # All values make sense here. 
+sp.resolution                "--sp-resolution "                    c (0,1,2)      # 0 renders a whole bunch of subordinates irrelevant.
+sp.variable.decay            "--sp-variable-decay "                c (1.1,1.4,2.0) # Should be bigger than 1 (o/w increase not decay). 
+sp.clause.decay              "--sp-clause-decay "                  c (1.1,1.4,2.0) # Same thing.
+sp.restart.inc               "--sp-restart-inc "                   c (1.1,1.3,1.5,1.7,1.9) # 1.3 and 1.7 were introduced later. Uniform because multiplicative.
+sp.learned.size.factor        "--sp-learned-size-factor "	   c (0.1,0.2,0.4,0.8,1.6) # 0.2 and 0.8 were introduced later. Uniform on logarithmic scale (starting value).
+sp.learned.clauses.inc       "--sp-learned-clauses-inc "           c (1.1,1.2,1.3,1.4,1.5) # 1.2 and 1.4 were introduced later. Uniform because multiplicative
+sp.clause.activity.inc       "--sp-clause-activity-inc "           c (0.5,1,1.5)         # Domagoj says these make sense.
+sp.var.activity.inc          "--sp-var-activity-inc "              c (0.5,1,1.5)         # Same thing.
+sp.rand.phase.dec.freq       "--sp-rand-phase-dec-freq "           c (0, 0.0001, 0.001, 0.005, 0.01, 0.05) | sp.phase.dec.heur %in% c(0,1,3,4,5,6)  # when heuristic is random, then additional random steps don't change anything # Never picked 0.05 in previous experiments, always zero.
+sp.rand.var.dec.freq         "--sp-rand-var-dec-freq "             c (0, 0.0001, 0.001, 0.005, 0.01, 0.05) # Never picked 0.05 in previous experiments, always zero.
+sp.rand.var.dec.scaling      "--sp-rand-var-dec-scaling "          c (0.3,0.6,0.9,1,1.1) | sp.rand.var.dec.freq %in% c(0.0001, 0.001, 0.005, 0.01, 0.05)  # not 0 # 0.5 and 2 were introduced later. Domagoj said those are too coarse, so new values.
+sp.rand.phase.scaling        "--sp-rand-phase-scaling "            c (0.3,0.6,0.9,1,1.1) | sp.rand.phase.dec.freq %in% c(0.0001, 0.001, 0.005, 0.01, 0.05)  # not 0 # Same thing.
+sp.max.res.lit.inc           "--sp-max-res-lit-inc "               c (0.25,0.5,1,2,4) | sp.resolution != 0   # 0.5 and 2 were introduced later.               
+sp.first.restart             "--sp-first-restart "                 c (25,50,100,200,400,800,1600,3200)  # Uniform on logarithmic scale (starting value).
+sp.res.cutoff.cls            "--sp-res-cutoff-cls "                c (2,4,8,16,20)  | sp.resolution != 0                 # 4 and 20 were introduced later. Only 20 allowed, would've used 32.
+sp.res.cutoff.lits           "--sp-res-cutoff-lits "               c (100,200,400,800,1600) | sp.resolution != 0    # 200 and 800 were introduced later.
+sp.max.res.runs              "--sp-max-res-runs "                  c (1,2,4,8,16,32)  | sp.resolution != 0          # 2, 8, and 32 were introduced later.
+sp.update.dec.queue          "--sp-update-dec-queue "              c (0,1)                      # Enable by default.
+sp.use.pure.literal.rule     "--sp-use-pure-literal-rule "         c (0,1)                    # Enable by default. 
+sp.clause.inversion          "--sp-clause-inversion "              c (0,1)               | sp.learned.clause.sort.heur %in% c(19)     # Enable by default. Enable reversion of learned clauses if fixed order (sp-learned-clause-sort-heur=19) 
+

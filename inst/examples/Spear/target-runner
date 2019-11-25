@@ -1,0 +1,76 @@
+#!/bin/bash
+###############################################################################
+# This script is the command that is executed every run.
+# Check the examples in examples/
+#
+# This script is run in the execution directory (execDir, --exec-dir).
+#
+# PARAMETERS:
+# $1 is the candidate configuration number
+# $2 is the instance ID
+# $3 is the seed
+# $4 is the instance name
+# The rest ($* after `shift 4') are parameters to the run
+#
+# RETURN VALUE:
+# This script should print one numerical value: the cost that must be minimized.
+# Exit with 0 if no error, with 1 in case of error
+###############################################################################
+EXE=~/bin/Spear-32_1.2.1
+TIMEOUT=30
+FIXED_PARAMS="--nosplash --time --tmout $TIMEOUT"
+
+error() {
+    echo "`TZ=UTC date`: $0: error: $@"
+    exit 1
+}
+
+CONFIG_ID=$1
+INSTANCE_ID=$2
+SEED=$3
+INSTANCE=$4
+shift 4 || error "Not enough parameters"
+CONFIG_PARAMS=$*
+
+STDOUT=c${CONFIG_ID}-${INSTANCE_ID}-${SEED}.stdout
+STDERR=c${CONFIG_ID}-${INSTANCE_ID}-${SEED}.stderr
+
+if [ ! -x "${EXE}" ]; then
+    error "${EXE}: not found or not executable (pwd: $(pwd))"
+fi
+
+
+$EXE ${FIXED_PARAMS} --dimacs $INSTANCE ${CONFIG_PARAMS} 1> ${STDOUT} 2> ${STDER}
+if [ $? -ne 0 ]; then
+    (cat <<EOF
+c ERROR
+c runtime 30
+EOF
+    ) > ${STDOUT}
+fi
+
+#####################################################################
+# Evaluate a floating point number subordinate expression.
+function float_cond()
+{
+    local cond=0
+    if [[ $# -gt 0 ]]; then
+        cond=$(echo "$*" | bc -q 2>/dev/null)
+        if [[ -z "$cond" ]]; then cond=0; fi
+        if [[ "$cond" != 0  &&  "$cond" != 1 ]]; then cond=0; fi
+    fi
+    local stat=$((cond == 0))
+    return $stat
+}
+
+
+if COST=$(cat ${STDOUT} | grep -e '^c runtime [0-9]' | cut -f3 -d ' '); then
+    if float_cond "$COST > $TIMEOUT"; then
+        echo "$TIMEOUT"
+    else
+        echo "$COST"
+    fi
+    rm -f ${STDOUT} ${STDERR}
+    exit 0
+fi
+exit 1
