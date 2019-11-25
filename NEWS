@@ -9,6 +9,11 @@
    of a script. On Windows, `irace.exe` replaces `irace.bat`
                                                    (Manuel López-Ibáñez)
 
+ * inst/examples/Spear contains the Spear (SAT solver) configuration scenario.
+                                                   (Manuel López-Ibáñez)
+
+
+
 3.3 (26/04/2019)
 
  * Fix buggy test that breaks CRAN.                   (Manuel López-Ibáñez)
