@@ -406,10 +406,13 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
   # Print the hierarchy vector:
   if (debugLevel >= 1) {
     cat ("# --- Parameters Hierarchy ---\n")
+    print(paste0(names(parameters$hierarchy)))
+    print(parameters$hierarchy)
+    print(sapply(parameters$depends, paste0, collapse=", "))
     print(data.frame(Parameter = paste0(names(parameters$hierarchy)),
                      Level = parameters$hierarchy,
-                     "Depends on" = sapply(parameters$depends, paste0, collapse=", ")),
-                     row.names=NULL)
+                     "Depends on" = sapply(parameters$depends, paste0, collapse=", "),
+                     row.names=NULL))
     cat("\n# ------------------------\n")
   }
 
