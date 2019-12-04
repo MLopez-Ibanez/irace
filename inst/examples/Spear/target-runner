@@ -39,7 +39,11 @@ if [ ! -x "${EXE}" ]; then
     error "${EXE}: not found or not executable (pwd: $(pwd))"
 fi
 
+if [ ! -r "$INSTANCE" ]; then
+    error "${INSTANCE}: cannot find instance (pwd: $(pwd))"
+fi
 
+#echo "$EXE ${FIXED_PARAMS} --dimacs $INSTANCE ${CONFIG_PARAMS}"
 $EXE ${FIXED_PARAMS} --dimacs $INSTANCE ${CONFIG_PARAMS} 1> ${STDOUT} 2> ${STDERR}
 if [ $? -ne 0 ]; then
     (cat <<EOF

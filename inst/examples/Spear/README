@@ -6,11 +6,17 @@ be downloaded from:
 
  http://www.cs.ubc.ca/labs/beta/Projects/ParamILS/algorithms.html
 
-Tuning instances:
+WARNING: Please note that no source code is available and we do not know what
+this executable is actually doing. We do NOT recommend running this executable
+in your computer.  If Spear doesn't work in your computer, there is nothing we
+can do to fix it.  Unless you absolutely must run Spear, we suggest to use a
+different scenario for which source code is available.
+
+* Tuning instances:
 
  http://www.cs.ubc.ca/labs/beta/Projects/ParamILS/benchmark_instances/SpearSWV/SWV-scrambled-first302.tar.gz
 
-Testing instances:
+* Testing instances:
 
  http://www.cs.ubc.ca/labs/beta/Projects/ParamILS/benchmark_instances/SpearSWV/SWV-scrambled-last302.tar.gz
 
