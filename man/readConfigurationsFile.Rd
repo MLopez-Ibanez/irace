@@ -7,7 +7,7 @@
 readConfigurationsFile(filename, parameters, debugLevel = 0, text)
 }
 \arguments{
-\item{filename}{A filename from which the configurations should be read.}
+\item{filename}{(\code{character(1)}) \cr Filename from which the configurations should be read.}
 
 \item{parameters}{(\code{list()}) \cr Data structure containing the parameter
 space definition. The data structure has to similar to the one returned by the
@@ -19,14 +19,14 @@ function \code{\link{readParameters}}.}
 then parameters are read from the value of \code{text} via a text connection.}
 }
 \value{
-A data frame containing the obtained configurations. 
-  Each row of the data frame is a candidate configuration, 
-  the columns correspond to the parameter names in \code{parameters}.
+A data frame containing the obtained configurations.
+Each row of the data frame is a candidate configuration,
+the columns correspond to the parameter names in \code{parameters}.
 }
 \description{
-\code{readConfigurationsFile} reads a set of target algorithms configurations 
- from a file and puts them in \pkg{irace} format. The configurations are checked 
- to match the parameters description provided.
+\code{readConfigurationsFile} reads a set of target algorithms configurations
+from a file and puts them in \pkg{irace} format. The configurations are checked
+to match the parameters description provided.
 }
 \seealso{
 \code{\link{readParameters}} to obtain a valid parameter structure from a parameters list.

@@ -20,19 +20,19 @@ scenario settings are set to their default values.
 \pkg{irace}, checks for errors and transforms it into a valid scenario.
 }
 \details{
-This function checks that the directories and the file names 
-provided and required by the \pkg{irace} exist. It also checks that the 
-settings are of the proper type, e.g. that settings expected to be integers 
+This function checks that the directories and the file names
+provided and required by the \pkg{irace} exist. It also checks that the
+settings are of the proper type, e.g. that settings expected to be integers
 are really integers. Finally, it also checks that there is no inconsistency
-between settings.  If an error is found that prevents \pkg{irace} from 
+between settings.  If an error is found that prevents \pkg{irace} from
 running properly, it will stop with an error.
 }
 \seealso{
 \describe{
- \item{\code{\link{readScenario}}}{for reading a configuration scenario from a file.}
- \item{\code{\link{printScenario}}}{prints the given scenario.}
- \item{\code{\link{defaultScenario}}}{returns the default scenario settings of \pkg{irace}.}
- \item{\code{\link{checkScenario}}}{to check that the scenario is valid.}
+\item{\code{\link{readScenario}}}{for reading a configuration scenario from a file.}
+\item{\code{\link{printScenario}}}{prints the given scenario.}
+\item{\code{\link{defaultScenario}}}{returns the default scenario settings of \pkg{irace}.}
+\item{\code{\link{checkScenario}}}{to check that the scenario is valid.}
 }
 }
 \author{

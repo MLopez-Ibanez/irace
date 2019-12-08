@@ -7,9 +7,9 @@
 readScenario(filename = "", scenario = list())
 }
 \arguments{
-\item{filename}{(\code{character(1)}) \cr  A filename from which the scenario will be read. If empty,
+\item{filename}{(\code{character(1)}) \cr  Filename from which the scenario will be read. If empty,
 the default \code{scenarioFile} is used.  An example scenario file is
-provided in \code{system.file(}\code{package="irace",} \code{"templates/scenario.txt.tmpl")}.}
+provided in \code{system.file(``package="irace",} \code{"templates/scenario.txt.tmpl")}.}
 
 \item{scenario}{(\code{list()}) \cr Data structure containing \pkg{irace}
 settings. The data structure has to be the one returned by the function
@@ -18,18 +18,18 @@ This is an initial scenario that is overwritten for every parameter specified in
 }
 \value{
 The scenario list read from the file. The scenario parameter not
-  present in the file are not present in the list, that is, they are
-  \code{NULL}.
+present in the file are not present in the list, that is, they are
+\code{NULL}.
 }
 \description{
-\code{readScenario} reads the scenario to be used by 
+\code{readScenario} reads the scenario to be used by
 \pkg{irace} from a file.
 }
 \seealso{
 \describe{
- \item{\code{\link{printScenario}}}{prints the given scenario.}
- \item{\code{\link{defaultScenario}}}{returns the default scenario settings of \pkg{irace}.}
- \item{\code{\link{checkScenario}}}{to check that the scenario is valid.}
+\item{\code{\link{printScenario}}}{prints the given scenario.}
+\item{\code{\link{defaultScenario}}}{returns the default scenario settings of \pkg{irace}.}
+\item{\code{\link{checkScenario}}}{to check that the scenario is valid.}
 }
 }
 \author{

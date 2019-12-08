@@ -16,10 +16,10 @@ Prints the given scenario
 }
 \seealso{
 \describe{
- \item{\code{\link{readScenario}}}{for reading a configuration scenario from a file.}
- \item{\code{\link{printScenario}}}{prints the given scenario.}
- \item{\code{\link{defaultScenario}}}{returns the default scenario settings of \pkg{irace}.}
- \item{\code{\link{checkScenario}}}{to check that the scenario is valid.}
+\item{\code{\link{readScenario}}}{for reading a configuration scenario from a file.}
+\item{\code{\link{printScenario}}}{prints the given scenario.}
+\item{\code{\link{defaultScenario}}}{returns the default scenario settings of \pkg{irace}.}
+\item{\code{\link{checkScenario}}}{to check that the scenario is valid.}
 }
 }
 \author{

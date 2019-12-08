@@ -1,22 +1,23 @@
 #' readConfigurationsFile
 #'
-#' \code{readConfigurationsFile} reads a set of target algorithms configurations 
+#' `readConfigurationsFile` reads a set of target algorithms configurations 
 #'  from a file and puts them in \pkg{irace} format. The configurations are checked 
 #'  to match the parameters description provided.
 #' 
-#' @param filename A filename from which the configurations should be read.
+#' @param filename (`character(1)`) \cr Filename from which the configurations should be read.
 #' @template arg_parameters
 #' @template arg_debuglevel
 #' @template arg_text
 #' 
 #' @return A data frame containing the obtained configurations. 
 #'   Each row of the data frame is a candidate configuration, 
-#'   the columns correspond to the parameter names in \code{parameters}.
+#'   the columns correspond to the parameter names in `parameters`.
 #'
 #' @seealso 
 #'   \code{\link{readParameters}} to obtain a valid parameter structure from a parameters list.
 #' 
 #' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
+#' @md
 #' @export
 ## Read some configurations from a file.
 ## Example of an input file,
@@ -231,18 +232,18 @@ buildForbiddenExp <- function(configurations, parameters)
 
 #' readScenario
 #'
-#' \code{readScenario} reads the scenario to be used by 
+#' `readScenario` reads the scenario to be used by 
 #' \pkg{irace} from a file.
 #' 
-#' @param filename (\code{character(1)}) \cr  A filename from which the scenario will be read. If empty,
-#'   the default \code{scenarioFile} is used.  An example scenario file is
-#'   provided in \code{system.file(}\code{package="irace",} \code{"templates/scenario.txt.tmpl")}.
+#' @param filename (`character(1)`) \cr  Filename from which the scenario will be read. If empty,
+#'   the default `scenarioFile` is used.  An example scenario file is
+#'   provided in `system.file(``package="irace",` `"templates/scenario.txt.tmpl")`.
 #' @templateVar arg_appendix This is an initial scenario that is overwritten for every parameter specified in the file to be read.
 #' @template arg_scenario
 #'  
 #' @return The scenario list read from the file. The scenario parameter not
 #'   present in the file are not present in the list, that is, they are
-#'   \code{NULL}.
+#'   `NULL`.
 #'
 #' @seealso
 #'  \describe{
@@ -252,6 +253,7 @@ buildForbiddenExp <- function(configurations, parameters)
 #' }
 #' 
 #' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
+#' @md
 #' @export
 readScenario <- function(filename = "", scenario = list())
 {
@@ -327,7 +329,7 @@ readScenario <- function(filename = "", scenario = list())
 
 #' Check and correct the given scenario
 #'
-#' \code{checkScenario} takes a (possibly incomplete) scenario setup of
+#' `checkScenario` takes a (possibly incomplete) scenario setup of
 #' \pkg{irace}, checks for errors and transforms it into a valid scenario.
 #' 
 #' @template arg_scenario
@@ -351,6 +353,7 @@ readScenario <- function(filename = "", scenario = list())
 #' }
 #' 
 #' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
+#' @md
 #' @export
 ## FIXME: This function should only do checks and return TRUE/FALSE. There
 ## should be other function that does the various transformations.
@@ -701,6 +704,7 @@ checkScenario <- function(scenario = defaultScenario())
 #' }
 #' 
 #' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
+#' @md
 #' @export
 printScenario <- function(scenario)
 {
