@@ -9,7 +9,7 @@
 
 #' Generate a command-line representation of a configuration
 #'
-#' @description \code{buildCommandLine} receives two vectors, one containing
+#' @description `buildCommandLine` receives two vectors, one containing
 #'   the values of the parameters, the other containing the switches of the
 #'   parameters. It builds a string with the switches and the values that can
 #'   be used as a command line to call the program to be tuned, thus generating
@@ -21,8 +21,8 @@
 #' @param switches A vector containing the switches of each paramter (in an
 #'  order that corresponds to the values vector).
 #' 
-#' @return A string concatenating each element of \code{switches} and
-#'   \code{values} for all parameters with a space between each pair of
+#' @return A string concatenating each element of `switches` and
+#'   `values` for all parameters with a space between each pair of
 #'   parameters (but none between the switches and the corresponding values).
 #'
 #' @examples
@@ -39,6 +39,7 @@
 #'       unlist(parameters$switches))
 #' 
 #' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
+#' @md
 #' @export
 buildCommandLine <- function(values, switches)
 {
@@ -151,48 +152,49 @@ exec.target.evaluator <- function (experiment, num.configurations, all.conf.id,
 
 #' target.evaluator.default
 #'
-#' \code{target.evaluator.default} is the default \code{targetEvaluator} function that is
-#'  invoked if \code{targetEvaluator} is a string (by default
-#'  \code{targetEvaluator} is \code{NULL} and this function is not invoked). You can use it as
-#'  an advanced example of how to create your own \code{targetEvaluator} function.
+#' `target.evaluator.default` is the default `targetEvaluator` function that is
+#'  invoked if `targetEvaluator` is a string (by default
+#'  `targetEvaluator` is `NULL` and this function is not invoked). You can use it as
+#'  an advanced example of how to create your own `targetEvaluator` function.
 #'   
 #' @param experiment A list describing the experiment. It contains at least:
 #'    \describe{
-#'     \item{\code{id.configuration}}{An alphanumeric string that uniquely identifies a configuration;}
-#'     \item{\code{id.instance}}{An alphanumeric string that uniquely identifies an instance;}
-#'      \item{\code{seed}}{Seed for the random number generator to be used for
+#'     \item{`id.configuration`}{An alphanumeric string that uniquely identifies a configuration;}
+#'     \item{`id.instance`}{An alphanumeric string that uniquely identifies an instance;}
+#'      \item{`seed`}{Seed for the random number generator to be used for
 #'        this evaluation, ignore the seed for deterministic algorithms;}
-#'      \item{\code{instance}}{String giving the instance to be used for this evaluation;}
-#'      \item{\code{bound}}{(only when \code{capping} is enabled) Time bound for the execution;}
-#'      \item{\code{configuration}}{1-row data frame with a column per parameter
+#'      \item{`instance`}{String giving the instance to be used for this evaluation;}
+#'      \item{`bound`}{(only when `capping` is enabled) Time bound for the execution;}
+#'      \item{`configuration`}{1-row data frame with a column per parameter
 #'        name;}
-#'      \item{\code{switches}}{Vector of parameter switches (labels) in the order
-#'        of parameters used in \code{configuration}.}
+#'      \item{`switches`}{Vector of parameter switches (labels) in the order
+#'        of parameters used in `configuration`.}
 #'    }
 #' @param num.configurations Number of  configurations alive in the race.
 #' @param all.conf.id Vector of configuration IDs of the alive configurations.
 #' @template arg_scenario
-#' @param target.runner.call String describing the call to \code{targetRunner} that
-#'    corresponds to this call to \code{targetEvaluator}. This is used for
+#' @param target.runner.call String describing the call to `targetRunner` that
+#'    corresponds to this call to `targetEvaluator`. This is used for
 #'    providing extra information to the user, for example, in case
-#'    \code{targetEvaluator} fails.
+#'    `targetEvaluator` fails.
 #' 
-#' @return The function \code{targetEvaluator} must return a list with one element
-#'  \code{"cost"}, the numerical value corresponding to the cost measure of the
+#' @return The function `targetEvaluator` must return a list with one element
+#'  `"cost"`, the numerical value corresponding to the cost measure of the
 #'  given configuration on the given instance.
 #'    
 #'  The return list may also contain the following optional elements that are used
-#'  by \pkg{irace} for reporting errors in \code{targetEvaluator}:
+#'  by \pkg{irace} for reporting errors in `targetEvaluator`:
 #'  \describe{
-#'    \item{\code{error}}{is a string used to report an error;}
-#'    \item{\code{outputRaw}}{is a string used to report the raw output of calls to
+#'    \item{`error`}{is a string used to report an error;}
+#'    \item{`outputRaw`}{is a string used to report the raw output of calls to
 #'      an external program or function;}
-#'    \item{\code{call}}{is a string used to report how \code{targetRunner} called 
+#'    \item{`call`}{is a string used to report how `targetRunner` called 
 #'      an external program or function.}
 #'  }
 #'
 #' 
 #' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
+#' @md
 #' @export
 target.evaluator.default <- function(experiment, num.configurations, all.conf.id,
                                      scenario, target.runner.call)
@@ -390,45 +392,46 @@ target.runner.aclib <- function(experiment, scenario)
 
 #' target.runner.default
 #'
-#' \code{target.runner.default} is the default targetRunner function. 
+#' `target.runner.default` is the default targetRunner function. 
 #' You can use it as an advanced example of how to create your own targetRunner 
 #' function.
 #' 
 #' @param experiment A list describing the experiment. It contains at least:
 #'    \describe{
-#'     \item{\code{id.configuration}}{An alphanumeric string that uniquely identifies a configuration;}
-#'     \item{\code{id.instance}}{An alphanumeric string that uniquely identifies an instance;}
-#'      \item{\code{seed}}{Seed for the random number generator to be used for
+#'     \item{`id.configuration`}{An alphanumeric string that uniquely identifies a configuration;}
+#'     \item{`id.instance`}{An alphanumeric string that uniquely identifies an instance;}
+#'      \item{`seed`}{Seed for the random number generator to be used for
 #'        this evaluation, ignore the seed for deterministic algorithms;}
-#'      \item{\code{instance}}{String giving the instance to be used for this evaluation;}
-#'      \item{\code{bound}}{(only when \code{capping} is enabled) Time bound for the execution;}
-#'      \item{\code{configuration}}{1-row data frame with a column per parameter
+#'      \item{`instance`}{String giving the instance to be used for this evaluation;}
+#'      \item{`bound`}{(only when `capping` is enabled) Time bound for the execution;}
+#'      \item{`configuration`}{1-row data frame with a column per parameter
 #'        name;}
-#'      \item{\code{switches}}{Vector of parameter switches (labels) in the order
-#'        of parameters used in \code{configuration}.}
+#'      \item{`switches`}{Vector of parameter switches (labels) in the order
+#'        of parameters used in `configuration`.}
 #'    }
 #' @template arg_scenario
 #' 
-#' @return If \code{targetEvaluator} is \code{NULL}, then the \code{targetRunner}
-#'  function must return a list with at least one element \code{"cost"},
+#' @return If `targetEvaluator` is `NULL`, then the `targetRunner`
+#'  function must return a list with at least one element `"cost"`,
 #'  the numerical value corresponding to the evaluation of the given
 #'  configuration on the given instance.
 #'    
-#'  If the scenario option \code{maxTime} is non-zero or if \code{capping} is enabled 
-#'  then the list must contain at least another element \code{"time"} that reports the
-#'  execution time for this call to \code{targetRunner}.
+#'  If the scenario option `maxTime` is non-zero or if `capping` is enabled 
+#'  then the list must contain at least another element `"time"` that reports the
+#'  execution time for this call to `targetRunner`.
 #'  The return list may also contain the following optional elements that are used
-#'  by \pkg{irace} for reporting errors in \code{targetRunner}:
+#'  by \pkg{irace} for reporting errors in `targetRunner`:
 #'  \describe{
-#'    \item{\code{error}}{is a string used to report an error;}
-#'    \item{\code{outputRaw}}{is a string used to report the raw output of calls to
+#'    \item{`error`}{is a string used to report an error;}
+#'    \item{`outputRaw`}{is a string used to report the raw output of calls to
 #'      an external program or function;}
-#'    \item{\code{call}}{is a string used to report how \code{targetRunner} called 
+#'    \item{`call`}{is a string used to report how `targetRunner` called 
 #'      an external program or function.}
 #'  }
 #'
 #' 
 #' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
+#' @md
 #' @export
 target.runner.default <- function(experiment, scenario)
 {

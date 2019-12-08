@@ -423,7 +423,7 @@ do.experiments <- function(configurations, ninstances, scenario, parameters)
   for (j in 1:ninstances) {
     vcost <- unlist(lapply(output[[j]], "[[", "cost"))
     if (scenario$capping)
-      vcost <- applyPAR(vcost, scenario)
+      vcost <- applyPAR(vcost, boundMax = scenario$boundMax, boundPar = scenario$boundPar)
     Results[j, ] <- vcost
     vtimes <- unlist(lapply(output[[j]], "[[", "time"))
     irace.assert(!any(is.null(vtimes)))

@@ -15,15 +15,15 @@ order that corresponds to the values vector).}
 }
 \value{
 A string concatenating each element of \code{switches} and
-  \code{values} for all parameters with a space between each pair of
-  parameters (but none between the switches and the corresponding values).
+\code{values} for all parameters with a space between each pair of
+parameters (but none between the switches and the corresponding values).
 }
 \description{
 \code{buildCommandLine} receives two vectors, one containing
-  the values of the parameters, the other containing the switches of the
-  parameters. It builds a string with the switches and the values that can
-  be used as a command line to call the program to be tuned, thus generating
-  one candidate configuration.
+the values of the parameters, the other containing the switches of the
+parameters. It builds a string with the switches and the values that can
+be used as a command line to call the program to be tuned, thus generating
+one candidate configuration.
 }
 \examples{
 switches <- c("--switch1 ", "--switch2 ")

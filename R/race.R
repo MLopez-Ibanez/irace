@@ -193,54 +193,40 @@ aux.friedman <- function(results, alive, which.alive, no.alive, conf.level)
   }
 }
 
-aux.ttest <- function(results, no.tasks.sofar, alive, which.alive, no.alive, conf.level,
+aux.ttest <- function(results, alive, which.alive, conf.level,
                       adjust = c("none","bonferroni","holm"))
 {
-  irace.assert(no.alive == length(which.alive))
-  
   adjust <- match.arg(adjust)
-  mean.all <- c()
-  for (j in 1:ncol(results)) {
-    # FIXME: why not just mean() ?
-    mean.all[j] <- sum(results[,j]) / no.tasks.sofar
+  irace.assert(sum(alive) == length(which.alive))
+  
+  results <- results[, which.alive]
+  means <- colMeans(results)
+  best <- which.min(means)
+  mean_best <- means[best]
+  pvals <- sapply(means, function(x) as.numeric(isTRUE(
+                                       all.equal.numeric(mean_best[[1]], x[[1]], check.attributes = FALSE))))
+  results_best <- results[, best]
+  var_best <- var(results_best)
+  which_test <- which(pvals < 1.0)
+  for (j in which_test) {
+    PVAL <- pvals[j]
+    if (PVAL == 1.0) next
+    results_j <- results[ , j]
+    # t.test may fail if the data in each group is almost constant. Hence, we
+    # surround the call in a try() and we initialize p with 1 if the means are
+    # equal or zero if they are different
+    if (min(var(results_best), var(results_j)) < 10 * .Machine$double.eps) next
+    try(PVAL <- t.test(results_best, results_j, paired = TRUE)$p.value)
+    irace.assert(!is.nan(PVAL) & !is.na(PVAL))
+    pvals[j] <- PVAL
   }
-  # FIXME: which.min?
-  best <- match(min(mean.all[alive]), mean.all)
-  ranks <- mean.all[alive]
-
-  # FIXME: Use matrix()
-  PJ <- array(0, dim = c(2,0))
-  Vb <- results[, best]
-  for (j in which.alive) {
-    Vj <- results[, j]
-    #cat("Vb:", Vb, "\n")
-    #cat("Vj:", Vj, "\n")
-    # t.test may fail if the data in each group is almost
-    # constant. Hence, we surround the call in a try() and we
-    # initialize p with 1 if the means are equal or zero if they are
-    # different.
-    # FIXME: mean(Vb) doesn't seem to change either.
-    PVAL <- as.integer(isTRUE(all.equal(mean(Vb), mean(Vj))))
-    try(PVAL <- t.test(Vb, Vj, paired = TRUE)$p.value)
-    if (is.nan(PVAL) | is.na(PVAL)) {
-      # This should not happen, but it happens sometimes if all values are
-      # equal.  We assume that we cannot reject anything.
-      PVAL <- 1
-    }
-    # FIXME: Is this equivalent to cbind or rbind?
-    PJ <- array(c(PJ, j, PVAL), dim = dim(PJ) + c(0,1))
-  }
-  PJ[2,] <- p.adjust(PJ[2,], method = adjust)
-  dropped.any <- FALSE
-  for (j in 1:ncol(PJ)) {
-    if (PJ[2,j] < 1 - conf.level) {
-      alive[PJ[1, j]] <- FALSE
-      dropped.any <- TRUE
-    }
-  }
-  irace.assert(which.alive[which.min(ranks)] == best)
-  return(list(best = best, ranks = ranks, alive = alive,
-              dropped.any = dropped.any, p.value = min(PJ[2,])))
+  pvals <- p.adjust(pvals, method = adjust)
+  dropj <- which.alive[pvals < 1.0 - conf.level]
+  dropped_any <- length(dropj) > 0
+  irace.assert(all(alive[dropj]))
+  alive[dropj] <- FALSE
+  return(list(best = which.alive[best], ranks = means, alive = alive,
+              dropped.any = dropped_any, p.value = min(pvals)))
 }
 
 race.init.instances <- function(deterministic, max.instances)
@@ -441,10 +427,8 @@ dom.elim <- function(results, elites, alive, scenario, minSurvival, eps = 1e-5)
 
 ## This function applies PARX (X=boundPar) to all experiments
 ## that exceed the maximum execution time (boundMax)
-applyPAR <- function(results, scenario)
+applyPAR <- function(results, boundMax, boundPar)
 {
-  boundMax <- scenario$boundMax
-  boundPar <- scenario$boundPar
   if (boundPar != 1)
     results[results >= boundMax] <- boundMax * boundPar
   return(results)
@@ -685,7 +669,7 @@ race <- function(maxExp = 0,
         # LESLIE: Yes you are right, Ill do it once we figure out the rest!
         vcost <- unlist(lapply(output, "[[", "cost"))
         irace.assert(length(vcost) == n.elite)
-        vcost <- applyPAR(vcost, scenario)
+        vcost <- applyPAR(vcost, boundMax = scenario$boundMax, boundPar = scenario$boundPar)
         Results[k, 1:n.elite] <- vcost
         vtimes <- unlist(lapply(output, "[[", "time"))
         irace.assert(length(vtimes) == n.elite)
@@ -864,7 +848,7 @@ race <- function(maxExp = 0,
         # Extract results
         vcost <- unlist(lapply(output, "[[", "cost"))
         irace.assert(length(vcost) == length(which.elite.exe))
-        vcost <- applyPAR(vcost, scenario)
+        vcost <- applyPAR(vcost, boundMax = scenario$boundMax, boundPar = scenario$boundPar)
         Results[current.task, which.elite.exe] <- vcost
         vtimes <- unlist(lapply(output, "[[", "time"))
         irace.assert(length(vtimes) == length(which.elite.exe))
@@ -937,7 +921,7 @@ race <- function(maxExp = 0,
     # Set max execution bound to timed out executions which have execution
     # times smaller than boundMax and implement parX if required
     if (scenario$capping) {
-      vcost <- applyPAR(vcost, scenario)
+      vcost <- applyPAR(vcost, boundMax = scenario$boundMax, boundPar = scenario$boundPar)
       if (scenario$boundAsTimeout)
         vcost[(vcost >= final.bounds[which.exps]) & (vcost < scenario$boundMax)] <- scenario$boundMax
     }
@@ -1005,13 +989,14 @@ race <- function(maxExp = 0,
     # case, this will only do the first test after the first multiple
     # of each.test that is larger than first.test.
     if (current.task >= first.test && (current.task %% each.test) == 0
-        && nbAlive > 1) {
+        && nbAlive > 1L) {
+      irace.assert(sum(alive) == nbAlive)
       test.res <-
         switch(stat.test,
                friedman = aux.friedman(Results[1:current.task, ], alive, which.alive, nbAlive, conf.level),
-               t.none = aux.ttest(Results[1:current.task, ], current.task, alive, which.alive, nbAlive, conf.level, adjust = "none"),
-               t.holm = aux.ttest(Results[1:current.task, ], current.task, alive, which.alive, nbAlive, conf.level, adjust = "holm"),
-               t.bonferroni = aux.ttest(Results[1:current.task, ], current.task, alive, which.alive, nbAlive, conf.level, adjust = "bonferroni"))
+               t.none = aux.ttest(Results[1:current.task, ], alive, which.alive, conf.level, adjust = "none"),
+               t.holm = aux.ttest(Results[1:current.task, ], alive, which.alive, conf.level, adjust = "holm"),
+               t.bonferroni = aux.ttest(Results[1:current.task, ], alive, which.alive, conf.level, adjust = "bonferroni"))
       
       best <- test.res$best
       race.ranks <- test.res$ranks

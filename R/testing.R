@@ -76,7 +76,8 @@ testConfigurations <- function(configurations, scenario, parameters)
   # assign it.
   for (i in seq_along(experiments)) {
     cost <- target.output[[i]]$cost
-    if (scenario$capping) cost <- applyPAR(cost, scenario)
+    if (scenario$capping)
+      cost <- applyPAR(cost, boundMax = scenario$boundMax, boundPar = scenario$boundPar)
     testResults[rownames(testResults) == experiments[[i]]$id.instance,
                 colnames(testResults) == experiments[[i]]$id.configuration] <- cost
   }

@@ -10,16 +10,16 @@ target.evaluator.default(experiment, num.configurations, all.conf.id,
 \arguments{
 \item{experiment}{A list describing the experiment. It contains at least:
 \describe{
- \item{\code{id.configuration}}{An alphanumeric string that uniquely identifies a configuration;}
- \item{\code{id.instance}}{An alphanumeric string that uniquely identifies an instance;}
-  \item{\code{seed}}{Seed for the random number generator to be used for
-    this evaluation, ignore the seed for deterministic algorithms;}
-  \item{\code{instance}}{String giving the instance to be used for this evaluation;}
-  \item{\code{bound}}{(only when \code{capping} is enabled) Time bound for the execution;}
-  \item{\code{configuration}}{1-row data frame with a column per parameter
-    name;}
-  \item{\code{switches}}{Vector of parameter switches (labels) in the order
-    of parameters used in \code{configuration}.}
+\item{\code{id.configuration}}{An alphanumeric string that uniquely identifies a configuration;}
+\item{\code{id.instance}}{An alphanumeric string that uniquely identifies an instance;}
+\item{\code{seed}}{Seed for the random number generator to be used for
+this evaluation, ignore the seed for deterministic algorithms;}
+\item{\code{instance}}{String giving the instance to be used for this evaluation;}
+\item{\code{bound}}{(only when \code{capping} is enabled) Time bound for the execution;}
+\item{\code{configuration}}{1-row data frame with a column per parameter
+name;}
+\item{\code{switches}}{Vector of parameter switches (labels) in the order
+of parameters used in \code{configuration}.}
 }}
 
 \item{num.configurations}{Number of  configurations alive in the race.}
@@ -37,24 +37,24 @@ providing extra information to the user, for example, in case
 }
 \value{
 The function \code{targetEvaluator} must return a list with one element
- \code{"cost"}, the numerical value corresponding to the cost measure of the
- given configuration on the given instance.
-   
- The return list may also contain the following optional elements that are used
- by \pkg{irace} for reporting errors in \code{targetEvaluator}:
- \describe{
-   \item{\code{error}}{is a string used to report an error;}
-   \item{\code{outputRaw}}{is a string used to report the raw output of calls to
-     an external program or function;}
-   \item{\code{call}}{is a string used to report how \code{targetRunner} called 
-     an external program or function.}
- }
+\code{"cost"}, the numerical value corresponding to the cost measure of the
+given configuration on the given instance.
+
+The return list may also contain the following optional elements that are used
+by \pkg{irace} for reporting errors in \code{targetEvaluator}:
+\describe{
+\item{\code{error}}{is a string used to report an error;}
+\item{\code{outputRaw}}{is a string used to report the raw output of calls to
+an external program or function;}
+\item{\code{call}}{is a string used to report how \code{targetRunner} called
+an external program or function.}
+}
 }
 \description{
 \code{target.evaluator.default} is the default \code{targetEvaluator} function that is
- invoked if \code{targetEvaluator} is a string (by default
- \code{targetEvaluator} is \code{NULL} and this function is not invoked). You can use it as
- an advanced example of how to create your own \code{targetEvaluator} function.
+invoked if \code{targetEvaluator} is a string (by default
+\code{targetEvaluator} is \code{NULL} and this function is not invoked). You can use it as
+an advanced example of how to create your own \code{targetEvaluator} function.
 }
 \author{
 Manuel López-Ibáñez and Jérémie Dubois-Lacoste

@@ -9,16 +9,16 @@ target.runner.default(experiment, scenario)
 \arguments{
 \item{experiment}{A list describing the experiment. It contains at least:
 \describe{
- \item{\code{id.configuration}}{An alphanumeric string that uniquely identifies a configuration;}
- \item{\code{id.instance}}{An alphanumeric string that uniquely identifies an instance;}
-  \item{\code{seed}}{Seed for the random number generator to be used for
-    this evaluation, ignore the seed for deterministic algorithms;}
-  \item{\code{instance}}{String giving the instance to be used for this evaluation;}
-  \item{\code{bound}}{(only when \code{capping} is enabled) Time bound for the execution;}
-  \item{\code{configuration}}{1-row data frame with a column per parameter
-    name;}
-  \item{\code{switches}}{Vector of parameter switches (labels) in the order
-    of parameters used in \code{configuration}.}
+\item{\code{id.configuration}}{An alphanumeric string that uniquely identifies a configuration;}
+\item{\code{id.instance}}{An alphanumeric string that uniquely identifies an instance;}
+\item{\code{seed}}{Seed for the random number generator to be used for
+this evaluation, ignore the seed for deterministic algorithms;}
+\item{\code{instance}}{String giving the instance to be used for this evaluation;}
+\item{\code{bound}}{(only when \code{capping} is enabled) Time bound for the execution;}
+\item{\code{configuration}}{1-row data frame with a column per parameter
+name;}
+\item{\code{switches}}{Vector of parameter switches (labels) in the order
+of parameters used in \code{configuration}.}
 }}
 
 \item{scenario}{(\code{list()}) \cr Data structure containing \pkg{irace}
@@ -27,26 +27,26 @@ settings. The data structure has to be the one returned by the function
 }
 \value{
 If \code{targetEvaluator} is \code{NULL}, then the \code{targetRunner}
- function must return a list with at least one element \code{"cost"},
- the numerical value corresponding to the evaluation of the given
- configuration on the given instance.
-   
- If the scenario option \code{maxTime} is non-zero or if \code{capping} is enabled 
- then the list must contain at least another element \code{"time"} that reports the
- execution time for this call to \code{targetRunner}.
- The return list may also contain the following optional elements that are used
- by \pkg{irace} for reporting errors in \code{targetRunner}:
- \describe{
-   \item{\code{error}}{is a string used to report an error;}
-   \item{\code{outputRaw}}{is a string used to report the raw output of calls to
-     an external program or function;}
-   \item{\code{call}}{is a string used to report how \code{targetRunner} called 
-     an external program or function.}
- }
+function must return a list with at least one element \code{"cost"},
+the numerical value corresponding to the evaluation of the given
+configuration on the given instance.
+
+If the scenario option \code{maxTime} is non-zero or if \code{capping} is enabled
+then the list must contain at least another element \code{"time"} that reports the
+execution time for this call to \code{targetRunner}.
+The return list may also contain the following optional elements that are used
+by \pkg{irace} for reporting errors in \code{targetRunner}:
+\describe{
+\item{\code{error}}{is a string used to report an error;}
+\item{\code{outputRaw}}{is a string used to report the raw output of calls to
+an external program or function;}
+\item{\code{call}}{is a string used to report how \code{targetRunner} called
+an external program or function.}
+}
 }
 \description{
-\code{target.runner.default} is the default targetRunner function. 
-You can use it as an advanced example of how to create your own targetRunner 
+\code{target.runner.default} is the default targetRunner function.
+You can use it as an advanced example of how to create your own targetRunner
 function.
 }
 \author{
