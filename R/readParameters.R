@@ -1,41 +1,41 @@
 #' readParameters
 #'
-#' \code{readParameters} reads the parameters to be tuned by 
+#' `readParameters` reads the parameters to be tuned by 
 #' \pkg{irace} from a file or directly from a character string.
 #' 
-#' @param file (\code{character(1)}) \cr The name of the file 
-#'  containing the definitions of the parameters to be tuned.
-#' @param digits The number of decimal places to be considered for the
-#'  real parameters.
+#' @param file (`character(1)`) \cr Filename containing the definitions of
+#'   the parameters to be tuned.
+#' @param digits The number of decimal places to be considered for the real
+#'   parameters.
 #' @template arg_debuglevel
 #' @template arg_text
 #' 
 #' @return A list containing the definitions of the parameters read. The list is
 #'  structured as follows:
 #'   \describe{
-#'     \item{\code{names}}{Vector that contains the names of the parameters.}
-#'     \item{\code{types}}{Vector that contains the type of each parameter 'i', 'c', 'r', 'o'.
+#'     \item{`names`}{Vector that contains the names of the parameters.}
+#'     \item{`types`}{Vector that contains the type of each parameter 'i', 'c', 'r', 'o'.
 #'       Numerical parameters can be sampled in a log-scale with 'i,log' and 'r,log'
 #'       (no spaces).}
-#'     \item{\code{switches}}{Vector that contains the switches to be used for the
+#'     \item{`switches`}{Vector that contains the switches to be used for the
 #'       parameters on the command line.}
-#'     \item{\code{domain}}{List of vectors, where each vector may contain two
+#'     \item{`domain`}{List of vectors, where each vector may contain two
 #'       values (minimum, maximum) for real and integer parameters, or
 #'       possibly more for categorical parameters.}
-#'     \item{\code{conditions}}{List of R logical expressions, with variables
+#'     \item{`conditions`}{List of R logical expressions, with variables
 #'       corresponding to parameter names.}
-#'     \item{\code{isFixed}}{Logical vector that specifies which parameter is fixed
+#'     \item{`isFixed`}{Logical vector that specifies which parameter is fixed
 #'       and, thus, it does not need to be tuned.}
-#'     \item{\code{nbParameters}}{An integer, the total number of parameters.}
-#'     \item{\code{nbFixed}}{An integer, the number of parameters with a fixed value.}
-#'     \item{\code{nbVariable}}{Number of variable (to be tuned) parameters.}
+#'     \item{`nbParameters`}{An integer, the total number of parameters.}
+#'     \item{`nbFixed`}{An integer, the number of parameters with a fixed value.}
+#'     \item{`nbVariable`}{Number of variable (to be tuned) parameters.}
 #'   }
 #'
-#' @details Either 'file' or 'text' must be given. If 'file' is given, the
-#'  parameters are read from the file 'file'. If 'text' is given instead,
-#'  the parameters are read directly from the 'text' character string.
-#'  In both cases, the parameters must be given (in 'text' or in the file
-#'  whose name is 'file') in the expected form.  See the documentation
+#' @details Either `file` or `text` must be given. If `file` is given, the
+#'  parameters are read from the file `file`. If `text` is given instead,
+#'  the parameters are read directly from the `text` character string.
+#'  In both cases, the parameters must be given (in `text` or in the file
+#'  whose name is `file`) in the expected form.  See the documentation
 #'  for details.  If none of these parameters is given, \pkg{irace}
 #'  will stop with an error.
 #'
@@ -44,7 +44,7 @@
 #'  function we set isFixed to TRUE only if the parameter is a categorical
 #'  and has only one possible value.  If it is an integer and the minimum
 #'  and maximum are equal, or it is a real and the minimum and maximum
-#'  values satisfy 'round(minimum, digits) == round(maximum, digits)',
+#'  values satisfy `round(minimum, digits) == round(maximum, digits)`,
 #'  then the parameter description is rejected as invalid to identify
 #'  potential user errors.
 #'
@@ -68,6 +68,7 @@
 #'  str(parameters)
 #' 
 #' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
+#' @md
 #' @export
 readParameters <- function (file, digits = 4, debugLevel = 0, text)
 {
