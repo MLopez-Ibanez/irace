@@ -4,8 +4,6 @@ BUGS: see BUGS file
 
 TODO R package:
 
- * https://builder.r-hub.io/
-
  * Use
    https://github.com/seandavi/F1000R_BiocWorkflows/blob/master/rnwConversion/processesRnw.R
    to convert the user-guide to Rmarkdown, then use pkgdown to generate a nice
@@ -280,6 +278,8 @@ TODO General (in order of importance):
 ------------------------------------------------------------------------------
 
 DONE:
+
+ * https://builder.r-hub.io/ [DONE by Manuel]
 
  * How to run individual tests from the make. Check testthat documentation.
    [DONE by Manuel]
