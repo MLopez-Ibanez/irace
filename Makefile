@@ -169,12 +169,18 @@ else
 	ssh $(RNODE) "cd $(RDIR)/$(PACKAGE) && make quick-install"
 endif
 
+remotecran: releasebuild
+	R --slave -e "rhub::check_for_cran(path=\"$(BINDIR)/$(PACKAGE)_$(PACKAGEVERSION).tar.gz\", show_status = TRUE, env_vars = c(`_R_CHECK_FORCE_SUGGESTS_` = 'true'))"
+
 submit: 
 	@echo "Read http://cran.r-project.org/web/packages/policies.html"
 	@echo "*** You need to use http://cran.r-project.org/submit.html"
 	@exit 1
 	cd $(BINDIR) && echo $(FTP_COMMANDS) | ftp -v -e -g -i -n cran.r-project.org
 	@echo "Don't forget to send email to cran@r-project.org !"
+
+macbuild: releasebuild
+	R --slave -e "rhub::check(platform='macos-elcapitan-release', path=\"$(BINDIR)/$(PACKAGE)_$(PACKAGEVERSION).tar.gz\", env_vars = c(`_R_CHECK_FORCE_SUGGESTS_` = 'true'))"
 
 winbuild: releasebuild
 	@echo "Winbuild: http://win-builder.r-project.org/"
