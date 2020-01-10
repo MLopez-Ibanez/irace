@@ -1,0 +1,19 @@
+algorithm {as,mmas,eas,ras,acs} [as]
+localsearch {0,1,2,3} [0]
+alpha [0,5] [0]
+beta [0,10] [0]
+rho [0.01,1] [0.01]
+ants [1,100] [5]i
+nnls [5,50] [5]i
+dlb {0,1} [0]
+q0 [0,1] [0]
+rasrank [1,100] [1]i
+elitistants [1,750] [1]i
+
+
+#Conditions:
+nnls | localsearch in {1, 2, 3}
+dlb | localsearch in {1, 2, 3}
+q0 | algorithm in {acs, mmas}
+rasrank | algorithm in {ras}
+elitistants | algorithm in {eas}

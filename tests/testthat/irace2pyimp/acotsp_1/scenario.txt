@@ -1,0 +1,10 @@
+algo=/vsc-hard-mounts/leuven-data/307/vsc30746/ParameterImportance/tuning-irace/ACOTSP/run-02/target-runner
+execDir=./
+deterministic=false
+run_obj=quality
+cutoff_time=1
+tunerTimeout=999999
+overall_obj=mean
+paramfile=params.pcs
+instance_file=instances.txt
+feature_file=features.csv

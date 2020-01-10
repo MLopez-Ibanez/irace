@@ -70,6 +70,7 @@ for (section in ordered.sections) {
 man.text <- c(man.text, "#' }", marker.end)
 writeLines(man.text, con = options.comment.filename)
 
+# FIXME: Implement this in pure R, and remove use of 'sed'
 system2("sed",
         args = c("-i", "-e",
                  sprintf("\"/$lead/,/$tail/{ /$lead/{r %s

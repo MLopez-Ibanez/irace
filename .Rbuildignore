@@ -1,4 +1,5 @@
 .+~
+\.o$
 DEVEL-README
 \.Rhistory$
 \.auctex-auto
@@ -36,6 +37,8 @@ DEVEL-README
 ^scenario\.txt$
 ^src/iracebin/irace$
 ^src/iracebin/irace.exe$
+^src/iracebin/irace2pyimp$
+^src/iracebin/irace2pyimp.exe$
 ^svn_version
 ^testing
 ^tmp

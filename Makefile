@@ -170,7 +170,7 @@ else
 endif
 
 remotecran: releasebuild
-	R --slave -e "rhub::check_for_cran(path=\"$(BINDIR)/$(PACKAGE)_$(PACKAGEVERSION).tar.gz\", show_status = TRUE, env_vars = c(`_R_CHECK_FORCE_SUGGESTS_` = 'true'))"
+	R --slave -e "rhub::check_for_cran(path=\"$(BINDIR)/$(PACKAGE)_$(PACKAGEVERSION).tar.gz\", show_status = TRUE,  env_vars = c('_R_CHECK_FORCE_SUGGESTS_'='true', R_DEFAULT_SAVE_VERSION='2', R_DEFAULT_SERIALIZE_VERSION='2'))"
 
 submit: 
 	@echo "Read http://cran.r-project.org/web/packages/policies.html"
@@ -180,7 +180,7 @@ submit:
 	@echo "Don't forget to send email to cran@r-project.org !"
 
 macbuild: releasebuild
-	R --slave -e "rhub::check(platform='macos-elcapitan-release', path=\"$(BINDIR)/$(PACKAGE)_$(PACKAGEVERSION).tar.gz\", env_vars = c(`_R_CHECK_FORCE_SUGGESTS_` = 'true'))"
+	R --slave -e "rhub::check(platform='macos-elcapitan-release', path='$(BINDIR)/$(PACKAGE)_$(PACKAGEVERSION).tar.gz', env_vars = c('_R_CHECK_FORCE_SUGGESTS_'='false', R_DEFAULT_SAVE_VERSION='2', R_DEFAULT_SERIALIZE_VERSION='2'))"
 
 winbuild: releasebuild
 	@echo "Winbuild: http://win-builder.r-project.org/"

@@ -1,0 +1,1 @@
+{"cputime": 32, "evaluations": 7, "cost": 0.611593, "incumbent": ["n_templates_middle=1", "n_templates_delta=1", "n_slots_middle=10", "n_slots_delta=11", "n_variations_middle=30", "n_variations_delta=3", "demand_range_middle=23", "demand_range_delta=1"], "total_cpu_time": null, "wallclock_time": 32}

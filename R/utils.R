@@ -38,6 +38,13 @@ irace.print.memUsed <- function(objects)
   cat(sep="", sprintf("%30s : %17.1f Mb\n", "gc", sum(gc()[,2])))
 }
 
+# Print a user-level warning message, when the calling context
+# cannot help the user to understand why the program failed.
+irace.warning <- function(...)
+{
+  cat(sep="", "WARNING: ", ..., "\n")
+}
+
 # Print a user-level fatal error message, when the calling context
 # cannot help the user to understand why the program failed.
 irace.error <- function(...)
@@ -219,6 +226,17 @@ bytecompile <- function(x)
 {
   if (is.bytecode(x)) return(x)
   return(compiler::cmpfun(x))
+}
+
+# FIXME: Use stringr function and replace this function
+str_sub <- function(x, start=0, stop=nchar(x))
+{
+  negs <- start < 0
+  if (any(negs)) start[negs] <- nchar(x[negs]) + 1  - start[negs]
+
+  negs <- stop < 0
+  if (any(negs)) stop[negs] <- nchar(x[negs]) + 1  - stop[negs]
+  return(substr(x, start, stop))
 }
 
 strcat <- function(...)

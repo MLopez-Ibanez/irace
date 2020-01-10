@@ -1,4 +1,4 @@
-execs <- c(file.path("iracebin", "irace"))
+execs <- file.path("iracebin", c("irace","irace2pyimp"))
 if (WINDOWS) execs <- paste0(execs, ".exe")
 if (any(file.exists(execs))) {
   dest <- file.path(R_PACKAGE_DIR,  paste0('bin', R_ARCH))

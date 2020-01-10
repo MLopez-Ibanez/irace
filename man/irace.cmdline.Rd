@@ -4,10 +4,10 @@
 \alias{irace.cmdline}
 \title{irace.cmdline}
 \usage{
-irace.cmdline(args = commandArgs(trailingOnly = TRUE))
+irace.cmdline(argv = commandArgs(trailingOnly = TRUE))
 }
 \arguments{
-\item{args}{(\code{character()}) \cr The arguments 
+\item{argv}{(\code{character()}) \cr The arguments 
 provided on the R command line as a character vector, e.g., 
 \code{c("--scenario", "scenario.txt", "-p", "parameters.txt")}.
 Using the  default value (not providing the parameter) is the 

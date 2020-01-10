@@ -1,4 +1,4 @@
-## This function fixes dependent parameters when a parameter values has been
+## This function fixes dependent parameters when a parameter value has been
 ## changed.
 fixDependenciesWithReference <- function(configuration, ref.configuration, parameters)
 {
