@@ -466,18 +466,22 @@ irace2pyimp_cmdline <- function(argv = commandArgs(trailingOnly = TRUE))
   if (!missing(argv) && length(argv) == 1) {
     argv <- strsplit(trim(argv), " +")[[1]]
   }
-  if (!is.null(readArg (argv, short = "-h", long = "--help"))) {
+  if (!is.null(readArg (argv, short = "-h", long = "--help")$value)) {
     cat(.irace2pyimp_header)
     cmdline_usage(.irace2pyimp_args)
     return(invisible(NULL))
   }
-  argv <- lapply(rownames(.irace2pyimp_args),
-                    readCmdLineParameter, argv = argv, argsdef = .irace2pyimp_args)
-  names(argv) <- rownames(.irace2pyimp_args)
+  argvalues <- list()
+  for (param in rownames(.irace2pyimp_args)) {
+    out <- readCmdLineParameter(argv = argv, paramName = param,
+                                argsdef = .irace2pyimp_args)
+    argv <- out$argv
+    argvalues[[param]] <- out$value
+  }
 
-  irace2pyimp(file = argv$iraceRdataFile, normalise = argv$normalise, outdir = argv$outDir,
-              instanceFeatureFile = argv$instanceFeatureFile, filterConditions = argv$filterConditions,
-              defaultConfigurationID = argv$defaultConfigurationID, ignoreUnsupported=argv$ignoreUnsupported)
+  irace2pyimp(file = argvalues$iraceRdataFile, normalise = argvalues$normalise, outdir = argvalues$outDir,
+              instanceFeatureFile = argvalues$instanceFeatureFile, filterConditions = argvalues$filterConditions,
+              defaultConfigurationID = argvalues$defaultConfigurationID, ignoreUnsupported=argvalues$ignoreUnsupported)
 }
 
 #' Convert an `irace.Rdata` file into the format supported by PyImp
