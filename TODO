@@ -4,6 +4,8 @@ BUGS: see BUGS file
 
 TODO R package:
 
+ * Use https://cran.r-project.org/web/packages/argparser/index.html
+ 
  * Use
    https://github.com/seandavi/F1000R_BiocWorkflows/blob/master/rnwConversion/processesRnw.R
    to convert the user-guide to Rmarkdown, then use pkgdown to generate a nice
