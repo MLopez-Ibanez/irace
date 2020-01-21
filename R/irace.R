@@ -212,8 +212,8 @@ computeComputationalBudget <- function(remainingBudget, indexIteration,
 
 ## The number of configurations
 computeNbConfigurations <- function(currentBudget, indexIteration, firstTest, eachTest,
-                                nElites = 0, nOldInstances = 0, newInstances = 0, 
-                                maxConfigurations = 1024)
+                                    nElites = 0, nOldInstances = 0, newInstances = 0, 
+                                    maxConfigurations = 1024)
 {
   # FIXME: This is slightly incorrect, because we may have elites that have not
   # been executed on all nOldInstances. Thus, we need to pass explicitly the
@@ -233,8 +233,7 @@ computeTerminationOfRace <- function(nbParameters)
 
 ## Compute the minimum budget required, and exit early in case the
 ## budget given by the user is insufficient.
-checkMinimumBudget <- function(remainingBudget, minSurvival, nbIterations,
-                               boundEstimate, scenario)
+computeMinimumBudget <- function(scenario, minSurvival, nbIterations, boundEstimate)
 {
   eachTest <- scenario$eachTest
   Tnew <- scenario$elitistNewInstances
@@ -288,7 +287,6 @@ checkMinimumBudget <- function(remainingBudget, minSurvival, nbIterations,
     #      = mu + Teach + Tnew + 5 * max (Teach, Tnew)
 
     # T_i = mu + Teach + max(I-5, 0) * Tnew + 5 * max (Teach, Tnew)
-
     if (nbIterations > 5) {
       minimumBudget <- minimumBudget *
         (mu + eachTest + (nbIterations - 5) * Tnew +  5 * max(eachTest, Tnew))
@@ -302,7 +300,15 @@ checkMinimumBudget <- function(remainingBudget, minSurvival, nbIterations,
     #   B >= (min_surv + 1) * I * (mu + 5 * T_each)
     minimumBudget <- minimumBudget * (mu + 5 * eachTest)
   }
-     
+
+  return(minimumBudget)
+}
+
+checkMinimumBudget <- function(scenario, remainingBudget, minSurvival, nbIterations,
+                               boundEstimate, timeUsed)
+{
+  minimumBudget <- computeMinimumBudget (scenario, minSurvival, nbIterations, boundEstimate)
+
   if (remainingBudget < minimumBudget) {
     if (scenario$maxTime == 0) {
       irace.error("Insufficient budget: ",
@@ -311,9 +317,8 @@ checkMinimumBudget <- function(remainingBudget, minSurvival, nbIterations,
     } else if (nbIterations == 1) {
       irace.error("Insufficient budget: ",
                   "With the current settings and estimated time per run (",
-                  boundEstimate,
-                  ") irace will require a value of ",
-                  "'maxTime' of at least '",  minimumBudget * boundEstimate, "'.")
+                  boundEstimate, ") irace will require a value of 'maxTime' of at least '",
+                  (minimumBudget * boundEstimate) + timeUsed, "'.")
     }
     return(FALSE)
   }
@@ -678,13 +683,8 @@ irace <- function(scenario, parameters)
                     paste0(rejectedIDs, collapse = ", ") , "\n")
       }
   
-      irace.note("Estimated execution time is ", boundEstimate, " based on ",
-                 next.configuration - 1, " configurations and ",
-                 ninstances," instances. Used time: ", timeUsed, "\n")
-      
       # Update budget
       remainingBudget <- round((scenario$maxTime - timeUsed) / boundEstimate)
-
       experimentsUsedSoFar <- experimentsUsedSoFar + nrow(iraceResults$experimentLog)
       eliteConfigurations <- allConfigurations[allConfigurations$.ID. %!in% rejectedIDs, ,drop = FALSE]
 
@@ -695,6 +695,12 @@ irace <- function(scenario, parameters)
       # implementation detail, thus we assume that the time was not actually
       # wasted.
       if (!scenario$elitist) timeUsed <- 0
+
+      irace.note("Estimated execution time is ", boundEstimate, " based on ",
+                 next.configuration - 1, " configurations and ",
+                 ninstances," instances. Used time: ", timeUsed,
+                 ", remaining time: ", (scenario$maxTime - timeUsed),
+                 ", remaining budget (experiments): ", remainingBudget, "\n")
     } # end of time estimation
 
     # Compute the total initial budget, that is, the maximum number of
@@ -707,23 +713,24 @@ irace <- function(scenario, parameters)
 
     # Check that the budget is enough, for the time estimation case we reduce
     # the number of iterations.
-    repeat {
-      if (scenario$maxTime == 0
-          || checkMinimumBudget (remainingBudget, minSurvival, nbIterations,
-                                 boundEstimate, scenario = scenario)) {
-        break;
-      }
-      irace.note("Warning:",
-                 " with the current settings and estimated time per run (",
+    warn_msg <- NULL
+    while (!checkMinimumBudget(scenario, remainingBudget, minSurvival, nbIterations,
+                               boundEstimate, timeUsed))
+    {
+      if (is.null(warn_msg))
+        warn_msg <- 
+          paste0("with the current settings and estimated time per run (",
                  boundEstimate,
                  ") irace will not have enough budget to execute the minimum",
                  " number of iterations (", nbIterations, "). ",
-                 " Execution will continue by assuming that the estimated time",
+                 "Execution will continue by assuming that the estimated time",
                  " is too high and reducing the minimum number of iterations,",
                  " however, if the estimation was correct or too low,",
                  " results might not be better than random sampling.\n")
       nbIterations <- nbIterations - 1
     }
+    if (!is.null(warn_msg)) irace.warning(warn_msg)
+    
   } #end of do not recover
   
   catInfo("Initialization\n",
@@ -809,21 +816,20 @@ irace <- function(scenario, parameters)
     
     # Compute the number of configurations for this race.
     if (scenario$elitist && !firstRace) {
-      nOldInstances <- nrow(iraceResults$experiments)
       nbConfigurations <-
         computeNbConfigurations(currentBudget, indexIteration,
-                            firstTest = max(scenario$mu, scenario$firstTest),
-                            eachTest = scenario$eachTest,
-                            nElites = nrow(eliteConfigurations),
-                            nOldInstances = nOldInstances,
-                            newInstances = scenario$elitistNewInstances)
+                                firstTest = max(scenario$mu, scenario$firstTest),
+                                eachTest = scenario$eachTest,
+                                nElites = nrow(eliteConfigurations),
+                                nOldInstances = nrow(iraceResults$experiments),
+                                newInstances = scenario$elitistNewInstances)
     } else {
       nbConfigurations <-
         computeNbConfigurations(currentBudget, indexIteration,
-                            firstTest = max(scenario$mu, scenario$firstTest),
-                            eachTest = scenario$eachTest,
-                            nElites = 0, nOldInstances = 0,
-                            newInstances = 0)
+                                firstTest = max(scenario$mu, scenario$firstTest),
+                                eachTest = scenario$eachTest,
+                                nElites = 0, nOldInstances = 0,
+                                newInstances = 0)
     }
     
     # If a value was given as a parameter, then this value limits the maximum,

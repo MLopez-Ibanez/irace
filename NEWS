@@ -18,6 +18,10 @@
  * inst/examples/Spear contains the Spear (SAT solver) configuration scenario.
                                                    (Manuel López-Ibáñez)
 
+ * Fixed bug when reporting minimum maxTime required.
+                                           (Reported by Luciana Salete Buriol,
+                                            fixed by Manuel López-Ibáñez)
+
 
 
 3.3 (26/04/2019)
