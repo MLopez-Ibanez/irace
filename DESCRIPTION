@@ -20,7 +20,8 @@ Depends: R (>= 3.2.0)
 Imports:
         stats,
         utils,
-        compiler
+        compiler,
+        R6
 Suggests:
         Rmpi (>= 0.6.0),
         parallel,
