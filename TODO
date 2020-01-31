@@ -4,8 +4,12 @@ BUGS: see BUGS file
 
 TODO R package:
 
- * Use https://cran.r-project.org/web/packages/argparser/index.html
- 
+ * Look at https://cran.r-project.org/web/packages/argparser/index.html or
+   optparse: See examples/optparse.R
+   NOTE: Currently error messages cannot be
+   customized, so we cannot use this. But it could be an inspiration to write
+   our own class.
+
  * Use
    https://github.com/seandavi/F1000R_BiocWorkflows/blob/master/rnwConversion/processesRnw.R
    to convert the user-guide to Rmarkdown, then use pkgdown to generate a nice
