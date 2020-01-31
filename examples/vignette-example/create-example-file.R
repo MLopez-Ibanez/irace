@@ -1,6 +1,9 @@
+library(irace)
+
 load("irace-acotsp.Rdata")
 
 # Change paths
+# FIXME: Use scenario.update.paths()
 to.change <- c("logFile", "trainInstancesDir", "trainInstancesFile",
                "testInstancesDir", "testInstancesFile", "parameterFile",
                "targetRunner")
@@ -39,8 +42,6 @@ output[[2]] <- list(cost=iraceResults$experiments[1,2], time=as.numeric(iraceRes
 
 # save in the folder
 save(experiment, output, file="examples.Rdata", version = 2)
-
-library(irace)
 
 
 ## Create sann.rda
