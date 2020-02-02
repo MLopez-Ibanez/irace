@@ -140,6 +140,7 @@ clean:
 vignettes: version vignettes/$(PACKAGE)-package.Rnw vignettes/section/irace-options.tex
 # FIXME: How to display the output of the latex and bibtex commands with R CMD?
 # FIXME: How to halt on warning?
+	@test -d $(PACKAGEDIR)/vignettes/optbib || (echo "ERROR: vignettes/optbib not found. You need to symlink or checkout https://github.com/iridia-ulb/references." && exit 1)
 	cd $(PACKAGEDIR)/vignettes \
 	&& R CMD Sweave --pdf $(PACKAGE)-package.Rnw \
 	&& $(RM) $(PACKAGE)-package.tex
