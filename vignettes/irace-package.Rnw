@@ -2401,18 +2401,23 @@ beneficial for different goals:
 \begin{itemize}
 \item Friedman test (\code{F-test}): This test uses the ranking of the
   configurations to analyze the differences between their performance. This
-  makes the test suitable for scenarios where the numerical results and their
-  scale are not significant to assess the cost of the configurations.  For
-  example, if the results for different instances have high numerical
-  differences and evaluating the performance of the configurations using the
-  mean could be deceiving.  We recommend to use the \code{F-test} (default when 
-  \parameter{capping} is not enabled)
-  when tuning for solution cost and whenever the best performing algorithm
-  should be among the best in as many instances as possible.
+  makes the test suitable for scenarios where the scale of the performance
+  metric is not as important to assess configurations as their relative
+  ranking.  This test is also indicated when the distribution of the mean
+  performances deviates greatly from a normal distribution. For example, the
+  ranges of the performance metric on different instances may be completely
+  difference and comparing the performance of different configurations using
+  the mean over multiple instances may be deceiving.  We recommend to use the
+  \code{F-test} (default when \parameter{capping} is not enabled) when tuning
+  for solution cost and whenever the best performing algorithm should be among
+  the best in as many instances as possible.
   
 \item Student's t-test (\code{t-test}): This test uses the mean performance of
   the configurations to analyze the differences between the
-  configurations. This makes the test suitable for scenarios where the
+  configurations.\footnote{The t-test does not require that the performance
+    values follow a normal distribution, only that the distribution of sample
+    means does. In practice, the t-test is robust despite large deviations from
+    the assumptions.} This makes the test suitable for scenarios where the
   differences between values obtained for different instances are relevant to
   assess good configurations.  We recommend using t-test, in particular, when
   the target algorithm is minimizing computation time and, in general, whenever
@@ -2737,16 +2742,31 @@ valgrind --error-exitcode=1 ${EXE} ${FIXED_PARAMS} -i ${INSTANCE} \
 \end{lstlisting}
 
 If there are bugs in your program, they will appear in
-\code{${STDERR}}, thus do not delete those files. Memory debuggers will
+\code{\${STDERR}}, thus do not delete those files. Memory debuggers will
 significantly slowdown your code, so use them only as a means to find what is
 wrong with your target algorithm. Once you have fixed the bugs, you should
 remove the use of \code{valgrind}.
 
 
+\subsection{\irace seems to run forever without any progress, is this a bug?}\label{faq:infloop}
+
+Every time this problem was reported, the issue was in the target algorithm and
+not in \irace. Some ideas for debugging this problem:
+\begin{itemize}
+\item Check that the target algorithm is really not running nor paused nor
+  sleeping nor waiting for input-output.
+\item Use \parameter{debugLevel}\code{=3} to see how  \irace calls \code{target-runner}, run the same command outside \irace and verify that it terminates.
+\item Add some output to your algorithm that reports at the very end the runtime and exit code. Verify that this output is printed when \irace calls your algorithm. 
+\item In \code{target-runner}, print something to a log file \emph{after} calling your target algorithm. Verify that this output appears in the log file when \irace is running.
+ 
+\item Set a maximum timeout when calling your target algorithm from \code{target-runner} (see FAQ~\ref{faq:timeout}).
+
+\end{itemize}
+
 \subsection{My program may be buggy and run into an infinite loop. Is it possible to set a maximum timeout?}\label{faq:timeout}
 
 We are not aware of any way to achieve this using \aR. However, in
-GNU/Linux, it is easy to implement by using the \code{timeout} command in
+GNU/Linux, it is easy to implement by using the \code{timeout} command\footnote{\url{http://man7.org/linux/man-pages/man1/timeout.1.html}} in
 \code{targetRunner} when invoking your program.
 
 \subsection{When using the mpi option, \irace is aborted with an error message indicating that a
@@ -3198,7 +3218,7 @@ system.file(package = "irace")
 }
 
 %% NEWS is latin1 but this file is utf8
-\begingroup\inputencoding{latin1}%
+\begingroup\inputencoding{utf8}%
 \VerbatimInput{NEWS.txt}%
 \endgroup
 
