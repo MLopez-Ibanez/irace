@@ -2850,9 +2850,10 @@ can be evaluated for the given budget, thus, the initial random sampling
 performed by \irace may generate repeated configurations and/or never generate
 some configurations, which is not ideal. The ideal approach in such cases is to
 provide all configurations explicitly to \irace (\autoref{sec:initial}) and
-execute a single race (\parameter{nbIterations}\code{=1}). Hopefully, a future
-version of \irace will automatically detect this case and switch to basic
-racing.
+execute a single race (\parameter{nbIterations}\code{=1}) with exactly the
+number of configurations provided (e.g.,
+\parameter{nbConfigurations}\code{=10}). A future version of \irace will
+automatically detect this case and switch to basic racing without having to set additional options.
 
 %%
 %%
