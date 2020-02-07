@@ -35,17 +35,22 @@ REVNUM = $(shell sh -c 'cat svn_version | tr -d -c "[:digit:]" 2> /dev/null')
 .PHONY : help build check clean install pdf rsync version submit cran winbuild vignettes examples genoptions pkgdown
 
 help:
+	@echo "quick-install  install the package without rebuilding the vignettes or generating the documentation"
+	@echo "setup      install required packages and software to build"
 	@echo "install    install the package"
-	@echo "quick-install  install the package without rebuilding the vignettes"
 	@echo "build      build the package as a tar.gz file"
 	@echo "check      build the package and run 'R CMD check'"
 	@echo "check TEST=x  run test called test-x.R"
 	@echo "rsync      copy the package and install it on $(RNODE)"
 	@echo "cran       build the package and run 'R CMD check --as-cran'"
-	@echo "winbuild   submit the package to the windows builder service"
+	@echo "winbuild   submit the package to the WINDOWS builder service"
+	@echo "macbuild   submit the package to the MacOS builder service"
 	@echo "examples   regenerate the examples used by vignettes"
 	@echo "vignettes  generate PDF of the vignettes"
 	@echo "submit     submit the package to CRAN (read DEVEL-README first)"
+
+setup:
+	./scripts/setup.sh
 
 install:
 	$(MAKE) build
