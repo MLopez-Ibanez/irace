@@ -31,8 +31,6 @@ TODO General (in order of importance):
 
  * Federico's implementation of DAG / Complexity metric.
  
- * https://github.com/ndangtt/irace-to-pimp
- 
  * Use both cost and time to calculate wins, then use a prop.test
    prop.test(x=c(sum(x <0.5),sum(y<0.5)), n=c(length(x), length(y)))
 
@@ -285,6 +283,8 @@ TODO General (in order of importance):
 
 DONE:
 
+ * https://github.com/ndangtt/irace-to-pimp [DONE by Nguyen Dang]
+   
  * https://builder.r-hub.io/ [DONE by Manuel]
 
  * How to run individual tests from the make. Check testthat documentation.
