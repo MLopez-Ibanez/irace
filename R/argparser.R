@@ -1,4 +1,4 @@
-CommandArgsParser <- R6::R6Class("CommandArgsParser", list(
+CommandArgsParser <- R6::R6Class("CommandArgsParser", cloneable = FALSE, list(
   argv = NULL,
   argsdef = NULL,
   initialize = function(argv, argsdef) {
