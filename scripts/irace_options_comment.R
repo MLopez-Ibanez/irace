@@ -50,7 +50,8 @@
 #'    }
 #'  \item Initial configurations:
 #'    \describe{
-#'      \item{\code{configurationsFile}}{File that contains a set of initial configurations. If empty or \code{NULL}, all initial configurations are randomly generated. (Default: \code{""})}
+#'      \item{\code{initConfigurations}}{Data frame describing initial configurations (usually read from a file using \code{readConfigurations}). (Default: \code{""})}
+#'      \item{\code{configurationsFile}}{File that contains a table of initial configurations. If empty or \code{NULL}, all initial configurations are randomly generated. (Default: \code{""})}
 #'    }
 #'  \item Training instances:
 #'    \describe{

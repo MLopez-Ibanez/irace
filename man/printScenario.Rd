@@ -9,7 +9,7 @@ printScenario(scenario)
 \arguments{
 \item{scenario}{(\code{list()}) \cr Data structure containing \pkg{irace}
 settings. The data structure has to be the one returned by the function
-\code{\link{defaultScenario}} and \code{\link{readScenario}}.}
+\code{\link{defaultScenario}} or \code{\link{readScenario}}.}
 }
 \description{
 Prints the given scenario

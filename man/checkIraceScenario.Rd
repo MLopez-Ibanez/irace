@@ -9,7 +9,7 @@ checkIraceScenario(scenario, parameters = NULL)
 \arguments{
 \item{scenario}{(\code{list()}) \cr Data structure containing \pkg{irace}
 settings. The data structure has to be the one returned by the function
-\code{\link{defaultScenario}} and \code{\link{readScenario}}.}
+\code{\link{defaultScenario}} or \code{\link{readScenario}}.}
 
 \item{parameters}{(\code{list()}) \cr Data structure containing the parameter
 space definition. The data structure has to similar to the one returned by the

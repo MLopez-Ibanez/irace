@@ -232,18 +232,19 @@ buildForbiddenExp <- function(configurations, parameters)
 
 #' readScenario
 #'
-#' `readScenario` reads the scenario to be used by 
-#' \pkg{irace} from a file.
+#' `readScenario` reads from a file the scenario settings to be used by
+#' \pkg{irace}..
 #' 
-#' @param filename (`character(1)`) \cr  Filename from which the scenario will be read. If empty,
-#'   the default `scenarioFile` is used.  An example scenario file is
-#'   provided in `system.file(``package="irace",` `"templates/scenario.txt.tmpl")`.
-#' @templateVar arg_appendix This is an initial scenario that is overwritten for every parameter specified in the file to be read.
+#' @param filename (`character(1)`) \cr Filename from which the scenario will
+#'   be read. If empty, the default `scenarioFile` is used.  An example
+#'   scenario file is provided in `system.file(``package="irace",`
+#'   `"templates/scenario.txt.tmpl")`.
+#' @templateVar arg_appendix This is an initial scenario that is overwritten
+#'   for every setting specified in the file to be read.
 #' @template arg_scenario
 #'  
-#' @return The scenario list read from the file. The scenario parameter not
-#'   present in the file are not present in the list, that is, they are
-#'   `NULL`.
+#' @return The scenario list read from the file. The scenario settings not
+#'   present in the file are not present in the list, i.e., they are `NULL`.
 #'
 #' @seealso
 #'  \describe{
@@ -400,8 +401,8 @@ checkScenario <- function(scenario = defaultScenario())
   ## Check that everything is fine with external parameters
   # Check that the files exist and are readable.
   scenario$parameterFile <- path.rel2abs(scenario$parameterFile)
-  # We don't check parameterFile here because the user may give the
-  # parameters explicitly. And it is checked in readParameters anyway.
+  # We don't read parameterFile here because the user may give the parameters
+  # explicitly.  And it is validated in readParameters anyway.
   scenario$execDir <- path.rel2abs(scenario$execDir)
   file.check (scenario$execDir, isdir = TRUE,
               text = paste0("execution directory ", quote.param("execDir")))
@@ -520,8 +521,17 @@ checkScenario <- function(scenario = defaultScenario())
     scenario$configurationsFile <- path.rel2abs(scenario$configurationsFile)
     file.check (scenario$configurationsFile, readable = TRUE,
                 text = "configurations file")
+    # We cannot read the configurations here because we need the parameters.
+    # FIXME: We should have the parameters inside scenario.
   }
-
+  
+  if (!is.null.or.empty(scenario$initConfigurations)
+      && !(is.data.frame(scenario$initConfigurations) || is.matrix(scenario$initConfigurations))) {
+    irace.error("if given, initConfigurations must be a matrix or data.frame")
+  } else {
+    scenario$initConfigurations <- NULL
+  }
+  
   # This prevents loading the file two times and overriding forbiddenExps if
   # the user specified them explicitly.
   if (is.null.or.empty(scenario$forbiddenExps)
@@ -781,7 +791,8 @@ printScenario <- function(scenario)
 #'    }
 #'  \item Initial configurations:
 #'    \describe{
-#'      \item{\code{configurationsFile}}{File that contains a set of initial configurations. If empty or \code{NULL}, all initial configurations are randomly generated. (Default: \code{""})}
+#'      \item{\code{initConfigurations}}{Data frame describing initial configurations (usually read from a file using \code{readConfigurations}). (Default: \code{""})}
+#'      \item{\code{configurationsFile}}{File that contains a table of initial configurations. If empty or \code{NULL}, all initial configurations are randomly generated. (Default: \code{""})}
 #'    }
 #'  \item Training instances:
 #'    \describe{

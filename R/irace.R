@@ -459,20 +459,20 @@ generateTimeMatrix <- function(elites, experimentLog)
   return(resultsTime)           
 }
 
-allConfigurationsInit <- function(scenario, parameters, debugLevel)
+allConfigurationsInit <- function(scenario, parameters)
 {
-  if (!is.null.or.empty(scenario$configurationsFile)) {
-    allConfigurations <- readConfigurationsFile(scenario$configurationsFile,
-                                                parameters, debugLevel)
+  if (!is.null.or.empty(scenario$initConfigurations)) {
+    cat("initconfs:")
+    print(scenario$initConfigurations)
+    allConfigurations <- scenario$initConfigurations
     allConfigurations <- cbind(.ID. = 1:nrow(allConfigurations),
-                               allConfigurations,
-                               .PARENT. = NA)
+                               allConfigurations, .PARENT. = NA)
     rownames(allConfigurations) <- allConfigurations$.ID.
     num <- nrow(allConfigurations)
     allConfigurations <- checkForbidden(allConfigurations, scenario$forbiddenExps)
     if (nrow(allConfigurations) < num) {
-      cat("# Warning: some of the configurations in the configurations file were forbidden",
-          "and, thus, discarded\n")
+      irace.warning("some of the initial configurations were forbidden",
+                    "and, thus, discarded")
     }
     cat("# Adding", nrow(allConfigurations), "initial configuration(s) from file",
         shQuote(scenario$configurationsFile), "\n")
@@ -539,6 +539,12 @@ irace <- function(scenario, parameters)
   }
   
   scenario <- checkScenario(defaultScenario(scenario))
+  if (is.null.or.empty(scenario$initConfigurations) &&
+      !is.null.or.empty(scenario$configurationsFile))
+    scenario$initConfigurations <-
+      readConfigurationsFile(scenario$configurationsFile,
+                             parameters, scenario$debugLevel)
+    
   # Recover state from file?
   if (!is.null(scenario$recoveryFile)) {
     irace.note ("Resuming from file: '", scenario$recoveryFile,"'\n")
@@ -561,7 +567,7 @@ irace <- function(scenario, parameters)
     options(.irace.debug.level = debugLevel)
     
     # Create a data frame of all configurations ever generated.
-    allConfigurations <- allConfigurationsInit(scenario, parameters, debugLevel)
+    allConfigurations <- allConfigurationsInit(scenario, parameters)
     nbUserConfigurations <- nrow(allConfigurations)
   
     # To save the logs

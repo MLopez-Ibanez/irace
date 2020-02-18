@@ -28,7 +28,7 @@ of parameters used in \code{configuration}.}
 
 \item{scenario}{(\code{list()}) \cr Data structure containing \pkg{irace}
 settings. The data structure has to be the one returned by the function
-\code{\link{defaultScenario}} and \code{\link{readScenario}}.}
+\code{\link{defaultScenario}} or \code{\link{readScenario}}.}
 
 \item{target.runner.call}{String describing the call to \code{targetRunner} that
 corresponds to this call to \code{targetEvaluator}. This is used for

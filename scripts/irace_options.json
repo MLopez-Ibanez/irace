@@ -101,6 +101,16 @@
     "section": "Training instances"
   },
   {
+    "name": "initConfigurations",
+    "type": "x",
+    "short": "",
+    "long": "",
+    "default": "",
+    "description": "",
+    "man": "Data frame describing initial configurations (usually read from a file using \\code{readConfigurations}).",
+    "section": "Initial configurations"
+  },
+  {
     "name": "trainInstancesDir",
     "type": "p",
     "short": "",
@@ -126,9 +136,9 @@
     "short": "",
     "long": "--configurations-file",
     "default": "",
-    "vignettes": "File containing a list of initial configurations. If empty or \\code{NULL}, \\irace will not use initial configurations. See \\autoref{sec:initial}.\n\\begin{xwarningbox}\nThe provided configurations must not violate the constraints described in \\parameter{parameterFile} and \\parameter{forbiddenFile}.\n\\end{xwarningbox}",
+    "vignettes": "File containing a table of initial configurations. If empty or \\code{NULL}, \\irace will not use initial configurations. See \\autoref{sec:initial}.\n\\begin{xwarningbox}\nThe provided configurations must not violate the constraints described in \\parameter{parameterFile} and \\parameter{forbiddenFile}.\n\\end{xwarningbox}",
     "section": "Initial configurations",
-    "description": "File that contains a set of initial configurations. If empty or \\code{NULL}, all initial configurations are randomly generated."
+    "description": "File that contains a table of initial configurations. If empty or \\code{NULL}, all initial configurations are randomly generated."
   },
   {
     "name": "forbiddenExps",

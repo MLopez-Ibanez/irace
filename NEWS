@@ -4,6 +4,10 @@
    (https://github.com/automl/ParameterImportance).
                                              (Nguyen Dang, Manuel López-Ibáñez)
 
+ * Initial configurations may also be provided directly in R using
+   `scenario$initConfigurations`
+                                                   (Manuel López-Ibáñez)
+ 
  * Rdata files are saved in version 2 to keep compatibility with older R
    versions.
                                                    (Manuel López-Ibáñez)

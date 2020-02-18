@@ -7,23 +7,23 @@
 readScenario(filename = "", scenario = list())
 }
 \arguments{
-\item{filename}{(\code{character(1)}) \cr  Filename from which the scenario will be read. If empty,
-the default \code{scenarioFile} is used.  An example scenario file is
-provided in \code{system.file(``package="irace",} \code{"templates/scenario.txt.tmpl")}.}
+\item{filename}{(\code{character(1)}) \cr Filename from which the scenario will
+be read. If empty, the default \code{scenarioFile} is used.  An example
+scenario file is provided in \code{system.file(``package="irace",}
+\code{"templates/scenario.txt.tmpl")}.}
 
 \item{scenario}{(\code{list()}) \cr Data structure containing \pkg{irace}
 settings. The data structure has to be the one returned by the function
-\code{\link{defaultScenario}} and \code{\link{readScenario}}.
-This is an initial scenario that is overwritten for every parameter specified in the file to be read.}
+\code{\link{defaultScenario}} or \code{\link{readScenario}}.
+This is an initial scenario that is overwritten}
 }
 \value{
-The scenario list read from the file. The scenario parameter not
-present in the file are not present in the list, that is, they are
-\code{NULL}.
+The scenario list read from the file. The scenario settings not
+present in the file are not present in the list, i.e., they are \code{NULL}.
 }
 \description{
-\code{readScenario} reads the scenario to be used by
-\pkg{irace} from a file.
+\code{readScenario} reads from a file the scenario settings to be used by
+\pkg{irace}..
 }
 \seealso{
 \describe{

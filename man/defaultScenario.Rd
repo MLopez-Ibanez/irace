@@ -9,7 +9,7 @@ defaultScenario(scenario = list())
 \arguments{
 \item{scenario}{(\code{list()}) \cr Data structure containing \pkg{irace}
 settings. The data structure has to be the one returned by the function
-\code{\link{defaultScenario}} and \code{\link{readScenario}}.}
+\code{\link{defaultScenario}} or \code{\link{readScenario}}.}
 }
 \value{
 A list indexed by the \pkg{irace} parameter names,
@@ -67,7 +67,8 @@ The scenario list contains the following elements:
    }
  \item Initial configurations:
    \describe{
-     \item{\code{configurationsFile}}{File that contains a set of initial configurations. If empty or \code{NULL}, all initial configurations are randomly generated. (Default: \code{""})}
+     \item{\code{initConfigurations}}{Data frame describing initial configurations (usually read from a file using \code{readConfigurations}). (Default: \code{""})}
+     \item{\code{configurationsFile}}{File that contains a table of initial configurations. If empty or \code{NULL}, all initial configurations are randomly generated. (Default: \code{""})}
    }
  \item Training instances:
    \describe{
