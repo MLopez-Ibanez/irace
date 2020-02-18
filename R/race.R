@@ -957,7 +957,6 @@ race <- function(maxExp = 0,
       # FIXME: Should we stop  if (nbAlive <= minSurvival) ???
       elite.safe <- update.elite.safe(Results, is.elite)  
     }
-    print(Results[, alive, drop=FALSE])
     irace.assert(!anyNA(Results[1:current.task, alive, drop=FALSE]))
     irace.assert(!any(is.infinite(Results[, alive, drop=FALSE])))
     
