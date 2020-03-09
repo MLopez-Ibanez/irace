@@ -27,8 +27,8 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 tar -acf "$TARGZFILE" *
-tar -atvf "$TARGZFILE"
 if [ $? -ne 0 ]; then
+    tar -atvf "$TARGZFILE"
     echo "$0: something failed !"
     exit 1
 fi
