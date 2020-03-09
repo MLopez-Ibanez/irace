@@ -188,13 +188,6 @@ ablation <- function(iraceLogFile = NULL, iraceResults = NULL,
   src.configuration$.ID. <- best.id <-  1
   best.configuration <- all.configurations <- src.configuration
   
-  # Define variables needed                       
-  results <- matrix(NA, ncol = 1, nrow = nrow(instances), 
-                    dimnames = list(seq(1,nrow(instances)), 1))
-  changes <- list()
-  trajectory <- 1
-  names(trajectory) <- "source"
-
   # Execute source and target configurations.
   ## FIXME: We may already have these experiments in the logFile!
   experiments <- createExperimentList(configurations = rbind(src.configuration, target.configuration), 
@@ -211,9 +204,16 @@ ablation <- function(iraceLogFile = NULL, iraceResults = NULL,
                                         src.configuration)
   # Save results
   output <- unlist(lapply(target.output, "[[", "cost")) 
+  results <- matrix(NA, ncol = 1, nrow = nrow(instances), 
+                    dimnames = list(seq(1,nrow(instances)), 1))
   results[,1] <- output[1:nrow(instances)]
   lastres <- output[(nrow(instances)+1):(2*nrow(instances))]
-  
+
+  # Define variables needed
+  trajectory <- 1
+  names(trajectory) <- "source"
+  changes <- list()
+
   # Start ablation
   step <- 1
   while (length(param.names) > 1) {
@@ -289,9 +289,9 @@ ablation <- function(iraceLogFile = NULL, iraceResults = NULL,
     # FIXME: This ID does not actually match the configuration ID
     # The race already reports the best.
     #cat("# Best configuration ID:", best.ids[1], "mean:", cand.mean[best.ids[1]],"\n")
-    for(i in 1:length(best.change)){
+    for(i in seq_along(best.change)) {
       cat("#  ", best.change[i], best.configuration[,best.change[i]], "->",
-          aconfigurations[best.ids[1],best.change[i]], "\n")
+          aconfigurations[best.ids[1], best.change[i]], "\n")
     }
   
     best.configuration <- aconfigurations[best.ids[1],,drop=FALSE]
@@ -339,7 +339,7 @@ ablation <- function(iraceLogFile = NULL, iraceResults = NULL,
 ablation.labels <- function(trajectory, configurations)
 {
   configurations <- removeConfigurationsMetaData(configurations[trajectory, , drop = FALSE])
-  labels <- names(trajectory)[1]
+  labels <- names(trajectory)
   last <- configurations[1, , drop = FALSE]
   param.names <- colnames(last)
   for (i in 2:length(trajectory)) {
@@ -347,8 +347,7 @@ ablation.labels <- function(trajectory, configurations)
     # select everything that is NOT NA now and was different or NA before.
     select <- !is.na(current) & (is.na(last) | (current != last))
     irace.assert(!anyNA(select))
-    labels <- c(labels,
-                paste0(param.names[select], "=", current[, select], collapse = "\n"))
+    labels[i] <- paste0(param.names[select], "=", current[, select], collapse = "\n")
     last <- current
   }
   return(labels)

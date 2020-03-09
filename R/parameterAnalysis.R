@@ -162,7 +162,6 @@ parcoordlabel <- function (configurations, parameters, col = "green", lty = 1,
   }
     
   param.names <- colnames(configurations)
-    
   bound.num <- parameters$domain   
   # Categorical -> Numerical
   for (i in 1:ncol(configurations)) {
@@ -294,9 +293,7 @@ parallelCoordinatesPlot <-
     
     dep <- aux$dependencies
     dnames <- names(dep) 
-
-
-    for(i in 1:length(dep)){
+    for(i in seq_along(dep)){
       if(length(dep[[i]]) < 2){
         cat("Skipping parameters",dnames[i],"\n")
         next

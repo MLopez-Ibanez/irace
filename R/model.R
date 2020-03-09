@@ -18,7 +18,6 @@ initialiseModel <- function (parameters, configurations, digits)
   for (currentParameter in parameters$names[!parameters$isFixed]) {
     type <- parameters$types[[currentParameter]]
     nbValues <- length(parameters$domain[[currentParameter]])
-    param <- list()
     if (type == "c") {
       value <- rep((1 / nbValues), nbValues)
     } else if (type %in% c("i","r")) {
@@ -27,6 +26,7 @@ initialiseModel <- function (parameters, configurations, digits)
       irace.assert(type == "o")
       value <- (nbValues - 1) / 2
     }
+    param <- list()
     for (indexConfig in seq_len(nbConfigurations)) {
       idCurrentConfig <- as.character(configurations[indexConfig, ".ID."])
       # Assign current parameter value to model

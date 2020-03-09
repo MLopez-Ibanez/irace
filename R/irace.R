@@ -80,11 +80,9 @@ numeric.configurations.equal <- function(x, configurations, parameters, threshol
     if (nrow(isSimilar.mat) == 0) break
   }
   
-  similar <- c()
   if (length(selected) != 0)
-    similar <- c(x[[".ID."]], configurations[selected,".ID."])
-
-  return(similar)
+    return(c(x[[".ID."]], configurations[selected,".ID."]))
+  return(NULL)
 }
 
 ##
@@ -111,13 +109,8 @@ similarConfigurations <- function(configurations, parameters, threshold)
   ### Categorical/Ordinal filtering ####
   if (nbCater > 0) {
     ## Build a vector with the categorical appended together in a string
-    ## FIXME: This would be faster as:
-    # strings <- apply(configurations[, vecCat], 1, paste0, collapse = " ; ")
-    strings <- c()
-    for (i in 1:nrow(configurations)) {
-      strings[i] <- paste0(configurations[i, vecCat], collapse = " ; ")
-    }
-
+    strings <- do.call(paste, c(configurations[, vecCat, drop=FALSE], sep = " ; "))
+    
     if (nbNumer != 0) configurations <- configurations[, c(".ID.", vecNum)]
     ord.strings <- order(strings)
     configurations <- configurations[ord.strings, ]
@@ -425,7 +418,7 @@ do.experiments <- function(configurations, ninstances, scenario, parameters)
                           dimnames = list(NULL, c("instance", "configuration", "time", "bound")))
                           
   # Extract results
-  for (j in 1:ninstances) {
+  for (j in seq_len(ninstances)) {
     vcost <- unlist(lapply(output[[j]], "[[", "cost"))
     if (scenario$capping)
       vcost <- applyPAR(vcost, boundMax = scenario$boundMax, boundPar = scenario$boundPar)
@@ -984,7 +977,8 @@ irace <- function(scenario, parameters)
           model <- restartConfigurations (raceConfigurations, tmp.ids, model,
                                           parameters, nbNewConfigurations, scenario$digits)
           iraceResults$softRestart[indexIteration] <- TRUE
-          iraceResults$model$afterSR[[indexIteration]] <- model
+          ## FIXME: What is this for?
+          # iraceResults$model$afterSR[[indexIteration]] <- model
           if (debugLevel >= 2) { printModel (model) }
           # Re-sample after restart like above
           #cat("# ", format(Sys.time(), usetz=TRUE), " sampleModel()\n")
@@ -1015,17 +1009,15 @@ irace <- function(scenario, parameters)
     }
 
     # Get data from previous elite tests 
-    elite.data <- NULL
     if (scenario$elitist && nrow(eliteConfigurations) > 0) {
       elite.data <- list()
       elite.data[["experiments"]] <- iraceResults$experiments[, as.character(eliteConfigurations[,".ID."]), drop=FALSE]
       if (scenario$capping)
         elite.data[["time"]] <- generateTimeMatrix(elites = eliteConfigurations, 
                                                    experimentLog = iraceResults$experimentLog)
-    }
-    
+    } else elite.data <- NULL
+        
     .irace$next.instance <- max(nrow(iraceResults$experiments), 0) + 1
- 
     # Add instances if needed
     # Calculate budget needed for old instances assuming non elitist irace
     if ((nrow(.irace$instancesList) - (.irace$next.instance - 1))

@@ -218,12 +218,12 @@ readParameters <- function(file, digits = 4, debugLevel = 0, text)
     irace.internal.error("unrecognized transformation type '", transf, "'")
   }
     
-  parameters <- list(names = c(),
-                     types = c(),
-                     switches = c(),
+  parameters <- list(names = character(0),
+                     types = character(0),
+                     switches = character(0),
                      domain = list(),
                      conditions = list(),
-                     isFixed = c(),
+                     isFixed = logical(0),
                      transform = list())
 
   conditions <- list()
@@ -329,14 +329,14 @@ readParameters <- function(file, digits = 4, debugLevel = 0, text)
     }
 
     count <- count + 1
-    parameters$names[[count]] <- param.name
-    parameters$switches[[count]] <- param.switch
-    parameters$types[[count]] <- param.type
+    parameters$names[count] <- param.name
+    parameters$switches[count] <- param.switch
+    parameters$types[count] <- param.type
     parameters$domain[[count]] <- param.value
     parameters$transform[[count]] <- param.transform
 
-    parameters$isFixed[[count]] <- isFixed(type = param.type,
-                                           domain = parameters$domain[[count]])
+    parameters$isFixed[count] <- isFixed(type = param.type,
+                                         domain = parameters$domain[[count]])
     # Reject non-categorical fixed parameters. They are often the
     # result of a user error.
     if (parameters$isFixed[[count]]) {
