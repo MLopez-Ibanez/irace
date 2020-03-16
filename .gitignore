@@ -1,0 +1,64 @@
+
+# /
+/revdep
+/tune-conf
+/parameters.txt
+/VERSION
+/.Rhistory
+/svn_version
+/irace-Ex.R
+/TAGS
+/*.synctex.gz
+/*.bak
+
+# /GenericWrapper4AC/
+/GenericWrapper4AC/.git
+/GenericWrapper4AC/build
+/GenericWrapper4AC/.gitattributes
+/GenericWrapper4AC/GenericWrapper4AC.egg-info
+
+# /GenericWrapper4AC/test/
+/GenericWrapper4AC/test/test_binaries
+
+# /R/
+/R/version.R
+/R/TAGS
+
+# /doc/
+/doc/auto
+/doc/*.out
+/doc/*.log
+/doc/*.blg
+/doc/*.aux
+/doc/*.bbl
+/doc/*~
+/doc/*.rel
+/doc/.svnignore
+/doc/*.bib
+/doc/documentation.pdf
+
+# /examples/vignette-example/
+/examples/vignette-example/examples.Rdata
+/examples/vignette-example/irace-output.Rdata
+/examples/vignette-example/*.stderr
+/examples/vignette-example/*.stdout
+
+# /man/
+/man/*.bak
+
+# /src/iracebin/
+/src/iracebin/irace
+/src/iracebin/irace2pyimp
+
+# /vignettes/
+/vignettes/*.out
+/vignettes/*.toc
+/vignettes/*.bbl
+/vignettes/*.synctex.gz
+/vignettes/irace-package.tex
+/vignettes/irace-package.pdf
+/vignettes/irace-package.R
+/vignettes/figure
+/vignettes/optbib
+/vignettes/_region_.*
+/vignettes/*.bak
