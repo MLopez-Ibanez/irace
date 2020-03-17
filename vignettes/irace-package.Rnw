@@ -14,7 +14,6 @@
 \usepackage[english]{babel}
 \usepackage{ifthen}
 \newboolean{Release}
-\setboolean{Release}{false}
 \setboolean{Release}{true}
 \usepackage{calc}
 \usepackage{afterpage}
@@ -134,7 +133,7 @@
 \newcommand{\FRACE}{\text{F-Race}\xspace}
 \newcommand{\IFRACE}{\text{I/F-Race}\xspace}
 \newcommand{\PyImp}{\pkg{PyImp}\xspace}
-\newcommand{\iraceversion}{3.4}
+\newcommand{\iraceversion}{\Sexpr{packageVersion("irace")}}
 
 \newcommand{\Niter}{\ensuremath{N^\text{iter}}\xspace}
 \newcommand{\Nparam}{\ensuremath{{N^\text{param}}}\xspace}
