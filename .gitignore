@@ -6,6 +6,7 @@
 /VERSION
 /.Rhistory
 /svn_version
+/git_version
 /irace-Ex.R
 /TAGS
 /*.synctex.gz

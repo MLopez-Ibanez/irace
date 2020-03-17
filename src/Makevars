@@ -13,5 +13,6 @@ $(iraceEXE): iracebin/irace.o
 
 iracebin/irace.o: iracebin/irace.h
 iracebin/irace2pyimp.o: iracebin/irace.h
+
 clean:
-	$(RM) iracebin/*.o $(irace2pyimpEXE) $(iraceEXE)
+	@$(RM) iracebin/*.o $(irace2pyimpEXE) $(iraceEXE)

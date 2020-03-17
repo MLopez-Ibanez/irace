@@ -8,11 +8,12 @@ INSTALL_FLAGS=
 BUILD_FLAGS=
 REALVERSION=$(PACKAGEVERSION).$(SVN_REV)
 PACKAGEDIR=$(CURDIR)
+# This could be replaced by devtools::build_win(version = "R-devel")
 FTP_COMMANDS="user anonymous anonymous\nbinary\ncd incoming\nput $(PACKAGE)_$(PACKAGEVERSION).tar.gz\nquit\n"
 WINBUILD_DEVEL_FTP_COMMANDS="user anonymous anonymous\nbinary\ncd R-devel\nput $(PACKAGE)_$(PACKAGEVERSION).tar.gz\nquit\n"
 WINBUILD_REL_FTP_COMMANDS="user anonymous anonymous\nbinary\ncd R-release\nput $(PACKAGE)_$(PACKAGEVERSION).tar.gz\nquit\n"
 PDFLATEX=pdflatex -shell-escape -file-line-error -halt-on-error -interaction=nonstopmode "\input"
-SED=sed -i.bak
+Reval=R --slave -e
 
 Rversion=$(R --version | head -n -1 | grep -m 1 -o -e [0-9] | head -n 1)
 ifeq ($(Rversion),2)
@@ -21,16 +22,22 @@ else
  NO_BUILD_VIGNETTES='--no-build-vignettes'
 endif
 
+define Rsed
+	R --slave --vanilla -e 'f <- "$(1)"; txt <- sub($(2), $(3), perl=TRUE, readLines(f)); writeLines(txt, f)'
+endef
+
 ## Do we have svnversion?
-ifeq ($(shell sh -c 'which svnversion 1> /dev/null 2>&1 && echo y'),y)
+ifeq ($(shell sh -c 'which git 1> /dev/null 2>&1 && echo y'),y)
   ## Is this a working copy?
-  ifeq ($(shell sh -c 'LC_ALL=C svnversion -n . | grep -q ^[0-9] && echo y'),y)
-    $(shell sh -c 'svnversion -n . > svn_version')
+  ifeq ($(shell sh -c 'LC_ALL=C  git describe --first-parent --always | grep -q "[0-9a-z]\+$$"  && echo y'),y)
+    $(shell sh -c 'LC_ALL=C  git describe --first-parent --always > git_version')
   endif
 endif
 ## Set version information:
-SVN_REV = $(shell sh -c 'cat svn_version 2> /dev/null')
-REVNUM = $(shell sh -c 'cat svn_version | tr -d -c "[:digit:]" 2> /dev/null')
+SVN_REV = $(shell sh -c 'cat git_version 2> /dev/null')
+REVNUM = $(shell sh -c 'cat git_version 2> /dev/null')
+
+RHUB_COMMON_ARGS= path='$(BINDIR)/$(PACKAGE)_$(PACKAGEVERSION).tar.gz', env_vars = c('_R_CHECK_FORCE_SUGGESTS_'='true', R_DEFAULT_SAVE_VERSION='2', R_DEFAULT_SERIALIZE_VERSION='2')
 
 .PHONY : help build check clean install pdf rsync version submit cran winbuild vignettes examples genoptions pkgdown
 
@@ -52,37 +59,36 @@ help:
 setup:
 	./scripts/setup.sh
 
-install:
-	$(MAKE) build
+install: build
 	cd $(BINDIR) && R CMD INSTALL $(INSTALL_FLAGS) $(PACKAGE)_$(PACKAGEVERSION).tar.gz
 
 quick-install: version
-	cd $(BINDIR) &&	R CMD build $(BUILD_FLAGS) $(NO_BUILD_VIGNETTES)  $(PACKAGEDIR) && R CMD INSTALL $(INSTALL_FLAGS) $(PACKAGE)_$(PACKAGEVERSION).tar.gz
+	cd $(BINDIR) &&	R CMD build $(BUILD_FLAGS) $(NO_BUILD_VIGNETTES) $(PACKAGEDIR) && R CMD INSTALL $(INSTALL_FLAGS) $(PACKAGE)_$(PACKAGEVERSION).tar.gz
 
 genoptions: R/irace-options.R vignettes/section/irace-options.tex scripts/irace_options_comment.R
 
 R/irace-options.R vignettes/section/irace-options.tex scripts/irace_options_comment.R: scripts/irace_options.json scripts/generate-options.R
 	cd scripts && R --slave -f generate-options.R && cd ..
 
-gendoc: 
-	R --slave -e 'devtools::document()'
+gendoc:
+	$(Reval) 'devtools::document()'
 
 pkgdown: gendoc
-	R --slave -e 'pkgdown::build_site(run_dont_run = TRUE)'
+	$(Reval) 'pkgdown::build_site(run_dont_run = TRUE, document = FALSE)'
 
-build : version genoptions gendoc clean
+build : version
+	@$(MAKE) genoptions
+	@$(MAKE) gendoc
 	$(MAKE) releasevignette
 	@if grep -q @ $(PACKAGEDIR)/vignettes/$(PACKAGE)-package.bib; then true; \
 	else echo "error: vignettes/$(PACKAGE)-package.bib is empty: run 'make vignettes'"; false; fi
 	cd $(BINDIR) &&	R CMD build $(BUILD_FLAGS) $(PACKAGEDIR)
+	@$(MAKE) clean
 
-closeversion: SVN_REL_URL=$(shell svn info --show-item relative-url)
-closeversion: build
-	svn ci -m " * NEWS: Close version $(PACKAGEVERSION)"
-	svn rm ^/tags/$(PACKAGEVERSION) -m " * Delete previous tag for version $(PACKAGEVERSION)" || echo "OK: tag is new."
-	svn cp $(SVN_REL_URL) ^/tags/$(PACKAGEVERSION) -m " * Tag version $(PACKAGEVERSION)"
-	svn up
-	make releasebuild # again to update version.R and svn_version
+closeversion:
+	git push origin :refs/tags/v$(PACKAGEVERSION) # Remove any existing tag
+	git tag -f -a v$(PACKAGEVERSION) -m "Version $(PACKAGEVERSION)"
+	git push --tags
 
 vignettes/$(PACKAGE)-package.bib: vignettes/$(PACKAGE)-package.aux
 	cd $(PACKAGEDIR)/vignettes \
@@ -92,12 +98,10 @@ vignettes/$(PACKAGE)-package.bib: vignettes/$(PACKAGE)-package.aux
 releasevignette:
 	test -s $(PACKAGEDIR)/vignettes/$(PACKAGE)-package.aux || $(MAKE) nonreleasevignette
 	$(MAKE) vignettes/$(PACKAGE)-package.bib
-	$(SED) 's/^%\+\\setboolean{Release}{true}/\\setboolean{Release}{true}/' \
-	$(PACKAGEDIR)/vignettes/$(PACKAGE)-package.Rnw
+	@$(call Rsed,$(PACKAGEDIR)/vignettes/$(PACKAGE)-package.Rnw,"^\\\\setboolean{Release}{false}","\\\\setboolean{Release}{true}")
 
 nonreleasevignette:
-	$(SED) 's/^\\setboolean{Release}{true}/%\\setboolean{Release}{true}/' \
-	$(PACKAGEDIR)/vignettes/$(PACKAGE)-package.Rnw
+	@$(call Rsed,$(PACKAGEDIR)/vignettes/$(PACKAGE)-package.Rnw,"^\\\\setboolean{Release}{true}","\\\\setboolean{Release}{false}")
 	$(MAKE) vignettes
 	$(MAKE) vignettes/$(PACKAGE)-package.bib
 
@@ -112,7 +116,7 @@ cran : releasebuild
 
 check: build
 ifdef TEST
-	_R_CHECK_FORCE_SUGGESTS_=false NOT_CRAN=true R --slave -e 'devtools::test(filter="$(TEST)")'
+	_R_CHECK_FORCE_SUGGESTS_=false NOT_CRAN=true $(Reval) 'devtools::test(filter="$(TEST)")'
 else
 	test -d ./GenericWrapper4AC/build || (cd GenericWrapper4AC && python3 setup.py install --user)
 	cd $(BINDIR) && (_R_CHECK_FORCE_SUGGESTS_=false NOT_CRAN=true R CMD check --run-donttest --timings $(PACKAGE)_$(PACKAGEVERSION).tar.gz; cat $(PACKAGE).Rcheck/$(PACKAGE)-Ex.timings)
@@ -157,8 +161,7 @@ pdf: build
 
 version :
 	@printf "#' irace.version\n#'\n#' A character string containing the version of \\pkg{irace}.\n#'\n#' @export\nirace.version <- '$(REALVERSION)'\n" > $(PACKAGEDIR)/R/version.R
-	@$(SED) 's/Version:.*$$/Version: $(PACKAGEVERSION)/' $(PACKAGEDIR)/DESCRIPTION
-	@$(SED) 's/\\iraceversion}{.*}$$/\\iraceversion}{$(PACKAGEVERSION)}/' vignettes/$(PACKAGE)-package.Rnw
+	@$(call Rsed,$(PACKAGEDIR)/DESCRIPTION,"Version:.*$$","Version: $(PACKAGEVERSION)")
 
 rsync : version
 ifndef RDIR
@@ -175,9 +178,6 @@ else
 	ssh $(RNODE) "cd $(RDIR)/$(PACKAGE) && make quick-install"
 endif
 
-remotecran: releasebuild
-	R --slave -e "rhub::check_for_cran(path=\"$(BINDIR)/$(PACKAGE)_$(PACKAGEVERSION).tar.gz\", show_status = TRUE,  env_vars = c('_R_CHECK_FORCE_SUGGESTS_'='true', R_DEFAULT_SAVE_VERSION='2', R_DEFAULT_SERIALIZE_VERSION='2'))"
-
 submit: 
 	@echo "Read http://cran.r-project.org/web/packages/policies.html"
 	@echo "*** You need to use http://cran.r-project.org/submit.html"
@@ -185,15 +185,18 @@ submit:
 	cd $(BINDIR) && echo $(FTP_COMMANDS) | ftp -v -e -g -i -n cran.r-project.org
 	@echo "Don't forget to send email to cran@r-project.org !"
 
+
+remotecran: releasebuild
+	$(Reval) "rhub::check_for_cran($(RHUB_COMMON_ARGS), show_status = TRUE)"
+
 macbuild: releasebuild
-	R --slave -e "rhub::check(platform='macos-elcapitan-release', path='$(BINDIR)/$(PACKAGE)_$(PACKAGEVERSION).tar.gz', env_vars = c('_R_CHECK_FORCE_SUGGESTS_'='false', R_DEFAULT_SAVE_VERSION='2', R_DEFAULT_SERIALIZE_VERSION='2'))"
+	$(Reval) "rhub::check(platform='macos-elcapitan-release', $(RHUB_COMMON_ARGS))"
 
 winbuild: releasebuild
 	@echo "Winbuild: http://win-builder.r-project.org/"
 	cd $(BINDIR) && echo $(WINBUILD_DEVEL_FTP_COMMANDS) | ftp -v -p -e -g -i -n win-builder.r-project.org
 	cd $(BINDIR) && echo $(WINBUILD_REL_FTP_COMMANDS) | ftp -v -p -e -g -i -n win-builder.r-project.org
-	R --slave -e "rhub::check_on_windows(path='$(BINDIR)/$(PACKAGE)_$(PACKAGEVERSION).tar.gz', env_vars = c('_R_CHECK_FORCE_SUGGESTS_'='false', R_DEFAULT_SAVE_VERSION='2', R_DEFAULT_SERIALIZE_VERSION='2'))"
-
+	$(Reval) "rhub::check_on_windows($(RHUB_COMMON_ARGS))
 
 examples: install
 	@echo "*** Makefile: Regenerating data for vignettes and examples. This will take time..."
