@@ -196,7 +196,7 @@ winbuild: releasebuild
 	@echo "Winbuild: http://win-builder.r-project.org/"
 	cd $(BINDIR) && echo $(WINBUILD_DEVEL_FTP_COMMANDS) | ftp -v -p -e -g -i -n win-builder.r-project.org
 	cd $(BINDIR) && echo $(WINBUILD_REL_FTP_COMMANDS) | ftp -v -p -e -g -i -n win-builder.r-project.org
-	$(Reval) "rhub::check_on_windows($(RHUB_COMMON_ARGS))
+	$(Reval) "rhub::check_on_windows($(RHUB_COMMON_ARGS))"
 
 examples: install
 	@echo "*** Makefile: Regenerating data for vignettes and examples. This will take time..."
