@@ -39,7 +39,8 @@ DEVEL-README
 ^src/iracebin/irace.exe$
 ^src/iracebin/irace2pyimp$
 ^src/iracebin/irace2pyimp.exe$
-^svn_version
+^git_version$
+^svn_version$
 ^testing
 ^tmp
 ^tune-conf$
