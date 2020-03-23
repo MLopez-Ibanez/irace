@@ -166,7 +166,7 @@ parcoordlabel <- function (configurations, parameters, col = "green", lty = 1,
   # Categorical -> Numerical
   for (i in 1:ncol(configurations)) {
     pname <- param.names[i]
-    if (parameters$types[[pname]] == "c") {
+    if (parameters$types[[pname]] %in% c("c","o")) {
       configurations[,i]<- as.numeric(replace.cat(configurations[,i], bound.num[[pname]]))
       bound.num[[pname]] <- seq(1,length(bound.num[[pname]]))
     }

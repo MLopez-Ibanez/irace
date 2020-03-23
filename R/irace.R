@@ -777,7 +777,8 @@ irace <- function(scenario, parameters)
                                timeUsed = timeUsed,
                                boundEstimate = boundEstimate,
                                rejectedIDs = rejectedIDs,
-                               forbiddenExps = forbiddenExps)
+                               forbiddenExps = forbiddenExps,
+                               completed = list(flag=FALSE, msg=""))
     # Consistency checks
     irace.assert(sum(!is.na(iraceResults$experiments)) == experimentsUsedSoFar)
     irace.assert(nrow(iraceResults$experimentLog) == experimentsUsedSoFar)
@@ -788,10 +789,16 @@ irace <- function(scenario, parameters)
 
     if (remainingBudget <= 0) {
       catInfo("Stopped because budget is exhausted")
+      iraceResults$state$completed$flag = TRUE
+      iraceResults$state$completed$msg = "Budget exhausted"
+      irace_save_logfile(iraceResults, scenario)
       return (eliteConfigurations)
     }
     if (scenario$maxTime > 0 && timeUsed >= scenario$maxTime) {
       catInfo("Stopped because time budget is exhausted")
+      iraceResults$state$completed$flag = TRUE
+      iraceResults$state$completed$msg = "Time budget exhausted"
+      irace_save_logfile(iraceResults, scenario)
       return (eliteConfigurations)
     }
 
@@ -802,6 +809,9 @@ irace <- function(scenario, parameters)
         if (debugLevel >= 1) {
           catInfo("Limit of iterations reached", verbose = FALSE)
         }
+        iraceResults$state$completed$flag = TRUE
+        iraceResults$state$completed$msg = "Limit of iterations reached"
+        irace_save_logfile(iraceResults, scenario)
         return (eliteConfigurations)
       }
     }
@@ -846,6 +856,9 @@ irace <- function(scenario, parameters)
       } else {
         catInfo("Stopped because ",
                 "there is not enough budget to enforce the value of nbConfigurations.")
+        iraceResults$state$completed$flag = TRUE
+        iraceResults$state$completed$msg = "Not enough budget to enforce the value of nbConfigurations"
+        irace_save_logfile(iraceResults, scenario)
         return (eliteConfigurations)
       }
     }
@@ -855,6 +868,9 @@ irace <- function(scenario, parameters)
       catInfo("Stopped because there is not enough budget left to race more than ",
               "the minimum (", minSurvival,")\n",
               "# You may either increase the budget or set 'minNbSurvival' to a lower value")
+      iraceResults$state$completed$flag = TRUE
+      iraceResults$state$completed$msg = "Not enough budget to race more than the minimum configurations"
+      irace_save_logfile(iraceResults, scenario)
       return (eliteConfigurations)
     }
 
@@ -873,6 +889,9 @@ irace <- function(scenario, parameters)
       catInfo("Stopped because ",
               "there is not enough budget left to race newly sampled configurations")
       #(number of elites  + 1) * (mu + min(5, indexIteration)) > remainingBudget" 
+      iraceResults$state$completed$flag = TRUE
+      iraceResults$state$completed$msg = "Not enough budget left to race newly sampled configurations"
+      irace_save_logfile(iraceResults, scenario)
       return (eliteConfigurations)
     }
     
@@ -883,11 +902,17 @@ irace <- function(scenario, parameters)
           + nrow(eliteConfigurations) * min(scenario$elitistNewInstances, max(scenario$mu, scenario$firstTest))
           > currentBudget) {
         catInfo("Stopped because there is not enough budget left to race all configurations up to the first test (or mu)")
+        iraceResults$state$completed$flag = TRUE
+        iraceResults$state$completed$msg = "Not enough budget to race all configurations up to the first test (or mu)"
+        irace_save_logfile(iraceResults, scenario)
         return (eliteConfigurations)
       }
     } else if (nbConfigurations * max(scenario$mu, scenario$firstTest)
                > currentBudget) {
       catInfo("Stopped because there is not enough budget left to race all configurations up to the first test (or mu)")
+      iraceResults$state$completed$flag = TRUE
+      iraceResults$state$completed$msg  = "Not enough budget to race all configurations up to the first test (or mu)"
+      irace_save_logfile(iraceResults, scenario)
       return (eliteConfigurations)
     }
 
@@ -1110,5 +1135,8 @@ irace <- function(scenario, parameters)
     }
   }
   # This code is actually never executed because we return above.
+  # Leslie: adding this just in case 
+  iraceResults$state$completed$flag = TRUE
+  irace_save_logfile(iraceResults, scenario)
   return (eliteConfigurations)
 }
