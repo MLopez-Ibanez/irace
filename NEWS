@@ -26,7 +26,9 @@
                                            (Reported by Luciana Salete Buriol,
                                             fixed by Manuel López-Ibáñez)
 
-
+ * Fixed bug detected by assert:
+   `all(apply(!is.na(elite.data$experiments), 1, any))` is not TRUE
+                     (Reported by Maxim Buzdalov, fixed by Manuel López-Ibáñez)
 
 3.3 (26/04/2019)
 
