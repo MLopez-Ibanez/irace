@@ -1,5 +1,11 @@
 library(irace)
 
+iracebin <- system.file(package="irace", "bin/irace")
+if (0 != file.access(iracebin, mode=1))
+  stop("Error: ", iracbin, " is not executable or not found!")
+
+system(paste0("nice -n 19 ", iracebin, " --parallel 2 | tee irace-acotsp-stdout.txt"))
+
 load("irace-acotsp.Rdata")
 
 # Change paths

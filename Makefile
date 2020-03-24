@@ -82,8 +82,8 @@ build : version
 	$(MAKE) releasevignette
 	@if grep -q @ $(PACKAGEDIR)/vignettes/$(PACKAGE)-package.bib; then true; \
 	else echo "error: vignettes/$(PACKAGE)-package.bib is empty: run 'make vignettes'"; false; fi
-	cd $(BINDIR) &&	R CMD build $(BUILD_FLAGS) $(PACKAGEDIR)
 	@$(MAKE) clean
+	cd $(BINDIR) &&	R CMD build $(BUILD_FLAGS) $(PACKAGEDIR)
 
 closeversion:
 	git push origin :refs/tags/v$(PACKAGEVERSION) # Remove any existing tag
@@ -199,8 +199,7 @@ winbuild: releasebuild
 
 examples: install
 	@echo "*** Makefile: Regenerating data for vignettes and examples. This will take time..."
-	cd examples/vignette-example/ && nice -n 19 $(PACKAGEDIR)/src/iracebin/$(PACKAGE) --parallel 2 | tee irace-acotsp-stdout.txt \
-		&& R --vanilla --slave --file=create-example-file.R
+	cd examples/vignette-example/ && R --vanilla --slave --file=create-example-file.R
 	cp examples/vignette-example/*.Rdata examples/vignette-example/irace-acotsp-stdout.txt vignettes/
 	$(MAKE) vignettes
 	$(MAKE) check
