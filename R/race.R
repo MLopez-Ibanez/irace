@@ -776,9 +776,6 @@ race <- function(maxExp = 0,
         break.msg <- paste0("number of alive configurations (", nbAlive,
                             ") <= minimum number of configurations (",
                             minSurvival, ")")
-        # Remove any instances that have not been executed by any configuration
-        # (because of the earlier termination)
-        Results[apply(!is.na(Results), 1, any), , drop=FALSE]
         break
       }
       # If we just did a test, check that we have enough budget to reach the
@@ -1092,8 +1089,10 @@ race <- function(maxExp = 0,
   if (is.null(break.msg))
     break.msg <- paste0("all instances (", no.tasks, ") evaluated")
 
-  # If we stop the loop before we see all new instances, there may be gaps in
-  # Results. Remove those rows.
+  # If we stop the loop before we see all new instances, there may be instances
+  # that have not been executed by any configuration. Remove those rows.
+  #
+  # FIXME: If we remove a whole row, when running in deterministic mode, this instance will never be seen again.
   Results <- Results[apply(!is.na(Results), 1, any), , drop = FALSE]
   
   race.ranks <- overall.ranks(Results[, alive, drop = FALSE], stat.test = stat.test)
