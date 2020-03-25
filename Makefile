@@ -30,7 +30,7 @@ endef
 ifeq ($(shell sh -c 'which git 1> /dev/null 2>&1 && echo y'),y)
   ## Is this a working copy?
   ifeq ($(shell sh -c 'LC_ALL=C  git describe --first-parent --always | grep -q "[0-9a-z]\+$$"  && echo y'),y)
-    $(shell sh -c 'LC_ALL=C  git describe --first-parent --always > git_version')
+    $(shell sh -c 'LC_ALL=C  git describe --dirty --first-parent --always > git_version')
   endif
 endif
 ## Set version information:
