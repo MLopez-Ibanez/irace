@@ -43,18 +43,18 @@ RHUB_COMMON_ARGS= path='$(BINDIR)/$(PACKAGE)_$(PACKAGEVERSION).tar.gz', env_vars
 
 help:
 	@echo "quick-install  install the package without rebuilding the vignettes or generating the documentation"
-	@echo "setup      install required packages and software to build"
-	@echo "install    install the package"
-	@echo "build      build the package as a tar.gz file"
-	@echo "check      build the package and run 'R CMD check'"
-	@echo "check TEST=x  run test called test-x.R"
-	@echo "rsync      copy the package and install it on $(RNODE)"
-	@echo "cran       build the package and run 'R CMD check --as-cran'"
-	@echo "winbuild   submit the package to the WINDOWS builder service"
-	@echo "macbuild   submit the package to the MacOS builder service"
-	@echo "examples   regenerate the examples used by vignettes"
-	@echo "vignettes  generate PDF of the vignettes"
-	@echo "submit     submit the package to CRAN (read DEVEL-README first)"
+	@echo "setup          install required packages and software to build"
+	@echo "install        install the package"
+	@echo "build          build the package as a tar.gz file"
+	@echo "check          build the package and run 'R CMD check'"
+	@echo "check TEST=x   run test called test-x.R"
+	@echo "rsync          copy the package and install it on $(RNODE)"
+	@echo "cran           build the package and run 'R CMD check --as-cran'"
+	@echo "winbuild       submit the package to the WINDOWS builder service"
+	@echo "macbuild       submit the package to the MacOS builder service"
+	@echo "examples       regenerate the examples used by vignettes"
+	@echo "vignettes      generate PDF of the vignettes"
+	@echo "submit         submit the package to CRAN (read DEVEL-README first)"
 
 setup:
 	./scripts/setup.sh
@@ -82,8 +82,8 @@ build : version
 	$(MAKE) releasevignette
 	@if grep -q @ $(PACKAGEDIR)/vignettes/$(PACKAGE)-package.bib; then true; \
 	else echo "error: vignettes/$(PACKAGE)-package.bib is empty: run 'make vignettes'"; false; fi
-	@$(MAKE) clean
 	cd $(BINDIR) &&	R CMD build $(BUILD_FLAGS) $(PACKAGEDIR)
+	@$(MAKE) clean
 
 closeversion:
 	git push origin :refs/tags/v$(PACKAGEVERSION) # Remove any existing tag
@@ -122,9 +122,7 @@ else
 endif
 
 clean: 
-	cd $(PACKAGEDIR) && ($(RM) ./$(PACKAGE)-Ex.R ./src/*.o ./src/*.so \
-		tests/testthat/*.log tests/testthat/*.Rout tests/testthat/irace.Rdata; \
-		find . -name '*.orig' -o -name '.Rhistory' | xargs $(RM) )
+	cd $(PACKAGEDIR) && (./cleanup; make -f src/Makevars clean)
 
 ## FIXME: building the vignettes is a bit complicated and sometimes fails.
 # If \setboolean{Release}{false}, entries are taken from optbib and everything
