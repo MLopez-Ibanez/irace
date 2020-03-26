@@ -6,7 +6,7 @@ test_that("test.path.rel2abs", {
   skip_if(is.null(old.cwd))
   on.exit(setwd(old.cwd), add = TRUE)
 
-  tryCatch(setwd("/x"), error = function(e) { skip(e) })
+  tryCatch(setwd("/tmp"), error = function(e) { skip(e) })
   
   testcases <- read.table(text='
 "."                         "/tmp"  "/tmp"
