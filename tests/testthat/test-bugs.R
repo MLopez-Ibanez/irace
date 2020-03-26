@@ -12,7 +12,13 @@ test_that("bug_large_new_instances", {
     saved_experiments <- dynGet("saved_experiments", inherits = TRUE)
     row <- which(saved_instances_list[, "instance"] == experiment[["id.instance"]]
                  & saved_instances_list[, "seed"] == experiment[["seed"]])
-    return(list(cost = saved_experiments[row, experiment[["id.configuration"]] ]))
+    cost <- saved_experiments[row, experiment[["id.configuration"]] ]
+    if (is.na(cost)) {
+      print(row)
+      print(experiment)
+    }
+    expect_false(is.na(cost))
+    return(list(cost = cost))
   }
   confs <- irace(scenario = scenario, parameters = parameters)
   expect_gt(nrow(confs), 0L)
