@@ -452,23 +452,40 @@ generateTimeMatrix <- function(elites, experimentLog)
   return(resultsTime)           
 }
 
+## Initialize allConfigurations with any initial configurations provided.
 allConfigurationsInit <- function(scenario, parameters)
 {
-  if (!is.null.or.empty(scenario$initConfigurations)) {
-    cat("initconfs:")
-    print(scenario$initConfigurations)
-    allConfigurations <- scenario$initConfigurations
+  initConfigurations <- scenario$initConfigurations
+  
+  confs_from_file <- NULL
+  if (!is.null.or.empty(scenario$configurationsFile)) {
+    confs_from_file <- readConfigurationsFile(scenario$configurationsFile,
+                                              parameters, scenario$debugLevel)
+  }
+  if (!is.null.or.empty(initConfigurations)) {
+    if (!identical(initConfigurations, confs_from_file))
+      irace.warning("'initConfigurations' provided in 'scenario',",
+                    " thus ignoring configurations from file '",
+                    scenario$configurationsFile, "'.")
+    cat("# Adding", nrow(initConfigurations), "initial configuration(s)\n")
+    if (scenario$debugLevel >= 2)
+      print(as.data.frame(scenario$initConfigurations, stringAsFactor = FALSE), digits=15)
+  } else {
+    initConfigurations <- confs_from_file
+  }
+    
+  if (!is.null.or.empty(initConfigurations)) {
+    allConfigurations <- initConfigurations
     allConfigurations <- cbind(.ID. = 1:nrow(allConfigurations),
                                allConfigurations, .PARENT. = NA)
     rownames(allConfigurations) <- allConfigurations$.ID.
     num <- nrow(allConfigurations)
     allConfigurations <- checkForbidden(allConfigurations, scenario$forbiddenExps)
     if (nrow(allConfigurations) < num) {
-      irace.warning("some of the initial configurations were forbidden",
-                    "and, thus, discarded")
+      irace.warning(num - nrow(allConfigurations), " of the ", num,
+                    " initial configurations were forbidden",
+                    " and, thus, discarded")
     }
-    cat("# Adding", nrow(allConfigurations), "initial configuration(s) from file",
-        shQuote(scenario$configurationsFile), "\n")
   } else {
     configurations.colnames <- c(".ID.", names(parameters$conditions), ".PARENT.")
     allConfigurations <-
@@ -532,12 +549,7 @@ irace <- function(scenario, parameters)
   }
   
   scenario <- checkScenario(defaultScenario(scenario))
-  if (is.null.or.empty(scenario$initConfigurations) &&
-      !is.null.or.empty(scenario$configurationsFile))
-    scenario$initConfigurations <-
-      readConfigurationsFile(scenario$configurationsFile,
-                             parameters, scenario$debugLevel)
-    
+
   # Recover state from file?
   if (!is.null(scenario$recoveryFile)) {
     irace.note ("Resuming from file: '", scenario$recoveryFile,"'\n")
@@ -1086,7 +1098,7 @@ irace <- function(scenario, parameters)
     experimentsUsedSoFar <- experimentsUsedSoFar + raceResults$experimentsUsed
     # Update remaining budget.
     if (scenario$maxTime > 0) { 
-      timeUsed <- sum(timeUsed, raceResults$experimentLog[, "time"], na.rm=TRUE)                                   
+      timeUsed <- sum(timeUsed, raceResults$experimentLog[, "time"], na.rm=TRUE)
       boundEstimate <- mean(iraceResults$experimentLog[, "time"], na.rm=TRUE)
       remainingBudget <- round((scenario$maxTime - timeUsed) / boundEstimate)
     } else {

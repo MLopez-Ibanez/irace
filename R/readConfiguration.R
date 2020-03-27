@@ -49,8 +49,8 @@ readConfigurationsFile <- function(filename, parameters, debugLevel = 0, text)
   irace.assert(is.data.frame(configurationTable))
   nbConfigurations <- nrow(configurationTable)
   # Print the table that has been read.
+  cat("# Read ", nbConfigurations, " configuration(s) from file '", filename, "'\n", sep="")
   if (debugLevel >= 2) {
-    cat("# Read ", nbConfigurations, " configurations from file '", filename, "'\n", sep="")
     print(as.data.frame(configurationTable, stringAsFactor = FALSE), digits=15)
   }
 
@@ -525,11 +525,10 @@ checkScenario <- function(scenario = defaultScenario())
     # FIXME: We should have the parameters inside scenario.
   }
   
-  if (!is.null.or.empty(scenario$initConfigurations)
-      && !(is.data.frame(scenario$initConfigurations) || is.matrix(scenario$initConfigurations))) {
-    irace.error("if given, initConfigurations must be a matrix or data.frame")
-  } else {
+  if (is.null.or.empty(scenario$initConfigurations)) {
     scenario$initConfigurations <- NULL
+  } else if (!is.data.frame(scenario$initConfigurations) && !is.matrix(scenario$initConfigurations)) {
+    irace.error("if given, initConfigurations must be a matrix or data.frame")
   }
   
   # This prevents loading the file two times and overriding forbiddenExps if
