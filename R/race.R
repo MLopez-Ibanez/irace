@@ -727,7 +727,7 @@ race <- function(maxExp = 0,
     return(all(apply(!is.na(Results[
                         as.character(seq_len(.irace$next.instance - 1)),
                         alive, drop=FALSE]), 1, any)))
-    }
+  }
 
   # Start main loop
   break.msg <- NULL
@@ -803,10 +803,6 @@ race <- function(maxExp = 0,
         break
       }
     }
-    ## if (nbAlive < 2) {
-    ##   break.msg <- paste0("number of alive configurations (", nbAlive, ") < 2)")
-    ##   break
-    ## }
     
     if (elitist) {
       if (scenario$elitistLimit != 0 && no.elimination >= scenario$elitistLimit

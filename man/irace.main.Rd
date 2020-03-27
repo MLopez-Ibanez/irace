@@ -62,7 +62,7 @@ instances as rows. Column names correspond to the internal identifier of
 the configuration (\code{allConfigurations$.ID.}).}
 
 \item{\code{experimentLog}}{A matrix with columns \code{iteration},
-\code{instance, }configuration, \code{time}.  This matrix contains the log of all the
+\code{instance}, \code{configuration}, \code{time}.  This matrix contains the log of all the
 experiments that \pkg{irace} performs during its execution.  The
 instance column refers to the index of the \code{scenario$instancesList}
 data frame. Time is saved ONLY when reported by the \code{targetRunner}.}

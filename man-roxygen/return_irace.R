@@ -47,7 +47,7 @@
 #' the configuration (`allConfigurations$.ID.`).}
 #' 
 #' \item{`experimentLog`}{A matrix with columns `iteration`,
-#' `instance, `configuration, `time`.  This matrix contains the log of all the
+#' `instance`, `configuration`, `time`.  This matrix contains the log of all the
 #' experiments that \pkg{irace} performs during its execution.  The
 #' instance column refers to the index of the `scenario$instancesList`
 #' data frame. Time is saved ONLY when reported by the `targetRunner`.}
