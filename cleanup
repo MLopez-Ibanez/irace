@@ -8,3 +8,5 @@ find . -name '*.orig' -o -name '.Rhistory' | xargs rm -f
 
 rm -rf autom4te.cache
 
+rm -f examples/vignette-example/Rplots.pdf
+
