@@ -281,8 +281,9 @@ elitrace.init.instances <- function(race.env, deterministic, max.instances)
 
 race.print.header <- function(capping)
 {
-  cat(sep = "", "  Markers:
+  cat(sep = "", "# Markers:
      x No test is performed.
+     c Configurations are discarded only due to capping.
      - The test is performed and some configurations are discarded.
      = The test is performed but no configuration is discarded.
      ! The test is performed and configurations could be discarded but elite configurations are preserved.
@@ -611,6 +612,7 @@ race <- function(maxExp = 0,
     elite.safe <- 0L
     elite.instances.ID <- NULL
   } else {
+    irace.assert(.irace$next.instance - 1 == nrow(elite.data$experiments))
     # There must be a non-NA entry for each instance.
     irace.assert(all(apply(!is.na(elite.data$experiments), 1, any)),
                  eval.after = { print(elite.data$experiments)})
@@ -718,6 +720,15 @@ race <- function(maxExp = 0,
   
   race.print.header(scenario$capping)
 
+  # Test that all instances that have been previously seen have been evaluated
+  # by at least one configuration.
+  all_elite_instances_evaluated <- function() {
+    if (elite.safe == 0L) return(TRUE)
+    return(all(apply(!is.na(Results[
+                        as.character(seq_len(.irace$next.instance - 1)),
+                        alive, drop=FALSE]), 1, any)))
+    }
+
   # Start main loop
   break.msg <- NULL
   for (current.task in seq_len (no.tasks)) {
@@ -754,8 +765,11 @@ race <- function(maxExp = 0,
     # LESLIE: Should we keep the early termination disabled? The difference between keeping it or 
     # not is that elite configurations could be eliminated later
     # LESLIE: I think we should remove this
+    ## We continue running if (1) we have not reached the first.test or (2)
+    ## there are instances previously seen that have not been evaluated on any
+    ## alive configuration.
     if (current.task > first.test) {
-    #if ((current.task > first.test && !scenario$capping) 
+      #if ((current.task > first.test && !scenario$capping) 
         # MANUEL: This is new and I'm not sure what it does.
         # LESLIE: When using capping, we dont finish any race until all 
         # previous instances have been executed (this makes sure that all non-elite 
@@ -770,7 +784,7 @@ race <- function(maxExp = 0,
           # execution
           # || (current.task > elitistNewInstances && nbAlive == 1)))) {
       # We always stop when we have less configurations than required.
-      if (nbAlive <= minSurvival) {
+      if (nbAlive <= minSurvival && all_elite_instances_evaluated()) {
         # Stop race if we have less or equal than the minimum number of
         # configurations.
         break.msg <- paste0("number of alive configurations (", nbAlive,
@@ -781,20 +795,22 @@ race <- function(maxExp = 0,
       # If we just did a test, check that we have enough budget to reach the
       # next test.
       if (maxExp && ( (current.task - 1) %% each.test) == 0
-          && experimentsUsed + length(which.exe) * each.test > maxExp) {
+          && experimentsUsed + length(which.exe) * each.test > maxExp
+          && all_elite_instances_evaluated()) {
         break.msg <- paste0("experiments for next test (",
                             experimentsUsed + length(which.exe) * each.test,
                             ") > max experiments (", maxExp, ")")
         break
       }
     }
-    if (nbAlive < 2) {
-      break.msg <- paste0("number of alive configurations (", nbAlive, ") < 2)")
-      break
-    }
+    ## if (nbAlive < 2) {
+    ##   break.msg <- paste0("number of alive configurations (", nbAlive, ") < 2)")
+    ##   break
+    ## }
     
     if (elitist) {
-      if (scenario$elitistLimit != 0 && no.elimination >= scenario$elitistLimit) {
+      if (scenario$elitistLimit != 0 && no.elimination >= scenario$elitistLimit
+          && all_elite_instances_evaluated()) {
         break.msg <- paste0("tests without elimination (", no.elimination,
                             ") >= elitistLimit (", scenario$elitistLimit, ")")
         break
@@ -1024,9 +1040,12 @@ race <- function(maxExp = 0,
     }
     
     # Output the result of the elimination test
-    res.symb <- if (cap.dropped || test.dropped) {
-                  if (prev.sum.alive != sum(alive)) "-" else "!"
-                } else if (cap.done || test.done) "=" else "x"
+    res.symb <- if (cap.dropped && !test.dropped
+                    && prev.sum.alive != sum(alive)) {
+                  "c" # Removed just by capping
+                  } else if (cap.dropped || test.dropped) {
+                    if (prev.sum.alive != sum(alive)) "-" else "!"
+                  } else if (cap.done || test.done) "=" else "x"
     
     # Rank alive configurations: order all configurations (eliminated or not)
     # LESLIE: we have to make the ranking outside: we can have configurations eliminated by capping
@@ -1089,10 +1108,12 @@ race <- function(maxExp = 0,
   if (is.null(break.msg))
     break.msg <- paste0("all instances (", no.tasks, ") evaluated")
 
-  # If we stop the loop before we see all new instances, there may be instances
-  # that have not been executed by any configuration. Remove those rows.
-  #
-  # FIXME: If we remove a whole row, when running in deterministic mode, this instance will never be seen again.
+  # All instances that are not new in this race must have been evaluated by at
+  # least one configuration.
+  irace.assert(all_elite_instances_evaluated(),
+               eval.after = { print(Results[,alive, drop=FALSE])})
+  # If we stop the loop before we see all new instances, there may be new
+  # instances that have not been executed by any configuration.
   Results <- Results[apply(!is.na(Results), 1, any), , drop = FALSE]
   
   race.ranks <- overall.ranks(Results[, alive, drop = FALSE], stat.test = stat.test)
