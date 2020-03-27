@@ -38,6 +38,10 @@ and, thus, it does not need to be tuned.}
 \item{\code{nbParameters}}{An integer, the total number of parameters.}
 \item{\code{nbFixed}}{An integer, the number of parameters with a fixed value.}
 \item{\code{nbVariable}}{Number of variable (to be tuned) parameters.}
+\item{\code{depends}}{List of character vectors, each vector specifies
+which parameters depend on this one.}
+\item{\code{isDependent}}{Logical vector that specifies which parameter has
+a dependent domain.}
 }
 }
 \description{
@@ -71,9 +75,9 @@ potential user errors.
  alpha        "--alpha "       r    (0.00, 5.00)
  beta         "--beta "        r    (0.00, 10.00)
  rho          "--rho  "        r    (0.01, 1.00)
- ants         "--ants "        i            (5, 100)
+ ants         "--ants "        i    (5, 100)
  q0           "--q0 "          r    (0.0, 1.0)           | algorithm == "acs"
- rasrank      "--rasranks "    i    (1, 100)             | algorithm == "ras"
+ rasrank      "--rasranks "    i    (1, "ants")          | algorithm == "ras"
  elitistants  "--elitistants " i    (1, 750)             | algorithm == "eas"
  nnls         "--nnls "        i    (5, 50)              | localsearch \%in\% c(1,2,3)
  dlb          "--dlb "         c    (0, 1)               | localsearch \%in\% c(1,2,3)

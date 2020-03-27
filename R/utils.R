@@ -440,6 +440,12 @@ paramUpperBound <- function (paramName, parameters)
   return (as.numeric(parameters$domain[[paramName]][2]))
 }
 
+inNumericDomain <- function(value, domain) {
+  if (value >= domain[1] && value <= domain[2])
+    return (TRUE)
+  return (FALSE)
+}
+
 nbParam <- function (parameters)
 {
   return (length(parameters$names))

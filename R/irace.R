@@ -50,8 +50,8 @@ numeric.configurations.equal <- function(x, configurations, parameters, threshol
   selected <- 1:nrow(configurations)
   for (i in seq_along(param.names)) {
     param <- param.names[i]
-    lower <- parameters$domain[[param]][1]
-    upper <- parameters$domain[[param]][2]
+    x.domain <- getDependentBound(parameters, param, x)
+    x.range <- diff(x.domain)
  
     X <- x[[param]]
     # FIXME: Since at the end we select a subset of configurations, we could use selected here.
@@ -69,7 +69,20 @@ numeric.configurations.equal <- function(x, configurations, parameters, threshol
         # FIXME: Why is this updating d[j]? It seems that if the difference is
         # large for one configuration, then it will be assumed to be large for
         # the rest.
-        d[j] <- max(d[j], abs((as.numeric(X) - as.numeric(Y)) / (upper - lower)))
+        if (parameters$isDependent[param]) {
+          # Compare depedent domains by normalising their values to their own ranges first
+          # and calculating the difference. (When possible)
+          y.domain <- getDependentBound(parameters, param, configurations[selected[j],])
+          y.range <- diff(x.domain)
+          dx <- ifelse (x.range == 0, 0, (as.numeric(X) - x.domain[1]) / x.range)
+          dy <- ifelse (y.range == 0, 0, (as.numeric(Y) - y.domain[1]) / y.range)
+       
+          d[j] <- max(d[j], abs(dx - dy))
+        } else {
+          # FIXME: We should calculate (X - x.domain[1]) / x.range once for all configurations
+          # and all parameters, then calculate the differences using vectorization.
+          d[j] <- max(d[j], abs((as.numeric(X) - as.numeric(Y)) / x.range))
+        }
         if (d[j] > threshold) isSimilar.mat[j,i] <- FALSE
       }
     }

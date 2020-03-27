@@ -26,6 +26,7 @@ initialiseModel <- function (parameters, configurations, digits)
       irace.assert(type == "o")
       value <- (nbValues - 1) / 2
     }
+
     param <- list()
     for (indexConfig in seq_len(nbConfigurations)) {
       idCurrentConfig <- as.character(configurations[indexConfig, ".ID."])
@@ -153,9 +154,9 @@ restartConfigurations <- function (configurations, restart.ids, model, parameter
         model[[param]][[id]] <- probVector / sum(probVector)
       } else {
         if (type == "i" || type == "r") {
-          value <- init.model.numeric(param, parameters)
-          # We keep the value of the configuration as last known
-          value[2] <- configurations[id, param]
+          value <- c(init.model.numeric(param, parameters),
+                     # We keep the value of the configuration as last known
+                     configurations[id, param])
         } else {
           irace.assert(type == "o")
           value <- (length(parameters$domain[[param]]) - 1) / 2
@@ -171,18 +172,25 @@ restartConfigurations <- function (configurations, restart.ids, model, parameter
 }
 
 # Initialise model in case of numerical variables.
-# it retuns an array size 2, first number indicates the 
+# it retuns an array size 2, first number indicates the
 # standard deviation and second the last known value (initially NA)
 init.model.numeric <- function(param, parameters)
 {
-  lower <- paramLowerBound(param, parameters)
-  upper <- paramUpperBound(param, parameters)
+  # Dependent parameters define the standard deviation as
+  # a portion of the size of the domain interval. In this case,
+  # 0.5 indicates half of the interval, equivalent  to
+  # (domain[2] - domain[1]) * 0.5
+  if (parameters$isDependent[[param]]) {
+    return(0.5)
+  }
+
   transf <- parameters$transform[[param]]
   if (transf == "log") {
-    lower <- 0
-    upper <- 1
+    domain <- c(0,1)
+  } else {
+    domain <- parameters$domain[[param]]
   }
-  value <- (upper - lower) / 2.0
+  value <- (domain[2] - domain[1]) / 2.0
   irace.assert(is.finite(value))
-  return(c(value, NA))
+  return(value)
 }
