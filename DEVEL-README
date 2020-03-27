@@ -4,18 +4,20 @@ README file for developers
 Subversion commands
 ---------------------
 
-# Send your changes to the repository (for your branch only)
-svn ci -m "Explain your changes"
-# Update your local copy with changes in the repository (for your branch only)
-svn up 
-# See differences in your local copy (against your branch only)
-svn diff
+# See differences in your local copy
+git diff
+# Commit your changes to the local repository
+git commit -m "Explain your changes"
+# Update your local copy with changes from remote repository (github)
+git pull --rebase
+# Send your changes to the remote repository
+git push
 # See differences between branches
-svn diff ^/trunk .
-# Merge changes in trunk into your local copy
-svn merge ^/trunk .
+git diff master
+# Merge changes from master into your branch
+git rebase -i master
 # Get help
-svn help
+git help
 
 
 Developing irace
@@ -90,12 +92,11 @@ be listed in the Imports: field of DESCRIPTION.
 RELEASE Process:
 -----------------
 
-1. svn up
+1. git status # make sure you are up to date and clean
 
 2. make check # passes
 
 3. make cran  # passes
-
 
 4. make examples # Takes a few hours. Inspect the examples in the vignette.
 
