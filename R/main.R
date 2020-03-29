@@ -351,6 +351,7 @@ irace.cmdline <- function(argv = commandArgs (trailingOnly = TRUE))
   if (!is.null(parser$readArg (short = "-v", long = "--version"))) {
     cat.irace.license()
     cat ("# installed at: ", system.file(package="irace"), "\n", sep = "")
+    print(citation(package="irace"))
     return(invisible(NULL))
   }
   cat.irace.license()
