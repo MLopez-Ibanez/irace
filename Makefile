@@ -148,7 +148,7 @@ vignettes: version vignettes/$(PACKAGE)-package.Rnw vignettes/section/irace-opti
 # FIXME: How to halt on warning?
 	@test -d $(PACKAGEDIR)/vignettes/optbib || (echo "ERROR: vignettes/optbib not found. You need to symlink or checkout https://github.com/iridia-ulb/references." && exit 1)
 	cd $(PACKAGEDIR)/vignettes \
-	&& R CMD Sweave --pdf $(PACKAGE)-package.Rnw \
+	&& R CMD Sweave --pdf --compact $(PACKAGE)-package.Rnw \
 	&& $(RM) $(PACKAGE)-package.tex
 # Rscript -e "library(knitr); knit('$(PACKAGE)-package.Rnw', output='$(PACKAGE)-package.tex', quiet = TRUE)" \
 # && $(PDFLATEX) $(PACKAGE)-package.tex && bibtex $(PACKAGE)-package && $(PDFLATEX) $(PACKAGE)-package.tex && $(PDFLATEX) $(PACKAGE)-package.tex && $(RM) $(PACKAGE)-package.tex
