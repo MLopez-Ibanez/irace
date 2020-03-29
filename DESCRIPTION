@@ -10,7 +10,7 @@ Authors@R: c(person("Manuel", "López-Ibáñez", role = c("aut", "cre"),
                               email = "manuel.lopez-ibanez@manchester.ac.uk",
                               comment = c(ORCID = "0000-0001-9974-1295")),
              person("Jérémie", "Dubois-Lacoste", role = "aut"),
-             person("Leslie", "Pérez Cáceres", role = c("aut")),
+             person("Leslie", "Pérez Cáceres", role = "aut"),
              person("Thomas", "Stützle", role = "aut"),
              person("Mauro", "Birattari", role = "aut"),
              person("Eric", "Yuan", role = "ctb"),
@@ -34,9 +34,10 @@ Suggests:
         rhub
 VignetteBuilder: knitr
 License: GPL (>= 2)
-URL: http://iridia.ulb.ac.be/irace
+URL: http://iridia.ulb.ac.be/irace, https://github.com/MLopez-Ibanez/irace
+BugReports: https://github.com/MLopez-Ibanez/irace/issues
 ByteCompile: yes
 LazyData: yes
 Encoding: UTF-8
 RoxygenNote: 6.1.1
-SystemRequirements: GNU make
+
