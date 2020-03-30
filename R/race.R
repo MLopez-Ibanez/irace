@@ -723,7 +723,6 @@ race <- function(maxExp = 0,
   # Test that all instances that have been previously seen have been evaluated
   # by at least one configuration.
   all_elite_instances_evaluated <- function() {
-    if (elite.safe == 0L) return(TRUE)
     return(all(apply(!is.na(Results[
                         as.character(seq_len(.irace$next.instance - 1)),
                         alive, drop=FALSE]), 1, any)))
