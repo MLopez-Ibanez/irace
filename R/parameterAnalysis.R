@@ -80,7 +80,7 @@ parameterFrequency <- function(configurations, parameters,
     pdf(file = paste0(filename, "-", cplot, ".pdf"), onefile = TRUE, width = pdf.width)
     on.exit(dev.off(), add = TRUE)
   }
-  par(mfrow=c(rows,cols))
+  par(mfrow=c(rows,cols), mar=0.1 + c(4,3,3,1))
   
   for (param.name in param.names) {
 
