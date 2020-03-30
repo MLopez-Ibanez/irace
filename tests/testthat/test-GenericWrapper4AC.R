@@ -3,7 +3,10 @@ context("GenericWrapper4AC")
 
 test_that("GenericWrapper4AC", {
   skip_on_cran()
-
+  skip_on_ci()
+  skip_on_travis()
+  # FIXME: how to check that a python package is installed?
+  
   parameters <- readParameters(text = '
    cost "cost" r (0.1, 1.00)
    runtime "runtime" r (0.1, 1.00)')
