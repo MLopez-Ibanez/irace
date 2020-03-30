@@ -2,7 +2,7 @@
 # irace: An implementation in R of Iterated Race.
 # -------------------------------------------------------------------------
 #
-#  Copyright (C) 2010-2018
+#  Copyright (C) 2010-2020
 #  Manuel López-Ibáñez     <manuel.lopez-ibanez@manchester.ac.uk> 
 #  Jérémie Dubois-Lacoste  <jeremie.dubois-lacoste@ulb.ac.be>
 #  Leslie Perez Caceres    <leslie.perez.caceres@ulb.ac.be>
@@ -39,7 +39,7 @@ irace.license <-
 '#------------------------------------------------------------------------------
 # irace: An implementation in R of (Elitist) Iterated Racing
 # Version: __VERSION__
-# Copyright (C) 2010-2019
+# Copyright (C) 2010-2020
 # Manuel Lopez-Ibanez     <manuel.lopez-ibanez@manchester.ac.uk>
 # Jeremie Dubois-Lacoste  
 # Leslie Perez Caceres    <leslie.perez.caceres@ulb.ac.be>

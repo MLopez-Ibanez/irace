@@ -288,8 +288,8 @@ parallel. See the [user guide](https://cran.r-project.org/package=irace/vignette
 License
 =======
 
-This software is Copyright (C) 2011-2018 Manuel López-Ibáñez and Jérémie
-Dubois-Lacoste.
+**irace** is Copyright (C) 2010-2020 Manuel López-Ibáñez, Jérémie Dubois-Lacoste
+and Leslie Pérez-Cáceres.
 
 This program is free software (software libre); you can redistribute it and/or
 modify it under the terms of the GNU General Public License as published by the
@@ -308,12 +308,16 @@ scientist to (a) mention the fashion in which this software was used in the
 Methods section; (b) mention the algorithm in the References section. The
 appropriate citation is:
 
-> Manuel López-Ibáñez, Jérémie Dubois-Lacoste, Leslie Pérez Cáceres, Thomas
-> Stützle, and Mauro Birattari.
-> [**The irace package: Iterated Racing for Automatic Algorithm Configuration.**](http://dx.doi.org/10.1016/j.orp.2016.09.002)
-> _Operations Research Perspectives_, 2016.
+ * Manuel López-Ibáñez, Jérémie Dubois-Lacoste, Leslie Pérez Cáceres, Thomas
+  Stützle, and Mauro Birattari.  [**The irace package: Iterated Racing for
+  Automatic Algorithm
+  Configuration.**](http://dx.doi.org/10.1016/j.orp.2016.09.002) _Operations
+  Research Perspectives_, 2016. doi: 10.1016/j.orp.2016.09.002
 
-The race package is Copyright (C) 2003 Mauro Birattari, used under the GPL.
+The **irace** package uses code under the GPL from the [race
+package](https://CRAN.R-project.org/package=race) is Copyright (C) 2003 Mauro
+Birattari.
+
 
 Frequently Asked Questions
 ==========================
