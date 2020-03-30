@@ -9,6 +9,8 @@ DEVEL-README
 \.rej$
 \.svn$
 \.bak$
+\.travis
+\.github
 ^.+\.data
 ^Instances$
 ^Makefile$
