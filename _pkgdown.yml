@@ -1,0 +1,10 @@
+template:
+  params:
+    bootswatch: cosmo
+  path: pkgdown/templates
+
+development:
+  mode: unreleased
+  destination: devel
+  version_label: default
+  version_tooltip: "Github version"
