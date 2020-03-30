@@ -1,0 +1,57 @@
+language: r
+cache:
+  - packages
+latex: true
+fortran: false
+
+os:
+  - linux
+  - osx
+  
+r:
+  - 3.4
+  - oldrel
+  - release
+
+# Combinations that don't work in travis-ci
+jobs:
+  exclude:
+  - os: osx
+    r: 3.4
+
+# Required for Rmpi
+apt_packages:
+  - libxml2-dev
+  - libgit2-dev
+#  - mpi-default-dev
+
+# work around temporary travis + R 3.5 bug
+# r_binary_packages:
+#    - devtools
+
+env:
+  global:
+    - _R_CHECK_FORCE_SUGGESTS_=false
+    - NOT_CRAN=true
+    - CRAN: http://cran.rstudio.com
+    - MAKEFLAGS="-j 2"
+
+r_check_args: '--run-donttest --timings'
+  
+before_install:
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then sudo tlmgr install oberdiek epstopdf-pkg epstopdf grfext gettitlestring environ trimspaces etoolbox upquote babel-english pgf xcolor algorithms relsize tocbibind appendix tocloft enumitem listings tcolorbox framed; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then tlmgr install oberdiek epstopdf-pkg epstopdf grfext gettitlestring environ trimspaces etoolbox upquote babel-english pgf xcolor algorithms relsize tocbibind appendix tocloft enumitem listings tcolorbox; fi
+  - make version
+
+notifications:
+  email: false
+
+# FIXME: We only need to do this for deploy
+before_cache: Rscript -e 'remotes::install_github("r-lib/pkgdown")'
+
+deploy:
+  skip_cleanup: true
+  provider: script
+  script: Rscript -e 'pkgdown::deploy_site_github(run_dont_run = TRUE)'
+  on:
+    condition: $TRAVIS_OS_NAME = linux && $TRAVIS_R_VERSION_STRING = release
