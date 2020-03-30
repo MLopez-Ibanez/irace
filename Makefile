@@ -75,6 +75,7 @@ gendoc:
 
 pkgdown: gendoc
 	$(Reval) 'pkgdown::build_site(run_dont_run = TRUE, document = FALSE)'
+	@$(MAKE) clean
 
 build : version
 	@$(MAKE) genoptions
