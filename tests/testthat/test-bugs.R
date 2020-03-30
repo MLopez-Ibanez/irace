@@ -2,9 +2,30 @@ context("bugs")
 
 withr::with_output_sink("test-bugs.Rout", {
 
+run_irace_from_rds <- function(rds_filename)
+{
+  scenario <- readRDS(rds_filename)$scenario
+  parameters <- readRDS(rds_filename)$parameters
+    
+  scenario$targetRunner <- function(experiment, scenario, filename = rds_filename) {
+    saved <- readRDS(filename)
+    row <- which(saved$instancesList[, "instance"] == experiment[["id.instance"]]
+                 & saved$instancesList[, "seed"] == experiment[["seed"]])
+    cost <- saved$experiments[row, experiment[["id.configuration"]] ]
+    if (is.na(cost)) {
+      print(row)
+      print(experiment)
+    }
+    expect_false(is.na(cost))
+    return(list(cost = cost))
+  }
+  confs <- irace(scenario = scenario, parameters = parameters)
+  expect_gt(nrow(confs), 0L)
+}
+
 test_that("bug_large_new_instances", {
   skip_on_cran()
-
+  # FIXME: Convert this test to use run_irace_from_rds()
   load("bug_large_new_instances.Rdata", verbose = TRUE)
 
   scenario$targetRunner <- function(experiment, scenario) {
@@ -69,47 +90,13 @@ x "" o (a,b,c,d)
 
 test_that("maxim_bug", {
   skip_on_cran()
-
-  scenario <- readRDS("saved_maxim_bug.rds")$scenario
-  parameters <- readRDS("saved_maxim_bug.rds")$parameters
-  
-  scenario$targetRunner <- function(experiment, scenario) {
-    saved <- readRDS("saved_maxim_bug.rds")
-    row <- which(saved$instancesList[, "instance"] == experiment[["id.instance"]]
-                 & saved$instancesList[, "seed"] == experiment[["seed"]])
-    cost <- saved$experiments[row, experiment[["id.configuration"]] ]
-    if (is.na(cost)) {
-      print(row)
-      print(experiment)
-    }
-    expect_false(is.na(cost))
-    return(list(cost = cost))
-  }
-  confs <- irace(scenario = scenario, parameters = parameters)
-  expect_gt(nrow(confs), 0L)
-
+  run_irace_from_rds("saved_maxim_bug.rds")
 })
 
 test_that("maxim_bug2", {
   skip_on_cran()
 
-  scenario <- readRDS("saved_maxim_bug2.rds")$scenario
-  parameters <- readRDS("saved_maxim_bug2.rds")$parameters
-  
-  scenario$targetRunner <- function(experiment, scenario) {
-    saved <- readRDS("saved_maxim_bug2.rds")
-    row <- which(saved$instancesList[, "instance"] == experiment[["id.instance"]]
-                 & saved$instancesList[, "seed"] == experiment[["seed"]])
-    cost <- saved$experiments[row, experiment[["id.configuration"]] ]
-    if (is.na(cost)) {
-      print(row)
-      print(experiment)
-    }
-    expect_false(is.na(cost))
-    return(list(cost = cost))
-  }
-  confs <- irace(scenario = scenario, parameters = parameters)
-  expect_gt(nrow(confs), 0L)
+  run_irace_from_rds("saved_maxim_bug2.rds")
 })
 }) # withr::with_output_sink()
 
