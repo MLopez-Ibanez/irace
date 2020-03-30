@@ -6,10 +6,10 @@ irace2pyimpEXE= iracebin/irace2pyimp$(EXE)
 all:  $(iraceEXE) $(irace2pyimpEXE)
 
 $(irace2pyimpEXE): iracebin/irace2pyimp.o
-	$(CC) $(PKG_CPPFLAGS) $(CFLAGS)  $<  -o $@
+	$(CC) $(PKG_CPPFLAGS) $(CFLAGS) iracebin/irace2pyimp.o -o $@
 
 $(iraceEXE): iracebin/irace.o
-	$(CC) $(PKG_CPPFLAGS) $(CFLAGS)  $<  -o $@
+	$(CC) $(PKG_CPPFLAGS) $(CFLAGS) iracebin/irace.o -o $@
 
 iracebin/irace.o: iracebin/irace.h
 iracebin/irace2pyimp.o: iracebin/irace.h
