@@ -1,3 +1,10 @@
+# irace 3.4.1  (31/03/2020)
+
+ * `NEWS` converted to markdown.
+
+ * Fix CRAN error on Solaris.
+
+
 # irace 3.4  (30/03/2020)
 
  * `irace2pyimp` function and executable (`irace2pyimp.exe` on Windows) to
@@ -213,18 +220,18 @@
    evaluated. See the scenario variable repairConfiguration.
                                                      (Manuel López-Ibáñez)
 
- * The option --sge-cluster (sgeCluster) was removed and replaced by
-   --batchmode (batchmode). It is now the responsibility of the target-runner
+ * The option `--sge-cluster` (`sgeCluster`) was removed and replaced by
+   `--batchmode` (`batchmode`). It is now the responsibility of the target-runner
    to parse the output of the batch job submission command (e.g., qsub or
    squeue), and return just the job ID. Values supported are: "sge", "torque",
    "pbs" and "slurm".                                     (Manuel López-Ibáñez)
 
- * The option --parallel can now be combined with --batchmode to limit the
+ * The option `--parallel` can now be combined with `--batchmode` to limit the
    number of jobs submitted by irace at once. This may be useful in batch
    clusters that have a small queue of jobs.
                                                           (Manuel López-Ibáñez)
 
- * New examples under inst/examples/batchmode-cluster/.
+ * New examples under `inst/examples/batchmode-cluster/`.
                                                        (Manuel López-Ibáñez)
 
  * It is now possible to include scenario definition files from other scenario
@@ -289,10 +296,10 @@
 
  * Minimum R version is 2.15.
 
- * Elitist irace by default, it can be disabled with parameter --elitist 0.
+ * Elitist irace by default, it can be disabled with parameter `--elitist 0`.
    (Leslie Pérez Cáceres, Manuel López-Ibáñez)
 
- * The parameter --test-type gains two additional values: (Manuel López-Ibáñez)
+ * The parameter `--test-type` gains two additional values: (Manuel López-Ibáñez)
 
    - `t-test-bonferroni` (t-test with Bonferroni's correction for multiple
                         comparisons),
@@ -387,13 +394,13 @@
  * Reduce memory use for very large values of maxExperiments.
    (Manuel López-Ibáñez, thanks to Federico Caselli for identifying the issue)
 
- * New option --load-balancing (loadBalancing) for disabling load-balancing
+ * New option `--load-balancing` (`loadBalancing`) for disabling load-balancing
    when executing jobs in parallel. Load-balancing makes better use of
    computing resources, but increases communication overhead. If this overhead
    is large, disabling load-balancing may be faster.
    (Manuel López-Ibáñez, thanks to Federico Caselli for identifying the issue)
 
- * The option --parallel in Windows now uses load-balancing by default.
+ * The option `--parallel` in Windows now uses load-balancing by default.
    (Manuel López-Ibáñez)
 
  * The wall-clock time after finishing each task is printed in the output.
@@ -421,12 +428,12 @@
 
 # irace 1.05
 
- * New option --version. (Manuel López-Ibáñez)
+ * New option `--version`. (Manuel López-Ibáñez)
 
  * Terminate early if there is no sufficient budget to run irace with
    the given settings. (Manuel López-Ibáñez)
 
- * The option --parallel (without --mpi) now works under Windows.
+ * The option `--parallel` (without `--mpi`) now works under Windows.
    (Manuel López-Ibáñez, thanks to Pablo Valledor Pellicer for testing
    it)
 
@@ -439,14 +446,14 @@
 
  * Forbidden configurations may be specified in terms of constraints
    on their values. Forbidden configurations will never be evaluated by irace.
-   See --forbidden-file and inst/templates/forbidden.tmpl.
+   See `--forbidden-file` and `inst/templates/forbidden.tmpl`.
    (Manuel López-Ibáñez)
 
- * New option --recovery-file (recoveryFile) allows resuming a
+ * New option `--recovery-file` (recoveryFile) allows resuming a
    previous irace run. (Leslie Pérez Cáceres)
 
  * The confidence level for the elimination test is now
-   configurable with parameter --confidence. (Leslie Pérez Cáceres)
+   configurable with parameter `--confidence`. (Leslie Pérez Cáceres)
 
  * Much more robust handling of relative/absolute paths. Improved support
    for Windows. (Leslie Pérez Cáceres, Manuel López-Ibáñez)
@@ -460,13 +467,13 @@
     x "" i (-1, -2)     # lower bound must be smaller than upper bound
     x "" c ("a", "a")   # duplicated values
 ```
- * Print elapsed time for calls to hook-run if debugLevel >=1.
+ * Print elapsed time for calls to hook-run if `debugLevel >=1`.
    (Manuel López-Ibáñez)
 
- * examples/hook-run-python/hook-run: A multi-purpose hook-run written
+ * `examples/hook-run-python/hook-run`: A multi-purpose hook-run written
    in Python. (Franco Mascia)
 
- * Parallel mode in an SGE cluster (--sge-cluster) is more
+ * Parallel mode in an SGE cluster (`--sge-cluster`) is more
    robust. (Manuel López-Ibáñez)
 
 # irace 1.04

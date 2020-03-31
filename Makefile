@@ -1,4 +1,4 @@
-PACKAGEVERSION=3.5
+PACKAGEVERSION=3.4.1
 PACKAGE=$(shell sh -c 'grep -F "Package: " DESCRIPTION | cut -f2 -d" "')
 # FIXME: This Makefile only works with this BINDIR!
 BINDIR=$(CURDIR)/..
@@ -111,7 +111,8 @@ releasebuild: releasevignette
 # Let's try to compact vignettes further (not needed for R > 3.6.1)
 	./scripts/recompact.sh $(BINDIR)/$(PACKAGE)_$(PACKAGEVERSION).tar.gz \
 		$(PACKAGE)/inst/doc/$(PACKAGE)-package.pdf
-cran : releasebuild
+
+cran: releasebuild
 	cd $(BINDIR) && _R_CHECK_FORCE_SUGGESTS_=false _R_CHECK_CRAN_INCOMING_=0 R CMD check --as-cran $(PACKAGE)_$(PACKAGEVERSION).tar.gz
 
 check: build
