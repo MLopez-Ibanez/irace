@@ -1,4 +1,4 @@
-PACKAGEVERSION=3.4.1
+PACKAGEVERSION=3.5
 PACKAGE=$(shell sh -c 'grep -F "Package: " DESCRIPTION | cut -f2 -d" "')
 # FIXME: This Makefile only works with this BINDIR!
 BINDIR=$(CURDIR)/..
@@ -13,6 +13,7 @@ FTP_COMMANDS="user anonymous anonymous\nbinary\ncd incoming\nput $(PACKAGE)_$(PA
 WINBUILD_DEVEL_FTP_COMMANDS="user anonymous anonymous\nbinary\ncd R-devel\nput $(PACKAGE)_$(PACKAGEVERSION).tar.gz\nquit\n"
 WINBUILD_REL_FTP_COMMANDS="user anonymous anonymous\nbinary\ncd R-release\nput $(PACKAGE)_$(PACKAGEVERSION).tar.gz\nquit\n"
 PDFLATEX=pdflatex -shell-escape -file-line-error -halt-on-error -interaction=nonstopmode "\input"
+RHUB_COMMON_ARGS= path='$(BINDIR)/$(PACKAGE)_$(PACKAGEVERSION).tar.gz', env_vars = c('_R_CHECK_FORCE_SUGGESTS_'='false', R_DEFAULT_SAVE_VERSION='2', R_DEFAULT_SERIALIZE_VERSION='2')
 Reval=R --slave -e
 
 Rversion=$(R --version | head -n -1 | grep -m 1 -o -e [0-9] | head -n 1)
@@ -26,7 +27,7 @@ define Rsed
 	R --slave --vanilla -e 'f <- "$(1)"; txt <- sub($(2), $(3), perl=TRUE, readLines(f)); writeLines(txt, f)'
 endef
 
-## Do we have svnversion?
+## Do we have git?
 ifeq ($(shell sh -c 'which git 1> /dev/null 2>&1 && echo y'),y)
   ## Is this a working copy?
   ifeq ($(shell sh -c 'LC_ALL=C  git describe --first-parent --always | grep -q "[0-9a-z]\+$$"  && echo y'),y)
@@ -36,8 +37,6 @@ endif
 ## Set version information:
 SVN_REV = $(shell sh -c 'cat git_version 2> /dev/null')
 REVNUM = $(shell sh -c 'cat git_version 2> /dev/null')
-
-RHUB_COMMON_ARGS= path='$(BINDIR)/$(PACKAGE)_$(PACKAGEVERSION).tar.gz', env_vars = c('_R_CHECK_FORCE_SUGGESTS_'='false', R_DEFAULT_SAVE_VERSION='2', R_DEFAULT_SERIALIZE_VERSION='2')
 
 .PHONY : help build check clean install pdf rsync version submit cran winbuild vignettes examples genoptions pkgdown
 
