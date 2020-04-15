@@ -11,6 +11,7 @@ DEVEL-README
 \.bak$
 \.travis
 \.github
+^\.git$
 _pkgdown.yml
 ^.+\.data
 ^Instances$
