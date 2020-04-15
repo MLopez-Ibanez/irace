@@ -36,8 +36,8 @@ License: GPL (>= 2)
    sum(x * x - 10 * cos(2 * pi * x) + 10)
  }
  
- ## We generate 200 instances (in this case, weights):
- weights <- rnorm(200, mean = 0.9, sd = 0.02)
+ ## We generate 20 instances (in this case, weights):
+ weights <- rnorm(20, mean = 0.9, sd = 0.02)
  
  ## On this set of instances, we are interested in optimizing two
  ## parameters of the SANN algorithm: tmax and temp. We setup the
@@ -53,7 +53,7 @@ License: GPL (>= 2)
  ## Next, we define the function that will evaluate each candidate
  ## configuration on a single instance. For simplicity, we restrict to
  ## three-dimensional functions and we set the maximum number of
- ## iterations of SANN to 5000.
+ ## iterations of SANN to 1000.
  target.runner <- function(experiment, scenario)
  {
    instance <- experiment$instance
@@ -66,7 +66,7 @@ License: GPL (>= 2)
      return(weight * f_rastrigin(x) + (1 - weight) * f_rosenbrock(x))
    }
    res <- stats::optim(par,fn, method="SANN",
-                control=list(maxit=5000
+                control=list(maxit=1000
                   , tmax = as.numeric(configuration[["tmax"]])
                   , temp = as.numeric(configuration[["temp"]])
                   ))
@@ -81,11 +81,11 @@ License: GPL (>= 2)
  }
  
  ## We define a configuration scenario by setting targetRunner to the
- ## function define above, instances to the first 100 random weights, and
- ## a maximum budget of 1000 calls to targetRunner.
+ ## function define above, instances to the first 10 random weights, and
+ ## a maximum budget of 'maxExperiments' calls to targetRunner.
  scenario <- list(targetRunner = target.runner,
-                  instances = weights[1:100],
-                  maxExperiments = 1000,
+                  instances = weights[1:10],
+                  maxExperiments = 500,
                   # Do not create a logFile
                   logFile = "")
  
@@ -104,12 +104,12 @@ License: GPL (>= 2)
  
  ## We can evaluate the quality of the best configuration found by
  ## irace versus the default configuration of the SANN algorithm on
- ## the other 100 instances previously generated.
+ ## the other 10 instances previously generated.
  ## To do so, first we apply the default configuration of the SANN
  ## algorithm to these instances:
  test <- function(configuration)
  {
-   res <- lapply(weights[101:200],
+   res <- lapply(weights[11:20],
                  function(x) target.runner(
                                experiment = list(instance = x,
                                                  configuration = configuration),
