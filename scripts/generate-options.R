@@ -70,16 +70,13 @@ for (section in ordered.sections) {
 man.text <- c(man.text, "#' }", marker.end)
 writeLines(man.text, con = options.comment.filename)
 
-# FIXME: Implement this in pure R, and remove use of 'sed'
-system2("sed",
-        args = c("-i", "-e",
-                 sprintf("\"/$lead/,/$tail/{ /$lead/{r %s
-                         };; d }\"", options.comment.filename),
-                 "../R/readConfiguration.R"),
-        env = c(sprintf("lead='^%s$';", marker.beg),
-                sprintf("tail='^%s$';", marker.end)))
-  
- 
+conf.filename <- "../R/readConfiguration.R"
+text <- paste0(readLines(conf.filename), collapse="\n")
+replace <- paste0(readLines(options.comment.filename), collapse="\n")
+text <- sub(sprintf("(?s)%s.*%s", marker.beg, marker.end),
+            paste0(marker.beg, marker.end), text, perl=TRUE)
+text <- sub(paste0(marker.beg, marker.end), replace, text, fixed=TRUE)
+writeLines(text, con = conf.filename)
 
 # Generate file with replacement for vignettes
 
