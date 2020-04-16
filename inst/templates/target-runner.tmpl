@@ -40,7 +40,7 @@ fi
 
 # If the program just prints a number, we can use 'exec' to avoid
 # creating another process, but there can be no other commands after exec.
-#exec $EXE ${FIXED_PARAMS} -i $INSTANCE ${CONFIG_PARAMS}
+#exec $EXE ${FIXED_PARAMS} -i $INSTANCE --seed ${SEED} ${CONFIG_PARAMS}
 # exit 1
 # 
 # Otherwise, save the output to a file, and parse the result from it.
