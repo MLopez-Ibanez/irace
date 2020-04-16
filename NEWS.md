@@ -203,7 +203,7 @@
 
 # irace 2.3
 
- * Fix bug that will cause iraceResults$experimentLog to count calls to
+ * Fix bug that will cause `iraceResults$experimentLog` to count calls to
    targetEvaluator as experiments, even if no call to targetRunner was
    performed. This does not affect the computation of the budget consumed and,
    thus, it does not affect the termination criteria of irace. The bug triggers
@@ -264,11 +264,12 @@
  * Fix \dontrun example in irace-package.Rd (Manuel López-Ibáñez)
 
  * Fix bug: If testInstances contains duplicates, results of testing are not
-   correctly saved in iraceResults$testing$experiments nor reported correctly
+   correctly saved in `iraceResults$testing$experiments` nor reported correctly
    at the end of a run. Now unique IDs of the form 1t, 2t, ... are used for
    each testing instance. These IDs are used for the rownames of
-   iraceResults$testing$experiments and the names of the scenario$testInstances
-   and iraceResults$testing$seeds vectors.  (Manuel López-Ibáñez)
+   `iraceResults$testing$experiments` and the names of the
+   `scenario$testInstances` 
+   and `iraceResults$testing$seeds` vectors.  (Manuel López-Ibáñez)
 
  * Fix bug where irace keeps retrying the target-runner call even if it
    succeeds. (Manuel López-Ibáñez)
@@ -506,7 +507,7 @@
  * Faster computation of similar candidates (Jeremie Dubois-Lacoste
    and Leslie Pérez Cáceres).
 
- * Fix bug when saving instances in tunerResults$experiments.
+ * Fix bug when saving instances in `tunerResults$experiments`.
 
  * `irace.cmdline ("--help")` does not try to quit R anymore.
 
