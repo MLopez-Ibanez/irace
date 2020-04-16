@@ -31,7 +31,7 @@ It builds upon the race package by Birattari and it is implemented in R.
 **Relevant literature:**
 
  1. M. López-Ibáñez, J. Dubois-Lacoste, L. Pérez Cáceres, T. Stützle, and
-    M. Birattari. [The irace package: Iterated Racing for Automatic Algorithm Configuration.](http://dx.doi.org/10.1016/j.orp.2016.09.002).
+    M. Birattari. [The irace package: Iterated Racing for Automatic Algorithm Configuration](http://dx.doi.org/10.1016/j.orp.2016.09.002).
 *Operations Research Perspectives*, 3:43–58, 2016.<br>
     [ [bibtex](http://lopez-ibanez.eu/LopezIbanez_bib.html#LopDubPerStuBir2016irace) 
     | doi: [10.1016/j.orp.2016.09.002](http://dx.doi.org/10.1016/j.orp.2016.09.002) ]
