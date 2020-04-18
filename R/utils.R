@@ -42,7 +42,7 @@ irace.print.memUsed <- function(objects)
 # cannot help the user to understand why the program failed.
 irace.warning <- function(...)
 {
-  cat(sep="", "WARNING: ", ..., "\n")
+  cat(sep="", .irace.prefix, "WARNING: ", ..., "\n")
 }
 
 # Print a user-level fatal error message, when the calling context

@@ -282,8 +282,8 @@ readScenario <- function(filename = "", scenario = list())
   if (filename == "") {
     filename <- .irace.params.def["scenarioFile","default"]
     if (file.exists(filename)) {
-      cat("Warning: A default scenario file", shQuote(filename),
-          "has been found and will be read\n")
+      irace.warning("A default scenario file", shQuote(filename),
+                    "has been found and will be read\n")
     } else {
       irace.error ("Not scenario file given (use ",
                    .irace.params.def["scenarioFile", "short"], " or ",
@@ -362,7 +362,10 @@ checkScenario <- function(scenario = defaultScenario())
 {
   quote.param <- function(name)
   {
-    return(paste0("'", name, "' (", .irace.params.def[name, "long"], ")"))
+    if (.irace.params.def[name, "long"] != "") {
+      return(paste0("'", name, "' (", .irace.params.def[name, "long"], ")"))
+    }
+    return(paste0("'", name, "'"))
   }
 
   as.boolean.param <- function(x, name)
@@ -577,7 +580,7 @@ checkScenario <- function(scenario = defaultScenario())
   
   if (scenario$mu < scenario$firstTest) {
     if (scenario$debugLevel >= 1) {
-      cat("Warning: Assuming 'mu = firstTest' because 'mu' cannot be lower than 'firstTest'\n")
+      irace.warning("Assuming 'mu = firstTest' because 'mu' cannot be lower than 'firstTest'\n")
     }
     scenario$mu <- scenario$firstTest
   }
@@ -675,13 +678,10 @@ checkScenario <- function(scenario = defaultScenario())
       scenario$boundMax <- NULL
   }
 
-
-  
   if (is.null.or.empty(scenario$testType) || 
-      is.null.or.na(scenario$testType) || 
-      scenario$testType =="") {
-  	if (scenario$capping) scenario$testType <- "t-test"
-  	else scenario$testType <- "f-test"
+      is.null.or.na(scenario$testType)) {
+    if (scenario$capping) scenario$testType <- "t-test"
+    else scenario$testType <- "f-test"
   }
   
   scenario$testType <-

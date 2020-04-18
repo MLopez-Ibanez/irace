@@ -237,8 +237,8 @@ testing.cmdline <- function(filename, scenario)
   num <- nrow(allConfigurations)
   allConfigurations <- checkForbidden(allConfigurations, scenario$forbiddenExps)
   if (nrow(allConfigurations) < num) {
-    cat("# Warning: some of the configurations in the configurations file were forbidden",
-        "and, thus, discarded\n")
+    irace.warning("Some of the configurations in the configurations file were forbidden",
+                  "and, thus, discarded")
   }
 
   # To save the logs

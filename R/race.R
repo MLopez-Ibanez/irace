@@ -1027,7 +1027,7 @@ race <- function(maxExp = 0,
     # configurations. In that case, we only trust the capping elimination.
     if (scenario$capping && !any(alive)) {
       if (scenario$debugLevel >= 2) {
-        irace.note("Warning: Elimination tests have eliminated all configurations, keeping the capping results.\n")
+        irace.warning("Elimination tests have eliminated all configurations, keeping the capping results.\n")
         irace.note("Alive according to capping:", which(cap.alive), "\n")
         irace.note("Alive according to test:", which(test.alive), "\n")
       }
