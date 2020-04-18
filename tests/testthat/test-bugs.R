@@ -15,6 +15,7 @@ run_irace_from_rds <- function(rds_filename)
     saved <- readRDS(filename)
     row <- which(saved$instancesList[, "instance"] == experiment[["id.instance"]]
                  & saved$instancesList[, "seed"] == experiment[["seed"]])
+
     cost <- saved$experiments[row, experiment[["id.configuration"]] ]
     if (length(cost) == 0 || is.na(cost)) {
       print(row)
@@ -102,7 +103,6 @@ test_that("maxim_bug", {
 
 test_that("maxim_bug2", {
   skip_on_cran()
-
   run_irace_from_rds("saved_maxim_bug2.rds")
 })
 

@@ -562,7 +562,8 @@ irace <- function(scenario, parameters)
   }
   
   scenario <- checkScenario(defaultScenario(scenario))
-
+  parameters <- checkParameters(parameters)
+  
   # Recover state from file?
   if (!is.null(scenario$recoveryFile)) {
     irace.note ("Resuming from file: '", scenario$recoveryFile,"'\n")

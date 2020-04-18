@@ -302,7 +302,7 @@ checkIraceScenario <- function(scenario, parameters = NULL)
     cat("# Parameters provided by user.\n",
         "# Parameter file '", scenario$parameterFile, "' will be ignored\n", sep = "")
   }
-
+  checkParameters(parameters)
   irace.note("Checking target execution.\n")
   if (checkTargetFiles(scenario = scenario, parameters = parameters)) {
     irace.note("Check succesful.\n")

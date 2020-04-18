@@ -440,9 +440,7 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
     irace.error("No parameter definition found: ",
                 "check that the parameter file is not empty")
   }
-  print(parameters$names)
-  print(parameters$domain)
-  
+
   # Generate dependency flag
   # FIXME: check if we really need this vector
   parameters$isDependent <- sapply(parameters$domain, is.expression)
@@ -634,4 +632,14 @@ read_pcs_file <- function(file, digits = 4, debugLevel = 0, text)
     irace.error("unrecognized line: ", line)
   }
   return(output)
+}
+
+checkParameters <- function(parameters)
+{
+  # FIXME: This is incomplete, for now we only repair inputs from previous irace versions.
+  if (is.null(parameters$isDependent)) {
+    parameters$isDependent <- sapply(parameters$domain, is.expression)
+    names(parameters$isDependent) <- parameters$names
+  }
+  return(parameters)
 }
