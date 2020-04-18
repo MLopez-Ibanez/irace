@@ -82,17 +82,17 @@ writeLines(text, con = conf.filename)
 
 gendefparameter <- function(x)
 {
-  return(sprintf(" \\defparameter%s{%s}{%s}{%s}%%\n%s\n",
-                 ifelse(x["short"] == "", "",
-                        # we have to cut the -
-                        paste0("[", substring(x["short"], 2), "]")),
-                 # Option names starting with "." are special: They should only appear in the vignette and there is no associated R option."
-                 ifelse(substring(x["name"], 0, 1) == ".",
-                        paste0("-{}-", substring(x["long"], 3)), x["name"]),
-                 # we have to cut the --
-                 substring(x["long"], 3),
-                 ifelse(is.na.nowarn(x["default"]), "", x["default"]),
-                 x["vignettes"]))
+  sprintf(" \\defparameter%s{%s}{%s}{%s}%%\n%s\n",
+          ifelse(x["short"] == "", "",
+                 # we have to cut the -
+                 paste0("[", substring(x["short"], 2), "]")),
+          # Option names starting with "." are special: They should only appear in the vignette and there is no associated R option."
+          ifelse(substring(x["name"], 0, 1) == ".",
+                 paste0("-{}-", substring(x["long"], 3)), x["name"]),
+          # we have to cut the --
+          substring(x["long"], 3),
+          ifelse(is.na.nowarn(x["default"]), "", x["default"]),
+          ifelse(x["vignettes"] != "", x["vignettes"], x["description"]))
 }
 
 vin.text <-"\n"
@@ -103,7 +103,12 @@ for (section in ordered.sections) {
                        "]{", section, "}"),
                 "\\begin{description}")
   parameters <- irace.params[irace.params[, "section"] == section, ]
-  parameters <- parameters[!is.na(parameters[, "vignettes"]) & !is.null(parameters[,"vignettes"]) & parameters[,"vignettes"]!="",]
+  
+  parameters <- parameters[!is.na(parameters[,"vignettes"]), ]
+  parameters[is.null(parameters[,"vignettes"]) | (parameters[,"vignettes"] == ""), "vignettes"] <-
+    parameters[(parameters[,"vignettes"] == ""), "description"]
+  parameters <- parameters[parameters[,"vignettes"] != "",]
+
   if (nrow(parameters) < 1) next
   sec.text <- apply(parameters, 1, gendefparameter)
 
