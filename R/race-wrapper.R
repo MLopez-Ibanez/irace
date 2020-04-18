@@ -570,14 +570,15 @@ execute.experiments <- function(experiments, scenario)
                             scenario = scenario,
                             target.runner = target.runner)
   }
- 
+
   return(target.output)
 }
 
 execute.evaluator <- function(experiments, scenario, target.output, configurations.id)
 {
   ## FIXME: We do not need the configurations.id argument:
-  # configurations.id <- sapply(experiments, function(x) x[["id.configuration"]])
+  irace.assert(isTRUE(all.equal(configurations.id,
+                                sapply(experiments, getElement, "id.configuration"))))
   all.conf.id <- paste(configurations.id, collapse = " ")
   
   ## Evaluate configurations sequentially
