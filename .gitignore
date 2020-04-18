@@ -1,17 +1,30 @@
 
 # /
-/revdep
-/tune-conf
-/parameters.txt
+*.aux
+*.bak
+*.bbl
+*.blg
+*.log
+*.o
+*.out
+*.rel
+*.synctex.gz
+*.toc
+*~
+.Rhistory
+TAGS
+docs/
 /VERSION
-/.Rhistory
-/svn_version
 /git_version
 /irace-Ex.R
 /TAGS
 /*.synctex*
 /*.bak
 docs/
+/parameters.txt
+/revdep
+/svn_version
+/tune-conf
 
 # /GenericWrapper4AC/
 /GenericWrapper4AC/.git
@@ -24,17 +37,9 @@ docs/
 
 # /R/
 /R/version.R
-/R/TAGS
 
 # /doc/
 /doc/auto
-/doc/*.out
-/doc/*.log
-/doc/*.blg
-/doc/*.aux
-/doc/*.bbl
-/doc/*~
-/doc/*.rel
 /doc/.svnignore
 /doc/*.bib
 /doc/documentation.pdf
@@ -45,8 +50,6 @@ docs/
 /examples/vignette-example/*.stderr
 /examples/vignette-example/*.stdout
 
-# /man/
-/man/*.bak
 
 # /src/iracebin/
 /src/iracebin/irace
@@ -64,4 +67,3 @@ docs/
 /vignettes/figure
 /vignettes/optbib
 /vignettes/_region_.*
-/vignettes/*.bak
