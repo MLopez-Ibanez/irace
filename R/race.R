@@ -80,7 +80,7 @@ race.wrapper <- function(configurations, instance.idx, bounds = NULL,
 {
   debugLevel <- scenario$debugLevel
   
-  irace.assert (isTRUE(parameters$nbParameters > 0))
+  irace.assert (parameters$nbVariable > 0)
   irace.assert (length(parameters$names) == parameters$nbParameters)
 
   # FIXME: Accessing 'seed' and 'instance' should be moved to createExperimentList.

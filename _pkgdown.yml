@@ -8,3 +8,16 @@ development:
   destination: devel
   version_label: default
   version_tooltip: "Github version"
+
+
+navbar:
+  structure:
+    left:  [home, intro, reference, guide, articles, tutorials, news]
+    right: [github]
+    
+  components:
+    home: ~
+    guide:
+      text: User Guide
+      href: irace-package.pdf
+

@@ -19,16 +19,7 @@ jobs:
   - os: osx
     r: 3.4
 
-# Required for Rmpi
-apt_packages:
-  - libxml2-dev
-  - libgit2-dev
-#  - mpi-default-dev
-
-# work around temporary travis + R 3.5 bug
-# r_binary_packages:
-#    - devtools
-
+ 
 env:
   global:
     - _R_CHECK_FORCE_SUGGESTS_=false
@@ -36,12 +27,35 @@ env:
     - CRAN: http://cran.rstudio.com
     - MAKEFLAGS="-j 2"
 
-r_check_args: '--run-donttest --timings'
-  
 before_install:
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then sudo tlmgr install oberdiek epstopdf-pkg epstopdf grfext gettitlestring environ trimspaces etoolbox upquote babel-english pgf xcolor algorithms relsize tocbibind appendix tocloft enumitem listings tcolorbox framed; fi
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then tlmgr install oberdiek epstopdf-pkg epstopdf grfext gettitlestring environ trimspaces etoolbox upquote babel-english pgf xcolor algorithms relsize tocbibind appendix tocloft enumitem listings tcolorbox; fi
   - make version
+
+# Do not install Suggests
+install:  
+  - R -e 'devtools::install_deps()'
+
+# Required for Rmpi
+apt_packages:
+  - libxml2-dev
+  - libgit2-dev
+#  - mpi-default-dev
+
+# Suggests packages.
+# FIXME: How to install Rmpi only on linux and not on osx?
+r_binary_packages:
+  - parallel
+  - knitr
+  - testthat
+  - withr
+  - ParamHelpers
+  - devtools
+
+# work around temporary travis + R 3.5 bug
+#    - devtools
+
+r_check_args: '--run-donttest --timings'
 
 notifications:
   email: false
@@ -52,6 +66,6 @@ before_cache: Rscript -e 'remotes::install_github("r-lib/pkgdown")'
 deploy:
   skip_cleanup: true
   provider: script
-  script: Rscript -e 'pkgdown::deploy_site_github(run_dont_run = TRUE)'
+  script: Rscript ./scripts/deploy_github_userguide.R
   on:
     condition: $TRAVIS_OS_NAME = linux && $TRAVIS_R_VERSION_STRING = release
