@@ -1,3 +1,9 @@
+# irace 3.5
+
+ * The user-guide now contains a detailed section on "Hyper-parameter
+   optimization of machine learning methods".
+
+
 # irace 3.4.1  (31/03/2020)
 
  * `NEWS` converted to markdown.
