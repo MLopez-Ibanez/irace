@@ -2,7 +2,17 @@
 
  * The user-guide now contains a detailed section on "Hyper-parameter
    optimization of machine learning methods".
+                                                     (Manuel López-Ibáñez)
 
+ * When `testType="F-test"` and only two configurations remain, the elimination
+   test now uses the pseudo-median estimated by the Wilcoxon signed-rank test
+   to decide which configuration is the best one instead of comparing the
+   median difference.
+                                                       (Manuel López-Ibáñez)
+
+ * Handle correctly clear out-performance cases despite strong bi-modality.
+                                            (Reported by Nguyen Dang,
+                                            fixed by Manuel López-Ibáñez)
 
 # irace 3.4.1  (31/03/2020)
 

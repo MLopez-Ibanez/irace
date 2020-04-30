@@ -160,29 +160,41 @@ aux_friedman <- function(results, alive, which.alive, conf.level)
   if (no.alive == 2) {
     best <- NULL
     ranks <- NULL
+    dropped.any <- FALSE
     # If only 2 configurations are left, switch to Wilcoxon
     V1   <- results[, which.alive[1]]
     V2   <- results[, which.alive[2]]
-    PVAL <- wilcox.test(V1, V2, paired = TRUE, exact = FALSE)$p.value
-    if (!is.nan(PVAL) && !is.na(PVAL) && PVAL < 1 - conf.level) {
+    
+    # Avoid the test if the answer is obvious
+    if (all(V1 <= V2)) {
       dropped.any <- TRUE
-      if (median(V1 - V2) < 0) {
-        best <- which.alive[1]
-        ranks <- c(1,2)
-        alive[which.alive[2]] <- FALSE
-      } else {
-        best <- which.alive[2]
-        ranks <- c(2,1)
-        alive[which.alive[1]] <- FALSE
-      }
+      best <- which.alive[1]
+      ranks <- c(1,2)
+      alive[which.alive[2]] <- FALSE
+     
+    } else if (all(V2 <= V1)) {
+      dropped.any <- TRUE
+      best <- which.alive[2]
+      ranks <- c(2,1)
+      alive[which.alive[1]] <- FALSE
     } else {
-      dropped.any <- FALSE
-      if (median(V1 - V2) < 0) {
+      res <- wilcox.test(V1, V2, paired = TRUE, conf.int = TRUE)
+      PVAL <- res$p.value
+      # We use the pseudo median estimated by the test.
+      if (res$estimate <= 0) {
         best <- which.alive[1]
         ranks <- c(1,2)
       } else {
         best <- which.alive[2]
         ranks <- c(2,1)
+      }
+      if (!is.nan(PVAL) && !is.na(PVAL) && PVAL < 1 - conf.level) {
+        dropped.any <- TRUE
+        if (median(V1 - V2) < 0) {
+          alive[which.alive[2]] <- FALSE
+        } else {
+          alive[which.alive[1]] <- FALSE
+        }
       }
     }
     irace.assert(which.alive[which.min(ranks)] == best)
@@ -216,6 +228,9 @@ aux.ttest <- function(results, alive, which.alive, conf.level,
     # surround the call in a try() and we initialize p with 1 if the means are
     # equal or zero if they are different
     if (min(var(results_best), var(results_j)) < 10 * .Machine$double.eps) next
+    # The t.test may fail if the data are not normal despite one configuration
+    # clearly dominating the other.
+    if (all(results_best <= results_j)) next
     try(PVAL <- t.test(results_best, results_j, paired = TRUE)$p.value)
     irace.assert(!is.nan(PVAL) & !is.na(PVAL))
     pvals[j] <- PVAL
