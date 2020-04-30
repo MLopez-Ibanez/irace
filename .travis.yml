@@ -33,8 +33,8 @@ before_install:
   - make version
 
 # Do not install Suggests
-install:  
-  - R -e 'devtools::install_deps()'
+install: 
+  - R -e 'install.packages("devtools");devtools::install_deps()'
 
 # Required for Rmpi
 apt_packages:
@@ -47,10 +47,7 @@ apt_packages:
 r_binary_packages:
   - parallel
   - knitr
-  - testthat
-  - withr
   - ParamHelpers
-  - devtools
 
 # work around temporary travis + R 3.5 bug
 #    - devtools
