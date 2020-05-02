@@ -29,7 +29,7 @@ env:
 
 before_install:
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then sudo tlmgr install oberdiek epstopdf-pkg epstopdf grfext gettitlestring environ trimspaces etoolbox upquote babel-english pgf xcolor algorithms relsize tocbibind appendix tocloft enumitem listings tcolorbox framed; fi
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then tlmgr install oberdiek epstopdf-pkg epstopdf grfext gettitlestring environ trimspaces etoolbox upquote babel-english pgf xcolor algorithms relsize tocbibind appendix tocloft enumitem listings tcolorbox; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then tlmgr install oberdiek epstopdf-pkg epstopdf grfext gettitlestring environ trimspaces etoolbox upquote babel-english pgf xcolor algorithms relsize tocbibind appendix tocloft enumitem listings tcolorbox collection-fontsrecommended inconsolata; fi
   - make version
 
 # Do not install Suggests
