@@ -202,3 +202,6 @@ examples: install
 	mv -t vignettes/ examples/vignette-example/*.Rdata examples/vignette-example/irace-acotsp-stdout.txt 
 	$(MAKE) vignettes
 	$(MAKE) check
+
+covr: build
+	$(Reval) "Sys.setenv(NOT_CRAN='true');covr::report(covr::package_coverage(type='all'))"

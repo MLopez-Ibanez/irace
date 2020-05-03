@@ -62,3 +62,4 @@ _pkgdown.yml
 ^scripts
 ^tests/testthat/test-nocran-*
 ^GenericWrapper4AC
+^codecov\.yml$

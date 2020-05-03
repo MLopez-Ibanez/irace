@@ -1,8 +1,12 @@
 language: r
 cache:
   - packages
+  - directories:
+      - /home/travis/texlive/
 latex: true
 fortran: false
+notifications:
+  email: false
 
 os:
   - linux
@@ -18,12 +22,11 @@ jobs:
   exclude:
   - os: osx
     r: 3.4
-
  
 env:
   global:
-    - _R_CHECK_FORCE_SUGGESTS_=false
-    - NOT_CRAN=true
+    - _R_CHECK_FORCE_SUGGESTS_: false
+    - NOT_CRAN: true
     - CRAN: http://cran.rstudio.com
     - MAKEFLAGS="-j 2"
 
@@ -32,33 +35,35 @@ before_install:
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then tlmgr install oberdiek epstopdf-pkg epstopdf grfext gettitlestring environ trimspaces etoolbox upquote babel-english pgf xcolor algorithms relsize tocbibind appendix tocloft enumitem listings tcolorbox collection-fontsrecommended inconsolata; fi
   - make version
 
-# Do not install Suggests
-install: 
-  - R -e 'install.packages("devtools");devtools::install_deps()'
-
-# Required for Rmpi
-apt_packages:
-  - libxml2-dev
-  - libgit2-dev
-#  - mpi-default-dev
-
-# Suggests packages.
+# FIXME: We override the default install because we don't want to install the
+# Suggested packages because that installs Rmpi on OSX and fails.
 # FIXME: How to install Rmpi only on linux and not on osx?
-r_binary_packages:
-  - parallel
-  - knitr
-  - ParamHelpers
+install:
+  - Rscript -e 'if(!require(devtools)) install.packages("devtools"); devtools::install_deps(upgrade="never")'
 
-# work around temporary travis + R 3.5 bug
-#    - devtools
+# FIXME: doesn't work when we override the default install.
+#apt_packages:
+# Required for Rmpi
+# - libxml2-dev
+# - libgit2-dev
+# - mpi-default-dev
+
+# FIXME: This doesn't work because we override the default install above.
+# r_binary_packages:
+#   - parallel
+#   - knitr
+#   - ParamHelpers
+#   - Rmpi
+  
 
 r_check_args: '--run-donttest --timings'
 
-notifications:
-  email: false
-
 # FIXME: We only need to do this for deploy
 before_cache: Rscript -e 'remotes::install_github("r-lib/pkgdown")'
+
+after_success:
+  - while sleep 540; do echo "=====[ $SECONDS seconds still running ]====="; done &
+  - test $TRAVIS_OS_NAME = "linux" && test $TRAVIS_R_VERSION_STRING = "release" && Rscript scripts/codecov.R
 
 deploy:
   skip_cleanup: true

@@ -25,14 +25,15 @@ Imports:
         compiler,
         R6
 Suggests:
-        Rmpi (>= 0.6.0),
-        parallel,
-        knitr,
-        testthat,
-        withr,
-        mlr (>= 2.15.0),
-        ParamHelpers,
-        devtools
+    Rmpi (>= 0.6.0),
+    parallel,
+    knitr,
+    testthat,
+    withr,
+    mlr (>= 2.15.0),
+    ParamHelpers,
+    devtools,
+    covr
 VignetteBuilder: knitr
 License: GPL (>= 2)
 URL: http://iridia.ulb.ac.be/irace, https://github.com/MLopez-Ibanez/irace

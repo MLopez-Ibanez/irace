@@ -1,9 +1,12 @@
 **irace**: Iterated Racing for Automatic Algorithm Configuration
 ================================================================
 
+<!-- badges: start -->
 [![CRAN Status](https://www.r-pkg.org/badges/version-last-release/irace)](https://cran.r-project.org/package=irace) [![CRAN Downloads](https://cranlogs.r-pkg.org/badges/grand-total/irace)](https://CRAN.R-project.org/package=irace) [![Travis Build
 Status](https://travis-ci.org/MLopez-Ibanez/irace.svg?branch=master)](https://travis-ci.org/MLopez-Ibanez/irace)
-
+[![Codecov test coverage](https://codecov.io/gh/MLopez-Ibanez/irace/branch/master/graph/badge.svg)](https://codecov.io/gh/MLopez-Ibanez/irace?branch=master)
+<!-- badges: end -->
+  
 [ [**Homepage**](http://iridia.ulb.ac.be/irace/) ] [ [**User Guide (PDF)**](https://cran.r-project.org/package=irace/vignettes/irace-package.pdf) ] 
 
 **Maintainers:** [Manuel López-Ibáñez](http://lopez-ibanez.eu), Leslie Pérez Cáceres

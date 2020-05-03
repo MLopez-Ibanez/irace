@@ -1,6 +1,6 @@
 #!/bin/sh
 rm -f  irace-Ex.R config.* confdefs.h \
-   src/*.o src/*.so src/config.h src/symbols.rds \
+   src/*.so src/*.o src/*/*.o src/*.gcno src/*/*.gcno src/config.h src/symbols.rds \
    inst/doc/*.blg inst/doc/*.bbl \
    tests/testthat/*.log tests/testthat/*.Rout tests/testthat/irace.Rdata
 
