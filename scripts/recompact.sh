@@ -4,7 +4,7 @@ PDFFILE=$2
 TMP_DIR=$(mktemp -d)
 QPDF=$(which qpdf)
 QPDF_OPTIONS="--compress-streams=y --object-streams=generate"
-GS_OPTIONS="-dPDFSETTINGS=/ebook -dCompatibilityLevel=1.5 -dAutoRotatePages=/None -dPrinted=false"
+GS_OPTIONS="-dPDFSETTINGS=/ebook -dCompatibilityLevel=1.5 -dAutoRotatePages=/None -dPrinted=false -dNOPLATFONTS -dSAFER -dEmbedAllFonts=true"
 if [ ! -x "$QPDF" ]; then
     echo "$0: qpdf not found, cannot compact vignettes"
     exit 1
