@@ -425,7 +425,7 @@ checkScenario <- function(scenario = defaultScenario())
     
     if (!is.null.or.empty(scenario$logFile)
         && scenario$recoveryFile == scenario$logFile) {
-      irace.error("log file and recovery file should be different ('",
+      irace.error("log file and recovery file should be different '",
                   scenario$logFile, "'")
     }
   } else {
@@ -476,7 +476,7 @@ checkScenario <- function(scenario = defaultScenario())
                 text = "target evaluator")
     .irace$target.evaluator <- target.evaluator.default
   } else {
-    irace.error("'targetEvaluator' must be a function or an executable program")
+    irace.error(quote.param('targetEvaluator'), " must be a function or an executable program")
   }
 
   irace.assert(is.null(scenario$targetEvaluator) == is.null(.irace$target.evaluator))
@@ -671,8 +671,8 @@ checkScenario <- function(scenario = defaultScenario())
     check.valid.param("boundType", valid = c("instance", "candidate"))
         
     if (scenario$boundPar < 1)
-      irace.error("Invalid value boundPar (", scenario$boundPar,
-                  ") must be >= 1")
+      irace.error("Invalid value (", scenario$boundPar, ") ",
+                  quote.param("boundPar"), " must be >= 1")
   } else { # no capping
     if (scenario$boundMax <= 0 || is.na(scenario$boundMax))
       scenario$boundMax <- NULL

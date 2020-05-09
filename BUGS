@@ -1,5 +1,11 @@
 ------------------------------------------------------------*- mode: text -*-
 
+#13 -------------------------------------------------------------
+
+It has been reported that giving a large cut-off value messes up initial
+estimation and irace does not actually consume the budget
+available. Investigate this.
+
 #12  ------------------------------------------------------------
 
 irace --check or checkIraceScenario do not work with targetRunnerParallel if

@@ -104,7 +104,7 @@ irace.assert <- function(exp, eval.after = NULL)
   msg <- paste0(deparse(mc), " is not TRUE\n")
   if (!is.null(eval.after)) {
     msg.after <- eval.parent(capture.output(eval.after))
-    msg <- paste0(msg, "\n", msg.after)
+    msg <- paste0(msg, "\n", paste0(msg.after, collapse="\n"))
   }
   irace.internal.error(msg)
   invisible()
