@@ -24,6 +24,9 @@
 \usepackage{amsmath,amssymb}
 \usepackage{relsize}
 \usepackage{fancyvrb}
+\usepackage{microtype}
+% \texttt{test -- test} keeps the "--" as "--" (and does not convert it to an en dash)
+\DisableLigatures{encoding = T1, family = tt* }
 \usepackage[hyphens]{url}
 \usepackage{hyperref}
 \usepackage[numbers]{natbib}
@@ -120,7 +123,7 @@
   \emph{flag:} %
   \ifthenelse{\equal{#1}{}}{}{%
     \code{-#1}~~~\emph{or}~~~}%
-  \code{-{}-#3} ~~ }%
+  \code{--#3} ~~ }%
 \emph{default:}~\texttt{#4} \\
 }
 \newcommand{\parameter}[1]{\hyperlink{opt:#1}{\code{#1}}}
@@ -674,7 +677,7 @@ problems. For more information about the \parameter{targetRunner}, please see
 
       \item \textit{Optional}: Modify the \code{target-evaluator} file. This is rarely needed and the \code{target-runner} template does not use it. \autoref{sec:evaluator} explains when a \parameter{targetEvaluator} is needed and how to define it.
         
-      \item The \irace executable provides an option (\parameter{-{}-check}) to
+      \item The \irace executable provides an option (\parameter{--check}) to
         check that the scenario is correctly defined. We recommend to perform a
         check every time you create a new scenario. When performing the check,
         \irace will verify that the scenario and parameter definitions are
@@ -974,10 +977,10 @@ where each field is defined as follows:
                   to \parameter{targetRunner}. In the default \parameter{targetRunner}
                   provided with the package (\autoref{sec:runner}), this is the
                   command-line switch used to pass the value of this parameter, for
-                  instance `\code{"-{}-ants "}'.\newline
+                  instance `\code{"--ants "}'.\newline
                   The value of the parameter is concatenated \emph{without
                   separator} to the label when
-                  invoking \parameter{targetRunner}, thus \emph{any whitespace in the label is significant}. Following the same example, when parameter \code{ants} takes value \code{5}, the default targetRunner will pass the parameter as \code{"-{}-ants 5"}.\\
+                  invoking \parameter{targetRunner}, thus \emph{any whitespace in the label is significant}. Following the same example, when parameter \code{ants} takes value \code{5}, the default targetRunner will pass the parameter as \code{"--ants 5"}.\\
                   %
   \code{{<type>}} & The type of the parameter, either
                     \textit{integer}, \textit{real}, \textit{ordinal} or
@@ -1700,7 +1703,7 @@ perform the testing.  The testing results will be stored in the \aR object
 \autoref{sec:output r}.  For examples on how to analyse the results see
 \autoref{sec:analysis}.
 
-Another alternative is to test a specific set of configurations using the command-line option \parameter{-{}-only-test} as follows:
+Another alternative is to test a specific set of configurations using the command-line option \parameter{--only-test} as follows:
 \begin{lstlisting}[style=BashInputStyle]
 irace --only-test configurations.txt
 \end{lstlisting}

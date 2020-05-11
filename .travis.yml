@@ -31,8 +31,8 @@ env:
     - MAKEFLAGS="-j 2"
 
 before_install:
-  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then sudo tlmgr install oberdiek epstopdf-pkg epstopdf grfext gettitlestring environ trimspaces etoolbox upquote babel-english pgf xcolor algorithms relsize tocbibind appendix tocloft enumitem listings tcolorbox framed; fi
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then tlmgr install oberdiek epstopdf-pkg epstopdf grfext gettitlestring environ trimspaces etoolbox upquote babel-english pgf xcolor algorithms relsize tocbibind appendix tocloft enumitem listings tcolorbox collection-fontsrecommended inconsolata; fi
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then sudo tlmgr install oberdiek epstopdf-pkg epstopdf grfext gettitlestring environ trimspaces etoolbox upquote babel-english pgf xcolor algorithms relsize tocbibind appendix tocloft enumitem listings tcolorbox framed microtype; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then tlmgr install oberdiek epstopdf-pkg epstopdf grfext gettitlestring environ trimspaces etoolbox upquote babel-english pgf xcolor algorithms relsize tocbibind appendix tocloft enumitem listings tcolorbox collection-fontsrecommended inconsolata microtype; fi
   - make version
 
 # FIXME: We override the default install because we don't want to install the
