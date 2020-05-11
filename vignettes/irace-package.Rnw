@@ -98,7 +98,7 @@
 \makeatletter
 \DeclareRobustCommand\code{\bgroup\@makeother\_\@makeother\~\@makeother\$\@noligs\@codex}
 \def\@codex#1{\texorpdfstring%
-{{\normalfont\ttfamily\hyphenchar\font=-1 #1}}%
+{{\text{\normalfont\ttfamily\hyphenchar\font=-1 #1}}}%
 {#1}\egroup}
 \makeatother
 
@@ -896,6 +896,54 @@ when executing the target algorithm and they are affected by constraints
 defined on them. All fixed parameters must be defined as categorical
 parameters and have a domain of one element.
 
+\subsubsection{Parameter dependent domains}\label{sec:paramdependant}
+
+Domains that are dependent on the values of other parameters can be specified
+only for numerical parameters (both integer and real). To do so, the dependent
+domain must be expressed in function of another parameter, which must be a
+numerical parameter. The expression that defines a dependency must be written
+between quotes: \code{(value, "expression")} or \code{("expression", value)} or
+\code{("expression", "expression")}.
+
+The expressions can only use the following operators and \aR functions: \code{+},
+\code{-}, \code{*}, \code{/}, \code{\%\%}, \code{min}, \code{max},
+\code{round}, \code{floor}, \code{ceiling}, \code{trunc}. If you need to use an
+operator or function not listed here, please contact us.
+
+\begin{xwarningbox} 
+The user must ensure that the defined domain is valid at all times since
+\irace currently is not able to detect possible invalid domains based on the expressions 
+provided.
+\end{xwarningbox}   
+
+If you have a parameter \code{p2} that is just a transformation of another
+\code{p1}, then instead of using a dependent domain (left-hand side of the
+following example), it will be better to create a dummy parameter that controls
+the transformation (right-hand side) and do the transformation within \code{target-runner}. For example:
+%
+\begin{center}
+\begin{minipage}{0.4\linewidth}
+\small\centering%
+\begin{CodeInput}[frame=single]
+# With dependent domains
+p1 "" r (0, 100)
+p2 "" r (p1, p1 + 10)
+\end{CodeInput}
+\end{minipage}
+\hspace{\stretch{1}} should be \hspace{\stretch{1}}
+\begin{minipage}{0.4\linewidth}
+\small\centering%
+\begin{CodeInput}[frame=single]
+# With a dummy parameter
+p1    "" r (0, 100)
+p2dum "" r (0, 10)
+\end{CodeInput}
+\end{minipage}
+\end{center}
+%
+and \code{target-runner} will compute $\code{p2} = \code{p2dum} \cdot \code{p1}$.
+
+
 \subsubsection{Conditional parameters}
 
 Conditional parameters are active only when others have certain values. These
@@ -911,7 +959,7 @@ For simplicity, the description of the parameters space is given as a
 table. Each line of the table defines a configurable parameter
 %
 \begin{center}
-\code{<name>\ <label>\ <type>\ <range>\ [ | <condition>\ ] }
+\code{<name>\ <label>\ <type>\ <domain>\ [ | <condition>\ ] }
 \end{center}
 where each field is defined as follows:
 %
@@ -939,8 +987,9 @@ where each field is defined as follows:
                     '\code{r,log}' (without spaces) for integer and real
                     parameters, respectively.\\
                     %
-  \code{{<range>}} & The range or set of values of the parameter delimited by
-                     parentheses. \eg~\code{(0,1)} or \code{(a,b,c,d)}.\\
+  \code{{<domain>}} & The range or set of values of the parameter delimited by
+                     parentheses, \eg~\code{(0,1)} or \code{(a,b,c,d)}.
+                     See also parameter dependent domains (\autoref{sec:paramdependant}).\\
                      %
 
   \code{{<condition>}} & An optional \emph{condition} that determines whether the parameter is
@@ -963,18 +1012,18 @@ of the \ACOTSP scenario.
 \begin{figure}[!hbt]
 \small\centering%
 \begin{CodeInput}
-# name      switch            type     values               [conditions (using R syntax)]
-algorithm   "--"              c        (as,mmas,eas,ras,acs)
-localsearch "--localsearch "  c        (0, 1, 2, 3)
-alpha       "--alpha "        r        (0.00, 5.00)
-beta        "--beta "         r        (0.00, 10.00)
-rho         "--rho  "         r        (0.01, 1.00)
-ants        "--ants "         i        (5, 100)
-nnls        "--nnls "         i        (5, 50)              | localsearch %in% c(1, 2, 3)
-q0          "--q0 "           r        (0.0, 1.0)           | algorithm == "acs"
-dlb         "--dlb "          c        (0, 1)               | localsearch %in% c(1,2,3)
-rasrank     "--rasranks "     i        (1, 100)             | algorithm == "ras"
-elitistants "--elitistants "  i        (1, 750)             | algorithm == "eas"
+# name      switch            type values               [conditions (using R syntax)]
+algorithm   "--"              c    (as,mmas,eas,ras,acs)
+localsearch "--localsearch "  c    (0, 1, 2, 3)
+alpha       "--alpha "        r    (0.00, 5.00)
+beta        "--beta "         r    (0.00, 10.00)
+rho         "--rho  "         r    (0.01, 1.00)
+ants        "--ants "         i    (5, 100)
+nnls        "--nnls "         i    (5, 50)              | localsearch %in% c(1, 2, 3)
+q0          "--q0 "           r    (0.0, 1.0)           | algorithm == "acs"
+dlb         "--dlb "          c    (0, 1)               | localsearch %in% c(1,2,3)
+rasrank     "--rasranks "     i    (1, "ants")          | algorithm == "ras"
+elitistants "--elitistants "  i    (1, 750)             | algorithm == "eas"
 \end{CodeInput}
 \caption{Parameter file (\code{parameters.txt}) for tuning \ACOTSP.}\label{fig:acotsp_parameters}
 \end{figure}
@@ -1009,6 +1058,8 @@ The structure of the parameter list that is created is as follows:
     \code{nbParameters} & An integer, the total number of parameters.\\
     \code{nbFixed}      & An integer, the number of parameters with a fixed value.\\
     \code{nbVariable}   & Number of variable (i.e., to be tuned) parameters.\\
+    \code{isDependent}  & Logical vector that specifies which parameter defines
+                          a dependent domain.\\
   \end{tabularx}
 \end{center}
 
@@ -2090,7 +2141,7 @@ last <- length(iraceResults$iterationElites)
 conf <- getConfigurationByIteration(iraceResults = iraceResults,
                                     iterations = c(last - 1, last))
 parallelCoordinatesPlot (conf, iraceResults$parameters,
-                         param_names = c("algorithm", "alpha", "beta", "rho", "q0"),
+                         param_names = c("algorithm", "alpha", "beta", "rho", "q0", "rasrank"),
                          hierarchy = FALSE)
 @
 
