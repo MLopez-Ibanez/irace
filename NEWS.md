@@ -1,5 +1,12 @@
 # irace 3.5
 
+ * This version includes handling of dependent parameter domains. These
+   should be specified in the parameter domain definition and, for now, 
+   only numerical parameter can define dependent domains. A numerical
+   domain can be dependent on one bound (e.g. (1, param1*2)), where the 
+   dependent bound can include basic arithmetic operators. 
+                                (Leslie Pérez Cáceres, Manuel López-Ibáñez)     
+ 
  * The user-guide now contains a detailed section on "Hyper-parameter
    optimization of machine learning methods".
                                                      (Manuel López-Ibáñez)
