@@ -5,6 +5,11 @@
  * Ablation will report configurations that produced the same results, which
    points to parameter values that have the same effect on the target algorithm,
    possibly indicating a bug in the target algorithm.
+   
+ * Adaptive capping is now enabled by default if `maxTime > 0` and `maxBound > 0`.
+   It can be disabled with `--capping 0` or `capping=0`. See
+   <https://iridia-ulb.github.io/references/#PerLopHooStu2017:lion> for details.
+                                     (Leslie Pérez Cáceres, Manuel López-Ibáñez)
 
 ## Fixes
 

@@ -343,7 +343,7 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
     target.output <- execute.evaluator (experiments, scenario, target.output,
                                         src.configuration)
   # Save results
-  output <- unlist(lapply(target.output, "[[", "cost")) 
+  output <- sapply(target.output, getElement, "cost") 
   results <- matrix(NA, ncol = 1, nrow = nrow(instances), 
                     dimnames = list(seq(1,nrow(instances)), 1))
   results[,1] <- output[1:nrow(instances)]

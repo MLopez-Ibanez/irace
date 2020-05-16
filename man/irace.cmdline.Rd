@@ -223,8 +223,8 @@ List of command-line options:\preformatted{-h,--help                Show this he
                          configuration. Use 0 for no limit. Default: 2.
    --capping             Enable the use of adaptive capping, a technique
                          designed for minimizing the computation time of
-                         configurations. This is only available when elitist is
-                         active. Default: 0.
+                         configurations. Capping is enabled by default if
+                         elitist is active, maxTime > 0 and boundMax > 0.
    --capping-type        Measure used to obtain the execution bound from the
                          performance of the elite configurations: median, mean,
                          worst, best. Default: median.

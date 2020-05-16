@@ -78,7 +78,7 @@
 #'    }
 #'  \item Adaptive capping:
 #'    \describe{
-#'      \item{`capping`}{Enable the use of adaptive capping, a technique designed for minimizing the computation time of configurations. This is only available when \code{elitist} is active. (Default: `0`)}
+#'      \item{`capping`}{Enable the use of adaptive capping, a technique designed for minimizing the computation time of configurations. Capping is enabled by default if \code{elitist} is active, \code{maxTime > 0} and  \code{boundMax > 0}. (Default: `NA`)}
 #'      \item{`cappingType`}{Measure used to obtain the execution bound from the performance of the elite configurations.\itemize{\item median: Median performance of the elite configurations.\item mean: Mean performance of the elite configurations.\item best: Best performance of the elite configurations.\item worst: Worst performance of the elite configurations.} (Default: `"median"`)}
 #'      \item{`boundType`}{Method to calculate the mean performance of elite configurations.\itemize{\item candidate: Mean execution times across the executed instances and the current one.\item instance: Execution time of the current instance.} (Default: `"candidate"`)}
 #'      \item{`boundMax`}{Maximum execution bound for \code{targetRunner}. It must be specified when capping is enabled. (Default: `0`)}

@@ -527,10 +527,10 @@
     "type": "b",
     "short": "",
     "long": "--capping",
-      "default": 0,
-    "vignettes": "Enable the use of adaptive capping. This option is only available when \\parameter{elitist} is active. When using this option, \\irace provides an execution bound to each target algorithm execution (See \\autoref{sec:runner}). For more details about this option See \\autoref{sec:capping}.",
-    "section": "Adaptive capping",
-    "description": "Enable the use of adaptive capping, a technique designed for minimizing the computation time of configurations. This is only available when \\code{elitist} is active."
+      "default": null,
+      "description": "Enable the use of adaptive capping, a technique designed for minimizing the computation time of configurations. Capping is enabled by default if \\code{elitist} is active, \\code{maxTime > 0} and  \\code{boundMax > 0}.",
+    "vignettes": "Enable the use of adaptive capping. Capping is enabled by default if \\parameter{elitist} is active, $\\parameter{maxTime} > 0$ and  $\\parameter{boundMax} > 0$. When using this option, \\irace provides an execution bound to each target algorithm execution (See \\autoref{sec:runner}). For more details about this option See \\autoref{sec:capping}.",
+    "section": "Adaptive capping"
   },
   {
     "name": "cappingType",

@@ -435,6 +435,7 @@ do.experiments <- function(configurations, ninstances, scenario, parameters)
     vcost <- unlist(lapply(output[[j]], "[[", "cost"))
     if (scenario$capping)
       vcost <- applyPAR(vcost, boundMax = scenario$boundMax, boundPar = scenario$boundPar)
+    # Convert output to a matrix so that we can skip this loop
     Results[j, ] <- vcost
     vtimes <- unlist(lapply(output[[j]], "[[", "time"))
     irace.assert(!any(is.null(vtimes)))
@@ -696,11 +697,11 @@ irace_run <- function(scenario, parameters)
     if (scenario$maxTime == 0) {
       remainingBudget <- scenario$maxExperiments
     } else { ## Estimate time when maxTime is defined.
-      # Get the number of instances to be used.
       ## IMPORTANT: This is firstTest because these configurations will be
       ## considered elite later, thus preserved up to firstTest, which is
       ## fine. If a larger number of instances is used, it would prevent
       ## discarding these configurations.
+      # Get the number of instances to be used.
       ninstances <- scenario$firstTest
       estimationTime <- ceiling(scenario$maxTime * scenario$budgetEstimation)
       irace.note("Estimating execution time using ", 100 * scenario$budgetEstimation,
@@ -708,8 +709,16 @@ irace_run <- function(scenario, parameters)
 
       # Estimate the number of configurations to be used
       nconfigurations <- max(2, floor(scenario$parallel / ninstances))
-      next.configuration <- 1
 
+      # MANUEL: When can we have a null boundMax?
+      boundEstimate <- if (!is.null(scenario$boundMax)) scenario$boundMax else 1.0
+      if (estimationTime < boundEstimate * nconfigurations) {
+        boundEstimate <- estimationTime / nconfigurations
+        irace.warning("maxBound = ", scenario$boundMax, " is too large, using ", boundEstimate, " instead.\n")
+        scenario$boundMax <- boundEstimate
+      }
+      next.configuration <- 1
+        
       while (TRUE) {
         # Sample new configurations if needed
         if (nrow(allConfigurations) < nconfigurations) {
@@ -721,13 +730,14 @@ irace_run <- function(scenario, parameters)
           newConfigurations <-
             cbind (.ID. = max(0, allConfigurations$.ID.) + 1:nrow(newConfigurations),
                    newConfigurations)
-          allConfigurations <- rbind(allConfigurations, newConfigurations) 
+          allConfigurations <- rbind(allConfigurations, newConfigurations)
           rownames(allConfigurations) <- allConfigurations$.ID.
         }
-        
         # Execute tests
+        # FIXME: Shouldn't we pass the bounds?
         output <- do.experiments(configurations = allConfigurations[next.configuration:nconfigurations, ],
-                                 ninstances = ninstances, scenario = scenario, parameters = parameters)  
+                                 ninstances = ninstances, scenario = scenario, parameters = parameters)
+        # FIXME: Here we should check if everything timed out and increase the bound dynamically.
         iraceResults$experimentLog <- rbind(iraceResults$experimentLog,
                                             # These experiments are assigned iteration 0
                                             cbind(iteration=0L, output$experimentLog)) 
@@ -789,6 +799,13 @@ irace_run <- function(scenario, parameters)
                  ninstances," instances. Used time: ", timeUsed,
                  ", remaining time: ", (scenario$maxTime - timeUsed),
                  ", remaining budget (experiments): ", remainingBudget, "\n")
+      # FIXME: Here we should check if the estimatedTime is more than a constant times
+      # the boundMax and update the boundMax
+      if (!is.null(scenario$boundMax) && 2 * boundEstimate < scenario$boundMax) {
+        irace.warning("maxBound = ", scenario$boundMax, " is much larger than estimated execution time, using ",
+                      2 * boundEstimate, " instead.\n")
+        scenario$boundMax <- 2 * boundEstimate
+      }
     } # end of time estimation
 
     # Compute the total initial budget, that is, the maximum number of
@@ -816,6 +833,10 @@ irace_run <- function(scenario, parameters)
                  " however, if the estimation was correct or too low,",
                  " results might not be better than random sampling.\n")
       nbIterations <- nbIterations - 1
+      # FIXME: We should also reduce the number of configurations to minSurvival * 2
+      scenario$nbConfigurations <- ifelse (scenario$nbConfigurations > 0,
+                                           min(minSurvival * 2, scenario$nbConfigurations),
+                                           minSurvival * 2)
     }
     if (!is.null(warn_msg)) irace.warning(warn_msg)
     

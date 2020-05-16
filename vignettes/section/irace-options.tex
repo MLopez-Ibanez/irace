@@ -227,8 +227,8 @@ Confidence level for the elimination test.
 
 \subsection[Adaptive capping]{Adaptive capping}
 \begin{description}
- \defparameter{capping}{capping}{0}%
-Enable the use of adaptive capping. This option is only available when \parameter{elitist} is active. When using this option, \irace provides an execution bound to each target algorithm execution (See \autoref{sec:runner}). For more details about this option See \autoref{sec:capping}.
+ \defparameter{capping}{capping}{}%
+Enable the use of adaptive capping. Capping is enabled by default if \parameter{elitist} is active, $\parameter{maxTime} > 0$ and  $\parameter{boundMax} > 0$. When using this option, \irace provides an execution bound to each target algorithm execution (See \autoref{sec:runner}). For more details about this option See \autoref{sec:capping}.
 
  \defparameter{cappingType}{capping-type}{median}%
  Specifies the measure used to define the execution bound:

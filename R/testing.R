@@ -70,14 +70,13 @@ testConfigurations <- function(configurations, scenario, parameters)
                         # dimnames = list(rownames, colnames)
                         dimnames = list (instances.ID, configurations$.ID.))
 
-  # FIXME: It would be much faster to get a vector cost, applyPAR to it, then
-  # assign it.
+  cost <- sapply(target.output, getElement, "cost")
+  if (scenario$capping)
+    cost <- applyPAR(cost, boundMax = scenario$boundMax, boundPar = scenario$boundPar)
+  # FIXME: Vectorize this loop
   for (i in seq_along(experiments)) {
-    cost <- target.output[[i]]$cost
-    if (scenario$capping)
-      cost <- applyPAR(cost, boundMax = scenario$boundMax, boundPar = scenario$boundPar)
     testResults[rownames(testResults) == experiments[[i]]$id.instance,
-                colnames(testResults) == experiments[[i]]$id.configuration] <- cost
+                colnames(testResults) == experiments[[i]]$id.configuration] <- cost[i]
   }
   if (scenario$debugLevel >= 3) {
     irace.note ("Memory used at the end of testConfigurations():\n")
