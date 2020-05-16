@@ -188,7 +188,7 @@ remotecran: releasebuild
 	$(Reval) "rhub::check_for_cran($(RHUB_COMMON_ARGS), show_status = TRUE)"
 
 macbuild: releasebuild
-	$(Reval) "rhub::check(platform='macos-elcapitan-release', $(RHUB_COMMON_ARGS))"
+	$(Reval) "rhub::check(platform='macos-highsierra-release-cran', $(RHUB_COMMON_ARGS))"
 
 winbuild: releasebuild
 	@echo "Winbuild: http://win-builder.r-project.org/"
