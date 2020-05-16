@@ -64,6 +64,7 @@
 #'      \item{\code{maxExperiments}}{Maximum number of runs (invocations of \code{targetRunner}) that will be performed. It determines the maximum budget of experiments for the tuning. (Default: \code{0})}
 #'      \item{\code{maxTime}}{Maximum total execution time in seconds for the executions of \code{targetRunner}. \code{targetRunner} must return two values: cost and time. (Default: \code{0})}
 #'      \item{\code{budgetEstimation}}{Fraction (smaller than 1) of the budget used to estimate the mean computation time of a configuration. Only used when \code{maxTime} > 0 (Default: \code{0.02})}
+#'      \item{\code{minMeasurableTime}}{Minimum time unit that is still (significantly) measureable. (Default: \code{0.01})}
 #'    }
 #'  \item Statistical test:
 #'    \describe{

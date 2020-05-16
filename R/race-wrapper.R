@@ -146,7 +146,7 @@ exec.target.evaluator <- function (experiment, num.configurations, all.conf.id,
                                     scenario, target.runner.call)
   check.output.target.evaluator (output, scenario, target.runner.call = target.runner.call)
   # Fix too small time.
-  output$time <- if (is.null(output$time)) NA else max(output$time, 0.01)
+  output$time <- if (is.null(output$time)) NA else max(output$time, scenario$minMeasurableTime)
   return (output)
 }
 
@@ -290,7 +290,7 @@ check.output.target.runner <- function (output, scenario)
     target.error (err.msg, output, scenario, target.runner.call = output$call)
   }
   # Fix too small time.
-  output$time <- if (is.null(output$time)) NA else max(output$time, 0.01)
+  output$time <- if (is.null(output$time)) NA else max(output$time, scenario$minMeasurableTime)
   return (output)
 }
 

@@ -444,10 +444,9 @@ applyPAR <- function(results, boundMax, boundPar)
 final.execution.bound <- function(experimentsTime, elites, no.configurations,
                                   current.task, which.exe, scenario)
 {
-  # FIXME: Make this a scenario parameter. The same parameter used in
-  # race-wrapper when parsing target.runner output.
-  minMeasurableTime <- 0.01
-  
+  minMeasurableTime <- scenario$minMeasurableTime
+
+  # FIXME: should we use an adjusted boundMax 
   final.bounds <- rep(scenario$boundMax, no.configurations)
   total.time  <- current.task * scenario$boundMax
   elite.bound <- scenario$boundMax

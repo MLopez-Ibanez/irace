@@ -241,6 +241,15 @@
     "section": "Tuning budget"
   },
   {
+    "name": "minMeasurableTime",
+    "type": "r",
+    "short": "",
+    "long": "--min-measurable-time",
+    "default": 0.01,
+    "description": "Minimum time unit that is still (significantly) measureable.",
+    "section": "Tuning budget"
+  },
+  {
     "name": "digits",
     "type": "i",
     "short": "",

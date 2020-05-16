@@ -1,11 +1,14 @@
 # irace 3.5
 
  * This version includes handling of dependent parameter domains. These
-   should be specified in the parameter domain definition and, for now, 
+   should be specified in the parameter domain definition and, for now,
    only numerical parameter can define dependent domains. A numerical
-   domain can be dependent on one bound (e.g. (1, param1*2)), where the 
-   dependent bound can include basic arithmetic operators. 
-                                (Leslie Pérez Cáceres, Manuel López-Ibáñez)     
+   domain can be dependent on one bound, e.g. `(1, param1*2))`, where the
+   dependent bound can include basic arithmetic operators.
+                                (Leslie Pérez Cáceres, Manuel López-Ibáñez)
+
+ * New scenario option `minMeasurableTime`
+                                                     (Manuel López-Ibáñez)
  
  * The user-guide now contains a detailed section on "Hyper-parameter
    optimization of machine learning methods".
@@ -17,7 +20,7 @@
    median difference.
                                                        (Manuel López-Ibáñez)
 
- * Handle correctly clear out-performance cases despite strong bi-modality.
+ * Correctly handle clear out-performance cases despite strong bi-modality.
                                             (Reported by Nguyen Dang,
                                             fixed by Manuel López-Ibáñez)
 
@@ -44,7 +47,7 @@
    versions.
                                                    (Manuel López-Ibáñez)
  * Fix invalid assert with ordered parameters:        (Leslie Pérez Cáceres)
- 
+
     ```
     value >= 1L && value <= length(possibleValues) is not TRUE
     ```
@@ -65,7 +68,7 @@
     ```R
     all(apply(!is.na(elite.data$experiments), 1, any)) is not TRUE
     ```
-   
+
      (Reported by Maxim Buzdalov, fixed by Manuel López-Ibáñez)
 
 
@@ -263,7 +266,7 @@
     ```R
     eval.parent(source("scenario-common.txt", chdir = TRUE, local = TRUE))
     ```
-   
+
      This feature is VERY experimental and the syntax is likely to change in the
      future.                                             (Manuel López-Ibáñez)
 
@@ -291,7 +294,7 @@
    at the end of a run. Now unique IDs of the form `1t, 2t, ...` are used for
    each testing instance. These IDs are used for the rownames of
    `iraceResults$testing$experiments` and the names of the
-   `scenario$testInstances` 
+   `scenario$testInstances`
    and `iraceResults$testing$seeds` vectors.  (Manuel López-Ibáñez)
 
  * Fix bug where irace keeps retrying the `target-runner` call even if it
@@ -341,7 +344,7 @@
 ```
 --target-runner-retries : Retry target-runner this many times in case of error.
 ```
-                                                   
+
 
  * We print diversity measures after evaluating on each instance:
    (Leslie Pérez Cáceres)
@@ -444,7 +447,7 @@
 
     - `hookRunParallel`: Optional R function to provide custom
       parallelization of `hook.run`.
-  
+
     - `hookRunData`: Optional data passed to `hookRun`. This is ignored by
       the default `hookRun` function, but it may be used by custom `hookRun` R functions to pass persistent data around.
        (Manuel López-Ibáñez)
