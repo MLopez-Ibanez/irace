@@ -247,6 +247,7 @@
     "long": "--min-measurable-time",
     "default": 0.01,
     "description": "Minimum time unit that is still (significantly) measureable.",
+    "vignettes": "Minimum time unit that is still (significantly) measureable.",
     "section": "Tuning budget"
   },
   {
