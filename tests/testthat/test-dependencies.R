@@ -1,5 +1,7 @@
 context("Test dependencies")
 
+withr::with_output_sink("test-dependencies.Rout", {
+
 test_that("param depend error checking", {
   expect_error_readParameters <- function(text, error)
     expect_error(readParameters(text=text), error)
@@ -62,7 +64,6 @@ checkConditionalAndDependency <- function(configuration, parameters)
   }
 }
 
-withr::with_output_sink("test-dependencies.Rout", {
 
 test_that("test inactive dependent", {
   parameters <- readParameters(text='
@@ -100,15 +101,15 @@ test.checkDependencies <- function(parameterFile, ...)
   scenario <- checkScenario (scenario)
  
   nconf <- 100
-  conf <- sampleUniform(parameters, nconf, 4)
+  conf <- irace:::sampleUniform(parameters, nconf, 4)
   conf <- cbind(seq(1,nrow(conf)), conf)
   names(conf)[1]<- ".ID."
 
   for (i in 1:nconf)
     checkConditionalAndDependency(conf[i,], parameters)
  
-  model <- initialiseModel(parameters, conf, 4)
-  conf2 <- sampleModel(parameters, conf, model, nconf, 4)
+  model <- irace:::initialiseModel(parameters, conf, 4)
+  conf2 <- irace:::sampleModel(parameters, conf, model, nconf, 4)
   for (i in 1:nconf)
     checkConditionalAndDependency(conf2[i,], parameters)
 

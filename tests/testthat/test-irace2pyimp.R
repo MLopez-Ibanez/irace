@@ -1,4 +1,7 @@
 context("irace2pyimp") # Avoid bug in testthat 2.0.0
+
+withr::with_output_sink("test-irace2pyimp.Rout", {
+
 test_that("irace2pyimp", {
   skip_on_cran()
   
@@ -57,4 +60,6 @@ test_that("irace2pyimp", {
               filterConditions = "n_templates_middle<=40")
 
   check_irace2pyimp_files(outdir, "./irace2pyimp/002-TemplateDesign")
+})
+
 })
