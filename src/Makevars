@@ -1,18 +1,13 @@
 # 							-*- mode: makefile -*-
 EXE=
 iraceEXE= iracebin/irace$(EXE)
-irace2pyimpEXE= iracebin/irace2pyimp$(EXE)
 
-all:  $(iraceEXE) $(irace2pyimpEXE)
-
-$(irace2pyimpEXE): iracebin/irace2pyimp.o
-	$(CC) $(PKG_CPPFLAGS) $(CFLAGS) iracebin/irace2pyimp.o -o $@
+all:  $(iraceEXE)
 
 $(iraceEXE): iracebin/irace.o
 	$(CC) $(PKG_CPPFLAGS) $(CFLAGS) iracebin/irace.o -o $@
 
 iracebin/irace.o: iracebin/irace.h
-iracebin/irace2pyimp.o: iracebin/irace.h
 
 clean:
-	@$(RM) iracebin/*.o $(irace2pyimpEXE) $(iraceEXE)
+	@$(RM) iracebin/*.o $(iraceEXE)
