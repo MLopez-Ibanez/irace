@@ -24,6 +24,9 @@
                                             (Reported by Nguyen Dang,
                                             fixed by Manuel López-Ibáñez)
 
+ * `irace2pyimp` moved to its own R package.
+                                                     (Manuel López-Ibáñez))
+
 # irace 3.4.1  (31/03/2020)
 
  * `NEWS` converted to markdown.
