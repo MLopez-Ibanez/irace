@@ -25,7 +25,11 @@
                                             fixed by Manuel López-Ibáñez)
 
  * `irace2pyimp` moved to its own R package.
-                                                     (Manuel López-Ibáñez))
+                                                     (Manuel López-Ibáñez)
+
+* Fix error when recovering from a parallel run on Windows.
+                            (Manuel López-Ibáñez, reported by Tarek Gamal)
+
 
 # irace 3.4.1  (31/03/2020)
 
