@@ -1,4 +1,5 @@
 #!/bin/sh
+tlmgr update --self
 tlmgr option -- autobackup 0
 tlmgr option -- docfiles 0
 tlmgr option -- srcfiles 0
