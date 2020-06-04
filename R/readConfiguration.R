@@ -194,10 +194,10 @@ compile.forbidden <- function(x)
   
   # We expect that there will be undefined variables, since the expressions
   # will be evaluated within a data.frame later.
-  exp <- compiler::compile(substitute(is.na(x) | !(x), list(x = x)),
+  expr <- compiler::compile(substitute(is.na(x) | !(x), list(x = x)),
                            options = list(suppressUndefined=TRUE))
-  attr(exp, "source") <- as.character(as.expression(x))
-  return(exp)
+  attr(expr, "source") <- as.character(as.expression(x))
+  return(expr)
 }
 
 readForbiddenFile <- function(filename)
@@ -211,7 +211,9 @@ readForbiddenFile <- function(filename)
 
   # FIXME: Instead of a list, we should generate a single expression that is
   # the logical-OR of all elements of the list.
-
+  # First we would need to handle the "is.na(x) | !(x)" case here.
+  # Maybe: sapply(forbiddenExps, function(x) substitute(is.na(x) | !(x), list(x=x)))
+  # x <- parse(text=paste0("(", paste0(forbiddenExps,collapse=")||("), ")"))
   # Byte-compile them.
   return(sapply(forbiddenExps, compile.forbidden))
 }      
