@@ -21,8 +21,8 @@ conditionsSatisfied <- function (parameters, partialConfiguration, paramName)
 new_empty_configuration <- function(parameters)
 {
   newConfigurationsColnames <- c(names(parameters$conditions), ".PARENT.")
-  return(setNames(as.list(rep(NA, length(newConfigurationsColnames))),
-                  newConfigurationsColnames))
+  setNames(as.vector(rep(NA, length(newConfigurationsColnames)), mode="list"),
+           newConfigurationsColnames)
 }
 
 get.fixed.value <- function(param, parameters)
@@ -74,11 +74,8 @@ sampleUniform <- function (parameters, nbConfigurations, digits,
   if (is.null(repair)) repair <- function(c, p, d) c
   
   namesParameters <- names(parameters$conditions)
-  newConfigurations  <-
-    as.data.frame(matrix(nrow = nbConfigurations,
-                         ncol = length(namesParameters) + 1,
-                         dimnames = list(NULL, c(namesParameters, ".PARENT."))
-                         ), stringsAsFactors=FALSE)
+  newConfigurations  <- alloc_configurations(
+    c(namesParameters, ".PARENT."), nrow = nbConfigurations, parameters = parameters)
   empty_configuration <- new_empty_configuration(parameters)
 
   for (idxConfiguration in seq_len(nbConfigurations)) {
@@ -111,7 +108,7 @@ sampleUniform <- function (parameters, nbConfigurations, digits,
         }
         configuration[[p]] <- newVal
       }
-      configuration <- as.data.frame(configuration, stringsAsFactors=FALSE)
+      configuration <- data.frame(configuration, check.names = FALSE, stringsAsFactors=FALSE)
       configuration <- repair(configuration, parameters, digits)
 
       if (is.null(forbidden)
@@ -141,11 +138,9 @@ sampleModel <- function (parameters, eliteConfigurations, model,
     irace.error ("The number of configurations to generate appears to be negative or zero.")
   }
   namesParameters <- names(parameters$conditions)
-  newConfigurations  <-
-    as.data.frame(matrix(nrow = nbNewConfigurations,
-                         ncol = length(namesParameters) + 1,
-                         dimnames = list(NULL, c(namesParameters, ".PARENT."))
-                         ), stringsAsFactors=FALSE)
+  newConfigurations  <- alloc_configurations(
+    c(namesParameters, ".PARENT."), nrow = nbNewConfigurations, parameters)
+  
   empty_configuration <- new_empty_configuration(parameters)
   
   for (idxConfiguration in seq_len(nbNewConfigurations)) {
@@ -238,10 +233,9 @@ sampleModel <- function (parameters, eliteConfigurations, model,
         }
         configuration[[p]] <- newVal
       }
-      
-      configuration <- as.data.frame(configuration, stringsAsFactors = FALSE)
+      # FIXME: This is slow. See: https://stackoverflow.com/questions/20689650/how-to-append-rows-to-an-r-data-frame
+      configuration <- data.frame(configuration, stringsAsFactors = FALSE, check.names = FALSE)
       configuration <- repair(configuration, parameters, digits)
-
       if (is.null(forbidden)
           || nrow(checkForbidden(configuration, forbidden)) == 1) {
         newConfigurations[idxConfiguration,] <- configuration

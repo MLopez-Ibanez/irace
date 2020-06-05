@@ -49,6 +49,7 @@ createExperimentList <- function(configurations, parameters,
 
   count <- 1
   for (i in seq_len(nrow(configurations))) {
+    # FIXME: This indexing is slow!
     values_i <- values[i, , drop = FALSE]
     for (j in seq_along(instances)) {
       experiments[[count]] <- list (id.configuration = configurations.ID[i],

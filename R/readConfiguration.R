@@ -49,9 +49,7 @@ readConfigurationsFile <- function(filename, parameters, debugLevel = 0, text)
   nbConfigurations <- nrow(configurationTable)
   # Print the table that has been read.
   cat("# Read ", nbConfigurations, " configuration(s) from file '", filename, "'\n", sep="")
-  if (debugLevel >= 2) {
-    print(as.data.frame(configurationTable, stringsAsFactor = FALSE), digits=15)
-  }
+  if (debugLevel >= 2) print(configurationTable, digits=15)
 
   namesParameters <- names(parameters$conditions)
   # This ignores fixed parameters unless they are given with a different value.
@@ -697,6 +695,7 @@ checkScenario <- function(scenario = defaultScenario())
   }
 
   if (is.na(scenario$capping)) {
+    # FIXME: when capping is enabled, we have to make sure we don't have cost AND time.
     scenario$capping <- (scenario$elitist && scenario$maxTime > 0 && scenario$boundMax > 0)
   }
 

@@ -440,11 +440,14 @@ removeConfigurationsMetaData <- function(configurations)
 #' @export
 configurations.print <- function(configurations, metadata = FALSE)
 {
+  if (!is.data.frame(configurations))
+    configurations <- as.data.frame(configurations, stringsAsFactors = FALSE)
+
   rownames(configurations) <- configurations$.ID.
   if (!metadata) {
     configurations <- removeConfigurationsMetaData(configurations)
-  } 
-  print(as.data.frame(configurations, stringsAsFactors = FALSE), digits = 15)
+  }
+  print.data.frame(configurations, digits = 15)
 }
 
 #' Print configurations as command-line strings.
@@ -560,6 +563,7 @@ concordance <- function(data)
   # Get rankings by rows (per instance)
   r <- t(apply(data, 1L, rank))
   R <- colSums(r)
+  # FIXME: This is slow, can we make it faster?
   TIES <- tapply(r, row(r), table)
   # If everything is tied, then W=1, perfect homogeneity.
   if (all(unlist(TIES) == ncol(data))) {

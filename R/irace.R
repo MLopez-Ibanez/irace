@@ -448,6 +448,29 @@ do.experiments <- function(configurations, ninstances, scenario, parameters)
   return (list(experiments = Results, experimentLog = experimentLog, rejectedIDs = rejectedIDs))
 }
 
+alloc_configurations <- function(colnames, nrow, parameters)
+{
+  parameter_type <- function(type) {
+    stopifnot(type %in% c("i","r","o","c"))
+    switch(type,
+           i = NA_integer_,
+           r = NA_real_,
+           NA_character_)
+  }
+
+  column_type <- function(x, n, types)
+    rep(switch(x,
+               .ID. = NA_integer_,
+               .PARENT. = NA_integer_,
+               .WEIGHT. = NA_real_,
+               parameter_type(types[x])), n)
+
+  x <- sapply(colnames, column_type, n=nrow, types = parameters$types,
+              simplify=FALSE, USE.NAMES=TRUE)
+  data.frame(x, stringsAsFactors = FALSE)
+}
+
+    
 ## Gets the elite configurations time matrix from the experiment log
 generateTimeMatrix <- function(elites, experimentLog)
 {
@@ -483,7 +506,7 @@ allConfigurationsInit <- function(scenario, parameters)
                     scenario$configurationsFile, "'.")
     cat("# Adding", nrow(initConfigurations), "initial configuration(s)\n")
     if (scenario$debugLevel >= 2)
-      print(as.data.frame(scenario$initConfigurations, stringsAsFactors = FALSE), digits=15)
+      print(scenario$initConfigurations, digits=15)
   } else {
     initConfigurations <- confs_from_file
   }
@@ -501,12 +524,9 @@ allConfigurationsInit <- function(scenario, parameters)
                     " and, thus, discarded")
     }
   } else {
-    configurations.colnames <- c(".ID.", names(parameters$conditions), ".PARENT.")
-    allConfigurations <-
-      as.data.frame(matrix(ncol = length(configurations.colnames),
-                           nrow = 0,
-                           dimnames = list(NULL, configurations.colnames)),
-                    stringsAsFactors=FALSE)
+    allConfigurations <- alloc_configurations(
+      c(".ID.", names(parameters$conditions), ".PARENT."),
+      nrow = 0, parameters = parameters)
   }
   allConfigurations
 }

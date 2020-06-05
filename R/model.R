@@ -132,9 +132,11 @@ restartConfigurations <- function (configurations, restart.ids, model, parameter
 {
   #print(configurations)
   tmp.ids <- c()
+  # FIXME: This loop is very slow!
   for (param in parameters$names[!parameters$isFixed]) {
     for (id in restart.ids) {
       if (!(id %in% names(model[[param]]))) {
+        # FIXME: This indexing is slow!
         id <- configurations[configurations$.ID. == id, ".PARENT."]
       }
       tmp.ids <- c(tmp.ids, id)
