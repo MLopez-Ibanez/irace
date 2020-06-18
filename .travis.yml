@@ -59,7 +59,7 @@ install:
 r_check_args: '--run-donttest --timings'
 
 # FIXME: We only need to do this for deploy
-before_cache: Rscript -e 'remotes::install_github("r-lib/pkgdown")'
+before_cache: Rscript -e 'install.packages("pkgdown")'
 
 after_success:
   - while sleep 540; do echo "=====[ $SECONDS seconds still running ]====="; done &
