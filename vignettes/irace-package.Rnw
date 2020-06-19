@@ -1112,7 +1112,7 @@ is invoked for each candidate configuration, passing as arguments:
     \code{id.instance} & an alphanumeric string that uniquely identifies an instance;\\
     \code{seed} & seed for the random number generator to be used for this evaluation, ignore the seed for deterministic algorithms;\\
     \code{instance} & string giving the instance to be used for this evaluation;\\
-    \code{bound} & optional execution time bound. Only provided when the \parameter{maxBound} option is set in the scenario, see \autoref{sec:capping};\\
+    \code{bound} & optional execution time bound. Only provided when the \parameter{boundMax} option is set in the scenario, see \autoref{sec:capping};\\
     \code{configuration} & the pairs parameter label-value that
     describe this candidate configuration. Typically given as command-line
     switches to be passed to the executable program.\\

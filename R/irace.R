@@ -781,11 +781,11 @@ irace <- function(scenario, parameters)
           if (scenario$capping) 
             paste0("# capping: ", scenario$cappingType, "\n",
                    "# type bound: ", scenario$boundType, "\n", 
-                   "# maxBound: ", scenario$boundMax, "\n",
+                   "# boundMax: ", scenario$boundMax, "\n",
                    "# par bound: ", scenario$boundPar, "\n", 
                    "# bound digits: ", scenario$boundDigits, "\n")
           else if (!is.null(scenario$boundMax))
-            paste0("# maxBound: ", scenario$boundMax, "\n"),
+            paste0("# boundMax: ", scenario$boundMax, "\n"),
           verbose = FALSE)
 
   
