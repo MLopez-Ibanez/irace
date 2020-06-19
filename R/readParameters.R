@@ -267,6 +267,8 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
                      domain = list(),
                      conditions = list(),
                      isFixed = logical(0),
+                     # FIXME: This has to be a list because we assign
+                     # attributes to elements.
                      transform = list(),
                      isDependent = logical(0))
 
