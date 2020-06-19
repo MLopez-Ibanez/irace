@@ -430,8 +430,9 @@ dom.elim <- function(results, elites, alive, scenario, minSurvival, eps = 1e-5)
 ## that exceed the maximum execution time (boundMax)
 applyPAR <- function(results, boundMax, boundPar)
 {
+  # We do not want to change Inf or -Inf because those represent rejection.
   if (boundPar != 1)
-    results[results >= boundMax] <- boundMax * boundPar
+    results[is.finite(results) & results >= boundMax] <- boundMax * boundPar
   return(results)
 }
 
