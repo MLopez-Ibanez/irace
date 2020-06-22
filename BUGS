@@ -1,5 +1,21 @@
 ------------------------------------------------------------*- mode: text -*-
 
+#14 -------------------------------------------------------------
+
+I was trying to recover an iRace run due to a power cut. I follow the steps given in Section 8 of the User Guide, i.e., make a backup of the log file and then re-start irace with the parameter --recovery-file. Then the following error occurs:
+
+Error in irace(scenario = scenario, parameters = parameters) :
+  object 'boundEstimate' not found
+Calls: irace.cmdline -> irace.main -> irace
+Execution halted
+
+https://groups.google.com/forum/#!msg/irace-package/00huAf5P30A/Gmbz9UYHAQAJ
+
+I'm afraid you have found a bug in our recovery. For handling maxTime budget,
+we need to estimate the runtime of a run before running it, however, we failed
+to save this estimate for recovery.
+
+
 #13 -------------------------------------------------------------
 
 It has been reported that giving a large cut-off value messes up initial
