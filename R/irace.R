@@ -25,6 +25,7 @@ recoverFromFile <- function(filename)
     # .Random.seed and .irace are special
     for (name in setdiff(names(iraceResults$state), c(".Random.seed", ".irace")))
       assign(name, iraceResults$state[[name]])
+    # FIXME: Check that irace.version matches and warn if not.
     assign(".Random.seed", iraceResults$state$.Random.seed, .GlobalEnv)
     for (name in ls(iraceResults$state$.irace))
       assign(name, get(name, envir = iraceResults$state$.irace), envir = .irace)
