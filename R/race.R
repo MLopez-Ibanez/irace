@@ -819,7 +819,8 @@ race <- function(maxExp = 0,
                           race.instances[current.task],
                           current.task, alive = alive,
                           configurations[best, ".ID."],
-                          best = best, experimentsUsed, Sys.time(), 
+                          best = best, experimentsUsed, Sys.time(),
+                          # FIXME: Why do we pass NA as bound? Why not pass the actual bound if any?
                           bound = NA, capping)
         next
       }
@@ -911,6 +912,7 @@ race <- function(maxExp = 0,
         # FIXME: This should go into its own function
         output <- race.wrapper (configurations = configurations[which.elite.exe, , drop = FALSE], 
                                 instance.idx = race.instances[current.task],
+                                # FIXME: What if we already have a bound for this instance?
                                 bounds = rep(scenario$boundMax, length(which.elite.exe)),
                                 # MANUEL: How does this work for target-evaluator?
                                 # We are telling race.wrapper that only some elites are alive!
@@ -959,6 +961,7 @@ race <- function(maxExp = 0,
                             current.task, alive = alive,
                             configurations[best, ".ID."],
                             best = best, experimentsUsed, start.time,
+                            # FIXME: Why do we pass NA as bound? Why not pass the actual bound if any?
                             bound = NA, capping)
           next
         }
