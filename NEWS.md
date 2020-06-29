@@ -27,8 +27,12 @@
  * `irace2pyimp` moved to its own R package.
                                                      (Manuel López-Ibáñez)
 
-* Fix error when recovering from a parallel run on Windows.
+ * Fix error when recovering from a parallel run on Windows.
                             (Manuel López-Ibáñez, reported by Tarek Gamal)
+
+ * `testNbElites` now controls how many iteration elites are tested when
+   `testIterationElites=1`. This is the documented behavior in the user guide.
+                           (Manuel López-Ibáñez, reported by Marcelo de Souza)
 
 
 # irace 3.4.1  (31/03/2020)

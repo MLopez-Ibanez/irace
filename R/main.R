@@ -134,8 +134,7 @@ irace.main <- function(scenario = defaultScenario(), output.width = 9999L)
   if (scenario$postselection > 0) 
     psRace(iraceLogFile=scenario$logFile, postselection=scenario$postselection, elites=TRUE)
   
-  if (length(eliteConfigurations) > 0 &&
-      (scenario$testIterationElites != 0 || scenario$testNbElites != 0))
+  if (length(eliteConfigurations) > 0 && scenario$testNbElites > 0)
     testing.main(logFile = scenario$logFile)
   
   invisible(eliteConfigurations)
@@ -179,31 +178,28 @@ testing.main <- function(logFile)
   if (is.null.or.empty(scenario$testInstances)) {
     return (FALSE)
   }
-  
-  # Get configurations
-  testing.id <- c()
-  if (scenario$testIterationElites)
-    testing.id <- c(testing.id, iraceResults$iterationElites)
-  if (scenario$testNbElites > 0) {
-    tmp <- iraceResults$allElites[[length(iraceResults$allElites)]]
-    testing.id <- c(testing.id, tmp[1:min(length(tmp), scenario$testNbElites)])
-  }
-  testing.id <- unique(testing.id)
-  configurations <- iraceResults$allConfigurations[testing.id, , drop=FALSE]
-
-  cat(" \n\n")
-  irace.note ("Testing configurations (in no particular order): ", paste(testing.id, collapse=" "), "\n")
-  configurations.print(configurations)  
-  cat("# Testing of elite configurations:", scenario$testNbElites, 
+  cat("\n\n# Testing of elite configurations:", scenario$testNbElites, 
       "\n# Testing iteration configurations:", scenario$testIterationElites,"\n")
+  # Get configurations that will be tested
+  irace.assert(scenario$testNbElites > 0)
+  if (scenario$testIterationElites)
+    testing_id <- sapply(iraceResults$allElites, function(x)
+      x[1:min(length(x), scenario$testNbElites)])
+  else {
+    tmp <- iraceResults$allElites[[length(iraceResults$allElites)]]
+    testing_id <- tmp[1:min(length(tmp), scenario$testNbElites)]
+  }
+  testing_id <- unique.default(testing_id)
+  configurations <- iraceResults$allConfigurations[testing_id, , drop=FALSE]
+
+  irace.note ("Testing configurations (in no particular order): ", paste(testing_id, collapse=" "), "\n")
+  configurations.print(configurations)  
   
   iraceResults$testing <- testConfigurations(configurations, scenario, parameters)
-
+  irace_save_logfile (iraceResults, scenario)
   # FIXME : We should print the seeds also. As an additional column?
   irace.note ("Testing results (column number is configuration ID in no particular order):\n")
   print(iraceResults$testing$experiments)
-  irace_save_logfile (iraceResults, scenario)
-
   irace.note ("Finished testing\n")
   return(TRUE)
 }
