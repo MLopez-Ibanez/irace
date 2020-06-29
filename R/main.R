@@ -134,8 +134,7 @@ irace.main <- function(scenario = defaultScenario(), output.width = 9999L)
   if (scenario$postselection > 0) 
     psRace(iraceLogFile=scenario$logFile, postselection=scenario$postselection, elites=TRUE)
   
-  if (length(eliteConfigurations) > 0 && scenario$testNbElites > 0)
-    testing.main(logFile = scenario$logFile)
+  testing.main(logFile = scenario$logFile)
   
   invisible(eliteConfigurations)
 }
@@ -171,17 +170,17 @@ testing.main <- function(logFile)
   
   file.check(logFile, readable = TRUE, text = "irace log file")
 
-  load (logFile)
+  load(logFile)
   scenario <- iraceResults$scenario
   parameters <- iraceResults$parameters
 
-  if (is.null.or.empty(scenario$testInstances)) {
+  if (is.null.or.empty(scenario$testInstances)
+      || scenario$testNbElites <= 0) {
     return (FALSE)
   }
   cat("\n\n# Testing of elite configurations:", scenario$testNbElites, 
       "\n# Testing iteration configurations:", scenario$testIterationElites,"\n")
   # Get configurations that will be tested
-  irace.assert(scenario$testNbElites > 0)
   if (scenario$testIterationElites)
     testing_id <- sapply(iraceResults$allElites, function(x)
       x[1:min(length(x), scenario$testNbElites)])
