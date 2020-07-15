@@ -34,6 +34,8 @@
    `testIterationElites=1`. This is the documented behavior in the user guide.
                            (Manuel López-Ibáñez, reported by Marcelo de Souza)
 
+ * Fixes to the Matlab example. (Manuel López-Ibáñez)
+
 
 # irace 3.4.1  (31/03/2020)
 

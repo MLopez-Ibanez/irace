@@ -1,0 +1,48 @@
+###################################################### -*- mode: r -*- #####
+
+targetRunner <- function(experiment, scenario)
+{
+  main.script <- "Main.m"
+
+  ## You need to install the matlabr package, for example,
+  # install.packages("matlabr")
+  require(matlabr)
+  debugLevel       <- scenario$debugLevel
+  configuration.id <- experiment$id.configuration
+  instance.id      <- experiment$id.instance
+  seed             <- experiment$seed
+  configuration    <- experiment$configuration
+  instance         <- experiment$instance
+  switches         <- experiment$switches
+  
+  args <- irace::buildCommandLine(configuration, switches)
+  args <- strsplit(args, split=" ")[[1]]
+  matlablr::run_matlab_code(c(args, paste0("run('", main.script, "')")))
+  cost <- as.numeric(readLines("hv"))
+  return(list(cost = cost))
+}
+
+## Maximum number of runs (invocations of targetRunner) that will be
+## performed. It determines the maximum budget of experiments for the
+## tuning.
+maxExperiments = 1000
+
+## File that contains the description of the parameters of the target
+## algorithm.
+# parameterFile = "./parameters.txt"
+
+## Directory where the programs will be run.
+# execDir = "./"
+
+## Directory where training instances are located; either absolute path or
+## relative to current directory. If no trainInstancesFiles is provided,
+## all the files in trainInstancesDir will be listed as instances.
+# trainInstancesDir = "./Instances"
+
+## File that contains a list of training instances and optionally
+## additional parameters for them. If trainInstancesDir is provided, irace
+## will search for the files in this folder.
+# trainInstancesFile = ""
+
+# Add other scenario options for irace. See the user-guide.
+
