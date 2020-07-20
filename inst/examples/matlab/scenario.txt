@@ -1,31 +1,41 @@
 ###################################################### -*- mode: r -*- #####
 
+matlab_script_path = getwd()
 targetRunner <- function(experiment, scenario)
 {
-  main.script <- "Main.m"
-
+  matlab_function_call <- "Main(INSTANCE,A,B)"
+  
   ## You need to install the matlabr package, for example,
   # install.packages("matlabr")
-  require(matlabr)
+  require(matlabr, quietly=TRUE)
   debugLevel       <- scenario$debugLevel
   configuration.id <- experiment$id.configuration
   instance.id      <- experiment$id.instance
   seed             <- experiment$seed
   configuration    <- experiment$configuration
   instance         <- experiment$instance
-  switches         <- experiment$switches
   
-  args <- irace::buildCommandLine(configuration, switches)
-  args <- strsplit(args, split=" ")[[1]]
-  matlablr::run_matlab_code(c(args, paste0("run('", main.script, "')")))
-  cost <- as.numeric(readLines("hv"))
-  return(list(cost = cost))
+  args <- paste0(names(configuration), "=", configuration, collapse=";")
+  output <- matlabr::run_matlab_code(
+                       # This is the instance and seed
+                       c(paste0("INSTANCE=", instance, ";SEED=", seed),
+                         # The configuration parameters,
+                         args, matlab_function_call),
+                       paths_to_add=matlab_script_path,
+                       verbose=FALSE, intern=TRUE)
+  output <- paste0(output, collapse="\n")
+  # Parse the output
+  cost <- as.numeric(sub(".*Result for irace=([-+.e0-9]+).*", "\\1", output))
+  if (is.na(cost)) {
+    print("targetRunner: error parsing numeric result from matlab output")
+  }
+  return(list(cost = cost, outputRaw = output))
 }
 
 ## Maximum number of runs (invocations of targetRunner) that will be
 ## performed. It determines the maximum budget of experiments for the
 ## tuning.
-maxExperiments = 1000
+maxExperiments = 100
 
 ## File that contains the description of the parameters of the target
 ## algorithm.
@@ -37,12 +47,12 @@ maxExperiments = 1000
 ## Directory where training instances are located; either absolute path or
 ## relative to current directory. If no trainInstancesFiles is provided,
 ## all the files in trainInstancesDir will be listed as instances.
-# trainInstancesDir = "./Instances"
+trainInstancesDir = ""
 
 ## File that contains a list of training instances and optionally
 ## additional parameters for them. If trainInstancesDir is provided, irace
 ## will search for the files in this folder.
-# trainInstancesFile = ""
+trainInstancesFile = "instances.txt"
 
-# Add other scenario options for irace. See the user-guide.
+# Add other scenario options for irace. See the user guide.
 
