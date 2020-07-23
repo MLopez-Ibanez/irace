@@ -1,33 +1,54 @@
 ###################################################### -*- mode: r -*- #####
 
+## You need to install the matlabr package, for example,
+# install.packages("matlabr")
+require(matlabr, quietly=TRUE)
+# We assume that the matlab .m files are in the same folder as this file. 
+# Otherwise, change the next line.
 matlab_script_path = getwd()
+# You may need to provide the path to matlab if have_matlab() cannot find it.
+# options(matlab.path="/opt/apps/apps/binapps/matlab/R2020a/bin/")
+
+if (have_matlab()) {
+   cat("=== irace === Using matlab as: ", get_matlab(), "\n")
+} else {
+   stop("=== irace === MATLAB not found! Maybe not installed or you need to provide the matlab.path in scenario.txt")
+}
+
+
 targetRunner <- function(experiment, scenario)
 {
-  matlab_function_call <- "Main(INSTANCE,A,B)"
+  matlab_function_call <- "Main(INSTANCE,SEED,A,B)"
   
-  ## You need to install the matlabr package, for example,
-  # install.packages("matlabr")
-  require(matlabr, quietly=TRUE)
   debugLevel       <- scenario$debugLevel
   configuration.id <- experiment$id.configuration
   instance.id      <- experiment$id.instance
   seed             <- experiment$seed
   configuration    <- experiment$configuration
   instance         <- experiment$instance
-  
+
   args <- paste0(names(configuration), "=", configuration, collapse=";")
-  output <- matlabr::run_matlab_code(
-                       # This is the instance and seed
-                       c(paste0("INSTANCE=", instance, ";SEED=", seed),
-                         # The configuration parameters,
-                         args, matlab_function_call),
-                       paths_to_add=matlab_script_path,
-                       verbose=FALSE, intern=TRUE)
-  output <- paste0(output, collapse="\n")
-  # Parse the output
-  cost <- as.numeric(sub(".*Result for irace=([-+.e0-9]+).*", "\\1", output))
+  exitcode <- matlabr::run_matlab_code(
+                         # This is the instance and seed
+                         c(paste0("INSTANCE='", instance, "';SEED=", seed),
+                           # The configuration parameters,
+                           args, matlab_function_call),
+                         paths_to_add=matlab_script_path,
+                         verbose= (debugLevel >= 2))
+  
+  ## Parse the output (just a single number!)
+  # FIXME: Create a uniquely named temporary file instead of Result.txt to
+  # allow parallel execution
+  output <- scan(file="Result.txt", quiet=TRUE)  
+  cost <- as.numeric(output)
+
+  if (exitcode != 0) {
+    cat("=== irace === targetRunner: matlab returned exit code ", exitcode, "\n")  
+  }
   if (is.na(cost)) {
-    print("targetRunner: error parsing numeric result from matlab output")
+    cat("=== irace === targetRunner: error parsing numeric result from matlab output\n")
+    if (!file.exists(file.path(matlab_script_path, "Main.m")))
+      cat("=== irace === matlab script: '", file.path(matlab_script_path, "Main.m"), "' not found!\n")
   }
   return(list(cost = cost, outputRaw = output))
 }
