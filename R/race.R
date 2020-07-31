@@ -280,6 +280,33 @@ elitrace.init.instances <- function(race.env, deterministic, max.instances)
   return(race.instances)
 }
 
+.nocap_table_fields_width <- c(1, 11, 11, 11, 16, 11, 8, 5, 4, 6)
+.nocap_colum_names <- c(" ", "Instance", "Alive", "Best", "Mean best", "Exp so far",
+                        "W time", "rho", "KenW", "Qvar")
+.capping_table_fields_width <- c(1, 11, 8, 11, 11, 16, 11, 8, 5, 4, 6)  
+.capping_colum_names <- c(" ", "Instance", "Bound", "Alive", "Best", "Mean best", "Exp so far",
+                        "W time", "rho", "KenW", "Qvar")
+
+table_hline <- function(widths) {
+  s <- "+"
+  for(w in widths) {
+    s <- paste0(s, strrep("-", w), "+")
+  }
+  return(paste0(s, "\n"))
+}
+table_sprint <- function(text, widths) {
+  s <- "|"
+  for (i in seq_along(text)) {
+      s <- paste0(s, sprintf("%*s", widths[i], text[i]), "|")
+  }
+  return(paste0(s, "\n"))
+}
+
+capping_hline <- table_hline(.capping_table_fields_width)
+capping_header <- table_sprint(.capping_colum_names, .capping_table_fields_width) 
+nocap_hline <- table_hline(.nocap_table_fields_width)
+nocap_header <- table_sprint(.nocap_colum_names, .nocap_table_fields_width) 
+                                
 race.print.header <- function(capping)
 {
   cat(sep = "", "# Markers:
@@ -288,16 +315,11 @@ race.print.header <- function(capping)
      - The test is performed and some configurations are discarded.
      = The test is performed but no configuration is discarded.
      ! The test is performed and configurations could be discarded but elite configurations are preserved.
-     . All alive configurations are elite and nothing is discarded\n")
-  cat(sep = "", if (!capping) "
-+-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
-| |   Instance|      Alive|       Best|      Mean best| Exp so far|  W time|  rho|KenW|  Qvar|
-+-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
-"  else "                                                                 
-+-+-----------+--------+-----------+-----------+---------------+-----------+--------+-----+----+------+
-| |   Instance|   Bound|      Alive|       Best|      Mean best| Exp so far|  W time|  rho|KenW|  Qvar|
-+-+-----------+--------+-----------+-----------+---------------+-----------+--------+-----+----+------+
-")
+     . All alive configurations are elite and nothing is discarded\n\n")
+  if (capping)
+    cat(sep = "", capping_hline, capping_header, capping_hline)
+  else
+    cat(sep = "", nocap_hline, nocap_header, nocap_hline)
 }
 
 race.print.task <- function(res.symb, Results,
@@ -322,7 +344,7 @@ race.print.task <- function(res.symb, Results,
   time_str <- elapsed_wctime_str(Sys.time(), start.time)
   cat(sprintf("|%s|%11d|", res.symb, instance))
   if (capping) cat(sprintf("%8.2f|", if(is.null(bound)) NA else bound))
-  cat(sprintf("%11d|%11d|%#15.10g|%11d|%s",
+  cat(sprintf("%11d|%11d|%#16.10g|%11d|%s",
               sum(alive), id.best, mean_best, experimentsUsed, time_str))
   
   if (current.task > 1 && sum(alive) > 1) {
@@ -337,13 +359,10 @@ race.print.task <- function(res.symb, Results,
 race.print.footer <- function(bestconf, mean.best, break.msg, debug.level, capping = FALSE)
 {
   cat(sep = "",
-      if (!capping)
-        "+-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+\n"
-      else
-        "+-+-----------+--------+-----------+-----------+---------------+-----------+--------+-----+----+------+\n",
+      if (capping) capping_hline else nocap_hline,
       if (debug.level >= 1) paste0("# Stopped because ", break.msg, "\n"),
       sprintf("Best-so-far configuration: %11d", bestconf[1, ".ID."]),
-      sprintf("    mean value: %#15.10g", mean.best), "\n",
+      sprintf("    mean value: %#16.10g", mean.best), "\n",
       "Description of the best-so-far configuration:\n")
   configurations.print(bestconf, metadata = TRUE)
   cat("\n")
