@@ -134,34 +134,49 @@ irace.main <- function(scenario = defaultScenario(), output.width = 9999L)
   if (scenario$postselection > 0) 
     psRace(iraceLogFile=scenario$logFile, postselection=scenario$postselection, elites=TRUE)
   
-  testing.main(logFile = scenario$logFile)
+  testing_fromlog(logFile = scenario$logFile)
   
   invisible(eliteConfigurations)
 }
 
-#' testing.main
+#' Test configurations given in `.Rdata` file
 #'
-#' \code{testing.main} executes the testing of the target 
-#' algorithm configurations found on an \pkg{irace} execution.
+#' `testing_fromlog` executes the testing of the target algorithm configurations
+#' found by an \pkg{irace} execution.
 #' 
-#' @param logFile Path to the \code{.Rdata} file produced by \pkg{irace}.
+#' @param logFile Path to the `.Rdata` file produced by \pkg{irace}.
 #'
-#' @return Boolean. TRUE if the testing ended successfully otherwise, returns
-#'   FALSE.
+#' @param testNbElites Number of (final) elite configurations to test. Overrides
+#'   the value found in `logFile`.
 #' 
-#' @details The function \code{testing.main} loads the \code{logFile} and
-#'   obtains the needed configurations according to the specified test. Use the
-#'   \code{scenario$testNbElites} to test N final elite configurations or use
-#'   \code{scenario$testIterationElites} to test the best configuration of each
-#'   iteration. A test instance set must be provided through
-#'   \code{scenario$testInstancesDir} and \code{testInstancesFile}.
+#' @param testIterationElites (`logical(1)`) If `FALSE`, only the final
+#'   `testNbElites` configurations are tested; otherwise, also test the best
+#'   configurations of each iteration. Overrides the value found in `logFile`.
 #'
-#' @seealso
-#'  \code{\link{defaultScenario}} to provide a default scenario for \pkg{irace}.
+#' @param testInstancesDir  Directory where testing instances are located, either absolute or relative to current directory.
+#'
+#' @param testInstancesFile File containing a list of test instances and optionally additional parameters for them.
+#'
+#' @param testInstances Character vector of the instances to be used in the `targetRunner` when executing the testing.
+#'
+#' @return Boolean. `TRUE` if the testing ended successfully otherwise, `FALSE`.
+#' 
+#' @details The function `testing_fromlog` loads the `logFile` and obtains the
+#'   testing setup and configurations to be tested.  Within the `logFile`, the
+#'   variable `scenario$testNbElites` specifies how many final elite
+#'   configurations to test and `scenario$testIterationElites` indicates
+#'   whether test the best configuration of each iteration. The values may be
+#'   overridden by setting the corresponding arguments in this function.  The
+#'   set of testing instances must appear in `scenario[["testInstances"]]`.
+#'
+#' @seealso [defaultScenario()] to provide a default scenario for \pkg{irace}.
+#' [testing_fromfile()] provides a different interface for testing.
 #' 
 #' @author Manuel López-Ibáñez and Leslie Pérez Cáceres
+#' @md
 #' @export
-testing.main <- function(logFile)
+testing_fromlog <- function(logFile, testNbElites, testIterationElites,
+                            testInstancesDir, testInstancesFile, testInstances)
 {
   if (is.null.or.empty(logFile)) {
     irace.note("No logFile provided to perform the testing of configurations. Skipping testing.\n")
@@ -171,15 +186,42 @@ testing.main <- function(logFile)
   file.check(logFile, readable = TRUE, text = "irace log file")
 
   load(logFile)
-  scenario <- iraceResults$scenario
-  parameters <- iraceResults$parameters
+  scenario <- iraceResults[["scenario"]]
+  parameters <- iraceResults[["parameters"]]
+  instances_changed <- FALSE
+  
+  if (!missing(testNbElites))
+    scenario[["testNbElites"]] <- testNbElites
+  if (!missing(testIterationElites))
+    scenario$testIterationElites <- testIterationElites
 
-  if (is.null.or.empty(scenario$testInstances)
-      || scenario$testNbElites <= 0) {
-    return (FALSE)
+  if (!missing(testInstances)) {
+    scenario[["testInstances"]] <- testInstances
   }
+  
+  if (!missing(testInstancesDir)) {
+    scenario$testInstancesDir <- testInstancesDir
+    instances_changed <- TRUE
+  }
+  if (!missing(testInstancesFile)) {
+    scenario$testInstancesFile <- testInstancesFile
+    instances_changed <- TRUE
+  }
+  
   cat("\n\n# Testing of elite configurations:", scenario$testNbElites, 
       "\n# Testing iteration configurations:", scenario$testIterationElites,"\n")
+  if (scenario$testNbElites <= 0)
+    return (FALSE)
+
+  # If they are already setup, don't change them.
+  if (instances_changed || is.null.or.empty(scenario[["testInstances"]])) {
+    scenario <- setup_test_instances(scenario)
+    if (is.null.or.empty(scenario[["testInstances"]])) {
+      irace.note("No test instances, skip testing")
+      return(FALSE)
+    }
+  }
+  
   # Get configurations that will be tested
   if (scenario$testIterationElites)
     testing_id <- sapply(iraceResults$allElites, function(x)
@@ -203,7 +245,25 @@ testing.main <- function(logFile)
   return(TRUE)
 }
 
-testing.cmdline <- function(filename, scenario)
+#' Test configurations given an explicit table of configurations and a scenario file
+#'
+#' `testing_fromfile` executes the testing of an explicit list of configurations
+#' given `filename`. A `logFile` is created unless disabled `scenario`. This
+#' may overwrite an existing one!`
+#' 
+#' @param filename Path to a file containing configurations: one configuration
+#'   per line, one parameter per column, parameter names in header.
+#'
+#' @template arg_scenario
+#'
+#' @return iraceResults
+#'
+#' @seealso [testing_fromlog()] provides a different interface for testing.
+#' 
+#' @author Manuel López-Ibáñez
+#' @md
+#' @export
+testing_fromfile <- function(filename, scenario)
 {
   irace.note ("Checking scenario\n")
   scenario <- checkScenario(scenario)
@@ -359,7 +419,7 @@ irace.cmdline <- function(argv = commandArgs (trailingOnly = TRUE))
   # Only do testing
   testFile <- parser$readArg (long = "--only-test")
   if (!is.null(testFile)) {
-    return(invisible(testing.cmdline(testFile, scenario)))
+    return(invisible(testing_fromfile(testFile, scenario)))
   }
 
   if (length(parser$argv) > 0) {

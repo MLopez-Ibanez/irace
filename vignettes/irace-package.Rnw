@@ -1690,10 +1690,10 @@ configurations considered within each set. Some examples:
 \end{itemize}
 
 The testing can be also (re-)executed at a later time by using the following
-\aR command:
+\aR command (but you may need to override \code{testNbElites} and \code{testIterationElites}):
 %
 <<testing_r, prompt=FALSE, eval=FALSE>>=
-testing.main(logFile = "./irace.Rdata")
+testing_fromlog(logFile = "./irace.Rdata", testNbElites = 1)
 @
 %
 The above line will load the scenario setup from \parameter{logFile} to
@@ -2929,7 +2929,7 @@ This is a bug in \aR 3.2.0 on Windows. The solution is to update your version of
 This is a warning given by \aR when the last line of an input file does not
 finish with the newline character. The warning is harmless and can be
 ignored. If you want to suppress it, just open the file and press the
-\code{ENTER} key at the end of the last line of the file.
+\code{ENTER} key at the end of the last line of the file to end the final line with a newline.
 
 
 \subsection{How are relative filesystem paths interpreted by \irace?}\label{faq:relpaths}

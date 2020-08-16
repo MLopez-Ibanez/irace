@@ -1,8 +1,6 @@
-#' testConfigurations
-#'
-#' \code{testConfigurations} executes the given configurations on the
-#' testing instances specified in the scenario.
-#' 
+#' Execute the given configurations on the testing instances specified in the
+#' scenario
+#'#' 
 #' @template arg_configurations
 #' @template arg_scenario
 #' @template arg_parameters
@@ -13,12 +11,13 @@
 #'     \item{\code{seeds}}{Array of the instance seeds used in the experiments.}
 #'   }
 #'
-#' @details A test instance set must be provided through \code{scenario$testInstances}.
+#' @details A test instance set must be provided through `scenario[["testInstances"]]`.
 #'
 #' @seealso
-#'  \code{\link{testing.main}}
+#'  [testing_fromlog()]
 #' 
 #' @author Manuel López-Ibáñez
+#' @md
 #' @export
 testConfigurations <- function(configurations, scenario, parameters)
 {
@@ -26,14 +25,14 @@ testConfigurations <- function(configurations, scenario, parameters)
   # we are called directly instead of being called after executing irace.
   scenario <- checkScenario(defaultScenario(scenario))
   
-  testInstances <- scenario$testInstances
+  testInstances <- scenario[["testInstances"]]
   instances.ID <- names(testInstances)
   if (length(testInstances) == 0) irace.error("No test instances given")
   if (is.null(instances.ID)) irace.error("testInstances must have names")
   
   # 2147483647 is the maximum value for a 32-bit signed integer.
   # We use replace = TRUE, because replace = FALSE allocates memory for each possible number.
-  ## FIXME: scenario$testInstances and scenario$instances behave differently,
+  ## FIXME: scenario[["testInstances"]] and scenario$instances behave differently,
   ## we should unify them so that the seeds are also saved in scenario.
   instanceSeed <- sample.int(2147483647, size = length(testInstances), replace = TRUE)
   names(instanceSeed) <- instances.ID

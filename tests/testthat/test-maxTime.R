@@ -32,8 +32,7 @@ time.irace <- function(...)
   confs <- irace(scenario = scenario, parameters = parameters)
   final_ids <- as.character(sort(confs$.ID.[1:scenario$testNbElites]))
   expect_gt(nrow(confs), 0L)
-  
-  testing.main(scenario$logFile)
+  testing_fromlog(scenario$logFile)
   load(scenario$logFile)
   if (scenario$testIterationElites) {
     # FIXME: We could test here that the correct configurations are tested.

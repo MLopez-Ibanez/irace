@@ -21,7 +21,7 @@ iraceResults$scenario$execDir <- "./"
 iraceResults$scenario$instances <-
   paste0(iraceResults$scenario$trainInstancesDir, "/",
          basename(iraceResults$scenario$instances))
-iraceResults$scenario$testInstances <-
+iraceResults$scenario[["testInstances"]] <-
   paste0(iraceResults$scenario$testInstancesDir, "/",
          basename(iraceResults$scenario$testInstances))
 

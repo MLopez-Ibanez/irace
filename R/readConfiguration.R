@@ -328,6 +328,30 @@ readScenario <- function(filename = "", scenario = list())
   return (scenario)
 }
 
+setup_test_instances <- function(scenario)
+{
+  if (is.null.or.empty(scenario[["testInstances"]])) {
+    if (!is.null.or.empty(scenario$testInstancesDir) || 
+        !is.null.or.empty(scenario$testInstancesFile)) {
+      scenario$testInstancesDir <- path.rel2abs(scenario$testInstancesDir)
+      if (!is.null.or.empty(scenario$testInstancesFile)) {
+        scenario$testInstancesFile <- path.rel2abs(scenario$testInstancesFile)
+      }
+      scenario[["testInstances"]] <-
+        readInstances(instancesDir = scenario$testInstancesDir,
+                      instancesFile = scenario$testInstancesFile)
+    } else {
+      scenario[["testInstances"]] <- NULL
+    }
+  }
+  if (!is.null(scenario[["testInstances"]])
+      && is.null(names(scenario[["testInstances"]]))) {
+    # Create unique IDs for testInstances
+    names(scenario[["testInstances"]]) <- paste0(1:length(scenario[["testInstances"]]), "t")
+  }
+  return (scenario)
+}    
+
 #' Check and correct the given scenario
 #'
 #' `checkScenario` takes a (possibly incomplete) scenario setup of
@@ -499,26 +523,8 @@ checkScenario <- function(scenario = defaultScenario())
   }
   
   # Testing instances
-  if (is.null.or.empty(scenario$testInstances)) {
-    if (!is.null.or.empty(scenario$testInstancesDir) || 
-        !is.null.or.empty(scenario$testInstancesFile)) {
-      scenario$testInstancesDir <- path.rel2abs(scenario$testInstancesDir)
-      if (!is.null.or.empty(scenario$testInstancesFile)) {
-        scenario$testInstancesFile <- path.rel2abs(scenario$testInstancesFile)
-      }
-      scenario$testInstances <-
-        readInstances(instancesDir = scenario$testInstancesDir,
-                      instancesFile = scenario$testInstancesFile)
-    } else {
-      scenario$testInstances <- NULL
-    }
-  }
-  if (!is.null(scenario$testInstances)
-      && is.null(names(scenario$testInstances))) {
-    # Create unique IDs for testInstances
-    names(scenario$testInstances) <- paste0(1:length(scenario$testInstances), "t")
-  }
-  
+  scenario <- setup_test_instances(scenario)
+
   # Configurations file
   if (!is.null.or.empty(scenario$configurationsFile)) {
     scenario$configurationsFile <- path.rel2abs(scenario$configurationsFile)

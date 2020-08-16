@@ -35,6 +35,11 @@
                            (Manuel López-Ibáñez, reported by Marcelo de Souza)
 
  * Fixes to the Matlab example. (Manuel López-Ibáñez)
+ 
+ * New functions `testing_fromlog()` and `testing_fromfile()` for independently
+   executing the testing phase. The function `testing.main()` was removed as it
+   is superseded by the new ones. 
+                                                      (Manuel López-Ibáñez)
 
 
 # irace 3.4.1  (31/03/2020)
