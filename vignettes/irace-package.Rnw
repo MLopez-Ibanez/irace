@@ -6,6 +6,7 @@
 %\VignetteDepends{knitr}
 %\VignetteCompiler{knitr}
 \synctex=1
+\RequirePackage{xparse}
 \RequirePackage[dvipsnames]{xcolor}
 \documentclass[a4paper,english]{article}
 \usepackage[T1]{fontenc}
