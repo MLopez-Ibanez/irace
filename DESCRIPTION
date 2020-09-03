@@ -42,5 +42,5 @@ BugReports: https://github.com/MLopez-Ibanez/irace/issues
 ByteCompile: yes
 LazyData: yes
 Encoding: UTF-8
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.1
 SystemRequirements: GNU make

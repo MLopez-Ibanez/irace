@@ -1,6 +1,6 @@
 #' Execute the given configurations on the testing instances specified in the
 #' scenario
-#'#' 
+#'
 #' @template arg_configurations
 #' @template arg_scenario
 #' @template arg_parameters

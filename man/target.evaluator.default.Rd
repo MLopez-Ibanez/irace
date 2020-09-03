@@ -4,8 +4,13 @@
 \alias{target.evaluator.default}
 \title{target.evaluator.default}
 \usage{
-target.evaluator.default(experiment, num.configurations, all.conf.id,
-  scenario, target.runner.call)
+target.evaluator.default(
+  experiment,
+  num.configurations,
+  all.conf.id,
+  scenario,
+  target.runner.call
+)
 }
 \arguments{
 \item{experiment}{A list describing the experiment. It contains at least:

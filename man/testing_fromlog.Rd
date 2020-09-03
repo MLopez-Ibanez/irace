@@ -4,8 +4,14 @@
 \alias{testing_fromlog}
 \title{Test configurations given in \code{.Rdata} file}
 \usage{
-testing_fromlog(logFile, testNbElites, testIterationElites,
-  testInstancesDir, testInstancesFile, testInstances)
+testing_fromlog(
+  logFile,
+  testNbElites,
+  testIterationElites,
+  testInstancesDir,
+  testInstancesFile,
+  testInstances
+)
 }
 \arguments{
 \item{logFile}{Path to the \code{.Rdata} file produced by \pkg{irace}.}

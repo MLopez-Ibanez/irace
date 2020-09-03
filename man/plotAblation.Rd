@@ -4,9 +4,16 @@
 \alias{plotAblation}
 \title{Create plot from an ablation log}
 \usage{
-plotAblation(ab.log = NULL, abLogFile = NULL, pdf.file = NULL,
-  pdf.width = 20, type = c("mean", "boxplot"), mar = par("mar"),
-  ylab = "Mean configuration cost", ...)
+plotAblation(
+  ab.log = NULL,
+  abLogFile = NULL,
+  pdf.file = NULL,
+  pdf.width = 20,
+  type = c("mean", "boxplot"),
+  mar = par("mar"),
+  ylab = "Mean configuration cost",
+  ...
+)
 }
 \arguments{
 \item{ab.log}{Ablation log returned by \code{\link{ablation}}.}

@@ -4,9 +4,15 @@
 \alias{parallelCoordinatesPlot}
 \title{parallelCoordinatesPlot}
 \usage{
-parallelCoordinatesPlot(configurations, parameters,
-  param_names = parameters$names, hierarchy = TRUE, filename = NULL,
-  pdf.width = 14, mar = c(8, 1, 4, 1))
+parallelCoordinatesPlot(
+  configurations,
+  parameters,
+  param_names = parameters$names,
+  hierarchy = TRUE,
+  filename = NULL,
+  pdf.width = 14,
+  mar = c(8, 1, 4, 1)
+)
 }
 \arguments{
 \item{configurations}{(\code{data.frame}) \cr Parameter configurations of the
@@ -41,9 +47,8 @@ A set of parallel coordinates plots showing the parameters values.
  ## To use data obtained by irace
  # First, load the data produced by irace.
  irace.logfile <- file.path(system.file(package="irace"), "exdata", "irace-acotsp.Rdata")
- load(irace.logfile)
- attach(iraceResults)
- parallelCoordinatesPlot(allConfigurations, parameters, hierarchy = FALSE)
+ load(irace.logfile) # Creates iraceResults
+ parallelCoordinatesPlot(iraceResults$allConfigurations, iraceResults$parameters, hierarchy = FALSE)
 }
 
 }

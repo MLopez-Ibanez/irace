@@ -21,9 +21,8 @@
 #' 
 #'  # First, load the data produced by irace.
 #'  irace.logfile <- file.path(system.file(package="irace"), "exdata", "irace-acotsp.Rdata")
-#'  load(irace.logfile)
-#'  attach(iraceResults)
-#'  parameterFrequency(allConfigurations, parameters)
+#'  load(irace.logfile) # Creates iraceResults
+#'  parameterFrequency(iraceResults$allConfigurations, iraceResults$parameters)
 #' }
 #'
 #' @seealso 
@@ -225,9 +224,8 @@ parcoordlabel <- function (configurations, parameters, col = "green", lty = 1,
 #'  ## To use data obtained by irace
 #'  # First, load the data produced by irace.
 #'  irace.logfile <- file.path(system.file(package="irace"), "exdata", "irace-acotsp.Rdata")
-#'  load(irace.logfile)
-#'  attach(iraceResults)
-#'  parallelCoordinatesPlot(allConfigurations, parameters, hierarchy = FALSE)
+#'  load(irace.logfile) # Creates iraceResults
+#'  parallelCoordinatesPlot(iraceResults$allConfigurations, iraceResults$parameters, hierarchy = FALSE)
 #' }
 #'
 #' @seealso 

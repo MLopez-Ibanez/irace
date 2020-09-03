@@ -34,7 +34,8 @@ buildCommandLine (values, switches)
 irace.logfile <- file.path(system.file(package="irace"),
                            "exdata", "irace-acotsp.Rdata")
 load(irace.logfile)
-attach(iraceResults)
+allConfigurations <- iraceResults$allConfigurations
+parameters <- iraceResults$parameters
 apply(allConfigurations[1:10, unlist(parameters$names)], 1, buildCommandLine,
       unlist(parameters$switches))
 

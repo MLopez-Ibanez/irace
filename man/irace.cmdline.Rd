@@ -20,7 +20,7 @@ A data frame with the set of best algorithm configurations found by \pkg{irace}.
 The data frame has the following columns:
 \itemize{
 \item \code{.ID.} : Internal id of the candidate configuration.
-\item \code{Parameter names} : One column per parameter name in \code{parameters}.
+\item \verb{Parameter names} : One column per parameter name in \code{parameters}.
 \item \code{.PARENT.} : Internal id of the parent candidate configuration.
 }
 

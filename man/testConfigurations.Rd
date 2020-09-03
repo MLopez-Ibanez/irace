@@ -3,8 +3,7 @@
 \name{testConfigurations}
 \alias{testConfigurations}
 \title{Execute the given configurations on the testing instances specified in the
-scenario
-#'}
+scenario}
 \usage{
 testConfigurations(configurations, scenario, parameters)
 }
@@ -30,7 +29,6 @@ A list with the following elements:
 \description{
 Execute the given configurations on the testing instances specified in the
 scenario
-#'
 }
 \details{
 A test instance set must be provided through \code{scenario[["testInstances"]]}.

@@ -4,8 +4,12 @@
 \alias{getConfigurationById}
 \title{Returns the configurations selected by ID.}
 \usage{
-getConfigurationById(iraceResults = NULL, logFile = NULL, ids,
-  drop.metadata = FALSE)
+getConfigurationById(
+  iraceResults = NULL,
+  logFile = NULL,
+  ids,
+  drop.metadata = FALSE
+)
 }
 \arguments{
 \item{iraceResults}{Object created by \pkg{irace} and saved in \code{scenario$logFile}.}

@@ -4,8 +4,12 @@
 \alias{getFinalElites}
 \title{Return the elite configurations of the final iteration.}
 \usage{
-getFinalElites(iraceResults = NULL, logFile = NULL, n = 0,
-  drop.metadata = FALSE)
+getFinalElites(
+  iraceResults = NULL,
+  logFile = NULL,
+  n = 0,
+  drop.metadata = FALSE
+)
 }
 \arguments{
 \item{iraceResults}{Object created by \pkg{irace} and saved in \code{scenario$logFile}.}

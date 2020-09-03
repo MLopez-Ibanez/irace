@@ -4,9 +4,15 @@
 \alias{psRace}
 \title{psRace}
 \usage{
-psRace(iraceLogFile = NULL, iraceResults = NULL, conf.ids = NULL,
-  postselection = NULL, max.experiments = NULL, elites = FALSE,
-  seed = 1234567)
+psRace(
+  iraceLogFile = NULL,
+  iraceResults = NULL,
+  conf.ids = NULL,
+  postselection = NULL,
+  max.experiments = NULL,
+  elites = FALSE,
+  seed = 1234567
+)
 }
 \arguments{
 \item{iraceLogFile}{NULL Log file created by \pkg{irace}, this file must contain the 
@@ -53,7 +59,7 @@ If \code{iraceLogFile} is provided this list object will be saved in \code{irace
   # Use 10\% of the total budget
   scenario$postselection <- 0.1
   irace(scenario=scenario, parameters=parameters)
-  # Execute the postselection after the execution of \\pkg{irace}.
+  # Execute the postselection after the execution of \pkg{irace}.
   psRace(iraceLogFile="irace.Rdata", max.experiments=120)
 }
 

@@ -4,7 +4,9 @@
 \name{irace.license}
 \alias{irace.license}
 \title{irace.license}
-\format{An object of class \code{character} of length 1.}
+\format{
+An object of class \code{character} of length 1.
+}
 \usage{
 irace.license
 }

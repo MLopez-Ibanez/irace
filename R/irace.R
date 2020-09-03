@@ -348,6 +348,7 @@ startParallel <- function(scenario)
         # on Windows. We need to use the future package for that:
         # https://stackoverflow.com/questions/56501937/how-to-print-from-clusterapply
         .irace$cluster <- parallel::makeCluster(parallel)
+        if (scenario$debugLevel >= 1) irace.note("makeCluster initialized for ", parallel, " jobs.")
         # In Windows, this needs to be exported, or we get:
         ## Error in checkForRemoteErrors(val) : 
         ##  2 nodes produced errors; first error: could not find function "target.runner"

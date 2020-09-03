@@ -4,9 +4,13 @@
 \alias{configurationsBoxplot}
 \title{Creates box plots of the quality of configurations.}
 \usage{
-configurationsBoxplot(experiments, title = NULL,
-  xlabel = "Configuration ID", ylabel = "Configuration cost",
-  filename = NULL)
+configurationsBoxplot(
+  experiments,
+  title = NULL,
+  xlabel = "Configuration ID",
+  ylabel = "Configuration cost",
+  filename = NULL
+)
 }
 \arguments{
 \item{experiments}{Matrix of performance of configurations (columns) over a set of instances (rows).}
