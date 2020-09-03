@@ -11,7 +11,9 @@ notifications:
 os:
   - linux
   - osx
-  
+
+dist: bionic
+
 r:
   - 3.4
   - oldrel
