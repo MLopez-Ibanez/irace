@@ -9,7 +9,7 @@
 /git_version
 /irace-Ex.R
 /TAGS
-/*.synctex.gz
+/*.synctex*
 /*.bak
 docs/
 
@@ -56,7 +56,7 @@ docs/
 /vignettes/*.out
 /vignettes/*.toc
 /vignettes/*.bbl
-/vignettes/*.synctex.gz
+/vignettes/*.synctex*
 /vignettes/irace-package.tex
 /vignettes/irace-package.pdf
 /vignettes/irace-package.R
