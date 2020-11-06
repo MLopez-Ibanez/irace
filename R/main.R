@@ -230,7 +230,7 @@ testing_fromlog <- function(logFile, testNbElites, testIterationElites,
     tmp <- iraceResults$allElites[[length(iraceResults$allElites)]]
     testing_id <- tmp[1:min(length(tmp), scenario$testNbElites)]
   }
-  testing_id <- unique.default(testing_id)
+  testing_id <- unique.default(unlist(testing_id))
   configurations <- iraceResults$allConfigurations[testing_id, , drop=FALSE]
 
   irace.note ("Testing configurations (in no particular order): ", paste(testing_id, collapse=" "), "\n")
