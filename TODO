@@ -120,8 +120,9 @@ TODO General (in order of importance):
  * Compositional parameter values (parameter values that must sum up to 1 or
    100) could be transformed into Euclidean space by using isometric log-ratio
    transformation (Egozcue, J.J., et al., 2003. Isometric logratio
-   transformations for compositional data. Mathematical Geology)
-   or mixture models.   
+   transformations for compositional data. Mathematical Geology) or mixture
+   models (Calibrating continuous multi-objective heuristics using mixture
+   experiments, José Antonio Vázquez-Rodríguez and Sanja Petrovic)
    
  * Detect the case where all possible parameter configurations can be sampled
    and there is still enough budget to do at least one test. In that case, it
