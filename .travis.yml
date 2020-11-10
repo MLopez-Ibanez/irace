@@ -35,6 +35,7 @@ env:
 before_install:
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then sudo ./scripts/latex_setup.sh; fi
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then ./scripts/latex_setup.sh; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt install libharfbuzz-dev libfribidi-dev; fi
   - make version
 
 # FIXME: We override the default install because we don't want to install the
@@ -68,7 +69,7 @@ after_success:
   - test $TRAVIS_OS_NAME = "linux" && test $TRAVIS_R_VERSION_STRING = "release" && Rscript scripts/codecov.R
 
 deploy:
-  cleanup: false
+  skip_cleanup: true
   provider: script
   script: Rscript ./scripts/deploy_github_userguide.R
   on:
