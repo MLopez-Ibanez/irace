@@ -3,6 +3,9 @@ library(openssl)
 library(fs)
 library(withr)
 
+# We have to do all this mess to get the PDF vignette from the package just
+# build. Is there a better way?
+
 # Most of it copied from: https://github.com/r-lib/pkgdown/blob/master/R/deploy-site.R
 git <- function(..., echo_cmd = TRUE, echo = TRUE, error_on_status = TRUE) {
   invisible(processx::run("git", c(...), echo_cmd = echo_cmd, echo = echo, error_on_status = error_on_status))
@@ -73,7 +76,7 @@ git("fetch", remote, branch)
 
 github_worktree_add(dest_dir, remote, branch)
 
-
+# Here we extract the vignette.
 cat_line("Extracting irace-package.pdf")
 untar(tarball, files = "irace/inst/doc/irace-package.pdf", verbose=TRUE,
       extras ="--strip-components=3", exdir=dest_dir)
@@ -82,5 +85,7 @@ github_push(dest_dir, commit_message, remote, branch)
 rule("Deploy completed", line = 2)
 github_worktree_remove(dest_dir)
 
+#devtools::install()
+install.packages("pkgdown")
 pkgdown::deploy_site_github(run_dont_run = TRUE)
 

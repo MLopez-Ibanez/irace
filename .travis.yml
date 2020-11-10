@@ -60,15 +60,15 @@ install:
 
 r_check_args: '--run-donttest --timings'
 
-# FIXME: We only need to do this for deploy
-before_cache: Rscript -e 'install.packages("pkgdown")'
+## FIXME: We only need to do this for deploy, but it seems to have stopped working
+# before_cache: Rscript -e 'install.packages("pkgdown")'
 
 after_success:
   - while sleep 540; do echo "=====[ $SECONDS seconds still running ]====="; done &
   - test $TRAVIS_OS_NAME = "linux" && test $TRAVIS_R_VERSION_STRING = "release" && Rscript scripts/codecov.R
 
 deploy:
-  skip_cleanup: true
+  cleanup: false
   provider: script
   script: Rscript ./scripts/deploy_github_userguide.R
   on:
