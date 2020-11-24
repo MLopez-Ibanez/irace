@@ -3,7 +3,7 @@ R --slave --quiet <<'EOF'
 list_of_packages <- c("devtools", "testthat")
 new_packages <- list_of_packages[!(list_of_packages %in% installed.packages()[,"Package"])]
 if(length(new_packages)) {
- cat("Installing R packakages: ", paste0(new_packages, collapse=", "), "\n")
+ cat("Installing R packages: ", paste0(new_packages, collapse=", "), "\n")
  install_packages(new_packages)
 }
 EOF
