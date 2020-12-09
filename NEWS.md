@@ -41,6 +41,12 @@
    is superseded by the new ones. 
                                                       (Manuel López-Ibáñez)
 
+ * Fix: The default of `testType` was not set to `t-test` when capping was
+   enabled. 
+                          (Manuel López-Ibáñez, reported by Jovana Radjenovic)
+
+ * Fix various issues in the user guide.
+                          (Manuel López-Ibáñez, reported by Jovana Radjenovic)
 
 # irace 3.4.1  (31/03/2020)
 

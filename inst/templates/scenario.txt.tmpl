@@ -93,13 +93,13 @@
 ## Randomly sample the training instances or use them in the order given.
 # sampleInstances = 1
 
-## Statistical test used for elimination. Default test is always F-test
-## unless capping is enabled, in which case the default test is t-test.
-## Valid values are: F-test (Friedman test), t-test (pairwise t-tests with
-## no correction), t-test-bonferroni (t-test with Bonferroni's correction
-## for multiple comparisons), t-test-holm (t-test with Holm's correction
-## for multiple comparisons).
-# testType = "F-test"
+## Statistical test used for elimination. The default value selects t-test
+## if capping is enabled or F-test, otherwise. Valid values are: F-test
+## (Friedman test), t-test (pairwise t-tests with no correction),
+## t-test-bonferroni (t-test with Bonferroni's correction for multiple
+## comparisons), t-test-holm (t-test with Holm's correction for multiple
+## comparisons).
+# testType = ""
 
 ## Number of instances evaluated before the first elimination test. It
 ## must be a multiple of eachTest.

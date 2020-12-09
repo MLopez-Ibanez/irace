@@ -85,7 +85,7 @@ The scenario list contains the following elements:
    }
  \item Statistical test:
    \describe{
-     \item{\code{testType}}{Statistical test used for elimination. Default test is always \code{F-test} unless \code{capping} is enabled, in which case the default test is \code{t-test}. Valid values are: F-test (Friedman test), t-test (pairwise t-tests with no correction), t-test-bonferroni (t-test with Bonferroni's correction for multiple comparisons), t-test-holm (t-test with Holm's correction for multiple comparisons). (Default: \code{"F-test"})}
+     \item{\code{testType}}{Statistical test used for elimination. The default value selects \code{t-test} if \code{capping} is enabled or \code{F-test}, otherwise. Valid values are: F-test (Friedman test), t-test (pairwise t-tests with no correction), t-test-bonferroni (t-test with Bonferroni's correction for multiple comparisons), t-test-holm (t-test with Holm's correction for multiple comparisons). (Default: \code{""})}
      \item{\code{firstTest}}{Number of instances evaluated before the first elimination test. It must be a multiple of \code{eachTest}. (Default: \code{5})}
      \item{\code{eachTest}}{Number of instances evaluated between elimination tests. (Default: \code{1})}
      \item{\code{confidence}}{Confidence level for the elimination test. (Default: \code{0.95})}

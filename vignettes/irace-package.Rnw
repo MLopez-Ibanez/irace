@@ -2029,12 +2029,12 @@ for a particular experiment can be obtained with:\sloppy
 # As an example, we get seed and instance of the experiments
 # of the best candidate.
 # Get index of the instances
-pair.id <- names(all.exp[!is.na(all.exp)])
-index <- iraceResults$state$.irace$instancesList[pair.id,"instance"]
+pair.id <- which(!is.na(all.exp))
+index <- iraceResults$state$.irace$instancesList[pair.id, "instance"]
 # Obtain the instance names
 iraceResults$scenario$instances[index]
 # Get the seeds
-iraceResults$state$.irace$instancesList[index,"seed"]
+iraceResults$state$.irace$instancesList[pair.id, "seed"]
 @
 \item \code{experimentLog}: A matrix with columns \code{iteration, instance, configuration}. This matrix contains the log of all the experiments that \irace
 performs during its execution. The \code{instance} column refers to the index of the
@@ -2286,17 +2286,8 @@ using the hypervolume can be found in the examples at
 \subsection{Tuning for minimizing computation time}
 \label{sec:capping}
 
-When using \irace for tuning algorithms that report computation time to
-reach a target, \parameter{targetRunner} should return the execution time of a configuration instead of solution cost.
-
-%Even though \irace can be used for
-%minimizing computation time, \irace may itself require more time to do so in
-%its current version than other methods, such as
-%\code{ParamILS}\footnote{\url{http://www.cs.ubc.ca/labs/beta/Projects/ParamILS/}}
-%or \code{SMAC}\footnote{\url{http://www.cs.ubc.ca/labs/beta/Projects/SMAC/}},
-%since it does not make use of techniques, such as ``adaptive capping'', that
-%avoid long runs of the target algorithm.
-%We are currently extending \irace with an adaptive capping mechanism.
+When using \irace for tuning algorithms that only report computation time to
+reach a target, \parameter{targetRunner} should return the execution time of a configuration instead of solution cost. When using \parameter{maxTime} as the budget, this means that \parameter{targetRunner} must return two times the execution time since the first value is the minimization objective and the second value is used to track the budget consumed.
 
 Starting from version $3.0$,  \irace includes an elitist racing procedure that 
 implements an \textbf{adaptive capping mechanism} \citep{PerLopHooStu2017:lion}. 

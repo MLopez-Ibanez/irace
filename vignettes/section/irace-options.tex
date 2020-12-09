@@ -188,7 +188,7 @@ Minimum time unit that is still (significantly) measureable.
 
 \subsection[Statistical test]{Statistical test}
 \begin{description}
- \defparameter{testType}{test-type}{F-test}%
+ \defparameter{testType}{test-type}{}%
 Specifies the statistical test used for elimination:
 \begin{itemize}
 \item[] \code{F-test} (Friedman test)
@@ -199,7 +199,7 @@ Specifies the statistical test used for elimination:
  We recommend to not use corrections for multiple comparisons because the test typically becomes too strict and the search stagnates. 
 See \autoref{sec:stat test} for details about choosing the statistical test most appropriate for your scenario.
 \begin{xwarningbox}
- The default setting of \parameter{testType} is \code{F-test} unless the \parameter{capping} option is enabled in which case, the default  setting is defined as \code{t-test}.
+ The default setting of \parameter{testType} is \code{F-test} unless the \parameter{capping} option is enabled in which case, the default setting is \code{t-test}.
 \end{xwarningbox}
 
  \defparameter{firstTest}{first-test}{5}%
