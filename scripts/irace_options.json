@@ -277,8 +277,8 @@
     "short": "",
     "long": "--iterations",
     "default": 0,
-    "description": "Number of iterations.",
-    "vignettes": "Minimum number of iterations to be executed. Each iteration involves the generation of new configurations and the use of racing to select the best configurations. By default (with 0), \\irace calculates the minimum number of iterations as $\\Niter = \\lfloor 2 + \\log_{2}\\Nparam \\rfloor$, where $\\Nparam$ is the number of non-fixed parameters to be tuned. We recommend to use the default value.",
+    "description": "Maximum number of iterations.",
+    "vignettes": "Maximum number of iterations to be executed. Each iteration involves the generation of new configurations and the use of racing to select the best configurations. By default (with 0), \\irace calculates a \\emph{minimum} number of iterations as $\\Niter = \\lfloor 2 + \\log_{2}\\Nparam \\rfloor$, where $\\Nparam$ is the number of non-fixed parameters to be tuned. Setting this parameter may make \\irace stop sooner than it should without using all the available budget. We recommend to use the default value.",
     "section": "Internal \\irace options"
   },
   {

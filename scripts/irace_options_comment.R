@@ -19,7 +19,7 @@
 #'    }
 #'  \item Internal \code{irace} options:
 #'    \describe{
-#'      \item{\code{nbIterations}}{Number of iterations. (Default: \code{0})}
+#'      \item{\code{nbIterations}}{Maximum number of iterations. (Default: \code{0})}
 #'      \item{\code{nbExperimentsPerIteration}}{Number of runs of the target algorithm per iteration. (Default: \code{0})}
 #'      \item{\code{sampleInstances}}{Randomly sample the training instances or use them in the order given. (Default: \code{1})}
 #'      \item{\code{minNbSurvival}}{Minimum number of configurations needed to continue the execution of each race (iteration). (Default: \code{0})}

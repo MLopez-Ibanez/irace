@@ -69,7 +69,7 @@ Enable/disable elitist \irace.
 \subsection[Internal irace options]{Internal \irace options}
 \begin{description}
  \defparameter{nbIterations}{iterations}{0}%
-Minimum number of iterations to be executed. Each iteration involves the generation of new configurations and the use of racing to select the best configurations. By default (with 0), \irace calculates the minimum number of iterations as $\Niter = \lfloor 2 + \log_{2}\Nparam \rfloor$, where $\Nparam$ is the number of non-fixed parameters to be tuned. We recommend to use the default value.
+Maximum number of iterations to be executed. Each iteration involves the generation of new configurations and the use of racing to select the best configurations. By default (with 0), \irace calculates a \emph{minimum} number of iterations as $\Niter = \lfloor 2 + \log_{2}\Nparam \rfloor$, where $\Nparam$ is the number of non-fixed parameters to be tuned. Setting this parameter may make \irace stop sooner than it should without using all the available budget. We recommend to use the default value.
 
  \defparameter{nbExperimentsPerIteration}{experiments-per-iteration}{0}%
 Number of runs of the target algorithm per iteration. By default (when equal to 0), this value changes for each iteration and depends on the iteration index and the remaining budget. Further details are provided in the \irace paper~\citep{LopDubPerStuBir2016irace}.

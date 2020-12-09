@@ -70,7 +70,7 @@
 "Minimum time unit that is still (significantly) measureable.", 
 "Maximum number of decimal places that are significant for numerical (real) parameters.", 
 "Debug level of the output of irace. Set this to 0 to silence all debug messages. Higher values provide more verbose debug messages.", 
-"Number of iterations.", "Number of runs of the target algorithm per iteration.", 
+"Maximum number of iterations.", "Number of runs of the target algorithm per iteration.", 
 "Randomly sample the training instances or use them in the order given.", 
 "Statistical test used for elimination. Default test is always F-test unless capping is enabled, in which case the default test is t-test. Valid values are: F-test (Friedman test), t-test (pairwise t-tests with no correction), t-test-bonferroni (t-test with Bonferroni's correction for multiple comparisons), t-test-holm (t-test with Holm's correction for multiple comparisons).", 
 "Number of instances evaluated before the first elimination test. It must be a multiple of eachTest.", 
