@@ -133,7 +133,7 @@ for (i in seq_len(nrow(irace.params))) {
   if (p["description"] == "") next
   if (p["name"] %in% c("scenarioFile")) next 
   out.text <- c(out.text,
-                strwrap(to.plain.text(p["description"]), width = 75,  prefix = "## "),
+                strwrap(to.plain.text(p["description"]), width = 79,  prefix = "## "),
                 sprintf("# %s = %s\n", p["name"],
                         format.number.or.string(p["default"])))
 }
