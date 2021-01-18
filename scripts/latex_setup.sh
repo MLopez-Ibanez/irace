@@ -1,4 +1,5 @@
 #!/bin/sh
+tlmgr option repository ctan
 tlmgr update --self
 tlmgr option -- autobackup 0
 tlmgr option -- docfiles 0
