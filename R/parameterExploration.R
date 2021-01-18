@@ -113,7 +113,8 @@ psRace <- function(iraceLogFile=NULL, iraceResults=NULL, conf.ids=NULL,
                       elitistNewInstances = 0)
   experiments <- race.output$experiments
   
-  elite.configurations <- extractElites(race.output$configurations,
+  elite.configurations <- extractElites(scenario, parameters,
+                                        race.output$configurations,
                                         min(race.output$nbAlive, 1))
   irace.note("Elite configurations (first number is the configuration ID;",
                " listed from best to worst according to the ",

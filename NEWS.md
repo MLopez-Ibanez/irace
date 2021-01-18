@@ -48,6 +48,10 @@
  * Fix various issues in the user guide.
                           (Manuel López-Ibáñez, reported by Jovana Radjenovic)
 
+ * Remove duplicated elites.
+                          (Manuel López-Ibáñez, reported by Federico Naldini)
+
+
 # irace 3.4.1  (31/03/2020)
 
  * `NEWS` converted to markdown.

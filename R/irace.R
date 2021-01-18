@@ -141,7 +141,7 @@ similarConfigurations <- function(configurations, parameters, threshold)
     ## filtering them out:
     configurations <- configurations [keepIdx, , drop=FALSE]
     ## filtering their strings out (to use them to define blocks):
-    strings <- strings [keepIdx]
+    strings <- strings[keepIdx]
     
     ## if everything is already filtered out, return
     if (nrow(configurations) == 0) {
@@ -1135,7 +1135,8 @@ irace <- function(scenario, parameters)
     # FIXME: Since we only actually keep the alive ones, we don't need
     # to carry around rejected ones in raceResults$configurations. This
     # would reduce overhead.
-    eliteConfigurations <- extractElites(raceResults$configurations,
+    eliteConfigurations <- extractElites(scenario, parameters,
+                                         raceResults$configurations,
                                          min(raceResults$nbAlive, minSurvival))
     irace.note("Elite configurations (first number is the configuration ID;",
                " listed from best to worst according to the ",
