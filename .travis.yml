@@ -35,7 +35,7 @@ env:
 before_install:
   - if [ "$TRAVIS_OS_NAME" == "osx" ]; then sudo ./scripts/latex_setup.sh; fi
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then ./scripts/latex_setup.sh; fi
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt install libharfbuzz-dev libfribidi-dev; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt install libharfbuzz-dev libfribidi-dev libgit2-dev; fi
   - make version
 
 # FIXME: We override the default install because we don't want to install the
