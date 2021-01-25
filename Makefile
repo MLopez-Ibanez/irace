@@ -116,7 +116,7 @@ cran: releasebuild
 
 check: build
 ifdef TEST
-	_R_CHECK_FORCE_SUGGESTS_=false NOT_CRAN=true $(Reval) 'devtools::test(filter="$(TEST)")'
+	_R_CHECK_FORCE_SUGGESTS_=false NOT_CRAN=true $(Reval) 'devtools::test(filter="$(TEST)", stop_on_failure = TRUE)'
 else
 	test -d ./GenericWrapper4AC/build || (cd GenericWrapper4AC && python3 setup.py install --user)
 	cd $(BINDIR) && (_R_CHECK_FORCE_SUGGESTS_=false NOT_CRAN=true R CMD check --run-donttest --timings $(PACKAGE)_$(PACKAGEVERSION).tar.gz; cat $(PACKAGE).Rcheck/$(PACKAGE)-Ex.timings)
@@ -169,10 +169,10 @@ ifndef RNODE
 	@echo "ERROR: You must specify a remote node (e.g., RNODE=majorana)"
 	@exit 1
 else
-	rsync -rlp -CIzc -L --delete --copy-unsafe-links --exclude=.svn --exclude=/examples/ --progress --relative \
+	rsync -rlp -CIzc -L --delete --copy-unsafe-links --exclude=.svn --exclude=.git --exclude=web --exclude=/examples/ --progress --relative \
 	.     \
 	$(RNODE):$(RDIR)/$(PACKAGE)/
-	ssh $(RNODE) "cd $(RDIR)/$(PACKAGE) && make quick-install"
+	ssh $(RNODE) '. ~/.profile && cd $(RDIR)/$(PACKAGE) && make quick-install'
 endif
 
 submit: 

@@ -13,6 +13,7 @@ DEVEL-README
 ^.+\.data
 ^GenericWrapper4AC
 ^Instances$
+^LICENSE\.md$
 ^Makefile$
 ^Program$
 ^R/.+\.data
@@ -67,4 +68,4 @@ DEVEL-README
 ^vignettes/optbib
 ^web
 _pkgdown.yml
-^LICENSE\.md$
+_snaps
