@@ -566,11 +566,11 @@ irace <- function(scenario, parameters)
     }
   }
   
-  scenario <- checkScenario(defaultScenario(scenario))
+  scenario <- checkScenario(scenario)
   parameters <- checkParameters(parameters)
   
   # Recover state from file?
-  if (!is.null(scenario$recoveryFile)) {
+  if (!is.null.or.empty(scenario$recoveryFile)) {
     irace.note ("Resuming from file: '", scenario$recoveryFile,"'\n")
     recoverFromFile(scenario$recoveryFile)
     # We call checkScenario again to fix any inconsistencies in the recovered

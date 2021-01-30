@@ -23,7 +23,7 @@ testConfigurations <- function(configurations, scenario, parameters)
 {
   # We need to set up a default scenario (and repeat all checks) in case
   # we are called directly instead of being called after executing irace.
-  scenario <- checkScenario(defaultScenario(scenario))
+  scenario <- checkScenario(scenario)
   
   testInstances <- scenario[["testInstances"]]
   instances.ID <- names(testInstances)

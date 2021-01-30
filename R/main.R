@@ -103,6 +103,7 @@ irace.main <- function(scenario = defaultScenario(), output.width = 9999L)
   op <- options(width = output.width) # Do not wrap the output.
   on.exit(options(op), add = TRUE)
 
+  # FIXME: We check the scenario again in irace(). Avoid this duplication.
   scenario <- checkScenario (scenario)
   debug.level <- scenario$debugLevel
   
@@ -121,7 +122,7 @@ irace.main <- function(scenario = defaultScenario(), output.width = 9999L)
 						
   if (debug.level >= 2) { irace.note("Parameters have been read\n") }
   
-  eliteConfigurations <- irace (scenario = scenario, parameters = parameters)
+  eliteConfigurations <- irace(scenario = scenario, parameters = parameters)
   
   cat("# Best configurations (first number is the configuration ID;",
       " listed from best to worst according to the ",
@@ -184,7 +185,6 @@ testing_fromlog <- function(logFile, testNbElites, testIterationElites,
   }
   
   file.check(logFile, readable = TRUE, text = "irace log file")
-
   load(logFile)
   scenario <- iraceResults[["scenario"]]
   parameters <- iraceResults[["parameters"]]

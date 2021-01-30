@@ -282,8 +282,8 @@ readScenario <- function(filename = "", scenario = list())
   if (filename == "") {
     filename <- .irace.params.def["scenarioFile","default"]
     if (file.exists(filename)) {
-      irace.warning("A default scenario file", shQuote(filename),
-                    "has been found and will be read\n")
+      irace.warning("A default scenario file ", shQuote(filename),
+                    " has been found and will be read\n")
     } else {
       irace.error ("Not scenario file given (use ",
                    .irace.params.def["scenarioFile", "short"], " or ",
@@ -409,10 +409,9 @@ checkScenario <- function(scenario = defaultScenario())
                    paste0(valid, collapse = ", "))
     }
   }
-  
-  
+    
   # Fill possible unset (NULL) with default settings.
-  scenario <- defaultScenario (scenario)
+  scenario <- defaultScenario(scenario)
 
   # Duplicated entries will cause confusion.
   dups <- anyDuplicated(names(scenario))
@@ -439,7 +438,8 @@ checkScenario <- function(scenario = defaultScenario())
     file.check(scenario$logFile, writeable = TRUE,
                text = quote.param('logFile'))
   } else {
-    scenario$logFile  <- NULL
+    # We cannot use NULL because defaultScenario() would override it.
+    scenario$logFile <- ""
   }
 
   if (!is.null.or.empty(scenario$recoveryFile)) {
@@ -447,13 +447,14 @@ checkScenario <- function(scenario = defaultScenario())
     file.check(scenario$recoveryFile, readable = TRUE,
                text = paste0("recovery file ", quote.param("recoveryFile")))
     
-    if (!is.null.or.empty(scenario$logFile)
+    if (!is.null.or.empty(scenario$logFile) # Must have been set "" above.
         && scenario$recoveryFile == scenario$logFile) {
       irace.error("log file and recovery file should be different '",
                   scenario$logFile, "'")
     }
   } else {
-    scenario$recoveryFile  <- NULL
+    # We cannot use NULL because defaultScenario() would override it.
+    scenario$recoveryFile <- ""
   }
   
   if (is.null.or.empty(scenario$targetRunnerParallel)) {
@@ -679,9 +680,8 @@ checkScenario <- function(scenario = defaultScenario())
     if (scenario$boundPar < 1)
       irace.error("Invalid value (", scenario$boundPar, ") ",
                   quote.param("boundPar"), " must be >= 1")
-  } else { # no capping
-    if (scenario$boundMax <= 0 || is.na(scenario$boundMax))
-      scenario$boundMax <- NULL
+  } else if (scenario$boundMax <= 0 || is.na(scenario$boundMax)) { # no capping
+    scenario$boundMax <- NULL
   }
 
   if (is.null.or.empty(scenario$testType) || 

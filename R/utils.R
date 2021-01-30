@@ -814,6 +814,6 @@ irace_save_logfile <- function(iraceResults, scenario)
   cwd <- setwd(scenario$execDir)
   # FIXME: Use saveRDS
   # FIXME: Bump to version=3 when we bump the minimum R version to >=3.6
-  save (iraceResults, file = scenario$logFile, version = 2)
-  setwd (cwd)
+  save(iraceResults, file = scenario$logFile, version = 2)
+  setwd(cwd)
 }
