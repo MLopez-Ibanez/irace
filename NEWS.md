@@ -50,6 +50,9 @@
 
  * Remove duplicated elites.
                           (Manuel López-Ibáñez, reported by Federico Naldini)
+ 
+ * Generating the file `irace.Rdata` may be disabled by setting logFile="".
+                               (Manuel López-Ibáñez, reported by Johann Dreo)
 
 
 # irace 3.4.1  (31/03/2020)
