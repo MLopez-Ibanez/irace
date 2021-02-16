@@ -51,7 +51,7 @@
  * Remove duplicated elites.
                           (Manuel López-Ibáñez, reported by Federico Naldini)
  
- * Generating the file `irace.Rdata` may be disabled by setting logFile="".
+ * Generating the file `irace.Rdata` may be disabled by setting `logFile=""`.
                                (Manuel López-Ibáñez, reported by Johann Dreo)
 
 
