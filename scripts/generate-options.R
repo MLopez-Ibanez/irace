@@ -88,7 +88,8 @@ gendefparameter <- function(x)
                  paste0("[", substring(x["short"], 2), "]")),
           # Option names starting with "." are special: They should only appear in the vignette and there is no associated R option."
           ifelse(substring(x["name"], 0, 1) == ".",
-                 paste0("-{}-", substring(x["long"], 3)), x["name"]),
+                 paste0("-{}-", substring(x["long"], 3)),
+                 gsub("_", "\\_", x["name"], fixed=TRUE)),
           # we have to cut the --
           substring(x["long"], 3),
           ifelse(is.na.nowarn(x["default"]), "", x["default"]),
