@@ -18,7 +18,7 @@ conditionsSatisfied <- function (parameters, partialConfiguration, paramName)
   return(v)
 }
 
-new.empty.configuration <- function(parameters)
+new_empty_configuration <- function(parameters)
 {
   newConfigurationsColnames <- c(names(parameters$conditions), ".PARENT.")
   return(setNames(as.list(rep(NA, length(newConfigurationsColnames))),
@@ -77,12 +77,12 @@ sampleUniform <- function (parameters, nbConfigurations, digits,
                          ncol = length(namesParameters) + 1,
                          dimnames = list(NULL, c(namesParameters, ".PARENT."))
                          ))
-  empty.configuration <- new.empty.configuration(parameters)
+  empty_configuration <- new_empty_configuration(parameters)
 
   for (idxConfiguration in seq_len(nbConfigurations)) {
     forbidden.retries <- 0
     while (forbidden.retries < 100) {
-      configuration <- empty.configuration
+      configuration <- empty_configuration
       for (p in seq_along(namesParameters)) {
         currentParameter <- namesParameters[p]
         if (!conditionsSatisfied(parameters, configuration, currentParameter)) {
@@ -98,8 +98,10 @@ sampleUniform <- function (parameters, nbConfigurations, digits,
           newVal <- get.fixed.value (currentParameter, parameters)
           # The parameter is not a fixed and should be sampled          
         } else if (currentType %in% c("i","r")) {
-          newVal <- sample.unif(currentParameter, parameters, currentType, digits,
-				configuration = configuration)
+          domain <- getDependentBound(parameters, currentParameter, configuration)
+          newVal <- sample_unif(currentType, domain,
+                                transf = parameters$transform[[currentParameter]],
+                                digits)
         } else {
           irace.assert(currentType %in% c("c","o"))
           possibleValues <- parameters$domain[[currentParameter]]
@@ -142,7 +144,7 @@ sampleModel <- function (parameters, eliteConfigurations, model,
                          ncol = length(namesParameters) + 1,
                          dimnames = list(NULL, c(namesParameters, ".PARENT."))
                          ))
-  empty.configuration <- new.empty.configuration(parameters)
+  empty_configuration <- new_empty_configuration(parameters)
   
   for (idxConfiguration in seq_len(nbNewConfigurations)) {
     forbidden.retries <- 0
@@ -152,7 +154,7 @@ sampleModel <- function (parameters, eliteConfigurations, model,
                                       prob = eliteConfigurations[[".WEIGHT."]])
       eliteParent <- eliteConfigurations[indexEliteParent, ]
       idEliteParent <- eliteParent[[".ID."]]
-      configuration <- empty.configuration
+      configuration <- empty_configuration
       configuration[[".PARENT."]] <- idEliteParent
       
       # Sample a value for every parameter of the new configuration.
@@ -164,7 +166,7 @@ sampleModel <- function (parameters, eliteConfigurations, model,
         currentType <- parameters$types[[currentParameter]]
         if (!conditionsSatisfied(parameters, configuration, currentParameter)) {
           # Some conditions are unsatisfied.
-          # Should be useless, NA is ?always? assigned when matrix created
+          # Should be useless, NA is (always?) assigned when matrix created
           newVal <- NA
           
         } else if (isFixed(currentParameter, parameters)) {
@@ -180,8 +182,8 @@ sampleModel <- function (parameters, eliteConfigurations, model,
           if (is.na(mean) || !inNumericDomain(mean, domain)) {
             # The elite parent does not have any value for this parameter,
             # let's sample uniformly.
-            newVal <- sample.unif(currentParameter, parameters, currentType, digits,
-	                          configuration = configuration)
+            newVal <- sample_unif(currentType, domain,
+                                  transf = parameters$transform[[currentParameter]], digits)
           } else {
             stdDev <- model[[currentParameter]][[as.character(idEliteParent)]][1]
             # If parameters are dependent standard deviation must be computed
@@ -190,8 +192,9 @@ sampleModel <- function (parameters, eliteConfigurations, model,
               # Conditions should be satisfied for the parameter, thus domain cannot be NA
               stdDev <- (domain[2] - domain[1]) * stdDev
             }
-            newVal <- sample.norm(mean, stdDev, currentParameter, parameters, currentType, digits,
-                                  configuration = configuration)
+            newVal <- sample_norm(mean, stdDev, currentType, domain,
+                                  transf = parameters$transform[[currentParameter]],
+                                  digits)
           }
         } else if (currentType == "o") {
           possibleValues <- paramDomain(currentParameter, parameters)  
@@ -209,7 +212,7 @@ sampleModel <- function (parameters, eliteConfigurations, model,
             stdDev <- model[[currentParameter]][[as.character(idEliteParent)]]
 
             # Sample with truncated normal distribution as an integer.
-            # See sample.norm() for an explanation.
+            # See sample_norm() for an explanation.
             newValAsInt <- floor(rtnorm(1, mean + 0.5, stdDev, lower = 1,
                                         upper = length(possibleValues) + 1L))
 
@@ -309,12 +312,11 @@ transform.to.log <- function(x, transf, lowerBound, upperBound)
 # except for the case of log-transformed negative domains, where we have to
 # translate by -0.5.
 # 
-numeric.value.round <- function(type, value, lowerBound, upperBound, digits)
+numeric_value_round <- function(type, value, lowerBound, upperBound, digits)
 {  
   irace.assert(is.finite(value))
   if (type == "i") {
     value <- floor(value)
-    upperBound <- upperBound - 1L # undo the above for the assert
     # The probability of this happening is very small, but it could happen.
     if (value == upperBound + 1L)
       value <- upperBound
@@ -326,11 +328,9 @@ numeric.value.round <- function(type, value, lowerBound, upperBound, digits)
 }
 
 # Sample value for a numerical parameter.
-sample.unif <- function(param, parameters, type, digits = NULL, configuration = NULL)
+sample_unif <- function(type, domain, transf, digits)
 {
-  domain <- getDependentBound(parameters, param, configuration)
-
-  # Depedent domains could be not available because of inactivity of parameters
+  # Dependent domains could be not available because of inactivity of parameters
   # on which they are depedent. In this case, the dependent parameter becomes 
   # not active and we return NA.
   if (anyNA(domain)) return(NA)
@@ -342,23 +342,20 @@ sample.unif <- function(param, parameters, type, digits = NULL, configuration = 
     # +1 for correct rounding before floor()
     upperBound <- 1L + upperBound
   }
-  transf <- parameters$transform[[param]]
   if (transf == "log") {
     value <- runif(1, min = 0, max = 1)
     value <- transform.from.log(value, transf, lowerBound, upperBound)
   } else {
     value <- runif(1, min = lowerBound, max = upperBound)    
   }
-  value <- numeric.value.round(type, value, lowerBound, upperBound, digits)
+  # We use original upperBound, not the +1L for 'i'.
+  value <- numeric_value_round(type, value, lowerBound, upperBound = domain[2], digits)
   return(value)
 }
 
-sample.norm <- function(mean, sd, param, parameters, type, digits = NULL, 
-                        configuration = NULL)
+sample_norm <- function(mean, sd, type, domain, transf, digits)
 {
-  domain <- getDependentBound(parameters, param, configuration)
-
-  # Depedent domains could be not available because of inactivity of parameters
+  # Dependent domains could be not available because of inactivity of parameters
   # on which they are depedent. In this case, the dependent parameter becomes 
   # not active and we return NA.
   if (anyNA(domain)) return(NA)
@@ -372,7 +369,6 @@ sample.norm <- function(mean, sd, param, parameters, type, digits = NULL,
     mean <- mean + 0.5
   }
   
-  transf <- parameters$transform[[param]]
   if (transf == "log") {
     trMean <- transform.to.log(mean, transf, lowerBound, upperBound)
     value <- rtnorm(1, trMean, sd, lower = 0, upper = 1)
@@ -380,7 +376,7 @@ sample.norm <- function(mean, sd, param, parameters, type, digits = NULL,
   } else {
     value <- rtnorm(1, mean, sd, lowerBound, upperBound)
   }
-
-  value <- numeric.value.round(type, value, lowerBound, upperBound, digits)
+  # We use original upperBound, not the +1L for 'i'.
+  value <- numeric_value_round(type, value, lowerBound, upperBound = domain[2], digits)
   return(value)
 }
