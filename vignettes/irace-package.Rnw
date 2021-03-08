@@ -2468,23 +2468,28 @@ portfolio of algorithm configurations, one for each subset, and algorithm
 selection techniques can be used to select the best configuration from the
 portfolio when facing a new instance.
 
-If finding an overall good configuration for all the instances is the
-objective, then we recommend that instances are randomly sampled
-(option \parameter{sampleInstances}), unless one can provide the instances in a
-particular order that does not bias the tuning towards any subset.  For
-example, let's assume a heterogeneous scenario with two classes of instances.  If
-training instances are not sampled and the first ten instances belong to only
-one class, the tuning will be biased towards configurations that perform good
-for those instances.  An optimal order would not ever present consecutively two
-instances of the same type.
+To make sure \irace is not misled by results on few instances, it may be useful
+to increase the number of instances executed before doing a statistical test
+using the option \parameter{firstTest}, \eg \code{--first-test 10} (default
+value is 5), in order to see more instances before discarding configurations.
+The option \parameter{elitistNewInstances} in elitist \irace (option
+\parameter{elitist}) can be used to increase the number of new instances
+executed in each iteration, \eg \code{--elitist-new-instances 5} (default value
+is 1).
 
-In addition, it may be useful to increase the number of instances executed
-before doing a statistical test in order to see more instance classes before
-discarding configurations. The option \parameter{elitistNewInstances} in elitist
-\irace (option \parameter{elitist}) can be used to increase the number of new
-instances executed in each iteration, \eg \code{--elitist-new-instances 5} (default
-value is 1). For the non-elitist \irace, the option \parameter{firstTest} may be used for the same purpose, \eg \code{--first-test 10} (default value is 5).
-\MANUEL{And both at the same time?}
+If finding an overall good configuration for all the instances is the
+objective, then we recommend that instances are randomly sampled (option
+\parameter{sampleInstances}), unless one can provide the instances in a
+particular order that does not bias the tuning towards any subset.  For
+example, let's assume a heterogeneous scenario with two classes of instances.
+If training instances are not sampled and the first ten instances belong to
+only one class, the tuning will be biased towards configurations that perform
+good for those instances.  An optimal order would never present consecutively
+two instances of the same type. One can make sure \irace sees all instance
+classes before discarding configurations by carefully
+specifying the order of instances (disabling \parameter{sampleInstances} and
+specifying the order in \parameter{trainInstancesFile}) and setting both
+\parameter{firstTest} and \parameter{eachTest} appropriately.
 
 While executing \irace, the homogeneity of the scenario can be observed by
 examining the values of Spearman's rank correlation coefficient and Kendall's
