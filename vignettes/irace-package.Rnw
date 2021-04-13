@@ -2145,7 +2145,8 @@ last <- length(iraceResults$iterationElites)
 conf <- getConfigurationByIteration(iraceResults = iraceResults,
                                     iterations = c(last - 1, last))
 parallelCoordinatesPlot (conf, iraceResults$parameters,
-                         param_names = c("algorithm", "alpha", "beta", "rho", "q0", "rasrank"),
+                         param_names = c("algorithm", "alpha", "beta", "rho",
+                                         "q0", "rasrank"),
                          hierarchy = FALSE)
 @
 
@@ -2155,7 +2156,7 @@ parallelCoordinatesPlot (conf, iraceResults$parameters,
 %%% different number of instances. Or simply plot a heatmap of instances x
 %%% best-of-each iteration.
 \hide{It is also possible to plot the performance evolution of the best-so-far configuration over the number of experiments as follows:
-%% <<trainEvo, fig.pos="tbp", fig.align="center", out.width='0.75\\textwidth', fig.cap="Training set performance of the best-so-far configuration over number of experiments.", prompt=FALSE, eval=TRUE, comment="">>=
+%%<<trainEvo, fig.pos="tbp", fig.align="center", out.width='0.75\\textwidth', fig.cap="Training set performance of the best-so-far configuration over number of experiments.", prompt=FALSE, eval=TRUE, comment="">>=
 # Get number of iterations
 iters <- unique(iraceResults$experimentLog[, "iteration"])
 # Get number of experiments (runs of target-runner) up to each iteration
@@ -2175,6 +2176,8 @@ plot(fes, values, type="s", xlab = "Number of runs of the target algorithm",
 points(fes, values)
 }
 
+% FIXME: We should normalize the ranges per instance so since the performance
+% on different instances is quite different.
 It is also possible to plot the performance on the test set of the best-so-far configuration over the number of experiments as follows:
 <<testEvo, fig.pos="tbp", fig.align="center", out.width='0.75\\textwidth', fig.cap="Testing set performance of the best-so-far configuration over number of experiments. Label of each point is the configuration ID.", prompt=FALSE, eval=TRUE, comment="">>=
 # Get number of iterations
@@ -2185,10 +2188,13 @@ fes <- cumsum(table(iraceResults$experimentLog[,"iteration"]))
 # for the best configuration of that iteration.
 elites <- as.character(iraceResults$iterationElites)
 values <- colMeans(iraceResults$testing$experiments[, elites])
+stderr <- function(x) sqrt(var(x)/length(x))
+err <- apply(iraceResults$testing$experiments[, elites], 2, stderr)
 plot(fes, values, type = "s",
      xlab = "Number of runs of the target algorithm",
-     ylab = "Mean value over testing set")
-points(fes, values)
+     ylab = "Mean value over testing set", ylim=c(23000000,23500000))
+points(fes, values, pch=19)
+arrows(fes, values - err, fes, values + err, length=0.05, angle=90, code=3)
 text(fes, values, elites, pos = 1)
 @
 
