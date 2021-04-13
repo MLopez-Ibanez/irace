@@ -53,7 +53,10 @@
  
  * Generating the file `irace.Rdata` may be disabled by setting `logFile=""`.
                                (Manuel López-Ibáñez, reported by Johann Dreo)
-
+ 
+ * Fix (#7): warnings with partial matched parameters.
+                               (Manuel López-Ibáñez, reported by Marc Becker)
+ 
 
 # irace 3.4.1  (31/03/2020)
 

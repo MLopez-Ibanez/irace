@@ -43,13 +43,13 @@
 rtnorm <- function (n, mean = 0, sd = 1, lower = -Inf, upper = Inf) {
     if (length(n) > 1)
         n <- length(n)
-    mean <- rep(mean, length=n)
-    sd <- rep(sd, length=n)
-    lower <- rep(lower, length=n)
-    upper <- rep(upper, length=n)
+    mean <- rep_len(mean, n)
+    sd <- rep_len(sd, n)
+    lower <- rep_len(lower, n)
+    upper <- rep_len(upper, n)
     lower <- (lower - mean) / sd ## Algorithm works on mean 0, sd 1 scale
     upper <- (upper - mean) / sd
-    ind <- seq(length=n)
+    ind <- seq_len(n)
     ret <- numeric(n)
     ## Different algorithms depending on where upper/lower limits lie.
     alg <- ifelse(
