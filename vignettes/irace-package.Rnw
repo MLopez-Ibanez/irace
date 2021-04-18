@@ -2972,6 +2972,23 @@ number of configurations provided (e.g.,
 \parameter{nbConfigurations}\code{=10}). A future version of \irace will
 automatically detect this case and switch to basic racing without having to set additional options.
 
+\subsection[On Windows and using target-runner.py  (a Python file), I
+  get the error target-runner.py is not executable]{On Windows and using \code{target-runner.py}  (a \proglang{Python} file), I
+  get the error ``\code{target-runner.py is not executable}''}\label{faq:py-not-exe}
+
+The issue is that \code{.py} files are not executable on their own and you need \code{python.exe} to read the \code{.py} file and execute it. Linux knows how to do this if  the first line of the file is ``\code{\#!/usr/bin/python}'', however, Windows doesn't know how to do it. In Windows you have 2 options:
+\begin{itemize}
+\item     Create a \code{target-runner.bat} file that contains a line similar to (see \path{templates/windows/target-runner.bat}):
+\begin{lstlisting}[style=BashInputStyle]
+C:\path\to\python.exe C:\path\to\target-runner.py %instance% %seed% \
+  %candidate_parameters% 1>%stdout% 2>%stderr%
+\end{lstlisting}
+
+\item Or convert \code{target-runner.py} into an \code{.exe} file, for example, using \code{auto-py-to-exe}\footnote{\url{https://pypi.org/project/auto-py-to-exe/}}, so that you do not need a \code{.bat} file.
+\end{itemize}
+
+
+
 %%
 %%
 %%
