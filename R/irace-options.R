@@ -101,8 +101,7 @@
 "Replace the configuration cost of bounded executions with boundMax.", 
 "Percentage of the configuration budget used to perform a postselection race of the best configurations of each iteration after the execution of irace.", 
 "Enable/disable AClib mode. This option enables compatibility with GenericWrapper4AC as targetRunner script."
-)), .Names = c("name", "type", "short", "long", "default", "description"
-), row.names = c(".help", ".version", ".check", ".onlytest", 
+)), row.names = c(".help", ".version", ".check", ".onlytest", 
 "scenarioFile", "parameterFile", "execDir", "logFile", "recoveryFile", 
 "instances", "initConfigurations", "trainInstancesDir", "trainInstancesFile", 
 "configurationsFile", "forbiddenExps", "forbiddenFile", "targetRunner", 

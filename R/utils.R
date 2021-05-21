@@ -127,7 +127,7 @@ file.check <- function (file, executable = FALSE, readable = executable,
   if (!is.character(file) || is.null.or.empty(file)) {
     irace.error (text, " ", shQuote(file), " is not a vaild filename")
   }
-  file <- path.rel2abs(file)
+  file <- path_rel2abs(file)
   ## The above should remove the trailing separator if present for windows OS
   ## compatibility, except when we have just C:/, where the trailing separator
   ## must remain.
@@ -244,10 +244,15 @@ strcat <- function(...)
   do.call(paste0, args = list(..., collapse = NULL))
 }
 
-# Function to convert a relative to an absolute path. CWD is the
-# working directory to complete relative paths. It tries really hard
+#' Converts a relative path to an absolute path. It tries really hard
 # to create canonical paths.
-path.rel2abs <- function (path, cwd = getwd())
+#' 
+#' @param path character string representing a relative path.
+#' @param cwd current working directory.
+#'
+#' @return (`character(1)`) character string representing the absolute path
+#' @export
+path_rel2abs <- function (path, cwd = getwd())
 {
   # Keep doing gsub as long as x keeps changing.
   gsub.all <- function(pattern, repl, x, ...) {
@@ -300,7 +305,7 @@ path.rel2abs <- function (path, cwd = getwd())
     # There is no need to normalize cwd if it was returned by getwd()
     if (!missing(cwd)) {
       # Recurse to get absolute cwd
-      cwd <- path.rel2abs(cwd)
+      cwd <- path_rel2abs(cwd)
     }
 
     # Speed-up the most common cases.

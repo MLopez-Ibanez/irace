@@ -320,7 +320,7 @@ readScenario <- function(filename = "", scenario = list())
       value <- get(param, inherits = FALSE)
       if (!is.null.or.empty(value) && is.character(value)
           && (param %in% pathParams)) {
-        value <- path.rel2abs(value, cwd = dirname(filename))
+        value <- path_rel2abs(value, cwd = dirname(filename))
       }
       scenario[[param]] <- value
     }
@@ -333,9 +333,9 @@ setup_test_instances <- function(scenario)
   if (is.null.or.empty(scenario[["testInstances"]])) {
     if (!is.null.or.empty(scenario$testInstancesDir) || 
         !is.null.or.empty(scenario$testInstancesFile)) {
-      scenario$testInstancesDir <- path.rel2abs(scenario$testInstancesDir)
+      scenario$testInstancesDir <- path_rel2abs(scenario$testInstancesDir)
       if (!is.null.or.empty(scenario$testInstancesFile)) {
-        scenario$testInstancesFile <- path.rel2abs(scenario$testInstancesFile)
+        scenario$testInstancesFile <- path_rel2abs(scenario$testInstancesFile)
       }
       scenario[["testInstances"]] <-
         readInstances(instancesDir = scenario$testInstancesDir,
@@ -426,15 +426,15 @@ checkScenario <- function(scenario = defaultScenario())
 
   ## Check that everything is fine with external parameters
   # Check that the files exist and are readable.
-  scenario$parameterFile <- path.rel2abs(scenario$parameterFile)
+  scenario$parameterFile <- path_rel2abs(scenario$parameterFile)
   # We don't read parameterFile here because the user may give the parameters
   # explicitly.  And it is validated in readParameters anyway.
-  scenario$execDir <- path.rel2abs(scenario$execDir)
+  scenario$execDir <- path_rel2abs(scenario$execDir)
   file.check (scenario$execDir, isdir = TRUE,
               text = paste0("execution directory ", quote.param("execDir")))
   options(.irace.execdir = scenario$execDir)
   if (!is.null.or.empty(scenario$logFile)) {
-    scenario$logFile <- path.rel2abs(scenario$logFile, cwd = scenario$execDir)
+    scenario$logFile <- path_rel2abs(scenario$logFile, cwd = scenario$execDir)
     file.check(scenario$logFile, writeable = TRUE,
                text = quote.param('logFile'))
   } else {
@@ -443,7 +443,7 @@ checkScenario <- function(scenario = defaultScenario())
   }
 
   if (!is.null.or.empty(scenario$recoveryFile)) {
-    scenario$recoveryFile <- path.rel2abs(scenario$recoveryFile)
+    scenario$recoveryFile <- path_rel2abs(scenario$recoveryFile)
     file.check(scenario$recoveryFile, readable = TRUE,
                text = paste0("recovery file ", quote.param("recoveryFile")))
     
@@ -479,7 +479,7 @@ checkScenario <- function(scenario = defaultScenario())
     .irace$target.runner <- bytecompile(scenario$targetRunner)
   } else if (is.null(scenario$targetRunnerParallel)) {
     if (is.character(scenario$targetRunner)) {
-      scenario$targetRunner <- path.rel2abs(scenario$targetRunner)
+      scenario$targetRunner <- path_rel2abs(scenario$targetRunner)
       file.check (scenario$targetRunner, executable = TRUE,
                   text = paste0("target runner ", quote.param("targetRunner")))
       .irace$target.runner <- if (scenario$aclib)
@@ -496,7 +496,7 @@ checkScenario <- function(scenario = defaultScenario())
     scenario$targetEvaluator <- get.function(scenario$targetEvaluator)
     .irace$target.evaluator <- bytecompile(scenario$targetEvaluator)
   } else if (is.character(scenario$targetEvaluator)) {
-    scenario$targetEvaluator <- path.rel2abs(scenario$targetEvaluator)
+    scenario$targetEvaluator <- path_rel2abs(scenario$targetEvaluator)
     file.check (scenario$targetEvaluator, executable = TRUE,
                 text = "target evaluator")
     .irace$target.evaluator <- target.evaluator.default
@@ -508,9 +508,9 @@ checkScenario <- function(scenario = defaultScenario())
   
   # Training instances
   if (is.null.or.empty(scenario$instances)) {
-    scenario$trainInstancesDir <- path.rel2abs(scenario$trainInstancesDir)
+    scenario$trainInstancesDir <- path_rel2abs(scenario$trainInstancesDir)
     if (!is.null.or.empty(scenario$trainInstancesFile)) {
-      scenario$trainInstancesFile <- path.rel2abs(scenario$trainInstancesFile)
+      scenario$trainInstancesFile <- path_rel2abs(scenario$trainInstancesFile)
     }
     if (is.null.or.empty(scenario$trainInstancesDir)
         && is.null.or.empty(scenario$trainInstancesFile))
@@ -528,7 +528,7 @@ checkScenario <- function(scenario = defaultScenario())
 
   # Configurations file
   if (!is.null.or.empty(scenario$configurationsFile)) {
-    scenario$configurationsFile <- path.rel2abs(scenario$configurationsFile)
+    scenario$configurationsFile <- path_rel2abs(scenario$configurationsFile)
     file.check (scenario$configurationsFile, readable = TRUE,
                 text = "configurations file")
     # We cannot read the configurations here because we need the parameters.
@@ -545,7 +545,7 @@ checkScenario <- function(scenario = defaultScenario())
   # the user specified them explicitly.
   if (is.null.or.empty(scenario$forbiddenExps)
       && !is.null.or.empty(scenario$forbiddenFile)) {
-    scenario$forbiddenFile <- path.rel2abs(scenario$forbiddenFile)
+    scenario$forbiddenFile <- path_rel2abs(scenario$forbiddenFile)
     file.check (scenario$forbiddenFile, readable = TRUE,
                 text = "forbidden configurations file")
     scenario$forbiddenExps <- readForbiddenFile(scenario$forbiddenFile)

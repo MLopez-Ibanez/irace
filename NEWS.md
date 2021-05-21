@@ -56,6 +56,9 @@
  
  * Fix (#7): warnings with partial matched parameters.
                                (Manuel López-Ibáñez, reported by Marc Becker)
+                               
+ * `path_rel2abs()` is now exported so that other packages may use it.
+                                                       (Manuel López-Ibáñez)
  
 
 # irace 3.4.1  (31/03/2020)
