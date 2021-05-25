@@ -56,8 +56,11 @@ irace.error <- function(...)
   stop (.irace.prefix, ..., call. = FALSE)
 }
 
-## utils::dump.frames is broken and cannot be used with bquote, so we need a wrapper.
-## See help(dump.frames)
+## utils::dump.frames is broken and cannot be used with bquote, so we need a wrapper. When irace crashes, it generates a file "iracedump.rda". To debug the crash use:
+## R> load("iracedump.rda")
+## R> debugger(iracedump)
+##
+## See help(dump.frames) for more details.
 irace.dump.frames <- function()
 {
   execDir <- getOption(".irace.execdir")
