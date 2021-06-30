@@ -2201,6 +2201,18 @@ text(fes, values, elites, pos = 1)
 The \irace package also provides an implementation of the ablation
 method~\cite{FawHoos2015ablation}. See \autoref{sec:ablation}.
 
+Finally, more advanced visualizations of the behavior of \irace are provided by
+the ACVIZ software package~\cite{DesRitLopPer2021acviz}, which is available at \url{https://github.com/souzamarcelo/acviz}. See an example in Fig.~\ref{fig:acviz}.
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=\textwidth]{fig1u-acotsp-instances}
+  \caption{Visualization produced by ACVIZ~\cite{DesRitLopPer2021acviz}.}
+  \label{fig:acviz}
+\end{figure}
+
+
+
 %%
 %%
 %%

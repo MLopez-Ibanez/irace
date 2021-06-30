@@ -1,10 +1,14 @@
 
 
-@preamble{{\providecommand{\MaxMinAntSystem}{{$\cal MAX$--$\cal MIN$} {A}nt {S}ystem} } # {\providecommand{\Rpackage}[1]{#1} } # {\providecommand{\SoftwarePackage}[1]{#1} } # {\providecommand{\proglang}[1]{#1} }}
+@preamble{{\providecommand{\MaxMinAntSystem}{{$\cal MAX$--$\cal MIN$} {Ant} {System}} } # {\providecommand{\rpackage}[1]{{#1}} } # {\providecommand{\softwarepackage}[1]{{#1}} } # {\providecommand{\proglang}[1]{{#1}} }}
 
 @string{and = { and }}
 
 @string{lncs = {Lecture Notes in Computer Science}}
+
+@string{add-berlin = { Berlin, Germany }}
+
+@string{add-cham = { Cham, Switzerland }}
 
 @string{aaaip-pub = {{AAAI} Press}}
 
@@ -14,16 +18,23 @@
 
 @string{springer = {Springer}}
 
-@string{springer-berlin-ad = {Berlin, Germany}}
-
 @string{springer-lncs = {Springer, Heidelberg, Germany}}
-
-@string{add-cham = {Cham, Switzerland}}
 
 @string{iridia = {IRIDIA, Universit{\'e} Libre de Bruxelles, Belgium}}
 
-@string{cec06 = {Proceedings of the 2006 Congress on Evolutionary
-                  Computation (CEC 2006)}}
+@string{proc_of = {Proceedings of }}
+
+@string{proc_of_the = proc_of # { the }}
+
+@string{aaai = proc_of_the # {{AAAI} Conference on Artificial Intelligence}}
+
+@string{cec = { Congress on Evolutionary Computation (CEC}}
+
+@string{cec06 = proc_of_the # {2006} # cec # { 2006)}}
+
+@string{icml = { International Conference on Machine Learning, {ICML} }}
+
+@string{icml2014 = proc_of_the # {31st} # icml # {2014}}
 
 @string{acm-cs = {{ACM} Computing Surveys}}
 
@@ -41,9 +52,9 @@
 
 @string{birattari = { Mauro Birattari }}
 
-@string{bischl_b = { Bernd Bischl }}
-
 @string{chiarandini = { Marco Chiarandini }}
+
+@string{desouza = { Marcelo {De Souza} }}
 
 @string{dubois-lacoste = { J{\'e}r{\'e}mie Dubois-Lacoste }}
 
@@ -63,15 +74,17 @@
 
 @string{mcgeoch_cc = { Catherine C. McGeoch }}
 
-@string{paquete = { Lu{\'i}s Paquete }}
+@string{paquete = { Lu{\'\i}s Paquete }}
 
 @string{pardalos = { Panos M. Pardalos }}
 
-@string{perez_l = { Leslie {P{\'e}rez C{\'a}ceres} }}
+@string{perez_l = {  P{\'e}rez C{\'a}ceres, Leslie}}
 
 @string{preuss_m = { Mike Preuss }}
 
-@string{schneider = { Marius Schneider }}
+@string{ritt = { Marcus Ritt}}
+
+@string{schneider_m = { Marius Schneider }}
 
 @string{schoenauer = { Marc Schoenauer }}
 
@@ -93,7 +106,30 @@
   title = {{F}-Race and Iterated {F}-Race: An Overview},
   pages = {311--336},
   crossref = {BarChiPaqPre2010emaoa},
-  keywords = {F-race, iterated F-race, irace, tuning}
+  keywords = {F-race, iterated F-race, irace, tuning},
+  doi = {10.1007/978-3-642-02538-9_13}
+}
+
+@article{DesRitLopPer2021acviz,
+  author = desouza # and # ritt # and # lopez-ibanez # and # perez_l,
+  title = {{\softwarepackage{ACVIZ}}: A Tool for the Visual Analysis of
+                  the Configuration of Algorithms with {\rpackage{irace}}},
+  journal = orp,
+  year = 2021,
+  doi = {10.1016/j.orp.2021.100186},
+  supplement = {https://zenodo.org/record/4714582},
+  abstract = {This paper introduces acviz, a tool that helps to analyze the
+                  automatic configuration of algorithms with irace. It provides
+                  a visual representation of the configuration process,
+                  allowing users to extract useful information, e.g. how the
+                  configurations evolve over time. When test data is available,
+                  acviz also shows the performance of each configuration on the
+                  test instances. Using this visualization, users can analyze
+                  and compare the quality of the resulting configurations and
+                  observe the performance differences on training and test
+                  instances.},
+  volume = 8,
+  pages = 100186
 }
 
 @article{FawHoos2015ablation,
@@ -109,7 +145,7 @@
 
 @incollection{FonPaqLop06:hypervolume,
   author = fonseca # and # paquete # and # lopez-ibanez,
-  title = {An improved dimension\hspace{0pt}-\hspace{0pt}sweep
+  title = {An improved dimension-\hspace{0pt}sweep
                   algorithm for the hypervolume indicator},
   crossref = {CEC2006},
   pages = {1157--1163},
@@ -153,13 +189,13 @@
 
 @article{HutHooLeyStu2009jair,
   author = hutter # and # hoos # and # leyton-brown # and # stuetzle,
-  title = {{ParamILS:} An Automatic Algorithm Configuration
-                  Framework},
+  title = {{\softwarepackage{ParamILS}:} An Automatic Algorithm Configuration Framework},
   journal = jair,
   year = 2009,
   volume = 36,
   pages = {267--306},
-  month = oct
+  month = oct,
+  doi = {10.1613/jair.2861}
 }
 
 @techreport{IRIDIA-2004-001,
@@ -172,7 +208,7 @@
 
 @article{LopDubPerStuBir2016irace,
   author = lopez-ibanez # and # dubois-lacoste # and # perez_l # and # stuetzle # and # birattari,
-  title = {The {\Rpackage{irace}} package: Iterated Racing for Automatic
+  title = {The {\rpackage{irace}} Package: Iterated Racing for Automatic
                   Algorithm Configuration},
   journal = orp,
   year = 2016,
@@ -184,7 +220,7 @@
 
 @techreport{LopDubStu2011irace,
   author = lopez-ibanez # and # dubois-lacoste # and # stuetzle # and # birattari,
-  title = {The {\Rpackage{irace}} package, Iterated Race for Automatic
+  title = {The {\rpackage{irace}} package, Iterated Race for Automatic
                   Algorithm Configuration},
   institution = iridia,
   year = 2011,
@@ -229,20 +265,12 @@
 
 @incollection{PerLopHooStu2017:lion,
   author = perez_l # and # lopez-ibanez # and # hoos # and # stuetzle,
-  title = {An experimental study of adaptive capping in irace},
+  title = {An Experimental Study of Adaptive Capping in {\rpackage{irace}}},
   crossref = {LION2017},
   pages = {235--250},
   pdf = {PerLopHooStu2017lion.pdf},
   doi = {10.1007/978-3-319-69404-7_17},
   supplement = {http://iridia.ulb.ac.be/supp/IridiaSupp2016-007/}
-}
-
-@manual{R:mlr,
-  title = {{\Rpackage{mlr}}: Machine Learning in \proglang{R}},
-  author = bischl_b # and # {Michel Lang and Jakob Bossek and Leonard Judt and Jakob Richter and Tobias Kuehn and Erich Studerus},
-  year = 2013,
-  note = {\proglang{R} package},
-  url = {http://cran.r-project.org/package=mlr}
 }
 
 @incollection{SchHoo2012quanti,
@@ -251,13 +279,13 @@
   crossref = {LION2012},
   keywords = {Quantifying Homogeneity; Empirical Analysis;
                   Parameter Optimization; Algorithm Configuration},
-  author = schneider # and # hoos,
+  author = schneider_m # and # hoos,
   pages = {190--204},
   doi = {10.1007/978-3-642-34413-8_14}
 }
 
 @book{AAAI2017,
-  booktitle = {AAAI Conference on Artificial Intelligence},
+  booktitle = aaai,
   editor = {Satinder P. Singh and Shaul Markovitch},
   title = {Proceedings of the Thirty-First {AAAI} Conference on
                   Artificial Intelligence, February 4-9, 2017, San Francisco,
@@ -273,7 +301,7 @@
   booktitle = {Experimental Methods for the Analysis of
                   Optimization Algorithms},
   publisher = springer,
-  address = springer-berlin-ad,
+  address = add-berlin,
   year = 2010,
   editor = bartz-beielstein # and # chiarandini # and # paquete # and # preuss_m
 }
@@ -291,10 +319,9 @@
 
 @proceedings{ICML2014,
   editor = {Xing, Eric P. and Jebara, Tony},
-  title = {Proceedings of the 31th International Conference on Machine
+  title = {Proceedings of the 31st International Conference on Machine
                   Learning, {ICML} 2014, Beijing, China, 21-26 June 2014},
-  booktitle = {Proceedings of the 31th International Conference on Machine
-                  Learning},
+  booktitle = icml2014,
   volume = 32,
   year = 2014,
   url = {http://jmlr.org/proceedings/papers/v32/}
