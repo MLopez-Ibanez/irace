@@ -352,6 +352,7 @@ startParallel <- function(scenario)
         # In Windows, this needs to be exported, or we get:
         ## Error in checkForRemoteErrors(val) : 
         ##  2 nodes produced errors; first error: could not find function "target.runner"
+        parallel::clusterExport(.irace$cluster, ls(environment(startParallel)), envir=environment(startParallel))
         parallel::clusterExport(.irace$cluster, list("target.runner"), envir=.irace)
         # In addition, we export the global environment because the user may
         # have defined stuff there. There must be a better way to do this, but

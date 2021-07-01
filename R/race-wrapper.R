@@ -303,7 +303,7 @@ exec.target.runner <- function(experiment, scenario, target.runner)
   doit <- function(experiment, scenario)
   {
     x <- target.runner(experiment, scenario)
-    return (check.output.target.runner (x, scenario))
+    return (check.output.target.runner(x, scenario))
   }
   
   retries <- scenario$targetRunnerRetries
