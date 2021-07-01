@@ -8,7 +8,10 @@ generate.set.seed <- function()
 
 test_irace_detectCores <- function()
 {
-  if (identical(Sys.getenv("NOT_CRAN"), "true"))
+  if (identical(Sys.getenv("NOT_CRAN"), "true")) {
+    x <- Sys.getenv("_R_CHECK_LIMIT_CORES_", "")
+    if (nzchar(x) && x == "TRUE") return(2L)
     return(parallel::detectCores())
+  }
   return(1L)
 }
