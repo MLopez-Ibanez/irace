@@ -1,4 +1,4 @@
-PACKAGEVERSION=3.5
+PACKAGEVERSION=$(shell sh -c 'grep -F "Version: " DESCRIPTION | cut -f2 -d" "')
 PACKAGE=$(shell sh -c 'grep -F "Package: " DESCRIPTION | cut -f2 -d" "')
 # FIXME: This Makefile only works with this BINDIR!
 BINDIR=$(CURDIR)/..
@@ -159,7 +159,6 @@ pdf: build
 
 version :
 	@printf "#' irace.version\n#'\n#' A character string containing the version of \\pkg{irace}.\n#'\n#' @export\nirace.version <- '$(REALVERSION)'\n" > $(PACKAGEDIR)/R/version.R
-	@$(call Rsed,$(PACKAGEDIR)/DESCRIPTION,"Version:.*$$","Version: $(PACKAGEVERSION)")
 
 rsync : version
 ifndef RDIR
