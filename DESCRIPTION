@@ -27,7 +27,6 @@ Imports:
 Suggests:
     Rmpi (>= 0.6.0),
     parallel,
-    irace2pyimp,
     knitr,
     testthat,
     withr,
