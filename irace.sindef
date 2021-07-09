@@ -1,0 +1,40 @@
+Bootstrap: library
+From: ubuntu:20.04
+
+%post
+    # Dependencies
+    apt -y install software-properties-common
+    add-apt-repository universe
+    apt -y update
+    apt -y dist-upgrade
+    apt -y install git make r-base r-cran-jsonlite
+    apt clean
+
+    # Temporary directory where we are going to build everything.
+    tmpdir=$(mktemp -d)
+    mkdir -p ${tmpdir}
+
+    # Build
+    cd ${tmpdir}
+    git clone --single-branch --branch master https://github.com/MLopez-Ibanez/irace.git
+    cd irace
+    make quick-install
+
+    # Clean-up
+    rm -rf ${tmpdir}
+    apt -y purge software-properties-common git make
+    apt -y --purge autoremove
+    apt -y autoclean
+    apt clean
+
+%help
+    This container provides an minimal executable version of irace.
+    You can run it with `singularity run <irace command line arguments>`.
+    e.g. `singularity run --help`
+
+%runscript
+    /usr/local/lib/R/site-library/irace/bin/irace $*
+
+%labels
+    Authors Johann Dreo
+
