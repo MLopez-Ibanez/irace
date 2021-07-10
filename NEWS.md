@@ -60,6 +60,10 @@
  * `path_rel2abs()` is now exported so that other packages may use it.
                                                        (Manuel López-Ibáñez)
  
+ * The package provides a `irace.sindef` file that may be used for building a
+   standalone container of irace using Singularity. See the `README.md` file
+   for instructions.                                (Contributed by Johann Dreo)
+        
 
 # irace 3.4.1  (31/03/2020)
 

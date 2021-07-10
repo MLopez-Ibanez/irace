@@ -322,6 +322,24 @@ package](https://CRAN.R-project.org/package=race) is Copyright (C) 2003 Mauro
 Birattari.
 
 
+Building an irace standalone container
+======================================
+
+Thanks to [Singularity](https://sylabs.io/singularity/), you can build a
+standalone container of `irace` using the file `irace.sindef` which is
+available in the directory `inst/` in the source tarball and github repository
+or, after installing the irace R package, in the installation directory given
+by the R expression `system.file(package="irace")`. After installing
+SingularityCE, the container may be build using:
+
+    sudo singularity build irace.sindef irace.sif
+    
+and run with:
+
+    singularity run irace.sif <arguments>
+    
+
+
 Frequently Asked Questions
 ==========================
 
