@@ -136,7 +136,7 @@ jobs:
         run: R CMD INSTALL check/*.tar.gz
 
       - name: Deploy package
-        if: success() && runner.os == 'Linux' && matrix.config.r == 'release' && ${{ github.event_name == 'push' }}
+        if: success() && runner.os == 'Linux' && matrix.config.r == 'release' && github.event_name == 'push'
         run: |
           git config --local user.email "actions@github.com"
           git config --local user.name "GitHub Actions"
