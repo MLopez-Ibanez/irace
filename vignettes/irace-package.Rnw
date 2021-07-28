@@ -1905,8 +1905,8 @@ for the execution of new candidate configurations.
 discarded after the statistical test was performed.
 \item \code{Best}: ID of the best configuration according to the instances seen
 so far in this race (i.e., not including previous iterations).
-\item \code{Mean best}: Mean of the best configuration across the instances seen so
-far in this race.
+\item \code{Mean best}: Mean cost value of the best configuration across the instances seen so
+far in this race (not globally). Equivalent to the concept of ``iteration-best'' in other algorithms.
 \item  \code{Exp so far}: Number of experiments
 performed so far.
 \item \code{W time}:  Wall-clock time spent on this instance.
@@ -2243,7 +2243,7 @@ total time of the \parameter{targetRunner} executions. When this latter option i
 must return the evaluation cost together with the execution time (\code{"cost time"}). 
 
 \begin{xwarningbox}
-When the goal is to minimize the computation time of an algorithm, and you wish to use \parameter{maxTime} as the tuning budget, \parameter{targetRunner} must return the time also as the evaluation cost, that is, return the time two times as \code{"time time"}.
+When the goal is to minimize the computation time of an algorithm, and you wish to use \parameter{maxTime} as the tuning budget, \parameter{targetRunner} must return the time also as the evaluation cost, that is, return the time twice as \code{"time time"}.
 \end{xwarningbox}
 
 \begin{xwarningbox}
@@ -2305,7 +2305,7 @@ using the hypervolume can be found in the examples at
 \label{sec:capping}
 
 When using \irace for tuning algorithms that only report computation time to
-reach a target, \parameter{targetRunner} should return the execution time of a configuration instead of solution cost. When using \parameter{maxTime} as the budget, this means that \parameter{targetRunner} must return two times the execution time since the first value is the minimization objective and the second value is used to track the budget consumed.
+reach a target, \parameter{targetRunner} should return the execution time of a configuration instead of solution cost. When using \parameter{maxTime} as the budget, this means that \parameter{targetRunner} must return twice the execution time since the first value is the minimization objective and the second value is used to track the budget consumed.
 
 Starting from version $3.0$,  \irace includes an elitist racing procedure that 
 implements an \textbf{adaptive capping mechanism} \citep{PerLopHooStu2017:lion}. 
