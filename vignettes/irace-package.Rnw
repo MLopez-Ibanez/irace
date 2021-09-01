@@ -2974,15 +2974,22 @@ file, or within various scripts, functions or instance files. Table
 
 \subsection{My parameter space is small enough that \irace could generate all possible configurations; however, \irace generates repeated configurations and/or does not generate some of them. Is this a bug?}\label{faq:allconfs}
 
-Currently, \irace does not try to detect whether all possible configurations
-can be evaluated for the given budget, thus, the initial random sampling
+Typically, \irace is applied to parameter spaces that are much larger than what
+can be explored within the budget given. Thus, \irace does not try to detect
+whether all possible configurations can be evaluated for the given budget and
+it does not waste computation time to check for repeated configurations. Thus,
+if the parameter space is actually very small, the initial random sampling
 performed by \irace may generate repeated configurations and/or never generate
-some configurations, which is not ideal. The ideal approach in such cases is to
-provide all configurations explicitly to \irace (\autoref{sec:initial}) and
-execute a single race (\parameter{nbIterations}\code{=1}) with exactly the
-number of configurations provided (e.g.,
-\parameter{nbConfigurations}\code{=10}). A future version of \irace will
-automatically detect this case and switch to basic racing without having to set additional options.
+some configurations, which is not ideal. If you still want to use
+(non-iterated) racing, the recommended approach is to provide all
+configurations explicitly to \irace (\autoref{sec:initial}) and execute a
+single race (\parameter{nbIterations}\code{=1}) with exactly the number of
+configurations provided (e.g., \parameter{nbConfigurations}\code{=240}). A
+future version of \irace may automatically detect this case and switch to
+non-iterated racing without having to set additional options. Future versions
+may also implement computationally cheap checks for repeated
+configurations.\footnote{If you are interested in implementing this, please
+  contact us!}
 
 \subsection[On Windows and using target-runner.py  (a Python file), I
   get the error target-runner.py is not executable]{On Windows and using \code{target-runner.py}  (a \proglang{Python} file), I
