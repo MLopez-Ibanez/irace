@@ -64,7 +64,7 @@
    standalone container of irace using Singularity. See the `README.md` file
    for instructions.                                (Contributed by Johann Dreo)
         
- * `readConfigurationsFile` will now detect duplicated configurations and
+ * `readConfigurationsFile()` will now detect duplicated configurations and
    error.                                         (Manuel López-Ibáñez)
         
 
