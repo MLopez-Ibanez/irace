@@ -489,9 +489,9 @@
     - `hookRunParallel`: Optional R function to provide custom
       parallelization of `hook.run`.
 
-    - `hookRunData`: Optional data passed to `hookRun`. This is ignored by
-      the default `hookRun` function, but it may be used by custom `hookRun` R functions to pass persistent data around.
-       (Manuel López-Ibáñez)
+    - `hookRunData`: Optional data passed to `hookRun`. This is ignored by the
+      default `hookRun` function, but it may be used by custom `hookRun` R
+      functions to pass persistent data around.  (Manuel López-Ibáñez)
 
 # irace 1.05
 
