@@ -507,9 +507,8 @@ extractElites <- function(scenario, parameters, configurations, nbElites)
   # is too slow to check at generation time. Nevertheless, we can check now
   # since we typically have very few elites.
   ## FIXME: Use a variant of similarConfigurations.
-  before <- nrow(configurations)
-  print(configurations)
   configurations <- configurations[order(configurations$.ID.), , drop = FALSE]
+  before <- nrow(configurations)
   configurations <- configurations[!duplicated(removeConfigurationsMetaData(configurations)),
                                  , drop = FALSE]
   after <- nrow(configurations)

@@ -157,6 +157,11 @@ readConfigurationsFile <- function(filename, parameters, debugLevel = 0, text)
       }
     }
   }
+  if (anyDuplicated(configurationTable)) {
+    irace.error("Duplicated configurations in file ", filename, " :\n",
+                paste0(capture.output(
+                  configurationTable[duplicated(configurationTable), , drop=FALSE]), "\n"))
+  }
   return (configurationTable)
 }
 # FIXME: It may be faster to create a single expression that concatenates all
