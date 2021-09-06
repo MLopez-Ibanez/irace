@@ -140,6 +140,11 @@ jobs:
         run: |
           git config --local user.email "actions@github.com"
           git config --local user.name "GitHub Actions"
+          # Commit version.R so that install_github works
+          git add R/version.R
+          git commit R/version.R --allow-empty -m "Update version.R [skip ci]"
+          git push --force origin 'HEAD'
+          # Commit vignette PDF to webpage
           export DEST_DIR=$(mktemp -d)
           git remote set-branches origin gh-pages
           git fetch origin gh-pages
