@@ -158,7 +158,7 @@ pdf: build
 	R CMD Rd2pdf --force --no-preview --batch --output=$(BINDIR)/$(PACKAGE)_$(PACKAGEVERSION).pdf $(PACKAGEDIR)/
 
 version :
-	$(Reval) 'cat(file="$(PACKAGEDIR)/R/version.R", sep="", "#\' irace.version\n#\'\n#\' A character string containing the version of \\\\pkg{irace}.\n#\'\n#\' @export\nirace.version <- \'$(REALVERSION)\'\n")'
+	$(Reval) 'cat(file="$(PACKAGEDIR)/R/version.R", sep="", "#'\'' irace.version\n#'\''\n#'\'' A character string containing the version of \\pkg{irace}.\n#'\''\n#'\'' @export\nirace.version <- '\''$(REALVERSION)'\''\n")'
 
 rsync : version
 ifndef RDIR
