@@ -8,10 +8,6 @@ TODO R package:
     is compiled with gcc instead of clang which may cause issues at runtime. A
     better approach is to use https://github.com/rmacoslib/r-macos-rtools. Of
     course you are free to recommend whatever you want, just a pointer.
-  * (Patrick Schratz) Yeah I am actually responsible for the CI for ropensci
-    and deeply involved in this. Usually I’d recommend
-    https://github.com/ropensci/tic/ to get started. You can test on all major
-    platforms via Github Actions.
 
  * Look at https://cran.r-project.org/web/packages/argparser/index.html or
    optparse: See examples/optparse.R
@@ -293,6 +289,11 @@ TODO General (in order of importance):
 ------------------------------------------------------------------------------
 
 DONE:
+
+  * (Patrick Schratz) Yeah I am actually responsible for the CI for ropensci
+    and deeply involved in this. Usually I’d recommend
+    https://github.com/ropensci/tic/ to get started. You can test on all major
+    platforms via Github Actions. [DONE by Manuel]
 
  * https://github.com/ndangtt/irace-to-pimp [DONE by Nguyen Dang]
    
