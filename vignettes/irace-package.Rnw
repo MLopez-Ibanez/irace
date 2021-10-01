@@ -751,17 +751,14 @@ Command-line options override the same options specified in the \code{scenario.t
 
 \subsection{Setup example for ACOTSP}\label{sec:example}
 
-The \ACOTSP tuning example can be found in the package installation at 
- \IRACEHOME{/examples/acotsp}.
+The \ACOTSP tuning example can be found in the package installation in the folder \IRACEHOME{/examples/acotsp}.
  %
-Additionally, a number of example scenarios can be found in the \code{examples} folder. More
+Other example scenarios can be found in the same folder. More
 examples of tuning scenarios can be found in the Algorithm Configuration Library (AClib, \url{http://www.aclib.net/}).
 
 In this section, we describe how to execute the \ACOTSP scenario. If you wish to start setting up
 your own scenario, continue to the next section. For this example, we assume
-a GNU/Linux system but making the necessary changes in the commands and \parameter{targetRunner},
-it can be executed in any system that has a \proglang{C} compiler.
-%\MANUEL{I don't think this is true, since the target-runner script needs Bash}
+a GNU/Linux system such as Ubuntu with a working \proglang{C} compiler such as \code{gcc}.
 To execute this scenario follow these steps:
 
 \begin{enumerate}
@@ -863,8 +860,7 @@ types supported by \irace are the following:
   option \parameter{digits}. For example, given the default
   number of digits of $4$, the values $0.12345$ and
   $0.12341$ are both rounded to $0.1234$.
-  % However, the values  $0.00001$ and $0.00005$ remain the same.
-  Selected real-valued parameters can be optionally sampled on
+   Selected real-valued parameters can be optionally sampled on
   a logarithmic scale (base $e$).
 
 \item \textit{Integer} parameters are numerical parameters that can take only
