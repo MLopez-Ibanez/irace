@@ -812,8 +812,9 @@ irace <- function(scenario, parameters)
                                forbiddenExps = forbiddenExps,
                                completed = list(flag=FALSE, msg=""))
     # Consistency checks
-    irace.assert(sum(!is.na(iraceResults$experiments)) == experimentsUsedSoFar)
     irace.assert(nrow(iraceResults$experimentLog) == experimentsUsedSoFar)
+    if (scenario$elitist)
+      irace.assert(sum(!is.na(iraceResults$experiments)) == experimentsUsedSoFar)
 
     ## Save to the log file
     iraceResults$allConfigurations <- allConfigurations
