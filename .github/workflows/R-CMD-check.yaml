@@ -46,20 +46,26 @@ jobs:
         env:
           # install full prebuilt version
           TINYTEX_INSTALLER: TinyTeX
-          
-      - name: Query dependencies
-        run: |
-          install.packages('remotes')
-          saveRDS(remotes::dev_package_deps(), ".github/depends.Rds", version = 2)
-          writeLines(sprintf("R-%i.%i", getRversion()$major, getRversion()$minor), ".github/R-version")
-        shell: Rscript {0}
 
-      - name: Restore R package cache
-        uses: actions/cache@v2
+      - uses: r-lib/actions/setup-r-dependencies@v1
+        if: runner.os != 'Linux' || matrix.config.r != 'release' || github.event_name != 'push'
         with:
-          path: ${{ env.R_LIBS_USER }}
-          key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-${{ hashFiles('.github/depends.Rds') }}
-          restore-keys: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-
+          extra-packages: |
+             devtools
+             rcmdcheck
+        
+      - uses: r-lib/actions/setup-r-dependencies@v1
+        if: runner.os == 'Linux' && matrix.config.r == 'release' && github.event_name == 'push'
+        with:
+          extra-packages: |
+            pkgdown
+            devtools
+            rcmdcheck
+            covr
+          needs: |
+            website
+            coverage
+      
       - name: Install latex packages
         run: |
           remotes::install_cran("tinytex")
@@ -86,22 +92,6 @@ jobs:
                                           "microtype"))
         shell: Rscript {0}
       
-      - name: Install system dependencies
-        if: runner.os == 'Linux'
-        run: |
-          while read -r cmd
-          do
-            eval sudo $cmd
-          done < <(Rscript -e 'writeLines(remotes::system_requirements("ubuntu", "20.04"))')
-
-      - name: Install dependencies
-        run: |
-          remotes::install_deps()
-          remotes::install_cran("devtools")
-          remotes::install_cran("rcmdcheck")
-        shell: Rscript {0}
-
-          
       - name: make version
         if: success() && runner.os == 'Linux'
         run: |
@@ -124,12 +114,6 @@ jobs:
         run: |
           options(crayon.enabled = TRUE)
           rcmdcheck::rcmdcheck(args = c("--no-manual", "--run-donttest","--timings"), error_on = "warning", check_dir = "check")
-        shell: Rscript {0}
-
-      - name: Install pkgdown
-        if: success() && runner.os == 'Linux' && matrix.config.r == 'release'
-        run: |
-          remotes::install_cran("pkgdown")
         shell: Rscript {0}
 
       - name: Install package
@@ -163,7 +147,6 @@ jobs:
       - name: Test coverage
         if: success() && runner.os == 'Linux' && matrix.config.r == 'release'
         run: |
-          remotes::install_cran('covr')
           covr::codecov(type="all", quiet=FALSE)
         shell: Rscript {0}
 
