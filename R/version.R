@@ -3,4 +3,4 @@
 #' A character string containing the version of \pkg{irace}.
 #'
 #' @export
-irace.version <- '3.5.9effb69'
+irace.version <- '3.5.0299245'
