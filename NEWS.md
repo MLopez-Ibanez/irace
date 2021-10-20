@@ -69,6 +69,9 @@
         
  * Fix (#10): wrong assert with `elitist=0`.      (Manuel López-Ibáñez)
 
+ * New example `examples/target-runner-python/target-runner-python-win.bat`
+   contributed by Levi Ribeiro.
+   
 
 # irace 3.4.1  (31/03/2020)
 
