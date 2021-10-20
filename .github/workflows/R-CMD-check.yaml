@@ -47,8 +47,9 @@ jobs:
           # install full prebuilt version
           TINYTEX_INSTALLER: TinyTeX
 
-      - run: brew install openmpi
-        if: runner.os == 'macOS-latest'
+      - name: Install MPI in macOS
+        run: brew install openmpi
+        if: runner.os == 'macOS'
 
       - uses: r-lib/actions/setup-r-dependencies@v1
         if: runner.os != 'Linux' || matrix.config.r != 'release' || github.event_name != 'push'
