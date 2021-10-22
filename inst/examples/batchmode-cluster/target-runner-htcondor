@@ -1,0 +1,69 @@
+#!/bin/bash
+###############################################################################
+# This script is the command that is executed every run.
+# Check the examples in examples/
+#
+# This script is run in the execution directory (execDir, --exec-dir),
+# the same directory where target-evaluator is executed. Hence, you may
+# need to copy extra files needed by the executable to this directory.
+#
+#
+# PARAMETERS:
+# $1 is the candidate number
+# $2 is the instance id
+# $3 is the seed
+# $4 is the instance name
+# The rest ($* after `shift 4') are parameters to the run
+#
+# RETURN VALUE:
+# This script should print nothing.
+# Exit with 0 if no error, with 1 in case of error
+###############################################################################
+error() {
+    echo "`TZ=UTC date`: $0: error: $@"
+    cat $tmpfile
+    rm -f $tmpfile
+    exit 1
+}
+
+tmpfile=$(mktemp)
+
+EXE=~/bin/program
+FIXED_PARAMS=""
+
+CANDIDATE=$1
+INSTANCEID=$2
+SEED=$3
+INSTANCE=$4
+shift 4 || error "Not enough parameters"
+CAND_PARAMS=$*
+
+STDOUT=c${CANDIDATE}-${INSTANCEID}-${SEED}.stdout
+STDERR=c${CANDIDATE}-${INSTANCEID}-${SEED}.stderr
+STDLOG=c${CANDIDATE}-${INSTANCEID}-${SEED}.stdlog
+
+# modify with the HTCONDOR submission template
+condor_submit 1> $tmpfile <<EOF
+universe = vanilla
+stream_output = True
+stream_error = True
+executable = $EXE
+arguments = ${FIXED_PARAMS} --input $INSTANCE ${CAND_PARAMS}
+log = $STDLOG
+output = $STDOUT
+error = $STDERR
+queue
+EOF
+
+rc=$?
+if [[ $rc == 0 ]]; then
+    JOBID=$(cat $STDLOG | grep "Job submitted" | egrep -o '\([0-9]+.' | egrep -o '[0-9]+')
+    if ! [[ "$JOBID" =~ ^[_-.@0-9A-Za-z]+$ ]] ; then
+        error "$0: cannot parse jobID from the log file!"
+    fi
+    echo "$JOBID"
+    rm -f $tmpfile
+    exit $rc
+else
+    error "$0: condor_submit failed!"
+fi
