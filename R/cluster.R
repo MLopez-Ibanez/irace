@@ -47,6 +47,13 @@ slurm.job.finished <- function(jobid)
   return (!any(grepl(paste0("\\s", jobid, "\\s"), output)))
 }
 
+htcondor.job.finished <- function(jobid)
+{
+  output <- suppressWarnings(system2("condor_q", jobid, stdout = TRUE, stderr = TRUE))
+  # Check if job is still in the queue, otherwise it is considered finished
+  return (!any(grepl(paste0("ID:\\s", jobid), output)))
+}
+
 ## Launch a job with qsub and return its jobID. This function does not
 ## call qsub directly, but instead targetRunner should be a script that
 ## invokes qsub and returns a jobID.
@@ -99,6 +106,7 @@ cluster.lapply <- function(X, scenario, poll.time = 2)
            pbs = pbs.job.finished,
            torque = torque.job.finished,
            slurm = slurm.job.finished,
+           htcondor = htcondor.job.finished,
            irace.error ("Invalid value of scenario$batchmode = ", scenario$batchmode))
 
   # Parallel controls how many jobs we send at once. Some clusters have low

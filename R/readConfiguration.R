@@ -659,7 +659,7 @@ checkScenario <- function(scenario = defaultScenario())
   if (scenario$batchmode != 0) {
     scenario$batchmode <- tolower(scenario$batchmode)
     # FIXME: We should encode options in the large table in main.R
-    check.valid.param("batchmode", valid = c("sge", "pbs", "torque", "slurm"))
+    check.valid.param("batchmode", valid = c("sge", "pbs", "torque", "slurm", "htcondor"))
   }
   # Currently batchmode requires a targetEvaluator
   if (scenario$batchmode != 0 && is.null(scenario$targetEvaluator)) {
