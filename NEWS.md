@@ -71,7 +71,9 @@
 
  * New example `examples/target-runner-python/target-runner-python-win.bat`
    contributed by Levi Ribeiro.
-   
+
+ * `path_rel2abs()` also searches in system paths.     (Manuel López-Ibáñez)
+ 
 
 # irace 3.4.1  (31/03/2020)
 
