@@ -355,6 +355,40 @@ parse.aclib.output <- function(outputRaw)
 
 target.runner.aclib <- function(experiment, scenario)
 {
+  debugLevel   <- scenario$debugLevel
+  res <- run_target_runner(experiment, scenario)
+  cmd <- res$cmd
+  output <- res$output
+  args <- res$args
+  
+  err.msg <- output$error
+  if (is.null(err.msg)) {
+    return(c(parse.aclib.output (output$output),
+             list(outputRaw = output$output, call = paste(cmd, args))))
+  }
+  
+  return(list(cost = NULL, time = NULL, error = err.msg,
+              outputRaw = output$output, call = paste(cmd, args)))
+}
+
+check_launcher_args <- function(targetRunnerLauncherArgs)
+{
+  if (!grepl("{targetRunner}", targetRunnerLauncherArgs, fixed=TRUE))
+    irace.error("targetRunnerLauncherArgs '", targetRunnerLauncherArgs, "' must contain '{targetRunner}'") 
+  if (!grepl("{targetRunnerArgs}", targetRunnerLauncherArgs, fixed=TRUE))
+    irace.error("targetRunnerLauncherArgs '", targetRunnerLauncherArgs, "' must contain '{targetRunnerArgs}'")
+}
+
+process_launcher_args <- function(targetRunnerLauncherArgs, targetRunner, args)
+{
+  check_launcher_args(targetRunnerLauncherArgs)
+  targetRunnerLauncherArgs <- gsub("{targetRunner}", targetRunner, targetRunnerLauncherArgs, fixed=TRUE)
+  targetRunnerLauncherArgs <- gsub("{targetRunnerArgs}", args, targetRunnerLauncherArgs, fixed=TRUE)
+  return(targetRunnerLauncherArgs)
+}
+  
+run_target_runner <- function(experiment, scenario)
+{
   configuration.id <- experiment$id.configuration
   instance.id      <- experiment$id.instance
   seed             <- experiment$seed
@@ -363,33 +397,39 @@ target.runner.aclib <- function(experiment, scenario)
   switches         <- experiment$switches
   bound            <- experiment$bound
   
-  debugLevel   <- scenario$debugLevel
   targetRunner <- scenario$targetRunner
-  if (as.logical(file.access(targetRunner, mode = 1))) {
-    irace.error ("targetRunner ", shQuote(targetRunner), " cannot be found or is not executable!\n")
-  }
+  debugLevel <- scenario$debugLevel
 
-  has_value <- !is.na(configuration)
-  # <executable> [<arg>] [<arg>] ... [--cutoff <cutoff time>] [--instance <instance name>] 
-  # [--seed <seed>] --config [-param_name_1 value_1] [-param_name_2 value_2] ...
-  args <- paste("--instance", instance, "--seed", seed, "--config",
-                paste0("-", switches[has_value], " ", configuration[has_value],
-                       collapse = " "))
-  if (!is.null.or.na(bound))
-    args <- paste("--cutoff", bound, args)
-  
-  output <- runcommand(targetRunner, args, configuration.id, debugLevel)
-
-  err.msg <- output$error
-  if (is.null(err.msg)) {
-    return(c(parse.aclib.output (output$output),
-             list(outputRaw = output$output, call = paste(targetRunner, args))))
+  if (isTRUE(scenario$aclib)) {
+    has_value <- !is.na(configuration)
+    # <executable> [<arg>] [<arg>] ... [--cutoff <cutoff time>] [--instance <instance name>] 
+    # [--seed <seed>] --config [-param_name_1 value_1] [-param_name_2 value_2] ...
+    args <- paste("--instance", instance, "--seed", seed, "--config",
+                  paste0("-", switches[has_value], " ", configuration[has_value],
+                         collapse = " "))
+    if (!is.null.or.na(bound))
+      args <- paste("--cutoff", bound, args)
+  } else {
+    args <- paste(configuration.id, instance.id, seed, instance, bound,
+                  buildCommandLine(configuration, switches))
   }
   
-  return(list(cost = NULL, time = NULL, error = err.msg,
-              outputRaw = output$output, call = paste(targetRunner, args)))
+  targetRunnerLauncher <- scenario$targetRunnerLauncher
+  if (is.null.or.empty(scenario$targetRunnerLauncher)) {
+    if (as.logical(file.access(targetRunner, mode = 1))) {
+      irace.error ("targetRunner ", shQuote(targetRunner), " cannot be found or is not executable!\n")
+    }
+    output <- runcommand(targetRunner, args, configuration.id, debugLevel)
+    return(list(cmd=targetRunner, output=output, args=args))
+  }
+  if (as.logical(file.access(targetRunnerLauncher, mode = 1))) {
+    irace.error ("targetRunnerLauncher ", shQuote(targetRunnerLauncher), " cannot be found or is not executable!\n")
+  }
+  
+  args <- process_launcher_args(scenario$targetRunnerLauncherArgs, targetRunner, args)
+  output <- runcommand(targetRunnerLauncher, args, configuration.id, debugLevel)
+  return(list(cmd=targetRunnerLauncher, output=output, args=args))
 }
-
 
 #' target.runner.default
 #'
@@ -436,28 +476,17 @@ target.runner.aclib <- function(experiment, scenario)
 #' @export
 target.runner.default <- function(experiment, scenario)
 {
-  configuration.id <- experiment$id.configuration
-  instance.id      <- experiment$id.instance
-  seed             <- experiment$seed
-  configuration    <- experiment$configuration
-  instance         <- experiment$instance
-  switches         <- experiment$switches
-  bound            <- experiment$bound
-  
   debugLevel   <- scenario$debugLevel
-  targetRunner <- scenario$targetRunner
-  if (as.logical(file.access(targetRunner, mode = 1))) {
-    irace.error ("targetRunner ", shQuote(targetRunner), " cannot be found or is not executable!\n")
-  }
+  res <- run_target_runner(experiment, scenario)
+  cmd <- res$cmd
+  output <- res$output
+  args <- res$args
 
-  args <- paste(configuration.id, instance.id, seed, instance, bound,
-                buildCommandLine(configuration, switches))
-  output <- runcommand(targetRunner, args, configuration.id, debugLevel)
-
+  
   cost <- time <- NULL
   err.msg <- output$error
   if (is.null(err.msg)) {
-    v.output <- parse.output(output$output, verbose = (scenario$debugLevel >= 2))
+    v.output <- parse.output(output$output, verbose = (debugLevel >= 2))
     if (length(v.output) > 2) {
       err.msg <- "The output of targetRunner should not be more than two numbers!"
     } else if (length(v.output) == 1) {
@@ -473,7 +502,7 @@ target.runner.default <- function(experiment, scenario)
   }
   return(list(cost = cost, time = time,
               error = err.msg, outputRaw = output$output,
-              call = paste(targetRunner, args)))
+              call = paste(cmd, args)))
 }
 
 execute.experiments <- function(experiments, scenario)

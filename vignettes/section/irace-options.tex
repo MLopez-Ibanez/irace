@@ -112,10 +112,16 @@ Maximum number of decimal places that are significant for numerical (real) param
 \subsection[Target algorithm execution]{Target algorithm execution}
 \begin{description}
  \defparameter{targetRunner}{target-runner}{./target-runner}%
-  This option defines a script or an \aR function that evaluates a configuration of the target algorithm on a particular instance. See \autoref{sec:runner} for details.
+Script or \aR function that evaluates a configuration of the target algorithm on a particular instance. See \autoref{sec:runner} for details.
+
+ \defparameter{targetRunnerLauncher}{target-runner-launcher}{}%
+An executable that will be used to launch the target runner, when \parameter{targetRunner} cannot be executed directly (.e.g, a Python script in Windows).
+
+ \defparameter{targetRunnerLauncherArgs}{target-runner-args}{{targetRunner} {targetRunnerArgs}}%
+Command-line arguments provided to \parameter{targetRunnerLauncher}. The substrings \code{\{targetRunner\}} and \code{\{targetRunnerArgs\}} will be replaced by the value of the option \parameter{targetRunner} and by the arguments usually passed when calling \parameter{targetRunner}, respectively. Example: \code{"-m \{targetRunner\} --args \{targetRunnerArgs\}"}.
 
  \defparameter{targetRunnerRetries}{target-runner-retries}{0}%
-  Number of times to retry a call to \parameter{targetRunner} if the call failed.
+Number of times to retry a call to \parameter{targetRunner} if the call failed.
 
  \defparameter{targetRunnerData}{}{}%
 Optional data passed to \parameter{targetRunner}. This is ignored by the default \parameter{targetRunner} function, but it may be used by custom \parameter{targetRunner} functions to pass persistent data around.

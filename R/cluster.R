@@ -52,29 +52,18 @@ slurm.job.finished <- function(jobid)
 ## invokes qsub and returns a jobID.
 target.runner.qsub <- function(experiment, scenario)
 {
-  debugLevel       <- scenario$debugLevel
-  configuration.id <- experiment$id.configuration
-  instance.id      <- experiment$id.instance
-  seed             <- experiment$seed
-  configuration    <- experiment$configuration
-  instance         <- experiment$instance
-  switches         <- experiment$switches
-  
-  targetRunner <- scenario$targetRunner
-  if (as.logical(file.access(targetRunner, mode = 1))) {
-    irace.error ("targetRunner ", shQuote(targetRunner), " cannot be found or is not executable!\n")
-  }
-
-  args <- paste(configuration.id, instance.id, seed, instance,
-                buildCommandLine(configuration, switches))
-  output <- runcommand(targetRunner, args, configuration.id, debugLevel)
+  debugLevel   <- scenario$debugLevel
+  res <- run_target_runner(experiment, scenario)
+  cmd <- res$cmd
+  output <- res$output
+  args <- res$args
 
   jobID <- NULL
   outputRaw <- output$output
   err.msg <- output$error
   if (is.null(err.msg)) {
     # We cannot use parse.output because that tries to convert to numeric.
-    if (scenario$debugLevel >= 2) { cat (outputRaw, sep = "\n") }
+    if (debugLevel >= 2) { cat (outputRaw, sep = "\n") }
     # Initialize output as raw. If it is empty stays like this.
     # strsplit crashes if outputRaw == character(0)
     if (length(outputRaw) > 0) {
@@ -86,7 +75,7 @@ target.runner.qsub <- function(experiment, scenario)
     }
   }
   return(list(jobID = jobID, error = err.msg, outputRaw = outputRaw,
-              call = paste(targetRunner, args)))
+              call = paste(cmd, args)))
 }
 
 cluster.lapply <- function(X, scenario, poll.time = 2)
