@@ -28,6 +28,10 @@ path_rel2abs <- function (path, cwd = getwd())
   } else if (path == "") {
     return ("")
   }
+  
+  sys_path <- Sys.which(path)
+  if (nchar(sys_path) > 0) return(as.vector(sys_path))
+  
   # Using .Platform$file.sep is too fragile. Better just use "/" everywhere.
   s <- "/"
 
