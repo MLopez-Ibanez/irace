@@ -7,6 +7,9 @@
    dependent bound can include basic arithmetic operators.
                                 (Leslie Pérez Cáceres, Manuel López-Ibáñez)
 
+ * Added support for HTCondor cluster framework to `--batchmode`.
+                                                     (Filippo Bistaffa)
+
  * New scenario option `minMeasurableTime`
                                                      (Manuel López-Ibáñez)
  

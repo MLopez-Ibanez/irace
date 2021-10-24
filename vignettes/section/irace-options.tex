@@ -148,7 +148,7 @@ Number of calls of the \parameter{targetRunner} to execute in parallel. Values  
   Enable/disable use of \pkg{Rmpi} to execute the \parameter{targetRunner} in parallel using MPI protocol. When \parameter{mpi} is enabled, the option \parameter{parallel} is the number of slave nodes. See \autoref{sec:parallel}.
 
  \defparameter{batchmode}{batchmode}{0}%
-  Specify how irace waits for jobs to finish when \parameter{targetRunner} submits jobs to a batch cluster: \code{sge}, \code{pbs}, \code{torque} or \code{slurm} (\parameter{targetRunner} must submit jobs to the cluster using. for example, \code{qsub}). See \autoref{sec:parallel}.
+  Specify how irace waits for jobs to finish when \parameter{targetRunner} submits jobs to a batch cluster: \code{sge}, \code{pbs}, \code{torque}, \code{slurm} or \code{htcondor} (\parameter{targetRunner} must submit jobs to the cluster using. for example, \code{qsub}). See \autoref{sec:parallel}.
 
 \end{description}
 
