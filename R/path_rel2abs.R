@@ -19,7 +19,8 @@ path_rel2abs <- function (path, cwd = getwd())
       x <- newx
     }
   }
-  irace.normalize.path <- function(path) {
+  irace_normalize_path <- function(path) {
+    # FIXME: Why NA and not FALSE?
     return(suppressWarnings(normalizePath(path, winslash = "/", mustWork = NA)))
   }
     
@@ -28,6 +29,7 @@ path_rel2abs <- function (path, cwd = getwd())
   } else if (path == "") {
     return ("")
   }
+  
   # Using .Platform$file.sep is too fragile. Better just use "/" everywhere.
   s <- "/"
 
@@ -45,7 +47,6 @@ path_rel2abs <- function (path, cwd = getwd())
     path <- sub(windrive.regex, "", path)
   }
 
-  
   # Change "/./" to "/" to get a canonical form 
   path <- gsub.all(paste0(s, ".", s), s, path, fixed = TRUE)
   # Change "//" to "/" to get a canonical form 
@@ -55,10 +56,10 @@ path_rel2abs <- function (path, cwd = getwd())
   # Drop final "/"
   path <- sub(paste0(s, "$"), "", path)
   if (path == "") path <- s
-  
+
   # Prefix the current cwd to the path if it doesn't start with
   # / \\ or whatever separator.
-  if (path == "." || !grepl(paste0("^",s), path)) {
+  if (path == "." || !startsWith(path, s)) {
     # There is no need to normalize cwd if it was returned by getwd()
     if (!missing(cwd)) {
       # Recurse to get absolute cwd
@@ -68,8 +69,20 @@ path_rel2abs <- function (path, cwd = getwd())
     # Speed-up the most common cases.
     # If it is just "."
     if (path == ".") {
-      return (irace.normalize.path(cwd))
+      return (irace_normalize_path(cwd))
     }
+    
+    # If it does not contain separators at all and does not start with ".."
+    if (!startsWith(path, "..") && !grepl(s, path)) {
+      # it may be a command in the path.
+      sys_path <- suppressWarnings(Sys.which(path))
+      if (nchar(sys_path) > 0
+          && file.access(sys_path, mode = 1) == 0
+          && !file.info(sys_path)$isdir) {
+        return(irace_normalize_path(as.vector(sys_path)))
+      }
+    }
+  
     # Remove "./" from the start of path.
     path <- sub(paste0("^\\.", s), "", path)
     # Make it absolute but avoid doubling s
@@ -77,7 +90,7 @@ path_rel2abs <- function (path, cwd = getwd())
     else path <- paste0(cwd, s, path)
     # If it is just a path without ".." inside
     if (!grepl(paste0(s,"\\.\\."), path)) {
-      return (irace.normalize.path(path))
+      return (irace_normalize_path(path))
     }
     # Detect a Windows drive
     if (grepl(paste0(windrive.regex, "($|", s, ")"), path)) {
@@ -114,5 +127,5 @@ path_rel2abs <- function (path, cwd = getwd())
 
   # We use normalizePath, which will further simplify the path if
   # the path exists.
-  return (irace.normalize.path(path))
+  return (irace_normalize_path(path))
 }

@@ -42,8 +42,20 @@
 # forbiddenFile = ""
 
 ## Script called for each configuration that executes the target algorithm
-## to be tuned. See templates.
+## to be tuned. See the templates and examples provided.
 # targetRunner = "./target-runner"
+
+## An executable that will be used to launch the target runner, when
+## targetRunner cannot be executed directly (.e.g, a Python script in
+## Windows).
+# targetRunnerLauncher = ""
+
+## Command-line arguments provided to targetRunnerLauncher. The substrings
+## \{targetRunner\} and \{targetRunnerArgs\} will be replaced by the value
+## of the option targetRunner and by the arguments usually passed when
+## calling targetRunner, respectively. Example: "-m \{targetRunner\ --args
+## \{targetRunnerArgs\}"}.
+# targetRunnerLauncherArgs = "{targetRunner} {targetRunnerArgs}"
 
 ## Number of times to retry a call to targetRunner if the call failed.
 # targetRunnerRetries = 0

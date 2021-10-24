@@ -41,12 +41,17 @@ test_that("test.path_rel2abs", {
 "../../../data"             "./"    "/data"
 "../../../data"             "/tmp/a/b/c/" "/tmp/data"
 "..//a"                     ".//"   "/a"
+"R"                         "/tmp/" "Sys.which"
 ', stringsAsFactors=FALSE)
   for(i in 1:nrow(testcases)) {
     orig <- testcases[i,1]
     cwd <-  testcases[i,2]
     res <- irace:::path_rel2abs(testcases[i,1], cwd)
-    exp <- gsub("\\", "/", path.expand(testcases[i,3]), fixed = TRUE)
+    if (testcases[i,3] == "Sys.which") {
+      exp <- normalizePath(Sys.which(testcases[i,1]), winslash = "/", mustWork = NA)
+    } else {
+      exp <- gsub("\\", "/", path.expand(testcases[i,3]), fixed = TRUE)
+    }
     if (res == exp) {
       # cat("[OK] (", orig, ", ", cwd, ") -> ", res, "\n", sep="")
     } else {
@@ -163,12 +168,17 @@ leslie/leslie/../../irace N:/tmp  N:/tmp/irace
 x.r                       N:/tmp  N:/tmp/x.r
 ~/irace/../x.r            N:/tmp  ~/x.r
 ~/x.r                     N:/tmp  ~/x.r
+"R"                       "/tmp/" "Sys.which"
 ', stringsAsFactors=FALSE)
   for(i in 1:nrow(testcases)) {
     orig <- testcases[i,1]
     cwd <-  testcases[i,2]
-    res <- irace:::path_rel2abs(testcases[i,1], cwd)
-    exp <- gsub("\\", "/", path.expand(testcases[i,3]), fixed = TRUE)
+    res <- path_rel2abs(testcases[i,1], cwd)
+    if (testcases[i,3] == "Sys.which") {
+      exp <- normalizePath(Sys.which(testcases[i,1]), winslash = "/", mustWork = NA)
+    } else {
+      exp <- gsub("\\", "/", path.expand(testcases[i,3]), fixed = TRUE)
+    }
     if (res == exp) {
       #cat("[OK] ", i, ": path_rel2abs(\"", orig, "\", \"", cwd, "\") -> ", res, "\n", sep="")
     } else {

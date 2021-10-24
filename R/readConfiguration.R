@@ -485,10 +485,17 @@ checkScenario <- function(scenario = defaultScenario())
   } else if (is.null(scenario$targetRunnerParallel)) {
     if (is.character(scenario$targetRunner)) {
       scenario$targetRunner <- path_rel2abs(scenario$targetRunner)
-      file.check (scenario$targetRunner, executable = TRUE,
-                  text = paste0("target runner ", quote.param("targetRunner")))
       .irace$target.runner <- if (scenario$aclib)
                                 target.runner.aclib else target.runner.default
+      if (is.null.or.empty(scenario$targetRunnerLauncher)) {
+        file.check (scenario$targetRunner, executable = TRUE,
+                    text = paste0("target runner ", quote.param("targetRunner")))
+      } else {
+        scenario$targetRunnerLauncher <- path_rel2abs(scenario$targetRunnerLauncher)
+        file.check (scenario$targetRunnerLauncher, executable = TRUE,
+                    text = paste0("target runner launcher ", quote.param("targetRunnerLauncher")))
+        check_launcher_args(scenario$targetRunnerLauncherArgs)
+      }
     } else {
       irace.error(quote.param ('targetRunner'), " must be a function or an executable program")
     }
@@ -788,7 +795,9 @@ printScenario <- function(scenario)
 #'    }
 #'  \item Target algorithm execution:
 #'    \describe{
-#'      \item{\code{targetRunner}}{Script called for each configuration that executes the target algorithm to be tuned. See templates. (Default: \code{"./target-runner"})}
+#'      \item{\code{targetRunner}}{Script called for each configuration that executes the target algorithm to be tuned. See the templates and examples provided. (Default: \code{"./target-runner"})}
+#'      \item{\code{targetRunnerLauncher}}{An executable that will be used to launch the target runner, when \code{targetRunner} cannot be executed directly (.e.g, a Python script in Windows). (Default: \code{""})}
+#'      \item{\code{targetRunnerLauncherArgs}}{Command-line arguments provided to \code{targetRunnerLauncher}. The substrings \code{\{targetRunner\}} and \code{\{targetRunnerArgs\}} will be replaced by the value of the option \code{targetRunner} and by the arguments usually passed when calling \code{targetRunner}, respectively. Example: \code{"-m \{targetRunner\} --args \{targetRunnerArgs\}"}. (Default: \code{"{targetRunner} {targetRunnerArgs}"})}
 #'      \item{\code{targetRunnerRetries}}{Number of times to retry a call to \code{targetRunner} if the call failed. (Default: \code{0})}
 #'      \item{\code{targetRunnerData}}{Optional data passed to \code{targetRunner}. This is ignored by the default \code{targetRunner} function, but it may be used by custom \code{targetRunner} functions to pass persistent data around. (Default: \code{""})}
 #'      \item{\code{targetRunnerParallel}}{Optional R function to provide custom parallelization of \code{targetRunner}. (Default: \code{""})}
