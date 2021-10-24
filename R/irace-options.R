@@ -89,7 +89,7 @@
     "Number of calls to targetRunner to execute in parallel. Values 0 or 1 mean no parallelization.", 
     "Enable/disable load-balancing when executing experiments in parallel. Load-balancing makes better use of computing resources, but increases communication overhead. If this overhead is large, disabling load-balancing may be faster.", 
     "Enable/disable MPI. Use Rmpi to execute targetRunner in parallel (parameter parallel is the number of slaves).", 
-    "Specify how irace waits for jobs to finish when targetRunner submits jobs to a batch cluster: sge, pbs, torque or slurm. targetRunner must submit jobs to the cluster using, for example, qsub.", 
+    "Specify how irace waits for jobs to finish when targetRunner submits jobs to a batch cluster: sge, pbs, torque, slurm or htcondor. targetRunner must submit jobs to the cluster using, for example, qsub.", 
     "Enable/disable the soft restart strategy that avoids premature convergence of the probabilistic model.", 
     "Soft restart threshold value for numerical parameters. If NA, NULL or \"\", it is computed as 10^-digits.", 
     "Directory where testing instances are located, either absolute or relative to current directory.", 

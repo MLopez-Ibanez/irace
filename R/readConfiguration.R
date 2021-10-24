@@ -806,7 +806,7 @@ printScenario <- function(scenario)
 #'      \item{\code{parallel}}{Number of calls to \code{targetRunner} to execute in parallel. Values \code{0} or \code{1} mean no parallelization. (Default: \code{0})}
 #'      \item{\code{loadBalancing}}{Enable/disable load-balancing when executing experiments in parallel. Load-balancing makes better use of computing resources, but increases communication overhead. If this overhead is large, disabling load-balancing may be faster. (Default: \code{1})}
 #'      \item{\code{mpi}}{Enable/disable MPI. Use \code{Rmpi} to execute \code{targetRunner} in parallel (parameter \code{parallel} is the number of slaves). (Default: \code{0})}
-#'      \item{\code{batchmode}}{Specify how irace waits for jobs to finish when \code{targetRunner} submits jobs to a batch cluster: sge, pbs, torque or slurm. \code{targetRunner} must submit jobs to the cluster using, for example, \code{qsub}. (Default: \code{0})}
+#'      \item{\code{batchmode}}{Specify how irace waits for jobs to finish when \code{targetRunner} submits jobs to a batch cluster: sge, pbs, torque, slurm or htcondor. \code{targetRunner} must submit jobs to the cluster using, for example, \code{qsub}. (Default: \code{0})}
 #'    }
 #'  \item Initial configurations:
 #'    \describe{

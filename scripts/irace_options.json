@@ -447,9 +447,9 @@
     "short": "",
     "long": "--batchmode",
     "default": 0,
-        "vignettes": "  Specify how irace waits for jobs to finish when \\parameter{targetRunner} submits jobs to a batch cluster: \\code{sge}, \\code{pbs}, \\code{torque} or \\code{slurm} (\\parameter{targetRunner} must submit jobs to the cluster using. for example, \\code{qsub}). See \\autoref{sec:parallel}.",
-      "section": "Target algorithm execution",
-    "description": "Specify how irace waits for jobs to finish when \\code{targetRunner} submits jobs to a batch cluster: sge, pbs, torque or slurm. \\code{targetRunner} must submit jobs to the cluster using, for example, \\code{qsub}."
+    "vignettes": "  Specify how irace waits for jobs to finish when \\parameter{targetRunner} submits jobs to a batch cluster: \\code{sge}, \\code{pbs}, \\code{torque}, \\code{slurm} or \\code{htcondor} (\\parameter{targetRunner} must submit jobs to the cluster using. for example, \\code{qsub}). See \\autoref{sec:parallel}.",
+    "section": "Target algorithm execution",
+    "description": "Specify how irace waits for jobs to finish when \\code{targetRunner} submits jobs to a batch cluster: sge, pbs, torque, slurm or htcondor. \\code{targetRunner} must submit jobs to the cluster using, for example, \\code{qsub}."
   },
   {
     "name": "softRestart",
