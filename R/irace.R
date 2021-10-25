@@ -980,7 +980,7 @@ irace <- function(scenario, parameters)
         allConfigurations <- rbind(allConfigurations, newConfigurations)
         rownames(allConfigurations) <- allConfigurations$.ID.
         raceConfigurations <- allConfigurations[allConfigurations$.ID. %!in% rejectedIDs, , drop = FALSE]
-      } else if (nbNewConfigurations < 0) {
+      } else if (nbNewConfigurations <= 0) {
         # We let the user know that not all configurations will be used.
         if (nbUserConfigurations > nbConfigurations) {
           catInfo("Only ", nbConfigurations,
