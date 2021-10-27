@@ -12,6 +12,11 @@ on:
 
 name: R-CMD-check
 
+env:
+  R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
+  _R_CHECK_FORCE_SUGGESTS_: false
+  _R_CHECK_CRAN_INCOMING_REMOTE_: false
+          
 jobs:
   R-CMD-check:
 
@@ -28,8 +33,6 @@ jobs:
           - {os: ubuntu-20.04, r: 'release', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
           - {os: ubuntu-20.04, r: 'devel', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
     env:
-      R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
-      _R_CHECK_FORCE_SUGGESTS_: false
       RSPM: ${{ matrix.config.rspm }}
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
     steps:
@@ -52,22 +55,96 @@ jobs:
         if: runner.os == 'macOS'
 
       - uses: r-lib/actions/setup-r-dependencies@v1
-        if: runner.os != 'Linux' || matrix.config.r != 'release' || github.event_name != 'push'
         with:
           extra-packages: |
              devtools
              rcmdcheck
         
+      - name: Install latex packages
+        run: |
+          remotes::install_cran("tinytex")
+          tinytex::tlmgr_install(pkgs = c("oberdiek",
+                                          "grfext",
+                                          "environ",
+                                          "trimspaces",
+                                          "etoolbox",
+                                          "upquote",
+                                          "babel-english",
+                                          "pgf",
+                                          "xcolor",
+                                          "algorithms",
+                                          "relsize",
+                                          "tocbibind",
+                                          "appendix",
+                                          "tocloft",
+                                          "enumitem",
+                                          "listings",
+                                          "tcolorbox",
+                                          "collection-fontsrecommended",
+                                          "framed",
+                                          "inconsolata",
+                                          "microtype"))
+        shell: Rscript {0}
+      
+      - name: Check (CRAN)
+        env:
+          NOT_CRAN: false
+        run: |
+          options(crayon.enabled = TRUE)
+          rcmdcheck::rcmdcheck(build_args=c("--compact-vignettes=gs+qpdf"), args = c("--no-manual", "--as-cran"), error_on = "warning", check_dir = "check")
+        shell: Rscript {0}
+
+      - name: Check (NOT CRAN)
+        if: success()
+        env:
+          NOT_CRAN: true
+        run: |
+          options(crayon.enabled = TRUE)
+          rcmdcheck::rcmdcheck(args = c("--no-manual", "--run-donttest","--timings"), error_on = "warning", check_dir = "check")
+        shell: Rscript {0}
+
+      - name: Upload check results
+        if: failure()
+        uses: actions/upload-artifact@main
+        with:
+          name: ${{ runner.os }}-r${{ matrix.config.r }}-results
+          path: check
+
+  coverage:
+    needs: R-CMD-check
+    name: ${{ matrix.config.os }} (${{ matrix.config.r }})
+    runs-on: ${{ matrix.config.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - {os: ubuntu-20.04, r: 'release', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
+    env:
+      RSPM: ${{ matrix.config.rspm }}
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+    
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: r-lib/actions/setup-r@v1
+        with:
+          r-version: ${{ matrix.config.r }}
+
+      - uses: r-lib/actions/setup-pandoc@v1
+
+      - name: Install latex
+        uses: r-lib/actions/setup-tinytex@v1
+        env:
+          # install full prebuilt version
+          TINYTEX_INSTALLER: TinyTeX
+
       - uses: r-lib/actions/setup-r-dependencies@v1
-        if: runner.os == 'Linux' && matrix.config.r == 'release' && github.event_name == 'push'
         with:
           extra-packages: |
-            pkgdown
             devtools
             rcmdcheck
             covr
           needs: |
-            website
             coverage
       
       - name: Install latex packages
@@ -95,37 +172,95 @@ jobs:
                                           "inconsolata",
                                           "microtype"))
         shell: Rscript {0}
-      
-      - name: make version
-        if: success() && runner.os == 'Linux'
+
+      - name: Test coverage
+        if: success()
         run: |
-          make version
-          
-      - name: Check (CRAN)
-        env:
-          _R_CHECK_CRAN_INCOMING_REMOTE_: false
-          NOT_CRAN: false
-        run: |
-          options(crayon.enabled = TRUE)
-          rcmdcheck::rcmdcheck(build_args=c("--compact-vignettes=gs+qpdf"), args = c("--no-manual", "--as-cran"), error_on = "warning", check_dir = "check")
+          covr::codecov(type="all", quiet=FALSE)
         shell: Rscript {0}
 
-      - name: Check (NOT CRAN)
-        if: success()
+      - name: Upload check results
+        if: failure()
+        uses: actions/upload-artifact@main
+        with:
+          name: ${{ runner.os }}-r${{ matrix.config.r }}-results
+          path: check
+    
+  pkgdown:
+    needs: R-CMD-check
+    if: contains('
+        refs/heads/master
+        refs/heads/main
+      ', github.ref) && github.event_name == 'push'
+    name: ${{ matrix.config.os }} (${{ matrix.config.r }})
+    runs-on: ${{ matrix.config.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - {os: ubuntu-20.04, r: 'release', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
+    env:
+      RSPM: ${{ matrix.config.rspm }}
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+    
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: r-lib/actions/setup-r@v1
+        with:
+          r-version: ${{ matrix.config.r }}
+
+      - uses: r-lib/actions/setup-pandoc@v1
+
+      - name: Install latex
+        uses: r-lib/actions/setup-tinytex@v1
         env:
-          _R_CHECK_CRAN_INCOMING_REMOTE_: false
-          NOT_CRAN: true
+          # install full prebuilt version
+          TINYTEX_INSTALLER: TinyTeX
+
+      - uses: r-lib/actions/setup-r-dependencies@v1
+        with:
+          extra-packages: |
+            pkgdown
+            devtools
+            rcmdcheck
+          needs: |
+            website
+      
+      - name: Install latex packages
         run: |
-          options(crayon.enabled = TRUE)
-          rcmdcheck::rcmdcheck(args = c("--no-manual", "--run-donttest","--timings"), error_on = "warning", check_dir = "check")
+          remotes::install_cran("tinytex")
+          tinytex::tlmgr_install(pkgs = c("oberdiek",
+                                          "grfext",
+                                          "environ",
+                                          "trimspaces",
+                                          "etoolbox",
+                                          "upquote",
+                                          "babel-english",
+                                          "pgf",
+                                          "xcolor",
+                                          "algorithms",
+                                          "relsize",
+                                          "tocbibind",
+                                          "appendix",
+                                          "tocloft",
+                                          "enumitem",
+                                          "listings",
+                                          "tcolorbox",
+                                          "collection-fontsrecommended",
+                                          "framed",
+                                          "inconsolata",
+                                          "microtype"))
         shell: Rscript {0}
 
       - name: Install package
-        if: success() && runner.os == 'Linux' && matrix.config.r == 'release'
-        run: R CMD INSTALL check/*.tar.gz
+        if: success()
+        run: |
+          make version
+          R CMD INSTALL .
 
       - name: Deploy package
-        if: success() && runner.os == 'Linux' && matrix.config.r == 'release' && github.event_name == 'push'
+        if: success()
         run: |
           git config --local user.email "actions@github.com"
           git config --local user.name "GitHub Actions"
@@ -147,12 +282,6 @@ jobs:
           git worktree remove $DEST_DIR
           Rscript -e 'pkgdown::deploy_to_branch(new_process = FALSE)'
         shell: bash {0}
-      
-      - name: Test coverage
-        if: success() && runner.os == 'Linux' && matrix.config.r == 'release'
-        run: |
-          covr::codecov(type="all", quiet=FALSE)
-        shell: Rscript {0}
 
       - name: Upload check results
         if: failure()
@@ -160,6 +289,4 @@ jobs:
         with:
           name: ${{ runner.os }}-r${{ matrix.config.r }}-results
           path: check
-
-
-          
+  
