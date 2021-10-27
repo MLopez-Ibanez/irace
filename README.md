@@ -46,10 +46,11 @@ It builds upon the race package by Birattari and it is implemented in R.
     [ [bibtex](http://iridia.ulb.ac.be/~manuel/LopezIbanez_bib.html#LopDubStu2011irace)
     | [PDF](http://iridia.ulb.ac.be/IridiaTrSeries/IridiaTr2011-004.pdf) ]
 
- 3. Manuel López-Ibáñez. [The irace
-    software package: A tutorial](http://iridia.ulb.ac.be/irace/files/irace-comex-tutorial.pdf). COMEX Workshop on Practical Automatic Algorithm Configuration, 2014.<br>
-    [ [workshop webpage](http://iridia.ulb.ac.be/~manuel/comex_workshop/)
-    | [PDF](http://iridia.ulb.ac.be/irace/files/irace-comex-tutorial.pdf) ]
+ 3. Thomas Stützle and Manuel López-Ibáñez. [Tutorial: Automated algorithm
+    configuration and design](https://doi.org/10.1145/3449726.3461404). GECCO
+    '21: Proceedings of the Genetic and Evolutionary Computation Conference
+    Companion, July 2021.
+    [doi:10.1145/3449726.3461404](https://doi.org/10.1145/3449726.3461404)
 
 
 Requisites
