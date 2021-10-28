@@ -16,13 +16,14 @@ env:
   R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
   _R_CHECK_FORCE_SUGGESTS_: false
   _R_CHECK_CRAN_INCOMING_REMOTE_: false
-          
+  LATEX_PACKAGES: oberdiek:grfext:environ:trimspaces:etoolbox:upquote:babel-english:pgf:xcolor:algorithms:relsize:tocbibind:appendix:tocloft:enumitem:listings:tcolorbox:collection-fontsrecommended:framed:inconsolata:microtype
+
 jobs:
   R-CMD-check:
 
     runs-on: ${{ matrix.config.os }}
 
-    name: ${{ matrix.config.os }} (${{ matrix.config.r }})
+    name: Check ${{ matrix.config.os }} (${{ matrix.config.r }})
 
     strategy:
       fail-fast: false
@@ -63,27 +64,16 @@ jobs:
       - name: Install latex packages
         run: |
           remotes::install_cran("tinytex")
-          tinytex::tlmgr_install(pkgs = c("oberdiek",
-                                          "grfext",
-                                          "environ",
-                                          "trimspaces",
-                                          "etoolbox",
-                                          "upquote",
-                                          "babel-english",
-                                          "pgf",
-                                          "xcolor",
-                                          "algorithms",
-                                          "relsize",
-                                          "tocbibind",
-                                          "appendix",
-                                          "tocloft",
-                                          "enumitem",
-                                          "listings",
-                                          "tcolorbox",
-                                          "collection-fontsrecommended",
-                                          "framed",
-                                          "inconsolata",
-                                          "microtype"))
+          tinytex::tlmgr_install(pkgs = strsplit(Sys.getenv("LATEX_PACKAGES"),split=":")[[1]])
+        shell: Rscript {0}
+      
+      - name: Check (NOT CRAN)
+        if: success()
+        env:
+          NOT_CRAN: true
+        run: |
+          options(crayon.enabled = TRUE)
+          rcmdcheck::rcmdcheck(args = c("--no-manual", "--run-donttest","--timings"), error_on = "warning", check_dir = "check")
         shell: Rscript {0}
       
       - name: Check (CRAN)
@@ -92,15 +82,6 @@ jobs:
         run: |
           options(crayon.enabled = TRUE)
           rcmdcheck::rcmdcheck(build_args=c("--compact-vignettes=gs+qpdf"), args = c("--no-manual", "--as-cran"), error_on = "warning", check_dir = "check")
-        shell: Rscript {0}
-
-      - name: Check (NOT CRAN)
-        if: success()
-        env:
-          NOT_CRAN: true
-        run: |
-          options(crayon.enabled = TRUE)
-          rcmdcheck::rcmdcheck(args = c("--no-manual", "--run-donttest","--timings"), error_on = "warning", check_dir = "check")
         shell: Rscript {0}
 
       - name: Upload check results
@@ -112,7 +93,7 @@ jobs:
 
   coverage:
     needs: R-CMD-check
-    name: ${{ matrix.config.os }} (${{ matrix.config.r }})
+    name: Coverage ${{ matrix.config.os }} (${{ matrix.config.r }})
     runs-on: ${{ matrix.config.os }}
     strategy:
       fail-fast: false
@@ -129,9 +110,7 @@ jobs:
       - uses: r-lib/actions/setup-r@v1
         with:
           r-version: ${{ matrix.config.r }}
-
-      - uses: r-lib/actions/setup-pandoc@v1
-
+          
       - name: Install latex
         uses: r-lib/actions/setup-tinytex@v1
         env:
@@ -142,37 +121,16 @@ jobs:
         with:
           extra-packages: |
             devtools
-            rcmdcheck
             covr
           needs: |
             coverage
-      
+
       - name: Install latex packages
         run: |
           remotes::install_cran("tinytex")
-          tinytex::tlmgr_install(pkgs = c("oberdiek",
-                                          "grfext",
-                                          "environ",
-                                          "trimspaces",
-                                          "etoolbox",
-                                          "upquote",
-                                          "babel-english",
-                                          "pgf",
-                                          "xcolor",
-                                          "algorithms",
-                                          "relsize",
-                                          "tocbibind",
-                                          "appendix",
-                                          "tocloft",
-                                          "enumitem",
-                                          "listings",
-                                          "tcolorbox",
-                                          "collection-fontsrecommended",
-                                          "framed",
-                                          "inconsolata",
-                                          "microtype"))
+          tinytex::tlmgr_install(pkgs = strsplit(Sys.getenv("LATEX_PACKAGES"),split=":")[[1]])
         shell: Rscript {0}
-
+      
       - name: Test coverage
         if: success()
         run: |
@@ -192,7 +150,7 @@ jobs:
         refs/heads/master
         refs/heads/main
       ', github.ref) && github.event_name == 'push'
-    name: ${{ matrix.config.os }} (${{ matrix.config.r }})
+    name: pkgdown ${{ matrix.config.os }} (${{ matrix.config.r }})
     runs-on: ${{ matrix.config.os }}
     strategy:
       fail-fast: false
@@ -223,41 +181,19 @@ jobs:
           extra-packages: |
             pkgdown
             devtools
-            rcmdcheck
           needs: |
             website
-      
+        
       - name: Install latex packages
         run: |
           remotes::install_cran("tinytex")
-          tinytex::tlmgr_install(pkgs = c("oberdiek",
-                                          "grfext",
-                                          "environ",
-                                          "trimspaces",
-                                          "etoolbox",
-                                          "upquote",
-                                          "babel-english",
-                                          "pgf",
-                                          "xcolor",
-                                          "algorithms",
-                                          "relsize",
-                                          "tocbibind",
-                                          "appendix",
-                                          "tocloft",
-                                          "enumitem",
-                                          "listings",
-                                          "tcolorbox",
-                                          "collection-fontsrecommended",
-                                          "framed",
-                                          "inconsolata",
-                                          "microtype"))
+          tinytex::tlmgr_install(pkgs = strsplit(Sys.getenv("LATEX_PACKAGES"),split=":")[[1]])
         shell: Rscript {0}
-
-      - name: Install package
+        
+      - name: Update version
         if: success()
         run: |
           make version
-          R CMD INSTALL .
 
       - name: Deploy package
         if: success()
