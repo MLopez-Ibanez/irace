@@ -2,13 +2,9 @@
 # https://community.rstudio.com/new-topic?category=Package%20development&tags=github-actions
 on:
   push:
-    branches:
-      - main
-      - master
+    branches: [main, master]
   pull_request:
-    branches:
-      - main
-      - master
+    branches:  [main, master]
 
 name: R-CMD-check
 
@@ -17,7 +13,8 @@ env:
   _R_CHECK_FORCE_SUGGESTS_: false
   _R_CHECK_CRAN_INCOMING_REMOTE_: false
   LATEX_PACKAGES: oberdiek:grfext:environ:trimspaces:etoolbox:upquote:babel-english:pgf:xcolor:algorithms:relsize:tocbibind:appendix:tocloft:enumitem:listings:tcolorbox:collection-fontsrecommended:framed:inconsolata:microtype
-
+  R_KEEP_PKG_SOURCE: yes
+  
 jobs:
   R-CMD-check:
 
@@ -27,13 +24,12 @@ jobs:
 
     strategy:
       fail-fast: false
-      
       matrix:
         config:
           - {os: windows-latest, r: 'release'}
           - {os: macOS-latest,   r: 'release'}
           - {os: ubuntu-20.04,   r: 'release', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
-          - {os: ubuntu-20.04,   r: 'devel',   rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
+          - {os: ubuntu-20.04,   r: 'devel', http-user-agent: 'release', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
           - {os: ubuntu-20.04,   r: '3.6',     rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
 
     env:
@@ -43,11 +39,13 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - uses: r-lib/actions/setup-r@v1
+      - uses: r-lib/actions/setup-pandoc@master
+        
+      - uses: r-lib/actions/setup-r@master
         with:
           r-version: ${{ matrix.config.r }}
-
-      - uses: r-lib/actions/setup-pandoc@v1
+          http-user-agent: ${{ matrix.config.http-user-agent }}
+          use-public-rspm: true
 
       - name: Install latex
         uses: r-lib/actions/setup-tinytex@v1
@@ -59,10 +57,9 @@ jobs:
         run: brew install openmpi
         if: runner.os == 'macOS'
 
-      - uses: r-lib/actions/setup-r-dependencies@v1
+      - uses: r-lib/actions/setup-r-dependencies@master
         with:
           extra-packages: |
-             devtools
              rcmdcheck
         
       - name: Install latex packages
@@ -111,9 +108,13 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - uses: r-lib/actions/setup-r@v1
+      - uses: r-lib/actions/setup-pandoc@master
+        
+      - uses: r-lib/actions/setup-r@master
         with:
           r-version: ${{ matrix.config.r }}
+          http-user-agent: ${{ matrix.config.http-user-agent }}
+          use-public-rspm: true
           
       - name: Install latex
         uses: r-lib/actions/setup-tinytex@v1
@@ -121,10 +122,9 @@ jobs:
           # install full prebuilt version
           TINYTEX_INSTALLER: TinyTeX
 
-      - uses: r-lib/actions/setup-r-dependencies@v1
+      - uses: r-lib/actions/setup-r-dependencies@master
         with:
           extra-packages: |
-            devtools
             covr
           needs: |
             coverage
@@ -141,13 +141,6 @@ jobs:
           covr::codecov(type="all", quiet=FALSE)
         shell: Rscript {0}
 
-      - name: Upload check results
-        if: failure()
-        uses: actions/upload-artifact@main
-        with:
-          name: ${{ runner.os }}-r${{ matrix.config.r }}-results
-          path: check
-    
   pkgdown:
     needs: R-CMD-check
     if: contains('
@@ -168,23 +161,24 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - uses: r-lib/actions/setup-r@v1
+      - uses: r-lib/actions/setup-pandoc@master
+        
+      - uses: r-lib/actions/setup-r@master
         with:
           r-version: ${{ matrix.config.r }}
-
-      - uses: r-lib/actions/setup-pandoc@v1
-
+          http-user-agent: ${{ matrix.config.http-user-agent }}
+          use-public-rspm: true
+          
       - name: Install latex
         uses: r-lib/actions/setup-tinytex@v1
         env:
           # install full prebuilt version
           TINYTEX_INSTALLER: TinyTeX
 
-      - uses: r-lib/actions/setup-r-dependencies@v1
+      - uses: r-lib/actions/setup-r-dependencies@master
         with:
           extra-packages: |
             pkgdown
-            devtools
           needs: |
             website
         
@@ -222,11 +216,4 @@ jobs:
           git worktree remove $DEST_DIR
           Rscript -e 'pkgdown::deploy_to_branch(new_process = FALSE)'
         shell: bash {0}
-
-      - name: Upload check results
-        if: failure()
-        uses: actions/upload-artifact@main
-        with:
-          name: ${{ runner.os }}-r${{ matrix.config.r }}-results
-          path: check
   
