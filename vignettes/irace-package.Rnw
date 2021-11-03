@@ -711,7 +711,7 @@ checkIraceScenario(scenario = scenario)
  or directly from the \aR console:
 
 \begin{itemize}
-\item{%
+\item 
 \textbf{From the command-line console}, call the command (on Windows, you should execute
   \code{irace.exe}):
 \begin{lstlisting}[style=BashInputStyle]
@@ -725,8 +725,8 @@ For this example we assume that the needed scenario files have been set
 properly in the \code{scenario.txt} file using the options described in
 \autoref{sec:irace options}. Most \irace options can be specified
 in the command line or directly in the \code{scenario.txt} file.
-}
-\item{
+
+\item 
 \textbf{From the \aR console}, evaluate:
 
 <<irace_R_exe, eval=FALSE, prompt=FALSE>>=
@@ -737,7 +737,7 @@ scenario <- readScenario(filename = "scenario.txt",
                          scenario = defaultScenario())
 irace.main(scenario = scenario)
 @
-}
+
 \end{itemize}
 
 This will perform one run of \irace. See the output of \code{irace --help} in the command-line or \code{irace.usage()} in \aR for quick information on
