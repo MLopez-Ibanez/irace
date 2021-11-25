@@ -160,8 +160,8 @@ Once installed, test that it is working by doing:
 ```R
     $ R
     R> library(irace)
-    R> system.file(package="irace")
-    [1] "~/R/irace"
+    R> system.file(package="irace", "bin", mustWork=TRUE)
+    [1] "/home/user/R/irace/bin"
 ```
 The last command tells you the installation directory of `irace`.
 
@@ -172,8 +172,8 @@ Save the installation directory of `irace` to a variable, and add it to your
 `.bash_profile`, `.bashrc` or `.profile`:
 
 ```bash
-    export IRACE_HOME=~/R/irace/ # Path given by system.file(package="irace")
-    export PATH=${IRACE_HOME}/bin/:$PATH
+    export IRACE_HOME=/home/user/R/irace/bin/ # Path given by system.file(package="irace", "bin", mustWork=TRUE)
+    export PATH=${IRACE_HOME}:$PATH
     # export R_LIBS=~/R:${R_LIBS} # Only if local installation was forced
 ```
 
