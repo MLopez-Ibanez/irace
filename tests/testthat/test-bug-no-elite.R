@@ -1,5 +1,5 @@
 context("bug")
-
+skip_on_cran()
 # https://github.com/MLopez-Ibanez/irace/issues/10
 withr::with_output_sink("test-bug-no-elite.Rout", {
 
@@ -8,8 +8,8 @@ algorithm    "--"             c    (as,mmas,eas,ras,acs)
 localsearch  "--localsearch " c    (0, 1, 2, 3)
 alpha        "--alpha "       r    (0.00, 5.00)
 beta         "--beta "        r    (0.00, 10.00)
-rho          "--rho  "        r    (0.01, 1.00)
-ants         "--ants "        i            (5, 100)
+rho          "--rho "         r    (0.01, 1.00)
+ants         "--ants "        i    (5, 100)
 q0           "--q0 "          r    (0.0, 1.0)           | algorithm == "acs"
 rasrank      "--rasranks "    i    (1, 100)             | algorithm == "ras"
 elitistants  "--elitistants " i    (1, 750)             | algorithm == "eas"
@@ -19,16 +19,67 @@ dlb          "--dlb "         c    (0, 1)               | localsearch %in% c(1,2
 target.runner <- function(experiment, scenario)
   return(list(cost = 100, call = toString(experiment)))
 
-  withr::with_options(list(warning=2), {
-    parameters <- irace:::readParameters(text=parameters.txt)
-    scenario <- list(targetRunner = target.runner,
-                     instances=1:10,
-                     maxExperiments = 5000, logFile = "",
-                     deterministic = TRUE,
-                     elitistNewInstances = 0,
-                     elitistLimit = 0,
-                     elitist = 0)
-    scenario <- checkScenario (scenario)
-    confs <- irace(scenario = scenario, parameters = parameters)
-  })
+parameters <- irace:::readParameters(text=parameters.txt)
+  
+withr::with_options(list(warning=2), {
+  scenario <- list(targetRunner = target.runner,
+                   instances=1:10,
+                   maxExperiments = 5000, logFile = "",
+                   deterministic = TRUE,
+                   elitistNewInstances = 0,
+                   elitistLimit = 0,
+                   elitist = 0)
+  scenario <- checkScenario (scenario)
+  confs <- irace(scenario = scenario, parameters = parameters)
+})
+
+# https://github.com/MLopez-Ibanez/irace/issues/13
+lookup <- readRDS("bug-13-lookup.rds")
+target.runner <- function(experiment, scenario) {
+  configuration <- experiment$configuration
+  instance <- experiment$instance
+  switches <- experiment$switches
+  debugLevel <- scenario$debugLevel
+  args <- paste(instance, trimws(irace:::buildCommandLine(configuration, switches)))
+  pos <- pmatch(args, lookup[,1])
+  if(!is.na(pos)) {
+    stopifnot(!is.na(lookup[pos, 2]))
+    cost <- as.numeric(lookup[pos, 2])
+    lookup[pos,2] <<- NA
+  } else {
+    cost <- 10
+  }
+  if(debugLevel > 0) {
+    cat("# ", args, "\n")
+    cat(cost, "\n")
+  }
+  return(list(cost = cost, call = toString(experiment)))
+}
+
+withr::with_options(list(warning=2), {
+  scenario <- list(instances = scan(what="", quiet=TRUE, text="
+2000-121.tsp
+2000-122.tsp
+2000-123.tsp
+2000-124.tsp
+2000-125.tsp
+2000-126.tsp
+2000-127.tsp
+2000-128.tsp
+2000-129.tsp
+2000-130.tsp"),
+trainInstancesDir = "",
+trainInstancesFile = "",
+maxExperiments = 3000,
+digits = 3,
+seed = 2357,
+deterministic = 1,
+elitist = 0,
+targetRunner = target.runner,
+debugLevel=3)
+  scenario <- checkScenario (scenario)
+  confs <- irace(scenario = scenario, parameters = parameters)
+  expect_true(all(is.na(lookup[,2])))
+})
+
 })
