@@ -1,7 +1,7 @@
 context("bug")
 skip_on_cran()
-# https://github.com/MLopez-Ibanez/irace/issues/10
-withr::with_output_sink("test-bug-no-elite.Rout", {
+# https://github.com/MLopez-Ibanez/irace/issues/13
+withr::with_output_sink("test-bug-13.Rout", {
 
 parameters.txt <- '
 algorithm    "--"             c    (as,mmas,eas,ras,acs)
@@ -16,25 +16,10 @@ elitistants  "--elitistants " i    (1, 750)             | algorithm == "eas"
 nnls         "--nnls "        i    (5, 50)              | localsearch %in% c(1,2,3)
 dlb          "--dlb "         c    (0, 1)               | localsearch %in% c(1,2,3)
 '
-target.runner <- function(experiment, scenario)
-  return(list(cost = 100, call = toString(experiment)))
-
 parameters <- irace:::readParameters(text=parameters.txt)
   
-withr::with_options(list(warning=2), {
-  scenario <- list(targetRunner = target.runner,
-                   instances=1:10,
-                   maxExperiments = 5000, logFile = "",
-                   deterministic = TRUE,
-                   elitistNewInstances = 0,
-                   elitistLimit = 0,
-                   elitist = 0)
-  scenario <- checkScenario (scenario)
-  confs <- irace(scenario = scenario, parameters = parameters)
-})
-
-# https://github.com/MLopez-Ibanez/irace/issues/13
 lookup <- readRDS("bug-13-lookup.rds")
+counter <- 0
 target.runner <- function(experiment, scenario) {
   configuration <- experiment$configuration
   instance <- experiment$instance
@@ -43,9 +28,8 @@ target.runner <- function(experiment, scenario) {
   args <- paste(instance, trimws(irace:::buildCommandLine(configuration, switches)))
   pos <- pmatch(args, lookup[,1])
   if(!is.na(pos)) {
-    stopifnot(!is.na(lookup[pos, 2]))
     cost <- as.numeric(lookup[pos, 2])
-    lookup[pos,2] <<- NA
+    counter <<- counter + 1
   } else {
     cost <- 10
   }
@@ -79,7 +63,7 @@ targetRunner = target.runner,
 debugLevel=3)
   scenario <- checkScenario (scenario)
   confs <- irace(scenario = scenario, parameters = parameters)
-  expect_true(all(is.na(lookup[,2])))
+  expect_equal(counter, 548)
 })
 
 })

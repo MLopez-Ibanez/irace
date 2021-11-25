@@ -404,9 +404,8 @@ generateInstances <- function(scenario, remainingBudget)
   # Sample seeds.
   # 2147483647 is the maximum value for a 32-bit signed integer.
   # We use replace = TRUE, because replace = FALSE allocates memory for each possible number.
-  tmp <- data.frame (instance = sindex,
-                     seed = sample.int(2147483647, size = ntimes * length(instances), replace = TRUE))
-  return(tmp)
+  return(data.frame (instance = sindex,
+                     seed = sample.int(2147483647, size = ntimes * length(instances), replace = TRUE)))
 }
 
 addInstances <- function(scenario, instancesList, n.instances)

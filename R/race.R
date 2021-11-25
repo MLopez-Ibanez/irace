@@ -230,15 +230,13 @@ aux.ttest <- function(results, alive, which.alive, conf.level,
               dropped.any = dropped_any, p.value = min(pvals)))
 }
 
-race.init.instances <- function(deterministic, max.instances)
+no_elitrace.init.instances <- function(deterministic, max.instances)
 {
-  if (.irace$next.instance <= max.instances) {
+  if (deterministic) {
+    # If deterministic consider all (do not resample)
+    race.instances <- 1:max.instances
+  } else if(.irace$next.instance <= max.instances) {
     race.instances <- .irace$next.instance : max.instances
-  } else {
-    # This may happen if the scenario is deterministic and we would need
-    # more instances than what we have.
-    irace.assert(deterministic)
-    race.instances <- 1 : max.instances
   }
   return(race.instances)
 }
@@ -246,7 +244,10 @@ race.init.instances <- function(deterministic, max.instances)
 elitrace.init.instances <- function(race.env, deterministic, max.instances)
 {
   # if next.instance == 1 then this is the first iteration.
-  if (.irace$next.instance != 1) {
+  if (.irace$next.instance == 1) {
+    # Consider all
+    race.instances <- 1 : max.instances
+  } else {
     new.instances <- NULL
     last.new <- .irace$next.instance + race.env$elitistNewInstances - 1
     # Do we need to add new instances?
@@ -274,8 +275,6 @@ elitrace.init.instances <- function(race.env, deterministic, max.instances)
     # new.instances + past.instances + future.instances
     race.instances <- c(new.instances, sample.int(.irace$next.instance - 1),
                         future.instances)
-  } else {
-    race.instances <- race.init.instances(deterministic, max.instances)
   }
   return(race.instances)
 }
@@ -618,8 +617,8 @@ race <- function(maxExp = 0,
                                               scenario$deterministic,
                                               max.instances = nrow(.irace$instancesList))
   else
-    race.instances <- race.init.instances(scenario$deterministic,
-                                          max.instances = nrow(.irace$instancesList))
+    race.instances <- no_elitrace.init.instances(scenario$deterministic,
+                                                 max.instances = nrow(.irace$instancesList))
   no.tasks <- length(race.instances)
 
   # Initialize some variables...
@@ -752,7 +751,7 @@ race <- function(maxExp = 0,
 
   # Start main loop
   break.msg <- NULL
-  for (current.task in seq_len (no.tasks)) {
+  for (current.task in seq_len(no.tasks)) {
     which.alive <- which(alive)
     nbAlive     <- length(which.alive)
     which.exe   <- which.alive
@@ -1113,18 +1112,19 @@ race <- function(maxExp = 0,
     } 
   }
   
-  # Adding this given that when ncandidates = minsuvival+1
+  if (is.null(break.msg))
+    break.msg <- paste0("all instances (", no.tasks, ") evaluated")
+
+  # Adding this given that when ncandidates = minsurvival+1
   # and there one elite configuration that gets discarded in the new instances
   # execution the race is finished with no executions.
   # FIXME: we should handle this better, maybe allowing irace to handle no elite 
   # in irace()
-  # MANUEL: I still don't understand how we reach this error if there are non-rejected elites.
-  if (current.task == 1 && !any(is.elite > 0)) 
+  # MANUEL: Leslie, how can we reach this error in normal circumstances?
+  # Can we handle this better?
+  if (current.task == 1 && !any(is.elite > 0))
     irace.error ("Maximum number configurations immediately rejected reached!")
-
-  if (is.null(break.msg))
-    break.msg <- paste0("all instances (", no.tasks, ") evaluated")
-
+  
   # All instances that are not new in this race must have been evaluated by at
   # least one configuration.
   irace.assert(all_elite_instances_evaluated(),
