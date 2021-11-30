@@ -636,9 +636,16 @@ read_pcs_file <- function(file, digits = 4, debugLevel = 0, text)
   return(output)
 }
 
+#'  checkParameters
+#'
+#' FIXME: This is incomplete, for now we only repair inputs from previous irace
+#' versions.
+#'
+#' @template arg_parameters
+#' @md
+#' @export
 checkParameters <- function(parameters)
 {
-  # FIXME: This is incomplete, for now we only repair inputs from previous irace versions.
   if (is.null(parameters$isDependent)) {
     parameters$isDependent <- sapply(parameters$domain, is.expression)
     names(parameters$isDependent) <- parameters$names
