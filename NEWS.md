@@ -57,10 +57,8 @@
  * Generating the file `irace.Rdata` may be disabled by setting `logFile=""`.
                                (Manuel López-Ibáñez, reported by Johann Dreo)
  
- * Fix (#7): warnings with partial matched parameters.
-                               (Manuel López-Ibáñez, reported by Marc Becker)
-                               
- * `path_rel2abs()` is now exported so that other packages may use it.
+ * `path_rel2abs()` and `checkParameters()` are now exported so that other
+   packages may use them.
                                                        (Manuel López-Ibáñez)
  
  * The package provides a `irace.sindef` file that may be used for building a
@@ -70,8 +68,6 @@
  * `readConfigurationsFile()` will now detect duplicated configurations and
    error.                                         (Manuel López-Ibáñez)
         
- * Fix (#10): wrong assert with `elitist=0`.      (Manuel López-Ibáñez)
-
  * New example `examples/target-runner-python/target-runner-python-win.bat`
    contributed by Levi Ribeiro.
 
@@ -80,7 +76,15 @@
  * New scenario options `targetRunnerLauncher` and `targetRunnerLauncherArgs`
    to help in cases where the target-runner must be invoked via another
    software with particular options (such as `python.exe` in Windows).
-                                                       (Manuel López-Ibáñez)
+                                                           (Manuel López-Ibáñez)
+                                                       
+ * Fix (#7): warnings with partial matched parameters.
+                                  (Manuel López-Ibáñez, reported by Marc Becker)
+                               
+ * Fix (#10): wrong assert with `elitist=0`.             (Manuel López-Ibáñez)
+
+ * Fix (#13): Maximum number configurations immediately rejected reached.
+                                                           (Manuel López-Ibáñez)
 
 
 # irace 3.4.1  (31/03/2020)
