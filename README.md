@@ -160,8 +160,8 @@ Once installed, test that it is working by doing:
 ```R
     $ R
     R> library(irace)
-    R> system.file(package="irace", "bin", mustWork=TRUE)
-    [1] "/home/user/R/irace/bin"
+    R> cat(system.file(package="irace", "bin", mustWork=TRUE), "\n")
+    /home/user/R/irace/bin
 ```
 The last command tells you the installation directory of `irace`.
 
