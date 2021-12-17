@@ -10,6 +10,8 @@
 
 @string{add-cham = { Cham, Switzerland }}
 
+@string{add-heidelberg = { Heidelberg }}
+
 @string{aaaip-pub = {{AAAI} Press}}
 
 @string{ieeep = {IEEE Press}}
@@ -17,8 +19,6 @@
 @string{ieeep-ad = {Piscataway, NJ}}
 
 @string{springer = {Springer}}
-
-@string{springer-lncs = {Springer, Heidelberg, Germany}}
 
 @string{iridia = {IRIDIA, Universit{\'e} Libre de Bruxelles, Belgium}}
 
@@ -50,6 +50,8 @@
 
 @string{battiti = { Roberto Battiti }}
 
+@string{biedenkapp = { Biedenkapp, Andr{\'e} }}
+
 @string{birattari = { Mauro Birattari }}
 
 @string{chiarandini = { Marco Chiarandini }}
@@ -70,11 +72,13 @@
 
 @string{leyton-brown = { Kevin Leyton-Brown }}
 
+@string{lindauer_m = { Marius Thomas Lindauer }}
+
 @string{lopez-ibanez = { Manuel L{\'o}pez-Ib{\'a}{\~n}ez }}
 
 @string{mcgeoch_cc = { Catherine C. McGeoch }}
 
-@string{paquete = { Lu{\'\i}s Paquete }}
+@string{paquete = { Lu{\'i}s Paquete }}
 
 @string{pardalos = { Panos M. Pardalos }}
 
@@ -93,7 +97,7 @@
 @string{yuan_z = { Zhi Yuan }}
 
 @inproceedings{BieLinEggFraFawHoo2017,
-  author = {Biedenkapp, Andr{\'e} and Lindauer, Marius and Eggensperger,
+  author = biedenkapp # and # lindauer_m # and # {Eggensperger,
                   Katharina} # and # hutter # and # fawcett # and # hoos,
   title = {Efficient Parameter Importance Analysis via Ablation with
                   Surrogates},
@@ -169,8 +173,8 @@
 
 @incollection{HutHooLey2013lion,
   author = hutter # and # hoos # and # leyton-brown,
-  title = {Identifying key algorithm parameters and instance features
-                  using forward selection},
+  title = {Identifying Key Algorithm Parameters and Instance Features
+                  using Forward Selection},
   crossref = {LION2013},
   pages = {364--381},
   doi = {10.1007/978-3-642-44973-4_40},
@@ -334,7 +338,8 @@
                   International Conference, LION 6},
   year = 2012,
   series = lncs,
-  publisher = springer-lncs,
+  publisher = springer,
+  address = add-heidelberg,
   editor = hamadi # and # schoenauer,
   volume = 7219
 }
@@ -348,7 +353,8 @@
   series = lncs,
   editor = pardalos # and # {G. Nicosia},
   volume = 7997,
-  publisher = springer-lncs
+  publisher = springer,
+  address = add-heidelberg
 }
 
 @book{LION2017,
