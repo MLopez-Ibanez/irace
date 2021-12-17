@@ -204,6 +204,8 @@ jobs:
           git add --force R/version.R
           git commit R/version.R --allow-empty -m "Update version.R [skip ci]"
           git push origin 'HEAD:master' || exit 1
+          # pkgdown
+          Rscript -e 'pkgdown::deploy_to_branch(new_process = FALSE)' || exit 1
           # Commit vignette PDF to webpage
           export DEST_DIR=$(mktemp -d)
           git remote set-branches origin gh-pages
@@ -216,5 +218,4 @@ jobs:
           git push origin 'HEAD:gh-pages'
           popd
           git worktree remove $DEST_DIR
-          Rscript -e 'pkgdown::deploy_to_branch(new_process = FALSE)'
         shell: bash {0}
