@@ -548,6 +548,7 @@ allConfigurationsInit <- function(scenario, parameters)
 #' }
 #' 
 #' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
+#' @concept running
 #' @export
 irace <- function(scenario, parameters)
 {

@@ -97,6 +97,7 @@ irace.usage <- function ()
 #'  \code{\link{defaultScenario}} to provide a default scenario for \pkg{irace}.
 #' 
 #' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
+#' @concept running
 #' @export
 irace.main <- function(scenario = defaultScenario(), output.width = 9999L)
 {
@@ -175,6 +176,7 @@ irace.main <- function(scenario = defaultScenario(), output.width = 9999L)
 #' 
 #' @author Manuel López-Ibáñez and Leslie Pérez Cáceres
 #' @md
+#' @concept running
 #' @export
 testing_fromlog <- function(logFile, testNbElites, testIterationElites,
                             testInstancesDir, testInstancesFile, testInstances)
@@ -382,6 +384,7 @@ checkIraceScenario <- function(scenario, parameters = NULL)
 #'  \code{\link{irace.main}} to start \pkg{irace} with a given scenario.
 #' 
 #' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
+#' @concept running
 #' @export
 irace.cmdline <- function(argv = commandArgs (trailingOnly = TRUE))
 {

@@ -33,3 +33,4 @@ Returns the configurations by the iteration in which they were executed.
 \author{
 Manuel López-Ibáñez and Leslie Pérez Cáceres
 }
+\concept{analysis}

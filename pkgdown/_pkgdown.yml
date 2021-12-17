@@ -20,3 +20,12 @@ navbar:
       text: User Guide
       href: irace-package.pdf
 
+
+reference:
+- title: Launching irace
+  contents: has_concept("running")
+- title: Analysis
+  contents: has_concept("analysis")
+- title: Other functions
+  contents: lacks_concepts(c("analysis", "running"))
+  

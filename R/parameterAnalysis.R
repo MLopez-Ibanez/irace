@@ -31,6 +31,7 @@
 #'    a configurations file.
 #' 
 #' @author Manuel López-Ibáñez and Leslie Pérez Cáceres
+#' @concept analysis
 #' @export
 # TODO:
 # * change slightly background of conditional parameters
@@ -234,6 +235,7 @@ parcoordlabel <- function (configurations, parameters, col = "green", lty = 1,
 #'    a configurations file.
 #' 
 #' @author Manuel López-Ibáñez and Leslie Pérez Cáceres
+#' @concept analysis
 #' @export
 # TODO:
 # * add color scheme
@@ -324,20 +326,25 @@ parallelCoordinatesPlot <-
 }
 
 #' Return the elite configurations of the final iteration.
+#'
 #' 
 #' @param iraceResults Object created by \pkg{irace} and saved in \code{scenario$logFile}.
 #' @param logFile Log file created by \pkg{irace}, this file must contain the 
 #' \code{iraceResults} object.
 #' @param n Number of elite configurations to return, if \code{n} is larger than the 
-#' number of configurations, then only the existing ones are returned.
+#' number of configurations, then only the existing ones are returned. The default (\code{n=0}) returns all of them.
 #' @param drop.metadata Remove metadata, such the configuration ID and
 #' the ID of the parent, from the returned configurations. See
 #' \code{\link{removeConfigurationsMetaData}}.
 #' 
 #' @return A data frame containing the elite configurations required.
 #'
+#' @examples
+#' logFile <- system.file("exdata/irace-acotsp.Rdata", package="irace", mustWork=TRUE)
+#' print(removeConfigurationsMetaData(getFinalElites(logFile=log_file, n=1)))
 #' 
 #' @author Manuel López-Ibáñez and Leslie Pérez Cáceres
+#' @concept analysis
 #' @export
 getFinalElites <- function(iraceResults = NULL, logFile = NULL, n = 0,
                            drop.metadata = FALSE)
@@ -381,6 +388,7 @@ getFinalElites <- function(iraceResults = NULL, logFile = NULL, n = 0,
 #' @return A data frame containing the elite configurations required.
 #'
 #' @author Manuel López-Ibáñez and Leslie Pérez Cáceres
+#' @concept analysis
 #' @export
 ## Get configuration(s) by the id(s).
 ## iraceResults: object created by irace and saved in scenario$logFile.
@@ -427,6 +435,7 @@ getConfigurationById <- function(iraceResults = NULL, logFile = NULL,
 #' @return A data frame containing the elite configurations required.
 #'
 #' @author Manuel López-Ibáñez and Leslie Pérez Cáceres
+#' @concept analysis
 #' @export
 ## Get configuration(s) by the iteration in which they were executed.
 ## iraceResults: object created by irace and saved in scenario$logFile.
@@ -477,6 +486,7 @@ getConfigurationByIteration <- function(iraceResults = NULL, logFile = NULL,
 #' @return Box plot of the performance of the configurations.
 #'
 #' @author Manuel López-Ibáñez and Leslie Pérez Cáceres
+#' @concept analysis
 #' @export
 configurationsBoxplot <- function(experiments, title = NULL, 
                                   xlabel = "Configuration ID",

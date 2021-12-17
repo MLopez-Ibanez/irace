@@ -32,3 +32,4 @@ Creates box plots of the quality of configurations.
 \author{
 Manuel López-Ibáñez and Leslie Pérez Cáceres
 }
+\concept{analysis}

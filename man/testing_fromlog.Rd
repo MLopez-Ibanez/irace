@@ -52,3 +52,4 @@ set of testing instances must appear in \code{scenario[["testInstances"]]}.
 \author{
 Manuel López-Ibáñez and Leslie Pérez Cáceres
 }
+\concept{running}

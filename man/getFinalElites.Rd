@@ -18,7 +18,7 @@ getFinalElites(
 \code{iraceResults} object.}
 
 \item{n}{Number of elite configurations to return, if \code{n} is larger than the 
-number of configurations, then only the existing ones are returned.}
+number of configurations, then only the existing ones are returned. The default (\code{n=0}) returns all of them.}
 
 \item{drop.metadata}{Remove metadata, such the configuration ID and
 the ID of the parent, from the returned configurations. See
@@ -30,6 +30,12 @@ A data frame containing the elite configurations required.
 \description{
 Return the elite configurations of the final iteration.
 }
+\examples{
+logFile <- system.file("exdata/irace-acotsp.Rdata", package="irace", mustWork=TRUE)
+print(removeConfigurationsMetaData(getFinalElites(logFile=log_file, n=1)))
+
+}
 \author{
 Manuel López-Ibáñez and Leslie Pérez Cáceres
 }
+\concept{analysis}

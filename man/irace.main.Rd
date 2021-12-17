@@ -101,3 +101,4 @@ lower-level interface, please see function \code{\link{irace}}.
 \author{
 Manuel López-Ibáñez and Jérémie Dubois-Lacoste
 }
+\concept{running}
