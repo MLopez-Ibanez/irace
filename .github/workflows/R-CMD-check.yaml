@@ -40,9 +40,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - uses: r-lib/actions/setup-pandoc@v2-branch
+      - uses: r-lib/actions/setup-pandoc@v2
 
-      - uses: r-lib/actions/setup-r@v2-branch
+      - uses: r-lib/actions/setup-r@v2
         with:
           r-version: ${{ matrix.config.r }}
           http-user-agent: ${{ matrix.config.http-user-agent }}
@@ -52,16 +52,17 @@ jobs:
         run: brew install openmpi
         if: runner.os == 'macOS'
 
-      - uses: r-lib/actions/setup-r-dependencies@v2-branch
-        with:
-          extra-packages: rcmdcheck
-
       - name: Install latex
         uses: r-lib/actions/setup-tinytex@v2
         env:
           # install full prebuilt version
           TINYTEX_INSTALLER: TinyTeX
 
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::rcmdcheck
+          needs: check
+          
       - name: Install latex packages
         run: |
           remotes::install_cran("tinytex")
@@ -109,7 +110,7 @@ jobs:
 
       - uses: r-lib/actions/setup-pandoc@master
 
-      - uses: r-lib/actions/setup-r@v2-branch
+      - uses: r-lib/actions/setup-r@v2
         with:
           r-version: ${{ matrix.config.r }}
           http-user-agent: ${{ matrix.config.http-user-agent }}
@@ -121,12 +122,10 @@ jobs:
           # install full prebuilt version
           TINYTEX_INSTALLER: TinyTeX
 
-      - uses: r-lib/actions/setup-r-dependencies@v2-branch
+      - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: |
-            covr
-          needs: |
-            coverage
+          extra-packages: any::covr
+          needs: coverage
 
       - name: Install latex packages
         run: |
@@ -159,24 +158,24 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - uses: r-lib/actions/setup-pandoc@v2-branch
+      - uses: r-lib/actions/setup-pandoc@v2
 
-      - uses: r-lib/actions/setup-r@v2-branch
+      - uses: r-lib/actions/setup-r@v2
         with:
           r-version: ${{ matrix.config.r }}
           http-user-agent: ${{ matrix.config.http-user-agent }}
           use-public-rspm: true
-
-      - uses: r-lib/actions/setup-r-dependencies@v2-branch
-        with:
-          extra-packages: any::pkgdown
-          needs: website
 
       - name: Install latex
         uses: r-lib/actions/setup-tinytex@v2
         env:
           # install full prebuilt version
           TINYTEX_INSTALLER: TinyTeX
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::pkgdown
+          needs: website
 
       - name: Install latex packages
         run: |
