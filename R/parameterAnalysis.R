@@ -340,7 +340,7 @@ parallelCoordinatesPlot <-
 #' @return A data frame containing the elite configurations required.
 #'
 #' @examples
-#' logFile <- system.file("exdata/irace-acotsp.Rdata", package="irace", mustWork=TRUE)
+#' log_file <- system.file("exdata/irace-acotsp.Rdata", package="irace", mustWork=TRUE)
 #' print(removeConfigurationsMetaData(getFinalElites(logFile=log_file, n=1)))
 #' 
 #' @author Manuel López-Ibáñez and Leslie Pérez Cáceres

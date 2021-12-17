@@ -31,7 +31,7 @@ A data frame containing the elite configurations required.
 Return the elite configurations of the final iteration.
 }
 \examples{
-logFile <- system.file("exdata/irace-acotsp.Rdata", package="irace", mustWork=TRUE)
+log_file <- system.file("exdata/irace-acotsp.Rdata", package="irace", mustWork=TRUE)
 print(removeConfigurationsMetaData(getFinalElites(logFile=log_file, n=1)))
 
 }
