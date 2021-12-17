@@ -48,18 +48,6 @@ jobs:
           http-user-agent: ${{ matrix.config.http-user-agent }}
           use-public-rspm: true
 
-      - name: Install latex
-        uses: r-lib/actions/setup-tinytex@v2
-        env:
-          # install full prebuilt version
-          TINYTEX_INSTALLER: TinyTeX
-
-      - name: Install latex packages
-        run: |
-          remotes::install_cran("tinytex")
-          tinytex::tlmgr_install(pkgs = strsplit(Sys.getenv("LATEX_PACKAGES"),split=":")[[1]])
-        shell: Rscript {0}
-
       - name: Install MPI in macOS
         run: brew install openmpi
         if: runner.os == 'macOS'
@@ -167,6 +155,11 @@ jobs:
           http-user-agent: ${{ matrix.config.http-user-agent }}
           use-public-rspm: true
 
+      - uses: r-lib/actions/setup-r-dependencies@v2-branch
+        with:
+          extra-packages: any::pkgdown
+          needs: website
+
       - name: Install latex
         uses: r-lib/actions/setup-tinytex@v2
         env:
@@ -183,11 +176,6 @@ jobs:
         if: success()
         run: |
           make version
-
-      - uses: r-lib/actions/setup-r-dependencies@v2-branch
-        with:
-          extra-packages: any::pkgdown
-          needs: website
 
       - name: Install package with vignettes
         if: success()
