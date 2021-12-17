@@ -62,6 +62,7 @@ jobs:
         with:
           extra-packages: any::rcmdcheck
           needs: check
+          cache-version: 2
           
       - name: Install latex packages
         run: |
