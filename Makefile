@@ -26,7 +26,7 @@ define Rsed
 	R --slave --vanilla -e 'f <- "$(1)"; txt <- sub($(2), $(3), perl=TRUE, readLines(f)); writeLines(txt, f)'
 endef
 
-.PHONY : help build check clean install pdf rsync submit cran winbuild vignettes examples genoptions pkgdown
+.PHONY : help build check clean install pdf rsync submit cran winbuild vignettes examples genoptions gendoc pkgdown version
 
 help:
 	@echo "quick-install  install the package without rebuilding the vignettes or generating the documentation"
@@ -57,16 +57,18 @@ genoptions: R/irace-options.R vignettes/section/irace-options.tex scripts/irace_
 R/irace-options.R vignettes/section/irace-options.tex scripts/irace_options_comment.R: scripts/irace_options.json scripts/generate-options.R
 	cd scripts && R --slave -f generate-options.R && cd ..
 
-gendoc:
+gendoc: version
 	$(Reval) 'devtools::document()'
 
 pkgdown: gendoc
 	$(Reval) 'pkgdown::build_site(run_dont_run = TRUE, document = FALSE)'
 	@$(MAKE) clean
 
-build:
+version:
+	./scripts/version.sh
+
+build: 
 	@$(MAKE) genoptions
-	@$(MAKE) gendoc
 	$(MAKE) releasevignette
 	@if grep -q @ $(PACKAGEDIR)/vignettes/$(PACKAGE)-package.bib; then true; \
 	else echo "error: vignettes/$(PACKAGE)-package.bib is empty: run 'make vignettes'"; false; fi
@@ -83,7 +85,7 @@ vignettes/$(PACKAGE)-package.bib: vignettes/$(PACKAGE)-package.aux
 	&& aux2bib $(PACKAGE)-package.aux | grep -v '@comment' > tmp-$(PACKAGE)-package.bib \
 	&& mv tmp-$(PACKAGE)-package.bib $(PACKAGE)-package.bib
 
-releasevignette:
+releasevignette: gendoc
 	test -s $(PACKAGEDIR)/vignettes/$(PACKAGE)-package.bib || $(MAKE) nonreleasevignette
 	@$(call Rsed,$(PACKAGEDIR)/vignettes/$(PACKAGE)-package.Rnw,"^\\\\setboolean{Release}{false}","\\\\setboolean{Release}{true}")
 

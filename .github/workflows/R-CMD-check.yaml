@@ -184,6 +184,11 @@ jobs:
           tinytex::tlmgr_install(pkgs = strsplit(Sys.getenv("LATEX_PACKAGES"),split=":")[[1]])
         shell: Rscript {0}
 
+      - name: Update version
+        if: success()
+        run: |
+          make version
+
       - name: Install package with vignettes
         if: success()
         run: |
@@ -195,6 +200,11 @@ jobs:
         run: |
           git config --local user.email "actions@github.com"
           git config --local user.name "GitHub Actions"
+          # Commit version.R so that install_github works
+          # FIXME: Is there a better way to record the git sha in R?
+          git add --force R/version.R
+          git commit R/version.R --m "Update version.R [skip ci]"
+          git push origin 'HEAD:master' || exit 1
           # pkgdown
           Rscript -e 'pkgdown::deploy_to_branch(new_process = FALSE)' || exit 1
           # Commit vignette PDF to webpage
