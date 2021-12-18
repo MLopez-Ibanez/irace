@@ -6,7 +6,6 @@ RNODE=iridiacluster
 RDIR=~/
 INSTALL_FLAGS="--with-keep.source"
 BUILD_FLAGS=
-REALVERSION=$(PACKAGEVERSION).$(SVN_REV)
 PACKAGEDIR=$(CURDIR)
 # This could be replaced by devtools::build_win(version = "R-devel")
 FTP_COMMANDS="user anonymous anonymous\nbinary\ncd incoming\nput $(PACKAGE)_$(PACKAGEVERSION).tar.gz\nquit\n"
@@ -27,18 +26,7 @@ define Rsed
 	R --slave --vanilla -e 'f <- "$(1)"; txt <- sub($(2), $(3), perl=TRUE, readLines(f)); writeLines(txt, f)'
 endef
 
-## Do we have git?
-ifeq ($(shell sh -c 'which git 1> /dev/null 2>&1 && echo y'),y)
-  ## Is this a working copy?
-  ifeq ($(shell sh -c 'LC_ALL=C  git describe --first-parent --always | grep -q "[0-9a-z]\+$$"  && echo y'),y)
-    $(shell sh -c 'LC_ALL=C  git describe --dirty --first-parent --always --exclude "*" > git_version')
-  endif
-endif
-## Set version information:
-SVN_REV = $(shell sh -c 'cat git_version 2> /dev/null')
-REVNUM = $(shell sh -c 'cat git_version 2> /dev/null')
-
-.PHONY : help build check clean install pdf rsync version submit cran winbuild vignettes examples genoptions pkgdown
+.PHONY : help build check clean install pdf rsync submit cran winbuild vignettes examples genoptions pkgdown
 
 help:
 	@echo "quick-install  install the package without rebuilding the vignettes or generating the documentation"
@@ -61,7 +49,7 @@ setup:
 install: build
 	cd $(BINDIR) && R CMD INSTALL $(INSTALL_FLAGS) $(PACKAGE)_$(PACKAGEVERSION).tar.gz
 
-quick-install: version
+quick-install:
 	cd $(BINDIR) &&	R CMD build $(BUILD_FLAGS) $(NO_BUILD_VIGNETTES) $(PACKAGEDIR) && R CMD INSTALL $(INSTALL_FLAGS) $(PACKAGE)_$(PACKAGEVERSION).tar.gz
 
 genoptions: R/irace-options.R vignettes/section/irace-options.tex scripts/irace_options_comment.R
@@ -76,7 +64,7 @@ pkgdown: gendoc
 	$(Reval) 'pkgdown::build_site(run_dont_run = TRUE, document = FALSE)'
 	@$(MAKE) clean
 
-build : version
+build:
 	@$(MAKE) genoptions
 	@$(MAKE) gendoc
 	$(MAKE) releasevignette
@@ -144,7 +132,7 @@ clean:
 # make nonreleasevignette should build with Release as false (which is faster and should always work).
 #
 # It is ok to fail if something is missing or needs to be done and give a nice error. For example, if optbib is missing.
-vignettes: version vignettes/$(PACKAGE)-package.Rnw vignettes/section/irace-options.tex
+vignettes: vignettes/$(PACKAGE)-package.Rnw vignettes/section/irace-options.tex
 # FIXME: How to display the output of the latex and bibtex commands with R CMD?
 # FIXME: How to halt on warning?
 	@test -d $(PACKAGEDIR)/vignettes/optbib || (echo "ERROR: vignettes/optbib not found. You need to symlink or checkout https://github.com/iridia-ulb/references." && exit 1)
@@ -157,10 +145,7 @@ vignettes: version vignettes/$(PACKAGE)-package.Rnw vignettes/section/irace-opti
 pdf: build
 	R CMD Rd2pdf --force --no-preview --batch --output=$(BINDIR)/$(PACKAGE)_$(PACKAGEVERSION).pdf $(PACKAGEDIR)/
 
-version :
-	$(Reval) 'cat(file="$(PACKAGEDIR)/R/version.R", sep="", "#'\'' irace.version\n#'\''\n#'\'' A character string containing the version of \\pkg{irace}.\n#'\''\n#'\'' @export\nirace.version <- '\''$(REALVERSION)'\''\n")'
-
-rsync : version
+rsync:
 ifndef RDIR
 	@echo "ERROR: You must specify a remote dir (e.g., RDIR=~/)"
 	@exit 1
