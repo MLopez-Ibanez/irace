@@ -934,6 +934,13 @@ checkTargetFiles <- function(scenario, parameters)
                                   repair = scenario$repairConfiguration)
   configurations <- cbind (.ID. = conf.id, configurations)
 
+  # Read initial configurations provided by the user.
+  initConfigurations <- allConfigurationsInit(scenario, parameters)
+  if (nrow(initConfigurations) > 0) {
+    # We do not use the .PARENT. column here.
+    initConfigurations <- initConfigurations[, colnames(initConfigurations) %!in% c(".PARENT.")]
+    configurations <- rbind(configurations, initConfigurations)
+  }
   bounds <- rep(scenario$boundMax, nrow(configurations))
 
   instances.ID <- if (scenario$sampleInstances)

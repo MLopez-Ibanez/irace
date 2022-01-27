@@ -86,6 +86,10 @@
  * Fix (#13): Maximum number configurations immediately rejected reached.
                                                            (Manuel López-Ibáñez)
 
+ * `--check` now also check the contents of `configurationsFile` and runs
+   configurations provided via `initConfigurations`. 
+                          (Manuel  López-Ibáñez, reported by Andreea Avramescu)
+
 
 # irace 3.4.1  (31/03/2020)
 
