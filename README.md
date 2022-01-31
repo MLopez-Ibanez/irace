@@ -7,7 +7,7 @@ status](https://github.com/MLopez-Ibanez/irace/workflows/R-CMD-check/badge.svg)]
 [![Codecov test coverage](https://codecov.io/gh/MLopez-Ibanez/irace/branch/master/graph/badge.svg)](https://codecov.io/gh/MLopez-Ibanez/irace?branch=master)
 <!-- badges: end -->
   
-[ [**Homepage**](http://iridia.ulb.ac.be/irace/) ] [ [**User Guide (PDF)**](https://cran.r-project.org/package=irace/vignettes/irace-package.pdf) ] 
+[ [**Homepage**](https://mlopez-ibanez.github.io/irace/) ] [ [**User Guide (PDF)**](https://cran.r-project.org/package=irace/vignettes/irace-package.pdf) ] 
 
 **Maintainers:** [Manuel López-Ibáñez](http://lopez-ibanez.eu), Leslie Pérez Cáceres
 
@@ -124,8 +124,8 @@ below.
 Installing the irace package
 ============================
 
-There are two methods for installing the [irace](http://iridia.ulb.ac.be/irace) R package on your
-computer:
+There are two methods for installing the
+[irace](https://mlopez-ibanez.github.io/irace/) R package on your computer:
 
 1. Install within R (automatic download):
 ```R

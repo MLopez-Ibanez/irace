@@ -252,7 +252,7 @@ package is available from CRAN:
 \end{center}
 %
 More information about \irace is available at
-\url{http://iridia.ulb.ac.be/irace}.
+\url{https://mlopez-ibanez.github.io/irace}.
 
 \subsection{Version}
 The current version of the \irace package is \iraceversion. Previous
@@ -773,7 +773,7 @@ cp $IRACE_HOME/examples/acotsp/* ~/tuning/
 \end{lstlisting}
 %@
 
-\item Download the training instances from \url{http://iridia.ulb.ac.be/irace/} to the \path{~/tuning/} directory.
+\item Download the training instances from \url{https://iridia.ulb.ac.be/supp/IridiaSupp2016-003/index.html} to the \path{~/tuning/} directory.
 \item Create the instance directory (\eg~\path{~/tuning/Instances}) and decompress the instance files on it.
 
 %<<instance0,engine='bash',eval=FALSE>>=
@@ -3019,7 +3019,7 @@ C:\path\to\python.exe C:\path\to\target-runner.py %instance% %seed% \
 \section{Resources and contact information} \label{sec:contact}
 
 More information about the package can be found on the \irace webpage:
-\begin{center} \url{http://iridia.ulb.ac.be/irace/} \end{center}
+\begin{center} \url{https://iridia.ulb.ac.be/supp/IridiaSupp2016-003/index.html} \end{center}
 
 For questions and suggestions please contact the development team through 
 the \irace package Google group:
@@ -3030,11 +3030,6 @@ or by sending an email to:
 \begin{center}
   \href{mailto:irace-package@googlegroups.com}{irace-package@googlegroups.com}
 \end{center}
-
-%% MANUEL: I think we should use just one channel. If the Google group is the winner, that should be it.
-%the mailing list:
-%% LESLIE I agree.
-%\begin{center} \href{mailto:irace@iridia.ulb.ac.be}{irace@iridia.ulb.ac.be} \end{center}
 
 
 \section{Acknowledgements}

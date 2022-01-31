@@ -83,7 +83,7 @@ irace.internal.error <- function(...)
 {
   .irace.bug.report <-
     paste0("An unexpected condition occurred. ",
-           "Please report this bug to the authors of the irace package <http://iridia.ulb.ac.be/irace>")
+           "Please report this bug to the authors of the irace package <https://github.com/MLopez-Ibanez/irace/issues>")
 
   op <- options(warning.length = 8170,
                 error = if (interactive()) utils::recover
