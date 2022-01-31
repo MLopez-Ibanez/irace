@@ -3,4 +3,4 @@
 #' A character string containing the version of `irace`.
 #' @md
 #' @export
-irace.version <- '3.5.568108a'
+irace.version <- '3.5.a445c7a'
