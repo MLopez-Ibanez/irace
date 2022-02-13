@@ -1,7 +1,26 @@
-load("./irace.Rdata")
+#load("./irace.Rdata")
+load("~/irace.Rdata")
 library(irace)
 ## TODO: convert all this to functions:
 experiments <- iraceResults$experiments[,unique(iraceResults$iterationElites)]
+experiments <- iraceResults$experiments
+
+library(tidyverse)
+#experiments[] <- rank(experiments, na.last="keep")
+experiments[] <- t(apply(experiments, 1, rank, na.last="keep"))
+
+experiments %>% 
+  as.data.frame() %>%
+  rownames_to_column("i_id") %>%
+  pivot_longer(-c(i_id), names_to = "C", values_to = "Cost") %>%
+  mutate(C= fct_relevel(C,as.character(1:ncol(experiments)))) %>%
+  mutate(i_id= fct_relevel(i_id,as.character(1:nrow(experiments)))) %>%
+  ggplot(aes(x=C, y=i_id, fill=Cost)) + 
+  geom_raster() + 
+    scale_fill_viridis_c(na.value="white")
+
+ggsave("heatmap-ranks.pdf")
+
 ## colsumna <- apply(experiments, 2, function(x) { sum(!is.na(x))})
 ## experiments <- experiments[, order(-colsumna)]
 #conf.ids <- colnames(iraceResults$experiments)[which(apply(iraceResults$experiments, 2, function(x) { sum(!is.na(x)) > 1}))]
@@ -207,7 +226,7 @@ irace.levelplot <- function(x, xaxes = FALSE)
   #levelplot (as.matrix(scale(mtcars)), aspect = "iso",scale=list(x=list(rot=45)))
 }
 
-#matrix.plot(experiments)
+matrix.plot(experiments)
 
 irace.levelplot(experiments)
 
@@ -230,17 +249,18 @@ distfun <- function(x)
   return(d)
 }
 
-d <- distfun(experiments[,1:100])
+d <- distfun(experiments)
 fit <- hclustfun(d)
 
-irace.heatmap(experiments[,1:100], Rowv = NULL, Colv = NULL,
+irace.heatmap(experiments, Rowv = NULL, Colv = NULL,
               xlab="Configurations", ylab="Instances",
               col = gray.colors(100,
                                 start = 0.6, end = 0), verbose=TRUE, scale = "none", asp = 3,
               hclustfun = hclustfun, distfun = distfun)
 
 # create heatmap and don't reorder columns
-heatmap(mtscaled, Colv=F, scale='none')
+#heatmap(mtscaled, Colv=F, scale='none')
+
 
 library(corrplot)
 corrplot(cor(t(experiments), method="spearman"), method="color", order="hclust")
