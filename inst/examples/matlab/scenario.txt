@@ -3,9 +3,10 @@
 ## You need to install the matlabr package, for example,
 # install.packages("matlabr")
 require(matlabr, quietly=TRUE)
-# We assume that the matlab .m files are in the same folder as this file. 
-# Otherwise, change the next line.
-matlab_script_path = getwd()
+# We assume that the matlab .m files are in the same folder as this file.
+# Otherwise, change the next line. (This variable has to start with '.' so that
+# irace does not give an error.)
+.matlab_script_path = getwd()
 # You may need to provide the path to matlab if have_matlab() cannot find it.
 # options(matlab.path="/opt/apps/apps/binapps/matlab/R2020a/bin/")
 
@@ -33,7 +34,7 @@ targetRunner <- function(experiment, scenario)
                          c(paste0("INSTANCE='", instance, "';SEED=", seed),
                            # The configuration parameters,
                            args, matlab_function_call),
-                         paths_to_add=matlab_script_path,
+                         paths_to_add=.matlab_script_path,
                          verbose= (debugLevel >= 2))
   
   ## Parse the output (just a single number!)
@@ -47,8 +48,8 @@ targetRunner <- function(experiment, scenario)
   }
   if (is.na(cost)) {
     cat("=== irace === targetRunner: error parsing numeric result from matlab output\n")
-    if (!file.exists(file.path(matlab_script_path, "Main.m")))
-      cat("=== irace === matlab script: '", file.path(matlab_script_path, "Main.m"), "' not found!\n")
+    if (!file.exists(file.path(.matlab_script_path, "Main.m")))
+      cat("=== irace === matlab script: '", file.path(.matlab_script_path, "Main.m"), "' not found!\n")
   }
   return(list(cost = cost, outputRaw = output))
 }
