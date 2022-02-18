@@ -208,6 +208,18 @@ You can also launch irace by opening the R console and executing:
     R> irace.cmdline("--help")
 ```
 
+GitHub (Development version)
+----------------------------
+
+If you wish to try the development version, you can install it by executing the
+following commands within the R console:
+
+```R
+    R> install.packages("devtools")
+    R> devtools::install_github("MLopez-Ibanez/irace")
+```
+
+
 Usage
 =====
 
