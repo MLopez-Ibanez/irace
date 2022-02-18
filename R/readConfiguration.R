@@ -287,7 +287,7 @@ readScenario <- function(filename = "", scenario = list())
 
   # First find out which file...
   if (filename == "") {
-    filename <- .irace.params.def["scenarioFile","default"]
+    filename <- path_rel2abs(.irace.params.def["scenarioFile","default"])
     if (file.exists(filename)) {
       irace.warning("A default scenario file ", shQuote(filename),
                     " has been found and will be read\n")
@@ -298,7 +298,10 @@ readScenario <- function(filename = "", scenario = list())
                    ") and no default scenario file ", shQuote(filename),
                    " has been found.")
     }
+  } else {
+    filename <- path_rel2abs(filename)
   }
+  
   if (file.exists (filename)) {
     debug.level <- getOption(".irace.debug.level", default = 0)
     if (debug.level >= 1)
@@ -317,7 +320,9 @@ readScenario <- function(filename = "", scenario = list())
   } else {
     irace.error ("The scenario file ", shQuote(filename), " does not exist.")
   }
+      
   ## Read scenario file variables.
+  scenario[["scenarioFile"]] <- filename 
   # If these are given and relative, they should be relative to the
   # scenario file (except logFile, which is relative to execDir).
   pathParams <- setdiff(.irace.params.def[.irace.params.def[, "type"] == "p",

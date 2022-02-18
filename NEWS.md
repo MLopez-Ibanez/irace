@@ -90,6 +90,11 @@
    configurations provided via `initConfigurations`. 
                           (Manuel  López-Ibáñez, reported by Andreea Avramescu)
 
+ * Fix: when setting the scenario file in the command-line, `scenarioFile` was
+   not set correctly. The correct scenario was used, however, the debug output
+   and the value stored in the log / recovery file was wrong.
+                         (Manuel López-Ibáñez, reported by Richard Schoonhoven)
+ 
 
 # irace 3.4.1  (31/03/2020)
 
