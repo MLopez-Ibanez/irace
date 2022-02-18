@@ -95,7 +95,12 @@
    and the value stored in the log / recovery file was wrong.
                          (Manuel López-Ibáñez, reported by Richard Schoonhoven)
  
-
+ * An error is produced if a variable set in the scenario file is not known to
+   irace.  If your scenario file contains R code, then use variable names
+   beginning with a dot `.`, which will be ignored by irace.
+                                                    (Manuel López-Ibáñez)
+ 
+ 
 # irace 3.4.1  (31/03/2020)
 
  * `NEWS` converted to markdown.

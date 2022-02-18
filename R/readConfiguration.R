@@ -266,8 +266,8 @@ buildForbiddenExp <- function(configurations, parameters)
 readScenario <- function(filename = "", scenario = list())
 {
   # This function allows recursively including scenario files.
-  envir <- environment()
-  include.scenario <- function(rfilename, topfile = filename, envir. = envir)
+  scenario_env <- new.env()
+  include.scenario <- function(rfilename, topfile = filename, envir. = scenario_env)
   {
     if (!file.exists (rfilename)) {
       irace.error ("The scenario file ", shQuote(rfilename), " included from ",
@@ -314,7 +314,7 @@ readScenario <- function(filename = "", scenario = list())
       return(NULL)
     }
     withCallingHandlers(
-      tryCatch(source(filename, local = TRUE, chdir = TRUE),
+      tryCatch(source(filename, local = scenario_env, chdir = TRUE),
                error = handle.source.error, warning = handle.source.error))
     if (debug.level >= 1) cat (" done!\n")
   } else {
@@ -328,8 +328,8 @@ readScenario <- function(filename = "", scenario = list())
   pathParams <- setdiff(.irace.params.def[.irace.params.def[, "type"] == "p",
                                           "name"], "logFile")
   for (param in .irace.params.names) {
-    if (exists (param, inherits = FALSE)) {
-      value <- get(param, inherits = FALSE)
+    if (exists (param, envir = scenario_env, inherits = FALSE)) {
+      value <- get(param, envir = scenario_env, inherits = FALSE)
       if (!is.null.or.empty(value) && is.character(value)
           && (param %in% pathParams)) {
         value <- path_rel2abs(value, cwd = dirname(filename))
@@ -337,6 +337,17 @@ readScenario <- function(filename = "", scenario = list())
       scenario[[param]] <- value
     }
   }
+  unknown_scenario_vars <- setdiff(ls(scenario_env), .irace.params.names)
+  if (length(unknown_scenario_vars) > 0) {
+    # FIXME: We should only accept variables that match irace.params.names and
+    # if the user wants to define their own, they should use names starting
+    # with ".", which are ignored by ls()
+    irace.error("Scenario file ", shQuote(filename), " contains unknown variables: ",
+                paste0(unknown_scenario_vars, collapse=", "),
+                "\nMAKE SURE NO VARIABLE NAME IS MISSPELL (for example, 'parameterFile' is correct, while 'parametersFile' is not)",
+                "\nIf you wish to use your own variables in the scenario file, use names beginning with a dot `.'")
+  }
+  
   return (scenario)
 }
 
