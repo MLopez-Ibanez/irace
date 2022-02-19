@@ -97,7 +97,7 @@
  
  * An error is produced if a variable set in the scenario file is not known to
    irace.  If your scenario file contains R code, then use variable names
-   beginning with a dot `.`, which will be ignored by irace.
+   beginning with a dot `'.'`, which will be ignored by irace.
                                                     (Manuel López-Ibáñez)
  
  
