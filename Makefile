@@ -113,7 +113,7 @@ else
 endif
 
 clean: 
-	cd $(PACKAGEDIR) && (./cleanup; make -C src -f Makevars clean)
+	cd $(PACKAGEDIR) && (./cleanup; make -C src -f Makevars clean; git checkout --force R/version.R)
 
 ## FIXME: building the vignettes is a bit complicated and sometimes fails.
 # If \setboolean{Release}{false}, entries are taken from optbib and everything

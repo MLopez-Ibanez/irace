@@ -4,9 +4,12 @@
 # during the build/install of an R package. Using a configure script fails when
 # building in Windows. R sucks sometimes.
 
-# The current solution calls this script during a github action, updates and
+# A possible solution is to call this script during a github action that update and
 # commits R/version.R.  This is problematic because this file produces
 # conflicts and extra commits. It should not exist in the github repo.
+
+# The current solution is to run this script manually when building the package
+# on behalf of someone else. This is what the Makefile does.
 
 # The ideal solution would be that R CMD build/install runs this script (or
 # something equivalent in R) and places the R version file (or updates the
