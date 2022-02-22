@@ -368,6 +368,9 @@ ablation.labels <- function(trajectory, configurations)
 #'
 #' @author Leslie Pérez Cáceres and Manuel López-Ibáñez
 #' @seealso \code{\link{ablation}}
+#' @examples
+#' logfile <- file.path(system.file(package="irace"), "exdata", "log-ablation.Rdata")
+#' plotAblation(abLogFile = logfile)
 #' @export
 plotAblation <- function (ab.log = NULL, abLogFile = NULL,
                           pdf.file = NULL, pdf.width = 20,

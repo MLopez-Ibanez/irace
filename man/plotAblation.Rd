@@ -37,6 +37,10 @@ arguments. See \code{plot.default}.}
 \description{
 Create plot from an ablation log
 }
+\examples{
+logfile <- file.path(system.file(package="irace"), "exdata", "log-ablation.Rdata")
+plotAblation(abLogFile = logfile)
+}
 \seealso{
 \code{\link{ablation}}
 }
