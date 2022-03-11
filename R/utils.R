@@ -663,6 +663,8 @@ runcommand <- function(command, args, id, debugLevel)
                 formatC(proc.time()["elapsed"] - elapsed,
                         format = "f", digits = 2), "\n")
   }
+  # TODO: Return elapsed time so that we can report at the end the total
+  # elapsed time taken by irace vs the time taken by the target-runner.
   return(list(output = output, error = NULL))
 }
 
