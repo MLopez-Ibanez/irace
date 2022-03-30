@@ -54,28 +54,19 @@ generateAblation <- function(initial.configuration, final.configuration,
   return (list(configurations=configurations, changed.params=changed.params))
 }
 
-#' Performs ablation between two configurations.
+#' Performs ablation between two configurations (from source to target).
 #'
 #' @description Ablation is a method for analyzing the differences between two configurations.
 #' 
-#' @param iraceLogFile Log file created by \pkg{irace}, this file must contain
-#'   the \code{iraceResults} object.
-#' @param iraceResults Object created by \pkg{irace} and saved in
-#'   \code{scenario$logFile}.
-#' @param src,target Source and target configuration IDs. If \code{NULL}, then
-#'   the first configuration ever evaluated is used as source and the best
-#'   configuration found is used as target.
-#' @param ab.params Parameter names to be used for the ablation. They must be
-#'   in parameters$names.
-#' @param n.instances Number of instances to be used for the "full" ablation,
-#'   if not provided firstTest instances are used.
-#' @param type Type of ablation to perform, "full" will execute all instances
-#'   in the configurations to determine the best performing, "racing" will
-#'   apply racing to find the best configurations.
-#' @param seed Numerical value to use as seed for the random number generation.
-#' @param ablationLogFile Log file to save the ablation log.
-#' @param pdf.file Prefix that will be used to save the plot file of the
-#'   ablation results.
+#' @param iraceLogFile Log file created by \pkg{irace}, e.g., `irace.Rdata`. This file must contain the \code{iraceResults} object.
+#' @param iraceResults Object created by \pkg{irace} and typically saved in the log file `irace.Rdata`. Either `iraceLogFile` or `iraceResults` must be given, but not both.
+#' @param src,target Source and target configuration IDs. By default, the first configuration ever evaluated (ID 1) is used as `src` and the best configuration found by irace is used as target.
+#' @param ab.params Parameter names to be used for the ablation. They must be in `parameters$names`.
+#' @param n.instances Number of instances to be used for the `"full"` ablation, if not provided `scenario$firstTest` instances are used.
+#' @param type Type of ablation to perform: `"full"` will execute all instances in the configurations to determine the best performing; `"racing"` will apply racing to find the best configurations.
+#' @param seed (`integer(1)`) Integer value to use as seed for the random number generation.
+#' @param ablationLogFile  Log file to save the ablation log.
+#' @param pdf.file Prefix that will be used to save the plot file of the ablation results.
 #' @param pdf.width Width provided to create the pdf file.
 #' @param mar Vector with the margins for the ablation plot.
 #' @template arg_debuglevel
@@ -109,28 +100,26 @@ generateAblation <- function(initial.configuration, final.configuration,
 #'
 #' @author Leslie Pérez Cáceres and Manuel López-Ibáñez
 #' @export
-#FIXME: Add check for the inputs!
+#' @md
 ablation <- function(iraceLogFile = NULL, iraceResults = NULL,
-                     src = NULL, target = NULL,
+                     src = 1L, target = NULL,
                      ab.params = NULL, n.instances = NULL,
-                     type = "full", seed = 1234567,
+                     type = c("full", "racing"), seed = 1234567,
                      ablationLogFile = "log-ablation.Rdata",
                      pdf.file = NULL, pdf.width = 20, mar = c(12,5,4,1),
                      debugLevel = NULL)
 {
-  # FIXME: The previous seed needs to be saved and restored at the end.
-  set.seed(seed)
-
   # Input check
   if (is.null(iraceLogFile) && is.null(iraceResults)) 
     irace.error("You must provide a Rdata file or an iraceResults object.")
-  if (!(type %in% c("full", "racing")))
-    irace.error("Type of ablation", type, "not recognized.") 
+  type <- match.arg(type)
 
+  # FIXME: The previous seed needs to be saved and restored at the end.
+  set.seed(seed)
+  
   # Load the data of the log file
   if (!is.null(iraceLogFile)) load(iraceLogFile)
-    
-  if (is.null(src)) src <- 1
+
   if (is.null(target)) target <- iraceResults$iterationElites[length(iraceResults$iterationElites)]
 
   irace.note ("Starting ablation from ", src, " to ", target, " :\n# Seed:", seed, "\n")
@@ -330,7 +319,8 @@ ablation <- function(iraceLogFile = NULL, iraceResults = NULL,
 
   if (!is.null(ablationLogFile))
     save(ab.log, file = ablationLogFile, version = 2)
-  
+
+  # FIXME: Do not plot here.
   plotAblation(ab.log = ab.log, pdf.file = pdf.file,
                pdf.width = pdf.width, mar = mar, main = "Ablation")
   return(ab.log)
@@ -356,11 +346,11 @@ ablation.labels <- function(trajectory, configurations)
 #' Create plot from an ablation log
 #'
 #' @param ab.log Ablation log returned by \code{\link{ablation}}.
-#' @param abLogFile Rdata file containing the ablation log.
+#' @param abLogFile  `.Rdata` file containing the ablation log.
 #' @param pdf.file Output filename.
 #' @param pdf.width Width provided to create the pdf file.
-#' @param type Type of plots. Supported values are \code{"mean"} and
-#'   \code{"boxplot"}.
+#' @param type Type of plots. Supported values are `"mean"` and
+#'   `"boxplot"`.
 #' @param mar Vector with the margins for the ablation plot.
 #' @param ylab Label of y-axis.
 #' @param ... Further graphical parameters may also be supplied as
@@ -371,6 +361,7 @@ ablation.labels <- function(trajectory, configurations)
 #' @examples
 #' logfile <- file.path(system.file(package="irace"), "exdata", "log-ablation.Rdata")
 #' plotAblation(abLogFile = logfile)
+#' @md
 #' @export
 plotAblation <- function (ab.log = NULL, abLogFile = NULL,
                           pdf.file = NULL, pdf.width = 20,
@@ -411,7 +402,7 @@ plotAblation <- function (ab.log = NULL, abLogFile = NULL,
 
   experiments <- ab.log$experiments
   
-  # FIXME: We should also show the other alternatives at each step not just the
+  # FIXME: We could also show the other alternatives at each step not just the
   # one selected. See Leonardo's thesis.
   ylim <- NULL
   if (type == "boxplot") {

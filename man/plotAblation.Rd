@@ -18,7 +18,7 @@ plotAblation(
 \arguments{
 \item{ab.log}{Ablation log returned by \code{\link{ablation}}.}
 
-\item{abLogFile}{Rdata file containing the ablation log.}
+\item{abLogFile}{\code{.Rdata} file containing the ablation log.}
 
 \item{pdf.file}{Output filename.}
 

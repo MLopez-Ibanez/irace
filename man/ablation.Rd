@@ -2,16 +2,16 @@
 % Please edit documentation in R/ablation.R
 \name{ablation}
 \alias{ablation}
-\title{Performs ablation between two configurations.}
+\title{Performs ablation between two configurations (from source to target).}
 \usage{
 ablation(
   iraceLogFile = NULL,
   iraceResults = NULL,
-  src = NULL,
+  src = 1L,
   target = NULL,
   ab.params = NULL,
   n.instances = NULL,
-  type = "full",
+  type = c("full", "racing"),
   seed = 1234567,
   ablationLogFile = "log-ablation.Rdata",
   pdf.file = NULL,
@@ -21,32 +21,23 @@ ablation(
 )
 }
 \arguments{
-\item{iraceLogFile}{Log file created by \pkg{irace}, this file must contain
-the \code{iraceResults} object.}
+\item{iraceLogFile}{Log file created by \pkg{irace}, e.g., \code{irace.Rdata}. This file must contain the \code{iraceResults} object.}
 
-\item{iraceResults}{Object created by \pkg{irace} and saved in
-\code{scenario$logFile}.}
+\item{iraceResults}{Object created by \pkg{irace} and typically saved in the log file \code{irace.Rdata}. Either \code{iraceLogFile} or \code{iraceResults} must be given, but not both.}
 
-\item{src, target}{Source and target configuration IDs. If \code{NULL}, then
-the first configuration ever evaluated is used as source and the best
-configuration found is used as target.}
+\item{src, target}{Source and target configuration IDs. By default, the first configuration ever evaluated (ID 1) is used as \code{src} and the best configuration found by irace is used as target.}
 
-\item{ab.params}{Parameter names to be used for the ablation. They must be
-in parameters$names.}
+\item{ab.params}{Parameter names to be used for the ablation. They must be in \code{parameters$names}.}
 
-\item{n.instances}{Number of instances to be used for the "full" ablation,
-if not provided firstTest instances are used.}
+\item{n.instances}{Number of instances to be used for the \code{"full"} ablation, if not provided \code{scenario$firstTest} instances are used.}
 
-\item{type}{Type of ablation to perform, "full" will execute all instances
-in the configurations to determine the best performing, "racing" will
-apply racing to find the best configurations.}
+\item{type}{Type of ablation to perform: \code{"full"} will execute all instances in the configurations to determine the best performing; \code{"racing"} will apply racing to find the best configurations.}
 
-\item{seed}{Numerical value to use as seed for the random number generation.}
+\item{seed}{(\code{integer(1)}) Integer value to use as seed for the random number generation.}
 
 \item{ablationLogFile}{Log file to save the ablation log.}
 
-\item{pdf.file}{Prefix that will be used to save the plot file of the
-ablation results.}
+\item{pdf.file}{Prefix that will be used to save the plot file of the ablation results.}
 
 \item{pdf.width}{Width provided to create the pdf file.}
 
@@ -56,15 +47,15 @@ ablation results.}
 }
 \value{
 A list containing the following elements:
- \describe{
-   \item{configurations}{Configurations tested in the ablation.}
-   \item{instances}{A matrix with the instances used in the experiments. First column has the 
-    instances IDs from \code{iraceResults$scenario$instances}, second column the seed assigned to the instance.}
-   \item{experiments}{A matrix with the results of the experiments (columns are configurations, rows are instances).}
-   \item{scenario}{Scenario object with the settings used for the experiments.}
-   \item{trajectory}{IDs of the best configurations at each step of the ablation.}
-   \item{best}{Best configuration found in the experiments.}
- }
+\describe{
+\item{configurations}{Configurations tested in the ablation.}
+\item{instances}{A matrix with the instances used in the experiments. First column has the
+instances IDs from \code{iraceResults$scenario$instances}, second column the seed assigned to the instance.}
+\item{experiments}{A matrix with the results of the experiments (columns are configurations, rows are instances).}
+\item{scenario}{Scenario object with the settings used for the experiments.}
+\item{trajectory}{IDs of the best configurations at each step of the ablation.}
+\item{best}{Best configuration found in the experiments.}
+}
 }
 \description{
 Ablation is a method for analyzing the differences between two configurations.
