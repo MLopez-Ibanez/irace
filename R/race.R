@@ -273,6 +273,7 @@ elitrace.init.instances <- function(race.env, deterministic, max.instances)
       future.instances <- (last.new + 1) : max.instances
     }
     # new.instances + past.instances + future.instances
+    # FIXME: we should sample taking into account the block-size, so we sample blocks, not instances.
     race.instances <- c(new.instances, sample.int(.irace$next.instance - 1),
                         future.instances)
   }
