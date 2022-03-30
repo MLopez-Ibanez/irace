@@ -35,6 +35,11 @@ TODO R package:
 
 TODO General (in order of importance):
 
+ * Replace firstTest / eachTest with minBlocksSeen / instancesPerBlock. Replace
+   sampleInstances=TRUE with orderedRace=FALSE. With orderedRace=FALSE,
+   sampling only affects the order of the blocks. Something like:
+   selectedInstances = c(outer(1:blockSize, selectedBlocks * blockSize, "+"))
+ 
  * Federico's implementation of DAG / Complexity metric.
  
  * Use both cost and time to calculate wins, then use a prop.test
@@ -50,7 +55,7 @@ TODO General (in order of importance):
  * Give priority to user-provided configurations or to default/preferred
    parameter values when choosing between similarly performing configurations.
 
- * maxBound should a floating-point number. 
+ * maxBound should be a floating-point number. 
 
  * Write a report at the end that checks if the instances are homogeneous and
    suggests clusters and sub-configurations. One possibility is to replace
