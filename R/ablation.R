@@ -69,7 +69,7 @@ generateAblation <- function(initial.configuration, final.configuration,
 #' @param pdf.file Prefix that will be used to save the plot file of the ablation results.
 #' @param pdf.width Width provided to create the pdf file.
 #' @param mar Vector with the margins for the ablation plot.
-#' @template arg_debuglevel
+#' @param ... Further arguments to override scenario settings, e.g., `debugLevel`, `parallel`, etc.
 #'
 #' @references
 #' C. Fawcett and H. H. Hoos. Analysing differences between algorithm
@@ -107,7 +107,7 @@ ablation <- function(iraceLogFile = NULL, iraceResults = NULL,
                      type = c("full", "racing"), seed = 1234567,
                      ablationLogFile = "log-ablation.Rdata",
                      pdf.file = NULL, pdf.width = 20, mar = c(12,5,4,1),
-                     debugLevel = NULL)
+                     ...)
 {
   # Input check
   if (is.null(iraceLogFile) && is.null(iraceResults)) 
@@ -135,10 +135,16 @@ ablation <- function(iraceLogFile = NULL, iraceResults = NULL,
 
   parameters <- iraceResults$parameters
   scenario   <- iraceResults$scenario
+  scenario_args <- list(...)
+  if (length(scenario_args) > 0) {
+    if (any(names(scenario_args) %!in% names(scenario))) {
+      irace.error("Unknown scenario settings given")
+    }
+    scenario <- modifyList(scenario, scenario_args)
+  }
   
   if (!is.null(ablationLogFile)) scenario$logFile <- ablationLogFile
-  if (!is.null(debugLevel)) scenario$debugLevel <- debugLevel
-  
+    
   scenario <- checkScenario (scenario)
   
   startParallel(scenario)
@@ -170,8 +176,10 @@ ablation <- function(iraceLogFile = NULL, iraceResults = NULL,
     irace.error("Candidates are equal considering the parameters selected\n")
   param.names <- colnames(src.configuration[,ab.params])[neq.params]
   
-  cat("# Configurations (row number is ID):\n")
-  configurations.print(rbind(src.configuration, target.configuration))
+  cat("# Source configuration (row number is ID):\n")
+  configurations.print(src.configuration)
+  cat("# Target configuration (row number is ID):\n")
+  configurations.print(target.configuration)
 
   # FIXME: Do we really need to override the ID?
   src.configuration$.ID. <- best.id <-  1

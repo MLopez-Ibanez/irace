@@ -17,7 +17,7 @@ ablation(
   pdf.file = NULL,
   pdf.width = 20,
   mar = c(12, 5, 4, 1),
-  debugLevel = NULL
+  ...
 )
 }
 \arguments{
@@ -43,7 +43,7 @@ ablation(
 
 \item{mar}{Vector with the margins for the ablation plot.}
 
-\item{debugLevel}{(\code{integer(1)}) \cr Larger values produce more verbose output.}
+\item{...}{Further arguments to override scenario settings, e.g., \code{debugLevel}, \code{parallel}, etc.}
 }
 \value{
 A list containing the following elements:
