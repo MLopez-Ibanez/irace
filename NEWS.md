@@ -94,7 +94,10 @@
    not set correctly. The correct scenario was used, however, the debug output
    and the value stored in the log / recovery file was wrong.
                          (Manuel López-Ibáñez, reported by Richard Schoonhoven)
- 
+
+ * The `ablation` function now allows overriding any scenario settings.
+                                                    (Manuel López-Ibáñez)
+
  * An error is produced if a variable set in the scenario file is not known to
    irace.  If your scenario file contains R code, then use variable names
    beginning with a dot `'.'`, which will be ignored by irace.
