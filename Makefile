@@ -182,7 +182,7 @@ winbuild: releasebuild
 	cd $(BINDIR) && echo $(WINBUILD_REL_FTP_COMMANDS) | ftp -v -p -e -g -i -n win-builder.r-project.org
 	$(Reval) "rhub::check_on_windows($(RHUB_COMMON_ARGS))"
 
-examples: install
+examples: quick-install
 	@echo "*** Makefile: Regenerating data for vignettes and examples. This will take time..."
 	cd examples/vignette-example/ && R --vanilla --slave --file=create-example-file.R
 	mv -t vignettes/ examples/vignette-example/*.Rdata examples/vignette-example/irace-acotsp-stdout.txt
