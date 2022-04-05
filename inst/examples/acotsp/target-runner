@@ -18,8 +18,9 @@ error() {
 }
 
 
-# Path to the ACOTSP software:
-EXE=~/bin/acotsp
+# Path to the ACOTSP executable (this path is relative to the execution directory `execDir` specified in the scenario).
+# EXE="~/bin/acotsp"
+EXE="../ACOTSP-1.03/acotsp"
 
 # Fixed parameters that should be always passed to ACOTSP.
 # The time to be used is always 10 seconds, and we want only one run:
