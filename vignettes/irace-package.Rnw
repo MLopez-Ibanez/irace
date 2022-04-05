@@ -795,14 +795,6 @@ cd ~/tuning/ACOTSP-1.03
 make
 \end{lstlisting}
 %@
-\item Create a directory for the executable and copy it:
-
-%<<acotsp1,engine='bash',eval=FALSE>>=
-\begin{lstlisting}[style=BashInputStyle]
-mkdir ~/bin/
-cp ~/tuning/ACOTSP-1.03/acotsp ~/bin/
-\end{lstlisting}
-%@
 
 \item Create a directory for executing the experiments and execute \irace:
 
