@@ -1,7 +1,9 @@
 # irace 3.5
 
- * This version includes handling of dependent parameter domains. These
-   should be specified in the parameter domain definition and, for now,
+## New features and improvements
+
+ * Handling of dependent parameter domains. 
+   These should be specified in the parameter domain definition and, for now,
    only numerical parameter can define dependent domains. A numerical
    domain can be dependent on one bound, e.g. `(1, param1*2))`, where the
    dependent bound can include basic arithmetic operators.
@@ -23,37 +25,14 @@
    median difference.
                                                        (Manuel López-Ibáñez)
 
- * Correctly handle clear out-performance cases despite strong bi-modality.
-                                            (Reported by Nguyen Dang,
-                                            fixed by Manuel López-Ibáñez)
-
- * `irace2pyimp` moved to its own R package.
-                                                     (Manuel López-Ibáñez)
-
- * Fix error when recovering from a parallel run on Windows.
-                            (Manuel López-Ibáñez, reported by Tarek Gamal)
-
- * `testNbElites` now controls how many iteration elites are tested when
-   `testIterationElites=1`. This is the documented behavior in the user guide.
-                           (Manuel López-Ibáñez, reported by Marcelo de Souza)
-
- * Fixes to the Matlab example. (Manuel López-Ibáñez)
- 
  * New functions `testing_fromlog()` and `testing_fromfile()` for independently
    executing the testing phase. The function `testing.main()` was removed as it
    is superseded by the new ones. 
                                                       (Manuel López-Ibáñez)
 
- * Fix: The default of `testType` was not set to `t-test` when capping was
-   enabled. 
-                          (Manuel López-Ibáñez, reported by Jovana Radjenovic)
+ * `irace2pyimp` moved to its own R package.
+                                                     (Manuel López-Ibáñez)
 
- * Fix various issues in the user guide.
-                          (Manuel López-Ibáñez, reported by Jovana Radjenovic)
-
- * Remove duplicated elites.
-                          (Manuel López-Ibáñez, reported by Federico Naldini)
- 
  * Generating the file `irace.Rdata` may be disabled by setting `logFile=""`.
                                (Manuel López-Ibáñez, reported by Johann Dreo)
  
@@ -77,7 +56,45 @@
    to help in cases where the target-runner must be invoked via another
    software with particular options (such as `python.exe` in Windows).
                                                            (Manuel López-Ibáñez)
-                                                       
+
+ * `--check` now also check the contents of `configurationsFile` and runs
+   configurations provided via `initConfigurations`. 
+                          (Manuel  López-Ibáñez, reported by Andreea Avramescu)
+
+ * The interface to functions `ablation()` and `plotAblation()` has been
+   simplified. The `ablation()` function now allows overriding scenario
+   settings.
+                                                    (Manuel López-Ibáñez)
+
+ * An error is produced if a variable set in the scenario file is not known to
+   irace.  If your scenario file contains R code, then use variable names
+   beginning with a dot `'.'`, which will be ignored by irace.
+                                                    (Manuel López-Ibáñez)
+
+## Fixes
+
+ * Correctly handle clear out-performance cases despite strong bi-modality.
+                                            (Reported by Nguyen Dang,
+                                            fixed by Manuel López-Ibáñez)
+
+ * Fix error when recovering from a parallel run on Windows.
+                            (Manuel López-Ibáñez, reported by Tarek Gamal)
+
+ * `testNbElites` now controls how many iteration elites are tested when
+   `testIterationElites=1`. This is the documented behavior in the user guide.
+                           (Manuel López-Ibáñez, reported by Marcelo de Souza)
+
+ * Fixes to the Matlab example. (Manuel López-Ibáñez)
+ 
+ * The default of `testType` was not set to `t-test` when capping was enabled. 
+                          (Manuel López-Ibáñez, reported by Jovana Radjenovic)
+
+ * Fix various issues in the user guide.
+                          (Manuel López-Ibáñez, reported by Jovana Radjenovic)
+
+ * Remove duplicated elites.
+                          (Manuel López-Ibáñez, reported by Federico Naldini)
+                                                        
  * Fix (#7): warnings with partial matched parameters.
                                   (Manuel López-Ibáñez, reported by Marc Becker)
                                
@@ -86,22 +103,11 @@
  * Fix (#13): Maximum number configurations immediately rejected reached.
                                                            (Manuel López-Ibáñez)
 
- * `--check` now also check the contents of `configurationsFile` and runs
-   configurations provided via `initConfigurations`. 
-                          (Manuel  López-Ibáñez, reported by Andreea Avramescu)
-
  * Fix: when setting the scenario file in the command-line, `scenarioFile` was
    not set correctly. The correct scenario was used, however, the debug output
    and the value stored in the log / recovery file was wrong.
                          (Manuel López-Ibáñez, reported by Richard Schoonhoven)
 
- * The `ablation` function now allows overriding any scenario settings.
-                                                    (Manuel López-Ibáñez)
-
- * An error is produced if a variable set in the scenario file is not known to
-   irace.  If your scenario file contains R code, then use variable names
-   beginning with a dot `'.'`, which will be ignored by irace.
-                                                    (Manuel López-Ibáñez)
  
  
 # irace 3.4.1  (31/03/2020)

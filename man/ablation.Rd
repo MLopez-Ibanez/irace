@@ -5,8 +5,7 @@
 \title{Performs ablation between two configurations (from source to target).}
 \usage{
 ablation(
-  iraceLogFile = NULL,
-  iraceResults = NULL,
+  iraceResults,
   src = 1L,
   target = NULL,
   ab.params = NULL,
@@ -14,16 +13,11 @@ ablation(
   type = c("full", "racing"),
   seed = 1234567,
   ablationLogFile = "log-ablation.Rdata",
-  pdf.file = NULL,
-  pdf.width = 20,
-  mar = c(12, 5, 4, 1),
   ...
 )
 }
 \arguments{
-\item{iraceLogFile}{Log file created by \pkg{irace}, e.g., \code{irace.Rdata}. This file must contain the \code{iraceResults} object.}
-
-\item{iraceResults}{Object created by \pkg{irace} and typically saved in the log file \code{irace.Rdata}. Either \code{iraceLogFile} or \code{iraceResults} must be given, but not both.}
+\item{iraceResults}{(\code{list()}|\code{character(1)}) \code{iraceResults} object created by \pkg{irace} and typically saved in the log file \code{irace.Rdata}. Alternatively, the path to the log file from which the \code{iraceResults} object will be loaded.}
 
 \item{src, target}{Source and target configuration IDs. By default, the first configuration ever evaluated (ID 1) is used as \code{src} and the best configuration found by irace is used as target.}
 
@@ -31,17 +25,11 @@ ablation(
 
 \item{n.instances}{Number of instances to be used for the \code{"full"} ablation, if not provided \code{scenario$firstTest} instances are used.}
 
-\item{type}{Type of ablation to perform: \code{"full"} will execute all instances in the configurations to determine the best performing; \code{"racing"} will apply racing to find the best configurations.}
+\item{type}{Type of ablation to perform: \code{"full"} will execute each configuration on all \code{n.instances} to determine the best-performing one; \code{"racing"} will apply racing to find the best configurations.}
 
 \item{seed}{(\code{integer(1)}) Integer value to use as seed for the random number generation.}
 
-\item{ablationLogFile}{Log file to save the ablation log.}
-
-\item{pdf.file}{Prefix that will be used to save the plot file of the ablation results.}
-
-\item{pdf.width}{Width provided to create the pdf file.}
-
-\item{mar}{Vector with the margins for the ablation plot.}
+\item{ablationLogFile}{(\code{character(1)}) Log file to save the ablation log. If \code{NULL}, the results are not saved to a file.}
 
 \item{...}{Further arguments to override scenario settings, e.g., \code{debugLevel}, \code{parallel}, etc.}
 }
@@ -65,17 +53,22 @@ Ablation is a method for analyzing the differences between two configurations.
 irace.logfile <- file.path(system.file(package="irace"), "exdata", "sann.rda")
 load(irace.logfile)
 # Execute ablation between the first and the best configuration found by irace.
-ablation(iraceResults = iraceResults, ablationLogFile = NULL)
+ablog <- ablation(iraceResults = iraceResults, ablationLogFile = NULL)
+plotAblation(ablog)
 # Execute ablation between two selected configurations, and selecting only a
 # subset of parameters, directly reading the setup from the irace log file.
-ablation(iraceLogFile = irace.logfile, src = 1, target = 10,
-         ab.params = c("temp"), ablationLogFile = NULL)
+ablog <- ablation(iraceResults = irace.logfile, src = 1, target = 10,
+                  ab.params = c("temp"), ablationLogFile = NULL)
+plotAblation(ablog)
 }
 
 }
 \references{
 C. Fawcett and H. H. Hoos. Analysing differences between algorithm
 configurations through ablation. Journal of Heuristics, 22(4):431–458, 2016.
+}
+\seealso{
+\code{\link[=plotAblation]{plotAblation()}}
 }
 \author{
 Leslie Pérez Cáceres and Manuel López-Ibáñez

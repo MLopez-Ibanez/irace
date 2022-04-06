@@ -5,8 +5,7 @@
 \title{Create plot from an ablation log}
 \usage{
 plotAblation(
-  ab.log = NULL,
-  abLogFile = NULL,
+  ablog,
   pdf.file = NULL,
   pdf.width = 20,
   type = c("mean", "boxplot"),
@@ -16,9 +15,7 @@ plotAblation(
 )
 }
 \arguments{
-\item{ab.log}{Ablation log returned by \code{\link{ablation}}.}
-
-\item{abLogFile}{\code{.Rdata} file containing the ablation log.}
+\item{ablog}{(\code{list()}|\code{character(1)}) Ablation log object returned by \code{\link[=ablation]{ablation()}}. Alternatively, the path to an \code{.Rdata} file, e.g., \code{"log-ablation.Rdata"}, from which the object will be loaded.}
 
 \item{pdf.file}{Output filename.}
 
@@ -32,17 +29,17 @@ plotAblation(
 \item{ylab}{Label of y-axis.}
 
 \item{...}{Further graphical parameters may also be supplied as
-arguments. See \code{plot.default}.}
+arguments. See \code{\link[graphics:plot.default]{graphics::plot.default()}}.}
 }
 \description{
 Create plot from an ablation log
 }
 \examples{
 logfile <- file.path(system.file(package="irace"), "exdata", "log-ablation.Rdata")
-plotAblation(abLogFile = logfile)
+plotAblation(ablog = logfile)
 }
 \seealso{
-\code{\link{ablation}}
+\code{\link[=ablation]{ablation()}}
 }
 \author{
 Leslie Pérez Cáceres and Manuel López-Ibáñez
