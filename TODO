@@ -73,7 +73,8 @@ TODO General (in order of importance):
  * Various initialization modes Latin Hyper-cube, random, exhaustive,
    Hammersley point set, etc.
 
- * Use saveRDS/readRDS instead of load/save to avoid overriding userspace.
+ * Use saveRDS/readRDS instead of load/save (.Rdata) to avoid overriding
+   userspace. Do the same for ablation logs.
  
  * Use https://cran.r-project.org/web/packages/optparse/index.html
    to handle command-line options.
@@ -205,9 +206,6 @@ TODO General (in order of importance):
    them, that is, in addition to "--mpi 1" and "--mpi 0", accept just
    "--mpi".
 
- * irace.Rdata should keep a list with the all the eliteCandidates after each
-   race. Right now we only keep the best one.
-
  * Fix issues with digits, rounding and real parameters. If digits=d,
    perhaps it is more correct to sample like:
 
@@ -295,7 +293,10 @@ TODO General (in order of importance):
 
 DONE:
 
-  * (Patrick Schratz) Yeah I am actually responsible for the CI for ropensci
+ * irace.Rdata should keep a list with the all the eliteCandidates after each
+   race. Right now we only keep the best one. [DONE in iterationElites]
+
+ * (Patrick Schratz) Yeah I am actually responsible for the CI for ropensci
     and deeply involved in this. Usually I’d recommend
     https://github.com/ropensci/tic/ to get started. You can test on all major
     platforms via Github Actions. [DONE by Manuel]
