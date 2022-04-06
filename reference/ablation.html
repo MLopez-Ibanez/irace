@@ -57,8 +57,7 @@
 
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">ablation</span><span class="op">(</span>
-  iraceLogFile <span class="op">=</span> <span class="cn">NULL</span>,
-  iraceResults <span class="op">=</span> <span class="cn">NULL</span>,
+  <span class="va">iraceResults</span>,
   src <span class="op">=</span> <span class="fl">1L</span>,
   target <span class="op">=</span> <span class="cn">NULL</span>,
   ab.params <span class="op">=</span> <span class="cn">NULL</span>,
@@ -66,19 +65,14 @@
   type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"full"</span>, <span class="st">"racing"</span><span class="op">)</span>,
   seed <span class="op">=</span> <span class="fl">1234567</span>,
   ablationLogFile <span class="op">=</span> <span class="st">"log-ablation.Rdata"</span>,
-  pdf.file <span class="op">=</span> <span class="cn">NULL</span>,
-  pdf.width <span class="op">=</span> <span class="fl">20</span>,
-  mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">12</span>, <span class="fl">5</span>, <span class="fl">4</span>, <span class="fl">1</span><span class="op">)</span>,
   <span class="va">...</span>
 <span class="op">)</span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>iraceLogFile</dt>
-<dd><p>Log file created by <span class="pkg">irace</span>, e.g., <code>irace.Rdata</code>. This file must contain the <code>iraceResults</code> object.</p></dd>
-<dt>iraceResults</dt>
-<dd><p>Object created by <span class="pkg">irace</span> and typically saved in the log file <code>irace.Rdata</code>. Either <code>iraceLogFile</code> or <code>iraceResults</code> must be given, but not both.</p></dd>
+    <dl><dt>iraceResults</dt>
+<dd><p>(<code><a href="https://rdrr.io/r/base/list.html" class="external-link">list()</a></code>|<code>character(1)</code>) <code>iraceResults</code> object created by <span class="pkg">irace</span> and typically saved in the log file <code>irace.Rdata</code>. Alternatively, the path to the log file from which the <code>iraceResults</code> object will be loaded.</p></dd>
 <dt>src, target</dt>
 <dd><p>Source and target configuration IDs. By default, the first configuration ever evaluated (ID 1) is used as <code>src</code> and the best configuration found by irace is used as target.</p></dd>
 <dt>ab.params</dt>
@@ -86,17 +80,11 @@
 <dt>n.instances</dt>
 <dd><p>Number of instances to be used for the <code>"full"</code> ablation, if not provided <code>scenario$firstTest</code> instances are used.</p></dd>
 <dt>type</dt>
-<dd><p>Type of ablation to perform: <code>"full"</code> will execute all instances in the configurations to determine the best performing; <code>"racing"</code> will apply racing to find the best configurations.</p></dd>
+<dd><p>Type of ablation to perform: <code>"full"</code> will execute each configuration on all <code>n.instances</code> to determine the best-performing one; <code>"racing"</code> will apply racing to find the best configurations.</p></dd>
 <dt>seed</dt>
 <dd><p>(<code>integer(1)</code>) Integer value to use as seed for the random number generation.</p></dd>
 <dt>ablationLogFile</dt>
-<dd><p>Log file to save the ablation log.</p></dd>
-<dt>pdf.file</dt>
-<dd><p>Prefix that will be used to save the plot file of the ablation results.</p></dd>
-<dt>pdf.width</dt>
-<dd><p>Width provided to create the pdf file.</p></dd>
-<dt>mar</dt>
-<dd><p>Vector with the margins for the ablation plot.</p></dd>
+<dd><p>(<code>character(1)</code>) Log file to save the ablation log. If <code>NULL</code>, the results are not saved to a file.</p></dd>
 <dt>...</dt>
 <dd><p>Further arguments to override scenario settings, e.g., <code>debugLevel</code>, <code>parallel</code>, etc.</p></dd>
 </dl></div>
@@ -128,6 +116,10 @@ instances IDs from <code>iraceResults$scenario$instances</code>, second column t
     <p>C. Fawcett and H. H. Hoos. Analysing differences between algorithm
 configurations through ablation. Journal of Heuristics, 22(4):431–458, 2016.</p>
     </div>
+    <div id="see-also">
+    <h2>See also</h2>
+    <div class="dont-index"><p><code><a href="plotAblation.html">plotAblation()</a></code></p></div>
+    </div>
     <div id="author">
     <h2>Author</h2>
     <p>Leslie Pérez Cáceres and Manuel López-Ibáñez</p>
@@ -139,21 +131,21 @@ configurations through ablation. Journal of Heuristics, 22(4):431–458, 2016.</
 <span class="r-in"><span class="va">irace.logfile</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span>package<span class="op">=</span><span class="st">"irace"</span><span class="op">)</span>, <span class="st">"exdata"</span>, <span class="st">"sann.rda"</span><span class="op">)</span></span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/load.html" class="external-link">load</a></span><span class="op">(</span><span class="va">irace.logfile</span><span class="op">)</span></span>
 <span class="r-in"><span class="co"># Execute ablation between the first and the best configuration found by irace.</span></span>
-<span class="r-in"><span class="fu">ablation</span><span class="op">(</span>iraceResults <span class="op">=</span> <span class="va">iraceResults</span>, ablationLogFile <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-03-31 11:49:03 UTC: Starting ablation from 1 to 134 :</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # Seed:1234567</span>
+<span class="r-in"><span class="va">ablog</span> <span class="op">&lt;-</span> <span class="fu">ablation</span><span class="op">(</span>iraceResults <span class="op">=</span> <span class="va">iraceResults</span>, ablationLogFile <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-04-06 19:16:12 UTC: Starting ablation from 1 to 127</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # Seed: 1234567</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # Source configuration (row number is ID):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   tmax    temp</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 2241 62.7879</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 2936 15.0259</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # Target configuration (row number is ID):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     tmax    temp</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 134  246 28.8061</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-03-31 11:49:03 UTC: Executing source and target configurations on the given instances...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     tmax   temp</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 127 3468 0.9979</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-04-06 19:16:12 UTC: Executing source and target configurations on the given instances...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # Generating configurations (row number is ID): tmax temp </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   tmax    temp</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  246 62.7879</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 2241 28.8061</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-03-31 11:49:09 UTC: Ablation (full) of 2 configurations on 100 instances.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 3468 15.0259</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 2936  0.9979</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-04-06 19:16:17 UTC: Ablation (full) of 2 configurations on 100 instances.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # Markers:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      x No test is performed.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      c Configurations are discarded only due to capping.</span>
@@ -165,978 +157,136 @@ configurations through ablation. Journal of Heuristics, 22(4):431–458, 2016.</
 <span class="r-out co"><span class="r-pr">#&gt;</span> +-+-----------+-----------+-----------+----------------+-----------+--------+-----+----+------+</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> | |   Instance|      Alive|       Best|       Mean best| Exp so far|  W time|  rho|KenW|  Qvar|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> +-+-----------+-----------+-----------+----------------+-----------+--------+-----+----+------+</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|          1|          2|          3|    0.1359190969|          2|00:00:00|   NA|  NA|    NA|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|          2|          2|          2|    0.4960449827|          4|00:00:00|-1.00|0.00|1.0000|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|          3|          2|          2|    0.3520459583|          6|00:00:00|-0.33|0.11|0.6667|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|          4|          2|          2|    0.3115514821|          8|00:00:00|-0.33|0.00|0.6667|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|          5|          2|          3|     1.468194526|         10|00:00:00|-0.20|0.04|0.6000|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|          6|          2|          3|     1.229988081|         12|00:00:00|-0.07|0.11|0.5333|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|          7|          2|          3|     1.061992361|         14|00:00:00|+0.05|0.18|0.4762|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|          8|          2|          3|    0.9329258426|         16|00:00:00|+0.14|0.25|0.4286|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|          9|          2|          3|     1.269014705|         18|00:00:00|+0.00|0.11|0.5000|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         10|          2|          3|     1.448941003|         20|00:00:00|-0.07|0.04|0.5333|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         11|          2|          3|     1.329333376|         22|00:00:00|-0.02|0.07|0.5091|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         12|          2|          3|     1.559966470|         24|00:00:00|-0.06|0.03|0.5303|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         13|          2|          3|     1.445657360|         26|00:00:00|-0.03|0.05|0.5128|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         14|          2|          3|     1.355063335|         28|00:00:00|-0.05|0.02|0.5275|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         15|          2|          3|     1.293879928|         30|00:00:00|-0.07|0.00|0.5333|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         16|          2|          3|     1.218176519|         32|00:00:00|-0.05|0.02|0.5250|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         17|          2|          3|     1.321263211|         34|00:00:00|-0.06|0.00|0.5294|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         18|          2|          2|    0.7977867197|         36|00:00:00|-0.06|0.00|0.5294|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         19|          2|          2|    0.7653880925|         38|00:00:00|-0.05|0.00|0.5263|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         20|          2|          2|     1.162314460|         40|00:00:00|-0.05|0.00|0.5263|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         21|          2|          2|     1.228237480|         42|00:00:00|-0.05|0.00|0.5238|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         22|          2|          2|     1.184501548|         44|00:00:00|-0.04|0.01|0.5195|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         23|          2|          2|     1.141060879|         46|00:00:00|-0.03|0.02|0.5138|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         24|          2|          2|     1.106723037|         48|00:00:00|-0.01|0.03|0.5072|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         25|          2|          2|     1.065971969|         50|00:00:00|-0.03|0.01|0.5133|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         26|          2|          2|     1.029269874|         52|00:00:00|-0.02|0.02|0.5077|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         27|          2|          2|     1.014996255|         54|00:00:00|-0.03|0.01|0.5128|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         28|          2|          2|    0.9943026557|         56|00:00:00|-0.02|0.02|0.5079|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         29|          2|          2|     1.011138629|         58|00:00:00|-0.02|0.01|0.5123|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         30|          2|          2|     1.077700332|         60|00:00:00|-0.03|0.00|0.5149|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         31|          2|          2|     1.054824948|         62|00:00:00|-0.02|0.01|0.5118|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         32|          2|          2|     1.031912563|         64|00:00:00|-0.02|0.02|0.5081|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         33|          2|          2|     1.096263050|         66|00:00:00|-0.02|0.01|0.5114|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         34|          2|          2|     1.075666599|         68|00:00:00|-0.03|0.00|0.5134|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         35|          2|          2|     1.051204928|         70|00:00:00|-0.03|0.00|0.5143|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         36|          2|          2|     1.026650668|         72|00:00:00|-0.03|0.00|0.5127|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         37|          2|          2|     1.000804805|         74|00:00:00|-0.02|0.01|0.5105|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         38|          2|          2|    0.9753403487|         76|00:00:00|-0.02|0.01|0.5078|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         39|          2|          2|    0.9648674801|         78|00:00:00|-0.01|0.02|0.5047|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         40|          2|          2|    0.9512978793|         80|00:00:00|-0.00|0.02|0.5013|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         41|          2|          2|    0.9316323061|         82|00:00:00|+0.00|0.03|0.4976|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         42|          2|          2|    0.9103713207|         84|00:00:00|+0.01|0.04|0.4936|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         43|          2|          2|    0.8951681450|         86|00:00:00|+0.02|0.04|0.4895|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         44|          2|          2|    0.8765558499|         88|00:00:00|+0.03|0.05|0.4852|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         45|          2|          2|    0.8615018967|         90|00:00:00|+0.02|0.04|0.4909|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         46|          2|          2|    0.8517754943|         92|00:00:00|+0.03|0.05|0.4870|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         47|          2|          2|    0.8402645095|         94|00:00:00|+0.02|0.04|0.4921|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         48|          2|          2|    0.8232287196|         96|00:00:00|+0.02|0.04|0.4885|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         49|          2|          2|    0.8762778983|         98|00:00:00|+0.01|0.03|0.4932|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         50|          2|          2|    0.8840300313|        100|00:00:00|+0.02|0.04|0.4898|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         51|          2|          2|     1.061136599|        102|00:00:00|+0.01|0.03|0.4941|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         52|          2|          2|     1.049113165|        104|00:00:00|+0.00|0.02|0.4977|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         53|          2|          2|     1.065552993|        106|00:00:00|-0.00|0.02|0.5007|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         54|          2|          2|     1.047975299|        108|00:00:00|+0.00|0.02|0.4983|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         55|          2|          2|     1.029739202|        110|00:00:00|+0.01|0.03|0.4956|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         56|          2|          2|     1.024154204|        112|00:00:00|+0.01|0.03|0.4929|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         57|          2|          2|     1.058345895|        114|00:00:00|+0.02|0.04|0.4900|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         58|          2|          2|     1.059096388|        116|00:00:00|+0.03|0.04|0.4870|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         59|          2|          2|     1.061890427|        118|00:00:00|+0.03|0.05|0.4839|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         60|          2|          2|     1.049340432|        120|00:00:00|+0.04|0.05|0.4808|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         61|          2|          2|     1.036159185|        122|00:00:00|+0.04|0.06|0.4776|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         62|          2|          2|     1.026381558|        124|00:00:00|+0.04|0.05|0.4823|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         63|          2|          2|     1.026021307|        126|00:00:00|+0.04|0.06|0.4793|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         64|          2|          2|     1.012382687|        128|00:00:00|+0.05|0.06|0.4762|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         65|          2|          2|     1.009241333|        130|00:00:00|+0.04|0.05|0.4808|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         66|          2|          2|     1.003149343|        132|00:00:00|+0.04|0.06|0.4779|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         67|          2|          2|    0.9906773997|        134|00:00:00|+0.04|0.05|0.4821|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         68|          2|          2|    0.9816990481|        136|00:00:00|+0.04|0.06|0.4794|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         69|          2|          2|    0.9734739646|        138|00:00:00|+0.03|0.05|0.4834|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         70|          2|          2|    0.9635347895|        140|00:00:00|+0.04|0.05|0.4807|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         71|          2|          2|    0.9531737695|        142|00:00:00|+0.04|0.06|0.4781|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         72|          2|          2|    0.9401411307|        144|00:00:00|+0.05|0.06|0.4754|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         73|          2|          2|    0.9295131223|        146|00:00:00|+0.05|0.07|0.4726|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         74|          2|          2|    0.9172794216|        148|00:00:00|+0.06|0.07|0.4698|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         75|          2|          2|    0.9072153505|        150|00:00:00|+0.07|0.08|0.4670|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         76|          2|          2|    0.9529072964|        152|00:00:00|+0.06|0.07|0.4716|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         77|          2|          2|    0.9512888120|        154|00:00:00|+0.06|0.07|0.4689|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         78|          2|          2|    0.9447240955|        156|00:00:00|+0.05|0.07|0.4732|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         79|          2|          2|    0.9741735766|        158|00:00:00|+0.05|0.06|0.4771|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         80|          2|          2|    0.9674349375|        160|00:00:00|+0.05|0.06|0.4747|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         81|          2|          2|    0.9574650901|        162|00:00:00|+0.04|0.06|0.4784|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         82|          2|          2|    0.9474630128|        164|00:00:00|+0.05|0.06|0.4761|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         83|          2|          2|    0.9709707282|        166|00:00:00|+0.05|0.06|0.4737|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         84|          2|          2|    0.9959911340|        168|00:00:00|+0.05|0.06|0.4773|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         85|          2|          2|    0.9962628550|        170|00:00:00|+0.05|0.06|0.4751|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         86|          2|          2|     1.019852451|        172|00:00:00|+0.04|0.05|0.4785|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         87|          2|          2|     1.008392784|        174|00:00:00|+0.05|0.06|0.4763|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         88|          2|          2|    0.9997223386|        176|00:00:00|+0.05|0.06|0.4741|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         89|          2|          2|     1.037600276|        178|00:00:00|+0.04|0.06|0.4775|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         90|          2|          2|     1.028051783|        180|00:00:00|+0.05|0.06|0.4754|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         91|          2|          2|     1.021030214|        182|00:00:00|+0.04|0.05|0.4786|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         92|          2|          2|     1.020804567|        184|00:00:00|+0.04|0.05|0.4816|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         93|          2|          2|     1.024074614|        186|00:00:00|+0.03|0.04|0.4843|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         94|          2|          2|     1.021665784|        188|00:00:00|+0.03|0.04|0.4868|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         95|          2|          2|     1.014032087|        190|00:00:00|+0.02|0.03|0.4891|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         96|          2|          2|     1.005707982|        192|00:00:00|+0.03|0.04|0.4875|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         97|          2|          2|     1.000496589|        194|00:00:00|+0.03|0.04|0.4858|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         98|          2|          2|    0.9925392523|        196|00:00:00|+0.03|0.04|0.4841|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         99|          2|          2|     1.004934304|        198|00:00:00|+0.03|0.04|0.4865|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |-|        100|          1|          2|    0.9978053545|        200|00:00:00|   NA|  NA|    NA|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|          1|          2|          3|     2.914310895|          2|00:00:00|   NA|  NA|    NA|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|          2|          2|          3|     2.905494686|          4|00:00:00|+1.00|1.00|0.0000|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|          3|          2|          3|     1.955693230|          6|00:00:00|-0.33|0.11|0.6667|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|          4|          2|          2|     2.049583344|          8|00:00:00|-0.33|0.00|0.6667|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|          5|          2|          3|     1.977476902|         10|00:00:00|-0.20|0.04|0.6000|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|          6|          2|          3|     1.662326932|         12|00:00:00|-0.07|0.11|0.5333|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|          7|          2|          3|     1.436013140|         14|00:00:00|+0.05|0.18|0.4762|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|          8|          2|          3|     1.265967066|         16|00:00:00|+0.14|0.25|0.4286|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|          9|          2|          3|     1.448941554|         18|00:00:00|+0.00|0.11|0.5000|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         10|          2|          3|     1.309318602|         20|00:00:00|+0.07|0.16|0.4667|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         11|          2|          3|     1.203166622|         22|00:00:00|+0.13|0.21|0.4364|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         12|          2|          3|     1.107415545|         24|00:00:00|+0.18|0.25|0.4091|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         13|          2|          3|     1.026250659|         26|00:00:00|+0.23|0.29|0.3846|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         14|          2|          3|     1.160400383|         28|00:00:00|+0.27|0.33|0.3626|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         15|          2|          3|     1.085154827|         30|00:00:00|+0.31|0.36|0.3429|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         16|          2|          3|     1.027332241|         32|00:00:00|+0.35|0.39|0.3250|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         17|          2|          3|    0.9685888827|         34|00:00:00|+0.38|0.42|0.3088|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         18|          2|          3|    0.9178624436|         36|00:00:00|+0.41|0.44|0.2941|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         19|          2|          3|    0.8702226770|         38|00:00:00|+0.44|0.47|0.2807|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         20|          2|          3|    0.8289492093|         40|00:00:00|+0.46|0.49|0.2684|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         21|          2|          3|    0.7899220532|         42|00:00:00|+0.49|0.51|0.2571|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         22|          2|          3|    0.8878919144|         44|00:00:00|+0.51|0.53|0.2468|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         23|          2|          3|    0.9745261424|         46|00:00:00|+0.40|0.43|0.3004|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         24|          2|          3|     1.100270881|         48|00:00:00|+0.31|0.34|0.3442|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         25|          2|          3|     1.171398553|         50|00:00:00|+0.24|0.27|0.3800|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         26|          2|          3|     1.127521815|         52|00:00:00|+0.26|0.29|0.3692|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         27|          2|          3|     1.087884970|         54|00:00:00|+0.28|0.31|0.3590|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         28|          2|          3|     1.154623840|         56|00:00:00|+0.22|0.25|0.3889|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         29|          2|          3|     1.115583792|         58|00:00:00|+0.24|0.27|0.3793|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         30|          2|          3|     1.079738615|         60|00:00:00|+0.26|0.28|0.3701|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         31|          2|          3|     1.140029343|         62|00:00:00|+0.28|0.30|0.3613|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         32|          2|          3|     1.105487930|         64|00:00:00|+0.29|0.32|0.3528|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         33|          2|          3|     1.182214701|         66|00:00:00|+0.24|0.27|0.3788|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         34|          2|          3|     1.148845101|         68|00:00:00|+0.26|0.28|0.3708|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         35|          2|          3|     1.198549226|         70|00:00:00|+0.21|0.24|0.3933|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         36|          2|          3|     1.166500641|         72|00:00:00|+0.23|0.25|0.3857|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         37|          2|          3|     1.135246030|         74|00:00:00|+0.24|0.26|0.3784|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         38|          2|          3|     1.211935362|         76|00:00:00|+0.20|0.22|0.3983|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         39|          2|          3|     1.256286736|         78|00:00:00|+0.22|0.24|0.3914|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         40|          2|          3|     1.298922554|         80|00:00:00|+0.23|0.25|0.3846|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         41|          2|          3|     1.268733896|         82|00:00:00|+0.24|0.26|0.3780|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         42|          2|          3|     1.307941769|         84|00:00:00|+0.21|0.23|0.3961|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         43|          2|          3|     1.345705618|         86|00:00:00|+0.22|0.24|0.3898|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         44|          2|          3|     1.316136621|         88|00:00:00|+0.23|0.25|0.3837|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         45|          2|          3|     1.287401707|         90|00:00:00|+0.24|0.26|0.3778|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         46|          2|          3|     1.260127557|         92|00:00:00|+0.26|0.27|0.3720|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         47|          2|          3|     1.233906073|         94|00:00:00|+0.27|0.28|0.3663|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         48|          2|          3|     1.208432015|         96|00:00:00|+0.28|0.29|0.3608|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         49|          2|          3|     1.185710997|         98|00:00:00|+0.29|0.30|0.3554|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         50|          2|          3|     1.242344912|        100|00:00:00|+0.26|0.27|0.3722|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         51|          2|          3|     1.219738782|        102|00:00:00|+0.27|0.28|0.3671|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         52|          2|          3|     1.196688523|        104|00:00:00|+0.28|0.29|0.3620|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         53|          2|          3|     1.174791484|        106|00:00:00|+0.29|0.30|0.3570|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         54|          2|          3|     1.154072473|        108|00:00:00|+0.30|0.31|0.3522|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         55|          2|          3|     1.186219951|        110|00:00:00|+0.31|0.32|0.3475|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         56|          2|          3|     1.297820382|        112|00:00:00|+0.27|0.29|0.3630|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         57|          2|          3|     1.275245681|        114|00:00:00|+0.28|0.30|0.3584|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         58|          2|          3|     1.294981075|        116|00:00:00|+0.29|0.30|0.3539|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         59|          2|          3|     1.323020223|        118|00:00:00|+0.26|0.28|0.3682|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         60|          2|          3|     1.301862034|        120|00:00:00|+0.27|0.28|0.3638|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         61|          2|          3|     1.280856312|        122|00:00:00|+0.28|0.29|0.3596|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         62|          2|          3|     1.307162473|        124|00:00:00|+0.25|0.27|0.3728|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         63|          2|          3|     1.287869728|        126|00:00:00|+0.26|0.27|0.3687|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         64|          2|          3|     1.268274423|        128|00:00:00|+0.27|0.28|0.3646|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         65|          2|          3|     1.293152649|        130|00:00:00|+0.28|0.29|0.3606|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         66|          2|          3|     1.274014683|        132|00:00:00|+0.29|0.30|0.3566|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         67|          2|          3|     1.315333713|        134|00:00:00|+0.29|0.30|0.3528|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         68|          2|          3|     1.354596763|        136|00:00:00|+0.27|0.28|0.3652|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         69|          2|          3|     1.336207158|        138|00:00:00|+0.28|0.29|0.3615|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         70|          2|          3|     1.317516485|        140|00:00:00|+0.28|0.29|0.3578|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         71|          2|          3|     1.299755627|        142|00:00:00|+0.29|0.30|0.3541|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         72|          2|          3|     1.281980619|        144|00:00:00|+0.30|0.31|0.3505|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         73|          2|          3|     1.266017661|        146|00:00:00|+0.31|0.32|0.3470|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         74|          2|          3|     1.288387994|        148|00:00:00|+0.31|0.32|0.3436|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         75|          2|          3|     1.309552824|        150|00:00:00|+0.32|0.33|0.3402|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         76|          2|          3|     1.330724336|        152|00:00:00|+0.33|0.34|0.3368|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         77|          2|          3|     1.313938223|        154|00:00:00|+0.33|0.34|0.3336|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         78|          2|          3|     1.297148627|        156|00:00:00|+0.34|0.35|0.3303|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         79|          2|          3|     1.318322713|        158|00:00:00|+0.32|0.32|0.3421|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         80|          2|          3|     1.337942240|        160|00:00:00|+0.32|0.33|0.3389|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         81|          2|          3|     1.321756049|        162|00:00:00|+0.33|0.34|0.3358|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         82|          2|          3|     1.341274444|        164|00:00:00|+0.33|0.34|0.3327|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         83|          2|          3|     1.325553008|        166|00:00:00|+0.34|0.35|0.3297|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         84|          2|          3|     1.310429775|        168|00:00:00|+0.35|0.35|0.3267|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         85|          2|          3|     1.295304871|        170|00:00:00|+0.35|0.36|0.3238|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         86|          2|          3|     1.280658680|        172|00:00:00|+0.36|0.37|0.3209|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         87|          2|          3|     1.299621708|        174|00:00:00|+0.36|0.37|0.3181|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         88|          2|          3|     1.285434064|        176|00:00:00|+0.37|0.38|0.3153|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         89|          2|          3|     1.272729695|        178|00:00:00|+0.35|0.35|0.3264|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         90|          2|          3|     1.302868997|        180|00:00:00|+0.35|0.36|0.3236|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         91|          2|          3|     1.321054202|        182|00:00:00|+0.33|0.34|0.3341|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         92|          2|          3|     1.307606959|        184|00:00:00|+0.34|0.34|0.3313|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         93|          2|          3|     1.337299265|        186|00:00:00|+0.32|0.32|0.3413|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         94|          2|          3|     1.353780866|        188|00:00:00|+0.30|0.31|0.3507|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         95|          2|          3|     1.339665808|        190|00:00:00|+0.30|0.31|0.3480|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         96|          2|          3|     1.356413951|        192|00:00:00|+0.31|0.32|0.3454|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         97|          2|          3|     1.342592537|        194|00:00:00|+0.31|0.32|0.3428|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         98|          2|          3|     1.330104042|        196|00:00:00|+0.32|0.33|0.3402|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         99|          2|          3|     1.317785763|        198|00:00:00|+0.32|0.33|0.3377|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |-|        100|          1|          3|     1.344875022|        200|00:00:00|   NA|  NA|    NA|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> +-+-----------+-----------+-----------+----------------+-----------+--------+-----+----+------+</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Best-so-far configuration:           2    mean value:     0.9978053545</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Best-so-far configuration:           3    mean value:      1.344875022</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Description of the best-so-far configuration:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .ID. tmax    temp .PARENT.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2    2  246 62.7879        1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .ID. tmax   temp .PARENT.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3    3 2936 0.9979        1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> #   tmax 2241 -&gt; 246 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-03-31 11:49:16 UTC: Final best configuration:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   tmax    temp</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  246 28.8061</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # Best changed parameters:#   temp 15.0259 -&gt; 0.9979 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-04-06 19:16:24 UTC: Final best configuration:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   tmax   temp</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 3468 0.9979</span>
+<span class="r-in"><span class="fu"><a href="plotAblation.html">plotAblation</a></span><span class="op">(</span><span class="va">ablog</span><span class="op">)</span></span>
 <span class="r-plt img"><img src="ablation-1.png" alt="" width="700" height="433"></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $configurations</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     .ID. tmax    temp .PARENT.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1      1 2241 62.7879       NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11     2  246 62.7879        1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2      3 2241 28.8061        1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 134    4  246 28.8061       96</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $instances</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     instance       seed</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1         78  747607747</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2         27 1978865385</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3         33 2013052311</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4         34  122554189</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5         59 2051723367</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6         80 2081997514</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7         39 2119004196</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8         64  306445407</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9          7 1215524956</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10        65 1293795474</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11        95 1229497975</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12        16 1237091561</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13        19 1742052408</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14        60  805298965</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15        32  130864637</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16        71  997403804</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17        28  658265029</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18        30  462489390</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19        44 1635842656</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20       100  507923323</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21         6 1429454553</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22        91 1682788467</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23        15  276731620</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 24        37  232803185</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 25        45  168887701</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 26        81  959096685</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27         8  563162715</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 28        49 1489756895</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 29        23  586306072</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 30        22 1009085729</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 31        54  863747016</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 32        29 1489319069</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 33        10 1421275773</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 34         3 1075210737</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 35        92  349271487</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 36        47      16653</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 37        89 1101574190</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 38        93  685323018</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 39        83  609326369</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 40        79 1354338785</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 41        98  852565085</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 42        82    9910237</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 43        11 1473967750</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 44        50  177626078</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 45        76  503778502</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 46        42 1967478576</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 47        97  361300915</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 48        77 1856657739</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 49        75 2007051392</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 50        48  212494403</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 51        94  524841098</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 52        66  981953086</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 53        35  607981684</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 54        61 1252050366</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 55        56  481491575</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 56        20 1199607169</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 57        70 1358355016</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 58         5 1979152749</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 59        26  216580027</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 60        18  715951662</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 61        14 1708221026</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 62        74  432164418</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 63        24 2092963608</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 64        62  482726585</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 65        90 1701503218</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 66        13  519402474</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 67        99 1507613314</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 68         4 2022165263</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 69        69 1523763160</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 70        67 1884913671</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 71        84  815860486</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 72        58  725855647</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 73        63  127383344</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 74        72 1939749955</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 75         1  219760076</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 76        53  591457714</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 77        96 1180014739</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 78        88  203535618</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 79        86 2009831245</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 80        87 2032123553</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 81        41 1190857902</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 82        57 2040989455</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 83        21  817989086</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 84        52 1696886239</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 85        43 1991279359</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 86        73  765262857</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 87        40 1125268814</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 88        38  167456315</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 89         9 1949981146</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 90        85  734252116</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 91        46 1849415409</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 92         2  572975735</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 93        25 2025983636</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 94        17   34241383</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 95        55 1971491956</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 96        36 1333688172</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 97        12  294533717</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 98        31 1169258093</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 99        68 1081767331</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 100       51 1726719293</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $experiments</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>              1          2           3            4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1   3.32005244 0.51811298 0.135919097  4.114259309</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2   0.05235946 0.47397699 3.992997929  4.044618538</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   5.05204601 0.06404791 3.026924163  0.076786803</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4   0.50030351 0.19006805 0.118453346  0.060795268</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5   3.04986860 0.27565172 0.066678097  0.062705127</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6   0.37302700 1.42434943 0.038955857  0.050170403</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7   0.28654221 0.78317067 0.054018036  0.100144709</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8   3.18508118 0.05123458 0.029460216  0.071208268</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9   4.17047797 0.07973532 3.957725600  4.032765379</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10  0.01177274 0.64575691 3.068277693 12.444843896</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11  0.07974989 7.80461959 0.133257103  2.977764782</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12  0.89463497 0.05440619 4.096930503  1.532891339</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13  0.82541051 1.06962468 0.073948047  2.914736088</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14  0.43373060 0.09159533 0.177341003  0.035772631</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15  0.01418734 0.21535365 0.437312229  0.027432442</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16  0.20217341 0.41767298 0.082625383  0.044553430</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17  0.92601671 0.07963421 2.970650292  0.008795548</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18  3.18862239 0.12114976 4.034795074  0.135374065</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19  0.26341168 0.18221280 2.894198852  9.945675947</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20  0.16604561 8.70391544 2.960295717  0.102852082</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21  0.05564160 2.54669788 8.988986506  0.091959834</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22  3.07665856 0.26604698 4.068775812  0.159970646</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23  1.00932030 0.18536615 2.961985425  0.035210024</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 24  3.34000458 0.31695269 1.038274538  2.911227569</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 25  0.40947212 0.08794633 0.020321844  2.972925136</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 26  3.41438050 0.11171750 0.136423801  0.300275979</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27  0.99774899 0.64388216 0.019816512  0.093579563</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 28  3.14534525 0.43557547 6.661538102 15.714118334</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 29  2.03792388 1.48254587 0.007798242  4.068099876</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 30  0.07068441 3.00798973 2.974886709  2.928509053</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 31  5.10651478 0.36856343 2.999173263  4.004751586</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 32  3.20496524 0.32162862 2.919246893  4.033751589</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 33  0.02957528 3.15547863 3.065014396  3.383060474</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 34  3.29645146 0.39598373 0.370451020  2.886297317</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 35  0.12244912 0.21950811 0.081947608  0.049152526</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 36  0.11295386 0.16725155 2.976870642  0.164613821</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 37  0.46648179 0.07035376 4.376441423  7.759848948</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 38  0.38720054 0.03315546 0.111587571  3.116825039</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 39  0.14274640 0.56689847 2.962958756  2.923193161</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 40  0.14953277 0.42208345 9.141040494  0.039738446</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 41  0.30141878 0.14500938 8.498688581  0.120266722</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 42  0.65068605 0.03867092 2.933927566  0.187647057</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 43  1.47574354 0.25663477 2.905555736  4.145409751</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 44  0.20237849 0.07622716 2.426722054  0.007217387</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 45  7.81446953 0.19912795 0.028242044  0.023229117</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 46  0.25659785 0.41408739 3.038992407  0.470733942</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 47  6.83051950 0.31075921 0.166813747  0.109881435</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 48  0.48073318 0.02254660 4.813325258  2.968786168</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 49  0.25581975 3.42263848 0.069026880  0.012047362</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 50  0.12143916 1.26388455 2.968695451  0.109050020</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 51  8.03016878 9.91646500 2.915326908  0.194392849</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 52  0.40742813 0.43591803 0.053348119  0.014329784</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 53  0.12428704 1.92042401 0.088937991  1.662283963</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 54  1.08975823 0.11635753 3.052588554  0.072649876</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 55  0.23273833 0.04498998 2.897896596  0.048260293</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 56  0.35717849 0.71697928 3.223944486  3.004244503</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 57  3.71936107 2.97308060 7.800637243  0.087751699</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 58  0.47734403 1.10187451 5.660568611  0.089793733</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 59  1.56197691 1.22394470 3.093568544  0.258204996</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 60  3.70650385 0.30889072 2.942015564  0.159126849</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 61  0.16649290 0.24528434 6.125804945  0.013504783</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 62  0.08407857 0.42994636 0.061638803  2.944419456</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 63  3.04961492 1.00368572 4.119595061  0.029803585</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 64  0.57292041 0.15314961 2.962325441  0.429916137</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 65  0.64518543 0.80819469 0.132476724  0.080260233</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 66  0.15569133 0.60717003 3.023509150  0.214758951</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 67  0.39988475 0.16752912 0.041853677  0.563122159</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 68  0.42860199 0.38014949 2.933939732  0.056188125</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 69  0.49335137 0.41416829 0.320967309  0.054622865</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 70  0.56791402 0.27773170 2.916354456 10.533426297</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 71  1.20837422 0.22790237 2.928814295  2.896648545</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 72  3.51779119 0.01482377 0.778112020  2.905810522</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 73  0.64729723 0.16429652 2.945690177  2.908171514</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 74  8.97462039 0.02421927 0.096284251  3.994830112</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 75  0.75425262 0.16247409 4.344373697  0.058219850</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 76  0.80644259 4.37980324 3.621186508  0.229260227</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 77  5.90619728 0.82828400 2.107632174  0.044593114</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 78  0.51139218 0.43924093 0.054280359  0.036558694</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 79  0.28379110 3.27123310 0.095272384  0.023505799</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 80  3.35132400 0.43508245 1.469206796  0.165262503</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 81  3.09428146 0.15987729 0.035516846  0.031899652</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 82  5.46659048 0.13729476 4.061192083  0.123225267</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 83  7.02667238 2.89860339 4.650856952  3.145919213</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 84  0.42377673 3.07268482 2.907881957  2.942255967</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 85  3.02513785 1.01908742 2.883253922  2.931609748</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 86  0.38610714 3.02496812 0.434813023  0.113155766</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 87  0.13978297 0.02286139 0.121238361  0.458209737</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 88  4.35338310 0.24539362 6.051098187  0.200375956</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 89  0.78119599 4.37085880 4.029207710  2.965097462</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 90  0.33663002 0.17823587 3.085785261  0.180707986</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 91  0.22430454 0.38908903 0.006650102  0.162538613</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 92  1.00232641 1.00027064 0.050336588  3.503478192</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 93  0.27176837 1.32491899 0.041351317  4.004210642</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 94  0.14054428 0.79764455 0.065916143  0.028120463</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 95  0.10216799 0.29646460 0.163260468  3.999515579</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 96  0.38216904 0.21491801 3.063473758 14.417793069</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 97  0.12634355 0.50020284 5.860120516  0.049619697</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 98  0.77644839 0.22067760 3.779492078  0.411608561</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 99  0.33550658 2.21964938 1.857127094  0.056387822</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 100 0.91947507 0.29203935 2.991495907  0.094364386</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$targetRunner</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> function (experiment, scenario) </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     f_rosenbrock &lt;- function(x) {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         d &lt;- length(x)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         z &lt;- x + 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         hz &lt;- z[1:(d - 1)]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         tz &lt;- z[2:d]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         s &lt;- sum(100 * (hz^2 - tz)^2 + (hz - 1)^2)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         return(s)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     f_rastrigin &lt;- function(x) {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         sum(x * x - 10 * cos(2 * pi * x) + 10)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     instance &lt;- experiment$instance</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     configuration &lt;- experiment$configuration</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     D &lt;- 3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     par &lt;- runif(D, min = -1, max = 1)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     fn &lt;- function(x) {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         weight &lt;- instance</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         return(weight * f_rastrigin(x) + (1 - weight) * f_rosenbrock(x))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     res &lt;- stats::optim(par, fn, method = "SANN", control = list(maxit = 5000, </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         tmax = as.numeric(configuration[["tmax"]]), temp = as.numeric(configuration[["temp"]])))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     return(list(cost = res$value))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$instances</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [1] 0.8968064 0.9342810 0.8691551 0.8758859 0.9148431 0.9264941 0.9079540</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [8] 0.9031222 0.9302191 0.9177350 0.9007699 0.8885924 0.8891457 0.9094353</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [15] 0.9076817 0.9282658 0.8930522 0.9265651 0.9147426 0.9214336 0.8812384</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [22] 0.8827130 0.8884406 0.9062795 0.9018415 0.9185133 0.8853831 0.8904517</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [29] 0.9029245 0.8630028 0.8878556 0.8867478 0.9121338 0.8896903 0.9294284</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [36] 0.9027581 0.8996896 0.8835523 0.9146852 0.8931457 0.9155231 0.8800278</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [43] 0.8643276 0.8495999 0.9029376 0.8946100 0.9371330 0.9147301 0.9086862</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [50] 0.9059224 0.9019409 0.8983494 0.8744151 0.9637985 0.9014962 0.9025646</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [57] 0.9013784 0.9049278 0.9038073 0.8963097 0.8947634 0.8903574 0.8810550</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [64] 0.8909728 0.9187782 0.8847513 0.8869683 0.9155673 0.8969061 0.9286169</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [71] 0.8801899 0.8844774 0.8794096 0.9053252 0.8935957 0.9193345 0.8889083</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [78] 0.8951665 0.8972915 0.8620368 0.9099500 0.9179124 0.9144542 0.8789670</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [85] 0.8844366 0.9143011 0.8944093 0.9241928 0.8642362 0.9035520 0.9084122</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [92] 0.8949396 0.8853040 0.8862550 0.9296903 0.9315903 0.8944870 0.8895404</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [99] 0.9259221 0.9095242</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$maxExperiments</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$logFile</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmppE63vB/file48581ec9936e/reference/sann.rda"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$execDir</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmppE63vB/file48581ec9936e/reference"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$scenarioFile</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "./scenario.txt"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$parameterFile</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/home/manu/work/irace/git/examples/vignette-example/parameters.txt"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$trainInstancesDir</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "./Instances"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$trainInstancesFile</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] ""</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$configurationsFile</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] ""</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$forbiddenFile</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] ""</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$targetRunnerRetries</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$targetRunnerData</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] ""</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$maxTime</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$budgetEstimation</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.02</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$digits</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$debugLevel</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$nbIterations</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$nbExperimentsPerIteration</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$sampleInstances</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$testType</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "friedman"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$firstTest</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 100</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$eachTest</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$minNbSurvival</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$nbConfigurations</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$mu</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$confidence</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.95</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$deterministic</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$seed</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 978201812</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$parallel</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$loadBalancing</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$mpi</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$batchmode</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "0"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$softRestart</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$softRestartThreshold</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1e-04</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$testInstancesDir</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] ""</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$testInstancesFile</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] ""</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$testNbElites</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$testIterationElites</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$elitist</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$elitistNewInstances</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$elitistLimit</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$capping</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$cappingType</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "median"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$boundType</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "candidate"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$boundDigits</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$boundPar</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$boundAsTimeout</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$postselection</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$aclib</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$recoveryFile</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] ""</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$targetRunnerLauncher</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] ""</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$targetRunnerLauncherArgs</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "{targetRunner} {targetRunnerArgs}"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$minMeasurableTime</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $trajectory</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> source               </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      1      2      4 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $best</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     .ID. tmax    temp .PARENT.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 134    4  246 28.8061       96</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span class="co"># Execute ablation between two selected configurations, and selecting only a</span></span>
 <span class="r-in"><span class="co"># subset of parameters, directly reading the setup from the irace log file.</span></span>
-<span class="r-in"><span class="fu">ablation</span><span class="op">(</span>iraceLogFile <span class="op">=</span> <span class="va">irace.logfile</span>, src <span class="op">=</span> <span class="fl">1</span>, target <span class="op">=</span> <span class="fl">10</span>,</span>
-<span class="r-in">         ab.params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"temp"</span><span class="op">)</span>, ablationLogFile <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-03-31 11:49:16 UTC: Starting ablation from 1 to 10 :</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # Seed:1234567</span>
+<span class="r-in"><span class="va">ablog</span> <span class="op">&lt;-</span> <span class="fu">ablation</span><span class="op">(</span>iraceResults <span class="op">=</span> <span class="va">irace.logfile</span>, src <span class="op">=</span> <span class="fl">1</span>, target <span class="op">=</span> <span class="fl">10</span>,</span>
+<span class="r-in">                  ab.params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"temp"</span><span class="op">)</span>, ablationLogFile <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-04-06 19:16:24 UTC: Starting ablation from 1 to 10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # Seed: 1234567</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # Source configuration (row number is ID):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   tmax    temp</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 2241 62.7879</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 2936 15.0259</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # Target configuration (row number is ID):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    tmax    temp</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10  998 58.8078</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-03-31 11:49:16 UTC: Executing source and target configurations on the given instances...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-03-31 11:49:22 UTC: Final best configuration:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 2418 38.8461</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-04-06 19:16:24 UTC: Executing source and target configurations on the given instances...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-04-06 19:16:30 UTC: Final best configuration:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   tmax    temp</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  998 58.8078</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 2418 38.8461</span>
+<span class="r-in"><span class="fu"><a href="plotAblation.html">plotAblation</a></span><span class="op">(</span><span class="va">ablog</span><span class="op">)</span></span>
 <span class="r-plt img"><img src="ablation-2.png" alt="" width="700" height="433"></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $configurations</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    .ID. tmax    temp .PARENT.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1     1 2241 62.7879       NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10    2  998 58.8078       NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $instances</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     instance       seed</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1         78  747607747</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2         27 1978865385</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3         33 2013052311</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4         34  122554189</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5         59 2051723367</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6         80 2081997514</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7         39 2119004196</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8         64  306445407</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9          7 1215524956</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10        65 1293795474</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11        95 1229497975</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12        16 1237091561</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13        19 1742052408</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14        60  805298965</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15        32  130864637</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16        71  997403804</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17        28  658265029</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18        30  462489390</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19        44 1635842656</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20       100  507923323</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21         6 1429454553</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22        91 1682788467</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23        15  276731620</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 24        37  232803185</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 25        45  168887701</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 26        81  959096685</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27         8  563162715</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 28        49 1489756895</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 29        23  586306072</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 30        22 1009085729</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 31        54  863747016</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 32        29 1489319069</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 33        10 1421275773</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 34         3 1075210737</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 35        92  349271487</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 36        47      16653</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 37        89 1101574190</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 38        93  685323018</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 39        83  609326369</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 40        79 1354338785</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 41        98  852565085</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 42        82    9910237</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 43        11 1473967750</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 44        50  177626078</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 45        76  503778502</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 46        42 1967478576</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 47        97  361300915</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 48        77 1856657739</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 49        75 2007051392</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 50        48  212494403</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 51        94  524841098</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 52        66  981953086</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 53        35  607981684</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 54        61 1252050366</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 55        56  481491575</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 56        20 1199607169</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 57        70 1358355016</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 58         5 1979152749</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 59        26  216580027</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 60        18  715951662</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 61        14 1708221026</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 62        74  432164418</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 63        24 2092963608</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 64        62  482726585</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 65        90 1701503218</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 66        13  519402474</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 67        99 1507613314</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 68         4 2022165263</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 69        69 1523763160</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 70        67 1884913671</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 71        84  815860486</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 72        58  725855647</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 73        63  127383344</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 74        72 1939749955</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 75         1  219760076</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 76        53  591457714</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 77        96 1180014739</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 78        88  203535618</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 79        86 2009831245</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 80        87 2032123553</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 81        41 1190857902</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 82        57 2040989455</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 83        21  817989086</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 84        52 1696886239</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 85        43 1991279359</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 86        73  765262857</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 87        40 1125268814</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 88        38  167456315</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 89         9 1949981146</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 90        85  734252116</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 91        46 1849415409</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 92         2  572975735</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 93        25 2025983636</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 94        17   34241383</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 95        55 1971491956</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 96        36 1333688172</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 97        12  294533717</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 98        31 1169258093</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 99        68 1081767331</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 100       51 1726719293</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $experiments</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>              1            2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1   3.32005244  0.163174644</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2   0.05235946  0.149745642</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   5.05204601  0.067572729</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4   0.50030351  0.144789752</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5   3.04986860  0.180606711</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6   0.37302700  0.418437524</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7   0.28654221  0.223598534</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8   3.18508118  0.798076655</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9   4.17047797  0.248114280</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10  0.01177274  0.023037158</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11  0.07974989  0.171728042</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12  0.89463497  0.079994725</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13  0.82541051  0.103720472</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14  0.43373060  0.100048584</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15  0.01418734  0.019535765</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16  0.20217341  0.285118764</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17  0.92601671  0.565342178</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18  3.18862239  0.044411831</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19  0.26341168  0.343069545</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20  0.16604561  0.347810146</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21  0.05564160  0.353095542</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22  3.07665856  0.590840020</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23  1.00932030  0.879581888</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 24  3.34000458  1.838501824</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 25  0.40947212  3.178996460</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 26  3.41438050  1.919117530</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27  0.99774899  1.741719368</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 28  3.14534525  0.169039876</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 29  2.03792388  0.063979856</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 30  0.07068441  0.059685236</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 31  5.10651478  0.318826585</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 32  3.20496524  0.416930774</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 33  0.02957528  3.048079387</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 34  3.29645146  2.771308699</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 35  0.12244912  0.282833091</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 36  0.11295386  3.176004799</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 37  0.46648179  0.540665184</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 38  0.38720054  0.648157200</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 39  0.14274640  0.196732357</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 40  0.14953277  0.383852174</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 41  0.30141878  1.758167645</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 42  0.65068605  0.316978075</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 43  1.47574354  0.002290335</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 44  0.20237849  0.550968951</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 45  7.81446953 11.012897994</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 46  0.25659785  0.350161831</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 47  6.83051950  0.129397511</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 48  0.48073318  0.118165164</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 49  0.25581975  0.437011915</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 50  0.12143916  0.084573788</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 51  8.03016878  0.697713409</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 52  0.40742813  0.365197391</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 53  0.12428704  0.090302958</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 54  1.08975823  0.096328825</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 55  0.23273833  0.591981469</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 56  0.35717849  0.315859367</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 57  3.71936107  3.553165497</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 58  0.47734403  3.035564363</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 59  1.56197691  0.312013548</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 60  3.70650385  0.237579354</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 61  0.16649290  3.260397127</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 62  0.08407857  0.363305558</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 63  3.04961492  0.527057926</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 64  0.57292041  0.683649699</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 65  0.64518543  4.705334420</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 66  0.15569133  0.206010996</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 67  0.39988475  3.208192724</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 68  0.42860199  3.492850091</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 69  0.49335137  0.092970914</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 70  0.56791402  0.500384061</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 71  1.20837422 13.677020086</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 72  3.51779119  0.532474532</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 73  0.64729723  0.188329879</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 74  8.97462039  0.704510846</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 75  0.75425262  0.191219278</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 76  0.80644259  0.333113489</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 77  5.90619728  0.348741654</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 78  0.51139218  5.477302036</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 79  0.28379110  0.208917134</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 80  3.35132400  0.119880354</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 81  3.09428146  0.029401175</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 82  5.46659048  0.256535036</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 83  7.02667238  0.184433496</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 84  0.42377673  0.083736257</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 85  3.02513785  0.375883191</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 86  0.38610714  0.062997459</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 87  0.13978297  0.293884562</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 88  4.35338310  0.615854940</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 89  0.78119599  0.135564047</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 90  0.33663002  0.396040177</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 91  0.22430454  0.519556246</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 92  1.00232641  0.060697633</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 93  0.27176837  0.288834428</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 94  0.14054428  0.063370345</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 95  0.10216799  0.198808246</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 96  0.38216904  0.871710589</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 97  0.12634355  0.189468928</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 98  0.77644839  0.128923285</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 99  0.33550658  0.029054703</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 100 0.91947507  0.060785623</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$targetRunner</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> function (experiment, scenario) </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     f_rosenbrock &lt;- function(x) {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         d &lt;- length(x)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         z &lt;- x + 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         hz &lt;- z[1:(d - 1)]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         tz &lt;- z[2:d]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         s &lt;- sum(100 * (hz^2 - tz)^2 + (hz - 1)^2)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         return(s)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     f_rastrigin &lt;- function(x) {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         sum(x * x - 10 * cos(2 * pi * x) + 10)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     instance &lt;- experiment$instance</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     configuration &lt;- experiment$configuration</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     D &lt;- 3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     par &lt;- runif(D, min = -1, max = 1)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     fn &lt;- function(x) {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         weight &lt;- instance</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         return(weight * f_rastrigin(x) + (1 - weight) * f_rosenbrock(x))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     res &lt;- stats::optim(par, fn, method = "SANN", control = list(maxit = 5000, </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         tmax = as.numeric(configuration[["tmax"]]), temp = as.numeric(configuration[["temp"]])))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     return(list(cost = res$value))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$instances</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [1] 0.8968064 0.9342810 0.8691551 0.8758859 0.9148431 0.9264941 0.9079540</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   [8] 0.9031222 0.9302191 0.9177350 0.9007699 0.8885924 0.8891457 0.9094353</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [15] 0.9076817 0.9282658 0.8930522 0.9265651 0.9147426 0.9214336 0.8812384</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [22] 0.8827130 0.8884406 0.9062795 0.9018415 0.9185133 0.8853831 0.8904517</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [29] 0.9029245 0.8630028 0.8878556 0.8867478 0.9121338 0.8896903 0.9294284</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [36] 0.9027581 0.8996896 0.8835523 0.9146852 0.8931457 0.9155231 0.8800278</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [43] 0.8643276 0.8495999 0.9029376 0.8946100 0.9371330 0.9147301 0.9086862</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [50] 0.9059224 0.9019409 0.8983494 0.8744151 0.9637985 0.9014962 0.9025646</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [57] 0.9013784 0.9049278 0.9038073 0.8963097 0.8947634 0.8903574 0.8810550</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [64] 0.8909728 0.9187782 0.8847513 0.8869683 0.9155673 0.8969061 0.9286169</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [71] 0.8801899 0.8844774 0.8794096 0.9053252 0.8935957 0.9193345 0.8889083</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [78] 0.8951665 0.8972915 0.8620368 0.9099500 0.9179124 0.9144542 0.8789670</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [85] 0.8844366 0.9143011 0.8944093 0.9241928 0.8642362 0.9035520 0.9084122</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [92] 0.8949396 0.8853040 0.8862550 0.9296903 0.9315903 0.8944870 0.8895404</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [99] 0.9259221 0.9095242</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$maxExperiments</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$logFile</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmppE63vB/file48581ec9936e/reference/sann.rda"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$execDir</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmppE63vB/file48581ec9936e/reference"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$scenarioFile</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "./scenario.txt"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$parameterFile</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/home/manu/work/irace/git/examples/vignette-example/parameters.txt"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$trainInstancesDir</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "./Instances"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$trainInstancesFile</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] ""</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$configurationsFile</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] ""</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$forbiddenFile</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] ""</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$targetRunnerRetries</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$targetRunnerData</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] ""</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$maxTime</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$budgetEstimation</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.02</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$digits</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$debugLevel</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$nbIterations</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$nbExperimentsPerIteration</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$sampleInstances</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$testType</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "friedman"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$firstTest</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$eachTest</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$minNbSurvival</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$nbConfigurations</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$mu</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$confidence</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.95</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$deterministic</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$seed</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 978201812</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$parallel</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$loadBalancing</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$mpi</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$batchmode</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "0"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$softRestart</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$softRestartThreshold</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1e-04</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$testInstancesDir</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] ""</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$testInstancesFile</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] ""</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$testNbElites</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$testIterationElites</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$elitist</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$elitistNewInstances</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$elitistLimit</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$capping</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$cappingType</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "median"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$boundType</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "candidate"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$boundDigits</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$boundPar</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$boundAsTimeout</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$postselection</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$aclib</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$recoveryFile</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] ""</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$targetRunnerLauncher</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] ""</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$targetRunnerLauncherArgs</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "{targetRunner} {targetRunnerArgs}"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $scenario$minMeasurableTime</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $trajectory</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> source        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      1      2 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $best</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    .ID. tmax    temp .PARENT.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10    2  998 58.8078       NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span class="co"># }</span></span>
 <span class="r-in"></span>
 </code></pre></div>
