@@ -186,7 +186,7 @@ examples: quick-install
 	@echo "*** Makefile: Regenerating data for vignettes and examples. This will take time..."
 	cd examples/vignette-example/ && R --vanilla --slave --file=create-example-file.R
 	mv -t vignettes/ examples/vignette-example/*.Rdata examples/vignette-example/irace-acotsp-stdout.txt
-	mv -t inst/exdata/ vignettes/log-ablation.RData
+	mv -t inst/exdata/ vignettes/log-ablation.Rdata
 	$(MAKE) vignettes
 	$(MAKE) check
 
