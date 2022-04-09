@@ -45,6 +45,7 @@ help:
 
 setup:
 	./scripts/setup.sh
+	@test -f $(PACKAGEDIR)/vignettes/optbib/.git || git submodule update --init
 
 install: build
 	cd $(BINDIR) && R CMD INSTALL $(INSTALL_FLAGS) $(PACKAGE)_$(PACKAGEVERSION).tar.gz
@@ -137,7 +138,7 @@ clean:
 vignettes: vignettes/$(PACKAGE)-package.Rnw vignettes/section/irace-options.tex
 # FIXME: How to display the output of the latex and bibtex commands with R CMD?
 # FIXME: How to halt on warning?
-	@test -d $(PACKAGEDIR)/vignettes/optbib || (echo "ERROR: vignettes/optbib not found. You need to symlink or checkout https://github.com/iridia-ulb/references." && exit 1)
+	@test -f $(PACKAGEDIR)/vignettes/optbib/.git || git submodule update --init
 	cd $(PACKAGEDIR)/vignettes \
 	&& R CMD Sweave --pdf --compact $(PACKAGE)-package.Rnw \
 	&& $(RM) $(PACKAGE)-package.tex
