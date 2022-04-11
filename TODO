@@ -1,6 +1,6 @@
 ------------------------------------------------------------*- mode: text -*-
 
-BUGS: see BUGS file
+BUGS: see https://github.com/MLopez-Ibanez/irace/issues
 
 TODO R package:
 
@@ -10,7 +10,8 @@ TODO R package:
     course you are free to recommend whatever you want, just a pointer.
 
  * Look at https://cran.r-project.org/web/packages/argparser/index.html or
-   optparse: See examples/optparse.R
+   optparse: https://cran.r-project.org/web/packages/optparse/index.html
+   See examples/optparse.R
    NOTE: Currently error messages cannot be
    customized, so we cannot use this. But it could be an inspiration to write
    our own class.
@@ -34,6 +35,10 @@ TODO R package:
 
 
 TODO General (in order of importance):
+
+ * Fix bugs in https://github.com/MLopez-Ibanez/irace/issues
+    
+ * Fix all FIXMEs.
 
  * Replace firstTest / eachTest with minBlocksSeen / instancesPerBlock. Replace
    sampleInstances=TRUE with orderedRace=FALSE. With orderedRace=FALSE,
@@ -65,10 +70,6 @@ TODO General (in order of importance):
 
  * Automatic split training and testing instances given a percentage.
    Stratified version that takes into account features.
-    
- * Fix all FIXMEs.
-
- * Fix bugs in BUGS file.
 
  * Various initialization modes Latin Hyper-cube, random, exhaustive,
    Hammersley point set, etc.
@@ -76,9 +77,6 @@ TODO General (in order of importance):
  * Use saveRDS/readRDS instead of load/save (.Rdata) to avoid overriding
    userspace. Do the same for ablation logs.
  
- * Use https://cran.r-project.org/web/packages/optparse/index.html
-   to handle command-line options.
-   
  * In elitist irace, target-evaluator is always called on elite configurations,
    while the corresponding target-runner is called only once. Hence, the
    files/data required by target-evaluator must be kept around for future
