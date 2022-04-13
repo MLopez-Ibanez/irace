@@ -550,25 +550,12 @@ cd ~/tuning
 \end{lstlisting}
 %@
 
-\item Copy all the template files from the \IRACEHOME{/templates/}
-directory to the scenario directory.
-%<<copy1,engine='bash',eval=FALSE>>=
+\item Initialize the tuning directory with template config files. On GNU/Linux or OS X, you can do this as follows:
+%<<dir1,engine='bash',eval=FALSE>>=
 \begin{lstlisting}[style=BashInputStyle]
-# $IRACE_HOME is the installation directory of irace.
-cp $IRACE_HOME/templates/*.tmpl  ~/tuning/
+irace --init
 \end{lstlisting}
 %@
-
-% Remember that \IRACEHOME{} is the path to the installation
-% directory of \irace. It can be obtained in the \aR console with:
-%
-% <<irace_path,eval=FALSE, prompt=FALSE>>=
-% library("irace")
-% system.file(package = "irace")
-% @
-
-\item For each template in your tuning directory, remove the \code{.tmpl}
-    suffix, and modify them following the next steps.
 
 \item Define the target algorithm parameters to be tuned by following the
 instructions in \code{parameters.txt}.  Available parameter types and other

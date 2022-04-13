@@ -229,23 +229,12 @@ Usage
         $ cd ~/tuning
 ```
 
-2. Copy the template and example files to the scenario directory
+2. Initialize your tuning directory with template config files
 ```bash
-        $ cp $IRACE_HOME/templates/*.tmpl .
+        $ $IRACE_HOME/bin/irace --init
 ```
 
-    where `$IRACE_HOME` is the path to the installation directory of
-    `irace`. It can be obtained by doing:
-
-```R
-        $ R
-        > library(irace)
-        > system.file(package="irace")
-```
-
-3. For each template in your tuning directory, remove the `.tmpl`
-   suffix, and modify them following the instructions in each file. In
-   particular,
+3. Modify the generated files following the instructions found within each file. In particular,
     * The scripts `target-runner` and `target-evaluator` (if you need it at all)
       should be executable. The output of `target-runner` (or
       `target-evaluator` if you use a separate evaluation step) is minimized by
@@ -259,7 +248,7 @@ Usage
 4. Put the instances in `~/tuning/Instances/`. In addition, you can
    create a file that specifies which instances from that directory
    should be run and which instance-specific parameters to use. See
-   `scenario.txt.tmpl` and `instances-list.tmpl` for examples. The command
+   `scenario.txt` and `instances-list.txt` for examples. The command
    irace will not attempt to create the execution directory (`execDir`),
    so it must exist before calling irace. The default `execDir` is the
    current directory.

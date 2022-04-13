@@ -358,6 +358,23 @@ checkIraceScenario <- function(scenario, parameters = NULL)
   }
 }
 
+init <- function() 
+{
+  irace.note("Initializing working directory...\n")
+  libPath <- system.file(package = "irace")
+  tmplFiles <- list.files(file.path(libPath, "templates"))
+  for (file in tmplFiles) {
+    if (grepl(".tmpl", file) && (file != "target-evaluator.tmpl")) {
+      newFile <- gsub(".tmpl", "", file)
+      if ((file == "target-runner.tmpl") && .Platform$OS.type == 'windows') {
+        file.copy(file.path(libPath, "templates", "windows", "target-runner.bat"), file.path(getwd(), "target-runner.bat"), overwrite = FALSE)
+      } else {
+        file.copy(file.path(libPath, "templates", file), file.path(getwd(), newFile), overwrite = FALSE)
+      }
+    }
+  }
+}
+
 
 #' irace.cmdline
 #'
@@ -403,6 +420,11 @@ irace.cmdline <- function(argv = commandArgs (trailingOnly = TRUE))
   cat.irace.license()
   cat ("# installed at: ", system.file(package="irace"), "\n",
        "# called with: ", paste(argv, collapse = " "), "\n", sep = "")
+  
+  if (!is.null(parser$readArg (short = "-i", long = "--init"))) {
+    init()
+    return(invisible(NULL))
+  }
   
   # Read the scenario file and the command line
   scenarioFile <- parser$readCmdLineParameter ("scenarioFile", default = "")

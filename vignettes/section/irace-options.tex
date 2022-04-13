@@ -12,6 +12,9 @@ Show the version of \irace.
  \defparameter[c]{-{}-check}{check}{}%
 Check that the scenario and parameter definitions are correct and test the execution of the target algorithm. See \autoref{sec:execution}.
 
+ \defparameter[i]{-{}-init}{init}{}%
+Initialize the working directory with the template config files. This copies the files in \code{\$IRACE_HOME/templates} to the working directory without overwriting the files with the same names as those of the template files.
+
  \defparameter[s]{scenarioFile}{scenario}{./scenario.txt}%
 File that contains the scenario setup and other irace options. All options listed in this section can be included in this file. See \IRACEHOME{/templates/} for an example. Relative file-system paths specified in the scenario file are relative to the scenario file itself.
 
