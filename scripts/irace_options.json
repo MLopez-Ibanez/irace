@@ -30,6 +30,16 @@
     "section": "General options"
   },
   {
+    "name": ".init",
+    "type": "x",
+    "short": "-i",
+    "long": "--init",
+    "default": "",
+    "description": "Initialize the working directory with template config files.",
+    "vignettes": "Initialize the working directory with the template config files. This copies the files in \\code{\\$IRACE_HOME/templates} to the working directory without overwriting the files with the same names as those of the template files.",
+    "section": "General options"
+  },
+  {
     "name": ".onlytest",
     "type": "p",
     "short": "",
