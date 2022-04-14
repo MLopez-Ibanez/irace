@@ -70,6 +70,9 @@
    irace.  If your scenario file contains R code, then use variable names
    beginning with a dot `'.'`, which will be ignored by irace.
                                                     (Manuel López-Ibáñez)
+                                                    
+ * New option `--init` to initialize a scenario. (Deyao Chen)
+
 
 ## Fixes
 
