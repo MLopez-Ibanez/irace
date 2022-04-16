@@ -61,8 +61,8 @@ cat.irace.license <- function()
   
 #' irace.usage
 #'
-#' \code{irace.usage}  This function prints all command-line options of \pkg{irace},
-#'   with the corresponding switches and a short description.
+#' This function prints all command-line options of \pkg{irace}, with the
+#' corresponding switches and a short description.
 #' 
 #' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
 #' @export
@@ -73,7 +73,7 @@ irace.usage <- function ()
   cmdline_usage(.irace.params.def)
 }
 
-#' irace.main
+#' Higher-level interface to launch `irace()`.
 #'
 #' \code{irace.main} is a higher-level interface to invoke \code{\link{irace}}.
 #' 
@@ -98,6 +98,7 @@ irace.usage <- function ()
 #' 
 #' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
 #' @concept running
+#' @md
 #' @export
 irace.main <- function(scenario = defaultScenario(), output.width = 9999L)
 {
@@ -376,10 +377,10 @@ init <- function()
 }
 
 
-#' irace.cmdline
+#' Launch `irace` with command-line options.
 #'
-#' \code{irace.cmdline} starts \pkg{irace} using the parameters
-#'  of the command line used to invoke R.
+#' Calls [irace.main()] using command-line options, maybe parsed from the
+#' command line used to invoke R.
 #' 
 #' @param argv (\code{character()}) \cr The arguments 
 #' provided on the R command line as a character vector, e.g., 
@@ -402,6 +403,7 @@ init <- function()
 #' 
 #' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
 #' @concept running
+#' @md
 #' @export
 irace.cmdline <- function(argv = commandArgs (trailingOnly = TRUE))
 {
