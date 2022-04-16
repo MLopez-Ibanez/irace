@@ -24,7 +24,7 @@ if test "$git_rev" = ""; then
 fi
 
 if test -e .git && (which git 1> /dev/null 2>&1) && (git describe --first-parent --always | grep -q "[0-9a-z]\+$"); then
-    git co --quiet R/version.R  # Ignore changes to R/version.R
+    git checkout --quiet R/version.R  # Ignore changes to R/version.R
     git_rev=`git describe --dirty --first-parent --always --exclude "*"`
 fi
 
