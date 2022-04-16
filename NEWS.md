@@ -73,6 +73,10 @@
                                                     
  * New option `--init` to initialize a scenario. (Deyao Chen)
 
+ * `configurationsBoxplot()` replaced by `iraceplot::boxplot_training()` and
+   `iraceplot::boxplot_test()`.
+                                  (Leslie Pérez Cáceres, Manuel López-Ibáñez)
+   
 
 ## Fixes
 

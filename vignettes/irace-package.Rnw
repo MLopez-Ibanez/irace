@@ -2069,19 +2069,20 @@ They are reported in decreasing order of performance, that is, the best
 configuration is reported first.
 
 If testing is performed, you can further analyze the resulting best
-configurations by performing statistical tests in \aR or just plotting the
-results:
-
-<<plot_test, fig.pos="tbp", fig.align="center", fig.height = 4, fig.width = 8, out.width='0.85\\textwidth', fig.cap="Boxplot of the testing results of the best configurations.", prompt=TRUE, eval=TRUE, comment="">>=
+configurations by performing statistical tests in \aR:
+% FIXME: iraceplot
+% or just plotting the results:
+%<<plot_test, fig.pos="tbp", fig.align="center", fig.height = 4, fig.width = 8, out.width='0.85\\textwidth', fig.cap="Boxplot of the testing results of the best configurations.", prompt=TRUE, eval=TRUE, comment="">>=
+<<wilcox_test,prompt=TRUE, eval=TRUE, comment="">>=
 results <- iraceResults$testing$experiments
 # Wilcoxon paired test
 conf <- gl(ncol(results), # number of configurations
            nrow(results), # number of instances
            labels = colnames(results))
 pairwise.wilcox.test (as.vector(results), conf, paired = TRUE, p.adj = "bonf")
-# Plot the results
-configurationsBoxplot (results, ylab = "Solution cost")
 @
+% # Plot the results
+% configurationsBoxplot (results, ylab = "Solution cost")
 
 %%FIXME: should we add something like this?
 %The Kendall concordance coefficient (\code{W}) and the Spearman's rho can be
