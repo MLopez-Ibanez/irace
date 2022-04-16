@@ -2096,17 +2096,18 @@ irace:::concordance(iraceResults$testing$experiments)
 @
 %
 
-During the tuning, \irace iteratively updates the sampling models of the
-parameters to focus on the best regions of the parameter search space. The
-frequency of the sampled configurations can provide insights on the parameter
-search space. We provide a function for plotting the
-frequency of the sampling of a set of configurations. For more information on this function, please see the \aR help, type in the
-\aR console: \code{?parameterFrequency}. The following example
-plots the frequency of the parameters sampled during one \irace run:
+%% FIXME: iraceplot
+% During the tuning, \irace iteratively updates the sampling models of the
+% parameters to focus on the best regions of the parameter search space. The
+% frequency of the sampled configurations can provide insights on the parameter
+% search space. We provide a function for plotting the
+% frequency of the sampling of a set of configurations. For more information on this function, please see the \aR help, type in the
+% \aR console: \code{?parameterFrequency}. The following example
+% plots the frequency of the parameters sampled during one \irace run:
 
-<<freq, fig.pos="tbp", fig.cap="Parameters sampling frequency.", out.width="\\textwidth",prompt=TRUE, eval=TRUE, comment="">>=
-parameterFrequency(iraceResults$allConfigurations, iraceResults$parameters)
-@
+% <<freq, fig.pos="tbp", fig.cap="Parameters sampling frequency.", out.width="\\textwidth",prompt=TRUE, eval=TRUE, comment="">>=
+% parameterFrequency(iraceResults$allConfigurations, iraceResults$parameters)
+% @
 
 %% FIXME: iraceplot
 % By using parallel coordinates plots, it is possible to analyze how the parameters

@@ -81,6 +81,9 @@
    `iraceplot::parallel_coord()`.
                                   (Leslie Pérez Cáceres, Manuel López-Ibáñez)
 
+ * `parameterFrequency()` replaced by `iraceplot::sampling_frequency()`.
+                                  (Leslie Pérez Cáceres, Manuel López-Ibáñez)
+
 
 ## Fixes
 

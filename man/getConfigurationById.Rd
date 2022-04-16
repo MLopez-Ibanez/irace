@@ -12,16 +12,16 @@ getConfigurationById(
 )
 }
 \arguments{
-\item{iraceResults}{Object created by \pkg{irace} and saved in \code{scenario$logFile}.}
+\item{iraceResults}{Object created by \code{irace} and saved in \code{scenario$logFile}.}
 
-\item{logFile}{Log file created by \pkg{irace}, this file must contain the 
+\item{logFile}{Log file created by \code{irace}, this file must contain the
 \code{iraceResults} object.}
 
 \item{ids}{The id or a vector of ids of the candidates configurations to obtain.}
 
 \item{drop.metadata}{Remove metadata, such the configuration ID and
 the ID of the parent, from the returned configurations. See
-\code{\link{removeConfigurationsMetaData}}.}
+\code{\link[=removeConfigurationsMetaData]{removeConfigurationsMetaData()}}.}
 }
 \value{
 A data frame containing the elite configurations required.
