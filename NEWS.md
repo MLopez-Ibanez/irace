@@ -76,7 +76,11 @@
  * `configurationsBoxplot()` replaced by `iraceplot::boxplot_training()` and
    `iraceplot::boxplot_test()`.
                                   (Leslie Pérez Cáceres, Manuel López-Ibáñez)
-   
+
+ * `parallelCoordinatesPlot()` replaced by `iraceplot::parallel_cat()` and
+   `iraceplot::parallel_coord()`.
+                                  (Leslie Pérez Cáceres, Manuel López-Ibáñez)
+
 
 ## Fixes
 

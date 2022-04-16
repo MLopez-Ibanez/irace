@@ -2084,17 +2084,16 @@ pairwise.wilcox.test (as.vector(results), conf, paired = TRUE, p.adj = "bonf")
 % # Plot the results
 % configurationsBoxplot (results, ylab = "Solution cost")
 
-%%FIXME: should we add something like this?
-%The Kendall concordance coefficient (\code{W}) and the Spearman's rho can be
-%applied over data that has the characteristics of the data obtained in the testing,
-%that is a full matrix where all configurations are executed in all instances. \code{W}
-%can show if the configurations tested have an homogeneous performance on the used instances
-%set. If evidence of an heterogeneous scenario found we recommend to make some adjustments
-%in the \irace options as described in \autoref{sec:}
+The Kendall concordance coefficient (\code{W}) and the Spearman's rho can be
+applied over data that has the characteristics of the data obtained in the testing,
+that is a full matrix where all configurations are executed in all instances. \code{W}
+can show if the configurations tested have an homogeneous performance on the used instances
+set. If evidence of an heterogeneous scenario found we recommend to make some adjustments
+in the \irace options as described in \autoref{sec:het}.
 
-%<<conc, prompt=TRUE, eval=TRUE, comment="">>=
-%irace:::concordance(iraceResults$testing$experiments)
-%@
+<<conc, prompt=TRUE, eval=TRUE, comment="">>=
+irace:::concordance(iraceResults$testing$experiments)
+@
 %
 
 During the tuning, \irace iteratively updates the sampling models of the
@@ -2109,23 +2108,24 @@ plots the frequency of the parameters sampled during one \irace run:
 parameterFrequency(iraceResults$allConfigurations, iraceResults$parameters)
 @
 
-By using parallel coordinates plots, it is possible to analyze how the parameters
-interact with each other. For more information on this function, please see the \aR help, type
-in the \aR console: (\code{?parallelCoordinatesPlot}).
- The following example shows how to create a parallel
-coordinate plot of the configurations in the last two iterations of \irace.
+%% FIXME: iraceplot
+% By using parallel coordinates plots, it is possible to analyze how the parameters
+% interact with each other. For more information on this function, please see the \aR help, type
+% in the \aR console: (\code{?parallelCoordinatesPlot}).
+%  The following example shows how to create a parallel
+% coordinate plot of the configurations in the last two iterations of \irace.
 
-<<parcord, fig.pos="tbp", fig.align="center", out.width="0.7\\textwidth", fig.cap="Parallel coordinate plots of the parameters of the configurations in the last two iterations of a run of \\irace.", prompt=FALSE, eval=TRUE, comment="">>=
-# Get last iteration number
-last <- length(iraceResults$iterationElites)
-# Get configurations in the last two iterations
-conf <- getConfigurationByIteration(iraceResults = iraceResults,
-                                    iterations = c(last - 1, last))
-parallelCoordinatesPlot (conf, iraceResults$parameters,
-                         param_names = c("algorithm", "alpha", "beta", "rho",
-                                         "q0", "rasrank"),
-                         hierarchy = FALSE)
-@
+% <<parcord, fig.pos="tbp", fig.align="center", out.width="0.7\\textwidth", fig.cap="Parallel coordinate plots of the parameters of the configurations in the last two iterations of a run of \\irace.", prompt=FALSE, eval=TRUE, comment="">>=
+% # Get last iteration number
+% last <- length(iraceResults$iterationElites)
+% # Get configurations in the last two iterations
+% conf <- getConfigurationByIteration(iraceResults = iraceResults,
+%                                     iterations = c(last - 1, last))
+% parallelCoordinatesPlot (conf, iraceResults$parameters,
+%                          param_names = c("algorithm", "alpha", "beta", "rho",
+%                                          "q0", "rasrank"),
+%                          hierarchy = FALSE)
+% @
 
 %%% FIXME: This plot is completely misleading. We should either calculate the
 %%% performance over the whole training set, or find a way to plot the
