@@ -2156,8 +2156,8 @@ points(fes, values)
 
 % FIXME: We should normalize the ranges per instance so since the performance
 % on different instances is quite different.
-It is also possible to plot the performance on the test set of the best-so-far configuration over the number of experiments as follows:
-<<testEvo, fig.pos="tbp", fig.align="center", out.width='0.75\\textwidth', fig.cap="Testing set performance of the best-so-far configuration over number of experiments. Label of each point is the configuration ID.", prompt=FALSE, eval=TRUE, comment="">>=
+It is also possible, as shown in Fig.~\ref{fig:testEvo}, to plot the performance on the test set of the best-so-far configuration over the number of experiments as follows:
+<<testEvo, fig.pos="tb", fig.align="center", out.width='0.7\\textwidth', fig.cap="Testing set performance of the best-so-far configuration over number of experiments. Label of each point is the configuration ID.", prompt=FALSE, eval=TRUE, comment="">>=
 # Get number of iterations
 iters <- unique(iraceResults$experimentLog[, "iteration"])
 # Get number of experiments (runs of target-runner) up to each iteration
