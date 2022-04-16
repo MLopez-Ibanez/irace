@@ -1,3 +1,4 @@
 [submodule "vignettes/optbib"]
 	path = vignettes/optbib
 	url = https://github.com/iridia-ulb/references.git
+        shallow = true
