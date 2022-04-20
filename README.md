@@ -74,6 +74,25 @@ package, invoking from R the following command:
 The following is a quick-start guide. The user guide gives more detailed
 instructions.
 
+Quick Start 
+===========
+1. Install R (with your favourite package manager, and see more details below).
+2. Install irace. This command works on CMD and Powershell with R added to PATH (see detailed instructions below).
+```bash
+    $ Rscript -e "install.packages('irace', repos='https://cloud.r-project.org')"
+```
+
+3. Add irace to path. For windows user, this step is unfortunately more involved, so please see more detailed instructions below.
+```bash
+    $ export PATH="$(Rscript -e "cat(paste0(system.file(package='irace', 'bin', mustWork=TRUE), ':'))" 2> /dev/null)${PATH}"
+```
+Consider adding this line to your `~/.bashrc`, `~/.zshrc`, or `~/.profile` for it to persist between sessions. 
+
+4. You can open the user guide with the following command. This command works on CMD and Powershell with R added to PATH (see detailed instructions below).
+```bash
+    $ Rscript -e "vignette('irace-package')"
+```
+
 Installing R
 ============
 
@@ -120,6 +139,17 @@ You can install R from a CRAN mirror
 launch the R console and install the irace package from it. See instructions
 below.
 
+In addition to using the R console, it might be very useful to add R to PATH so you can run most of the GUN/Linux shell commands without modification in CMD or Powershell. Usually, R is installed in `C:\Program Files\R\R-4.1.3` (the version number depends on your installation).
+
+You should add the following line [to PATH](https://www.architectryan.com/2018/03/17/add-to-the-path-on-windows-10/) (if you want to use the 64-bit version)
+```
+C:\Program Files\R\R-4.1.3\bin\x64
+```
+
+Or, if you are on a 32-bit version 
+```
+C:\Program Files\R\R-4.1.3\bin\i386
+```
 
 Installing the irace package
 ============================
@@ -188,17 +218,17 @@ invoke `irace` as follows:
 Windows
 -------
 
-If the installation directory of `irace` is `C:/R/irace/`, you can invoke
-`irace` by opening a terminal (launch the program `cmd.exe`) and executing:
+You can find out where the irace binary is installed by running the following in Powershell or CMD:
 
-```bash
-    C:\> C:\R\irace\bin\x64\irace.exe --help
+```Powershell
+    C:\> Rscript -e "cat(gsub('/', '\\\\', system.file(package='irace', 'bin', 'x64', mustWork=TRUE)))"
 ```
 
-or if you are in a 32-bits system, executing:
+It will output a path, such as `C:\Program Files\R\R-4.1.3\library\irace\bin\x64` (replace `x64` with `i386` if you are on a 32-bit system), which can you [add to PATH](https://www.architectryan.com/2018/03/17/add-to-the-path-on-windows-10/). 
 
-```bash
-    C:\> C:\R\irace\bin\i386\irace.exe --help
+Then running the following should work:
+```Powershell 
+    C:\> irace --help
 ```
 
 You can also launch irace by opening the R console and executing:
