@@ -2985,7 +2985,9 @@ C:\path\to\python.exe C:\path\to\target-runner.py %instance% %seed% \
 \item Or convert \code{target-runner.py} into an \code{.exe} file, for example, using \code{auto-py-to-exe}\footnote{\url{https://pypi.org/project/auto-py-to-exe/}}, so that you do not need a \code{.bat} file.
 \end{itemize}
 
+\subsection[Error in socketConnection(\ldots) : can not open the connection]{Error in \code{socketConnection("localhost", port = port, server = TRUE, lock = TRUE,} : can not open the connection}
 
+This error may arise if you activate the \parameter{parallel} option of \irace and your \parameter{targetRunner} or \parameter{targetEvaluator} tries to setup a parallel cluster or execute code in parallel in a way that interacts badly with the parallel mechanism in \aR. In this case, you need to either investigate yourself if there is a way for the two parallel mechanisms to co-exist or, if that is not possible, disable parallelism in \irace or in your code. Note that packages or software used by your \parameter{targetRunner} may have a parallel mechanism enabled by default and unknown to you. This is definitely NOT a bug in \irace.
 
 %%
 %%
