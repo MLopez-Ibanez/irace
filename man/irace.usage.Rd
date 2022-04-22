@@ -7,8 +7,8 @@
 irace.usage()
 }
 \description{
-\code{irace.usage}  This function prints all command-line options of \pkg{irace},
-  with the corresponding switches and a short description.
+This function prints all command-line options of \pkg{irace}, with the
+corresponding switches and a short description.
 }
 \author{
 Manuel López-Ibáñez and Jérémie Dubois-Lacoste

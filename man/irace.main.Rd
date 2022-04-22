@@ -2,7 +2,7 @@
 % Please edit documentation in R/main.R
 \name{irace.main}
 \alias{irace.main}
-\title{irace.main}
+\title{Higher-level interface to launch \code{irace()}.}
 \usage{
 irace.main(scenario = defaultScenario(), output.width = 9999L)
 }
@@ -94,9 +94,9 @@ lower-level interface, please see function \code{\link{irace}}.
 }
 \seealso{
 \code{\link{irace.cmdline}} a higher-level command-line interface to
- \code{irace.main}.
- \code{\link{readScenario}} to read the scenario setup from  a file.
- \code{\link{defaultScenario}} to provide a default scenario for \pkg{irace}.
+\code{irace.main}.
+\code{\link{readScenario}} to read the scenario setup from  a file.
+\code{\link{defaultScenario}} to provide a default scenario for \pkg{irace}.
 }
 \author{
 Manuel López-Ibáñez and Jérémie Dubois-Lacoste

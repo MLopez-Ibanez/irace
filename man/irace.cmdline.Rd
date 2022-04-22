@@ -2,15 +2,15 @@
 % Please edit documentation in R/main.R
 \name{irace.cmdline}
 \alias{irace.cmdline}
-\title{irace.cmdline}
+\title{Launch \code{irace} with command-line options.}
 \usage{
 irace.cmdline(argv = commandArgs(trailingOnly = TRUE))
 }
 \arguments{
-\item{argv}{(\code{character()}) \cr The arguments 
-provided on the R command line as a character vector, e.g., 
+\item{argv}{(\code{character()}) \cr The arguments
+provided on the R command line as a character vector, e.g.,
 \code{c("--scenario", "scenario.txt", "-p", "parameters.txt")}.
-Using the  default value (not providing the parameter) is the 
+Using the  default value (not providing the parameter) is the
 easiest way to call \code{irace.cmdline}.}
 }
 \value{
@@ -82,16 +82,16 @@ each experiment.}
 }
 }
 \description{
-\code{irace.cmdline} starts \pkg{irace} using the parameters
- of the command line used to invoke R.
+Calls \code{\link[=irace.main]{irace.main()}} using command-line options, maybe parsed from the
+command line used to invoke R.
 }
 \details{
 The function reads the parameters given on the command line
 used to invoke R, finds the name of the scenario file,
- initializes the scenario from the file (with the function
- \code{\link{readScenario}}) and possibly from parameters passed on
- the command line. It finally starts \pkg{irace} by calling
- \code{\link{irace.main}}.
+initializes the scenario from the file (with the function
+\code{\link{readScenario}}) and possibly from parameters passed on
+the command line. It finally starts \pkg{irace} by calling
+\code{\link{irace.main}}.
 }
 \seealso{
 \code{\link{irace.main}} to start \pkg{irace} with a given scenario.

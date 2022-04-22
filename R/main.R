@@ -345,8 +345,8 @@ checkIraceScenario <- function(scenario, parameters = NULL)
                                   digits = scenario$digits,
                                   debugLevel = 2)
   } else if (!is.null.or.empty(scenario$parameterFile)) {
-    cat("# Parameters provided by user.\n",
-        "# Parameter file '", scenario$parameterFile, "' will be ignored\n", sep = "")
+    cat("# checkIraceScenario(): 'parameters' provided by user. ",
+        "Parameter file '", scenario$parameterFile, "' will be ignored\n", sep = "")
   }
   checkParameters(parameters)
   irace.note("Checking target runner.\n")
