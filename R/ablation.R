@@ -114,14 +114,15 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
     stop("'n.instances' has no effect when type == 'racing'")
   }
 
-  save_ablog <- function() {
+  save_ablog <- function(complete) {
     ablog <- list(changes = changes,
                   configurations = all.configurations,
                   experiments = results,
                   instances   = instances,
                   scenario    = scenario, 
                   trajectory  = trajectory,
-                  best = best.configuration)
+                  best = best.configuration,
+                  complete = complete)
     if (!is.null(ablationLogFile))
       save(ablog, file = ablationLogFile, version = 2)
     return(ablog)
@@ -220,9 +221,8 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
   # Define variables needed
   trajectory <- 1
   names(trajectory) <- "source"
+  # FIXME: changes should only store the changed parameters.
   changes <- list()
-
-  # Start ablation
   step <- 1
   while (length(param.names) > 1) {
     # Generate ablation configurations
@@ -271,8 +271,8 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
                         elitistNewInstances = 0)	
     results <- merge.matrix (results, race.output$experiments)
 
-    # Save temp log
-    ablog <- save_ablog()
+    # Save log
+    ablog <- save_ablog(complete = FALSE)
     
     # Get the best configuration based on the criterion of irace
     # MANUEL: Doesn't race.output already give you all this info???
@@ -320,7 +320,7 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
   # MANUEL: Do not plot anything that was discarded
   
   # Save final log.
-  ablog <- save_ablog()
+  ablog <- save_ablog(complete = TRUE)
   return(ablog)
 }
 
@@ -377,6 +377,10 @@ plotAblation <- function (ablog, pdf.file = NULL, pdf.width = 20,
       irace.error("The file '", ablog, "' does not contain the 'ablog' object")
   }
 
+  if (!ablog$complete)
+    stop("The ablog shows that the ablation procedure did not complete cleanly and only contains partial information")
+  
+  
   if (!is.null(pdf.file)) {
     if (!is.file.extension(pdf.file, ".pdf"))
       pdf.file <- paste0(pdf.file, ".pdf")

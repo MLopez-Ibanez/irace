@@ -63,7 +63,8 @@
 
  * The interface to functions `ablation()` and `plotAblation()` has been
    simplified. The `ablation()` function now allows overriding scenario
-   settings.
+   settings. The `plotAblation()` function will not create the plot if the
+   ablation log does not reflect a complete ablation.
                                                     (Manuel López-Ibáñez)
 
  * An error is produced if a variable set in the scenario file is not known to
