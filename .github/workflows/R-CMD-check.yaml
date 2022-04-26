@@ -125,7 +125,7 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::covr
+          extra-packages: cran::XML any::covr
           needs: coverage
 
       - name: Install latex packages
@@ -175,7 +175,7 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::pkgdown
+          extra-packages: cran::XML any::pkgdown
           needs: website
 
       - name: Install latex packages
