@@ -11,6 +11,7 @@ DEVEL-README
 \.svn$
 \.travis
 ^.+\.data
+^Dockerfile$
 ^GenericWrapper4AC
 ^Instances$
 ^LICENSE\.md$
