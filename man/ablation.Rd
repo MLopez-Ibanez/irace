@@ -50,13 +50,13 @@ Ablation is a method for analyzing the differences between two configurations.
 }
 \examples{
 \donttest{
-iraceResults <- read_logfile(system.file(package="irace", "exdata", "sann.rda"))
+logfile <- system.file(package="irace", "exdata", "sann.rda")
 # Execute ablation between the first and the best configuration found by irace.
-ablog <- ablation(iraceResults = iraceResults, ablationLogFile = NULL)
+ablog <- ablation(logfile, ablationLogFile = NULL)
 plotAblation(ablog)
 # Execute ablation between two selected configurations, and selecting only a
 # subset of parameters, directly reading the setup from the irace log file.
-ablog <- ablation(iraceResults = irace.logfile, src = 1, target = 10,
+ablog <- ablation(logfile, src = 1, target = 10,
                   ab.params = c("temp"), ablationLogFile = NULL)
 plotAblation(ablog)
 }
