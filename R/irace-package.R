@@ -6,8 +6,8 @@
 #' @docType package
 #' @import stats utils compiler
 #' @importFrom R6 R6Class
-#' @importFrom grDevices dev.new dev.off pdf cairo_pdf rgb
-#' @importFrom graphics abline axis barplot boxplot hist lines matplot mtext par plot points strwidth text bxp grid
+#' @importFrom grDevices dev.new dev.off pdf
+#' @importFrom graphics abline axis barplot boxplot lines matplot mtext par plot points strwidth text bxp grid
 #'  
 #' 
 #' @details  License: GPL (>= 2)

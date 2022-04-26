@@ -22,13 +22,11 @@
 getFinalElites <- function(iraceResults = NULL, logFile = NULL, n = 0,
                            drop.metadata = FALSE)
 {
-  if (is.null(iraceResults)) {
-    if (is.null(logFile))
-      stop("You must supply either 'iraceResults' or 'logFile' argument.\n")
-    else
-      load(logFile)
+  if (is.null(iraceResults) && is.null(logFile)) {
+    stop("You must supply either 'iraceResults' or 'logFile' argument.")
   }
-  
+  if (is.null(iraceResults)) iraceResults <- read_logfile(logFile)
+    
   last.elites <- iraceResults$allElites[[length(iraceResults$allElites)]]
   
   if (n == 0)

@@ -85,7 +85,9 @@
  * `parameterFrequency()` replaced by `iraceplot::sampling_frequency()`.
                                   (Leslie Pérez Cáceres, Manuel López-Ibáñez)
 
-
+ * New function `read_logfile()` to easily read the log file produced by irace.
+                                                       (Manuel López-Ibáñez)
+                                                       
 ## Fixes
 
  * Correctly handle clear out-performance cases despite strong bi-modality.

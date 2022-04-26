@@ -710,3 +710,31 @@ irace_save_logfile <- function(iraceResults, scenario)
   save(iraceResults, file = scenario$logFile, version = 2)
   setwd(cwd)
 }
+
+valid_iracelog <- function(x)
+{
+  is.list(x) && ("scenario" %in% names(x))
+}
+
+#' Read the log file produced by irace (`irace.Rdata`).
+#'
+#' @param filename Filename that contains the log file saved by irace. Example: `irace.Rdata`.
+#'
+#' @param name Optional argument that allows overriding the default name of the object in the file.
+#' 
+#' @return (`list()`)
+#' @concept analysis
+#' @md
+#' @export
+read_logfile <- function(filename, name = "iraceResults")
+{
+  # If filename is already the iraceResults object, just return it.
+  if (valid_iracelog(filename)) return(filename)
+
+  load(filename)
+  iraceResults <- get0(name, inherits=FALSE)
+  if (!valid_iracelog(iraceResults)) {
+    stop("The file '", filename, "' does not contain the '", name, "' object.")
+  }
+  iraceResults
+}

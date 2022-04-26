@@ -66,7 +66,7 @@ psRace <- function(iraceLogFile=NULL, iraceResults=NULL, conf.ids=NULL,
   if (!is.null(conf.ids)) {
     if (!all(conf.ids %in% iraceResults$allConfigurations$.ID.)) 
       irace.error("Configuration ids provided", conf.ids,"cannot be found in the configurations.")
-    configurations <- iraceResults$allConfigurations[iraceResults$allConfigurations$.ID.%in% conf.ids,,drop=FALSE] 	
+    configurations <- iraceResults$allConfigurations[iraceResults$allConfigurations$.ID.%in% conf.ids,,drop=FALSE]
   } else {
     which.elites <- if (elites) unlist(iraceResults$allElites) else iraceResults$iterationElites
     which.elites <- unique(which.elites)
