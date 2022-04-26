@@ -56,21 +56,13 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">getConfigurationById</span><span class="op">(</span>
-  iraceResults <span class="op">=</span> <span class="cn">NULL</span>,
-  logFile <span class="op">=</span> <span class="cn">NULL</span>,
-  <span class="va">ids</span>,
-  drop.metadata <span class="op">=</span> <span class="cn">FALSE</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">getConfigurationById</span><span class="op">(</span><span class="va">iraceResults</span>, <span class="va">ids</span>, drop.metadata <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>iraceResults</dt>
-<dd><p>Object created by <code>irace</code> and saved in <code>scenario$logFile</code>.</p></dd>
-<dt>logFile</dt>
-<dd><p>Log file created by <code>irace</code>, this file must contain the
-<code>iraceResults</code> object.</p></dd>
+<dd><p>(<code><a href="https://rdrr.io/r/base/list.html" class="external-link">list()</a></code>|<code>character(1)</code>) <code>iraceResults</code> object created by <span class="pkg">irace</span> and typically saved in the log file <code>irace.Rdata</code>. If a character string is given, then it is interpreted as the path to the log file from which the <code>iraceResults</code> object will be loaded.</p></dd>
 <dt>ids</dt>
 <dd><p>The id or a vector of ids of the candidates configurations to obtain.</p></dd>
 <dt>drop.metadata</dt>
@@ -99,7 +91,7 @@ the ID of the parent, from the returned configurations. See
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
 </div>
 
       </footer></div>

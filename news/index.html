@@ -70,11 +70,13 @@
 <li><p>New scenario options <code>targetRunnerLauncher</code> and <code>targetRunnerLauncherArgs</code> to help in cases where the target-runner must be invoked via another software with particular options (such as <code>python.exe</code> in Windows). (Manuel López-Ibáñez)</p></li>
 <li><p><code>--check</code> now also check the contents of <code>configurationsFile</code> and runs configurations provided via <code>initConfigurations</code>. (Manuel López-Ibáñez, reported by Andreea Avramescu)</p></li>
 <li><p>The interface to functions <code><a href="../reference/ablation.html">ablation()</a></code> and <code><a href="../reference/plotAblation.html">plotAblation()</a></code> has been simplified. The <code><a href="../reference/ablation.html">ablation()</a></code> function now allows overriding scenario settings. The <code><a href="../reference/plotAblation.html">plotAblation()</a></code> function will not create the plot if the ablation log does not reflect a complete ablation. (Manuel López-Ibáñez)</p></li>
+<li><p>The interface to functions <code><a href="../reference/getFinalElites.html">getFinalElites()</a></code>, <code><a href="../reference/getConfigurationById.html">getConfigurationById()</a></code> and <code><a href="../reference/getConfigurationByIteration.html">getConfigurationByIteration()</a></code> has been simplified.</p></li>
 <li><p>An error is produced if a variable set in the scenario file is not known to irace. If your scenario file contains R code, then use variable names beginning with a dot <code>'.'</code>, which will be ignored by irace. (Manuel López-Ibáñez)</p></li>
 <li><p>New option <code>--init</code> to initialize a scenario. (Deyao Chen)</p></li>
 <li><p><code>configurationsBoxplot()</code> replaced by <code>iraceplot::boxplot_training()</code> and <code>iraceplot::boxplot_test()</code>. (Leslie Pérez Cáceres, Manuel López-Ibáñez)</p></li>
 <li><p><code>parallelCoordinatesPlot()</code> replaced by <code>iraceplot::parallel_cat()</code> and <code>iraceplot::parallel_coord()</code>. (Leslie Pérez Cáceres, Manuel López-Ibáñez)</p></li>
 <li><p><code>parameterFrequency()</code> replaced by <code>iraceplot::sampling_frequency()</code>. (Leslie Pérez Cáceres, Manuel López-Ibáñez)</p></li>
+<li><p>New function <code><a href="../reference/read_logfile.html">read_logfile()</a></code> to easily read the log file produced by irace. (Manuel López-Ibáñez)</p></li>
 </ul></div>
 <div class="section level3">
 <h3 id="fixes-3-5">Fixes<a class="anchor" aria-label="anchor" href="#fixes-3-5"></a></h3>
@@ -170,8 +172,7 @@
 </ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="2.3" id="irace-23">irace 2.3<small>2017-04-26</small><a class="anchor" aria-label="anchor" href="#irace-23"></a></h2>
-<ul><li>Fix bug that will cause <code>iraceResults$experimentLog</code> to count calls to <code>targetEvaluator</code> as experiments, even if no call to <code>targetRunner</code> was performed. This does not affect the computation of the budget consumed and, thus, it does not affect the termination criteria of irace. The bug triggers an assertion that terminates irace, thus no run that was successful with version 2.2 is affected. (Manuel López-Ibáñez)</li>
-</ul></div>
+<ul><li>Fix bug that will cause <code>iraceResults$experimentLog</code> to count calls to <code>targetEvaluator</code> as experiments, even if no call to <code>targetRunner</code> was performed. This does not affect the computation of the budget consumed and, thus, it does not affect the termination criteria of irace. The bug triggers an assertion that terminates irace, thus no run that was successful with version 2.2 is affected. (Manuel López-Ibáñez)</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="2.2" id="irace-22">irace 2.2<small>2017-03-24</small><a class="anchor" aria-label="anchor" href="#irace-22"></a></h2>
 <ul><li><p>Command-line parameters are printed to stdout (useful for future replications). (Manuel López-Ibáñez, suggested by Markus Wagner)</p></li>
@@ -198,8 +199,7 @@
 <li><p>New command-line parameter</p></li>
 </ul><pre><code>       --only-test FILE</code></pre>
 <p>which just evaluates the configurations given in FILE on the testing instances defined by the scenario. Useful if you decide on the testing instances only after running irace. (Manuel López-Ibáñez)</p>
-<ul><li>Bugfix: When using <code>maxTime != 0</code>, the number of experiments performed may be miscounted in some cases. (Manuel López-Ibáñez)</li>
-</ul></div>
+<ul><li>Bugfix: When using <code>maxTime != 0</code>, the number of experiments performed may be miscounted in some cases. (Manuel López-Ibáñez)</li></ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="2.1" id="irace-21">irace 2.1<small>2016-10-18</small><a class="anchor" aria-label="anchor" href="#irace-21"></a></h2>
 <ul><li><p>Fix CRAN errors in tests. (Manuel López-Ibáñez)</p></li>
@@ -330,7 +330,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
 </div>
 
       </footer></div>
