@@ -58,7 +58,7 @@ genoptions: R/irace-options.R vignettes/section/irace-options.tex scripts/irace_
 R/irace-options.R vignettes/section/irace-options.tex scripts/irace_options_comment.R: scripts/irace_options.json scripts/generate-options.R
 	cd scripts && R --slave -f generate-options.R && cd ..
 
-gendoc: version
+gendoc:
 	$(Reval) 'devtools::document()'
 
 pkgdown: gendoc
