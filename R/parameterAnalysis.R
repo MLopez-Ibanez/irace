@@ -1,9 +1,7 @@
 #' Return the elite configurations of the final iteration.
 #'
 #' 
-#' @param iraceResults Object created by \pkg{irace} and saved in \code{scenario$logFile}.
-#' @param logFile Log file created by \pkg{irace}, this file must contain the 
-#' \code{iraceResults} object.
+#' @template arg_iraceresults
 #' @param n Number of elite configurations to return, if \code{n} is larger than the 
 #' number of configurations, then only the existing ones are returned. The default (\code{n=0}) returns all of them.
 #' @param drop.metadata Remove metadata, such the configuration ID and
@@ -14,18 +12,15 @@
 #'
 #' @examples
 #' log_file <- system.file("exdata/irace-acotsp.Rdata", package="irace", mustWork=TRUE)
-#' print(removeConfigurationsMetaData(getFinalElites(logFile=log_file, n=1)))
+#' print(removeConfigurationsMetaData(getFinalElites(log_file, n=1)))
 #' 
 #' @author Manuel López-Ibáñez and Leslie Pérez Cáceres
 #' @concept analysis
 #' @export
-getFinalElites <- function(iraceResults = NULL, logFile = NULL, n = 0,
-                           drop.metadata = FALSE)
+getFinalElites <- function(iraceResults, n = 0L, drop.metadata = FALSE)
 {
-  if (is.null(iraceResults) && is.null(logFile)) {
-    stop("You must supply either 'iraceResults' or 'logFile' argument.")
-  }
-  if (is.null(iraceResults)) iraceResults <- read_logfile(logFile)
+  if (missing(iraceResults)) stop("argument 'iraceResults' is missing")
+  iraceResults <- read_logfile(iraceResults)
     
   last.elites <- iraceResults$allElites[[length(iraceResults$allElites)]]
   
@@ -33,7 +28,7 @@ getFinalElites <- function(iraceResults = NULL, logFile = NULL, n = 0,
     n <- length(last.elites) 
     
   if (length(last.elites) < n) {
-    cat("Only", length(last.elites), "configurations available, reducing n,\n")
+    cat("Only", length(last.elites), "configurations available, reducing n,")
     n <- length(last.elites)
   }
   last.elites <- last.elites[1:n]
@@ -48,9 +43,7 @@ getFinalElites <- function(iraceResults = NULL, logFile = NULL, n = 0,
 
 #' Returns the configurations selected by ID.
 #' 
-#' @param iraceResults Object created by `irace` and saved in `scenario$logFile`.
-#' @param logFile Log file created by `irace`, this file must contain the 
-#' `iraceResults` object.
+#' @template arg_iraceresults
 #' @param ids The id or a vector of ids of the candidates configurations to obtain.
 #' @param drop.metadata Remove metadata, such the configuration ID and
 #' the ID of the parent, from the returned configurations. See
@@ -62,29 +55,16 @@ getFinalElites <- function(iraceResults = NULL, logFile = NULL, n = 0,
 #' @concept analysis
 #' @export
 #' @md
-## Get configuration(s) by the id(s).
-## iraceResults: object created by irace and saved in scenario$logFile.
-## iraceLog: log file created by irace, this file must contain the iraceResults object.
-## ids: the id or a vector of ids of the candidates configurations to obtain.
-## drop.metadata: Remove the internal identifier and parent identifier from the returned 
-##    configurations data frame.
-## * iraceResults or iraceLog must be provided, in case both are give iraceResults will be used.
-## This function returns a data frame containing the selected candidate configurations 
-getConfigurationById <- function(iraceResults = NULL, logFile = NULL,
-                                 ids, drop.metadata = FALSE)
+getConfigurationById <- function(iraceResults, ids, drop.metadata = FALSE)
 {
-  if (is.null(iraceResults)) {
-    if (is.null(logFile))
-      stop("You must supply either iraceResults or iraceLog argument.\n")
-    else
-      load(logFile)
-  }
-  
-  if (length(ids) < 1) stop("You must provide at least one configuration id.\n")
+  if (missing(iraceResults)) stop("argument 'iraceResults' is missing")
+  iraceResults <- read_logfile(iraceResults)
+    
+  if (length(ids) < 1) stop("You must provide at least one configuration id.")
   
   selection <- iraceResults$allConfigurations[,".ID."] %in% ids
   
-  if (length(selection) < 1) stop("No configuration found with id", ids,".\n")
+  if (length(selection) < 1) stop("No configuration found with id", ids,".")
   
   configurations <-iraceResults$allConfigurations[selection, , drop = FALSE]
   
@@ -95,9 +75,7 @@ getConfigurationById <- function(iraceResults = NULL, logFile = NULL,
 
 #' Returns the configurations by the iteration in which they were executed.
 #'
-#' @param iraceResults (\code{NULL}) Object created by \pkg{irace} and saved in \code{scenario$logFile}.
-#' @param logFile (\code{NULL}) Log file created by \pkg{irace}, this file must contain the 
-#' \code{iraceResults} object.
+#' @template arg_iraceresults
 #' @param iterations The iteration number or a vector of iteration numbers from where 
 #'  the configurations should be obtained.
 #' @param drop.metadata (\code{FALSE}) Remove metadata, such the configuration ID and
@@ -109,26 +87,14 @@ getConfigurationById <- function(iraceResults = NULL, logFile = NULL,
 #' @author Manuel López-Ibáñez and Leslie Pérez Cáceres
 #' @concept analysis
 #' @export
-## Get configuration(s) by the iteration in which they were executed.
-## iraceResults: object created by irace and saved in scenario$logFile.
-## iraceLog: log file created by irace, this file must contain the iraceResults object.
-## iterations: the iteration or a vector of iterations from where the configurations should be obtained.
-## drop.metadata: Remove the internal identifier and parent identifier from the returned 
-##    configurations data frame.
-## * iraceResults or iraceLog must be provided, in case both are give iraceResults will be used.
-## This function returns a data frame containing the selected candidate configurations 
-getConfigurationByIteration <- function(iraceResults = NULL, logFile = NULL,
+getConfigurationByIteration <- function(iraceResults,
                                         iterations, drop.metadata = FALSE)
 {
-  if (is.null(iraceResults)) {
-    if (is.null(logFile))
-      stop("You must supply either iraceResults or iraceLog argument.\n")
-    else
-      load(logFile)
-  }
-  
+  if (missing(iraceResults)) stop("argument 'iraceResults' is missing")
+  iraceResults <- read_logfile(iraceResults)
+
   if (length(iterations) < 1)
-    stop("You must provide at least one configuration id.\n")
+    stop("You must provide at least one configuration id.")
 
   # To silence warning.
   iteration <- NULL
@@ -138,7 +104,7 @@ getConfigurationByIteration <- function(iraceResults = NULL, logFile = NULL,
   
   selection <- iraceResults$allConfigurations[,".ID."] %in% ids
   
-  if (length(selection) < 1) stop("No configuration found with id", ids,".\n")
+  if (length(selection) < 1) stop("No configuration found with id", ids,".")
   
   configurations <- iraceResults$allConfigurations[selection, , drop=FALSE]
   

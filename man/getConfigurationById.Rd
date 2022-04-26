@@ -4,18 +4,10 @@
 \alias{getConfigurationById}
 \title{Returns the configurations selected by ID.}
 \usage{
-getConfigurationById(
-  iraceResults = NULL,
-  logFile = NULL,
-  ids,
-  drop.metadata = FALSE
-)
+getConfigurationById(iraceResults, ids, drop.metadata = FALSE)
 }
 \arguments{
-\item{iraceResults}{Object created by \code{irace} and saved in \code{scenario$logFile}.}
-
-\item{logFile}{Log file created by \code{irace}, this file must contain the
-\code{iraceResults} object.}
+\item{iraceResults}{(\code{list()}|\code{character(1)}) \code{iraceResults} object created by \pkg{irace} and typically saved in the log file \code{irace.Rdata}. If a character string is given, then it is interpreted as the path to the log file from which the \code{iraceResults} object will be loaded.}
 
 \item{ids}{The id or a vector of ids of the candidates configurations to obtain.}
 

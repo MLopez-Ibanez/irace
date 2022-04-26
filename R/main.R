@@ -188,7 +188,7 @@ testing_fromlog <- function(logFile, testNbElites, testIterationElites,
   }
   
   file.check(logFile, readable = TRUE, text = "irace log file")
-  load(logFile)
+  iraceResults <- read_logfile(logFile)
   scenario <- iraceResults[["scenario"]]
   parameters <- iraceResults[["parameters"]]
   instances_changed <- FALSE

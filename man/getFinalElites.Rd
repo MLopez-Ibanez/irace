@@ -4,18 +4,10 @@
 \alias{getFinalElites}
 \title{Return the elite configurations of the final iteration.}
 \usage{
-getFinalElites(
-  iraceResults = NULL,
-  logFile = NULL,
-  n = 0,
-  drop.metadata = FALSE
-)
+getFinalElites(iraceResults, n = 0L, drop.metadata = FALSE)
 }
 \arguments{
-\item{iraceResults}{Object created by \pkg{irace} and saved in \code{scenario$logFile}.}
-
-\item{logFile}{Log file created by \pkg{irace}, this file must contain the 
-\code{iraceResults} object.}
+\item{iraceResults}{(\code{list()}|\code{character(1)}) \code{iraceResults} object created by \pkg{irace} and typically saved in the log file \code{irace.Rdata}. If a character string is given, then it is interpreted as the path to the log file from which the \code{iraceResults} object will be loaded.}
 
 \item{n}{Number of elite configurations to return, if \code{n} is larger than the 
 number of configurations, then only the existing ones are returned. The default (\code{n=0}) returns all of them.}
@@ -32,7 +24,7 @@ Return the elite configurations of the final iteration.
 }
 \examples{
 log_file <- system.file("exdata/irace-acotsp.Rdata", package="irace", mustWork=TRUE)
-print(removeConfigurationsMetaData(getFinalElites(logFile=log_file, n=1)))
+print(removeConfigurationsMetaData(getFinalElites(log_file, n=1)))
 
 }
 \author{

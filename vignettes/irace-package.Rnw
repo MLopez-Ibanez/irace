@@ -1955,7 +1955,7 @@ configuration corresponds to the first ID. To obtain the values of the
 parameters of all elite configurations found by \irace use:
 
 <<get_elites, prompt=TRUE, eval=TRUE, comment="">>=
-getFinalElites(logFile = "irace-acotsp.Rdata", n = 0)
+getFinalElites("irace-acotsp.Rdata", n = 0)
 @
 
 \item \code{iterationElites}: A vector containing the best candidate configuration ID of each iteration. The best configuration found corresponds to the last one
@@ -1969,7 +1969,7 @@ One can obtain the full configuration with:
 <<get_elite, prompt=TRUE, eval=TRUE, comment="">>=
 last <- length(iraceResults$iterationElites)
 id <- iraceResults$iterationElites[last]
-getConfigurationById(logFile = "irace-acotsp.Rdata", ids = id)
+getConfigurationById(iraceResults, ids = id)
 @
 
 \item \code{rejectedConfigurations}: A vector containing the rejected configurations IDs. These 

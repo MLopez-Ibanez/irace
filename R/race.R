@@ -191,12 +191,11 @@ aux_friedman <- function(results, alive, which.alive, conf.level)
   }
 }
 
-aux.ttest <- function(results, alive, which.alive, conf.level,
-                      adjust = c("none","bonferroni","holm"))
+aux.one_ttest <- function(results, alive, which.alive, conf.level,
+                          adjust = c("none","bonferroni","holm"))
 {
   adjust <- match.arg(adjust)
   irace.assert(sum(alive) == length(which.alive))
-  
   results <- results[, which.alive]
   means <- colMeans(results)
   best <- which.min(means)
@@ -209,7 +208,48 @@ aux.ttest <- function(results, alive, which.alive, conf.level,
   for (j in which_test) {
     PVAL <- pvals[j]
     if (PVAL == 1.0) next
-    results_j <- results[ , j]
+    results_j <- results[, j]
+    # t.test may fail if the data in each group is almost constant. Hence, we
+    # surround the call in a try() and we initialize p with 1 if the means are
+    # equal or zero if they are different
+    if (min(var(results_best), var(results_j)) < 10 * .Machine$double.eps) next
+    # The t.test may fail if the data are not normal despite one configuration
+    # clearly dominating the other.
+    if (all(results_best <= results_j)) next
+    try(PVAL <- t.test(results_best, results_j, alternative = "less",
+                       paired = TRUE)$p.value)
+    irace.assert(!is.nan(PVAL) & !is.na(PVAL))
+    pvals[j] <- PVAL
+  }
+  pvals <- p.adjust(pvals, method = adjust)
+  dropj <- which.alive[pvals < 1.0 - conf.level]
+  dropped_any <- length(dropj) > 0
+  irace.assert(all(alive[dropj]))
+  alive[dropj] <- FALSE
+  return(list(best = which.alive[best], ranks = means, alive = alive,
+              dropped.any = dropped_any, p.value = min(pvals)))
+}
+
+aux.ttest <- function(results, alive, which.alive, conf.level,
+                      adjust = c("none","bonferroni","holm"))
+{
+  adjust <- match.arg(adjust)
+  irace.assert(sum(alive) == length(which.alive))
+  
+  results <- results[, which.alive]
+  means <- colMeans(results)
+  # FIXME: break ties using median or ranks?
+  best <- which.min(means)
+  mean_best <- means[best]
+  pvals <- sapply(means, function(x) as.numeric(isTRUE(
+                                       all.equal.numeric(mean_best[[1]], x[[1]], check.attributes = FALSE))))
+  results_best <- results[, best]
+  var_best <- var(results_best)
+  which_test <- which(pvals < 1.0)
+  for (j in which_test) {
+    PVAL <- pvals[j]
+    if (PVAL == 1.0) next
+    results_j <- results[, j]
     # t.test may fail if the data in each group is almost constant. Hence, we
     # surround the call in a try() and we initialize p with 1 if the means are
     # equal or zero if they are different

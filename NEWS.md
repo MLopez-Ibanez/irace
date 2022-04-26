@@ -67,6 +67,9 @@
    ablation log does not reflect a complete ablation.
                                                     (Manuel López-Ibáñez)
 
+ * The interface to functions `getFinalElites()`, `getConfigurationById()` and
+   `getConfigurationByIteration()` has been simplified.
+   
  * An error is produced if a variable set in the scenario file is not known to
    irace.  If your scenario file contains R code, then use variable names
    beginning with a dot `'.'`, which will be ignored by irace.

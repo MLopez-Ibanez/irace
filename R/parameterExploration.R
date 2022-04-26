@@ -42,8 +42,6 @@
 #'
 #' @author Leslie Pérez Cáceres
 #' @export
-# This function executes a post selection race
-# elites: test all elites
 psRace <- function(iraceLogFile=NULL, iraceResults=NULL, conf.ids=NULL,
                    postselection=NULL, max.experiments=NULL, elites=FALSE, seed=1234567)
 {
@@ -57,7 +55,7 @@ psRace <- function(iraceLogFile=NULL, iraceResults=NULL, conf.ids=NULL,
   
   # Load the data of the log file
   if (!is.null(iraceLogFile)) 
-    load(iraceLogFile)
+    iraceResults <- read_logfile(iraceLogFile)
  
   parameters <- iraceResults$parameters
   scenario   <- iraceResults$scenario
