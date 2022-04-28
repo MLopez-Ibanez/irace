@@ -118,14 +118,12 @@ OS X
 You can install R directly from a CRAN mirror
 (<https://cran.r-project.org/bin/macosx/>).
 
-Alternatively, if you use homebrew, you can just brew the R formula
-from the science tap (unfortunately it does not come already bottled
-so you need to have Xcode installed to compile it):
-
-```bash
-    $ brew tap homebrew/science
-    $ brew install r
+Alternatively, if you use homebrew, you can just do
 ```
+    $ brew install --cask r
+```
+
+(Using `brew install r` is not recommended because that will build R from source and you will not be able to use any CRAN binary, possibly resulting in annoying build failiures). 
 
 Once R is installed, you can launch R from the Terminal (or from your
 Applications), and from the R prompt install the irace package. See
