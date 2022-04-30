@@ -29,7 +29,6 @@ plot_type       s    -O    --plot-type   'mean'                'Type of plot. Su
 #' 
 #' @author Manuel López-Ibáñez
 #' @concept running
-#' @md
 #' @export
 ablation_cmdline <- function(argv = commandArgs(trailingOnly = TRUE))
 {
@@ -161,7 +160,6 @@ generateAblation <- function(initial.configuration, final.configuration,
 #'
 #' @author Leslie Pérez Cáceres and Manuel López-Ibáñez
 #' @export
-#' @md
 ablation <- function(iraceResults, src = 1L, target = NULL,
                      ab.params = NULL, type = c("full", "racing"),
                      n.instances = NULL, seed = 1234567,
@@ -414,7 +412,6 @@ ablation.labels <- function(trajectory, configurations)
 #' @examples
 #' logfile <- file.path(system.file(package="irace"), "exdata", "log-ablation.Rdata")
 #' plotAblation(ablog = logfile)
-#' @md
 #' @export
 plotAblation <- function (ablog, pdf.file = NULL, pdf.width = 20,
                           type = c("mean", "boxplot"),

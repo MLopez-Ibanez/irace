@@ -54,7 +54,6 @@ getFinalElites <- function(iraceResults, n = 0L, drop.metadata = FALSE)
 #' @author Manuel López-Ibáñez and Leslie Pérez Cáceres
 #' @concept analysis
 #' @export
-#' @md
 getConfigurationById <- function(iraceResults, ids, drop.metadata = FALSE)
 {
   if (missing(iraceResults)) stop("argument 'iraceResults' is missing")

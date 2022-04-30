@@ -130,25 +130,25 @@ License: GPL (>= 2)
 }
 \references{
 Manuel López-Ibáñez, Jérémie Dubois-Lacoste, Leslie Pérez Cáceres,
-  Thomas Stützle, and Mauro Birattari. The irace package: Iterated
-  Racing for Automatic Algorithm Configuration. \emph{Operations Research
-  Perspectives}, 2016. \doi{10.1016/j.orp.2016.09.002}
-   
-  Manuel López-Ibáñez, Jérémie Dubois-Lacoste, Thomas Stützle, and Mauro
-  Birattari. \emph{The irace package, Iterated Race for Automatic
-  Algorithm Configuration}. Technical Report TR/IRIDIA/2011-004, IRIDIA,
-  Université Libre de Bruxelles, Belgium, 2011.
-  
-  Manuel López-Ibáñez and Thomas Stützle. The Automatic Design of
-  Multi-Objective Ant Colony Optimization Algorithms. \emph{IEEE Transactions
-  on Evolutionary Computation}, 2012.
+Thomas Stützle, and Mauro Birattari. The irace package: Iterated
+Racing for Automatic Algorithm Configuration. \emph{Operations Research
+Perspectives}, 2016. \doi{10.1016/j.orp.2016.09.002}
+
+Manuel López-Ibáñez, Jérémie Dubois-Lacoste, Thomas Stützle, and Mauro
+Birattari. \emph{The irace package, Iterated Race for Automatic
+Algorithm Configuration}. Technical Report TR/IRIDIA/2011-004, IRIDIA,
+Université Libre de Bruxelles, Belgium, 2011.
+
+Manuel López-Ibáñez and Thomas Stützle. The Automatic Design of
+Multi-Objective Ant Colony Optimization Algorithms. \emph{IEEE Transactions
+on Evolutionary Computation}, 2012.
 }
 \seealso{
 \code{\link{irace.main}} to start \pkg{irace} with a given scenario.
 }
 \author{
 Maintainers: Manuel López-Ibáñez and Leslie Pérez Cáceres
-        \email{irace-package@googlegroups.com}
+\email{irace-package@googlegroups.com}
 }
 \keyword{automatic}
 \keyword{configuration}

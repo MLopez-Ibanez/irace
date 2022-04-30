@@ -84,16 +84,16 @@ each experiment.}
 }
 }
 \description{
-\code{irace} implements iterated Race. It receives some parameters to be tuned 
-  and returns the best configurations found, namely, the elite configurations 
-  obtained from the last iterations (and sorted by rank).
+\code{irace} implements iterated Race. It receives some parameters to be tuned
+and returns the best configurations found, namely, the elite configurations
+obtained from the last iterations (and sorted by rank).
 }
 \details{
-The function \code{irace} executes the tuning procedure using 
- the information provided in \code{scenario} and \code{parameters}. Initially it checks 
- the correctness of \code{scenario} and recovers a previous execution if 
- \code{scenario$recoveryFile} is set. A R data file log of the execution is created 
- in \code{scenario$logFile}.
+The function \code{irace} executes the tuning procedure using
+the information provided in \code{scenario} and \code{parameters}. Initially it checks
+the correctness of \code{scenario} and recovers a previous execution if
+\code{scenario$recoveryFile} is set. A R data file log of the execution is created
+in \code{scenario$logFile}.
 }
 \examples{
 \dontrun{
@@ -106,11 +106,11 @@ irace(scenario = scenario, parameters = parameters)
 }
 \seealso{
 \describe{
- \item{\code{\link{irace.main}}}{a higher-level command-line interface to \code{irace}.}
- \item{\code{\link{readScenario}}}{for reading a configuration scenario from a file.}
- \item{\code{\link{readParameters}}}{read the target algorithm parameters from a file.}
- \item{\code{\link{defaultScenario}}}{returns the default scenario settings of \pkg{irace}.}
- \item{\code{\link{checkScenario}}}{to check that the scenario is valid.}
+\item{\code{\link{irace.main}}}{a higher-level command-line interface to \code{irace}.}
+\item{\code{\link{readScenario}}}{for reading a configuration scenario from a file.}
+\item{\code{\link{readParameters}}}{read the target algorithm parameters from a file.}
+\item{\code{\link{defaultScenario}}}{returns the default scenario settings of \pkg{irace}.}
+\item{\code{\link{checkScenario}}}{to check that the scenario is valid.}
 }
 }
 \author{

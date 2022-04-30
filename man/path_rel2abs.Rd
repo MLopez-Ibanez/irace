@@ -8,12 +8,12 @@ canonical paths.}
 path_rel2abs(path, cwd = getwd())
 }
 \arguments{
-\item{path}{(`character(1)`) Character string representing a relative path.}
+\item{path}{(\code{character(1)}) Character string representing a relative path.}
 
-\item{cwd}{(`character(1)`) Current working directory.}
+\item{cwd}{(\code{character(1)}) Current working directory.}
 }
 \value{
-(`character(1)`) Character string representing the absolute path
+(\code{character(1)}) Character string representing the absolute path
 }
 \description{
 Converts a relative path to an absolute path. It tries really hard to create

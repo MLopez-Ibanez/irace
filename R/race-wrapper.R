@@ -40,7 +40,6 @@
 #'       unlist(parameters$switches))
 #' 
 #' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
-#' @md
 #' @export
 buildCommandLine <- function(values, switches)
 {
@@ -195,7 +194,6 @@ exec.target.evaluator <- function (experiment, num.configurations, all.conf.id,
 #'
 #' 
 #' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
-#' @md
 #' @export
 target.evaluator.default <- function(experiment, num.configurations, all.conf.id,
                                      scenario, target.runner.call)
@@ -472,7 +470,6 @@ run_target_runner <- function(experiment, scenario)
 #'
 #' 
 #' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
-#' @md
 #' @export
 target.runner.default <- function(experiment, scenario)
 {

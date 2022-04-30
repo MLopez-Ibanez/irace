@@ -65,7 +65,6 @@ CommandArgsParser <- R6::R6Class("CommandArgsParser", cloneable = FALSE, list(
 #' 
 #' @rdname CommandArgsParser
 #' @export
-#' @md
 cmdline_usage <- function(cmdline_args)
 {
   for (i in seq_len(nrow(cmdline_args))) {

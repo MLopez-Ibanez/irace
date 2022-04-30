@@ -9,7 +9,7 @@ getFinalElites(iraceResults, n = 0L, drop.metadata = FALSE)
 \arguments{
 \item{iraceResults}{(\code{list()}|\code{character(1)}) \code{iraceResults} object created by \pkg{irace} and typically saved in the log file \code{irace.Rdata}. If a character string is given, then it is interpreted as the path to the log file from which the \code{iraceResults} object will be loaded.}
 
-\item{n}{Number of elite configurations to return, if \code{n} is larger than the 
+\item{n}{Number of elite configurations to return, if \code{n} is larger than the
 number of configurations, then only the existing ones are returned. The default (\code{n=0}) returns all of them.}
 
 \item{drop.metadata}{Remove metadata, such the configuration ID and

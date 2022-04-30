@@ -66,4 +66,3 @@
 #' each experiment.}
 #'
 #' }
-#' @md

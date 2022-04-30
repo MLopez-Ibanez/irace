@@ -72,7 +72,6 @@
 #'  str(parameters)
 #' 
 #' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
-#' @md
 #' @export
 readParameters <- function (file, digits = 4, debugLevel = 0, text)
 {
@@ -543,7 +542,6 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
 #'  str(parameters)
 #' 
 #' @author Manuel López-Ibáñez
-#' @md
 #' @export
 read_pcs_file <- function(file, digits = 4, debugLevel = 0, text)
 {
@@ -642,7 +640,6 @@ read_pcs_file <- function(file, digits = 4, debugLevel = 0, text)
 #' versions.
 #'
 #' @template arg_parameters
-#' @md
 #' @export
 checkParameters <- function(parameters)
 {

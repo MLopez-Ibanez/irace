@@ -724,7 +724,6 @@ valid_iracelog <- function(x)
 #' 
 #' @return (`list()`)
 #' @concept analysis
-#' @md
 #' @export
 read_logfile <- function(filename, name = "iraceResults")
 {

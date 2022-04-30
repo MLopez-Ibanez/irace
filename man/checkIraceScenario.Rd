@@ -21,21 +21,21 @@ returns \code{TRUE} if succesful and gives an error and returns
 }
 \description{
 \code{checkIraceScenario} tests that the given irace scenario
-  can be run by checking the scenario settings provided and trying to run
-  the target-algorithm.
+can be run by checking the scenario settings provided and trying to run
+the target-algorithm.
 }
 \details{
 Provide the \code{parameters} argument only if the parameter list
-  should not be obtained from the parameter file given by the scenario. If
-  the parameter list is provided it will not be checked. This function will
-  try to execute the target-algorithm.
+should not be obtained from the parameter file given by the scenario. If
+the parameter list is provided it will not be checked. This function will
+try to execute the target-algorithm.
 }
 \seealso{
 \describe{
- \item{\code{\link{readScenario}}}{for reading a configuration scenario from a file.}
- \item{\code{\link{printScenario}}}{prints the given scenario.}
- \item{\code{\link{defaultScenario}}}{returns the default scenario settings of \pkg{irace}.}
- \item{\code{\link{checkScenario}}}{to check that the scenario is valid.}
+\item{\code{\link{readScenario}}}{for reading a configuration scenario from a file.}
+\item{\code{\link{printScenario}}}{prints the given scenario.}
+\item{\code{\link{defaultScenario}}}{returns the default scenario settings of \pkg{irace}.}
+\item{\code{\link{checkScenario}}}{to check that the scenario is valid.}
 }
 }
 \author{

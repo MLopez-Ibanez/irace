@@ -30,5 +30,5 @@ fi
 
 if (test "$git_rev" != "unknown") || (test ! -r R/version.R) 2>/dev/null; then
     realversion=${packageversion}.${git_rev}
-    R --slave -e "cat(file='./R/version.R', sep='', \"#' irace.version\n#'\n#' A character string containing the version of \`irace\`.\n#' @md\n#' @export\nirace.version <- '${realversion}'\n\")"
+    R --slave -e "cat(file='./R/version.R', sep='', \"#' irace.version\n#'\n#' A character string containing the version of \`irace\`.\n#' @export\nirace.version <- '${realversion}'\n\")"
 fi

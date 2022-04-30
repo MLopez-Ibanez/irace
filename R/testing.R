@@ -17,7 +17,6 @@
 #'  [testing_fromlog()]
 #' 
 #' @author Manuel López-Ibáñez
-#' @md
 #' @export
 testConfigurations <- function(configurations, scenario, parameters)
 {

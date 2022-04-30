@@ -97,7 +97,6 @@ irace.usage <- function()
 #' 
 #' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
 #' @concept running
-#' @md
 #' @export
 irace.main <- function(scenario = defaultScenario(), output.width = 9999L)
 {
@@ -175,7 +174,6 @@ irace.main <- function(scenario = defaultScenario(), output.width = 9999L)
 #' [testing_fromfile()] provides a different interface for testing.
 #' 
 #' @author Manuel López-Ibáñez and Leslie Pérez Cáceres
-#' @md
 #' @concept running
 #' @export
 testing_fromlog <- function(logFile, testNbElites, testIterationElites,
@@ -263,7 +261,6 @@ testing_fromlog <- function(logFile, testNbElites, testIterationElites,
 #' @seealso [testing_fromlog()] provides a different interface for testing.
 #' 
 #' @author Manuel López-Ibáñez
-#' @md
 #' @export
 testing_fromfile <- function(filename, scenario)
 {
@@ -405,7 +402,6 @@ init <- function()
 #' irace.cmdline("--version")
 #' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
 #' @concept running
-#' @md
 #' @export
 irace.cmdline <- function(argv = commandArgs(trailingOnly = TRUE))
 {

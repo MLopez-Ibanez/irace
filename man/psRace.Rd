@@ -15,7 +15,7 @@ psRace(
 )
 }
 \arguments{
-\item{iraceLogFile}{NULL Log file created by \pkg{irace}, this file must contain the 
+\item{iraceLogFile}{NULL Log file created by \pkg{irace}, this file must contain the
 \code{iraceResults} object.}
 
 \item{iraceResults}{NULL Object created by \pkg{irace} and saved in \code{scenario$logFile}.}
@@ -26,9 +26,9 @@ If NULL, the elites argument will be used.}
 \item{postselection}{NULL Percentage of the maxExperiments provided in the scenario to be used in the race.}
 
 \item{max.experiments}{NULL Number of experiments available for the race. If NULL budget for the race is set
- by the parameter scenario$postselection, which defines the percentage of the total budget of \pkg{irace}
+by the parameter scenario$postselection, which defines the percentage of the total budget of \pkg{irace}
 (iraceResults$scenario$maxExperiments or iraceResults$scenario$maxTime/iraceResults$state$timeEstimate) to use
- for the postselection.}
+for the postselection.}
 
 \item{elites}{FALSE Flag for selecting configurations. If FALSE, the best configurations of each
 iteration are used for the race. If TRUE, the elite configurtions of each iteration are used for the race.}
@@ -37,14 +37,14 @@ iteration are used for the race. If TRUE, the elite configurtions of each iterat
 }
 \value{
 If iraceLogFile is NULL, it returns a list with the following elements:
- \describe{
-   \item{configurations}{Configurations used in the race.}
-   \item{instances}{A matrix with the instances used in the experiments. First column has the 
-   instances ids from iraceResults$scenario$instances, second column the seed assigned to the instance.}
-   \item{maxExperiments}{Maximum number of experiments set for the race.}
-   \item{experiments}{A matrix with the results of the experiments (columns are configurations, rows are instances).}
-   \item{elites}{Best configurations found in the experiments.}
- }
+\describe{
+\item{configurations}{Configurations used in the race.}
+\item{instances}{A matrix with the instances used in the experiments. First column has the
+instances ids from iraceResults$scenario$instances, second column the seed assigned to the instance.}
+\item{maxExperiments}{Maximum number of experiments set for the race.}
+\item{experiments}{A matrix with the results of the experiments (columns are configurations, rows are instances).}
+\item{elites}{Best configurations found in the experiments.}
+}
 If \code{iraceLogFile} is provided this list object will be saved in \code{iraceResults$psrace.log}.
 }
 \description{

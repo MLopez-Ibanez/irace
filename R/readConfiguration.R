@@ -17,7 +17,6 @@
 #'   \code{\link{readParameters}} to obtain a valid parameter structure from a parameters list.
 #' 
 #' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
-#' @md
 #' @export
 ## Read some configurations from a file.
 ## Example of an input file,
@@ -261,7 +260,6 @@ buildForbiddenExp <- function(configurations, parameters)
 #' }
 #' 
 #' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
-#' @md
 #' @export
 readScenario <- function(filename = "", scenario = list())
 {
@@ -401,7 +399,6 @@ setup_test_instances <- function(scenario)
 #' }
 #' 
 #' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
-#' @md
 #' @export
 ## FIXME: This function should only do checks and return TRUE/FALSE. There
 ## should be other function that does the various transformations.
@@ -749,7 +746,6 @@ checkScenario <- function(scenario = defaultScenario())
 #' }
 #' 
 #' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
-#' @md
 #' @export
 printScenario <- function(scenario)
 {

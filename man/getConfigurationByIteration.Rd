@@ -9,7 +9,7 @@ getConfigurationByIteration(iraceResults, iterations, drop.metadata = FALSE)
 \arguments{
 \item{iraceResults}{(\code{list()}|\code{character(1)}) \code{iraceResults} object created by \pkg{irace} and typically saved in the log file \code{irace.Rdata}. If a character string is given, then it is interpreted as the path to the log file from which the \code{iraceResults} object will be loaded.}
 
-\item{iterations}{The iteration number or a vector of iteration numbers from where 
+\item{iterations}{The iteration number or a vector of iteration numbers from where
 the configurations should be obtained.}
 
 \item{drop.metadata}{(\code{FALSE}) Remove metadata, such the configuration ID and
