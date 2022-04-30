@@ -61,6 +61,10 @@
    configurations provided via `initConfigurations`. 
                           (Manuel  López-Ibáñez, reported by Andreea Avramescu)
 
+ * The package now provides an `ablation` (`ablation.exe` in Windows)
+   executable that makes easier to perform ablation analysis without having any
+   R knowledge.
+   
  * The interface to functions `ablation()` and `plotAblation()` has been
    simplified. The `ablation()` function now allows overriding scenario
    settings. The `plotAblation()` function will not create the plot if the

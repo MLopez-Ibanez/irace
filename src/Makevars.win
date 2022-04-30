@@ -1,13 +1,4 @@
 # 							-*- mode: makefile -*-
 EXE=.exe
-iraceEXE= iracebin/irace$(EXE)
+include Makevars-common
 
-all:  $(iraceEXE)
-
-$(iraceEXE): iracebin/irace.o
-	$(CC) $(PKG_CPPFLAGS) $(CFLAGS) iracebin/irace.o -o $@
-
-iracebin/irace.o: iracebin/irace.h
-
-clean:
-	@$(RM) iracebin/*.o $(iraceEXE)

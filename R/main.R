@@ -57,7 +57,6 @@ cat.irace.license <- function()
 {
   cat(sub("__VERSION__", irace.version, irace.license, fixed=TRUE))
 }
-
   
 #' irace.usage
 #'
@@ -66,7 +65,7 @@ cat.irace.license <- function()
 #' 
 #' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
 #' @export
-irace.usage <- function ()
+irace.usage <- function()
 {
   cat.irace.license()
   cat ("# installed at: ", system.file(package="irace"), "\n", sep = "")
@@ -393,35 +392,36 @@ init <- function()
 #'  initializes the scenario from the file (with the function
 #'  \code{\link{readScenario}}) and possibly from parameters passed on
 #'  the command line. It finally starts \pkg{irace} by calling
-#'  \code{\link{irace.main}}.
-#'
+#'  \code{\link{irace.main}}. List of command-line parameters:
+#' ```{r}
+#' cmdline_usage(.irace.params.def)
+#' ```
 #' @templateVar return_invisible TRUE
 #' @template return_irace
 #' 
 #' @seealso
 #'  \code{\link{irace.main}} to start \pkg{irace} with a given scenario.
-#' 
+#' @examples
+#' irace.cmdline("--version")
 #' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
 #' @concept running
 #' @md
 #' @export
-irace.cmdline <- function(argv = commandArgs (trailingOnly = TRUE))
+irace.cmdline <- function(argv = commandArgs(trailingOnly = TRUE))
 {
   parser <- CommandArgsParser$new(argv = argv, argsdef = .irace.params.def)
   if (!is.null(parser$readArg (short = "-h", long = "--help"))) {
     irace.usage()
     return(invisible(NULL))
   }
-
-  if (!is.null(parser$readArg (short = "-v", long = "--version"))) {
-    cat.irace.license()
-    cat ("# installed at: ", system.file(package="irace"), "\n", sep = "")
-    print(citation(package="irace"))
-    return(invisible(NULL))
-  }
   cat.irace.license()
   cat ("# installed at: ", system.file(package="irace"), "\n",
        "# called with: ", paste(argv, collapse = " "), "\n", sep = "")
+
+  if (!is.null(parser$readArg (short = "-v", long = "--version"))) {
+    print(citation(package="irace"))
+    return(invisible(NULL))
+  }
   
   if (!is.null(parser$readArg (short = "-i", long = "--init"))) {
     init()

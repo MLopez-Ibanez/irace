@@ -21,8 +21,7 @@ plotAblation(
 
 \item{pdf.width}{Width provided to create the pdf file.}
 
-\item{type}{Type of plots. Supported values are \code{"mean"} and
-\code{"boxplot"}.}
+\item{type}{Type of plot. Supported values are \code{"mean"} and \code{"boxplot"}.}
 
 \item{mar}{Vector with the margins for the ablation plot.}
 

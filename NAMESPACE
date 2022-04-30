@@ -2,6 +2,7 @@
 
 export(CommandArgsParser)
 export(ablation)
+export(ablation_cmdline)
 export(buildCommandLine)
 export(checkIraceScenario)
 export(checkParameters)

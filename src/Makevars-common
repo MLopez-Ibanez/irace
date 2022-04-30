@@ -1,0 +1,17 @@
+iraceEXE= iracebin/irace$(EXE)
+ablationEXE= iracebin/ablation$(EXE)
+
+all:  $(iraceEXE) $(ablationEXE)
+
+$(iraceEXE): iracebin/irace.o
+	$(CC) $(PKG_CPPFLAGS) $(CFLAGS) iracebin/irace.o -o $@
+
+iracebin/irace.o: iracebin/irace.h
+
+$(ablationEXE): iracebin/ablation.o
+	$(CC) $(PKG_CPPFLAGS) $(CFLAGS) iracebin/ablation.o -o $@
+
+iracebin/ablation.o: iracebin/irace.h
+
+clean:
+	@$(RM) iracebin/*.o $(iraceEXE) $(ablationEXE)
