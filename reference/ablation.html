@@ -61,8 +61,8 @@
   src <span class="op">=</span> <span class="fl">1L</span>,
   target <span class="op">=</span> <span class="cn">NULL</span>,
   ab.params <span class="op">=</span> <span class="cn">NULL</span>,
-  n.instances <span class="op">=</span> <span class="cn">NULL</span>,
   type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"full"</span>, <span class="st">"racing"</span><span class="op">)</span>,
+  n.instances <span class="op">=</span> <span class="cn">NULL</span>,
   seed <span class="op">=</span> <span class="fl">1234567</span>,
   ablationLogFile <span class="op">=</span> <span class="st">"log-ablation.Rdata"</span>,
   <span class="va">...</span>
@@ -76,11 +76,11 @@
 <dt>src, target</dt>
 <dd><p>Source and target configuration IDs. By default, the first configuration ever evaluated (ID 1) is used as <code>src</code> and the best configuration found by irace is used as target.</p></dd>
 <dt>ab.params</dt>
-<dd><p>Parameter names to be used for the ablation. They must be in <code>parameters$names</code>.</p></dd>
-<dt>n.instances</dt>
-<dd><p>Number of instances to be used for the <code>"full"</code> ablation, if not provided <code>scenario$firstTest</code> instances are used.</p></dd>
+<dd><p>Specific parameter names to be used for the ablation. They must be in <code>parameters$names</code>. By default, use all parameters.</p></dd>
 <dt>type</dt>
 <dd><p>Type of ablation to perform: <code>"full"</code> will execute each configuration on all <code>n.instances</code> to determine the best-performing one; <code>"racing"</code> will apply racing to find the best configurations.</p></dd>
+<dt>n.instances</dt>
+<dd><p>Number of instances to be used for the <code>"full"</code> ablation, if not provided <code>scenario$firstTest</code> instances are used.</p></dd>
 <dt>seed</dt>
 <dd><p>(<code>integer(1)</code>) Integer value to use as seed for the random number generation.</p></dd>
 <dt>ablationLogFile</dt>
@@ -93,23 +93,23 @@
     <p>A list containing the following elements:</p><dl><dt>configurations</dt>
 <dd><p>Configurations tested in the ablation.</p></dd>
 
-<dt>instances</dt>
-<dd><p>A matrix with the instances used in the experiments. First column has the
-instances IDs from <code>iraceResults$scenario$instances</code>, second column the seed assigned to the instance.</p></dd>
+   <dt>instances</dt>
+<dd><p>A matrix with the instances used in the experiments. First column has the 
+    instances IDs from <code>iraceResults$scenario$instances</code>, second column the seed assigned to the instance.</p></dd>
 
-<dt>experiments</dt>
+   <dt>experiments</dt>
 <dd><p>A matrix with the results of the experiments (columns are configurations, rows are instances).</p></dd>
 
-<dt>scenario</dt>
+   <dt>scenario</dt>
 <dd><p>Scenario object with the settings used for the experiments.</p></dd>
 
-<dt>trajectory</dt>
+   <dt>trajectory</dt>
 <dd><p>IDs of the best configurations at each step of the ablation.</p></dd>
 
-<dt>best</dt>
+   <dt>best</dt>
 <dd><p>Best configuration found in the experiments.</p></dd>
 
-
+ 
 </dl></div>
     <div id="references">
     <h2>References</h2>
@@ -131,7 +131,7 @@ configurations through ablation. Journal of Heuristics, 22(4):431–458, 2016.</
 <span class="r-in"><span class="va">logfile</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span>package<span class="op">=</span><span class="st">"irace"</span>, <span class="st">"exdata"</span>, <span class="st">"sann.rda"</span><span class="op">)</span></span>
 <span class="r-in"><span class="co"># Execute ablation between the first and the best configuration found by irace.</span></span>
 <span class="r-in"><span class="va">ablog</span> <span class="op">&lt;-</span> <span class="fu">ablation</span><span class="op">(</span><span class="va">logfile</span>, ablationLogFile <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-04-26 19:14:11 UTC: Starting ablation from 1 to 127</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-04-30 08:58:31 UTC: Starting ablation from 1 to 127</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # Seed: 1234567</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # Source configuration (row number is ID):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   tmax    temp</span>
@@ -139,12 +139,12 @@ configurations through ablation. Journal of Heuristics, 22(4):431–458, 2016.</
 <span class="r-out co"><span class="r-pr">#&gt;</span> # Target configuration (row number is ID):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     tmax   temp</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 127 3468 0.9979</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-04-26 19:14:11 UTC: Executing source and target configurations on the given instances...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-04-30 08:58:31 UTC: Executing source and target configurations on the given instances...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # Generating configurations (row number is ID): tmax temp </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   tmax    temp</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2 3468 15.0259</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3 2936  0.9979</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-04-26 19:14:18 UTC: Ablation (full) of 2 configurations on 100 instances.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-04-30 08:58:38 UTC: Ablation (full) of 2 configurations on 100 instances.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # Markers:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      x No test is performed.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      c Configurations are discarded only due to capping.</span>
@@ -263,7 +263,7 @@ configurations through ablation. Journal of Heuristics, 22(4):431–458, 2016.</
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3    3 2936 0.9979        1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # Best changed parameters:#   temp 15.0259 -&gt; 0.9979 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-04-26 19:14:26 UTC: Final best configuration:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-04-30 08:58:45 UTC: Final best configuration:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   tmax   temp</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4 3468 0.9979</span>
 <span class="r-in"><span class="fu"><a href="plotAblation.html">plotAblation</a></span><span class="op">(</span><span class="va">ablog</span><span class="op">)</span></span>
@@ -272,7 +272,7 @@ configurations through ablation. Journal of Heuristics, 22(4):431–458, 2016.</
 <span class="r-in"><span class="co"># subset of parameters, directly reading the setup from the irace log file.</span></span>
 <span class="r-in"><span class="va">ablog</span> <span class="op">&lt;-</span> <span class="fu">ablation</span><span class="op">(</span><span class="va">logfile</span>, src <span class="op">=</span> <span class="fl">1</span>, target <span class="op">=</span> <span class="fl">10</span>,</span>
 <span class="r-in">                  ab.params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"temp"</span><span class="op">)</span>, ablationLogFile <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-04-26 19:14:26 UTC: Starting ablation from 1 to 10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-04-30 08:58:45 UTC: Starting ablation from 1 to 10</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # Seed: 1234567</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # Source configuration (row number is ID):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   tmax    temp</span>
@@ -280,8 +280,8 @@ configurations through ablation. Journal of Heuristics, 22(4):431–458, 2016.</
 <span class="r-out co"><span class="r-pr">#&gt;</span> # Target configuration (row number is ID):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    tmax    temp</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 10 2418 38.8461</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-04-26 19:14:26 UTC: Executing source and target configurations on the given instances...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-04-26 19:14:33 UTC: Final best configuration:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-04-30 08:58:45 UTC: Executing source and target configurations on the given instances...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-04-30 08:58:51 UTC: Final best configuration:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   tmax    temp</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2 2418 38.8461</span>
 <span class="r-in"><span class="fu"><a href="plotAblation.html">plotAblation</a></span><span class="op">(</span><span class="va">ablog</span><span class="op">)</span></span>
