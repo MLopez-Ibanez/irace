@@ -70,7 +70,7 @@
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>iraceLogFile</dt>
-<dd><p>NULL Log file created by <span class="pkg">irace</span>, this file must contain the 
+<dd><p>NULL Log file created by <span class="pkg">irace</span>, this file must contain the
 <code>iraceResults</code> object.</p></dd>
 <dt>iraceResults</dt>
 <dd><p>NULL Object created by <span class="pkg">irace</span> and saved in <code>scenario$logFile</code>.</p></dd>
@@ -81,9 +81,9 @@ If NULL, the elites argument will be used.</p></dd>
 <dd><p>NULL Percentage of the maxExperiments provided in the scenario to be used in the race.</p></dd>
 <dt>max.experiments</dt>
 <dd><p>NULL Number of experiments available for the race. If NULL budget for the race is set
- by the parameter scenario$postselection, which defines the percentage of the total budget of <span class="pkg">irace</span>
+by the parameter scenario$postselection, which defines the percentage of the total budget of <span class="pkg">irace</span>
 (iraceResults$scenario$maxExperiments or iraceResults$scenario$maxTime/iraceResults$state$timeEstimate) to use
- for the postselection.</p></dd>
+for the postselection.</p></dd>
 <dt>elites</dt>
 <dd><p>FALSE Flag for selecting configurations. If FALSE, the best configurations of each
 iteration are used for the race. If TRUE, the elite configurtions of each iteration are used for the race.</p></dd>
@@ -95,20 +95,20 @@ iteration are used for the race. If TRUE, the elite configurtions of each iterat
     <p>If iraceLogFile is NULL, it returns a list with the following elements:</p><dl><dt>configurations</dt>
 <dd><p>Configurations used in the race.</p></dd>
 
-   <dt>instances</dt>
-<dd><p>A matrix with the instances used in the experiments. First column has the 
-   instances ids from iraceResults$scenario$instances, second column the seed assigned to the instance.</p></dd>
+<dt>instances</dt>
+<dd><p>A matrix with the instances used in the experiments. First column has the
+instances ids from iraceResults$scenario$instances, second column the seed assigned to the instance.</p></dd>
 
-   <dt>maxExperiments</dt>
+<dt>maxExperiments</dt>
 <dd><p>Maximum number of experiments set for the race.</p></dd>
 
-   <dt>experiments</dt>
+<dt>experiments</dt>
 <dd><p>A matrix with the results of the experiments (columns are configurations, rows are instances).</p></dd>
 
-   <dt>elites</dt>
+<dt>elites</dt>
 <dd><p>Best configurations found in the experiments.</p></dd>
 
- 
+
 </dl><p>If <code>iraceLogFile</code> is provided this list object will be saved in <code>iraceResults$psrace.log</code>.</p>
     </div>
     <div id="author">
