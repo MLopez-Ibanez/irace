@@ -201,7 +201,7 @@ jobs:
           #git commit R/version.R --m "Update version.R [skip ci]"
           # pull so that if there are new commits, we can push
           #git pull --rebase
-          git push origin 'HEAD:master' || exit 1
+          # git push origin 'HEAD:master' || exit 1
           # pkgdown
           Rscript -e 'pkgdown::deploy_to_branch(new_process = FALSE)' || exit 1
           # Commit vignette PDF to webpage
