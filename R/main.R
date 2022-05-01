@@ -377,8 +377,8 @@ init <- function()
 #'  the command line. It finally starts \pkg{irace} by calling
 #'  \code{\link{irace.main}}.
 #'
-#' List of command-line parameters:
-#' ```{r echo=FALSE}
+#' List of command-line options:
+#' ```{r echo=FALSE,comment=NA}
 #' cmdline_usage(.irace.params.def)
 #' ```
 #'

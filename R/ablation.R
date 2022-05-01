@@ -12,20 +12,25 @@ plot            s    -p    --plot        ''                    'Output filename 
 plot_type       s    -O    --plot-type   'mean'                'Type of plot. Supported values are \"mean\" and \"boxplot\"'
 ")
 
-#' Launch [ablation()] with the same command-line options as `ablation.exe`.
+#' Launch ablation with command-line options.
+#'
+#' Launch [ablation()] with the same command-line options as the command-line
+#' executable (`ablation.exe` in Windows).
 #' 
 #' @param argv (`character()`) \cr The arguments 
 #' provided on the R command line as a character vector, e.g., 
 #' `c("-i", "irace.Rdata", "--src", 1)`.
 #' 
 #' @details The function reads the parameters given on the command line
-#' used to invoke R, launches [ablation()] and possibly [plotAblation()]. List of command-line parameters.
-#' ```{r echo=FALSE}
+#' used to invoke R, launches [ablation()] and possibly [plotAblation()].
+#'
+#' List of command-line options:
+#' ```{r echo=FALSE,comment=NA}
 #' cmdline_usage(.ablation.params.def)
 #' ```
 #' @template ret_ablog
 #' @examples
-#' ablation_cmdline("--help")
+#' # ablation_cmdline("--help")
 #' 
 #' @author Manuel López-Ibáñez
 #' @concept running

@@ -1,7 +1,11 @@
 template:
-  params:
-    bootswatch: cosmo
-
+  bootstrap: 5
+  #bootswatch: cosmo
+  bslib:
+    primary: "#0054AD"
+    border-radius: 0.5rem
+    btn-border-radius: 0.25rem
+  
 development:
   mode: unreleased
   destination: devel
@@ -11,7 +15,7 @@ development:
 
 navbar:
   structure:
-    left:  [home, intro, reference, guide, articles, tutorials, news]
+    left:  [home, intro, guide, reference, articles, tutorials, news]
     right: [github]
     
   components:

@@ -2,7 +2,7 @@
 % Please edit documentation in R/ablation.R
 \name{ablation_cmdline}
 \alias{ablation_cmdline}
-\title{Launch \code{\link[=ablation]{ablation()}} with the same command-line options as \code{ablation.exe}.}
+\title{Launch ablation with command-line options.}
 \usage{
 ablation_cmdline(argv = commandArgs(trailingOnly = TRUE))
 }
@@ -24,35 +24,38 @@ instances IDs from \code{iraceResults$scenario$instances}, second column the see
 }
 }
 \description{
-Launch \code{\link[=ablation]{ablation()}} with the same command-line options as \code{ablation.exe}.
+Launch \code{\link[=ablation]{ablation()}} with the same command-line options as the command-line
+executable (\code{ablation.exe} in Windows).
 }
 \details{
 The function reads the parameters given on the command line
-used to invoke R, launches \code{\link[=ablation]{ablation()}} and possibly \code{\link[=plotAblation]{plotAblation()}}. List of command-line parameters.\preformatted{## -i,--log-file            path to the (.Rdata) file created by irace from which
-##                          the `iraceResults` object will be loaded
-## -S,--src                 Source configuration ID
-## -T,--target              Target configuration ID. By default the best
-##                          configuration found by irace
-## -P,--params              Specific parameter names to be used for the ablation
-##                          (separated with commas). By default use all
-## -t,--type                Type of ablation to perform: "full" will execute each
-##                          configuration on all `--n-instances` to determine the
-##                          best-performing one; "racing" will apply racing to
-##                          find the best configurations
-## -n,--n-instances         Number of instances to be used for the "full"
-##                          ablation, if not provided firstTest instances are used
-## -s,--seed                Integer value to use as seed for the random number
-##                          generation
-## -o,--output-file         Log file to save the ablation log. If "", the results
-##                          are not saved to a file.
-## -p,--plot                Output filename (.pdf) for the plot. If not given, no
-##                          plot is created
-## -O,--plot-type           Type of plot. Supported values are "mean" and
-##                          "boxplot"
+used to invoke R, launches \code{\link[=ablation]{ablation()}} and possibly \code{\link[=plotAblation]{plotAblation()}}.
+
+List of command-line options:\preformatted{-i,--log-file            path to the (.Rdata) file created by irace from which
+                         the `iraceResults` object will be loaded
+-S,--src                 Source configuration ID
+-T,--target              Target configuration ID. By default the best
+                         configuration found by irace
+-P,--params              Specific parameter names to be used for the ablation
+                         (separated with commas). By default use all
+-t,--type                Type of ablation to perform: "full" will execute each
+                         configuration on all `--n-instances` to determine the
+                         best-performing one; "racing" will apply racing to
+                         find the best configurations
+-n,--n-instances         Number of instances to be used for the "full"
+                         ablation, if not provided firstTest instances are used
+-s,--seed                Integer value to use as seed for the random number
+                         generation
+-o,--output-file         Log file to save the ablation log. If "", the results
+                         are not saved to a file.
+-p,--plot                Output filename (.pdf) for the plot. If not given, no
+                         plot is created
+-O,--plot-type           Type of plot. Supported values are "mean" and
+                         "boxplot"
 }
 }
 \examples{
-ablation_cmdline("--help")
+# ablation_cmdline("--help")
 
 }
 \author{
