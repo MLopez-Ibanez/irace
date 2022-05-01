@@ -92,6 +92,7 @@
 <li><p>Fix (<a href="https://github.com/MLopez-Ibanez/irace/issues/10" class="external-link">#10</a>): wrong assert with <code>elitist=0</code>. (Manuel López-Ibáñez)</p></li>
 <li><p>Fix (<a href="https://github.com/MLopez-Ibanez/irace/issues/13" class="external-link">#13</a>): Maximum number configurations immediately rejected reached. (Manuel López-Ibáñez)</p></li>
 <li><p>Fix: when setting the scenario file in the command-line, <code>scenarioFile</code> was not set correctly. The correct scenario was used, however, the debug output and the value stored in the log / recovery file was wrong. (Manuel López-Ibáñez, reported by Richard Schoonhoven)</p></li>
+<li><p>The function <code>irace.usage()</code> was removed. It was not really useful for R users as the same result can be obtained by calling <code>irace.cmdline("--help")</code>. (Manuel López-Ibáñez)</p></li>
 </ul></div>
 </div>
     <div class="section level2">

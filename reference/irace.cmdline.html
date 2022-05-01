@@ -155,21 +155,22 @@ each experiment.</p></dd>
     <p>The function reads the parameters given on the command line
 used to invoke R, finds the name of the scenario file,
 initializes the scenario from the file (with the function
-<code><a href="readScenario.html">readScenario</a></code>) and possibly from parameters passed on
+<code><a href="readScenario.html">readScenario</a></code>) and possibly from parameters passed in
 the command line. It finally starts <span class="pkg">irace</span> by calling
-<code><a href="irace.main.html">irace.main</a></code>. List of command-line parameters:</p><div class="r"><div class="sourceCode"><pre><code><span class="fu"><a href="../reference/CommandArgsParser.html">cmdline_usage</a></span><span class="op">(</span><span class="va">.irace.params.def</span><span class="op">)</span></code></pre></div><p></p></div><div class="sourceCode"><pre><code><span class="co">## -h --help                Show this help.</span>
-<span class="co">## -v --version             Show irace package version.</span>
-<span class="co">## -c --check               Check scenario.</span>
-<span class="co">## -i --init                Initialize the working directory with template config</span>
+<code><a href="irace.main.html">irace.main</a></code>.</p>
+<p>List of command-line parameters:</p><div class="sourceCode"><pre><code><span class="co">## -h,--help                Show this help.</span>
+<span class="co">## -v,--version             Show irace package version.</span>
+<span class="co">## -c,--check               Check scenario.</span>
+<span class="co">## -i,--init                Initialize the working directory with template config</span>
 <span class="co">##                          files.</span>
 <span class="co">##    --only-test           Only test the configurations given in the file passed</span>
 <span class="co">##                          as argument.</span>
-<span class="co">## -s --scenario            File that describes the configuration scenario setup</span>
+<span class="co">## -s,--scenario            File that describes the configuration scenario setup</span>
 <span class="co">##                          and other irace settings.</span>
-<span class="co">## -p --parameter-file      File that contains the description of the parameters</span>
+<span class="co">## -p,--parameter-file      File that contains the description of the parameters</span>
 <span class="co">##                          of the target algorithm.</span>
 <span class="co">##    --exec-dir            Directory where the programs will be run.</span>
-<span class="co">## -l --log-file            File to save tuning results as an R dataset, either</span>
+<span class="co">## -l,--log-file            File to save tuning results as an R dataset, either</span>
 <span class="co">##                          absolute path or relative to execDir.</span>
 <span class="co">##    --recovery-file       Previously saved log file to recover the execution of</span>
 <span class="co">##                          irace, either absolute path or relative to the current</span>
@@ -278,7 +279,7 @@ the command line. It finally starts <span class="pkg">irace</span> by calling
 <span class="co">##                          will be tested if test instances are provided.</span>
 <span class="co">##    --test-iteration-elites  Enable/disable testing the elite configurations</span>
 <span class="co">##                          found at each iteration.</span>
-<span class="co">## -e --elitist             Enable/disable elitist irace.</span>
+<span class="co">## -e,--elitist             Enable/disable elitist irace.</span>
 <span class="co">##    --elitist-new-instances  Number of instances added to the execution list</span>
 <span class="co">##                          before previous instances in elitist irace.</span>
 <span class="co">##    --elitist-limit       In elitist irace, maximum number per race of</span>

@@ -92,26 +92,26 @@ instances IDs from <code>iraceResults$scenario$instances</code>, second column t
     <div id="details">
     <h2>Details</h2>
     <p>The function reads the parameters given on the command line
-used to invoke R, launches <code><a href="ablation.html">ablation()</a></code> and possibly <code><a href="plotAblation.html">plotAblation()</a></code>. List of command-line parameters.</p><div class="r"><div class="sourceCode"><pre><code><span class="fu"><a href="../reference/CommandArgsParser.html">cmdline_usage</a></span><span class="op">(</span><span class="va">.ablation.params.def</span><span class="op">)</span></code></pre></div><p></p></div><div class="sourceCode"><pre><code><span class="co">## -i --log-file            path to the (.Rdata) file created by irace from which</span>
+used to invoke R, launches <code><a href="ablation.html">ablation()</a></code> and possibly <code><a href="plotAblation.html">plotAblation()</a></code>. List of command-line parameters.</p><div class="sourceCode"><pre><code><span class="co">## -i,--log-file            path to the (.Rdata) file created by irace from which</span>
 <span class="co">##                          the `iraceResults` object will be loaded</span>
-<span class="co">## -S --src                 Source configuration ID</span>
-<span class="co">## -T --target              Target configuration ID. By default the best</span>
+<span class="co">## -S,--src                 Source configuration ID</span>
+<span class="co">## -T,--target              Target configuration ID. By default the best</span>
 <span class="co">##                          configuration found by irace</span>
-<span class="co">## -P --params              Specific parameter names to be used for the ablation</span>
+<span class="co">## -P,--params              Specific parameter names to be used for the ablation</span>
 <span class="co">##                          (separated with commas). By default use all</span>
-<span class="co">## -t --type                Type of ablation to perform: "full" will execute each</span>
+<span class="co">## -t,--type                Type of ablation to perform: "full" will execute each</span>
 <span class="co">##                          configuration on all `--n-instances` to determine the</span>
 <span class="co">##                          best-performing one; "racing" will apply racing to</span>
 <span class="co">##                          find the best configurations</span>
-<span class="co">## -n --n-instances         Number of instances to be used for the "full"</span>
+<span class="co">## -n,--n-instances         Number of instances to be used for the "full"</span>
 <span class="co">##                          ablation, if not provided firstTest instances are used</span>
-<span class="co">## -s --seed                Integer value to use as seed for the random number</span>
+<span class="co">## -s,--seed                Integer value to use as seed for the random number</span>
 <span class="co">##                          generation</span>
-<span class="co">## -o --output-file         Log file to save the ablation log. If "", the results</span>
+<span class="co">## -o,--output-file         Log file to save the ablation log. If "", the results</span>
 <span class="co">##                          are not saved to a file.</span>
-<span class="co">## -p --plot                Output filename (.pdf) for the plot. If not given, no</span>
+<span class="co">## -p,--plot                Output filename (.pdf) for the plot. If not given, no</span>
 <span class="co">##                          plot is created</span>
-<span class="co">## -O --plot-type           Type of plot. Supported values are "mean" and</span>
+<span class="co">## -O,--plot-type           Type of plot. Supported values are "mean" and</span>
 <span class="co">##                          "boxplot"</span></code></pre></div>
 
     </div>
@@ -141,26 +141,26 @@ used to invoke R, launches <code><a href="ablation.html">ablation()</a></code> a
 <span class="r-out co"><span class="r-pr">#&gt;</span> #------------------------------------------------------------------------------</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # installed at: /home/runner/work/_temp/Library/irace</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # called with: --help</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> -i --log-file            path to the (.Rdata) file created by irace from which</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> -i,--log-file            path to the (.Rdata) file created by irace from which</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                          the `iraceResults` object will be loaded</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> -S --src                 Source configuration ID</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> -T --target              Target configuration ID. By default the best</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> -S,--src                 Source configuration ID</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> -T,--target              Target configuration ID. By default the best</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                          configuration found by irace</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> -P --params              Specific parameter names to be used for the ablation</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> -P,--params              Specific parameter names to be used for the ablation</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                          (separated with commas). By default use all</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> -t --type                Type of ablation to perform: "full" will execute each</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> -t,--type                Type of ablation to perform: "full" will execute each</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                          configuration on all `--n-instances` to determine the</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                          best-performing one; "racing" will apply racing to</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                          find the best configurations</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> -n --n-instances         Number of instances to be used for the "full"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> -n,--n-instances         Number of instances to be used for the "full"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                          ablation, if not provided firstTest instances are used</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> -s --seed                Integer value to use as seed for the random number</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> -s,--seed                Integer value to use as seed for the random number</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                          generation</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> -o --output-file         Log file to save the ablation log. If "", the results</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> -o,--output-file         Log file to save the ablation log. If "", the results</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                          are not saved to a file.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> -p --plot                Output filename (.pdf) for the plot. If not given, no</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> -p,--plot                Output filename (.pdf) for the plot. If not given, no</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                          plot is created</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> -O --plot-type           Type of plot. Supported values are "mean" and</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> -O,--plot-type           Type of plot. Supported values are "mean" and</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                          "boxplot"</span>
 <span class="r-in"></span>
 </code></pre></div>
