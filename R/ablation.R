@@ -64,8 +64,8 @@ ablation_cmdline <- function(argv = commandArgs(trailingOnly = TRUE))
                     ab.params = params$ab.params, type = params$type,
                     n.instances = params$n.instances, seed = params$seed,
                     ablationLogFile = params$ablationLogFile)
-  if (!is.null(params$plot) || base::interactive()) {
-    plotAblation(ablog, pdf.file = params$plot, type = params$plot_type) 
+  if (!is.null(params[["plot"]]) || base::interactive()) {
+    plotAblation(ablog, pdf.file = params[["plot"]], type = params[["plot_type"]]) 
   }
   invisible(ablog)
 }
