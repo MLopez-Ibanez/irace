@@ -11,16 +11,21 @@ CommandArgsParser <- R6::R6Class("CommandArgsParser", cloneable = FALSE, list(
       argv <- strsplit(trim(argv), " +")[[1]]
     }
     self$argv <- argv
+    required_colnames <- c("name", "short", "long", "type", "default")
+    if (any(required_colnames %!in% colnames(argsdef))) {
+      stop("argsdef must contain the column names: ", paste0(required_colnames, collapse=", "))
+    }
     self$argsdef <- argsdef
+    rownames(self$argsdef) <- argsdef$name
+    self
   },
   readCmdLineParameter = function (paramName, default = NULL) {
-    value <- self$readArg (short = self$argsdef[paramName, "short"],
-                           long  = self$argsdef[paramName,"long"])
+    value <- self$readArg(short = self$argsdef[paramName, "short"],
+                          long  = self$argsdef[paramName,"long"])
     if (is.null(value)) {
       value <- if (is.null(default)) self$argsdef[paramName, "default"] else default
-    } else if (is.na(value) && self$argsdef[paramName,"type"] != 'x' ) {
-      irace.error ("option '", self$argsdef[paramName,"long"],
-                   "' requires an argument\n")
+    } else if (is.na(value) && self$argsdef[paramName,"type"] != 'x') {
+      stop("option '", self$argsdef[paramName,"long"],"' requires an argument", call. = FALSE)
     }
     return(value)
   },
@@ -30,20 +35,20 @@ CommandArgsParser <- R6::R6Class("CommandArgsParser", cloneable = FALSE, list(
   readArg = function(short = "", long = "") {
     argv <- self$argv
     pos <- c()
-    if (length (short) > 0) {
+    if (length(short) > 0) {
       pos <- grep (paste0("^", short, "$"), argv)
       if (length (pos) == 0) {
         pos <- grep (paste0("^", short, "="), argv)
       }
     }
-    if (length (long) > 0 && length (pos) == 0)  {
-      pos <- grep (paste0("^", long, "$"), argv)
-      if (length (pos) == 0) {
-        pos <- grep (paste0("^", long, "="), argv)
+    if (length(long) > 0 && length(pos) == 0)  {
+      pos <- grep(paste0("^", long, "$"), argv)
+      if (length(pos) == 0) {
+        pos <- grep(paste0("^", long, "="), argv)
       }
     }
-    if (length (pos) == 0) {
-      return (NULL)
+    if (length(pos) == 0) {
+      return(NULL)
     } else if (length(pos) > 0) {
       # Allow repeated parameters
       pos <- max(pos)
@@ -56,6 +61,18 @@ CommandArgsParser <- R6::R6Class("CommandArgsParser", cloneable = FALSE, list(
     }
     self$argv <- self$argv[-pos]
     return (value)
+  },
+  readAll = function() {
+    params <- list()
+    for (param in self$argsdef$name[self$argsdef$type != 'x']) {
+      value <- self$readCmdLineParameter(paramName = param)
+      if (is.na(value) || (length(value) > 0 && value == "")) value <- NULL
+      params[[param]] <- value
+    }
+    params
+  },
+  cmdline_usage = function(){
+    irace::cmdline_usage(self$argsdef)
   })
   )
 
@@ -72,8 +89,9 @@ cmdline_usage <- function(cmdline_args)
     long <- cmdline_args[i,"long"]
     desc <- cmdline_args[i,"description"]
     if (desc == "" || (short == "" && long == "")) next
+    if (short != "") short <- paste0(short,",")
     cat(sep = "\n", strwrap(desc, width = 80,
-                            initial = sprintf("%2s %-20s  ", short, long),
+                            initial = sprintf("%3s%-20s  ", short, long),
                             exdent = 25))
   }
 }

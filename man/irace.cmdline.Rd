@@ -89,22 +89,23 @@ command line used to invoke R.
 The function reads the parameters given on the command line
 used to invoke R, finds the name of the scenario file,
 initializes the scenario from the file (with the function
-\code{\link{readScenario}}) and possibly from parameters passed on
+\code{\link{readScenario}}) and possibly from parameters passed in
 the command line. It finally starts \pkg{irace} by calling
-\code{\link{irace.main}}. List of command-line parameters:\if{html}{\out{<div class="r">}}\preformatted{cmdline_usage(.irace.params.def)
-}\if{html}{\out{</div>}}\preformatted{## -h --help                Show this help.
-## -v --version             Show irace package version.
-## -c --check               Check scenario.
-## -i --init                Initialize the working directory with template config
+\code{\link{irace.main}}.
+
+List of command-line parameters:\preformatted{## -h,--help                Show this help.
+## -v,--version             Show irace package version.
+## -c,--check               Check scenario.
+## -i,--init                Initialize the working directory with template config
 ##                          files.
 ##    --only-test           Only test the configurations given in the file passed
 ##                          as argument.
-## -s --scenario            File that describes the configuration scenario setup
+## -s,--scenario            File that describes the configuration scenario setup
 ##                          and other irace settings.
-## -p --parameter-file      File that contains the description of the parameters
+## -p,--parameter-file      File that contains the description of the parameters
 ##                          of the target algorithm.
 ##    --exec-dir            Directory where the programs will be run.
-## -l --log-file            File to save tuning results as an R dataset, either
+## -l,--log-file            File to save tuning results as an R dataset, either
 ##                          absolute path or relative to execDir.
 ##    --recovery-file       Previously saved log file to recover the execution of
 ##                          irace, either absolute path or relative to the current
@@ -213,7 +214,7 @@ the command line. It finally starts \pkg{irace} by calling
 ##                          will be tested if test instances are provided.
 ##    --test-iteration-elites  Enable/disable testing the elite configurations
 ##                          found at each iteration.
-## -e --elitist             Enable/disable elitist irace.
+## -e,--elitist             Enable/disable elitist irace.
 ##    --elitist-new-instances  Number of instances added to the execution list
 ##                          before previous instances in elitist irace.
 ##    --elitist-limit       In elitist irace, maximum number per race of

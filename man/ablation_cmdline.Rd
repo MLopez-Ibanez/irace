@@ -28,27 +28,26 @@ Launch \code{\link[=ablation]{ablation()}} with the same command-line options as
 }
 \details{
 The function reads the parameters given on the command line
-used to invoke R, launches \code{\link[=ablation]{ablation()}} and possibly \code{\link[=plotAblation]{plotAblation()}}. List of command-line parameters.\if{html}{\out{<div class="r">}}\preformatted{cmdline_usage(.ablation.params.def)
-}\if{html}{\out{</div>}}\preformatted{## -i --log-file            path to the (.Rdata) file created by irace from which
+used to invoke R, launches \code{\link[=ablation]{ablation()}} and possibly \code{\link[=plotAblation]{plotAblation()}}. List of command-line parameters.\preformatted{## -i,--log-file            path to the (.Rdata) file created by irace from which
 ##                          the `iraceResults` object will be loaded
-## -S --src                 Source configuration ID
-## -T --target              Target configuration ID. By default the best
+## -S,--src                 Source configuration ID
+## -T,--target              Target configuration ID. By default the best
 ##                          configuration found by irace
-## -P --params              Specific parameter names to be used for the ablation
+## -P,--params              Specific parameter names to be used for the ablation
 ##                          (separated with commas). By default use all
-## -t --type                Type of ablation to perform: "full" will execute each
+## -t,--type                Type of ablation to perform: "full" will execute each
 ##                          configuration on all `--n-instances` to determine the
 ##                          best-performing one; "racing" will apply racing to
 ##                          find the best configurations
-## -n --n-instances         Number of instances to be used for the "full"
+## -n,--n-instances         Number of instances to be used for the "full"
 ##                          ablation, if not provided firstTest instances are used
-## -s --seed                Integer value to use as seed for the random number
+## -s,--seed                Integer value to use as seed for the random number
 ##                          generation
-## -o --output-file         Log file to save the ablation log. If "", the results
+## -o,--output-file         Log file to save the ablation log. If "", the results
 ##                          are not saved to a file.
-## -p --plot                Output filename (.pdf) for the plot. If not given, no
+## -p,--plot                Output filename (.pdf) for the plot. If not given, no
 ##                          plot is created
-## -O --plot-type           Type of plot. Supported values are "mean" and
+## -O,--plot-type           Type of plot. Supported values are "mean" and
 ##                          "boxplot"
 }
 }

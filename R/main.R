@@ -57,20 +57,6 @@ cat.irace.license <- function()
 {
   cat(sub("__VERSION__", irace.version, irace.license, fixed=TRUE))
 }
-  
-#' irace.usage
-#'
-#' This function prints all command-line options of \pkg{irace}, with the
-#' corresponding switches and a short description.
-#' 
-#' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
-#' @export
-irace.usage <- function()
-{
-  cat.irace.license()
-  cat ("# installed at: ", system.file(package="irace"), "\n", sep = "")
-  cmdline_usage(.irace.params.def)
-}
 
 #' Higher-level interface to launch `irace()`.
 #'
@@ -387,12 +373,15 @@ init <- function()
 #' @details The function reads the parameters given on the command line
 #' used to invoke R, finds the name of the scenario file,
 #'  initializes the scenario from the file (with the function
-#'  \code{\link{readScenario}}) and possibly from parameters passed on
+#'  \code{\link{readScenario}}) and possibly from parameters passed in
 #'  the command line. It finally starts \pkg{irace} by calling
-#'  \code{\link{irace.main}}. List of command-line parameters:
-#' ```{r}
+#'  \code{\link{irace.main}}.
+#'
+#' List of command-line parameters:
+#' ```{r echo=FALSE}
 #' cmdline_usage(.irace.params.def)
 #' ```
+#'
 #' @templateVar return_invisible TRUE
 #' @template return_irace
 #' 
@@ -405,21 +394,21 @@ init <- function()
 #' @export
 irace.cmdline <- function(argv = commandArgs(trailingOnly = TRUE))
 {
+  cat.irace.license()
+  cat("# installed at: ", system.file(package="irace"), "\n",
+      "# called with: ", paste(argv, collapse = " "), "\n", sep = "")
+
   parser <- CommandArgsParser$new(argv = argv, argsdef = .irace.params.def)
   if (!is.null(parser$readArg (short = "-h", long = "--help"))) {
-    irace.usage()
+    parser$cmdline_usage()
     return(invisible(NULL))
   }
-  cat.irace.license()
-  cat ("# installed at: ", system.file(package="irace"), "\n",
-       "# called with: ", paste(argv, collapse = " "), "\n", sep = "")
-
-  if (!is.null(parser$readArg (short = "-v", long = "--version"))) {
+  if (!is.null(parser$readArg(short = "-v", long = "--version"))) {
     print(citation(package="irace"))
     return(invisible(NULL))
   }
   
-  if (!is.null(parser$readArg (short = "-i", long = "--init"))) {
+  if (!is.null(parser$readArg(short = "-i", long = "--init"))) {
     init()
     return(invisible(NULL))
   }

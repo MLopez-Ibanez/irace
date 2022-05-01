@@ -217,7 +217,7 @@ library(knitr)
 <<exampleload,eval=TRUE,include=FALSE>>=
 library("irace")
 load("examples.Rdata")
-load("irace-acotsp.Rdata")
+iraceResults <- irace::read_logfile("irace-acotsp.Rdata")
 log_ablation_file <- file.path(system.file(package="irace"), "exdata", "log-ablation.Rdata")
 load(log_ablation_file)
 options(width = 70)
@@ -2661,16 +2661,17 @@ other just in one parameter, where parameter values in source are replaced by
 values from target. The sequence can be seen as a ``path'' from the source to
 the target configuration.  This can be used to find new better ``intermediate''
 configurations or to analyse the impact of the parameters in the performance.
-To perform ablation use the \code{ablation} function and specify the IDs of the
-source and target configurations.  By default, the source is taken as the first
-configuration evaluated by \irace and the target as the best overall
-configuration found. The argument \code{ab.params} can be used to specify a
-subset of the parameters considered in the ablation. The option
+
+
+To perform ablation, you can use the \code{ablation} function and specify the
+IDs of the source and target configurations.  By default, the source is taken
+as the first configuration evaluated by \irace and the target as the best
+overall configuration found. The argument \code{ab.params} can be used to
+specify a subset of the parameters considered in the ablation. The option
 \parameter{firstTest} defines how many instances are selected for the
 evaluation of configurations, if a different number of instances is required it
-must be specified in the argument \code{n.instance}.
-Use the function \code{plotAblation} to visualize the ablation results
-(Fig.~\ref{fig:testAb}).
+must be specified in the argument \code{n.instance}.  Use the function
+\code{plotAblation} to visualize the ablation results (Fig.~\ref{fig:testAb}).
 
 <<ablation, prompt=FALSE, eval=FALSE>>=
 ablog <- ablation("irace.Rdata", src = 1, target = 60)
@@ -2692,6 +2693,10 @@ The function returns a list containing the following elements:
    \item \code{best}: Best overall configuration found.
 \end{description}
 
+We also provide a command-line executable that allows you to perform ablation without launching \aR. It is installed in the same location as the \irace command-line executable and has the following options:
+<<ablation_cmdline, prompt=FALSE, eval=TRUE,echo=FALSE>>=
+ablation_cmdline("--help")
+@
 
 \subsection{Postselection race}\label{sec:postselection}
 

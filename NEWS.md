@@ -132,7 +132,11 @@
    and the value stored in the log / recovery file was wrong.
                          (Manuel López-Ibáñez, reported by Richard Schoonhoven)
 
- 
+ * The function `irace.usage()` was removed. It was not really useful for R
+   users as the same result can be obtained by calling
+   `irace.cmdline("--help")`.
+                                                         (Manuel López-Ibáñez)
+   
  
 # irace 3.4.1  (31/03/2020)
 

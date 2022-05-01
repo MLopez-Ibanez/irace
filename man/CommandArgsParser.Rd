@@ -23,6 +23,8 @@ R6 Class for parsing command-line arguments
 \item \href{#method-new}{\code{CommandArgsParser$new()}}
 \item \href{#method-readCmdLineParameter}{\code{CommandArgsParser$readCmdLineParameter()}}
 \item \href{#method-readArg}{\code{CommandArgsParser$readArg()}}
+\item \href{#method-readAll}{\code{CommandArgsParser$readAll()}}
+\item \href{#method-cmdline_usage}{\code{CommandArgsParser$cmdline_usage()}}
 }
 }
 \if{html}{\out{<hr>}}
@@ -49,6 +51,24 @@ R6 Class for parsing command-line arguments
 \subsection{Method \code{readArg()}}{
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{CommandArgsParser$readArg(short = "", long = "")}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-readAll"></a>}}
+\if{latex}{\out{\hypertarget{method-readAll}{}}}
+\subsection{Method \code{readAll()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CommandArgsParser$readAll()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-cmdline_usage"></a>}}
+\if{latex}{\out{\hypertarget{method-cmdline_usage}{}}}
+\subsection{Method \code{cmdline_usage()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{CommandArgsParser$cmdline_usage()}\if{html}{\out{</div>}}
 }
 
 }
