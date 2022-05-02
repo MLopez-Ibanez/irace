@@ -2,12 +2,11 @@
 
 ## New features and improvements
 
- * Handling of dependent parameter domains. 
-   These should be specified in the parameter domain definition and, for now,
-   only numerical parameter can define dependent domains. A numerical
-   domain can be dependent on one bound, e.g. `(1, param1*2))`, where the
-   dependent bound can include basic arithmetic operators.
-                                (Leslie Pérez Cáceres, Manuel López-Ibáñez)
+ * Handling of dependent parameter domains: These should be specified in the
+   parameter domain definition and, for now, only numerical parameter can
+   define dependent domains. A numerical domain can be dependent on one bound,
+   e.g. `(1, param1*2))`, where the dependent bound can include basic
+   arithmetic operators.          (Leslie Pérez Cáceres, Manuel López-Ibáñez)
 
  * Added support for HTCondor cluster framework to `--batchmode`.
                                                      (Filippo Bistaffa)
@@ -59,11 +58,11 @@
 
  * `--check` now also check the contents of `configurationsFile` and runs
    configurations provided via `initConfigurations`. 
-                          (Manuel  López-Ibáñez, reported by Andreea Avramescu)
+                          (Manuel López-Ibáñez, reported by Andreea Avramescu)
 
- * The package now provides an `ablation` (`ablation.exe` in Windows)
-   executable that makes easier to perform ablation analysis without having any
-   R knowledge.
+ * The package now provides an `ablation` executable (`ablation.exe` in
+   Windows) that makes easier to perform ablation analysis without having any R
+   knowledge.
    
  * The interface to functions `ablation()` and `plotAblation()` has been
    simplified. The `ablation()` function now allows overriding scenario
