@@ -232,14 +232,12 @@
 <li><p>Calling the command:</p></li>
 </ol>
 <div class="sourceCode" id="cb22"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>        <span class="ex">$</span> cd ~/tuning/ <span class="kw">&amp;&amp;</span> <span class="va">$IRACE_HOME</span><span class="ex">/bin/irace</span></span></code></pre></div>
-<div class="sourceCode" id="cb23"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>performs one run of Iterated Race. See the output of <span class="st">`</span><span class="at">irace --help</span><span class="st">`</span> <span class="cf">for</span></span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>additional irace parameters. Command<span class="sc">-</span>line parameters override the</span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>scenario setup specified <span class="cf">in</span> the <span class="st">`</span><span class="at">scenario.txt</span><span class="st">`</span> file.</span></code></pre></div>
+<p>performs one run of Iterated Race. See the output of <code>irace --help</code> for additional irace parameters. Command-line parameters override the scenario setup specified in the <code>scenario.txt</code> file.</p>
 <div class="section level2">
 <h2 id="many-tuning-runs-in-parallel">Many tuning runs in parallel<a class="anchor" aria-label="anchor" href="#many-tuning-runs-in-parallel"></a>
 </h2>
 <p>For executing several repetitions of irace in parallel, call the program</p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>    <span class="ex">$</span> cd ~/tuning/ <span class="kw">&amp;&amp;</span> <span class="va">$IRACE_HOME</span><span class="ex">/bin/parallel-irace</span> N</span></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>    <span class="ex">$</span> cd ~/tuning/ <span class="kw">&amp;&amp;</span> <span class="va">$IRACE_HOME</span><span class="ex">/bin/parallel-irace</span> N</span></code></pre></div>
 <p>where N is the number of repetitions. By default, the execution directory of each run of irace will be set to <code>./execdir-dd</code>, where <code>dd</code> is a number padded with zeroes.</p>
 <p><strong>Be careful</strong>, <code>parallel-irace</code> will create these directories from scratch, deleting them first if they already exist.</p>
 <p>Check the help of <code>parallel-irace</code> by running it without parameters.</p>
@@ -264,9 +262,9 @@
 <h1 id="building-an-irace-standalone-container">Building an irace standalone container<a class="anchor" aria-label="anchor" href="#building-an-irace-standalone-container"></a>
 </h1>
 <p>Thanks to <a href="https://sylabs.io/singularity/" class="external-link">Singularity</a>, you can build a standalone container of <code>irace</code> using the file <code>irace.sindef</code> which is available in the directory <code>inst/</code> in the source tarball and github repository or, after installing the irace R package, in the installation directory given by the R expression <code>system.file(package="irace")</code>. After installing SingularityCE, the container may be build using:</p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>sudo singularity build irace.sindef irace.sif</span></code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>sudo singularity build irace.sindef irace.sif</span></code></pre></div>
 <p>and run with:</p>
-<div class="sourceCode" id="cb26"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>singularity run irace.sif <span class="sc">&lt;</span>arguments<span class="sc">&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>singularity run irace.sif <span class="sc">&lt;</span>arguments<span class="sc">&gt;</span></span></code></pre></div>
 </div>
 <div class="section level1">
 <h1 id="frequently-asked-questions">Frequently Asked Questions<a class="anchor" aria-label="anchor" href="#frequently-asked-questions"></a>
