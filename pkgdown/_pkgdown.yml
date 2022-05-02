@@ -1,8 +1,10 @@
+# We need this so search will work.
+url: https://mlopez-ibanez.github.io/irace/
+
 template:
   bootstrap: 5
-  bootswatch: cosmo
   bslib:
-    #primary: "#0054AD"
+    primary: "#707070"
     border-radius: 0.5rem
     btn-border-radius: 0.25rem
   
