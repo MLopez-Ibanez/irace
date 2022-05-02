@@ -1,8 +1,8 @@
 template:
   bootstrap: 5
-  #bootswatch: cosmo
+  bootswatch: cosmo
   bslib:
-    primary: "#0054AD"
+    #primary: "#0054AD"
     border-radius: 0.5rem
     btn-border-radius: 0.25rem
   
@@ -16,7 +16,7 @@ development:
 navbar:
   structure:
     left:  [home, intro, guide, reference, articles, tutorials, news]
-    right: [github]
+    right: [search, github]
     
   components:
     home: ~

@@ -3,7 +3,7 @@ README file for developers
 
 Subversion commands
 ---------------------
-
+```
 # See differences in your local copy
 git diff
 # Commit your changes to the local repository
@@ -18,7 +18,7 @@ git diff master
 git rebase -i master
 # Get help
 git help
-
+```
 
 Developing irace
 ----------------
@@ -62,7 +62,7 @@ CHECKING:
      wilcox.test 
 
   can be fixed by running:
-
+```R
 imports_for_undefined_globals <-
 function(txt, lst, selective = TRUE)
 {
@@ -81,10 +81,12 @@ function(txt, lst, selective = TRUE)
         sprintf("import(\"%s\")", names(imp))
     }
 } 
+```
+```
 R> txt <- "median p.adjust pchisq qt read.table recover rexp rnorm runif t.test
      wilcox.test" 
 R> writeLines(imports_for_undefined_globals(txt, selective = FALSE))
-
+```
 And adding the result to NAMESPACE. Namespaces newly imported from also need to
 be listed in the Imports: field of DESCRIPTION.
 
