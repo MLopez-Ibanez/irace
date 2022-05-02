@@ -285,10 +285,9 @@ Usage
 ```bash
         $ cd ~/tuning/ && $IRACE_HOME/bin/irace
 ```
-
-    performs one run of Iterated Race. See the output of `irace --help` for
-    additional irace parameters. Command-line parameters override the
-    scenario setup specified in the `scenario.txt` file.
+   performs one run of Iterated Race. See the output of `irace --help` for
+   additional irace parameters. Command-line parameters override the
+   scenario setup specified in the `scenario.txt` file.
 
 
 Many tuning runs in parallel

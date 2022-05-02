@@ -5,8 +5,10 @@ template:
   bootstrap: 5
   bootswatch: sandstone
   bslib:
+    link-color: "#447099" 
     font-scale: 0.9
-    primary: "#447099"
+    link-decoration: none
+    link-hover-decoration: underline
     border-radius: 0
     btn-border-radius: 3px
   
