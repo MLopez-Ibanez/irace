@@ -62,7 +62,7 @@ gendoc:
 	$(Reval) 'devtools::document()'
 
 pkgdown: gendoc
-	$(Reval) 'pkgdown::build_site(run_dont_run = TRUE, document = FALSE)'
+	$(Reval) 'pkgdown::build_site()'
 	@$(MAKE) clean
 
 version:

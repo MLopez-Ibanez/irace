@@ -3,10 +3,12 @@ url: https://mlopez-ibanez.github.io/irace/
 
 template:
   bootstrap: 5
+  bootswatch: sandstone
   bslib:
-    primary: "#707070"
-    border-radius: 0.5rem
-    btn-border-radius: 0.25rem
+    font-scale: 0.9
+    primary: "#447099"
+    border-radius: 0
+    btn-border-radius: 3px
   
 development:
   mode: unreleased
