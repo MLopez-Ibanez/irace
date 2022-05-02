@@ -1,129 +1,129 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>/404.html</loc>
+    <loc>https://mlopez-ibanez.github.io/irace/404.html</loc>
   </url>
   <url>
-    <loc>/DEVEL-README.html</loc>
+    <loc>https://mlopez-ibanez.github.io/irace/DEVEL-README.html</loc>
   </url>
   <url>
-    <loc>/LICENSE.html</loc>
+    <loc>https://mlopez-ibanez.github.io/irace/LICENSE.html</loc>
   </url>
   <url>
-    <loc>/authors.html</loc>
+    <loc>https://mlopez-ibanez.github.io/irace/authors.html</loc>
   </url>
   <url>
-    <loc>/index.html</loc>
+    <loc>https://mlopez-ibanez.github.io/irace/index.html</loc>
   </url>
   <url>
-    <loc>/news/index.html</loc>
+    <loc>https://mlopez-ibanez.github.io/irace/news/index.html</loc>
   </url>
   <url>
-    <loc>/reference/CommandArgsParser.html</loc>
+    <loc>https://mlopez-ibanez.github.io/irace/reference/CommandArgsParser.html</loc>
   </url>
   <url>
-    <loc>/reference/ablation.html</loc>
+    <loc>https://mlopez-ibanez.github.io/irace/reference/ablation.html</loc>
   </url>
   <url>
-    <loc>/reference/ablation_cmdline.html</loc>
+    <loc>https://mlopez-ibanez.github.io/irace/reference/ablation_cmdline.html</loc>
   </url>
   <url>
-    <loc>/reference/buildCommandLine.html</loc>
+    <loc>https://mlopez-ibanez.github.io/irace/reference/buildCommandLine.html</loc>
   </url>
   <url>
-    <loc>/reference/checkIraceScenario.html</loc>
+    <loc>https://mlopez-ibanez.github.io/irace/reference/checkIraceScenario.html</loc>
   </url>
   <url>
-    <loc>/reference/checkParameters.html</loc>
+    <loc>https://mlopez-ibanez.github.io/irace/reference/checkParameters.html</loc>
   </url>
   <url>
-    <loc>/reference/checkScenario.html</loc>
+    <loc>https://mlopez-ibanez.github.io/irace/reference/checkScenario.html</loc>
   </url>
   <url>
-    <loc>/reference/configurations.print.command.html</loc>
+    <loc>https://mlopez-ibanez.github.io/irace/reference/configurations.print.command.html</loc>
   </url>
   <url>
-    <loc>/reference/configurations.print.html</loc>
+    <loc>https://mlopez-ibanez.github.io/irace/reference/configurations.print.html</loc>
   </url>
   <url>
-    <loc>/reference/defaultScenario.html</loc>
+    <loc>https://mlopez-ibanez.github.io/irace/reference/defaultScenario.html</loc>
   </url>
   <url>
-    <loc>/reference/getConfigurationById.html</loc>
+    <loc>https://mlopez-ibanez.github.io/irace/reference/getConfigurationById.html</loc>
   </url>
   <url>
-    <loc>/reference/getConfigurationByIteration.html</loc>
+    <loc>https://mlopez-ibanez.github.io/irace/reference/getConfigurationByIteration.html</loc>
   </url>
   <url>
-    <loc>/reference/getFinalElites.html</loc>
+    <loc>https://mlopez-ibanez.github.io/irace/reference/getFinalElites.html</loc>
   </url>
   <url>
-    <loc>/reference/index.html</loc>
+    <loc>https://mlopez-ibanez.github.io/irace/reference/index.html</loc>
   </url>
   <url>
-    <loc>/reference/irace-package.html</loc>
+    <loc>https://mlopez-ibanez.github.io/irace/reference/irace-package.html</loc>
   </url>
   <url>
-    <loc>/reference/irace.cmdline.html</loc>
+    <loc>https://mlopez-ibanez.github.io/irace/reference/irace.cmdline.html</loc>
   </url>
   <url>
-    <loc>/reference/irace.html</loc>
+    <loc>https://mlopez-ibanez.github.io/irace/reference/irace.html</loc>
   </url>
   <url>
-    <loc>/reference/irace.license.html</loc>
+    <loc>https://mlopez-ibanez.github.io/irace/reference/irace.license.html</loc>
   </url>
   <url>
-    <loc>/reference/irace.main.html</loc>
+    <loc>https://mlopez-ibanez.github.io/irace/reference/irace.main.html</loc>
   </url>
   <url>
-    <loc>/reference/irace.version.html</loc>
+    <loc>https://mlopez-ibanez.github.io/irace/reference/irace.version.html</loc>
   </url>
   <url>
-    <loc>/reference/path_rel2abs.html</loc>
+    <loc>https://mlopez-ibanez.github.io/irace/reference/path_rel2abs.html</loc>
   </url>
   <url>
-    <loc>/reference/plotAblation.html</loc>
+    <loc>https://mlopez-ibanez.github.io/irace/reference/plotAblation.html</loc>
   </url>
   <url>
-    <loc>/reference/printScenario.html</loc>
+    <loc>https://mlopez-ibanez.github.io/irace/reference/printScenario.html</loc>
   </url>
   <url>
-    <loc>/reference/psRace.html</loc>
+    <loc>https://mlopez-ibanez.github.io/irace/reference/psRace.html</loc>
   </url>
   <url>
-    <loc>/reference/readConfigurationsFile.html</loc>
+    <loc>https://mlopez-ibanez.github.io/irace/reference/readConfigurationsFile.html</loc>
   </url>
   <url>
-    <loc>/reference/readParameters.html</loc>
+    <loc>https://mlopez-ibanez.github.io/irace/reference/readParameters.html</loc>
   </url>
   <url>
-    <loc>/reference/readScenario.html</loc>
+    <loc>https://mlopez-ibanez.github.io/irace/reference/readScenario.html</loc>
   </url>
   <url>
-    <loc>/reference/read_logfile.html</loc>
+    <loc>https://mlopez-ibanez.github.io/irace/reference/read_logfile.html</loc>
   </url>
   <url>
-    <loc>/reference/read_pcs_file.html</loc>
+    <loc>https://mlopez-ibanez.github.io/irace/reference/read_pcs_file.html</loc>
   </url>
   <url>
-    <loc>/reference/removeConfigurationsMetaData.html</loc>
+    <loc>https://mlopez-ibanez.github.io/irace/reference/removeConfigurationsMetaData.html</loc>
   </url>
   <url>
-    <loc>/reference/scenario.update.paths.html</loc>
+    <loc>https://mlopez-ibanez.github.io/irace/reference/scenario.update.paths.html</loc>
   </url>
   <url>
-    <loc>/reference/target.evaluator.default.html</loc>
+    <loc>https://mlopez-ibanez.github.io/irace/reference/target.evaluator.default.html</loc>
   </url>
   <url>
-    <loc>/reference/target.runner.default.html</loc>
+    <loc>https://mlopez-ibanez.github.io/irace/reference/target.runner.default.html</loc>
   </url>
   <url>
-    <loc>/reference/testConfigurations.html</loc>
+    <loc>https://mlopez-ibanez.github.io/irace/reference/testConfigurations.html</loc>
   </url>
   <url>
-    <loc>/reference/testing_fromfile.html</loc>
+    <loc>https://mlopez-ibanez.github.io/irace/reference/testing_fromfile.html</loc>
   </url>
   <url>
-    <loc>/reference/testing_fromlog.html</loc>
+    <loc>https://mlopez-ibanez.github.io/irace/reference/testing_fromlog.html</loc>
   </url>
 </urlset>

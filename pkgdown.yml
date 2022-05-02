@@ -2,5 +2,8 @@ pandoc: 2.14.2
 pkgdown: 2.0.3
 pkgdown_sha: ~
 articles: {}
-last_built: 2022-05-02T07:49Z
+last_built: 2022-05-02T08:47Z
+urls:
+  reference: https://mlopez-ibanez.github.io/irace/reference
+  article: https://mlopez-ibanez.github.io/irace/articles
 
