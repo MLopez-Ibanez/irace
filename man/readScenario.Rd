@@ -22,8 +22,7 @@ The scenario list read from the file. The scenario settings not
 present in the file are not present in the list, i.e., they are \code{NULL}.
 }
 \description{
-\code{readScenario} reads from a file the scenario settings to be used by
-\pkg{irace}..
+Reads from a file the scenario settings to be used by \pkg{irace}.
 }
 \seealso{
 \describe{

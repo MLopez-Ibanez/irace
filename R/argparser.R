@@ -36,9 +36,11 @@ CommandArgsParser <- R6::R6Class("CommandArgsParser", cloneable = FALSE, list(
     argv <- self$argv
     pos <- c()
     if (length(short) > 0) {
-      pos <- grep (paste0("^", short, "$"), argv)
-      if (length (pos) == 0) {
-        pos <- grep (paste0("^", short, "="), argv)
+      # FIXME: use match()
+      pos <- grep(paste0("^", short, "$"), argv)
+      if (length(pos) == 0) {
+        # FIXME: use pmatch()
+        pos <- grep(paste0("^", short, "="), argv)
       }
     }
     if (length(long) > 0 && length(pos) == 0)  {
@@ -49,12 +51,12 @@ CommandArgsParser <- R6::R6Class("CommandArgsParser", cloneable = FALSE, list(
     }
     if (length(pos) == 0) {
       return(NULL)
-    } else if (length(pos) > 0) {
+    } else if(length(pos) > 0) {
       # Allow repeated parameters
       pos <- max(pos)
     }
   
-    value <- unlist(strsplit (argv[pos], '=', fixed = TRUE))[2]
+    value <- unlist(strsplit(argv[pos], '=', fixed = TRUE))[2]
     if (is.null (value) || is.na(value)) {
       value <- argv[pos + 1]
       self$argv <- argv[-(pos + 1)]

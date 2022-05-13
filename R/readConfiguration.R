@@ -18,6 +18,7 @@
 #' 
 #' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
 #' @export
+## FIXME: add this info to the docs.
 ## Read some configurations from a file.
 ## Example of an input file,
 ## it should be readable with read.table( , header=TRUE).
@@ -238,8 +239,7 @@ buildForbiddenExp <- function(configurations, parameters)
 
 #' readScenario
 #'
-#' `readScenario` reads from a file the scenario settings to be used by
-#' \pkg{irace}..
+#' Reads from a file the scenario settings to be used by \pkg{irace}.
 #' 
 #' @param filename (`character(1)`) \cr Filename from which the scenario will
 #'   be read. If empty, the default `scenarioFile` is used.  An example
