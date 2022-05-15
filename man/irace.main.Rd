@@ -9,7 +9,7 @@ irace.main(scenario = defaultScenario(), output.width = 9999L)
 \arguments{
 \item{scenario}{(\code{list()}) \cr Data structure containing \pkg{irace}
 settings. The data structure has to be the one returned by the function
-\code{\link{defaultScenario}} or \code{\link{readScenario}}.}
+\code{\link[=defaultScenario]{defaultScenario()}} or \code{\link[=readScenario]{readScenario()}}.}
 
 \item{output.width}{(\code{integer(1)}) The width that must be used for the screen
 output.}

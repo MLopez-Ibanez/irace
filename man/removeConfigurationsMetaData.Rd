@@ -21,8 +21,8 @@ the configurations, to output only the values for the parameters
 of the configuration without data possibly useless to the user.
 }
 \seealso{
-\code{\link{configurations.print.command}} to print the configurations as command lines.
-\code{\link{configurations.print}} to print the configurations as a data frame.
+\code{\link[=configurations.print.command]{configurations.print.command()}} to print the configurations as command lines.
+\code{\link[=configurations.print]{configurations.print()}} to print the configurations as a data frame.
 }
 \author{
 Manuel López-Ibáñez and Jérémie Dubois-Lacoste

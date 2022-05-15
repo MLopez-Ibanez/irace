@@ -29,7 +29,7 @@ from a file and puts them in \pkg{irace} format. The configurations are checked
 to match the parameters description provided.
 }
 \seealso{
-\code{\link{readParameters}} to obtain a valid parameter structure from a parameters list.
+\code{\link[=readParameters]{readParameters()}} to obtain a valid parameter structure from a parameters list.
 }
 \author{
 Manuel López-Ibáñez and Jérémie Dubois-Lacoste

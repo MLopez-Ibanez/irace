@@ -9,13 +9,13 @@ scenario.update.paths(scenario, from, to, fixed = TRUE)
 \arguments{
 \item{scenario}{(\code{list()}) \cr Data structure containing \pkg{irace}
 settings. The data structure has to be the one returned by the function
-\code{\link{defaultScenario}} or \code{\link{readScenario}}.}
+\code{\link[=defaultScenario]{defaultScenario()}} or \code{\link[=readScenario]{readScenario()}}.}
 
 \item{from}{character string containing a regular expression (or character
 string for \code{fixed = TRUE}) to be matched.}
 
 \item{to}{the replacement string.character string. For \code{fixed = FALSE}
-this can include backreferences \code{"\1"} to \code{"\9"} to
+this can include backreferences \code{"\\1"} to \code{"\\9"} to
 parenthesized subexpressions of \code{from}.}
 
 \item{fixed}{logical.  If \code{TRUE}, \code{from} is a string to be matched
@@ -35,5 +35,5 @@ scenario <- scenario.update.paths(scenario, from = "/home/manuel/", to = "/home/
 }
 }
 \seealso{
-\code{\link[base]{grep}}
+\code{\link[base:grep]{base::grep()}}
 }

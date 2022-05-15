@@ -50,7 +50,8 @@ man.text <- c(man.text, "#' \\itemize{")
 
 for (section in ordered.sections) {
   man.text <- c(man.text,
-                sprintf("#'  \\item %s:", gsub("\\\\([^ ]+)", "\\\\code{\\1}", section)),
+                # We can rely on markdown
+                sprintf("#'  \\item %s:", gsub("\\\\([^ ]+)", "`\\1`", section)),
                 "#'    \\describe{")
   parameters <- irace.params[irace.params[, "section"] == section, ]
   parameters <- parameters[substring(parameters[, "name"], 1, 1) != ".", , drop = FALSE]
@@ -58,12 +59,12 @@ for (section in ordered.sections) {
                            | !is.null.or.na.or.empty(parameters[, "description"]), , drop = FALSE]
   if (nrow(parameters) < 1) next
   sec.text <- apply(parameters, 1, function(x) {
-    paste0("#'      \\item{\\code{", x["name"], "}}{",
+    paste0("#'      \\item{`", x["name"], "`}{",
            ifelse(is.null.or.na.or.empty(x["man"]),
                                          x["description"], x["man"]),
-                  " (Default: \\code{",
+                  " (Default: `",
            format.number.or.string(x["default"]),
-           "})}")})
+           "`)}")})
 
   man.text <- c(man.text, sec.text, "#'    }")
 }

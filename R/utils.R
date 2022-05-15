@@ -254,11 +254,11 @@ strcat <- function(...)
 #'
 #' @template arg_scenario
 #' @param from character string containing a regular expression (or character
-#'   string for \code{fixed = TRUE}) to be matched.
-#' @param to the replacement string.character string. For \code{fixed = FALSE}
-#'   this can include backreferences \code{"\1"} to \code{"\9"} to
-#'   parenthesized subexpressions of \code{from}.
-#' @param fixed logical.  If \code{TRUE}, \code{from} is a string to be matched
+#'   string for `fixed = TRUE`) to be matched.
+#' @param to the replacement string.character string. For `fixed = FALSE`
+#'   this can include backreferences `"\1"` to `"\9"` to
+#'   parenthesized subexpressions of `from`.
+#' @param fixed logical.  If `TRUE`, `from` is a string to be matched
 #'   as is.
 #' @return The updated scenario
 #' @examples
@@ -266,7 +266,7 @@ strcat <- function(...)
 #' scenario <- readScenario(filename = "scenario.txt")
 #' scenario <- scenario.update.paths(scenario, from = "/home/manuel/", to = "/home/leslie")
 #' }
-#' @seealso \code{\link[base]{grep}}
+#' @seealso [base::grep()]
 #' @export
 scenario.update.paths <- function(scenario, from, to, fixed = TRUE)
 {
@@ -274,7 +274,7 @@ scenario.update.paths <- function(scenario, from, to, fixed = TRUE)
   # Only consider the ones that actually appear in scenario.
   pathParams <- intersect(pathParams, names(scenario))
   scenario[pathParams] <- lapply(scenario[pathParams], sub, pattern = from, replacement = to, fixed = fixed)
-  return(scenario)
+  scenario
 }
 
 # This function is used to trim potentially large strings for printing, since
@@ -396,7 +396,7 @@ extractElites <- function(scenario, parameters, configurations, nbElites)
   configurations <- configurations[!duplicated(removeConfigurationsMetaData(configurations)),
                                  , drop = FALSE]
   after <- nrow(configurations)
-  if (after < before && scenario$debugLevel >= 1)  {
+  if (after < before && scenario$debugLevel >= 1) {
     irace.note("Dropped ", before - after, " duplicated elites\n")
   }
 
@@ -406,7 +406,7 @@ extractElites <- function(scenario, parameters, configurations, nbElites)
   elites <- elites[1:nbElites, , drop = FALSE]
   elites[, ".WEIGHT."] <- ((nbElites - (1:nbElites) + 1)
                            / (nbElites * (nbElites + 1) / 2))
-  return (elites)
+  elites
 }
 
 #' removeConfigurationsMetaData
@@ -422,8 +422,8 @@ extractElites <- function(scenario, parameters, configurations, nbElites)
 #' @return The same matrix without the "metadata".
 #'    
 #' @seealso 
-#'   \code{\link{configurations.print.command}} to print the configurations as command lines.
-#'   \code{\link{configurations.print}} to print the configurations as a data frame.
+#'   [configurations.print.command()] to print the configurations as command lines.
+#'   [configurations.print()] to print the configurations as a data frame.
 #' 
 #' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
 #' @export
@@ -445,7 +445,7 @@ removeConfigurationsMetaData <- function(configurations)
 #' @return None.
 #'
 #' @seealso
-#'  \code{\link{configurations.print.command}} to print the configurations as command-line strings.
+#'  [configurations.print.command()] to print the configurations as command-line strings.
 #' 
 #' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
 #' @export
@@ -469,7 +469,7 @@ configurations.print <- function(configurations, metadata = FALSE)
 #' @return None.
 #'
 #' @seealso
-#'  \code{\link{configurations.print}} to print the configurations as a data frame.
+#'  [configurations.print()] to print the configurations as a data frame.
 #' 
 #' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
 #' @export

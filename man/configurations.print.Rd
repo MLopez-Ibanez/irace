@@ -21,7 +21,7 @@ None.
 Print configurations as a data frame
 }
 \seealso{
-\code{\link{configurations.print.command}} to print the configurations as command-line strings.
+\code{\link[=configurations.print.command]{configurations.print.command()}} to print the configurations as command-line strings.
 }
 \author{
 Manuel López-Ibáñez and Jérémie Dubois-Lacoste

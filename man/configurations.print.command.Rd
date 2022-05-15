@@ -22,7 +22,7 @@ Prints configurations after converting them into a representation for the
 command-line.
 }
 \seealso{
-\code{\link{configurations.print}} to print the configurations as a data frame.
+\code{\link[=configurations.print]{configurations.print()}} to print the configurations as a data frame.
 }
 \author{
 Manuel López-Ibáñez and Jérémie Dubois-Lacoste

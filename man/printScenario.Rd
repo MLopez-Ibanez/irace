@@ -9,17 +9,17 @@ printScenario(scenario)
 \arguments{
 \item{scenario}{(\code{list()}) \cr Data structure containing \pkg{irace}
 settings. The data structure has to be the one returned by the function
-\code{\link{defaultScenario}} or \code{\link{readScenario}}.}
+\code{\link[=defaultScenario]{defaultScenario()}} or \code{\link[=readScenario]{readScenario()}}.}
 }
 \description{
 Prints the given scenario
 }
 \seealso{
 \describe{
-\item{\code{\link{readScenario}}}{for reading a configuration scenario from a file.}
-\item{\code{\link{printScenario}}}{prints the given scenario.}
-\item{\code{\link{defaultScenario}}}{returns the default scenario settings of \pkg{irace}.}
-\item{\code{\link{checkScenario}}}{to check that the scenario is valid.}
+\item{\code{\link[=readScenario]{readScenario()}}}{for reading a configuration scenario from a file.}
+\item{\code{\link[=printScenario]{printScenario()}}}{prints the given scenario.}
+\item{\code{\link[=defaultScenario]{defaultScenario()}}}{returns the default scenario settings of \pkg{irace}.}
+\item{\code{\link[=checkScenario]{checkScenario()}}}{to check that the scenario is valid.}
 }
 }
 \author{

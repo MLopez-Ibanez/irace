@@ -14,7 +14,7 @@ scenario file is provided in \verb{system.file(``package="irace",}
 
 \item{scenario}{(\code{list()}) \cr Data structure containing \pkg{irace}
 settings. The data structure has to be the one returned by the function
-\code{\link{defaultScenario}} or \code{\link{readScenario}}.
+\code{\link[=defaultScenario]{defaultScenario()}} or \code{\link[=readScenario]{readScenario()}}.
 This is an initial scenario that is overwritten}
 }
 \value{
@@ -26,9 +26,9 @@ Reads from a file the scenario settings to be used by \pkg{irace}.
 }
 \seealso{
 \describe{
-\item{\code{\link{printScenario}}}{prints the given scenario.}
-\item{\code{\link{defaultScenario}}}{returns the default scenario settings of \pkg{irace}.}
-\item{\code{\link{checkScenario}}}{to check that the scenario is valid.}
+\item{\code{\link[=printScenario]{printScenario()}}}{prints the given scenario.}
+\item{\code{\link[=defaultScenario]{defaultScenario()}}}{returns the default scenario settings of \pkg{irace}.}
+\item{\code{\link[=checkScenario]{checkScenario()}}}{to check that the scenario is valid.}
 }
 }
 \author{

@@ -23,7 +23,7 @@ of parameters used in \code{configuration}.}
 
 \item{scenario}{(\code{list()}) \cr Data structure containing \pkg{irace}
 settings. The data structure has to be the one returned by the function
-\code{\link{defaultScenario}} or \code{\link{readScenario}}.}
+\code{\link[=defaultScenario]{defaultScenario()}} or \code{\link[=readScenario]{readScenario()}}.}
 }
 \value{
 If \code{targetEvaluator} is \code{NULL}, then the \code{targetRunner}

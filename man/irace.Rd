@@ -9,7 +9,7 @@ irace(scenario, parameters)
 \arguments{
 \item{scenario}{(\code{list()}) \cr Data structure containing \pkg{irace}
 settings. The data structure has to be the one returned by the function
-\code{\link{defaultScenario}} or \code{\link{readScenario}}.}
+\code{\link[=defaultScenario]{defaultScenario()}} or \code{\link[=readScenario]{readScenario()}}.}
 
 \item{parameters}{(\code{list()}) \cr Data structure containing the parameter
 space definition. The data structure has to similar to the one returned by the
@@ -106,11 +106,11 @@ irace(scenario = scenario, parameters = parameters)
 }
 \seealso{
 \describe{
-\item{\code{\link{irace.main}}}{a higher-level command-line interface to \code{irace}.}
-\item{\code{\link{readScenario}}}{for reading a configuration scenario from a file.}
-\item{\code{\link{readParameters}}}{read the target algorithm parameters from a file.}
-\item{\code{\link{defaultScenario}}}{returns the default scenario settings of \pkg{irace}.}
-\item{\code{\link{checkScenario}}}{to check that the scenario is valid.}
+\item{\code{\link[=irace.main]{irace.main()}}}{a higher-level command-line interface to \code{irace}.}
+\item{\code{\link[=readScenario]{readScenario()}}}{for reading a configuration scenario from a file.}
+\item{\code{\link[=readParameters]{readParameters()}}}{read the target algorithm parameters from a file.}
+\item{\code{\link[=defaultScenario]{defaultScenario()}}}{returns the default scenario settings of \pkg{irace}.}
+\item{\code{\link[=checkScenario]{checkScenario()}}}{to check that the scenario is valid.}
 }
 }
 \author{

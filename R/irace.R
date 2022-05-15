@@ -516,18 +516,18 @@ allConfigurationsInit <- function(scenario, parameters)
 
 #' irace
 #'
-#' \code{irace} implements iterated Race. It receives some parameters to be tuned 
+#' `irace` implements iterated Race. It receives some parameters to be tuned 
 #'   and returns the best configurations found, namely, the elite configurations 
 #'   obtained from the last iterations (and sorted by rank).
 #' 
 #' @template arg_scenario
 #' @template arg_parameters
 #'
-#' @details The function \code{irace} executes the tuning procedure using 
-#'  the information provided in \code{scenario} and \code{parameters}. Initially it checks 
-#'  the correctness of \code{scenario} and recovers a previous execution if 
-#'  \code{scenario$recoveryFile} is set. A R data file log of the execution is created 
-#'  in \code{scenario$logFile}.
+#' @details The function `irace` executes the tuning procedure using 
+#'  the information provided in `scenario` and `parameters`. Initially it checks 
+#'  the correctness of `scenario` and recovers a previous execution if 
+#'  `scenario$recoveryFile` is set. A R data file log of the execution is created 
+#'  in `scenario$logFile`.
 #'
 #' @template return_irace
 #' @examples
@@ -540,11 +540,11 @@ allConfigurationsInit <- function(scenario, parameters)
 #'
 #' @seealso
 #'  \describe{
-#'  \item{\code{\link{irace.main}}}{a higher-level command-line interface to \code{irace}.}
-#'  \item{\code{\link{readScenario}}}{for reading a configuration scenario from a file.}
-#'  \item{\code{\link{readParameters}}}{read the target algorithm parameters from a file.}
-#'  \item{\code{\link{defaultScenario}}}{returns the default scenario settings of \pkg{irace}.}
-#'  \item{\code{\link{checkScenario}}}{to check that the scenario is valid.}
+#'  \item{[irace.main()]}{a higher-level command-line interface to `irace`.}
+#'  \item{[readScenario()]}{for reading a configuration scenario from a file.}
+#'  \item{[readParameters()]}{read the target algorithm parameters from a file.}
+#'  \item{[defaultScenario()]}{returns the default scenario settings of \pkg{irace}.}
+#'  \item{[checkScenario()]}{to check that the scenario is valid.}
 #' }
 #' 
 #' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
