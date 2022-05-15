@@ -53,6 +53,7 @@ docs/
 
 # /src/iracebin/
 /src/iracebin/irace
+/src/iracebin/ablation
 /src/iracebin/irace2pyimp
 
 # /vignettes/

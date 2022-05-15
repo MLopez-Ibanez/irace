@@ -47,6 +47,8 @@ DEVEL-README.md
 ^scripts
 ^src/iracebin/irace$
 ^src/iracebin/irace.exe$
+^src/iracebin/ablation$
+^src/iracebin/ablation.exe$
 ^src/iracebin/irace2pyimp$
 ^src/iracebin/irace2pyimp.exe$
 ^svn_version$
