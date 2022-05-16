@@ -404,8 +404,8 @@ generateInstances <- function(scenario, remainingBudget)
   # Sample seeds.
   # 2147483647 is the maximum value for a 32-bit signed integer.
   # We use replace = TRUE, because replace = FALSE allocates memory for each possible number.
-  return(data.frame (instance = sindex,
-                     seed = sample.int(2147483647, size = ntimes * length(instances), replace = TRUE)))
+  data.frame(instance = sindex,
+             seed = sample.int(2147483647, size = ntimes * length(instances), replace = TRUE))
 }
 
 addInstances <- function(scenario, instancesList, n.instances)
@@ -414,7 +414,7 @@ addInstances <- function(scenario, instancesList, n.instances)
   if (is.null.or.empty(instancesList))
     instancesList <- generateInstances(scenario, n.instances)
   # If deterministic, we have already added all instances.
-  else if (! scenario$deterministic)
+  else if (!scenario$deterministic)
     instancesList <- rbind(instancesList, generateInstances(scenario, n.instances))
 
   # FIXME: Something is adding rownames. Clear them to avoid future problems.

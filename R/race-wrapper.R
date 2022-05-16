@@ -431,9 +431,8 @@ run_target_runner <- function(experiment, scenario)
 
 #' target.runner.default
 #'
-#' `target.runner.default` is the default targetRunner function. 
-#' You can use it as an advanced example of how to create your own targetRunner 
-#' function.
+#' Default `targetRunner` function. Use it as an advanced example of how to
+#' create your own `targetRunner` function.
 #' 
 #' @param experiment A list describing the experiment. It contains at least:
 #'    \describe{
@@ -478,7 +477,6 @@ target.runner.default <- function(experiment, scenario)
   cmd <- res$cmd
   output <- res$output
   args <- res$args
-
   
   cost <- time <- NULL
   err.msg <- output$error

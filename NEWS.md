@@ -131,6 +131,10 @@
    and the value stored in the log / recovery file was wrong.
                          (Manuel López-Ibáñez, reported by Richard Schoonhoven)
 
+ * With `sampleInstances = FALSE`, elitist irace does not change the order of
+   instances already seen.  However, if you want to make sure that the order of
+   the instances is enforced, you also need to set `elitistNewInstances=0`.
+  
  * The function `irace.usage()` was removed. It was not really useful for R
    users as the same result can be obtained by calling
    `irace.cmdline("--help")`.

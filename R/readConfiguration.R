@@ -948,7 +948,7 @@ checkTargetFiles <- function(scenario, parameters)
 
   # Read initial configurations provided by the user.
   initConfigurations <- allConfigurationsInit(scenario, parameters)
-  if (nrow(initConfigurations) > 0) {
+  if (nrow(initConfigurations) > 0L) {
     # We do not use the .PARENT. column here.
     initConfigurations <- initConfigurations[, colnames(initConfigurations) %!in% c(".PARENT.")]
     configurations <- rbind(configurations, initConfigurations)
@@ -956,7 +956,7 @@ checkTargetFiles <- function(scenario, parameters)
   bounds <- rep(scenario$boundMax, nrow(configurations))
 
   instances.ID <- if (scenario$sampleInstances)
-                    sample.int(length(scenario$instances), 1) else 1
+                    sample.int(length(scenario$instances), 1L) else 1L
   experiments <- createExperimentList(
     configurations, parameters, instances = scenario$instances,
     instances.ID = instances.ID, seeds = 1234567, scenario, bounds = bounds)

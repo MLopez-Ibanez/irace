@@ -270,62 +270,51 @@ aux.ttest <- function(results, alive, which.alive, conf.level,
               dropped.any = dropped_any, p.value = min(pvals)))
 }
 
-no_elitrace.init.instances <- function(deterministic, max.instances)
-{
-  if (deterministic) {
-    # If deterministic consider all (do not resample)
-    race.instances <- 1:max.instances
-  } else if(.irace$next.instance <= max.instances) {
-    race.instances <- .irace$next.instance : max.instances
-  }
-  return(race.instances)
-}
-
-elitrace.init.instances <- function(race.env, deterministic, max.instances)
+no_elitrace.init.instances <- function(deterministic, max_instances)
 {
   # if next.instance == 1 then this is the first iteration.
-  if (.irace$next.instance == 1) {
-    # Consider all
-    race.instances <- 1 : max.instances
-  } else {
-    new.instances <- NULL
-    last.new <- .irace$next.instance + race.env$elitistNewInstances - 1
-    # Do we need to add new instances?
-    if (race.env$elitistNewInstances > 0) {
-      if (last.new > max.instances) {
-        # This may happen if the scenario is deterministic and we would need
-        # more instances than what we have.
-        irace.assert(deterministic)
-        if (.irace$next.instance <= max.instances) {
-          # Add all instances that we have not seen yet as new ones.
-          last.new <- max.instances
-          new.instances <- .irace$next.instance : last.new
-        } # else new.instances remains NULL and last.new remains > number of instances.
-        # We need to update this because the value is used below and now there
-        # may be fewer than expected, even zero.
-        race.env$elitistNewInstances <- length(new.instances)
-      } else {
-        new.instances <- .irace$next.instance : last.new
-      }
-    }
-    future.instances <- NULL
-    if ((last.new + 1) <= max.instances) {
-      future.instances <- (last.new + 1) : max.instances
-    }
-    # new.instances + past.instances + future.instances
-    # FIXME: we should sample taking into account the block-size, so we sample blocks, not instances.
-    race.instances <- c(new.instances, sample.int(.irace$next.instance - 1),
-                        future.instances)
-  }
-  return(race.instances)
+  # If deterministic consider all (do not resample).
+  if (.irace$next.instance == 1 || deterministic) return(1:max_instances)
+  irace.assert(.irace$next.instance < max_instances)
+  return(.irace$next.instance : max_instances)
 }
 
-.nocap_table_fields_width <- c(1, 11, 11, 11, 16, 11, 8, 5, 4, 6)
-.nocap_colum_names <- c(" ", "Instance", "Alive", "Best", "Mean best", "Exp so far",
-                        "W time", "rho", "KenW", "Qvar")
-.capping_table_fields_width <- c(1, 11, 8, 11, 11, 16, 11, 8, 5, 4, 6)  
-.capping_colum_names <- c(" ", "Instance", "Bound", "Alive", "Best", "Mean best", "Exp so far",
-                        "W time", "rho", "KenW", "Qvar")
+elitrace.init.instances <- function(race.env, deterministic, max_instances, sampleInstances)
+{
+  # if next.instance == 1 then this is the first iteration.
+  if (.irace$next.instance == 1) return(1:max_instances) # Consider all
+
+  new.instances <- NULL
+  last.new <- .irace$next.instance + race.env$elitistNewInstances - 1
+  # Do we need to add new instances?
+  if (race.env$elitistNewInstances > 0) {
+    if (last.new > max_instances) {
+      # This may happen if the scenario is deterministic and we would need
+      # more instances than what we have.
+      irace.assert(deterministic)
+      if (.irace$next.instance <= max_instances) {
+        # Add all instances that we have not seen yet as new ones.
+        last.new <- max_instances
+        new.instances <- .irace$next.instance : last.new
+      } # else new.instances remains NULL and last.new remains > number of instances.
+      # We need to update this because the value is used below and now there
+      # may be fewer than expected, even zero.
+      race.env$elitistNewInstances <- length(new.instances)
+    } else {
+      new.instances <- .irace$next.instance : last.new
+    }
+  }
+  future.instances <- NULL
+  if ((last.new + 1) <= max_instances) {
+    future.instances <- (last.new + 1) : max_instances
+  }
+  # new.instances + past.instances + future.instances
+  # FIXME: we should sample taking into account the block-size, so we sample blocks, not instances.
+  past_instances <- if (sampleInstances)
+                      sample.int(.irace$next.instance - 1) else
+                                                             1:.irace$next.instance
+  c(new.instances, past_instances, future.instances)
+}
 
 table_hline <- function(widths) {
   s <- "+"
@@ -341,7 +330,12 @@ table_sprint <- function(text, widths) {
   }
   return(paste0(s, "\n"))
 }
-
+.nocap_table_fields_width <- c(1, 11, 11, 11, 16, 11, 8, 5, 4, 6)
+.nocap_colum_names <- c(" ", "Instance", "Alive", "Best", "Mean best", "Exp so far",
+                        "W time", "rho", "KenW", "Qvar")
+.capping_table_fields_width <- c(1, 11, 8, 11, 11, 16, 11, 8, 5, 4, 6)  
+.capping_colum_names <- c(" ", "Instance", "Bound", "Alive", "Best", "Mean best", "Exp so far",
+                        "W time", "rho", "KenW", "Qvar")
 capping_hline <- table_hline(.capping_table_fields_width)
 capping_header <- table_sprint(.capping_colum_names, .capping_table_fields_width) 
 nocap_hline <- table_hline(.nocap_table_fields_width)
@@ -656,10 +650,11 @@ race <- function(maxExp = 0,
   if (elitist)
     race.instances <- elitrace.init.instances(race.env,
                                               scenario$deterministic,
-                                              max.instances = nrow(.irace$instancesList))
+                                              max_instances = nrow(.irace$instancesList),
+                                              sampleInstances = scenario$sampleInstances)
   else
     race.instances <- no_elitrace.init.instances(scenario$deterministic,
-                                                 max.instances = nrow(.irace$instancesList))
+                                                 max_instances = nrow(.irace$instancesList))
   no.tasks <- length(race.instances)
 
   # Initialize some variables...

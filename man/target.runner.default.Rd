@@ -45,9 +45,8 @@ an external program or function.}
 }
 }
 \description{
-\code{target.runner.default} is the default targetRunner function.
-You can use it as an advanced example of how to create your own targetRunner
-function.
+Default \code{targetRunner} function. Use it as an advanced example of how to
+create your own \code{targetRunner} function.
 }
 \author{
 Manuel López-Ibáñez and Jérémie Dubois-Lacoste
