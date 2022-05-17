@@ -55,7 +55,7 @@ rm -rf \$TMP
 exit \$RET
 EOF
 }
-## End of customization
+## END OF CUSTOMIZATION
 
 error () {
     echo "$0: error: $@" >&2
@@ -64,13 +64,14 @@ error () {
 
 usage() {
     cat <<EOF
-Usage: $0 N[-M] [EXECDIR] [IRACE PARAMS]
+Usage: $0 N[-M] [EXECDIR] [--seed NUM] [IRACE PARAMS]
 
 Parameters:
  N             an integer giving the number of repetitions of irace
                or a sequence N-M giving which repetitions to redo.
  EXECDIR       job M will use EXECDIR-M directory (default: execdir)
                as the execDir (--exec-dir) parameter of irace.
+ --seed NUM    the seed of each run i will be SEED+i-1 (default: 1234567)
  IRACE PARAMS  additional parameters for irace.
 EOF
     exit 1

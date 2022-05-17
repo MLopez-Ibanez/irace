@@ -8,18 +8,6 @@ set -o pipefail
 # Find our own location.
 BINDIR=$(dirname "$(readlink -f "$(type -P $0 || echo $0)")")
 IRACE="$BINDIR/irace"
-# You may need to customize this part according to the setup of your own
-# cluster.
-read -r -d '' SLURM_SETUP << EOF
-# Amount of RAM needed for this job:
-#SBATCH --mem=2gb
-# The time the job will be running:
-#SBATCH --time=60:00:00
-# To use GPUs you have to request them:
-##SBATCH --gres=gpu:1
-#SBATCH --constraint=cal
-EOF
-
 # This function launches one run of irace.
 irace_main() {
     # We would like to use $BASHPID here, but OS X version of bash does not
@@ -28,6 +16,13 @@ irace_main() {
     # You may need to CUSTOMIZE this part according to the setup of your own cluster: https://slurm.schedmd.com
     exec sbatch <(cat<<EOF
 #!/usr/bin/env bash
+# Amount of RAM needed for this job:
+#SBATCH --mem=2gb
+# The time the job will be running:
+#SBATCH --time=60:00:00
+# To use GPUs you have to request them:
+##SBATCH --gres=gpu:1
+#SBATCH --constraint=cal
 # The name to show in queue lists for this job:
 #SBATCH -J $JOBNAME
 #SBATCH --array=1-$N_RUNS
@@ -53,13 +48,15 @@ error () {
 
 usage() {
     cat <<EOF
-Usage: $0 N[-M] [EXECDIR] [IRACE PARAMS]
+Usage: $0 N[-M] [EXECDIR] --parallel NUM [--seed NUM] [IRACE PARAMS]
 
 Parameters:
  N             an integer giving the number of repetitions of irace
                or a sequence N-M giving which repetitions to redo.
  EXECDIR       job M will use EXECDIR-M directory (default: execdir)
                as the execDir (--exec-dir) parameter of irace.
+ --parallel NUM    number of parallel jobs (value in scenario.txt is ignored)
+ --seed NUM        the seed of each run i will be SEED+i-1 (default: 1234567)
  IRACE PARAMS  additional parameters for irace.
 EOF
     exit 1
@@ -72,7 +69,6 @@ test $# -ge 1 || usage
 REPETITIONS=$1
 shift
 START=1
-
 if [[ "$REPETITIONS" =~ ^([0-9]+)-([0-9]+)$ ]] ; then
     START=${BASH_REMATCH[1]}
     REPETITIONS=${BASH_REMATCH[2]}
@@ -83,7 +79,6 @@ fi
 # execDir (--exec-dir) directory
 EXECDIR_PREFIX=${1:-execdir}
 shift
-
 SEED=1234567
 N_CPUS=1
 PARAMS=

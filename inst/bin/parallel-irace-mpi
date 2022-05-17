@@ -60,14 +60,15 @@ error () {
 
 usage() {
     cat <<EOF
-Usage: $0 N[-M] [EXECDIR] --parallel <NUM> [--machine MACHINE] [IRACE PARAMS]
+Usage: $0 N[-M] [EXECDIR] --parallel NUM [--seed NUM] [--machine MACHINE] [IRACE PARAMS]
 
 Parameters:
  N                 an integer giving the number of repetitions of irace
                    or a sequence N-M giving which repetitions to redo.
  EXECDIR           job M will use EXECDIR-M directory (default: execdir-)
                    as the execDir (--exec-dir) parameter of irace.
- --parallel <NUM>  number of parallel jobs
+ --parallel NUM    number of parallel jobs (value in scenario.txt is ignored)
+ --seed NUM        the seed of each run i will be SEED+i-1 (default: 1234567)
  --machine MACHINE qsub queue type, e.g., opteron6272
  IRACE PARAMS      additional parameters for irace.
 EOF
