@@ -93,7 +93,10 @@
 
  * New function `read_logfile()` to easily read the log file produced by irace.
                                                        (Manuel López-Ibáñez)
-                                                       
+
+ * New helper script in `bin/parallel-irace-slurm` to launch `irace` in [SLURM](https://slurm.schedmd.com/) computer clusters.
+                                                       (Manuel López-Ibáñez)
+
 ## Fixes
 
  * Correctly handle clear out-performance cases despite strong bi-modality.

@@ -1,0 +1,108 @@
+#!/usr/bin/env bash
+###############################################################################
+# This script launches several runs of irace in parallel on a SLURM cluster.
+# Execute without parameters to see usage.
+###############################################################################
+set -e
+set -o pipefail
+# Find our own location.
+BINDIR=$(dirname "$(readlink -f "$(type -P $0 || echo $0)")")
+IRACE="$BINDIR/irace"
+# You may need to customize this part according to the setup of your own
+# cluster.
+read -r -d '' SLURM_SETUP << EOF
+# Amount of RAM needed for this job:
+#SBATCH --mem=2gb
+# The time the job will be running:
+#SBATCH --time=60:00:00
+# To use GPUs you have to request them:
+##SBATCH --gres=gpu:1
+#SBATCH --constraint=cal
+EOF
+
+# This function launches one run of irace.
+irace_main() {
+    # We would like to use $BASHPID here, but OS X version of bash does not
+    # support it.
+    JOBNAME="irace-$$-$1"
+    # You may need to CUSTOMIZE this part according to the setup of your own cluster: https://slurm.schedmd.com
+    exec sbatch <(cat<<EOF
+#!/usr/bin/env bash
+# The name to show in queue lists for this job:
+#SBATCH -J $JOBNAME
+#SBATCH --array=1-$N_RUNS
+# Number of desired cpus:
+#SBATCH --cpus-per-task=$N_CPUS
+$SLURM_SETUP
+# Set output and error files
+#SBATCH --error=$EXECDIR/irace.stderr
+#SBATCH --output=$EXECDIR/irace.stdout
+# To load some software (you can show the list with 'module avail'):
+module load R/4.1.0_sin
+run=\$SLURM_ARRAY_TASK_ID
+exec $IRACE --exec-dir=$EXECDIR --seed $RUNSEED $PARAMS
+EOF
+                 )
+}
+## END OF CUSTOMIZATION
+
+error () {
+    echo "$0: error: $@" >&2
+    exit 1
+}
+
+usage() {
+    cat <<EOF
+Usage: $0 N[-M] [EXECDIR] [IRACE PARAMS]
+
+Parameters:
+ N             an integer giving the number of repetitions of irace
+               or a sequence N-M giving which repetitions to redo.
+ EXECDIR       job M will use EXECDIR-M directory (default: execdir)
+               as the execDir (--exec-dir) parameter of irace.
+ IRACE PARAMS  additional parameters for irace.
+EOF
+    exit 1
+}
+
+# Issue usage if no parameters are given.
+test $# -ge 1 || usage
+
+# Number of repetitions of iRace
+REPETITIONS=$1
+shift
+START=1
+
+if [[ "$REPETITIONS" =~ ^([0-9]+)-([0-9]+)$ ]] ; then
+    START=${BASH_REMATCH[1]}
+    REPETITIONS=${BASH_REMATCH[2]}
+elif ! [[ "$REPETITIONS" =~ ^[0-9]+$ ]] ; then
+    error "number of repetitions must be an integer"
+fi
+
+# execDir (--exec-dir) directory
+EXECDIR_PREFIX=${1:-execdir}
+shift
+
+SEED=1234567
+N_CPUS=1
+PARAMS=
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --parallel) shift; N_CPUS="$1"; shift;;
+        --seed) shift; SEED="$1"; shift;;
+        *) PARAMS="$PARAMS $1"; shift;;# terminate case
+    esac
+done
+
+# FIXME: Use SBATCH --array=$START-$REPETITIONS
+N_RUNS=1
+for i in $(seq $START $REPETITIONS); do
+    EXECDIR=$(printf '%s-%002d' ${EXECDIR_PREFIX} $i)
+    echo "execution directory: $EXECDIR"
+    rm -rf $EXECDIR
+    mkdir -p $EXECDIR
+    let RUNSEED=SEED+i-1 
+    irace_main $(printf '%002d' $i) &
+    sleep 1
+done
