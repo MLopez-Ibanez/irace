@@ -28,7 +28,6 @@ irace_main() {
 #SBATCH --array=1-$N_RUNS
 # Number of desired cpus:
 #SBATCH --cpus-per-task=$N_CPUS
-$SLURM_SETUP
 # Set output and error files
 #SBATCH --error=$EXECDIR/irace.stderr
 #SBATCH --output=$EXECDIR/irace.stdout
