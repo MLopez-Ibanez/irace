@@ -2,7 +2,8 @@
 % Please edit documentation in R/readParameters.R
 \name{readParameters}
 \alias{readParameters}
-\title{readParameters}
+\title{Reads the parameters to be tuned by \pkg{irace} from a file or from a
+character string.}
 \usage{
 readParameters(file, digits = 4, debugLevel = 0, text)
 }
@@ -45,8 +46,8 @@ a dependent domain.}
 }
 }
 \description{
-\code{readParameters} reads the parameters to be tuned by
-\pkg{irace} from a file or directly from a character string.
+Reads the parameters to be tuned by \pkg{irace} from a file or from a
+character string.
 }
 \details{
 Either \code{file} or \code{text} must be given. If \code{file} is given, the

@@ -2,12 +2,12 @@
 % Please edit documentation in R/readConfiguration.R
 \name{readConfigurationsFile}
 \alias{readConfigurationsFile}
-\title{readConfigurationsFile}
+\title{Read parameter configurations from a file}
 \usage{
 readConfigurationsFile(filename, parameters, debugLevel = 0, text)
 }
 \arguments{
-\item{filename}{(\code{character(1)}) \cr Filename from which the configurations should be read.}
+\item{filename}{(\code{character(1)}) \cr Filename from which the configurations should be read. The contents should be readable by \code{read.table( , header=TRUE)}.}
 
 \item{parameters}{(\code{list()}) \cr Data structure containing the parameter
 space definition. The data structure has to similar to the one returned by the
@@ -24,12 +24,24 @@ Each row of the data frame is a candidate configuration,
 the columns correspond to the parameter names in \code{parameters}.
 }
 \description{
-\code{readConfigurationsFile} reads a set of target algorithms configurations
-from a file and puts them in \pkg{irace} format. The configurations are checked
-to match the parameters description provided.
+Reads a set of target-algorithm configurations from a file and puts them in
+\pkg{irace} format. The configurations are checked to match the parameters
+description provided.
+}
+\details{
+Example of an input file:\preformatted{# This is a comment line
+<param_name_1>  <param_name_2> ... 
+      0.5           "value_1"    ...
+      1.0           "value_2"    ...
+      1.2           "value_3"    ...
+      ...           ...
+}
+
+The order of the columns does not necessarily have to be the same
+as in the file containing the definition of the parameters.
 }
 \seealso{
-\code{\link[=readParameters]{readParameters()}} to obtain a valid parameter structure from a parameters list.
+\code{\link[=readParameters]{readParameters()}} to obtain a valid parameter structure from a parameters file.
 }
 \author{
 Manuel López-Ibáñez and Jérémie Dubois-Lacoste

@@ -117,7 +117,7 @@ The scenario list contains the following elements:
 }
 }
 \description{
-Return scenario with default values.
+Return scenario object with default values.
 }
 \seealso{
 \describe{

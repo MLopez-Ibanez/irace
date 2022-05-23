@@ -1,7 +1,5 @@
-#' readParameters
-#'
-#' `readParameters` reads the parameters to be tuned by
-#' \pkg{irace} from a file or directly from a character string.
+#' Reads the parameters to be tuned by \pkg{irace} from a file or from a
+#' character string.
 #' 
 #' @param file (`character(1)`) \cr Filename containing the definitions of
 #'   the parameters to be tuned.
@@ -494,8 +492,6 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
   return (parameters)
 }
 
-#' read_pcs_file
-#'
 #' Read parameters in PCS (AClib) format and write them in irace format.
 #' 
 #' @param file (`character(1)`) \cr Filename containing the definitions of
@@ -634,7 +630,7 @@ read_pcs_file <- function(file, digits = 4, debugLevel = 0, text)
   return(output)
 }
 
-#'  checkParameters
+#' checkParameters
 #'
 #' FIXME: This is incomplete, for now we only repair inputs from previous irace
 #' versions.

@@ -2,7 +2,7 @@
 % Please edit documentation in R/readConfiguration.R
 \name{readScenario}
 \alias{readScenario}
-\title{readScenario}
+\title{Reads from a file the scenario settings to be used by \pkg{irace}.}
 \usage{
 readScenario(filename = "", scenario = list())
 }

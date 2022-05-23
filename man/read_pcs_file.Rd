@@ -2,7 +2,7 @@
 % Please edit documentation in R/readParameters.R
 \name{read_pcs_file}
 \alias{read_pcs_file}
-\title{read_pcs_file}
+\title{Read parameters in PCS (AClib) format and write them in irace format.}
 \usage{
 read_pcs_file(file, digits = 4, debugLevel = 0, text)
 }

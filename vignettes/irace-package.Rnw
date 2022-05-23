@@ -605,9 +605,7 @@ For setting the tuning budget see \autoref{sec:budget}. For more information on 
   time (\code{cost [time]}). When the \parameter{maxTime} option is used, returning \code{time} is mandatory.
   The \code{target-runner} template is written in \proglang{GNU Bash}
   scripting language, which can be executed easily in GNU/Linux and OS X
-  systems. However, you may use any other programming language. As an example,
-  we provide a \proglang{Python} example in the directory
-  \IRACEHOME{/examples/python}. %
+  systems. However, you may use any other programming language. We provide examples written in \proglang{Python},  \proglang{MATLAB} and other languages in \IRACEHOME{/examples/}. %
   Follow these instructions to adjust the given \code{target-runner} template
   to your algorithm:
   \begin{enumerate}
@@ -648,11 +646,11 @@ For setting the tuning budget see \autoref{sec:budget}. For more information on 
       \code{COST=\$(cat \$\{STDOUT\} | grep -e '\^{}[[:space:]]*[+-]\textbackslash{}?[0-9]' | cut -f1)}
     \end{center}
     parses the output of your algorithm to obtain the result from the last line. The \code{target-runner}
-    script must return \textbf{only} one number. In the template example, the result is returned with
-    \code{echo "\$COST"} (assuming \parameter{maxExperiments} is used) and the used files are deleted.
+    script must print \textbf{only} one number. In the template example, the result is printed with
+    \code{echo "\$COST"} (assuming \parameter{maxExperiments} is used) and the generated files are deleted (you may remove that line if you wish to keep them).
 
     \begin{xwarningbox}
-      The \code{target-runner} script must be executable.
+      The \code{target-runner} script must be an executable file, unless you specify \parameter{targetRunnerLauncher} and \parameter{targetRunnerLauncherArgs}.
     \end{xwarningbox}
 
     You can test the target runner from the \aR console by checking the scenario as 
