@@ -44,6 +44,8 @@ TODO General (in order of importance):
    sampleInstances=TRUE with orderedRace=FALSE. With orderedRace=FALSE,
    sampling only affects the order of the blocks. Something like:
    selectedInstances = c(outer(1:blockSize, selectedBlocks * blockSize, "+"))
+
+ * Consume all budget.
  
  * Federico's implementation of DAG / Complexity metric.
  

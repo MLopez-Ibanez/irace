@@ -514,6 +514,13 @@ allConfigurationsInit <- function(scenario, parameters)
   return(allConfigurations)
 }
 
+irace_finish <- function(iraceResults, scenario, reason)
+{
+  iraceResults$state$completed = reason
+  irace_save_logfile(iraceResults, scenario)
+  iraceResults$state$eliteConfigurations
+}
+
 #' irace
 #'
 #' `irace` implements iterated Race. It receives some parameters to be tuned 
@@ -810,7 +817,7 @@ irace <- function(scenario, parameters)
                                boundEstimate = boundEstimate,
                                rejectedIDs = rejectedIDs,
                                forbiddenExps = forbiddenExps,
-                               completed = list(flag=FALSE, msg=""))
+                               completed = "Unknown")
     # Consistency checks
     irace.assert(nrow(iraceResults$experimentLog) == experimentsUsedSoFar)
     if (scenario$elitist)
@@ -822,17 +829,11 @@ irace <- function(scenario, parameters)
 
     if (remainingBudget <= 0) {
       catInfo("Stopped because budget is exhausted")
-      iraceResults$state$completed$flag = TRUE
-      iraceResults$state$completed$msg = "Budget exhausted"
-      irace_save_logfile(iraceResults, scenario)
-      return (eliteConfigurations)
+      return(irace_finish(iraceResults, scenario, reason = "Budget exhausted"))
     }
     if (scenario$maxTime > 0 && timeUsed >= scenario$maxTime) {
       catInfo("Stopped because time budget is exhausted")
-      iraceResults$state$completed$flag = TRUE
-      iraceResults$state$completed$msg = "Time budget exhausted"
-      irace_save_logfile(iraceResults, scenario)
-      return (eliteConfigurations)
+      return(irace_finish(iraceResults, scenario, reason = "Time budget exhausted"))
     }
 
     if (indexIteration > nbIterations) {
@@ -842,10 +843,7 @@ irace <- function(scenario, parameters)
         if (debugLevel >= 1) {
           catInfo("Limit of iterations reached", verbose = FALSE)
         }
-        iraceResults$state$completed$flag = TRUE
-        iraceResults$state$completed$msg = "Limit of iterations reached"
-        irace_save_logfile(iraceResults, scenario)
-        return (eliteConfigurations)
+        return(irace_finish(iraceResults, scenario, reason = "Limit of iterations reached"))
       }
     }
     # Compute the current budget (nb of experiments for this iteration),
@@ -889,10 +887,7 @@ irace <- function(scenario, parameters)
       } else {
         catInfo("Stopped because ",
                 "there is not enough budget to enforce the value of nbConfigurations.")
-        iraceResults$state$completed$flag = TRUE
-        iraceResults$state$completed$msg = "Not enough budget to enforce the value of nbConfigurations"
-        irace_save_logfile(iraceResults, scenario)
-        return (eliteConfigurations)
+        return(irace_finish(iraceResults, scenario, reason = "Not enough budget to enforce the value of nbConfigurations"))
       }
     }
     
@@ -901,10 +896,7 @@ irace <- function(scenario, parameters)
       catInfo("Stopped because there is not enough budget left to race more than ",
               "the minimum (", minSurvival,")\n",
               "# You may either increase the budget or set 'minNbSurvival' to a lower value")
-      iraceResults$state$completed$flag = TRUE
-      iraceResults$state$completed$msg = "Not enough budget to race more than the minimum configurations"
-      irace_save_logfile(iraceResults, scenario)
-      return (eliteConfigurations)
+      return(irace_finish(iraceResults, scenario, reason = "Not enough budget to race more than the minimum configurations"))
     }
 
 
@@ -922,10 +914,7 @@ irace <- function(scenario, parameters)
       catInfo("Stopped because ",
               "there is not enough budget left to race newly sampled configurations")
       #(number of elites  + 1) * (mu + min(5, indexIteration)) > remainingBudget" 
-      iraceResults$state$completed$flag = TRUE
-      iraceResults$state$completed$msg = "Not enough budget left to race newly sampled configurations"
-      irace_save_logfile(iraceResults, scenario)
-      return (eliteConfigurations)
+      return(irace_finish(iraceResults, scenario, reason = "Not enough budget left to race newly sampled configurations"))
     }
     
     if (scenario$elitist) {
@@ -935,18 +924,12 @@ irace <- function(scenario, parameters)
           + nrow(eliteConfigurations) * min(scenario$elitistNewInstances, max(scenario$mu, scenario$firstTest))
           > currentBudget) {
         catInfo("Stopped because there is not enough budget left to race all configurations up to the first test (or mu)")
-        iraceResults$state$completed$flag = TRUE
-        iraceResults$state$completed$msg = "Not enough budget to race all configurations up to the first test (or mu)"
-        irace_save_logfile(iraceResults, scenario)
-        return (eliteConfigurations)
+        return(irace_finish(iraceResults, scenario, reason = "Not enough budget to race all configurations up to the first test (or mu)"))
       }
     } else if (nbConfigurations * max(scenario$mu, scenario$firstTest)
                > currentBudget) {
       catInfo("Stopped because there is not enough budget left to race all configurations up to the first test (or mu)")
-      iraceResults$state$completed$flag = TRUE
-      iraceResults$state$completed$msg  = "Not enough budget to race all configurations up to the first test (or mu)"
-      irace_save_logfile(iraceResults, scenario)
-      return (eliteConfigurations)
+      return(irace_finish(iraceResults, scenario, reason = "Not enough budget to race all configurations up to the first test (or mu)"))
     }
 
     catInfo("Iteration ", indexIteration, " of ", nbIterations, "\n",
@@ -1168,9 +1151,5 @@ irace <- function(scenario, parameters)
       irace.print.memUsed()
     }
   }
-  # This code is actually never executed because we return above.
-  # Leslie: adding this just in case 
-  iraceResults$state$completed$flag = TRUE
-  irace_save_logfile(iraceResults, scenario)
-  return (eliteConfigurations)
+  irace.internal.error("This code is actually never executed because we return above")
 }

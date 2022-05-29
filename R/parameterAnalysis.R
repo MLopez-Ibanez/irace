@@ -1,5 +1,4 @@
 #' Return the elite configurations of the final iteration.
-#'
 #' 
 #' @template arg_iraceresults
 #' @param n Number of elite configurations to return, if \code{n} is larger than the 
