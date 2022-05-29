@@ -169,8 +169,6 @@ testing_fromlog <- function(logFile, testNbElites, testIterationElites,
     irace.note("No logFile provided to perform the testing of configurations. Skipping testing.\n")
     return(FALSE)
   }
-  
-  file.check(logFile, readable = TRUE, text = "irace log file")
   iraceResults <- read_logfile(logFile)
   scenario <- iraceResults[["scenario"]]
   parameters <- iraceResults[["parameters"]]
@@ -181,10 +179,9 @@ testing_fromlog <- function(logFile, testNbElites, testIterationElites,
   if (!missing(testIterationElites))
     scenario$testIterationElites <- testIterationElites
 
-  if (!missing(testInstances)) {
+  if (!missing(testInstances))
     scenario[["testInstances"]] <- testInstances
-  }
-  
+    
   if (!missing(testInstancesDir)) {
     scenario$testInstancesDir <- testInstancesDir
     instances_changed <- TRUE
@@ -221,7 +218,6 @@ testing_fromlog <- function(logFile, testNbElites, testIterationElites,
 
   irace.note ("Testing configurations (in no particular order): ", paste(testing_id, collapse=" "), "\n")
   configurations.print(configurations)  
-  
   iraceResults$testing <- testConfigurations(configurations, scenario, parameters)
   irace_save_logfile (iraceResults, scenario)
   # FIXME : We should print the seeds also. As an additional column?
@@ -257,32 +253,30 @@ testing_fromfile <- function(filename, scenario)
   irace.note("Reading parameter file '", scenario$parameterFile, "'.\n")
   parameters <- readParameters (file = scenario$parameterFile,
                                 digits = scenario$digits)
-  allConfigurations <- readConfigurationsFile (filename, parameters)
-  allConfigurations <- cbind(.ID. = 1:nrow(allConfigurations),
-                             allConfigurations,
+  configurations <- readConfigurationsFile (filename, parameters)
+  configurations <- cbind(.ID. = 1:nrow(configurations),
+                             configurations,
                              .PARENT. = NA)
-  rownames(allConfigurations) <- allConfigurations$.ID.
-  num <- nrow(allConfigurations)
-  allConfigurations <- checkForbidden(allConfigurations, scenario$forbiddenExps)
-  if (nrow(allConfigurations) < num) {
+  rownames(configurations) <- configurations$.ID.
+  num <- nrow(configurations)
+  configurations <- checkForbidden(configurations, scenario$forbiddenExps)
+  if (nrow(configurations) < num) {
     irace.warning("Some of the configurations in the configurations file were forbidden",
                   "and, thus, discarded")
   }
-
   # To save the logs
   iraceResults <- list(scenario = scenario,
                        irace.version = irace.version,
                        parameters = parameters,
-                       allConfigurations = allConfigurations)
+                       allConfigurations = configurations)
     
   irace.note ("Testing configurations (in the order given as input): \n")
-  configurations.print(allConfigurations)  
-  iraceResults$testing <- testConfigurations(allConfigurations, scenario, parameters)
-
+  configurations.print(configurations)
+  iraceResults$testing <- testConfigurations(configurations, scenario, parameters)
+  irace_save_logfile(iraceResults, scenario)
   # FIXME : We should print the seeds also. As an additional column?
   irace.note ("Testing results (column number is configuration ID in no particular order):\n")
   print(iraceResults$testing$experiments)
-  irace_save_logfile(iraceResults, scenario)
   irace.note ("Finished testing\n")
   return(iraceResults)
 }
