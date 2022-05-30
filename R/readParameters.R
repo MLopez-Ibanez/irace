@@ -511,10 +511,15 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
 #'  for details.  If none of these parameters is given, \pkg{irace}
 #'  will stop with an error.
 #'
+#' **FIXME:** Forbidden configurations, default configuration and transformations ("log") are currently ignored. See https://github.com/MLopez-Ibanez/irace/issues/31
+#'
+#' @references
+#' Frank Hutter, Manuel López-Ibáñez, Chris Fawcett, Marius Thomas Lindauer, Holger H. Hoos, Kevin Leyton-Brown, and Thomas Stützle. **AClib: A Benchmark Library for Algorithm Configuration**. In P. M. Pardalos, M. G. C. Resende, C. Vogiatzis, and J. L. Walteros, editors, _Learning and Intelligent Optimization, 8th International Conference, LION 8_, volume 8426 of Lecture Notes in Computer Science, pages 36–40. Springer, Heidelberg, 2014.
+#' 
 #' @examples
 #'  ## Read the parameters directly from text
-#'  pcs.table <- '
-#'  # name       values               [conditions (using R syntax)]
+#'  pcs_table <- '
+#'  # name       domain
 #'  algorithm    {as,mmas,eas,ras,acs}[as]
 #'  localsearch  {0, 1, 2, 3}[0]
 #'  alpha        [0.00, 5.00][1]
@@ -533,8 +538,9 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
 #'  nnls | localsearch in {1,2,3}
 #'  dlb | localsearch in {1,2,3}
 #'  '
-#'  parameters.table <- read_pcs_file(text=pcs.table)
-#'  parameters <- readParameters(text=parameters.table)
+#'  parameters_table <- read_pcs_file(text=pcs_table)
+#'  print(parameters_table)
+#'  parameters <- readParameters(text=parameters_table)
 #'  str(parameters)
 #' 
 #' @author Manuel López-Ibáñez

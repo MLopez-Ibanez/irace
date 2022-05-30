@@ -32,11 +32,13 @@ In both cases, the parameters must be given (in \code{text} or in the file
 whose name is \code{file}) in the expected form.  See the documentation
 for details.  If none of these parameters is given, \pkg{irace}
 will stop with an error.
+
+\strong{FIXME:} Forbidden configurations, default configuration and transformations ("log") are currently ignored. See https://github.com/MLopez-Ibanez/irace/issues/31
 }
 \examples{
  ## Read the parameters directly from text
- pcs.table <- '
- # name       values               [conditions (using R syntax)]
+ pcs_table <- '
+ # name       domain
  algorithm    {as,mmas,eas,ras,acs}[as]
  localsearch  {0, 1, 2, 3}[0]
  alpha        [0.00, 5.00][1]
@@ -55,10 +57,14 @@ will stop with an error.
  nnls | localsearch in {1,2,3}
  dlb | localsearch in {1,2,3}
  '
- parameters.table <- read_pcs_file(text=pcs.table)
- parameters <- readParameters(text=parameters.table)
+ parameters_table <- read_pcs_file(text=pcs_table)
+ print(parameters_table)
+ parameters <- readParameters(text=parameters_table)
  str(parameters)
 
+}
+\references{
+Frank Hutter, Manuel López-Ibáñez, Chris Fawcett, Marius Thomas Lindauer, Holger H. Hoos, Kevin Leyton-Brown, and Thomas Stützle. \strong{AClib: A Benchmark Library for Algorithm Configuration}. In P. M. Pardalos, M. G. C. Resende, C. Vogiatzis, and J. L. Walteros, editors, \emph{Learning and Intelligent Optimization, 8th International Conference, LION 8}, volume 8426 of Lecture Notes in Computer Science, pages 36–40. Springer, Heidelberg, 2014.
 }
 \author{
 Manuel López-Ibáñez
