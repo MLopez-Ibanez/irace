@@ -941,13 +941,12 @@ checkTargetFiles <- function(scenario, parameters)
                                   digits = scenario$digits,
                                   forbidden = scenario$forbiddenExps,
                                   repair = scenario$repairConfiguration)
-  configurations <- cbind (.ID. = conf.id, configurations)
+  configurations <- cbind(.ID. = conf.id, configurations, stringsAsFactors=FALSE)
 
   # Read initial configurations provided by the user.
   initConfigurations <- allConfigurationsInit(scenario, parameters)
   if (nrow(initConfigurations) > 0L) {
-    # We do not use the .PARENT. column here.
-    initConfigurations <- initConfigurations[, colnames(initConfigurations) %!in% c(".PARENT.")]
+    irace.assert(all(colnames(configurations) == colnames(initConfigurations)))
     configurations <- rbind(configurations, initConfigurations)
   }
   bounds <- rep(scenario$boundMax, nrow(configurations))
