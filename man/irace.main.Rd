@@ -83,7 +83,7 @@ each experiment.}
 }
 }
 \description{
-\code{irace.main} is a higher-level interface to invoke \code{\link{irace}}.
+Higher-level interface to launch \code{irace()}.
 }
 \details{
 The function \code{irace.main} checks the correctness of the

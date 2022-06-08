@@ -245,7 +245,8 @@ buildForbiddenExp <- function(configurations, parameters)
 #' @templateVar arg_appendix This is an initial scenario that is overwritten
 #'   for every setting specified in the file to be read.
 #' @template arg_scenario
-#'  
+#' @param params_def (`data.frame()`) \cr Definition of the options accepted by the scenario. This should only be modified by packages that wish to extend \pkg{irace}.
+#' 
 #' @return The scenario list read from the file. The scenario settings not
 #'   present in the file are not present in the list, i.e., they are `NULL`.
 #'
@@ -258,7 +259,8 @@ buildForbiddenExp <- function(configurations, parameters)
 #' 
 #' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
 #' @export
-readScenario <- function(filename = "", scenario = list())
+readScenario <- function(filename = "", scenario = list(),
+                         params_def = .irace.params.def)
 {
   # This function allows recursively including scenario files.
   scenario_env <- new.env()
@@ -282,14 +284,14 @@ readScenario <- function(filename = "", scenario = list())
 
   # First find out which file...
   if (filename == "") {
-    filename <- path_rel2abs(.irace.params.def["scenarioFile","default"])
+    filename <- path_rel2abs(params_def["scenarioFile","default"])
     if (file.exists(filename)) {
       irace.warning("A default scenario file ", shQuote(filename),
                     " has been found and will be read\n")
     } else {
       irace.error ("Not scenario file given (use ",
-                   .irace.params.def["scenarioFile", "short"], " or ",
-                   .irace.params.def["scenarioFile", "long"],
+                   params_def["scenarioFile", "short"], " or ",
+                   params_def["scenarioFile", "long"],
                    ") and no default scenario file ", shQuote(filename),
                    " has been found.")
     }
@@ -320,9 +322,12 @@ readScenario <- function(filename = "", scenario = list())
   scenario[["scenarioFile"]] <- filename 
   # If these are given and relative, they should be relative to the
   # scenario file (except logFile, which is relative to execDir).
-  pathParams <- setdiff(.irace.params.def[.irace.params.def[, "type"] == "p",
+  pathParams <- setdiff(params_def[params_def[, "type"] == "p",
                                           "name"], "logFile")
-  for (param in .irace.params.names) {
+  params_names <- params_def[!startsWith(params_def[,"name"], "."),
+                                    "name"]
+  
+  for (param in params_names) {
     if (exists (param, envir = scenario_env, inherits = FALSE)) {
       value <- get(param, envir = scenario_env, inherits = FALSE)
       if (!is.null.or.empty(value) && is.character(value)
@@ -332,7 +337,7 @@ readScenario <- function(filename = "", scenario = list())
       scenario[[param]] <- value
     }
   }
-  unknown_scenario_vars <- setdiff(ls(scenario_env), .irace.params.names)
+  unknown_scenario_vars <- setdiff(ls(scenario_env), params_names)
   if (length(unknown_scenario_vars) > 0) {
     # FIXME: We should only accept variables that match irace.params.names and
     # if the user wants to define their own, they should use names starting
@@ -342,8 +347,7 @@ readScenario <- function(filename = "", scenario = list())
                 "\nMAKE SURE NO VARIABLE NAME IS MISSPELL (for example, 'parameterFile' is correct, while 'parametersFile' is not)",
                 "\nIf you wish to use your own variables in the scenario file, use names beginning with a dot `.'")
   }
-  
-  return (scenario)
+  scenario
 }
 
 setup_test_instances <- function(scenario)

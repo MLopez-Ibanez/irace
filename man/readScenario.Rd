@@ -4,7 +4,7 @@
 \alias{readScenario}
 \title{Reads from a file the scenario settings to be used by \pkg{irace}.}
 \usage{
-readScenario(filename = "", scenario = list())
+readScenario(filename = "", scenario = list(), params_def = .irace.params.def)
 }
 \arguments{
 \item{filename}{(\code{character(1)}) \cr Filename from which the scenario will
@@ -16,6 +16,8 @@ scenario file is provided in \verb{system.file(``package="irace",}
 settings. The data structure has to be the one returned by the function
 \code{\link[=defaultScenario]{defaultScenario()}} or \code{\link[=readScenario]{readScenario()}}.
 This is an initial scenario that is overwritten}
+
+\item{params_def}{(\code{data.frame()}) \cr Definition of the options accepted by the scenario. This should only be modified by packages that wish to extend \pkg{irace}.}
 }
 \value{
 The scenario list read from the file. The scenario settings not

@@ -595,7 +595,6 @@ execute.experiments <- function(experiments, scenario)
                             scenario = scenario,
                             target.runner = target.runner)
   }
-
   return(target.output)
 }
 

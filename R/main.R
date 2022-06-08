@@ -60,8 +60,6 @@ cat.irace.license <- function()
 
 #' Higher-level interface to launch `irace()`.
 #'
-#' \code{irace.main} is a higher-level interface to invoke \code{\link{irace}}.
-#' 
 #' @template arg_scenario
 #' 
 #' @param output.width (\code{integer(1)}) The width that must be used for the screen
@@ -105,9 +103,7 @@ irace.main <- function(scenario = defaultScenario(), output.width = 9999L)
   parameters <- readParameters (file = scenario$parameterFile,
                                 digits = scenario$digits,
                                 debugLevel = debug.level)
-						
-  if (debug.level >= 2) { irace.note("Parameters have been read\n") }
-  
+
   eliteConfigurations <- irace(scenario = scenario, parameters = parameters)
   
   cat("# Best configurations (first number is the configuration ID;",

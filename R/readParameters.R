@@ -488,8 +488,11 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
   parameters$nbParameters <- length(parameters$names)
   parameters$nbFixed <- sum(parameters$isFixed == TRUE)
   parameters$nbVariable <- sum(parameters$isFixed == FALSE)
-  if (debugLevel >= 2) print(parameters, digits = 15)
-  return (parameters)
+  if (debugLevel >= 2) {
+    print(parameters, digits = 15)
+    irace.note("Parameters have been read\n")
+  }
+  parameters
 }
 
 #' Read parameters in PCS (AClib) format and write them in irace format.
