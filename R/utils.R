@@ -699,7 +699,7 @@ is.file.extension <- function(filename, ext)
 }
 
 # Same as !(x %in% table)
-"%!in%" <- function (x, table) match(x, table, nomatch = 0L) == 0L
+"%!in%" <- function(x, table) match(x, table, nomatch = 0L) == 0L
 
 irace_save_logfile <- function(iraceResults, scenario)
 {

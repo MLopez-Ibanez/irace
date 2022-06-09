@@ -245,7 +245,7 @@ buildForbiddenExp <- function(configurations, parameters)
 #' @templateVar arg_appendix This is an initial scenario that is overwritten
 #'   for every setting specified in the file to be read.
 #' @template arg_scenario
-#' @param params_def (`data.frame()`) \cr Definition of the options accepted by the scenario. This should only be modified by packages that wish to extend \pkg{irace}.
+#' @template arg_params_def
 #' 
 #' @return The scenario list read from the file. The scenario settings not
 #'   present in the file are not present in the list, i.e., they are `NULL`.
@@ -324,8 +324,7 @@ readScenario <- function(filename = "", scenario = list(),
   # scenario file (except logFile, which is relative to execDir).
   pathParams <- setdiff(params_def[params_def[, "type"] == "p",
                                           "name"], "logFile")
-  params_names <- params_def[!startsWith(params_def[,"name"], "."),
-                                    "name"]
+  params_names <- params_def[!startsWith(params_def[,"name"], "."), "name"]
   
   for (param in params_names) {
     if (exists (param, envir = scenario_env, inherits = FALSE)) {
@@ -371,7 +370,7 @@ setup_test_instances <- function(scenario)
     # Create unique IDs for testInstances
     names(scenario[["testInstances"]]) <- paste0(1:length(scenario[["testInstances"]]), "t")
   }
-  return (scenario)
+  scenario
 }    
 
 #' Check and correct the given scenario
@@ -766,6 +765,8 @@ printScenario <- function(scenario)
 #' Return scenario object with default values.
 #' 
 #' @template arg_scenario
+#'
+#' @template arg_params_def
 #' 
 #' @return A list indexed by the \pkg{irace} parameter names,
 #' containing the default values for each parameter, except for those
@@ -883,22 +884,24 @@ printScenario <- function(scenario)
 #'
 #' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
 #' @export
-defaultScenario <- function(scenario = list())
+defaultScenario <- function(scenario = list(),
+                            params_def = .irace.params.def)
 {
-  if (!is.null(names(scenario))
-      && !all(names(scenario) %in% .irace.params.names)) {
+  params_names <- params_def[!startsWith(params_def[,"name"], "."), "name"]
+  if (is.null(names(scenario))) {
+    scenario <- setNames(as.list(params_def[params_names,"default"]), params_names)
+  } else if (!all(names(scenario) %in% params_names)) {
     irace.error("Unknown scenario parameters: ",
-                paste(names(scenario)[which(!names(scenario)
-                                            %in% .irace.params.names)],
+                paste(names(scenario)[!(names(scenario) %in% params_names)],
                       collapse = ", "))
-  }
-
-  for (k in .irace.params.names) {
-    if (is.null.or.na(scenario[[k]])) {
-      scenario[[k]] <- .irace.params.def[k, "default"]
+  } else {
+    for (k in params_names) {
+      if (is.null.or.na(scenario[[k]])) {
+        scenario[[k]] <- params_def[k, "default"]
+      }
     }
   }
-  return (scenario)
+  scenario
 }
 
 readInstances <- function(instancesDir = NULL, instancesFile = NULL)
@@ -915,8 +918,7 @@ readInstances <- function(instancesDir = NULL, instancesFile = NULL)
     instances <- sub("#.*$", "", instances) # Remove comments
     instances <- sub("^[[:space:]]+", "", instances) # Remove leading whitespace
     instances <- instances[instances != ""] # Delete empty lines
-    # FIXME: is.null.or.empty should handle length() == 0.
-    if (is.null.or.empty(instances) || length(instances) == 0)
+    if (is.null.or.empty(instances))
       irace.error("No instances found in '", instancesFile,
                   "' (whitespace and comments starting with '#' are ignored)")
     if (!is.null.or.empty(instancesDir))
@@ -931,8 +933,7 @@ readInstances <- function(instancesDir = NULL, instancesFile = NULL)
     if (length (instances) == 0)
       irace.error("No instances found in `", instancesDir, "'")
   }
-  
-  return(instances)
+  instances
 }
 
 ## Check targetRunner execution
@@ -1008,7 +1009,7 @@ checkTargetFiles <- function(scenario, parameters)
       print(output, digits = 15)
     }
   }
-  return(result)
+  result
 }
 
 
