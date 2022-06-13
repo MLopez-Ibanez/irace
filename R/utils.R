@@ -207,6 +207,11 @@ is.null.or.empty <- function(x)
   (length(x) == 0) || (length(x) == 1 && !suppressWarnings(is.na(x)) && is.character(x) && x == "")
 }
 
+is_null_or_empty_or_na <- function(x)
+{
+  (length(x) == 0) || is.na.nowarn(x) || (length(x) == 1 && !suppressWarnings(is.na(x)) && is.character(x) && x == "")
+}
+
 is.function.name <- function(FUN)
 {
   # FIXME: Is there a simpler way to do this check?

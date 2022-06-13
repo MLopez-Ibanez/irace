@@ -583,7 +583,7 @@ checkScenario <- function(scenario = defaultScenario())
 
   # Make it NULL if it is "" or NA
   # FIXME: If it is a non-empty vector of strings, parse them as above.
-  if (is.null.or.empty(scenario$forbiddenExps) || is.null.or.na(scenario$forbiddenExps))
+  if (is_null_or_empty_or_na(scenario$forbiddenExps))
     scenario$forbiddenExps <- NULL
 
   # We have characters everywhere, set to the right types to avoid
@@ -711,8 +711,7 @@ checkScenario <- function(scenario = defaultScenario())
     scenario$boundMax <- NULL
   }
 
-  if (is.null.or.empty(scenario$testType) || 
-      is.null.or.na(scenario$testType)) {
+  if (is_null_or_empty_or_na(scenario$testType)) {
     if (scenario$capping) scenario$testType <- "t-test"
     else scenario$testType <- "f-test"
   }
@@ -749,8 +748,9 @@ checkScenario <- function(scenario = defaultScenario())
 #' @export
 printScenario <- function(scenario)
 {
+  params_names <- .irace.params.names
   cat("## irace scenario:\n")
-  for (param in .irace.params.names) {
+  for (param in params_names) {
     if (param == "forbiddenExps")
       extra <- paste0(" = expression(", paste0(collapse=", ",
                                   sapply(scenario[[param]], attr, "source")), ")")
