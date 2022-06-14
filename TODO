@@ -48,7 +48,10 @@ TODO General (in order of importance):
  * Consume all budget.
  
  * Federico's implementation of DAG / Complexity metric.
- 
+
+ * In src/irace/irace.c, set R_LIBS in the environment to the directory holding
+   the executable.
+
  * Use both cost and time to calculate wins, then use a prop.test
    prop.test(x=c(sum(x <0.5),sum(y<0.5)), n=c(length(x), length(y)))
 

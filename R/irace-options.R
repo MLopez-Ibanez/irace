@@ -3,7 +3,7 @@
 # Variables that do not have a command-line option have description == ""
 # Types are b(oolean), i(nteger), s(tring), r(eal), p(ath), x (R object or no value)
 # FIXME: Add special type for R functions.
-# FIXME: For i and r add their range.
+# FIXME: For i and r add their domain.
 .irace.params.def <- structure(list(name = c(".help", ".version", ".check", ".init", 
 ".onlytest", "scenarioFile", "parameterFile", "execDir", "logFile", 
 "recoveryFile", "instances", "initConfigurations", "trainInstancesDir", 
@@ -52,7 +52,12 @@
 "0", "0.02", "0.01", "4", "0", "0", "0", "1", "", "5", "1", "0", 
 "0", "5", "0.95", "0", NA, "0", "1", "0", "0", "1", "", "", "", 
 "", "1", "0", "1", "1", "2", "", "0", "median", "candidate", 
-"0", "0", "1", "1", "0", "0"), description = c("Show this help.", 
+"0", "0", "1", "1", "0", "0"), domain = c(NA, NA, NA, NA, NA, 
+NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 
+NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, "F-test,t-test,t-test-holm,t-test-bonferroni", 
+NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, "sge,pbs,torque,slurm,htcondor", 
+NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, "median,mean,worst,best", 
+"instance,candidate", NA, NA, NA, NA, NA, NA), description = c("Show this help.", 
 "Show irace package version.", "Check scenario.", "Initialize the working directory with template config files.", 
 "Only test the configurations given in the file passed as argument.", 
 "File that describes the configuration scenario setup and other irace settings.", 

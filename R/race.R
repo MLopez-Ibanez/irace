@@ -78,8 +78,6 @@ race.wrapper <- function(configurations, instance.idx, bounds = NULL,
                          # which.alive nor which.exe
                          which.alive, which.exe, parameters, scenario)
 {
-  debugLevel <- scenario$debugLevel
-  
   irace.assert (parameters$nbVariable > 0)
   irace.assert (length(parameters$names) == parameters$nbParameters)
 
@@ -109,7 +107,7 @@ race.wrapper <- function(configurations, instance.idx, bounds = NULL,
   if (!is.null(scenario$targetEvaluator))
     target.output <- execute.evaluator (experiments, scenario, target.output,
                                         configurations[, ".ID."])
-  return(target.output) 
+  target.output
 }
 
 aux2.friedman <- function(y, I, alive, conf.level = 0.95)

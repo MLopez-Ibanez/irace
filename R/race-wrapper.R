@@ -429,10 +429,9 @@ run_target_runner <- function(experiment, scenario)
   return(list(cmd=targetRunnerLauncher, output=output, args=args))
 }
 
-#' target.runner.default
+#' Default `targetRunner` function.
 #'
-#' Default `targetRunner` function. Use it as an advanced example of how to
-#' create your own `targetRunner` function.
+#' Use it as an advanced example of how to create your own `targetRunner` function.
 #' 
 #' @param experiment A list describing the experiment. It contains at least:
 #'    \describe{
@@ -472,12 +471,12 @@ run_target_runner <- function(experiment, scenario)
 #' @export
 target.runner.default <- function(experiment, scenario)
 {
-  debugLevel   <- scenario$debugLevel
   res <- run_target_runner(experiment, scenario)
   cmd <- res$cmd
   output <- res$output
   args <- res$args
   
+  debugLevel <- scenario$debugLevel
   cost <- time <- NULL
   err.msg <- output$error
   if (is.null(err.msg)) {
@@ -495,9 +494,9 @@ target.runner.default <- function(experiment, scenario)
       time <- v.output[2]
     }
   }
-  return(list(cost = cost, time = time,
-              error = err.msg, outputRaw = output$output,
-              call = paste(cmd, args)))
+  list(cost = cost, time = time,
+       error = err.msg, outputRaw = output$output,
+       call = paste(cmd, args))
 }
 
 execute.experiments <- function(experiments, scenario)

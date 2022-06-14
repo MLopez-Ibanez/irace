@@ -2,7 +2,7 @@
 % Please edit documentation in R/race-wrapper.R
 \name{target.runner.default}
 \alias{target.runner.default}
-\title{target.runner.default}
+\title{Default \code{targetRunner} function.}
 \usage{
 target.runner.default(experiment, scenario)
 }
@@ -45,8 +45,7 @@ an external program or function.}
 }
 }
 \description{
-Default \code{targetRunner} function. Use it as an advanced example of how to
-create your own \code{targetRunner} function.
+Use it as an advanced example of how to create your own \code{targetRunner} function.
 }
 \author{
 Manuel López-Ibáñez and Jérémie Dubois-Lacoste

@@ -161,7 +161,7 @@ readConfigurationsFile <- function(filename, parameters, debugLevel = 0, text)
                 paste0(capture.output(
                   configurationTable[duplicated(configurationTable), , drop=FALSE]), "\n"))
   }
-  return (configurationTable)
+  configurationTable
 }
 # FIXME: It may be faster to create a single expression that concatenates all
 # the elements of forbidden using '|'
@@ -178,7 +178,7 @@ checkForbidden <- function(configurations, forbidden)
     ## would be faster to break as soon as nrow(configurations) < 1
   }
   #print(nrow(configurations))
-  return(configurations)
+  configurations
 }
 
 compile.forbidden <- function(x)
@@ -196,7 +196,7 @@ compile.forbidden <- function(x)
   expr <- compiler::compile(substitute(is.na(x) | !(x), list(x = x)),
                            options = list(suppressUndefined=TRUE))
   attr(expr, "source") <- as.character(as.expression(x))
-  return(expr)
+  expr
 }
 
 readForbiddenFile <- function(filename)
@@ -214,7 +214,7 @@ readForbiddenFile <- function(filename)
   # Maybe: sapply(forbiddenExps, function(x) substitute(is.na(x) | !(x), list(x=x)))
   # x <- parse(text=paste0("(", paste0(forbiddenExps,collapse=")||("), ")"))
   # Byte-compile them.
-  return(sapply(forbiddenExps, compile.forbidden))
+  sapply(forbiddenExps, compile.forbidden)
 }      
 
 buildForbiddenExp <- function(configurations, parameters)
@@ -233,7 +233,7 @@ buildForbiddenExp <- function(configurations, parameters)
   }
   exps <- parse(text = lines)
   # print(exps)
-  return(sapply(exps, compile.forbidden))
+  sapply(exps, compile.forbidden)
 }
 
 #' Reads from a file the scenario settings to be used by \pkg{irace}. 
@@ -338,9 +338,9 @@ readScenario <- function(filename = "", scenario = list(),
   }
   unknown_scenario_vars <- setdiff(ls(scenario_env), params_names)
   if (length(unknown_scenario_vars) > 0) {
-    # FIXME: We should only accept variables that match irace.params.names and
-    # if the user wants to define their own, they should use names starting
-    # with ".", which are ignored by ls()
+    # We only accept variables that match irace.params.names and if the user
+    # wants to define their own, they should use names starting with ".", which
+    # are ignored by ls()
     irace.error("Scenario file ", shQuote(filename), " contains unknown variables: ",
                 paste0(unknown_scenario_vars, collapse=", "),
                 "\nMAKE SURE NO VARIABLE NAME IS MISSPELL (for example, 'parameterFile' is correct, while 'parametersFile' is not)",
@@ -409,7 +409,7 @@ checkScenario <- function(scenario = defaultScenario())
     if (.irace.params.def[name, "long"] != "") {
       return(paste0("'", name, "' (", .irace.params.def[name, "long"], ")"))
     }
-    return(paste0("'", name, "'"))
+    paste0("'", name, "'")
   }
 
   as.boolean.param <- function(x, name)
@@ -418,11 +418,14 @@ checkScenario <- function(scenario = defaultScenario())
     if (is.na (x) || (x != 0 && x != 1)) {
       irace.error (quote.param(name), " must be either 0 or 1.")
     }
-    return(as.logical(x))
+    as.logical(x)
   }
 
-  check.valid.param <- function(x, valid)
+  check.valid.param <- function(x)
   {
+    cat(x, "\n")
+    cat(.irace.params.def[x, "domain"], "\n")
+    valid <- trimws(strsplit(.irace.params.def[x, "domain"],",",fixed=TRUE)[[1]])
     if (scenario[[x]] %!in% valid) {
       irace.error ("Invalid value '", scenario[[x]], "' of ",
                    quote.param(x), ", valid values are: ",
@@ -676,12 +679,12 @@ checkScenario <- function(scenario = defaultScenario())
                  " must be larger than 1 when mpi is enabled.")
   }
 
+
   if (is.null.or.empty(scenario$batchmode))
     scenario$batchmode <- 0
   if (scenario$batchmode != 0) {
     scenario$batchmode <- tolower(scenario$batchmode)
-    # FIXME: We should encode options in the large table in main.R
-    check.valid.param("batchmode", valid = c("sge", "pbs", "torque", "slurm", "htcondor"))
+    check.valid.param("batchmode")
   }
   # Currently batchmode requires a targetEvaluator
   if (scenario$batchmode != 0 && is.null(scenario$targetEvaluator)) {
@@ -700,10 +703,8 @@ checkScenario <- function(scenario = defaultScenario())
     if (scenario$boundMax <= 0) 
       irace.error("When capping == TRUE, boundMax (", scenario$boundMax,
                   ") must be > 0")
-    check.valid.param("cappingType",
-                      valid = c("median", "mean", "worst", "best"))
-    check.valid.param("boundType", valid = c("instance", "candidate"))
-        
+    check.valid.param("cappingType")
+    check.valid.param("boundType")
     if (scenario$boundPar < 1)
       irace.error("Invalid value (", scenario$boundPar, ") ",
                   quote.param("boundPar"), " must be >= 1")
@@ -726,10 +727,8 @@ checkScenario <- function(scenario = defaultScenario())
            "t.holm" = "t.holm",
            "t-test-bonferroni" =, # Fall-through,
            "t.bonferroni" = "t.bonferroni",
-           check.valid.param("testType",
-                             c("F-test, t-test, t-test-holm, t-test-bonferroni")))
-  
-  return (scenario)
+           check.valid.param("testType"))
+  scenario
 }
 
 #' Prints the given scenario
@@ -939,7 +938,6 @@ readInstances <- function(instancesDir = NULL, instancesFile = NULL)
 ## Check targetRunner execution
 checkTargetFiles <- function(scenario, parameters)
 {
-  result <- TRUE
   ## Create two random configurations
   conf.id <- c("testConfig1", "testConfig2")
   configurations <- sampleUniform(parameters, length(conf.id),
@@ -968,6 +966,7 @@ checkTargetFiles <- function(scenario, parameters)
   # FIXME: Create a function try.call(err.msg,warn.msg, fun, ...)
   # Executing targetRunner
   cat("# Executing targetRunner (", nrow(configurations), "times)...\n")
+  result <- TRUE
   output <-  withCallingHandlers(
     tryCatch(execute.experiments(experiments, scenario),
              error = function(e) {
@@ -988,7 +987,8 @@ checkTargetFiles <- function(scenario, parameters)
   }
   
   irace.assert(is.null(scenario$targetEvaluator) == is.null(.irace$target.evaluator))
-
+  if (!result) return(FALSE)
+  
   if (!is.null(scenario$targetEvaluator)) {
     cat("# Executing targetEvaluator...\n")
     output <-  withCallingHandlers(
