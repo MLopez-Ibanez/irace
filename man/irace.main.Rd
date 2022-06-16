@@ -2,16 +2,16 @@
 % Please edit documentation in R/main.R
 \name{irace.main}
 \alias{irace.main}
-\title{Higher-level interface to launch \code{irace()}.}
+\title{Higher-level interface to launch irace.}
 \usage{
-irace.main(scenario = defaultScenario(), output.width = 9999L)
+irace.main(scenario, output.width = 9999L)
 }
 \arguments{
 \item{scenario}{(\code{list()}) \cr Data structure containing \pkg{irace}
 settings. The data structure has to be the one returned by the function
 \code{\link[=defaultScenario]{defaultScenario()}} or \code{\link[=readScenario]{readScenario()}}.}
 
-\item{output.width}{(\code{integer(1)}) The width that must be used for the screen
+\item{output.width}{(\code{integer(1)}) The width used for the screen
 output.}
 }
 \value{
@@ -83,20 +83,21 @@ each experiment.}
 }
 }
 \description{
-Higher-level interface to launch \code{irace()}.
+Higher-level interface to launch irace.
 }
 \details{
-The function \code{irace.main} checks the correctness of the
-scenario, prints it, reads the parameter space from
-\code{scenario$parameterFile}, invokes \code{\link{irace}} and
-prints its results in various formatted ways. If you want a
-lower-level interface, please see function \code{\link{irace}}.
+This function checks the correctness of the scenario, reads the
+parameter space from \code{scenario$parameterFile}, invokes \code{\link[=irace]{irace()}},
+prints its results in various formatted ways, (optionally) calls
+\code{\link[=psRace]{psRace()}} and, finally, evaluates the best configurations on the test
+instances (if provided). If you want a lower-level interface that just
+runs irace, please see function \code{\link[=irace]{irace()}}.
 }
 \seealso{
-\code{\link{irace.cmdline}} a higher-level command-line interface to
-\code{irace.main}.
-\code{\link{readScenario}} to read the scenario setup from  a file.
-\code{\link{defaultScenario}} to provide a default scenario for \pkg{irace}.
+\code{\link[=irace.cmdline]{irace.cmdline()}} a higher-level command-line interface to
+\code{\link[=irace]{irace()}}
+\code{\link[=readScenario]{readScenario()}} to read the scenario setup from  a file.
+\code{\link[=defaultScenario]{defaultScenario()}} to provide a default scenario for \pkg{irace}.
 }
 \author{
 Manuel López-Ibáñez and Jérémie Dubois-Lacoste

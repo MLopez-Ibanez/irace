@@ -205,10 +205,7 @@ similarConfigurations <- function(configurations, parameters, threshold)
 
 
 ## Number of iterations.
-computeNbIterations <- function(nbParameters)
-{
-  return (2 + log2(nbParameters))
-}
+computeNbIterations <- function(nbParameters) (2 + log2(nbParameters))
 
 ## Computational budget at each iteration.
 computeComputationalBudget <- function(remainingBudget, indexIteration,
@@ -233,10 +230,7 @@ computeNbConfigurations <- function(currentBudget, indexIteration, firstTest, ea
 
 ## Termination of a race at each iteration. The race will stop if the
 ## number of surviving configurations is equal or less than this number.
-computeTerminationOfRace <- function(nbParameters)
-{
-  return (2 + log2(nbParameters))
-}
+computeTerminationOfRace <- function(nbParameters) (2 + log2(nbParameters))
 
 ## Compute the minimum budget required, and exit early in case the
 ## budget given by the user is insufficient.
@@ -375,6 +369,7 @@ irace.init <- function(scenario)
 {
   # We need to do this here to use/recover .Random.seed later.
   if (is.na(scenario$seed)) {
+    # FIXME: We should store this seed in state not in scenario. We should not modify scenario.
     scenario$seed <- trunc(runif(1, 1, .Machine$integer.max))
   }
   set.seed(scenario$seed)
@@ -382,7 +377,7 @@ irace.init <- function(scenario)
     irace.note("RNGkind: ", paste0(RNGkind(), collapse = " "), "\n")
     irace.note(".Random.seed: ", paste0(.Random.seed, collapse = ", "), "\n")
   }
-  return(scenario)
+  scenario
 }
 
 ## Generate instances + seed.
@@ -533,14 +528,14 @@ allConfigurationsInit <- function(scenario, parameters)
 #' @examples
 #' \dontrun{
 #' parameters <- readParameters("parameters.txt")
-#' scenario <- readScenario(filename = "scenario.txt",
-#'                          scenario = defaultScenario())
+#' scenario <- readScenario(filename = "scenario.txt")
 #' irace(scenario = scenario, parameters = parameters)
 #' }
 #'
 #' @seealso
 #'  \describe{
-#'  \item{[irace.main()]}{a higher-level command-line interface to `irace`.}
+#'  \item{[irace.main()]}{a higher-level interface to `irace`.}
+#'  \item{[irace.cmdline()]}{a command-line interface to `irace`.}
 #'  \item{[readScenario()]}{for reading a configuration scenario from a file.}
 #'  \item{[readParameters()]}{read the target algorithm parameters from a file.}
 #'  \item{[defaultScenario()]}{returns the default scenario settings of \pkg{irace}.}
@@ -551,9 +546,55 @@ allConfigurationsInit <- function(scenario, parameters)
 #' @concept running
 #' @export
 irace <- function(scenario, parameters)
+  irace_common(scenario, parameters, simple = TRUE)
+
+irace_common <- function(scenario, parameters, simple, output.width = 9999L)
 {
-  timer <- Timer$new()
+  if (!simple) {
+    op <- options(width = output.width) # Do not wrap the output.
+    on.exit(options(op), add = TRUE)
+  }
+  scenario <- checkScenario(scenario)
+  debugLevel <- scenario$debugLevel
+
+  if (debugLevel >= 1) {
+    op.debug <- options(warning.length = 8170,
+                        error = if (interactive()) utils::recover
+                                else irace.dump.frames)
+    on.exit(options(op.debug), add = TRUE)
+    printScenario (scenario)
+  }
   
+  if (missing(parameters)) {
+    # Read parameters definition
+    parameters <- readParameters (file = scenario$parameterFile,
+                                  digits = scenario$digits,
+                                  debugLevel = debugLevel)
+  } else {
+    parameters <- checkParameters(parameters)
+  }
+
+  eliteConfigurations <- irace_run(scenario = scenario, parameters = parameters)
+  if (simple) return(eliteConfigurations)
+
+  cat("# Best configurations (first number is the configuration ID;",
+      " listed from best to worst according to the ",
+      test.type.order.str(scenario$testType), "):\n", sep = "")
+  configurations.print(eliteConfigurations)
+  
+  cat("# Best configurations as commandlines (first number is the configuration ID; same order as above):\n")
+  configurations.print.command (eliteConfigurations, parameters)
+  
+  if (scenario$postselection > 0) 
+    psRace(iraceLogFile=scenario$logFile, postselection=scenario$postselection, elites=TRUE)
+  
+  testing_fromlog(logFile = scenario$logFile)
+  
+  invisible(eliteConfigurations)
+}
+
+irace_run <- function(scenario, parameters)
+{    
   catInfo <- function(..., verbose = TRUE) {
     irace.note (..., "\n")
     if (verbose) {
@@ -579,30 +620,29 @@ irace <- function(scenario, parameters)
     iraceResults$state$eliteConfigurations
   }
 
-  scenario <- checkScenario(scenario)
-  parameters <- checkParameters(parameters)
-  
+  timer <- Timer$new()
+  debugLevel <- scenario$debugLevel
+
   # Recover state from file?
   if (!is.null.or.empty(scenario$recoveryFile)) {
     irace.note ("Resuming from file: '", scenario$recoveryFile,"'\n")
     recoverFromFile(scenario$recoveryFile)
     # We call checkScenario again to fix any inconsistencies in the recovered
     # data.
-    firstRace <- FALSE
+    # FIXME: Do not call checkScenario earlier and instead do the minimum to check recoveryFile.
     scenario <- checkScenario(scenario)
+    firstRace <- FALSE
     stopParallel()
     startParallel(scenario)
     on.exit(stopParallel(), add = TRUE)
   } else { # Do not recover
     firstRace <- TRUE
-    scenario <- irace.init (scenario)
+    scenario <- irace.init(scenario)
     forbiddenExps <- scenario$forbiddenExps
-    debugLevel <- scenario$debugLevel
     # Set options controlling debug level.
     # FIXME: This should be the other way around, the options set the debugLevel.
     options(.race.debug.level = debugLevel)
     options(.irace.debug.level = debugLevel)
-    
     # Create a data frame of all configurations ever generated.
     allConfigurations <- allConfigurationsInit(scenario, parameters)
     nbUserConfigurations <- nrow(allConfigurations)
@@ -991,14 +1031,13 @@ irace <- function(scenario, parameters)
       nbNewConfigurations <- nbConfigurations - nrow(eliteConfigurations)
 
       # Update the model based on elites configurations
-      if (debugLevel >= 1) { irace.note("Update model\n") }
+      if (debugLevel >= 1) irace.note("Update model\n")
       model <- updateModel(parameters, eliteConfigurations, model, indexIteration,
                            nbIterations, nbNewConfigurations, scenario)
-      if (debugLevel >= 2) { printModel (model) }
-      
-      if (debugLevel >= 1) {
+      if (debugLevel >= 2) printModel (model)
+      if (debugLevel >= 1)
         irace.note("Sample ", nbNewConfigurations, " configurations from model\n")
-      }
+      
       newConfigurations <- sampleModel(parameters, eliteConfigurations,
                                        model, nbNewConfigurations,
                                        digits = scenario$digits,

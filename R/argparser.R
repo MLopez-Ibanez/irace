@@ -1,31 +1,29 @@
 #' R6 Class for parsing command-line arguments
 #' 
 #' @export
-CommandArgsParser <- R6::R6Class("CommandArgsParser", cloneable = FALSE, list(
-  argv = NULL,
-  argsdef = NULL,
+CommandArgsParser <- R6::R6Class("CommandArgsParser", cloneable = FALSE,
+ public = list(
   initialize = function(argv, argsdef) {
     # Handle the case where we are given a single character string like a
     # command-line.
     if (!missing(argv) && length(argv) == 1) {
       argv <- strsplit(trim(argv), " +")[[1]]
     }
-    self$argv <- argv
+    private$argv <- argv
     required_colnames <- c("name", "short", "long", "type", "default")
     if (any(required_colnames %!in% colnames(argsdef))) {
       stop("argsdef must contain the column names: ", paste0(required_colnames, collapse=", "))
     }
-    self$argsdef <- argsdef
-    rownames(self$argsdef) <- argsdef$name
-    self
+    private$argsdef <- argsdef
+    rownames(private$argsdef) <- argsdef$name
   },
   readCmdLineParameter = function (paramName, default = NULL) {
-    value <- self$readArg(short = self$argsdef[paramName, "short"],
-                          long  = self$argsdef[paramName,"long"])
+    value <- self$readArg(short = private$argsdef[paramName, "short"],
+                          long  = private$argsdef[paramName,"long"])
     if (is.null(value)) {
-      value <- if (is.null(default)) self$argsdef[paramName, "default"] else default
-    } else if (is.na(value) && self$argsdef[paramName,"type"] != 'x') {
-      stop("option '", self$argsdef[paramName,"long"],"' requires an argument", call. = FALSE)
+      value <- if (is.null(default)) private$argsdef[paramName, "default"] else default
+    } else if (is.na(value) && private$argsdef[paramName,"type"] != 'x') {
+      stop("option '", private$argsdef[paramName,"long"],"' requires an argument", call. = FALSE)
     }
     return(value)
   },
@@ -33,7 +31,7 @@ CommandArgsParser <- R6::R6Class("CommandArgsParser", cloneable = FALSE, list(
   ## FIXME: This function always consumes two arguments. This is problematic
   ## for flags that have no arguments, like --check.
   readArg = function(short = "", long = "") {
-    argv <- self$argv
+    argv <- private$argv
     pos <- c()
     if (length(short) > 0) {
       # FIXME: use match()
@@ -59,24 +57,28 @@ CommandArgsParser <- R6::R6Class("CommandArgsParser", cloneable = FALSE, list(
     value <- unlist(strsplit(argv[pos], '=', fixed = TRUE))[2]
     if (is.null (value) || is.na(value)) {
       value <- argv[pos + 1]
-      self$argv <- argv[-(pos + 1)]
+      private$argv <- argv[-(pos + 1)]
     }
-    self$argv <- self$argv[-pos]
+    private$argv <- private$argv[-pos]
     return (value)
   },
   readAll = function() {
     params <- list()
-    for (param in self$argsdef$name[self$argsdef$type != 'x']) {
+    for (param in private$argsdef$name[private$argsdef$type != 'x']) {
       value <- self$readCmdLineParameter(paramName = param)
       if (is.na(value) || (length(value) > 0 && value == "")) value <- NULL
       params[[param]] <- value
     }
     params
   },
-  cmdline_usage = function(){
-    irace::cmdline_usage(self$argsdef)
-  })
-  )
+  cmdline_usage = function() {
+    irace::cmdline_usage(private$argsdef)
+  }),
+ private = list(
+   argv = NULL,
+   argsdef = NULL
+ )
+)
 
 #' `cmdline_usage()` prints the output of `--help`
 #'

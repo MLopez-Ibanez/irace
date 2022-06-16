@@ -458,8 +458,7 @@ checkScenario <- function(scenario = defaultScenario())
   options(.irace.execdir = scenario$execDir)
   if (!is.null.or.empty(scenario$logFile)) {
     scenario$logFile <- path_rel2abs(scenario$logFile, cwd = scenario$execDir)
-    file.check(scenario$logFile, writeable = TRUE,
-               text = quote.param('logFile'))
+    file.check(scenario$logFile, writeable = TRUE, text = quote.param('logFile'))
   } else {
     # We cannot use NULL because defaultScenario() would override it.
     scenario$logFile <- ""

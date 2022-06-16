@@ -58,69 +58,33 @@ cat.irace.license <- function()
   cat(sub("__VERSION__", irace.version, irace.license, fixed=TRUE))
 }
 
-#' Higher-level interface to launch `irace()`.
+#' Higher-level interface to launch irace.
 #'
 #' @template arg_scenario
 #' 
-#' @param output.width (\code{integer(1)}) The width that must be used for the screen
-#' output.
+#' @param output.width (\code{integer(1)}) The width used for the screen
+#'   output.
 #'
-#' @details  The function \code{irace.main} checks the correctness of the
-#' scenario, prints it, reads the parameter space from
-#' \code{scenario$parameterFile}, invokes \code{\link{irace}} and
-#' prints its results in various formatted ways. If you want a
-#' lower-level interface, please see function \code{\link{irace}}.
+#' @details This function checks the correctness of the scenario, reads the
+#'   parameter space from \code{scenario$parameterFile}, invokes [irace()],
+#'   prints its results in various formatted ways, (optionally) calls
+#'   [psRace()] and, finally, evaluates the best configurations on the test
+#'   instances (if provided). If you want a lower-level interface that just
+#'   runs irace, please see function [irace()].
 #'
 #' @templateVar return_invisible TRUE
 #' @template return_irace
 #' @seealso
-#'  \code{\link{irace.cmdline}} a higher-level command-line interface to
-#'  \code{irace.main}.
-#'  \code{\link{readScenario}} to read the scenario setup from  a file.
-#'  \code{\link{defaultScenario}} to provide a default scenario for \pkg{irace}.
+#' [irace.cmdline()] a higher-level command-line interface to
+#'  [irace()]
+#'  [readScenario()] to read the scenario setup from  a file.
+#'  [defaultScenario()] to provide a default scenario for \pkg{irace}.
 #' 
 #' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
 #' @concept running
 #' @export
-irace.main <- function(scenario = defaultScenario(), output.width = 9999L)
-{
-  op <- options(width = output.width) # Do not wrap the output.
-  on.exit(options(op), add = TRUE)
-  
-  # FIXME: We check the scenario again in irace(). Avoid this duplication.
-  scenario <- checkScenario(scenario)
-  debug.level <- scenario$debugLevel
-  
-  if (debug.level >= 1) {
-    op.debug <- options(warning.length = 8170,
-                        error = if (interactive()) utils::recover
-                                else irace.dump.frames)
-    on.exit(options(op.debug), add = TRUE)
-    printScenario (scenario)
-  }
-  
-  # Read parameters definition
-  parameters <- readParameters (file = scenario$parameterFile,
-                                digits = scenario$digits,
-                                debugLevel = debug.level)
-
-  eliteConfigurations <- irace(scenario = scenario, parameters = parameters)
-
-  cat("# Best configurations (first number is the configuration ID;",
-      " listed from best to worst according to the ",
-      test.type.order.str(scenario$testType), "):\n", sep = "")
-  configurations.print(eliteConfigurations)
-  
-  cat("# Best configurations as commandlines (first number is the configuration ID; same order as above):\n")
-  configurations.print.command (eliteConfigurations, parameters)
-  
-  if (scenario$postselection > 0) 
-    psRace(iraceLogFile=scenario$logFile, postselection=scenario$postselection, elites=TRUE)
-  
-  testing_fromlog(logFile = scenario$logFile)
-  
-  invisible(eliteConfigurations)
-}
+irace.main <- function(scenario, output.width = 9999L)
+  irace_common(scenario = scenario, simple=FALSE, output.width = output.width)
 
 #' Test configurations given in `.Rdata` file
 #'
@@ -196,7 +160,7 @@ testing_fromlog <- function(logFile, testNbElites, testIterationElites,
   if (instances_changed || is.null.or.empty(scenario[["testInstances"]])) {
     scenario <- setup_test_instances(scenario)
     if (is.null.or.empty(scenario[["testInstances"]])) {
-      irace.note("No test instances, skip testing")
+      irace.note("No test instances, skip testing\n")
       return(FALSE)
     }
   }
@@ -279,19 +243,18 @@ testing_fromfile <- function(filename, scenario)
 
 #' Test that the given irace scenario can be run.
 #'
-#' @description \code{checkIraceScenario} tests that the given irace scenario
-#'   can be run by checking the scenario settings provided and trying to run
-#'   the target-algorithm.
+#' Test that the given irace scenario can be run by checking the scenario
+#' settings provided and trying to run the target-algorithm.
 #' 
 #' @template arg_scenario
 #' @template arg_parameters
 #'
-#' @return returns \code{TRUE} if succesful and gives an error and returns
+#' @return returns \code{TRUE} if successful and gives an error and returns
 #' \code{FALSE} otherwise.
 #' 
-#' @details Provide the \code{parameters} argument only if the parameter list
-#'   should not be obtained from the parameter file given by the scenario. If
-#'   the parameter list is provided it will not be checked. This function will
+#' @details If the `parameters` argument is missing, then the parameters 
+#'   will be read from the file `parameterFile`  given by `scenario`. If
+#'   `parameters` is provided, then `parameterFile` will not be read.  This function will
 #'   try to execute the target-algorithm.
 #'
 #' @seealso
@@ -304,14 +267,14 @@ testing_fromfile <- function(filename, scenario)
 #' 
 #' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
 #' @export
-checkIraceScenario <- function(scenario, parameters = NULL)
+checkIraceScenario <- function(scenario, parameters)
 {
   irace.note ("Checking scenario\n")
   scenario$debugLevel <- 2 
   scenario <- checkScenario(scenario)
   printScenario(scenario)
  
-  if (is.null(parameters)) {
+  if (missing(parameters)) {
     irace.note("Reading parameter file '", scenario$parameterFile, "'.\n")
     parameters <- readParameters (file = scenario$parameterFile,
                                   digits = scenario$digits,
@@ -376,7 +339,7 @@ init <- function()
 #' @template return_irace
 #' 
 #' @seealso
-#'  \code{\link{irace.main}} to start \pkg{irace} with a given scenario.
+#'  [irace.main()] to start \pkg{irace} with a given scenario.
 #' @examples
 #' irace.cmdline("--version")
 #' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
@@ -427,6 +390,6 @@ irace.cmdline <- function(argv = commandArgs(trailingOnly = TRUE))
   if (length(parser$argv) > 0) {
     irace.error ("Unknown command-line options: ", paste(parser$argv, collapse = " "))
   }
-  
-  irace.main(scenario)
+
+  irace_common(scenario = scenario, simple=FALSE)
 }

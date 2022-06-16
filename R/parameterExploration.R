@@ -30,9 +30,8 @@
 #' @examples
 #' \dontrun{
 #'   # Execute the postselection automatically after irace
+#'   scenario <- readScenario(filename="scenario.txt")
 #'   parameters <- readParameters("parameters.txt")
-#'   scenario <- readScenario(filename="scenario.txt", 
-#'                            scenario=defaultScenario())
 #'   # Use 10% of the total budget
 #'   scenario$postselection <- 0.1
 #'   irace(scenario=scenario, parameters=parameters)
@@ -49,7 +48,7 @@ psRace <- function(iraceLogFile=NULL, iraceResults=NULL, conf.ids=NULL,
   if (is.null(iraceLogFile) && is.null(iraceResults)) 
     irace.error("You must provide a Rdata file or an iraceResults object.")
     
-  irace.note ("Stating post-selection:\n# Seed:", seed, "\n")
+  irace.note ("Starting post-selection:\n# Seed:", seed, "\n")
   if (!is.null(iraceLogFile))
     cat("# Log file:",iraceLogFile,"\n")
   

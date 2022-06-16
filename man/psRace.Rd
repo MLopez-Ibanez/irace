@@ -53,9 +53,8 @@ If \code{iraceLogFile} is provided this list object will be saved in \code{irace
 \examples{
 \dontrun{
   # Execute the postselection automatically after irace
+  scenario <- readScenario(filename="scenario.txt")
   parameters <- readParameters("parameters.txt")
-  scenario <- readScenario(filename="scenario.txt", 
-                           scenario=defaultScenario())
   # Use 10\% of the total budget
   scenario$postselection <- 0.1
   irace(scenario=scenario, parameters=parameters)

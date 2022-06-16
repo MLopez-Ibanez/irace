@@ -4,7 +4,7 @@
 \alias{checkIraceScenario}
 \title{Test that the given irace scenario can be run.}
 \usage{
-checkIraceScenario(scenario, parameters = NULL)
+checkIraceScenario(scenario, parameters)
 }
 \arguments{
 \item{scenario}{(\code{list()}) \cr Data structure containing \pkg{irace}
@@ -16,18 +16,17 @@ space definition. The data structure has to similar to the one returned by the
 function \code{\link{readParameters}}.}
 }
 \value{
-returns \code{TRUE} if succesful and gives an error and returns
+returns \code{TRUE} if successful and gives an error and returns
 \code{FALSE} otherwise.
 }
 \description{
-\code{checkIraceScenario} tests that the given irace scenario
-can be run by checking the scenario settings provided and trying to run
-the target-algorithm.
+Test that the given irace scenario can be run by checking the scenario
+settings provided and trying to run the target-algorithm.
 }
 \details{
-Provide the \code{parameters} argument only if the parameter list
-should not be obtained from the parameter file given by the scenario. If
-the parameter list is provided it will not be checked. This function will
+If the \code{parameters} argument is missing, then the parameters
+will be read from the file \code{parameterFile}  given by \code{scenario}. If
+\code{parameters} is provided, then \code{parameterFile} will not be read.  This function will
 try to execute the target-algorithm.
 }
 \seealso{

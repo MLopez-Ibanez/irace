@@ -652,5 +652,5 @@ checkParameters <- function(parameters)
     parameters$isDependent <- sapply(parameters$domain, is.expression)
     names(parameters$isDependent) <- parameters$names
   }
-  return(parameters)
+  parameters
 }

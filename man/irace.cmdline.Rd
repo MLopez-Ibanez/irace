@@ -249,7 +249,7 @@ List of command-line options:\preformatted{-h,--help                Show this he
 irace.cmdline("--version")
 }
 \seealso{
-\code{\link{irace.main}} to start \pkg{irace} with a given scenario.
+\code{\link[=irace.main]{irace.main()}} to start \pkg{irace} with a given scenario.
 }
 \author{
 Manuel López-Ibáñez and Jérémie Dubois-Lacoste

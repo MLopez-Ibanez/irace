@@ -98,15 +98,15 @@ in \code{scenario$logFile}.
 \examples{
 \dontrun{
 parameters <- readParameters("parameters.txt")
-scenario <- readScenario(filename = "scenario.txt",
-                         scenario = defaultScenario())
+scenario <- readScenario(filename = "scenario.txt")
 irace(scenario = scenario, parameters = parameters)
 }
 
 }
 \seealso{
 \describe{
-\item{\code{\link[=irace.main]{irace.main()}}}{a higher-level command-line interface to \code{irace}.}
+\item{\code{\link[=irace.main]{irace.main()}}}{a higher-level interface to \code{irace}.}
+\item{\code{\link[=irace.cmdline]{irace.cmdline()}}}{a command-line interface to \code{irace}.}
 \item{\code{\link[=readScenario]{readScenario()}}}{for reading a configuration scenario from a file.}
 \item{\code{\link[=readParameters]{readParameters()}}}{read the target algorithm parameters from a file.}
 \item{\code{\link[=defaultScenario]{defaultScenario()}}}{returns the default scenario settings of \pkg{irace}.}
