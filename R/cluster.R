@@ -1,17 +1,11 @@
 ### Submit/wait for jobs in batch clusters.
 sge.job.finished <- function(jobid)
-{
-  return(system (paste0("qstat -j ", jobid),
-                 ignore.stdout = TRUE, ignore.stderr = TRUE,
-                 intern = FALSE, wait = TRUE))
-}
+  system (paste0("qstat -j ", jobid), ignore.stdout = TRUE, ignore.stderr = TRUE,
+          intern = FALSE, wait = TRUE)
 
 pbs.job.finished <- function(jobid)
-{
-  return(system (paste0("qstat ", jobid),
-                 ignore.stdout = TRUE, ignore.stderr = TRUE,
-                 intern = FALSE, wait = TRUE))
-}
+  system (paste0("qstat ", jobid), ignore.stdout = TRUE, ignore.stderr = TRUE,
+          intern = FALSE, wait = TRUE)
 
 torque.job.finished <- function(jobid)
 {
@@ -32,7 +26,7 @@ torque.job.finished <- function(jobid)
   # output. If the 5th token in the last line is a 'C', then the job has
   # terminated and its output files can be processed. Otherwise the job is not
   # completed (queued, running, exiting...)
-  return(any(grepl(paste0(jobid, ".*\\sC\\s"), output)))
+  any(grepl(paste0(jobid, ".*\\sC\\s"), output))
 }
 
 slurm.job.finished <- function(jobid)
@@ -44,14 +38,14 @@ slurm.job.finished <- function(jobid)
   if (!is.null(attr(output, "status"))) return(TRUE)
   # If may return zero, but the job is not in the system anymore because it
   # completed. This is different from the Torque case.
-  return (!any(grepl(paste0("\\s", jobid, "\\s"), output)))
+  !any(grepl(paste0("\\s", jobid, "\\s"), output))
 }
 
 htcondor.job.finished <- function(jobid)
 {
   output <- suppressWarnings(system2("condor_q", jobid, stdout = TRUE, stderr = TRUE))
   # Check if job is still in the queue, otherwise it is considered finished
-  return (!any(grepl(paste0("ID:\\s", jobid), output)))
+  !any(grepl(paste0("ID:\\s", jobid), output))
 }
 
 ## Launch a job with qsub and return its jobID. This function does not
@@ -81,8 +75,8 @@ target.runner.qsub <- function(experiment, scenario)
       jobID <- NULL
     }
   }
-  return(list(jobID = jobID, error = err.msg, outputRaw = outputRaw,
-              call = paste(cmd, args)))
+  list(jobID = jobID, error = err.msg, outputRaw = outputRaw,
+       call = paste(cmd, args))
 }
 
 cluster.lapply <- function(X, scenario, poll.time = 2)
@@ -128,5 +122,5 @@ cluster.lapply <- function(X, scenario, poll.time = 2)
       }
     }
   }
-  return(output)
+  output
 }

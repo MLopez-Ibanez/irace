@@ -78,11 +78,11 @@ target.error <- function(err.msg, output, scenario, target.runner.call,
                          target.evaluator.call = NULL)
 {
   if (!is.null(target.evaluator.call)) {
-    err.msg <- paste0(err.msg, "\n", .irace.prefix,
+    err.msg <- paste0(err.msg, "\n", .msg.prefix,
                       "The call to targetEvaluator was:\n", target.evaluator.call)
   }
   if (!is.null(target.runner.call)) {
-    err.msg <- paste0(err.msg, "\n", .irace.prefix,
+    err.msg <- paste0(err.msg, "\n", .msg.prefix,
                       "The call to targetRunner was:\n", target.runner.call)
   }
   if (is.null(output$outputRaw)) {
@@ -101,9 +101,9 @@ target.error <- function(err.msg, output, scenario, target.runner.call,
       " Try to run the command(s) above from the execution directory '",
       scenario$execDir, "' to investigate the issue. See also Appendix B (targetRunner troubleshooting checklist) of the User Guide (https://cran.r-project.org/package=irace/vignettes/irace-package.pdf).")
   }
-  irace.error(err.msg, "\n", .irace.prefix,
+  irace.error(err.msg, "\n", .msg.prefix,
               "The output was:\n", paste(output$outputRaw, collapse = "\n"),
-              "\n", .irace.prefix, advice.txt)
+              "\n", .msg.prefix, advice.txt)
 }
 
 check.output.target.evaluator <- function (output, scenario, target.runner.call = NULL)

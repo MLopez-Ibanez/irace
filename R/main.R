@@ -86,9 +86,9 @@ irace.main <- function(scenario = defaultScenario(), output.width = 9999L)
 {
   op <- options(width = output.width) # Do not wrap the output.
   on.exit(options(op), add = TRUE)
-
+  
   # FIXME: We check the scenario again in irace(). Avoid this duplication.
-  scenario <- checkScenario (scenario)
+  scenario <- checkScenario(scenario)
   debug.level <- scenario$debugLevel
   
   if (debug.level >= 1) {
@@ -105,7 +105,7 @@ irace.main <- function(scenario = defaultScenario(), output.width = 9999L)
                                 debugLevel = debug.level)
 
   eliteConfigurations <- irace(scenario = scenario, parameters = parameters)
-  
+
   cat("# Best configurations (first number is the configuration ID;",
       " listed from best to worst according to the ",
       test.type.order.str(scenario$testType), "):\n", sep = "")

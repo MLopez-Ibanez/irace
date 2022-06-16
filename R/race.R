@@ -368,7 +368,7 @@ race.print.task <- function(res.symb, Results,
     if (now <= start) return("00:00:00")
     elapsed <- difftime(now, start, units = "secs")
     # FIXME: Maybe better and faster if we only print seconds?
-    return(format(.POSIXct(elapsed, tz="GMT"), "%H:%M:%S"))
+    format(.POSIXct(elapsed, tz="GMT"), "%H:%M:%S")
   }
   # FIXME: This is the mean of the best, but perhaps it should
   # be the sum of ranks in the case of test == friedman?

@@ -10,8 +10,6 @@ irace.reload.debug <- function(package = "irace")
           quote(utils::dump.frames("iracedump", TRUE)))
 }
 
-.irace.prefix <- "== irace == "
-
 irace.print.memUsed <- function(objects)
 {
   object.size.kb <- function (name, envir) {
@@ -42,7 +40,7 @@ irace.print.memUsed <- function(objects)
 # cannot help the user to understand why the program failed.
 irace.warning <- function(...)
 {
-  cat(sep="", .irace.prefix, "WARNING: ", ..., "\n")
+  cat(sep="", .msg.prefix, "WARNING: ", ..., "\n")
 }
 
 # Print a user-level fatal error message, when the calling context
@@ -53,7 +51,7 @@ irace.error <- function(...)
   # value allowed up to R 3.0.2
   op <- options(warning.length = 8170)
   on.exit(options(op))
-  stop (.irace.prefix, ..., call. = FALSE)
+  stop (.msg.prefix, ..., call. = FALSE)
 }
 
 ## utils::dump.frames is broken and cannot be used with bquote, so we need a wrapper. When irace crashes, it generates a file "iracedump.rda". To debug the crash use:
@@ -92,9 +90,9 @@ irace.internal.error <- function(...)
   # 6 to not show anything below irace.assert()
   bt <- capture.output(traceback(6))
   warnings()
-  stop (.irace.prefix, paste0(..., collapse = "\n"),
+  stop (.msg.prefix, paste0(..., collapse = "\n"),
         paste0(bt, collapse= "\n"), "\n",
-        .irace.prefix, "\n", .irace.bug.report, call. = FALSE)
+        .msg.prefix, "\n", .irace.bug.report, call. = FALSE)
   invisible()
 }
 

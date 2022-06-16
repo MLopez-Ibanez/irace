@@ -511,14 +511,7 @@ allConfigurationsInit <- function(scenario, parameters)
                            nrow = 0,
                            dimnames = list(NULL, configurations.colnames)))
   }
-  return(allConfigurations)
-}
-
-irace_finish <- function(iraceResults, scenario, reason)
-{
-  iraceResults$state$completed = reason
-  irace_save_logfile(iraceResults, scenario)
-  iraceResults$state$eliteConfigurations
+  allConfigurations
 }
 
 #' irace
@@ -559,6 +552,8 @@ irace_finish <- function(iraceResults, scenario, reason)
 #' @export
 irace <- function(scenario, parameters)
 {
+  timer <- Timer$new()
+  
   catInfo <- function(..., verbose = TRUE) {
     irace.note (..., "\n")
     if (verbose) {
@@ -573,7 +568,17 @@ irace <- function(scenario, parameters)
            sep = "")
     }
   }
-  
+
+  irace_finish <- function(iraceResults, scenario, reason) {
+    elapsed <- timer$elapsed()
+    cat("# Total CPU user time: ", elapsed["user"], ", CPU sys time: ", elapsed["system"],
+        ", Wall-clock time: ", elapsed["wallclock"], "\n", sep="")
+    iraceResults$state$elapsed = elapsed  
+    iraceResults$state$completed = reason
+    irace_save_logfile(iraceResults, scenario)
+    iraceResults$state$eliteConfigurations
+  }
+
   scenario <- checkScenario(scenario)
   parameters <- checkParameters(parameters)
   
