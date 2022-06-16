@@ -2,11 +2,9 @@ library("jsonlite")
 # Read parameters from JSON file
 irace_params <- fromJSON(txt = "irace_options.json", simplifyDataFrame = TRUE)
 
-is.na.nowarn <- function(x)
-  return(suppressWarnings(is.na(x)))
+is.na.nowarn <- function(x) suppressWarnings(is.na(x))
 
-is.null.or.na.or.empty <- function(x)
-  return(is.null(x) | is.na.nowarn(x) | (x == ""))
+is.null.or.na.or.empty <- function(x) (is.null(x) | is.na.nowarn(x) | (x == ""))
 
 format.number.or.string <- function(x)
 {
@@ -19,9 +17,8 @@ format.number.or.string <- function(x)
   else
     return(y)
 }
-to.plain.text <- function(x)
-  return(gsub("\\\\code\\{([^}]+)\\}", "\\1", x))
-     
+to.plain.text <- function(x) gsub("\\\\code\\{([^}]+)\\}", "\\1", x)
+
 ordered_sections <- c("General options",
                       "Elitist \\irace",
                       "Internal \\irace options",

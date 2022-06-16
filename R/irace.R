@@ -679,8 +679,8 @@ irace <- function(scenario, parameters)
         output <- do.experiments(configurations = allConfigurations[next.configuration:nconfigurations, ],
                                  ninstances = ninstances, scenario = scenario, parameters = parameters)  
         iraceResults$experimentLog <- rbind(iraceResults$experimentLog,
-                                            cbind(rep(0, nrow(output$experimentLog)),
-                                                  output$experimentLog)) 
+                                            # These experiments are assigned iteration 0
+                                            cbind(iteration=0L, output$experimentLog)) 
         
         iraceResults$experiments <- merge.matrix (iraceResults$experiments,
                                                   output$experiments)
