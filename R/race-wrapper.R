@@ -211,8 +211,7 @@ target.evaluator.default <- function(experiment, num.configurations, all.conf.id
   }
 
   cwd <- setwd (scenario$execDir)
-  # FIXME: I think we don't even need to paste the args, since system2 handles this by itself.
-  args <- paste(configuration.id, instance.id, seed, instance, num.configurations, all.conf.id)
+  args <- c(configuration.id, instance.id, seed, instance, num.configurations, all.conf.id)
   output <- runcommand(targetEvaluator, args, configuration.id, debugLevel)
   setwd (cwd)
 
@@ -233,7 +232,7 @@ target.evaluator.default <- function(experiment, num.configurations, all.conf.id
   }
   return(list(cost = cost, time = time,
               error = err.msg, outputRaw = output$output,
-              call = paste(targetEvaluator, args)))
+              call = paste(targetEvaluator, args, collapse=" ")))
 }
 
 check.output.target.runner <- function (output, scenario)
@@ -361,12 +360,12 @@ target.runner.aclib <- function(experiment, scenario)
   
   err.msg <- output$error
   if (is.null(err.msg)) {
-    return(c(parse.aclib.output (output$output),
+    return(c(parse.aclib.output(output$output),
              list(outputRaw = output$output, call = paste(cmd, args))))
   }
   
-  return(list(cost = NULL, time = NULL, error = err.msg,
-              outputRaw = output$output, call = paste(cmd, args)))
+  list(cost = NULL, time = NULL, error = err.msg,
+       outputRaw = output$output, call = paste(cmd, args))
 }
 
 check_launcher_args <- function(targetRunnerLauncherArgs)
@@ -382,7 +381,7 @@ process_launcher_args <- function(targetRunnerLauncherArgs, targetRunner, args)
   check_launcher_args(targetRunnerLauncherArgs)
   targetRunnerLauncherArgs <- gsub("{targetRunner}", targetRunner, targetRunnerLauncherArgs, fixed=TRUE)
   targetRunnerLauncherArgs <- gsub("{targetRunnerArgs}", args, targetRunnerLauncherArgs, fixed=TRUE)
-  return(targetRunnerLauncherArgs)
+  targetRunnerLauncherArgs
 }
   
 run_target_runner <- function(experiment, scenario)
@@ -496,7 +495,7 @@ target.runner.default <- function(experiment, scenario)
   }
   list(cost = cost, time = time,
        error = err.msg, outputRaw = output$output,
-       call = paste(cmd, args))
+       call = paste(cmd, args, collapse = " "))
 }
 
 execute.experiments <- function(experiments, scenario)
