@@ -11,7 +11,11 @@
  * Added support for HTCondor cluster framework to `--batchmode`.
                                                      (Filippo Bistaffa)
 
- * New scenario option `minMeasurableTime`
+ * New scenario option `minMeasurableTime`.
+                                                     (Manuel López-Ibáñez)
+ 
+ * New command-line option `--quiet` to run without producing any output
+   except errors (also available as a scenario option).
                                                      (Manuel López-Ibáñez)
  
  * The user-guide now contains a detailed section on "Hyper-parameter

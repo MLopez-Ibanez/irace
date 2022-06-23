@@ -397,7 +397,7 @@ run_target_runner <- function(experiment, scenario)
   targetRunner <- scenario$targetRunner
   debugLevel <- scenario$debugLevel
 
-  if (isTRUE(scenario$aclib)) {
+  if (scenario$aclib) {
     has_value <- !is.na(configuration)
     # <executable> [<arg>] [<arg>] ... [--cutoff <cutoff time>] [--instance <instance name>] 
     # [--seed <seed>] --config [-param_name_1 value_1] [-param_name_2 value_2] ...

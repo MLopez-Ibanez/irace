@@ -338,7 +338,8 @@ capping_hline <- table_hline(.capping_table_fields_width)
 capping_header <- table_sprint(.capping_colum_names, .capping_table_fields_width) 
 nocap_hline <- table_hline(.nocap_table_fields_width)
 nocap_header <- table_sprint(.nocap_colum_names, .nocap_table_fields_width) 
-                                
+
+# FIXME: Depending on capping here is ugly. We should simply set-up the correct printing functions at the start of race().
 race.print.header <- function(capping)
 {
   cat(sep = "", "# Markers:
@@ -507,11 +508,11 @@ final.execution.bound <- function(experimentsTime, elites, no.configurations,
                                   current.task, which.exe, scenario)
 {
   minMeasurableTime <- scenario$minMeasurableTime
-
+  boundMax <- scenario$boundMax
   # FIXME: should we use an adjusted boundMax 
-  final.bounds <- rep(scenario$boundMax, no.configurations)
-  total.time  <- current.task * scenario$boundMax
-  elite.bound <- scenario$boundMax
+  final.bounds <- rep(boundMax, no.configurations)
+  total.time  <- current.task * boundMax
+  elite.bound <- boundMax
   # Elite candidates can have NA values due to the rejection 
   if (length(elites) > 0)
     elites <- elites[!is.na(experimentsTime[current.task,elites])]
@@ -525,17 +526,17 @@ final.execution.bound <- function(experimentsTime, elites, no.configurations,
     if (scenario$boundType == "instance") {
        elite.bound <- instanceBound(experimentsTime[current.task, elites],
                                     type = scenario$cappingType)
-       final.bounds[which.exe] <- min(elite.bound + minMeasurableTime, scenario$boundMax)
+       final.bounds[which.exe] <- min(elite.bound + minMeasurableTime, boundMax)
        final.bounds[which.exe] <- ceiling.digits(final.bounds[which.exe], scenario$boundDigits)
      } else {
        elite.bound <- executionBound(experimentsTime[1:current.task, elites, drop = FALSE],
                                      type = scenario$cappingType)
-       elite.bound <- min(elite.bound, scenario$boundMax)
+       elite.bound <- min(elite.bound, boundMax)
        # FIXME: This minMeasurableTime should be a scenario setting and it
        # should be the same value that we use in check.output.target.runner
        total.time <- (current.task * elite.bound) + minMeasurableTime
        time.left <- total.time - colSums(experimentsTime[1:current.task, which.exe, drop = FALSE], na.rm = TRUE)
-       final.bounds[which.exe] <- sapply(time.left, min, scenario$boundMax)
+       final.bounds[which.exe] <- sapply(time.left, min, boundMax)
        # We round up the bounds up to the specified number of digits. This may
        # be necessary if the target-algorithm does not support higher precision.
        final.bounds[which.exe] <- ceiling.digits(final.bounds[which.exe], scenario$boundDigits)
@@ -625,6 +626,8 @@ race <- function(maxExp = 0,
   first.test <- scenario$firstTest
   each.test <- scenario$eachTest
   elitist <- scenario$elitist
+  capping <- scenario$capping
+  quiet <- scenario$quiet
   no.configurations <- nrow(configurations)
   experimentLog <- matrix(nrow = 0, ncol = 4,
                           dimnames = list(NULL, c("instance", "configuration", "time", "bound")))
@@ -694,7 +697,7 @@ race <- function(maxExp = 0,
                     nrow = elite.safe,
                     ncol = no.configurations,
                     dimnames = list(elite.instances.ID, configurations.ID))
-  if (scenario$capping)
+  if (capping)
     experimentsTime <- matrix(NA,
                               nrow = elite.safe,
                               ncol = no.configurations, 
@@ -704,14 +707,14 @@ race <- function(maxExp = 0,
     Results[rownames(elite.data[["experiments"]]),
             colnames(elite.data[["experiments"]])] <- elite.data[["experiments"]]
 
-    if (scenario$capping) {
+    if (capping) {
       experimentsTime[rownames(elite.data[["time"]]),
                       colnames(elite.data[["time"]])] <- elite.data[["time"]]
     }
 
     # Preliminary execution of elite configurations to calculate
     # the execution bound of initial configurations (capping only).
-    if (scenario$capping && elitistNewInstances != 0) {
+    if (capping && elitistNewInstances != 0) {
       # FIXME: This should go into its own function.
       n.elite <- ncol(elite.data[["experiments"]])
       which.elites <- which(rep(TRUE, n.elite))
@@ -780,8 +783,8 @@ race <- function(maxExp = 0,
   best <- 0
   race.ranks <- c()
   no.elimination <- 0 # number of tasks without elimination.
-  
-  race.print.header(scenario$capping)
+  if (!quiet)
+    race.print.header(capping)
 
   # Test that all instances that have been previously seen have been evaluated
   # by at least one configuration.
@@ -814,12 +817,13 @@ race <- function(maxExp = 0,
         # criterion is disabled)
         ## MANUEL: So what is the reason to not immediately terminate here? Is
         ## there a reason to continue?
-        race.print.task(".", Results[1:current.task, , drop = FALSE],
-                        race.instances[current.task],
-                        current.task, alive = alive,
-                        configurations[best, ".ID."],
-                        best = best, experimentsUsed, Sys.time(), 
-                        bound = NA, scenario$capping)
+        if (!quiet)
+          race.print.task(".", Results[1:current.task, , drop = FALSE],
+                          race.instances[current.task],
+                          current.task, alive = alive,
+                          configurations[best, ".ID."],
+                          best = best, experimentsUsed, Sys.time(), 
+                          bound = NA, capping)
         next
       }
     }
@@ -833,12 +837,12 @@ race <- function(maxExp = 0,
     ## there are instances previously seen that have not been evaluated on any
     ## alive configuration.
     if (current.task > first.test) {
-      #if ((current.task > first.test && !scenario$capping) 
+      #if ((current.task > first.test && !capping) 
         # MANUEL: This is new and I'm not sure what it does.
         # LESLIE: When using capping, we dont finish any race until all 
         # previous instances have been executed (this makes sure that all non-elite 
         # configurations execute all the previous instances)
-    #    || (scenario$capping && (current.task > elite.safe))) {
+    #    || (capping && (current.task > elite.safe))) {
           # MANUEL: How is this even possible?
           # LESLIE: It can be that the capping eliminate all but one configuration
           # (which should be an elite one) after we finish the new instances to be evaluated, 
@@ -891,7 +895,7 @@ race <- function(maxExp = 0,
     if (nrow(Results) < current.task) {
       Results <- rbind(Results, rep(NA, ncol(Results)))
       rownames(Results) <- race.instances[1:nrow(Results)]
-      if (scenario$capping) {
+      if (capping) {
         experimentsTime <- rbind(experimentsTime, rep(NA, ncol(experimentsTime)))
         rownames(experimentsTime) <- race.instances[1:nrow(experimentsTime)]
       }
@@ -904,7 +908,7 @@ race <- function(maxExp = 0,
     # Calculate bounds for executing if needed.
     which.elite.exe <- intersect(which.exe, which(is.elite > 0))
     irace.assert(setequal(which.elite.exe, which(is.elite & is.na(Results[current.task,]))))
-    if (scenario$capping) {
+    if (capping) {
       # Pre-execute elite configurations that are not yet executed in the current instance.
       if (length(which.elite.exe)) {
         # FIXME: This should go into its own function
@@ -949,14 +953,16 @@ race <- function(maxExp = 0,
           elite.safe <- update.elite.safe(Results, is.elite)
         }
         which.exe <- setdiff(which.exe, which.elite.exe)
+        # FIXME: There is similar code above.
         if (length(which.exe) == 0L) {
           is.elite <- update.is.elite(is.elite, which.elite.exe)
-          race.print.task(".", Results[1:current.task, , drop = FALSE],
-                        race.instances[current.task],
-                        current.task, alive = alive,
-                        configurations[best, ".ID."],
-                        best = best, experimentsUsed, start.time,
-                        bound = NA, scenario$capping)
+          if (!quiet)
+            race.print.task(".", Results[1:current.task, , drop = FALSE],
+                            race.instances[current.task],
+                            current.task, alive = alive,
+                            configurations[best, ".ID."],
+                            best = best, experimentsUsed, start.time,
+                            bound = NA, capping)
           next
         }
       }
@@ -990,7 +996,7 @@ race <- function(maxExp = 0,
     irace.assert(length(vcost) == length(which.exps))
     # Set max execution bound to timed out executions which have execution
     # times smaller than boundMax and implement parX if required
-    if (scenario$capping) {
+    if (capping) {
       vcost <- applyPAR(vcost, boundMax = scenario$boundMax, boundPar = scenario$boundPar)
       if (scenario$boundAsTimeout)
         vcost[(vcost >= final.bounds[which.exps]) & (vcost < scenario$boundMax)] <- scenario$boundMax
@@ -1002,7 +1008,7 @@ race <- function(maxExp = 0,
     irace.assert(length(which.exps) == length(which.exe))
     vtimes <- unlist(lapply(output[which.exps], "[[", "time"))
     irace.assert(length(vtimes) == length(which.exe))
-    if (scenario$capping) {
+    if (capping) {
       # Correct higher execution times.
       experimentsTime[current.task, which.exps] <- pmin(vtimes, final.bounds[which.exps])
     }
@@ -1046,7 +1052,7 @@ race <- function(maxExp = 0,
     ## Dominance elimination (Capping only).
     # The second condition can be false if we eliminated via immediate
     # rejection
-    if (scenario$capping && sum(alive) > minSurvival) {
+    if (capping && sum(alive) > minSurvival) {
       irace.assert(!any(is.elite > 0) == (current.task >= elite.safe))
       cap.alive <- dom.elim(Results[1:current.task, , drop = FALSE],
                             # Get current elite configurations
@@ -1090,7 +1096,7 @@ race <- function(maxExp = 0,
 
     # It may happen that the capping and the test eliminate together all
     # configurations. In that case, we only trust the capping elimination.
-    if (scenario$capping && !any(alive)) {
+    if (capping && !any(alive)) {
       if (scenario$debugLevel >= 2) {
         irace.warning("Elimination tests have eliminated all configurations, keeping the capping results.\n")
         irace.note("Alive according to capping:", which(cap.alive), "\n")
@@ -1134,14 +1140,14 @@ race <- function(maxExp = 0,
     # Remove the ranks of those that are not alive anymore
     race.ranks <- race.ranks[which.alive]
     irace.assert(length(race.ranks) == sum(alive))
-
-    race.print.task(res.symb, Results[1:current.task, , drop = FALSE],
-                    race.instances[current.task],
-                    current.task, alive = alive,
-                    configurations[best, ".ID."],
-                    best = best, experimentsUsed, start.time, 
-                    bound = elite.bound, scenario$capping)
-            
+    if (!quiet)
+      race.print.task(res.symb, Results[1:current.task, , drop = FALSE],
+                      race.instances[current.task],
+                      current.task, alive = alive,
+                      configurations[best, ".ID."],
+                      best = best, experimentsUsed, start.time, 
+                      bound = elite.bound, capping)
+    
     if (elitist) {
       # Compute number of statistical tests without eliminations.
       irace.assert(!any(is.elite > 0) == (current.task >= elite.safe))
@@ -1180,14 +1186,15 @@ race <- function(maxExp = 0,
   race.ranks <- overall.ranks(Results[, alive, drop = FALSE], stat.test = stat.test)
   best <- which.alive[which.min(race.ranks)]
 
-  race.print.footer(bestconf = configurations[best, , drop = FALSE],
-                    # FIXME: This is the mean of the best, but perhaps it
-                    # should be the sum of ranks in the case of test ==
-                    # friedman?
-                    mean.best = mean(Results[, best]),
-                    break.msg = break.msg, debug.level = scenario$debugLevel, 
-                    capping = scenario$capping)
-  
+  if (!quiet)
+    race.print.footer(bestconf = configurations[best, , drop = FALSE],
+                      # FIXME: This is the mean of the best, but perhaps it
+                      # should be the sum of ranks in the case of test ==
+                      # friedman?
+                      mean.best = mean(Results[, best]),
+                      break.msg = break.msg, debug.level = scenario$debugLevel, 
+                      capping = capping)
+
   nbAlive <- sum(alive)
   configurations$.ALIVE. <- as.logical(alive)
   # Assign the proper ranks in the configurations data.frame.

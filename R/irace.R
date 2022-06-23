@@ -577,13 +577,15 @@ irace_common <- function(scenario, parameters, simple, output.width = 9999L)
   eliteConfigurations <- irace_run(scenario = scenario, parameters = parameters)
   if (simple) return(eliteConfigurations)
 
-  cat("# Best configurations (first number is the configuration ID;",
-      " listed from best to worst according to the ",
-      test.type.order.str(scenario$testType), "):\n", sep = "")
-  configurations.print(eliteConfigurations)
+  if (!scenario$quiet) {
+    cat("# Best configurations (first number is the configuration ID;",
+        " listed from best to worst according to the ",
+        test.type.order.str(scenario$testType), "):\n", sep = "")
+    configurations.print(eliteConfigurations)
   
-  cat("# Best configurations as commandlines (first number is the configuration ID; same order as above):\n")
-  configurations.print.command (eliteConfigurations, parameters)
+    cat("# Best configurations as commandlines (first number is the configuration ID; same order as above):\n")
+    configurations.print.command (eliteConfigurations, parameters)
+  }
   
   if (scenario$postselection > 0) 
     psRace(iraceLogFile=scenario$logFile, postselection=scenario$postselection, elites=TRUE)
@@ -594,8 +596,9 @@ irace_common <- function(scenario, parameters, simple, output.width = 9999L)
 }
 
 irace_run <- function(scenario, parameters)
-{    
-  catInfo <- function(..., verbose = TRUE) {
+{
+  quiet <- scenario$quiet
+  catInfo <- if (quiet) do_nothing else function(..., verbose = TRUE) {
     irace.note (..., "\n")
     if (verbose) {
       cat ("# Iteration: ", indexIteration, "\n",
@@ -603,7 +606,7 @@ irace_run <- function(scenario, parameters)
            "# experimentsUsedSoFar: ", experimentsUsedSoFar, "\n",
            "# timeUsed: ", timeUsed, "\n",
            "# remainingBudget: ", remainingBudget, "\n",
-           "# currentBudget: ", currentBudget, "\n",
+             "# currentBudget: ", currentBudget, "\n",
            "# number of elites: ", nrow(eliteConfigurations), "\n",
            "# nbConfigurations: ", nbConfigurations, "\n",
            sep = "")
@@ -612,9 +615,10 @@ irace_run <- function(scenario, parameters)
 
   irace_finish <- function(iraceResults, scenario, reason) {
     elapsed <- timer$elapsed()
-    cat("# Total CPU user time: ", elapsed["user"], ", CPU sys time: ", elapsed["system"],
-        ", Wall-clock time: ", elapsed["wallclock"], "\n", sep="")
-    iraceResults$state$elapsed = elapsed  
+    if (!quiet)
+      cat("# Total CPU user time: ", elapsed["user"], ", CPU sys time: ", elapsed["system"],
+          ", Wall-clock time: ", elapsed["wallclock"], "\n", sep="")
+    iraceResults$state$elapsed = elapsed
     iraceResults$state$completed = reason
     irace_save_logfile(iraceResults, scenario)
     iraceResults$state$eliteConfigurations
@@ -1170,7 +1174,7 @@ irace_run <- function(scenario, parameters)
     irace.note("Elite configurations (first number is the configuration ID;",
                " listed from best to worst according to the ",
                test.type.order.str(scenario$testType), "):\n")
-    configurations.print(eliteConfigurations, metadata = debugLevel >= 1)
+    if (!quiet) configurations.print(eliteConfigurations, metadata = debugLevel >= 1)
     iraceResults$iterationElites <- c(iraceResults$iterationElites, eliteConfigurations$.ID.[1])
     iraceResults$allElites[[indexIteration]] <- eliteConfigurations$.ID.
     

@@ -208,7 +208,7 @@ testing_fromfile <- function(filename, scenario)
 {
   irace.note ("Checking scenario\n")
   scenario <- checkScenario(scenario)
-  printScenario(scenario)
+  if (!scenario$quiet) printScenario(scenario)
 
   irace.note("Reading parameter file '", scenario$parameterFile, "'.\n")
   parameters <- readParameters (file = scenario$parameterFile,
@@ -231,12 +231,12 @@ testing_fromfile <- function(filename, scenario)
                        allConfigurations = configurations)
     
   irace.note ("Testing configurations (in the order given as input): \n")
-  configurations.print(configurations)
+  if (!scenario$quiet) configurations.print(configurations)
   iraceResults$testing <- testConfigurations(configurations, scenario, parameters)
   irace_save_logfile(iraceResults, scenario)
   # FIXME : We should print the seeds also. As an additional column?
   irace.note ("Testing results (column number is configuration ID in no particular order):\n")
-  print(iraceResults$testing$experiments)
+  if (!scenario$quiet) print(iraceResults$testing$experiments)
   irace.note ("Finished testing\n")
   return(iraceResults)
 }
@@ -272,7 +272,7 @@ checkIraceScenario <- function(scenario, parameters)
   irace.note ("Checking scenario\n")
   scenario$debugLevel <- 2 
   scenario <- checkScenario(scenario)
-  printScenario(scenario)
+  if (!scenario$quiet) printScenario(scenario)
  
   if (missing(parameters)) {
     irace.note("Reading parameter file '", scenario$parameterFile, "'.\n")
@@ -280,13 +280,14 @@ checkIraceScenario <- function(scenario, parameters)
                                   digits = scenario$digits,
                                   debugLevel = 2)
   } else if (!is.null.or.empty(scenario$parameterFile)) {
-    cat("# checkIraceScenario(): 'parameters' provided by user. ",
-        "Parameter file '", scenario$parameterFile, "' will be ignored\n", sep = "")
+    if (!scenario$quiet) 
+      cat("# checkIraceScenario(): 'parameters' provided by user. ",
+          "Parameter file '", scenario$parameterFile, "' will be ignored\n", sep = "")
   }
   checkParameters(parameters)
   irace.note("Checking target runner.\n")
   if (checkTargetFiles(scenario = scenario, parameters = parameters)) {
-    irace.note("Check succesful.\n")
+    irace.note("Check successful.\n")
     return(TRUE)
   } else {
     irace.error("Check unsuccessful.\n")
@@ -347,11 +348,16 @@ init <- function()
 #' @export
 irace.cmdline <- function(argv = commandArgs(trailingOnly = TRUE))
 {
-  cat.irace.license()
-  cat("# installed at: ", system.file(package="irace"), "\n",
-      "# called with: ", paste(argv, collapse = " "), "\n", sep = "")
-
   parser <- CommandArgsParser$new(argv = argv, argsdef = .irace.params.def)
+  quiet <- !is.null(parser$readArg (short = "-q", long = "--quiet")) 
+  if (quiet) {
+    op <- options(.irace.quiet = TRUE)
+    on.exit(options(op))
+  } else {
+    cat.irace.license()
+    cat("# installed at: ", system.file(package="irace"), "\n",
+        "# called with: ", paste(argv, collapse = " "), "\n", sep = "")
+  }
   if (!is.null(parser$readArg (short = "-h", long = "--help"))) {
     parser$cmdline_usage()
     return(invisible(NULL))
@@ -374,6 +380,7 @@ irace.cmdline <- function(argv = commandArgs(trailingOnly = TRUE))
       parser$readCmdLineParameter(paramName = param,
                                   default = scenario[[param]])
   }
+  if (quiet) scenario$quiet <- TRUE
  
   # Check scenario
   if (!is.null(parser$readArg (short = "-c", long = "--check"))) {

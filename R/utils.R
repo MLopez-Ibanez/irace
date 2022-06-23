@@ -40,6 +40,7 @@ irace.print.memUsed <- function(objects)
 # cannot help the user to understand why the program failed.
 irace.warning <- function(...)
 {
+  if (getOption(".irace.quiet", default=FALSE)) return()
   cat(sep="", .msg.prefix, "WARNING: ", ..., "\n")
 }
 
@@ -113,6 +114,9 @@ irace.assert <- function(exp, eval.after = NULL)
 
 irace.note <- function(...)
 {
+  # FIXME: If this was a function within an irace object, we could replace it
+  # when using quiet.
+  if (getOption(".irace.quiet", default=FALSE)) return()
   cat ("# ", format(Sys.time(), usetz=TRUE), ": ",
        paste0(..., collapse = ""), sep = "")
 }
@@ -740,3 +744,5 @@ read_logfile <- function(filename, name = "iraceResults")
   }
   iraceResults
 }
+
+do_nothing <- function(...) invisible()
