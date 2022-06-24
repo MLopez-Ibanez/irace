@@ -379,11 +379,7 @@ race.print.task <- function(res.symb, Results,
   if (capping) {
     if (is.null(bound)) cat("      NA|") else cat(sprintf("%8.2f|", bound))
   }
-  # FIXME:  We would like to use %#16.10g but this causes problems with
-  # https://github.com/oracle/fastr/issues/191
-  ## Uses 10 decimal places at most so that there is space for '-', '.', and
-  ## 'e-NN' within the 16 spaces.
-  cat(sprintf("%11d|%11d|%16.10g|%11d|%s",
+  cat(sprintf(paste0("%11d|%11d|", .irace.format.perf, "|%11d|%s"),
               sum(alive), id.best, mean_best, experimentsUsed, time_str))
   
   if (current.task > 1 && sum(alive) > 1) {
@@ -399,13 +395,12 @@ race.print.task <- function(res.symb, Results,
 
 race.print.footer <- function(bestconf, mean.best, break.msg, debug.level, capping = FALSE)
 {
-  # FIXME:  We would like to use %#16.10g but this causes problems with
-  # https://github.com/oracle/fastr/issues/191
   cat(sep = "",
       if (capping) capping_hline else nocap_hline,
       if (debug.level >= 1) paste0("# Stopped because ", break.msg, "\n"),
       sprintf("Best-so-far configuration: %11d", bestconf[1, ".ID."]),
-      sprintf("    mean value: %16.10g", mean.best), "\n",
+      "    mean value: ",
+      sprintf(.irace.format.perf, mean.best), "\n",
       "Description of the best-so-far configuration:\n")
   configurations.print(bestconf, metadata = TRUE)
   cat("\n")
