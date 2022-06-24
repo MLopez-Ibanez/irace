@@ -8,16 +8,50 @@
    e.g. `(1, param1*2))`, where the dependent bound can include basic
    arithmetic operators.          (Leslie Pérez Cáceres, Manuel López-Ibáñez)
 
+ * The package now provides an `ablation` executable (`ablation.exe` in
+   Windows) that makes easier to perform ablation analysis without having any R
+   knowledge.
+   
+ * The interface to functions `ablation()` and `plotAblation()` has been
+   simplified. The `ablation()` function now allows overriding scenario
+   settings. The `plotAblation()` function will not create the plot if the
+   ablation log does not reflect a complete ablation.
+                                                    (Manuel López-Ibáñez)
+
+ * New command-line option `--quiet` to run without producing any output
+   except errors (also available as a scenario option).
+                                                     (Manuel López-Ibáñez)
+
+ * New command-line option `--init` to initialize a scenario. (Deyao Chen)
+ 
  * Added support for HTCondor cluster framework to `--batchmode`.
                                                      (Filippo Bistaffa)
+
+ * `--check` now also check the contents of `configurationsFile` and runs
+   configurations provided via `initConfigurations`. 
+                          (Manuel López-Ibáñez, reported by Andreea Avramescu)
+
+ * New scenario options `targetRunnerLauncher` and `targetRunnerLauncherArgs`
+   to help in cases where the target-runner must be invoked via another
+   software with particular options (such as `python.exe` in Windows).
+                                                           (Manuel López-Ibáñez)
 
  * New scenario option `minMeasurableTime`.
                                                      (Manuel López-Ibáñez)
  
- * New command-line option `--quiet` to run without producing any output
-   except errors (also available as a scenario option).
-                                                     (Manuel López-Ibáñez)
- 
+ * An error is produced if a variable set in the scenario file is not known to
+   irace.  If your scenario file contains R code, then use variable names
+   beginning with a dot `'.'`, which will be ignored by irace.
+                                                    (Manuel López-Ibáñez)
+                                                    
+ * Plotting functions have been moved to the new package
+   [iraceplot](https://auto-optimization.github.io/iraceplot/).  In particular,
+   `configurationsBoxplot()` is replaced by `iraceplot::boxplot_training()` and
+   `iraceplot::boxplot_test()`; `parallelCoordinatesPlot()` is replaced by
+   `iraceplot::parallel_cat()` and `iraceplot::parallel_coord()`; and
+   `parameterFrequency()` is replaced by `iraceplot::sampling_frequency()`.
+                                     (Leslie Pérez Cáceres, Manuel López-Ibáñez)
+
  * The user-guide now contains a detailed section on "Hyper-parameter
    optimization of machine learning methods".
                                                      (Manuel López-Ibáñez)
@@ -33,6 +67,9 @@
    is superseded by the new ones. 
                                                       (Manuel López-Ibáñez)
 
+ * New function `read_logfile()` to easily read the log file produced by irace.
+                                                       (Manuel López-Ibáñez)
+
  * `irace2pyimp` moved to its own R package.
                                                      (Manuel López-Ibáñez)
 
@@ -43,60 +80,20 @@
    packages may use them.
                                                        (Manuel López-Ibáñez)
  
+ * `path_rel2abs()` also searches in system paths.     (Manuel López-Ibáñez)
+
+ * `readConfigurationsFile()` will now detect duplicated configurations and
+   error.                                         (Manuel López-Ibáñez)
+        
+ * The interface to functions `getFinalElites()`, `getConfigurationById()` and
+   `getConfigurationByIteration()` has been simplified.
+   
  * The package provides a `irace.sindef` file that may be used for building a
    standalone container of irace using Singularity. See the `README.md` file
    for instructions.                                (Contributed by Johann Dreo)
         
- * `readConfigurationsFile()` will now detect duplicated configurations and
-   error.                                         (Manuel López-Ibáñez)
-        
  * New example `examples/target-runner-python/target-runner-python-win.bat`
    contributed by Levi Ribeiro.
-
- * `path_rel2abs()` also searches in system paths.     (Manuel López-Ibáñez)
-
- * New scenario options `targetRunnerLauncher` and `targetRunnerLauncherArgs`
-   to help in cases where the target-runner must be invoked via another
-   software with particular options (such as `python.exe` in Windows).
-                                                           (Manuel López-Ibáñez)
-
- * `--check` now also check the contents of `configurationsFile` and runs
-   configurations provided via `initConfigurations`. 
-                          (Manuel López-Ibáñez, reported by Andreea Avramescu)
-
- * The package now provides an `ablation` executable (`ablation.exe` in
-   Windows) that makes easier to perform ablation analysis without having any R
-   knowledge.
-   
- * The interface to functions `ablation()` and `plotAblation()` has been
-   simplified. The `ablation()` function now allows overriding scenario
-   settings. The `plotAblation()` function will not create the plot if the
-   ablation log does not reflect a complete ablation.
-                                                    (Manuel López-Ibáñez)
-
- * The interface to functions `getFinalElites()`, `getConfigurationById()` and
-   `getConfigurationByIteration()` has been simplified.
-   
- * An error is produced if a variable set in the scenario file is not known to
-   irace.  If your scenario file contains R code, then use variable names
-   beginning with a dot `'.'`, which will be ignored by irace.
-                                                    (Manuel López-Ibáñez)
-                                                    
- * New option `--init` to initialize a scenario. (Deyao Chen)
-
- * `configurationsBoxplot()` replaced by `iraceplot::boxplot_training()` and
-   `iraceplot::boxplot_test()`.
-                                  (Leslie Pérez Cáceres, Manuel López-Ibáñez)
-
- * `parallelCoordinatesPlot()` replaced by `iraceplot::parallel_cat()` and
-   `iraceplot::parallel_coord()`.
-                                  (Leslie Pérez Cáceres, Manuel López-Ibáñez)
-
- * `parameterFrequency()` replaced by `iraceplot::sampling_frequency()`.
-                                  (Leslie Pérez Cáceres, Manuel López-Ibáñez)
-
- * New function `read_logfile()` to easily read the log file produced by irace.
-                                                       (Manuel López-Ibáñez)
 
  * New helper script in `bin/parallel-irace-slurm` to launch `irace` in [SLURM](https://slurm.schedmd.com/) computer clusters.
                                                        (Manuel López-Ibáñez)
@@ -116,7 +113,7 @@
 
  * Fixes to the Matlab example. (Manuel López-Ibáñez)
  
- * The default of `testType` was not set to `t-test` when capping was enabled. 
+ * The default of `testType` is now set to `t-test` when capping is enabled. 
                           (Manuel López-Ibáñez, reported by Jovana Radjenovic)
 
  * Fix various issues in the user guide.
@@ -130,6 +127,8 @@
                                
  * Fix (#10): wrong assert with `elitist=0`.             (Manuel López-Ibáñez)
 
+ * Fix (#12): irace can be run with [FastR](https://www.graalvm.org/22.1/docs/getting-started/#run-r).
+ 
  * Fix (#13): Maximum number configurations immediately rejected reached.
                                                            (Manuel López-Ibáñez)
 
