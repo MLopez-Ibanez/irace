@@ -64,17 +64,24 @@
 be read. If empty, the default <code>scenarioFile</code> is used.  An example
 scenario file is provided in <code>system.file(``package="irace",</code>
 <code>"templates/scenario.txt.tmpl")</code>.</p></dd>
+
+
 <dt>scenario</dt>
 <dd><p>(<code><a href="https://rdrr.io/r/base/list.html" class="external-link">list()</a></code>) <br> Data structure containing <span class="pkg">irace</span>
 settings. The data structure has to be the one returned by the function
 <code><a href="defaultScenario.html">defaultScenario()</a></code> or <code>readScenario()</code>.
 This is an initial scenario that is overwritten</p></dd>
+
+
 <dt>params_def</dt>
 <dd><p>(<code><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame()</a></code>) <br> Definition of the options accepted by the scenario. This should only be modified by packages that wish to extend <span class="pkg">irace</span>.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>The scenario list read from the file. The scenario settings not
+    
+
+<p>The scenario list read from the file. The scenario settings not
 present in the file are not present in the list, i.e., they are <code>NULL</code>.</p>
     </div>
     <div class="section level2">
@@ -106,7 +113,7 @@ present in the file are not present in the list, i.e., they are <code>NULL</code
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
     </footer></div>

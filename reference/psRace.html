@@ -70,27 +70,42 @@
     <dl><dt>iraceLogFile</dt>
 <dd><p>NULL Log file created by <span class="pkg">irace</span>, this file must contain the
 <code>iraceResults</code> object.</p></dd>
+
+
 <dt>iraceResults</dt>
 <dd><p>NULL Object created by <span class="pkg">irace</span> and saved in <code>scenario$logFile</code>.</p></dd>
+
+
 <dt>conf.ids</dt>
 <dd><p>NULL IDs of the configurations in iraceResults$allConfigurations to be used for ablation.
 If NULL, the elites argument will be used.</p></dd>
+
+
 <dt>postselection</dt>
 <dd><p>NULL Percentage of the maxExperiments provided in the scenario to be used in the race.</p></dd>
+
+
 <dt>max.experiments</dt>
 <dd><p>NULL Number of experiments available for the race. If NULL budget for the race is set
 by the parameter scenario$postselection, which defines the percentage of the total budget of <span class="pkg">irace</span>
 (iraceResults$scenario$maxExperiments or iraceResults$scenario$maxTime/iraceResults$state$timeEstimate) to use
 for the postselection.</p></dd>
+
+
 <dt>elites</dt>
 <dd><p>FALSE Flag for selecting configurations. If FALSE, the best configurations of each
 iteration are used for the race. If TRUE, the elite configurtions of each iteration are used for the race.</p></dd>
+
+
 <dt>seed</dt>
 <dd><p>1234567 Numerical value to use as seed for the random number generation.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>If iraceLogFile is NULL, it returns a list with the following elements:</p><dl><dt>configurations</dt>
+    
+
+<p>If iraceLogFile is NULL, it returns a list with the following elements:</p><dl><dt>configurations</dt>
 <dd><p>Configurations used in the race.</p></dd>
 
 <dt>instances</dt>
@@ -118,9 +133,8 @@ instances ids from iraceResults$scenario$instances, second column the seed assig
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
 <span class="r-in">  <span class="co"># Execute the postselection automatically after irace</span></span>
+<span class="r-in">  <span class="va">scenario</span> <span class="op">&lt;-</span> <span class="fu"><a href="readScenario.html">readScenario</a></span><span class="op">(</span>filename<span class="op">=</span><span class="st">"scenario.txt"</span><span class="op">)</span></span>
 <span class="r-in">  <span class="va">parameters</span> <span class="op">&lt;-</span> <span class="fu"><a href="readParameters.html">readParameters</a></span><span class="op">(</span><span class="st">"parameters.txt"</span><span class="op">)</span></span>
-<span class="r-in">  <span class="va">scenario</span> <span class="op">&lt;-</span> <span class="fu"><a href="readScenario.html">readScenario</a></span><span class="op">(</span>filename<span class="op">=</span><span class="st">"scenario.txt"</span>, </span>
-<span class="r-in">                           scenario<span class="op">=</span><span class="fu"><a href="defaultScenario.html">defaultScenario</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-in">  <span class="co"># Use 10% of the total budget</span></span>
 <span class="r-in">  <span class="va">scenario</span><span class="op">$</span><span class="va">postselection</span> <span class="op">&lt;-</span> <span class="fl">0.1</span></span>
 <span class="r-in">  <span class="fu"><a href="irace.html">irace</a></span><span class="op">(</span>scenario<span class="op">=</span><span class="va">scenario</span>, parameters<span class="op">=</span><span class="va">parameters</span><span class="op">)</span></span>
@@ -139,7 +153,7 @@ instances ids from iraceResults$scenario$instances, second column the seed assig
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
     </footer></div>

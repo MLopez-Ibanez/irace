@@ -71,24 +71,41 @@
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>iraceResults</dt>
 <dd><p>(<code><a href="https://rdrr.io/r/base/list.html" class="external-link">list()</a></code>|<code>character(1)</code>) <code>iraceResults</code> object created by <span class="pkg">irace</span> and typically saved in the log file <code>irace.Rdata</code>. If a character string is given, then it is interpreted as the path to the log file from which the <code>iraceResults</code> object will be loaded.</p></dd>
+
+
 <dt>src, target</dt>
 <dd><p>Source and target configuration IDs. By default, the first configuration ever evaluated (ID 1) is used as <code>src</code> and the best configuration found by irace is used as target.</p></dd>
+
+
 <dt>ab.params</dt>
 <dd><p>Specific parameter names to be used for the ablation. They must be in <code>parameters$names</code>. By default, use all parameters.</p></dd>
+
+
 <dt>type</dt>
 <dd><p>Type of ablation to perform: <code>"full"</code> will execute each configuration on all <code>n.instances</code> to determine the best-performing one; <code>"racing"</code> will apply racing to find the best configurations.</p></dd>
+
+
 <dt>n.instances</dt>
 <dd><p>Number of instances to be used for the <code>"full"</code> ablation, if not provided <code>scenario$firstTest</code> instances are used.</p></dd>
+
+
 <dt>seed</dt>
 <dd><p>(<code>integer(1)</code>) Integer value to use as seed for the random number generation.</p></dd>
+
+
 <dt>ablationLogFile</dt>
 <dd><p>(<code>character(1)</code>) Log file to save the ablation log. If <code>NULL</code>, the results are not saved to a file.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Further arguments to override scenario settings, e.g., <code>debugLevel</code>, <code>parallel</code>, etc.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A list containing the following elements:</p><dl><dt>configurations</dt>
+    
+
+<p>A list containing the following elements:</p><dl><dt>configurations</dt>
 <dd><p>Configurations tested in the ablation.</p></dd>
 
 <dt>instances</dt>
@@ -129,7 +146,7 @@ configurations through ablation. Journal of Heuristics, 22(4):431–458, 2016.</
 <span class="r-in"><span class="va">logfile</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span>package<span class="op">=</span><span class="st">"irace"</span>, <span class="st">"exdata"</span>, <span class="st">"sann.rda"</span><span class="op">)</span></span>
 <span class="r-in"><span class="co"># Execute ablation between the first and the best configuration found by irace.</span></span>
 <span class="r-in"><span class="va">ablog</span> <span class="op">&lt;-</span> <span class="fu">ablation</span><span class="op">(</span><span class="va">logfile</span>, ablationLogFile <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-06-13 09:08:41 UTC: Starting ablation from 1 to 127</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-06-24 17:03:00 UTC: Starting ablation from 1 to 127</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # Seed: 1234567</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # Source configuration (row number is ID):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   tmax    temp</span>
@@ -137,12 +154,12 @@ configurations through ablation. Journal of Heuristics, 22(4):431–458, 2016.</
 <span class="r-out co"><span class="r-pr">#&gt;</span> # Target configuration (row number is ID):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     tmax   temp</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 127 3468 0.9979</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-06-13 09:08:41 UTC: Executing source and target configurations on the given instances...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-06-24 17:03:00 UTC: Executing source and target configurations on the given instances...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # Generating configurations (row number is ID): tmax temp </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   tmax    temp</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2 3468 15.0259</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3 2936  0.9979</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-06-13 09:08:47 UTC: Ablation (full) of 2 configurations on 100 instances.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-06-24 17:03:06 UTC: Ablation (full) of 2 configurations on 100 instances.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # Markers:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      x No test is performed.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      c Configurations are discarded only due to capping.</span>
@@ -261,7 +278,7 @@ configurations through ablation. Journal of Heuristics, 22(4):431–458, 2016.</
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3    3 2936 0.9979        1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # Best changed parameters:#   temp 15.0259 -&gt; 0.9979 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-06-13 09:08:53 UTC: Final best configuration:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-06-24 17:03:13 UTC: Final best configuration:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   tmax   temp</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4 3468 0.9979</span>
 <span class="r-in"><span class="fu"><a href="plotAblation.html">plotAblation</a></span><span class="op">(</span><span class="va">ablog</span><span class="op">)</span></span>
@@ -270,7 +287,7 @@ configurations through ablation. Journal of Heuristics, 22(4):431–458, 2016.</
 <span class="r-in"><span class="co"># subset of parameters, directly reading the setup from the irace log file.</span></span>
 <span class="r-in"><span class="va">ablog</span> <span class="op">&lt;-</span> <span class="fu">ablation</span><span class="op">(</span><span class="va">logfile</span>, src <span class="op">=</span> <span class="fl">1</span>, target <span class="op">=</span> <span class="fl">10</span>,</span>
 <span class="r-in">                  ab.params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"temp"</span><span class="op">)</span>, ablationLogFile <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-06-13 09:08:53 UTC: Starting ablation from 1 to 10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-06-24 17:03:13 UTC: Starting ablation from 1 to 10</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # Seed: 1234567</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # Source configuration (row number is ID):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   tmax    temp</span>
@@ -278,8 +295,8 @@ configurations through ablation. Journal of Heuristics, 22(4):431–458, 2016.</
 <span class="r-out co"><span class="r-pr">#&gt;</span> # Target configuration (row number is ID):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    tmax    temp</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 10 2418 38.8461</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-06-13 09:08:54 UTC: Executing source and target configurations on the given instances...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-06-13 09:08:59 UTC: Final best configuration:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-06-24 17:03:13 UTC: Executing source and target configurations on the given instances...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-06-24 17:03:19 UTC: Final best configuration:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   tmax    temp</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2 2418 38.8461</span>
 <span class="r-in"><span class="fu"><a href="plotAblation.html">plotAblation</a></span><span class="op">(</span><span class="va">ablog</span><span class="op">)</span></span>
@@ -297,7 +314,7 @@ configurations through ablation. Journal of Heuristics, 22(4):431–458, 2016.</
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
     </footer></div>

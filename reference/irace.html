@@ -69,21 +69,31 @@ obtained from the last iterations (and sorted by rank).</p>
 <dd><p>(<code><a href="https://rdrr.io/r/base/list.html" class="external-link">list()</a></code>) <br> Data structure containing <span class="pkg">irace</span>
 settings. The data structure has to be the one returned by the function
 <code><a href="defaultScenario.html">defaultScenario()</a></code> or <code><a href="readScenario.html">readScenario()</a></code>.</p></dd>
+
+
 <dt>parameters</dt>
 <dd><p>(<code><a href="https://rdrr.io/r/base/list.html" class="external-link">list()</a></code>) <br> Data structure containing the parameter
 space definition. The data structure has to similar to the one returned by the
 function <code><a href="readParameters.html">readParameters</a></code>.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>(<code>data.frame</code>)
-A data frame with the set of best algorithm configurations found by <span class="pkg">irace</span>.
+    
+
+<p>(<code>data.frame</code>)</p>
+
+
+<p>A data frame with the set of best algorithm configurations found by <span class="pkg">irace</span>.
 The data frame has the following columns:</p><ul><li><p><code>.ID.</code> : Internal id of the candidate configuration.</p></li>
 <li><p><code>Parameter names</code> : One column per parameter name in <code>parameters</code>.</p></li>
 <li><p><code>.PARENT.</code> : Internal id of the parent candidate configuration.</p></li>
 </ul><p>Additionally, this function saves an R data file containing an object called
 <code>iraceResults</code>. The path of the file is indicated in <code>scenario$logFile</code>.
-The <code>iraceResults</code> object is a list with the following structure:</p><dl><dt><code>scenario</code></dt>
+The <code>iraceResults</code> object is a list with the following structure:</p>
+
+
+<dl><dt><code>scenario</code></dt>
 <dd><p>The scenario R object containing the <span class="pkg">irace</span>
 options used for the execution. See <code><a href="defaultScenario.html">defaultScenario</a></code>
 for more information.</p></dd>
@@ -166,7 +176,10 @@ in <code>scenario$logFile</code>.</p>
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index">
 <dl><dt><code><a href="irace.main.html">irace.main()</a></code></dt>
-<dd><p>a higher-level command-line interface to <code>irace</code>.</p></dd>
+<dd><p>a higher-level interface to <code>irace</code>.</p></dd>
+
+<dt><code><a href="irace.cmdline.html">irace.cmdline()</a></code></dt>
+<dd><p>a command-line interface to <code>irace</code>.</p></dd>
 
 <dt><code><a href="readScenario.html">readScenario()</a></code></dt>
 <dd><p>for reading a configuration scenario from a file.</p></dd>
@@ -192,8 +205,7 @@ in <code>scenario$logFile</code>.</p>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
 <span class="r-in"><span class="va">parameters</span> <span class="op">&lt;-</span> <span class="fu"><a href="readParameters.html">readParameters</a></span><span class="op">(</span><span class="st">"parameters.txt"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">scenario</span> <span class="op">&lt;-</span> <span class="fu"><a href="readScenario.html">readScenario</a></span><span class="op">(</span>filename <span class="op">=</span> <span class="st">"scenario.txt"</span>,</span>
-<span class="r-in">                         scenario <span class="op">=</span> <span class="fu"><a href="defaultScenario.html">defaultScenario</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">scenario</span> <span class="op">&lt;-</span> <span class="fu"><a href="readScenario.html">readScenario</a></span><span class="op">(</span>filename <span class="op">=</span> <span class="st">"scenario.txt"</span><span class="op">)</span></span>
 <span class="r-in"><span class="fu">irace</span><span class="op">(</span>scenario <span class="op">=</span> <span class="va">scenario</span>, parameters <span class="op">=</span> <span class="va">parameters</span><span class="op">)</span></span>
 <span class="r-in"><span class="op">}</span></span>
 <span class="r-in"></span>
@@ -208,7 +220,7 @@ in <code>scenario$logFile</code>.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
     </footer></div>

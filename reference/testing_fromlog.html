@@ -71,23 +71,36 @@ found by an <span class="pkg">irace</span> execution.</p>
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>logFile</dt>
 <dd><p>Path to the <code>.Rdata</code> file produced by <span class="pkg">irace</span>.</p></dd>
+
+
 <dt>testNbElites</dt>
 <dd><p>Number of (final) elite configurations to test. Overrides
 the value found in <code>logFile</code>.</p></dd>
+
+
 <dt>testIterationElites</dt>
 <dd><p>(<code>logical(1)</code>) If <code>FALSE</code>, only the final
 <code>testNbElites</code> configurations are tested; otherwise, also test the best
 configurations of each iteration. Overrides the value found in <code>logFile</code>.</p></dd>
+
+
 <dt>testInstancesDir</dt>
 <dd><p>Directory where testing instances are located, either absolute or relative to current directory.</p></dd>
+
+
 <dt>testInstancesFile</dt>
 <dd><p>File containing a list of test instances and optionally additional parameters for them.</p></dd>
+
+
 <dt>testInstances</dt>
 <dd><p>Character vector of the instances to be used in the <code>targetRunner</code> when executing the testing.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>Boolean. <code>TRUE</code> if the testing ended successfully otherwise, <code>FALSE</code>.</p>
+    
+
+<p>Boolean. <code>TRUE</code> if the testing ended successfully otherwise, <code>FALSE</code>.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -118,7 +131,7 @@ set of testing instances must appear in <code>scenario[["testInstances"]]</code>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
     </footer></div>
