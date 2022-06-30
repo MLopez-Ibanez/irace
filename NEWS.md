@@ -70,6 +70,9 @@
  * New function `read_logfile()` to easily read the log file produced by irace.
                                                        (Manuel López-Ibáñez)
 
+ * New function `printParameters()` that prints a parameters R object as a valid input text.
+                                                       (Manuel López-Ibáñez)
+
  * `irace2pyimp` moved to its own R package.
                                                      (Manuel López-Ibáñez)
 
