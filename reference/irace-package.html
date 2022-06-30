@@ -98,92 +98,92 @@ on Evolutionary Computation</em>, 2012.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"> <span class="co">#######################################################################</span></span>
-<span class="r-in"> <span class="co"># This example illustrates how to tune the parameters of the simulated</span></span>
-<span class="r-in"> <span class="co"># annealing algorithm (SANN) provided by the optim() function in the</span></span>
-<span class="r-in"> <span class="co"># R base package.  The goal in this example is to optimize instances of</span></span>
-<span class="r-in"> <span class="co"># the following family:</span></span>
-<span class="r-in"> <span class="co"># f(x) = lambda * f_rastrigin(x) + (1 - lambda) * f_rosenbrock(x)</span></span>
-<span class="r-in"> <span class="co"># where lambda follows a normal distribution whose mean is 0.9 and</span></span>
-<span class="r-in"> <span class="co"># standard deviation is 0.02. f_rastrigin and f_rosenbrock are the</span></span>
-<span class="r-in"> <span class="co"># well-known Rastrigin and Rosenbrock benchmark functions (taken from</span></span>
-<span class="r-in"> <span class="co"># the cmaes package). In this scenario, different instances are given</span></span>
-<span class="r-in"> <span class="co"># by different values of lambda.</span></span>
-<span class="r-in"> <span class="co">#######################################################################</span></span>
-<span class="r-in"> <span class="co">## First we provide an implementation of the functions to be optimized:</span></span>
-<span class="r-in"> <span class="va">f_rosenbrock</span> <span class="op">&lt;-</span> <span class="kw">function</span> <span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in">   <span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
-<span class="r-in">   <span class="va">z</span> <span class="op">&lt;-</span> <span class="va">x</span> <span class="op">+</span> <span class="fl">1</span></span>
-<span class="r-in">   <span class="va">hz</span> <span class="op">&lt;-</span> <span class="va">z</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="op">(</span><span class="va">d</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span><span class="op">]</span></span>
-<span class="r-in">   <span class="va">tz</span> <span class="op">&lt;-</span> <span class="va">z</span><span class="op">[</span><span class="fl">2</span><span class="op">:</span><span class="va">d</span><span class="op">]</span></span>
-<span class="r-in">   <span class="va">s</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="fl">100</span> <span class="op">*</span> <span class="op">(</span><span class="va">hz</span><span class="op">^</span><span class="fl">2</span> <span class="op">-</span> <span class="va">tz</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span> <span class="op">+</span> <span class="op">(</span><span class="va">hz</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span></span>
-<span class="r-in">   <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">s</span><span class="op">)</span></span>
-<span class="r-in"> <span class="op">}</span></span>
-<span class="r-in"> <span class="va">f_rastrigin</span> <span class="op">&lt;-</span> <span class="kw">function</span> <span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in">   <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">x</span> <span class="op">*</span> <span class="va">x</span> <span class="op">-</span> <span class="fl">10</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/Trig.html" class="external-link">cos</a></span><span class="op">(</span><span class="fl">2</span> <span class="op">*</span> <span class="va">pi</span> <span class="op">*</span> <span class="va">x</span><span class="op">)</span> <span class="op">+</span> <span class="fl">10</span><span class="op">)</span></span>
-<span class="r-in"> <span class="op">}</span></span>
-<span class="r-in"> </span>
-<span class="r-in"> <span class="co">## We generate 20 instances (in this case, weights):</span></span>
-<span class="r-in"> <span class="va">weights</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">20</span>, mean <span class="op">=</span> <span class="fl">0.9</span>, sd <span class="op">=</span> <span class="fl">0.02</span><span class="op">)</span></span>
-<span class="r-in"> </span>
-<span class="r-in"> <span class="co">## On this set of instances, we are interested in optimizing two</span></span>
-<span class="r-in"> <span class="co">## parameters of the SANN algorithm: tmax and temp. We setup the</span></span>
-<span class="r-in"> <span class="co">## parameter space as follows:</span></span>
-<span class="r-in"> <span class="va">parameters_table</span> <span class="op">&lt;-</span> <span class="st">'</span>
-<span class="r-in"> tmax "" i,log (1, 5000)</span>
-<span class="r-in"> temp "" r (0, 100)</span>
-<span class="r-in"> '</span></span>
-<span class="r-in"> </span>
-<span class="r-in"> <span class="co">## We use the irace function readParameters to read this table:</span></span>
-<span class="r-in"> <span class="va">parameters</span> <span class="op">&lt;-</span> <span class="fu"><a href="readParameters.html">readParameters</a></span><span class="op">(</span>text <span class="op">=</span> <span class="va">parameters_table</span><span class="op">)</span></span>
-<span class="r-in"> </span>
-<span class="r-in"> <span class="co">## Next, we define the function that will evaluate each candidate</span></span>
-<span class="r-in"> <span class="co">## configuration on a single instance. For simplicity, we restrict to</span></span>
-<span class="r-in"> <span class="co">## three-dimensional functions and we set the maximum number of</span></span>
-<span class="r-in"> <span class="co">## iterations of SANN to 1000.</span></span>
-<span class="r-in"> <span class="va">target_runner</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">experiment</span>, <span class="va">scenario</span><span class="op">)</span></span>
-<span class="r-in"> <span class="op">{</span></span>
-<span class="r-in">   <span class="va">instance</span> <span class="op">&lt;-</span> <span class="va">experiment</span><span class="op">$</span><span class="va">instance</span></span>
-<span class="r-in">   <span class="va">configuration</span> <span class="op">&lt;-</span> <span class="va">experiment</span><span class="op">$</span><span class="va">configuration</span></span>
-<span class="r-in"> </span>
-<span class="r-in">   <span class="va">D</span> <span class="op">&lt;-</span> <span class="fl">3</span></span>
-<span class="r-in">   <span class="va">par</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="va">D</span>, min<span class="op">=</span><span class="op">-</span><span class="fl">1</span>, max<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
-<span class="r-in">   <span class="va">fn</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in">     <span class="va">weight</span> <span class="op">&lt;-</span> <span class="va">instance</span></span>
-<span class="r-in">     <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">weight</span> <span class="op">*</span> <span class="fu">f_rastrigin</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">-</span> <span class="va">weight</span><span class="op">)</span> <span class="op">*</span> <span class="fu">f_rosenbrock</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in">   <span class="op">}</span></span>
-<span class="r-in">   <span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">stats</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/stats/optim.html" class="external-link">optim</a></span><span class="op">(</span><span class="va">par</span>,<span class="va">fn</span>, method<span class="op">=</span><span class="st">"SANN"</span>,</span>
-<span class="r-in">                control<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>maxit<span class="op">=</span><span class="fl">1000</span></span>
-<span class="r-in">                  , tmax <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">configuration</span><span class="op">[[</span><span class="st">"tmax"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
-<span class="r-in">                  , temp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">configuration</span><span class="op">[[</span><span class="st">"temp"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
-<span class="r-in">                  <span class="op">)</span><span class="op">)</span></span>
-<span class="r-in">   <span class="co">## New output interface in irace 2.0. This list may also contain:</span></span>
-<span class="r-in">   <span class="co">## - 'time' if irace is called with 'maxTime'</span></span>
-<span class="r-in">   <span class="co">## - 'error' is a string used to report an error</span></span>
-<span class="r-in">   <span class="co">## - 'outputRaw' is a string used to report the raw output of calls to</span></span>
-<span class="r-in">   <span class="co">##   an external program or function.</span></span>
-<span class="r-in">   <span class="co">## - 'call' is a string used to report how target_runner called the</span></span>
-<span class="r-in">   <span class="co">##   external program or function.</span></span>
-<span class="r-in">   <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>cost <span class="op">=</span> <span class="va">res</span><span class="op">$</span><span class="va">value</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"> <span class="op">}</span></span>
-<span class="r-in"> </span>
-<span class="r-in"> <span class="co">## We define a configuration scenario by setting targetRunner to the</span></span>
-<span class="r-in"> <span class="co">## function define above, instances to the first 10 random weights, and</span></span>
-<span class="r-in"> <span class="co">## a maximum budget of 'maxExperiments' calls to targetRunner.</span></span>
-<span class="r-in"> <span class="va">scenario</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>targetRunner <span class="op">=</span> <span class="va">target_runner</span>,</span>
-<span class="r-in">                  instances <span class="op">=</span> <span class="va">weights</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span>,</span>
-<span class="r-in">                  maxExperiments <span class="op">=</span> <span class="fl">500</span>,</span>
-<span class="r-in">                  <span class="co"># Do not create a logFile</span></span>
-<span class="r-in">                  logFile <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span>
-<span class="r-in"> </span>
-<span class="r-in"> <span class="co">## We check that the scenario is valid. This will also try to execute</span></span>
-<span class="r-in"> <span class="co">## target_runner.</span></span>
-<span class="r-in"> <span class="fu"><a href="checkIraceScenario.html">checkIraceScenario</a></span><span class="op">(</span><span class="va">scenario</span>, parameters <span class="op">=</span> <span class="va">parameters</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-06-24 17:21:55 UTC: Checking scenario</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span> <span class="co">#######################################################################</span></span></span>
+<span class="r-in"><span> <span class="co"># This example illustrates how to tune the parameters of the simulated</span></span></span>
+<span class="r-in"><span> <span class="co"># annealing algorithm (SANN) provided by the optim() function in the</span></span></span>
+<span class="r-in"><span> <span class="co"># R base package.  The goal in this example is to optimize instances of</span></span></span>
+<span class="r-in"><span> <span class="co"># the following family:</span></span></span>
+<span class="r-in"><span> <span class="co"># f(x) = lambda * f_rastrigin(x) + (1 - lambda) * f_rosenbrock(x)</span></span></span>
+<span class="r-in"><span> <span class="co"># where lambda follows a normal distribution whose mean is 0.9 and</span></span></span>
+<span class="r-in"><span> <span class="co"># standard deviation is 0.02. f_rastrigin and f_rosenbrock are the</span></span></span>
+<span class="r-in"><span> <span class="co"># well-known Rastrigin and Rosenbrock benchmark functions (taken from</span></span></span>
+<span class="r-in"><span> <span class="co"># the cmaes package). In this scenario, different instances are given</span></span></span>
+<span class="r-in"><span> <span class="co"># by different values of lambda.</span></span></span>
+<span class="r-in"><span> <span class="co">#######################################################################</span></span></span>
+<span class="r-in"><span> <span class="co">## First we provide an implementation of the functions to be optimized:</span></span></span>
+<span class="r-in"><span> <span class="va">f_rosenbrock</span> <span class="op">&lt;-</span> <span class="kw">function</span> <span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>   <span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></span>
+<span class="r-in"><span>   <span class="va">z</span> <span class="op">&lt;-</span> <span class="va">x</span> <span class="op">+</span> <span class="fl">1</span></span></span>
+<span class="r-in"><span>   <span class="va">hz</span> <span class="op">&lt;-</span> <span class="va">z</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="op">(</span><span class="va">d</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span><span class="op">]</span></span></span>
+<span class="r-in"><span>   <span class="va">tz</span> <span class="op">&lt;-</span> <span class="va">z</span><span class="op">[</span><span class="fl">2</span><span class="op">:</span><span class="va">d</span><span class="op">]</span></span></span>
+<span class="r-in"><span>   <span class="va">s</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="fl">100</span> <span class="op">*</span> <span class="op">(</span><span class="va">hz</span><span class="op">^</span><span class="fl">2</span> <span class="op">-</span> <span class="va">tz</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span> <span class="op">+</span> <span class="op">(</span><span class="va">hz</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span>   <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">s</span><span class="op">)</span></span></span>
+<span class="r-in"><span> <span class="op">}</span></span></span>
+<span class="r-in"><span> <span class="va">f_rastrigin</span> <span class="op">&lt;-</span> <span class="kw">function</span> <span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>   <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">x</span> <span class="op">*</span> <span class="va">x</span> <span class="op">-</span> <span class="fl">10</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/Trig.html" class="external-link">cos</a></span><span class="op">(</span><span class="fl">2</span> <span class="op">*</span> <span class="va">pi</span> <span class="op">*</span> <span class="va">x</span><span class="op">)</span> <span class="op">+</span> <span class="fl">10</span><span class="op">)</span></span></span>
+<span class="r-in"><span> <span class="op">}</span></span></span>
+<span class="r-in"><span> </span></span>
+<span class="r-in"><span> <span class="co">## We generate 20 instances (in this case, weights):</span></span></span>
+<span class="r-in"><span> <span class="va">weights</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">20</span>, mean <span class="op">=</span> <span class="fl">0.9</span>, sd <span class="op">=</span> <span class="fl">0.02</span><span class="op">)</span></span></span>
+<span class="r-in"><span> </span></span>
+<span class="r-in"><span> <span class="co">## On this set of instances, we are interested in optimizing two</span></span></span>
+<span class="r-in"><span> <span class="co">## parameters of the SANN algorithm: tmax and temp. We setup the</span></span></span>
+<span class="r-in"><span> <span class="co">## parameter space as follows:</span></span></span>
+<span class="r-in"><span> <span class="va">parameters_table</span> <span class="op">&lt;-</span> <span class="st">'</span></span></span>
+<span class="r-in"><span><span class="st"> tmax "" i,log (1, 5000)</span></span></span>
+<span class="r-in"><span><span class="st"> temp "" r (0, 100)</span></span></span>
+<span class="r-in"><span><span class="st"> '</span></span></span>
+<span class="r-in"><span> </span></span>
+<span class="r-in"><span> <span class="co">## We use the irace function readParameters to read this table:</span></span></span>
+<span class="r-in"><span> <span class="va">parameters</span> <span class="op">&lt;-</span> <span class="fu"><a href="readParameters.html">readParameters</a></span><span class="op">(</span>text <span class="op">=</span> <span class="va">parameters_table</span><span class="op">)</span></span></span>
+<span class="r-in"><span> </span></span>
+<span class="r-in"><span> <span class="co">## Next, we define the function that will evaluate each candidate</span></span></span>
+<span class="r-in"><span> <span class="co">## configuration on a single instance. For simplicity, we restrict to</span></span></span>
+<span class="r-in"><span> <span class="co">## three-dimensional functions and we set the maximum number of</span></span></span>
+<span class="r-in"><span> <span class="co">## iterations of SANN to 1000.</span></span></span>
+<span class="r-in"><span> <span class="va">target_runner</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">experiment</span>, <span class="va">scenario</span><span class="op">)</span></span></span>
+<span class="r-in"><span> <span class="op">{</span></span></span>
+<span class="r-in"><span>   <span class="va">instance</span> <span class="op">&lt;-</span> <span class="va">experiment</span><span class="op">$</span><span class="va">instance</span></span></span>
+<span class="r-in"><span>   <span class="va">configuration</span> <span class="op">&lt;-</span> <span class="va">experiment</span><span class="op">$</span><span class="va">configuration</span></span></span>
+<span class="r-in"><span> </span></span>
+<span class="r-in"><span>   <span class="va">D</span> <span class="op">&lt;-</span> <span class="fl">3</span></span></span>
+<span class="r-in"><span>   <span class="va">par</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="va">D</span>, min<span class="op">=</span><span class="op">-</span><span class="fl">1</span>, max<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span>   <span class="va">fn</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>     <span class="va">weight</span> <span class="op">&lt;-</span> <span class="va">instance</span></span></span>
+<span class="r-in"><span>     <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">weight</span> <span class="op">*</span> <span class="fu">f_rastrigin</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">-</span> <span class="va">weight</span><span class="op">)</span> <span class="op">*</span> <span class="fu">f_rosenbrock</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>   <span class="op">}</span></span></span>
+<span class="r-in"><span>   <span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">stats</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/stats/optim.html" class="external-link">optim</a></span><span class="op">(</span><span class="va">par</span>,<span class="va">fn</span>, method<span class="op">=</span><span class="st">"SANN"</span>,</span></span>
+<span class="r-in"><span>                control<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>maxit<span class="op">=</span><span class="fl">1000</span></span></span>
+<span class="r-in"><span>                  , tmax <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">configuration</span><span class="op">[[</span><span class="st">"tmax"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                  , temp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">configuration</span><span class="op">[[</span><span class="st">"temp"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                  <span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>   <span class="co">## New output interface in irace 2.0. This list may also contain:</span></span></span>
+<span class="r-in"><span>   <span class="co">## - 'time' if irace is called with 'maxTime'</span></span></span>
+<span class="r-in"><span>   <span class="co">## - 'error' is a string used to report an error</span></span></span>
+<span class="r-in"><span>   <span class="co">## - 'outputRaw' is a string used to report the raw output of calls to</span></span></span>
+<span class="r-in"><span>   <span class="co">##   an external program or function.</span></span></span>
+<span class="r-in"><span>   <span class="co">## - 'call' is a string used to report how target_runner called the</span></span></span>
+<span class="r-in"><span>   <span class="co">##   external program or function.</span></span></span>
+<span class="r-in"><span>   <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>cost <span class="op">=</span> <span class="va">res</span><span class="op">$</span><span class="va">value</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span> <span class="op">}</span></span></span>
+<span class="r-in"><span> </span></span>
+<span class="r-in"><span> <span class="co">## We define a configuration scenario by setting targetRunner to the</span></span></span>
+<span class="r-in"><span> <span class="co">## function define above, instances to the first 10 random weights, and</span></span></span>
+<span class="r-in"><span> <span class="co">## a maximum budget of 'maxExperiments' calls to targetRunner.</span></span></span>
+<span class="r-in"><span> <span class="va">scenario</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>targetRunner <span class="op">=</span> <span class="va">target_runner</span>,</span></span>
+<span class="r-in"><span>                  instances <span class="op">=</span> <span class="va">weights</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span>,</span></span>
+<span class="r-in"><span>                  maxExperiments <span class="op">=</span> <span class="fl">500</span>,</span></span>
+<span class="r-in"><span>                  <span class="co"># Do not create a logFile</span></span></span>
+<span class="r-in"><span>                  logFile <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span></span>
+<span class="r-in"><span> </span></span>
+<span class="r-in"><span> <span class="co">## We check that the scenario is valid. This will also try to execute</span></span></span>
+<span class="r-in"><span> <span class="co">## target_runner.</span></span></span>
+<span class="r-in"><span> <span class="fu"><a href="checkIraceScenario.html">checkIraceScenario</a></span><span class="op">(</span><span class="va">scenario</span>, parameters <span class="op">=</span> <span class="va">parameters</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-06-30 15:07:23 UTC: Checking scenario</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ## irace scenario:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> scenarioFile = "./scenario.txt"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> parameterFile = "/tmp/RtmpkiUxHv/file440d53b304d6/reference/parameters.txt"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> execDir = "/tmp/RtmpkiUxHv/file440d53b304d6/reference"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> parameterFile = "/tmp/RtmpEYRtvR/file438e6714174b/reference/parameters.txt"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> execDir = "/tmp/RtmpEYRtvR/file438e6714174b/reference"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> logFile = ""</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> recoveryFile = ""</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> instances = c(0.885660238800136, 0.899372484822612, 0.911246829443252, 0.90604830768778, 0.894291552969442, 0.908856301293193, 0.891842069141862, 0.92639538357336, 0.907048085645395, 0.897293382757449)</span>
@@ -244,8 +244,8 @@ on Evolutionary Computation</em>, 2012.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> aclib = FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> quiet = FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ## end of irace scenario</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # checkIraceScenario(): 'parameters' provided by user. Parameter file '/tmp/RtmpkiUxHv/file440d53b304d6/reference/parameters.txt' will be ignored</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-06-24 17:21:55 UTC: Checking target runner.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # checkIraceScenario(): 'parameters' provided by user. Parameter file '/tmp/RtmpEYRtvR/file438e6714174b/reference/parameters.txt' will be ignored</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-06-30 15:07:23 UTC: Checking target runner.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # Executing targetRunner ( 2 times)...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # targetRunner returned:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[1]]</span>
@@ -264,15 +264,15 @@ on Evolutionary Computation</em>, 2012.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-06-24 17:21:55 UTC: Check successful.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-06-30 15:07:23 UTC: Check successful.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
-<span class="r-in"> </span>
-<span class="r-in"> <span class="co"># \donttest{</span></span>
-<span class="r-in"> <span class="co">## We are now ready to launch irace. We do it by means of the irace</span></span>
-<span class="r-in"> <span class="co">## function. The function will print information about its</span></span>
-<span class="r-in"> <span class="co">## progress. This may require a few minutes, so it is not run by default.</span></span>
-<span class="r-in"> <span class="va">tuned_confs</span> <span class="op">&lt;-</span> <span class="fu"><a href="irace.html">irace</a></span><span class="op">(</span>scenario <span class="op">=</span> <span class="va">scenario</span>, parameters <span class="op">=</span> <span class="va">parameters</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-06-24 17:21:55 UTC: Initialization</span>
+<span class="r-in"><span> </span></span>
+<span class="r-in"><span> <span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span> <span class="co">## We are now ready to launch irace. We do it by means of the irace</span></span></span>
+<span class="r-in"><span> <span class="co">## function. The function will print information about its</span></span></span>
+<span class="r-in"><span> <span class="co">## progress. This may require a few minutes, so it is not run by default.</span></span></span>
+<span class="r-in"><span> <span class="va">tuned_confs</span> <span class="op">&lt;-</span> <span class="fu"><a href="irace.html">irace</a></span><span class="op">(</span>scenario <span class="op">=</span> <span class="va">scenario</span>, parameters <span class="op">=</span> <span class="va">parameters</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-06-30 15:07:23 UTC: Initialization</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # Elitist race</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # Elitist new instances: 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # Elitist limit: 2</span>
@@ -285,7 +285,7 @@ on Evolutionary Computation</em>, 2012.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # mu: 5</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # deterministic: FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-06-24 17:21:55 UTC: Iteration 1 of 3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-06-30 15:07:23 UTC: Iteration 1 of 3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # experimentsUsedSoFar: 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # remainingBudget: 500</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # currentBudget: 166</span>
@@ -313,12 +313,12 @@ on Evolutionary Computation</em>, 2012.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    .ID. tmax    temp .PARENT.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 17   17    4 21.9751       NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-06-24 17:21:56 UTC: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-06-30 15:07:24 UTC: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    tmax    temp</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 17    4 21.9751</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 26    9 16.6998</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4    10 82.9875</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-06-24 17:21:56 UTC: Iteration 2 of 3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-06-30 15:07:24 UTC: Iteration 2 of 3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # experimentsUsedSoFar: 162</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # remainingBudget: 338</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # currentBudget: 169</span>
@@ -348,12 +348,12 @@ on Evolutionary Computation</em>, 2012.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    .ID. tmax    temp .PARENT.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 17   17    4 21.9751       NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-06-24 17:21:58 UTC: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-06-30 15:07:26 UTC: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    tmax    temp</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 17    4 21.9751</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 45    2 17.8451</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 50    2 10.2934</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-06-24 17:21:58 UTC: Iteration 3 of 3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-06-30 15:07:26 UTC: Iteration 3 of 3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # experimentsUsedSoFar: 319</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # remainingBudget: 181</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # currentBudget: 181</span>
@@ -384,12 +384,12 @@ on Evolutionary Computation</em>, 2012.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    .ID. tmax    temp .PARENT.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 17   17    4 21.9751       NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-06-24 17:21:59 UTC: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-06-30 15:07:27 UTC: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    tmax    temp</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 17    4 21.9751</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 50    2 10.2934</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 55    6 26.4434</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-06-24 17:21:59 UTC: Stopped because there is not enough budget left to race more than the minimum (3)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-06-30 15:07:27 UTC: Stopped because there is not enough budget left to race more than the minimum (3)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # You may either increase the budget or set 'minNbSurvival' to a lower value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # Iteration: 4</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # nbIterations: 4</span>
@@ -399,41 +399,41 @@ on Evolutionary Computation</em>, 2012.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # currentBudget: 7</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # number of elites: 3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # nbConfigurations: 3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # Total CPU user time: 4.58, CPU sys time: 0, Wall-clock time: 4.582</span>
-<span class="r-in"> </span>
-<span class="r-in"> <span class="co">## We can print the best configurations found by irace as follows:</span></span>
-<span class="r-in"> <span class="fu"><a href="configurations.print.html">configurations.print</a></span><span class="op">(</span><span class="va">tuned_confs</span><span class="op">)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # Total CPU user time: 4.633, CPU sys time: 0, Wall-clock time: 4.633</span>
+<span class="r-in"><span> </span></span>
+<span class="r-in"><span> <span class="co">## We can print the best configurations found by irace as follows:</span></span></span>
+<span class="r-in"><span> <span class="fu"><a href="configurations.print.html">configurations.print</a></span><span class="op">(</span><span class="va">tuned_confs</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    tmax    temp</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 17    4 21.9751</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 50    2 10.2934</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 55    6 26.4434</span>
-<span class="r-in"> </span>
-<span class="r-in"> <span class="co">## We can evaluate the quality of the best configuration found by</span></span>
-<span class="r-in"> <span class="co">## irace versus the default configuration of the SANN algorithm on</span></span>
-<span class="r-in"> <span class="co">## the other 10 instances previously generated.</span></span>
-<span class="r-in"> <span class="co">## To do so, first we apply the default configuration of the SANN</span></span>
-<span class="r-in"> <span class="co">## algorithm to these instances:</span></span>
-<span class="r-in"> <span class="va">test</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">configuration</span><span class="op">)</span></span>
-<span class="r-in"> <span class="op">{</span></span>
-<span class="r-in">   <span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">weights</span><span class="op">[</span><span class="fl">11</span><span class="op">:</span><span class="fl">20</span><span class="op">]</span>,</span>
-<span class="r-in">                 <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu">target_runner</span><span class="op">(</span></span>
-<span class="r-in">                               experiment <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>instance <span class="op">=</span> <span class="va">x</span>,</span>
-<span class="r-in">                                                 configuration <span class="op">=</span> <span class="va">configuration</span><span class="op">)</span>,</span>
-<span class="r-in">                               scenario <span class="op">=</span> <span class="va">scenario</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in">   <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">res</span>, <span class="va">getElement</span>, name <span class="op">=</span> <span class="st">"cost"</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"> <span class="op">}</span></span>
-<span class="r-in"> <span class="va">default</span> <span class="op">&lt;-</span> <span class="fu">test</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>tmax<span class="op">=</span><span class="fl">10</span>, temp<span class="op">=</span><span class="fl">10</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"> <span class="co">## We extract and apply the winning configuration found by irace</span></span>
-<span class="r-in"> <span class="co">## to these instances:</span></span>
-<span class="r-in"> <span class="va">tuned</span> <span class="op">&lt;-</span> <span class="fu">test</span><span class="op">(</span><span class="fu"><a href="removeConfigurationsMetaData.html">removeConfigurationsMetaData</a></span><span class="op">(</span><span class="va">tuned_confs</span><span class="op">[</span><span class="fl">1</span>,<span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"> </span>
-<span class="r-in"> <span class="co">## Finally, we can compare using a boxplot the quality obtained with the</span></span>
-<span class="r-in"> <span class="co">## default parametrization of SANN and the quality obtained with the</span></span>
-<span class="r-in"> <span class="co">## best configuration found by irace.</span></span>
-<span class="r-in"> <span class="fu"><a href="https://rdrr.io/r/graphics/boxplot.html" class="external-link">boxplot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>default <span class="op">=</span> <span class="va">default</span>, tuned <span class="op">=</span> <span class="va">tuned</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span> </span></span>
+<span class="r-in"><span> <span class="co">## We can evaluate the quality of the best configuration found by</span></span></span>
+<span class="r-in"><span> <span class="co">## irace versus the default configuration of the SANN algorithm on</span></span></span>
+<span class="r-in"><span> <span class="co">## the other 10 instances previously generated.</span></span></span>
+<span class="r-in"><span> <span class="co">## To do so, first we apply the default configuration of the SANN</span></span></span>
+<span class="r-in"><span> <span class="co">## algorithm to these instances:</span></span></span>
+<span class="r-in"><span> <span class="va">test</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">configuration</span><span class="op">)</span></span></span>
+<span class="r-in"><span> <span class="op">{</span></span></span>
+<span class="r-in"><span>   <span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">weights</span><span class="op">[</span><span class="fl">11</span><span class="op">:</span><span class="fl">20</span><span class="op">]</span>,</span></span>
+<span class="r-in"><span>                 <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu">target_runner</span><span class="op">(</span></span></span>
+<span class="r-in"><span>                               experiment <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>instance <span class="op">=</span> <span class="va">x</span>,</span></span>
+<span class="r-in"><span>                                                 configuration <span class="op">=</span> <span class="va">configuration</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                               scenario <span class="op">=</span> <span class="va">scenario</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>   <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">res</span>, <span class="va">getElement</span>, name <span class="op">=</span> <span class="st">"cost"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span> <span class="op">}</span></span></span>
+<span class="r-in"><span> <span class="va">default</span> <span class="op">&lt;-</span> <span class="fu">test</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>tmax<span class="op">=</span><span class="fl">10</span>, temp<span class="op">=</span><span class="fl">10</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span> <span class="co">## We extract and apply the winning configuration found by irace</span></span></span>
+<span class="r-in"><span> <span class="co">## to these instances:</span></span></span>
+<span class="r-in"><span> <span class="va">tuned</span> <span class="op">&lt;-</span> <span class="fu">test</span><span class="op">(</span><span class="fu"><a href="removeConfigurationsMetaData.html">removeConfigurationsMetaData</a></span><span class="op">(</span><span class="va">tuned_confs</span><span class="op">[</span><span class="fl">1</span>,<span class="op">]</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span> </span></span>
+<span class="r-in"><span> <span class="co">## Finally, we can compare using a boxplot the quality obtained with the</span></span></span>
+<span class="r-in"><span> <span class="co">## default parametrization of SANN and the quality obtained with the</span></span></span>
+<span class="r-in"><span> <span class="co">## best configuration found by irace.</span></span></span>
+<span class="r-in"><span> <span class="fu"><a href="https://rdrr.io/r/graphics/boxplot.html" class="external-link">boxplot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>default <span class="op">=</span> <span class="va">default</span>, tuned <span class="op">=</span> <span class="va">tuned</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="irace-package-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span class="co"># }</span></span>
-<span class="r-in"></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

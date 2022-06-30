@@ -106,7 +106,7 @@
 </h2>
 <p>A complete <a href="https://cran.r-project.org/package=irace/vignettes/irace-package.pdf" class="external-link">user guide</a> comes with the package. You can access it online or, after installing the irace package, invoking from R the following command:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R">        <span class="va">R</span><span class="op">&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignette</a></span><span class="op">(</span><span class="st">"irace-package"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span>        <span class="va">R</span><span class="op">&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignette</a></span><span class="op">(</span><span class="st">"irace-package"</span><span class="op">)</span></span></code></pre></div>
 <p>The following is a quick-start guide. The user guide gives more detailed instructions.</p>
 </div>
 </div>
@@ -164,8 +164,8 @@
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>        R<span class="sc">&gt;</span> <span class="fu">install.packages</span>(<span class="st">"irace"</span>)</span></code></pre></div>
 <p>select a mirror close to you, and test the installation with</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R">        <span class="va">R</span><span class="op">&gt;</span> <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://mlopez-ibanez.github.io/irace">irace</a></span><span class="op">)</span>
-        <span class="va">R</span><span class="op">&gt;</span> <span class="va">CTRL</span><span class="op">+</span><span class="va">d</span></code></pre></div>
+<code class="sourceCode R"><span>        <span class="va">R</span><span class="op">&gt;</span> <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://mlopez-ibanez.github.io/irace">irace</a></span><span class="op">)</span></span>
+<span>        <span class="va">R</span><span class="op">&gt;</span> <span class="va">CTRL</span><span class="op">+</span><span class="va">d</span></span></code></pre></div>
 <ol start="2" style="list-style-type: decimal"><li>Manually <a href="https://cran.r-project.org/package=irace" class="external-link">download the package from CRAN</a> and invoke at the command-line:</li></ol>
 <div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>        <span class="ex">$</span> R CMD INSTALL <span class="op">&lt;</span>package<span class="op">&gt;</span></span></code></pre></div>
 <p>where <code>&lt;package&gt;</code> is one of the three versions available: <code>.tar.gz</code> (Unix/BSD/GNU/Linux), <code>.tgz</code> (MacOS X), or <code>.zip</code> (Windows).</p>
@@ -199,16 +199,16 @@
 <div class="sourceCode" id="cb17"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>    C<span class="op">:</span>\<span class="op">&gt;</span> irace <span class="op">--</span>help</span></code></pre></div>
 <p>You can also launch irace by opening the R console and executing:</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R">    <span class="va">R</span><span class="op">&gt;</span> <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://mlopez-ibanez.github.io/irace">irace</a></span><span class="op">)</span>
-    <span class="va">R</span><span class="op">&gt;</span> <span class="fu"><a href="reference/irace.cmdline.html">irace.cmdline</a></span><span class="op">(</span><span class="st">"--help"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span>    <span class="va">R</span><span class="op">&gt;</span> <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://mlopez-ibanez.github.io/irace">irace</a></span><span class="op">)</span></span>
+<span>    <span class="va">R</span><span class="op">&gt;</span> <span class="fu"><a href="reference/irace.cmdline.html">irace.cmdline</a></span><span class="op">(</span><span class="st">"--help"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="github-development-version">GitHub (Development version)<a class="anchor" aria-label="anchor" href="#github-development-version"></a>
 </h2>
 <p>If you wish to try the development version, you can install it by executing the following commands within the R console:</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R">    <span class="va">R</span><span class="op">&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span>
-    <span class="va">R</span><span class="op">&gt;</span> <span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org/reference/remote-reexports.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"MLopez-Ibanez/irace"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span>    <span class="va">R</span><span class="op">&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span></span>
+<span>    <span class="va">R</span><span class="op">&gt;</span> <span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"MLopez-Ibanez/irace"</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level1">

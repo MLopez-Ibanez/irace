@@ -60,7 +60,7 @@ character string.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">readParameters</span><span class="op">(</span><span class="va">file</span>, digits <span class="op">=</span> <span class="fl">4</span>, debugLevel <span class="op">=</span> <span class="fl">0</span>, <span class="va">text</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">readParameters</span><span class="op">(</span><span class="va">file</span>, digits <span class="op">=</span> <span class="fl">4</span>, debugLevel <span class="op">=</span> <span class="fl">0</span>, <span class="va">text</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -158,23 +158,23 @@ potential user errors.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"> <span class="co">## Read the parameters directly from text</span></span>
-<span class="r-in"> <span class="va">parameters.table</span> <span class="op">&lt;-</span> <span class="st">'</span>
-<span class="r-in"> # name       switch           type values               [conditions (using R syntax)]</span>
-<span class="r-in"> algorithm    "--"             c    (as,mmas,eas,ras,acs)</span>
-<span class="r-in"> localsearch  "--localsearch " c    (0, 1, 2, 3)</span>
-<span class="r-in"> alpha        "--alpha "       r    (0.00, 5.00)</span>
-<span class="r-in"> beta         "--beta "        r    (0.00, 10.00)</span>
-<span class="r-in"> rho          "--rho  "        r    (0.01, 1.00)</span>
-<span class="r-in"> ants         "--ants "        i    (5, 100)</span>
-<span class="r-in"> q0           "--q0 "          r    (0.0, 1.0)           | algorithm == "acs"</span>
-<span class="r-in"> rasrank      "--rasranks "    i    (1, "ants")          | algorithm == "ras"</span>
-<span class="r-in"> elitistants  "--elitistants " i    (1, 750)             | algorithm == "eas"</span>
-<span class="r-in"> nnls         "--nnls "        i    (5, 50)              | localsearch %in% c(1,2,3)</span>
-<span class="r-in"> dlb          "--dlb "         c    (0, 1)               | localsearch %in% c(1,2,3)</span>
-<span class="r-in"> '</span></span>
-<span class="r-in"> <span class="va">parameters</span> <span class="op">&lt;-</span> <span class="fu">readParameters</span><span class="op">(</span>text<span class="op">=</span><span class="va">parameters.table</span><span class="op">)</span></span>
-<span class="r-in"> <span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">parameters</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span> <span class="co">## Read the parameters directly from text</span></span></span>
+<span class="r-in"><span> <span class="va">parameters.table</span> <span class="op">&lt;-</span> <span class="st">'</span></span></span>
+<span class="r-in"><span><span class="st"> # name       switch           type  values               [conditions (using R syntax)]</span></span></span>
+<span class="r-in"><span><span class="st"> algorithm    "--"             c     (as,mmas,eas,ras,acs)</span></span></span>
+<span class="r-in"><span><span class="st"> localsearch  "--localsearch " c     (0, 1, 2, 3)</span></span></span>
+<span class="r-in"><span><span class="st"> alpha        "--alpha "       r     (0.00, 5.00)</span></span></span>
+<span class="r-in"><span><span class="st"> beta         "--beta "        r     (0.00, 10.00)</span></span></span>
+<span class="r-in"><span><span class="st"> rho          "--rho  "        r     (0.01, 1.00)</span></span></span>
+<span class="r-in"><span><span class="st"> ants         "--ants "        i,log (5, 100)</span></span></span>
+<span class="r-in"><span><span class="st"> q0           "--q0 "          r     (0.0, 1.0)           | algorithm == "acs"</span></span></span>
+<span class="r-in"><span><span class="st"> rasrank      "--rasranks "    i     (1, "ants")          | algorithm == "ras"</span></span></span>
+<span class="r-in"><span><span class="st"> elitistants  "--elitistants " i     (1, 750)             | algorithm == "eas"</span></span></span>
+<span class="r-in"><span><span class="st"> nnls         "--nnls "        i     (5, 50)              | localsearch %in% c(1,2,3)</span></span></span>
+<span class="r-in"><span><span class="st"> dlb          "--dlb "         c     (0, 1)               | localsearch %in% c(1,2,3)</span></span></span>
+<span class="r-in"><span><span class="st"> '</span></span></span>
+<span class="r-in"><span> <span class="va">parameters</span> <span class="op">&lt;-</span> <span class="fu">readParameters</span><span class="op">(</span>text<span class="op">=</span><span class="va">parameters.table</span><span class="op">)</span></span></span>
+<span class="r-in"><span> <span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">parameters</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> List of 13</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ names       : chr [1:11] "algorithm" "localsearch" "alpha" "beta" ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ types       : Named chr [1:11] "c" "c" "r" "r" ...</span>
@@ -213,7 +213,9 @@ potential user errors.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ alpha      : chr ""</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ beta       : chr ""</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ rho        : chr ""</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ ants       : chr ""</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ ants       : chr "log"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..- attr(*, "lower")= num 1.61</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..- attr(*, "upper")= num 4.62</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ q0         : chr ""</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ rasrank    : chr ""</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ elitistants: chr ""</span>
@@ -238,7 +240,7 @@ potential user errors.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ nbParameters: int 11</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ nbFixed     : int 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ nbVariable  : int 11</span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
