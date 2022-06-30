@@ -657,7 +657,7 @@ checkParameters <- function(parameters)
 
 #' Print parameter space in the textual format accepted by irace.
 #' 
-#' FIXME: Dependent parameter bounds are not supported yet. This function will move to the irace package in the next release.
+#' FIXME: Dependent parameter bounds are not supported yet.
 #'
 #' @param params (`list()`) Parameter object stored in `irace.Rdata` or read with `irace::readParameters()`.
 #'
