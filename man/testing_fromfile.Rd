@@ -18,9 +18,9 @@ settings. The data structure has to be the one returned by the function
 iraceResults
 }
 \description{
-\code{testing_fromfile} executes the testing of an explicit list of configurations
-given \code{filename}. A \code{logFile} is created unless disabled \code{scenario}. This
-may overwrite an existing one!`
+Executes the testing of an explicit list of configurations given in
+\code{filename} (same format as in \code{\link[=readConfigurationsFile]{readConfigurationsFile()}}). A \code{logFile} is
+created unless disabled in \code{scenario}. This may overwrite an existing one!
 }
 \seealso{
 \code{\link[=testing_fromlog]{testing_fromlog()}} provides a different interface for testing.
@@ -28,3 +28,4 @@ may overwrite an existing one!`
 \author{
 Manuel López-Ibáñez
 }
+\concept{running}

@@ -177,21 +177,15 @@ testing_fromlog <- function(logFile, testNbElites, testIterationElites,
   configurations <- iraceResults$allConfigurations[testing_id, , drop=FALSE]
 
   irace.note ("Testing configurations (in no particular order): ", paste(testing_id, collapse=" "), "\n")
-  configurations.print(configurations)  
-  iraceResults$testing <- testConfigurations(configurations, scenario, parameters)
-  irace_save_logfile (iraceResults, scenario)
-  # FIXME : We should print the seeds also. As an additional column?
-  irace.note ("Testing results (column number is configuration ID in no particular order):\n")
-  print(iraceResults$testing$experiments)
-  irace.note ("Finished testing\n")
+  testing_common(configurations, scenario, parameters, iraceResults)
   return(TRUE)
 }
 
 #' Test configurations given an explicit table of configurations and a scenario file
 #'
-#' `testing_fromfile` executes the testing of an explicit list of configurations
-#' given `filename`. A `logFile` is created unless disabled `scenario`. This
-#' may overwrite an existing one!`
+#' Executes the testing of an explicit list of configurations given in
+#' `filename` (same format as in [readConfigurationsFile()]). A `logFile` is
+#' created unless disabled in `scenario`. This may overwrite an existing one!
 #' 
 #' @param filename Path to a file containing configurations: one configuration
 #'   per line, one parameter per column, parameter names in header.
@@ -203,6 +197,7 @@ testing_fromlog <- function(logFile, testNbElites, testIterationElites,
 #' @seealso [testing_fromlog()] provides a different interface for testing.
 #' 
 #' @author Manuel López-Ibáñez
+#' @concept running
 #' @export
 testing_fromfile <- function(filename, scenario)
 {
@@ -231,12 +226,19 @@ testing_fromfile <- function(filename, scenario)
                        allConfigurations = configurations)
     
   irace.note ("Testing configurations (in the order given as input): \n")
-  if (!scenario$quiet) configurations.print(configurations)
+  iraceResults <- testing_common(configurations, scenario, parameters, iraceResults)
+  return(iraceResults)
+}
+
+testing_common <- function(configurations, scenario, parameters, iraceResults)
+{
+  verbose <- !scenario$quiet
+  if (verbose) configurations.print(configurations)
   iraceResults$testing <- testConfigurations(configurations, scenario, parameters)
-  irace_save_logfile(iraceResults, scenario)
+  irace_save_logfile (iraceResults, scenario)
   # FIXME : We should print the seeds also. As an additional column?
   irace.note ("Testing results (column number is configuration ID in no particular order):\n")
-  if (!scenario$quiet) print(iraceResults$testing$experiments)
+  if (verbose) print(iraceResults$testing$experiments)
   irace.note ("Finished testing\n")
   return(iraceResults)
 }

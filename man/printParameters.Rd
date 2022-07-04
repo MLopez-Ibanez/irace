@@ -12,7 +12,7 @@ printParameters(params, digits = 15L)
 \item{digits}{(\code{integer()}) The desired number of digits after the decimal point for real-valued parameters. Default is 15, but it should be the value in \code{scenario$digits}.}
 }
 \description{
-FIXME: Dependent parameter bounds are not supported yet. This function will move to the irace package in the next release.
+FIXME: Dependent parameter bounds are not supported yet.
 }
 \examples{
  parameters.table <- '
