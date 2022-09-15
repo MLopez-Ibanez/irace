@@ -93,7 +93,7 @@ In both cases, the parameters must be given (in <code>text</code> or in the file
 whose name is <code>file</code>) in the expected form.  See the documentation
 for details.  If none of these parameters is given, <span class="pkg">irace</span>
 will stop with an error.</p>
-<p><strong>FIXME:</strong> Forbidden configurations, default configuration and transformations ("log") are currently ignored. See https://github.com/MLopez-Ibanez/irace/issues/31</p>
+<p><strong>FIXME:</strong> Forbidden configurations, default configuration and transformations ("log") are currently ignored. See <a href="https://github.com/MLopez-Ibanez/irace/issues/31" class="external-link">https://github.com/MLopez-Ibanez/irace/issues/31</a></p>
     </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
@@ -128,8 +128,27 @@ will stop with an error.</p>
 <span class="r-in"><span><span class="st"> dlb | localsearch in {1,2,3}</span></span></span>
 <span class="r-in"><span><span class="st"> '</span></span></span>
 <span class="r-in"><span> <span class="va">parameters_table</span> <span class="op">&lt;-</span> <span class="fu">read_pcs_file</span><span class="op">(</span>text<span class="op">=</span><span class="va">pcs_table</span><span class="op">)</span></span></span>
-<span class="r-in"><span> <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">parameters_table</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "\n # name       domain\nalgorithm \"algorithm\" c (as,mmas,eas,ras,acs)\nlocalsearch \"localsearch\" c (0, 1, 2, 3)\nalpha \"alpha\" r (0.00, 5.00)\nbeta \"beta\" r (0.00, 10.00)\nrho \"rho\" r (0.01, 1.00)\nants \"ants\" i (5, 100)\nq0 \"q0\" r (0.0, 1.0) | algorithm %in% c(\"acs\")\nrasrank \"rasrank\" i (1, 100) | algorithm %in% c(\"ras\")\nelitistants \"elitistants\" i (1, 750) | algorithm %in% c(\"eas\")\nnnls \"nnls\" i (5, 50) | localsearch %in% c(\"1\",\"2\",\"3\")\ndlb \"dlb\" c (0, 1) | localsearch %in% c(\"1\",\"2\",\"3\") \n\n\n\n\n\n\n \n"</span>
+<span class="r-in"><span> <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="va">parameters_table</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  # name       domain</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> algorithm "algorithm" c (as,mmas,eas,ras,acs)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> localsearch "localsearch" c (0, 1, 2, 3)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> alpha "alpha" r (0.00, 5.00)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> beta "beta" r (0.00, 10.00)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rho "rho" r (0.01, 1.00)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ants "ants" i (5, 100)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> q0 "q0" r (0.0, 1.0) | algorithm %in% c("acs")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rasrank "rasrank" i (1, 100) | algorithm %in% c("ras")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> elitistants "elitistants" i (1, 750) | algorithm %in% c("eas")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> nnls "nnls" i (5, 50) | localsearch %in% c("1","2","3")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> dlb "dlb" c (0, 1) | localsearch %in% c("1","2","3") </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-in"><span> <span class="va">parameters</span> <span class="op">&lt;-</span> <span class="fu"><a href="readParameters.html">readParameters</a></span><span class="op">(</span>text<span class="op">=</span><span class="va">parameters_table</span><span class="op">)</span></span></span>
 <span class="r-in"><span> <span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">parameters</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> List of 13</span>

@@ -179,20 +179,29 @@ on Evolutionary Computation</em>, 2012.</p>
 <span class="r-in"><span> <span class="co">## We check that the scenario is valid. This will also try to execute</span></span></span>
 <span class="r-in"><span> <span class="co">## target_runner.</span></span></span>
 <span class="r-in"><span> <span class="fu"><a href="checkIraceScenario.html">checkIraceScenario</a></span><span class="op">(</span><span class="va">scenario</span>, parameters <span class="op">=</span> <span class="va">parameters</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-09-12 09:01:19 UTC: Checking scenario</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-09-15 16:00:55 UTC: Checking scenario</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ## irace scenario:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> scenarioFile = "./scenario.txt"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> parameterFile = "/tmp/RtmpeXbkQx/file44fc4869bf15/reference/parameters.txt"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> execDir = "/tmp/RtmpeXbkQx/file44fc4869bf15/reference"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> execDir = "/tmp/RtmpnuWo6S/file48fb24218d8a/reference"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> parameterFile = "/tmp/RtmpnuWo6S/file48fb24218d8a/reference/parameters.txt"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> forbiddenExps = NULL = expression()</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> forbiddenFile = ""</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> initConfigurations = NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> configurationsFile = ""</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> logFile = ""</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> recoveryFile = ""</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> instances = c(0.885660238800136, 0.899372484822612, 0.911246829443252, 0.90604830768778, 0.894291552969442, 0.908856301293193, 0.891842069141862, 0.92639538357336, 0.907048085645395, 0.897293382757449)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> initConfigurations = NULL</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> trainInstancesDir = "./Instances"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> trainInstancesFile = ""</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> configurationsFile = ""</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> forbiddenExps = NULL = expression()</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> forbiddenFile = ""</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> sampleInstances = TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> testInstancesDir = ""</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> testInstancesFile = ""</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> testInstances = NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> testNbElites = 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> testIterationElites = FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> testType = "friedman"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> firstTest = 5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> eachTest = 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> targetRunner = function (experiment, scenario) {    instance &lt;- experiment$instance    configuration &lt;- experiment$configuration    D &lt;- 3    par &lt;- runif(D, min = -1, max = 1)    fn &lt;- function(x) {        weight &lt;- instance        return(weight * f_rastrigin(x) + (1 - weight) * f_rosenbrock(x))    }    res &lt;- stats::optim(par, fn, method = "SANN", control = list(maxit = 1000,         tmax = as.numeric(configuration[["tmax"]]), temp = as.numeric(configuration[["temp"]])))    return(list(cost = res$value))}</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> targetRunnerLauncher = ""</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> targetRunnerLauncherArgs = "{targetRunner} {targetRunnerArgs}"</span>
@@ -200,35 +209,21 @@ on Evolutionary Computation</em>, 2012.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> targetRunnerData = ""</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> targetRunnerParallel = NULL</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> targetEvaluator = NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> deterministic = FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> maxExperiments = 500</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> maxTime = 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> budgetEstimation = 0.02</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> minMeasurableTime = 0.01</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> digits = 4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> debugLevel = 2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> nbIterations = 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> nbExperimentsPerIteration = 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> sampleInstances = TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> testType = "friedman"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> firstTest = 5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> eachTest = 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> minNbSurvival = 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> nbConfigurations = 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> mu = 5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> confidence = 0.95</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> deterministic = FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> seed = NA_character_</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> parallel = 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> loadBalancing = TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> mpi = FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> batchmode = "0"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> digits = 4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> quiet = FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> debugLevel = 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> seed = NA_character_</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> softRestart = TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> softRestartThreshold = 1e-04</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> testInstancesDir = ""</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> testInstancesFile = ""</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> testInstances = NULL</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> testNbElites = 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> testIterationElites = FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> elitist = TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> elitistNewInstances = 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> elitistLimit = 2</span>
@@ -242,10 +237,15 @@ on Evolutionary Computation</em>, 2012.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> boundAsTimeout = TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> postselection = 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> aclib = FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> quiet = FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> nbIterations = 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> nbExperimentsPerIteration = 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> minNbSurvival = 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> nbConfigurations = 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> mu = 5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> confidence = 0.95</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ## end of irace scenario</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # checkIraceScenario(): 'parameters' provided by user. Parameter file '/tmp/RtmpeXbkQx/file44fc4869bf15/reference/parameters.txt' will be ignored</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-09-12 09:01:19 UTC: Checking target runner.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # checkIraceScenario(): 'parameters' provided by user. Parameter file '/tmp/RtmpnuWo6S/file48fb24218d8a/reference/parameters.txt' will be ignored</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-09-15 16:00:55 UTC: Checking target runner.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # Executing targetRunner ( 2 times)...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # targetRunner returned:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[1]]</span>
@@ -264,7 +264,7 @@ on Evolutionary Computation</em>, 2012.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-09-12 09:01:19 UTC: Check successful.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-09-15 16:00:55 UTC: Check successful.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-in"><span> </span></span>
 <span class="r-in"><span> <span class="co"># \donttest{</span></span></span>
@@ -272,7 +272,7 @@ on Evolutionary Computation</em>, 2012.</p>
 <span class="r-in"><span> <span class="co">## function. The function will print information about its</span></span></span>
 <span class="r-in"><span> <span class="co">## progress. This may require a few minutes, so it is not run by default.</span></span></span>
 <span class="r-in"><span> <span class="va">tuned_confs</span> <span class="op">&lt;-</span> <span class="fu"><a href="irace.html">irace</a></span><span class="op">(</span>scenario <span class="op">=</span> <span class="va">scenario</span>, parameters <span class="op">=</span> <span class="va">parameters</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-09-12 09:01:19 UTC: Initialization</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-09-15 16:00:55 UTC: Initialization</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # Elitist race</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # Elitist new instances: 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # Elitist limit: 2</span>
@@ -285,7 +285,7 @@ on Evolutionary Computation</em>, 2012.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # mu: 5</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # deterministic: FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-09-12 09:01:19 UTC: Iteration 1 of 3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-09-15 16:00:55 UTC: Iteration 1 of 3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # experimentsUsedSoFar: 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # remainingBudget: 500</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # currentBudget: 166</span>
@@ -313,12 +313,12 @@ on Evolutionary Computation</em>, 2012.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    .ID. tmax    temp .PARENT.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 17   17    4 21.9751       NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-09-12 09:01:21 UTC: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-09-15 16:00:57 UTC: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    tmax    temp</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 17    4 21.9751</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 26    9 16.6998</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4    10 82.9875</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-09-12 09:01:21 UTC: Iteration 2 of 3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-09-15 16:00:57 UTC: Iteration 2 of 3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # experimentsUsedSoFar: 162</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # remainingBudget: 338</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # currentBudget: 169</span>
@@ -348,12 +348,12 @@ on Evolutionary Computation</em>, 2012.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    .ID. tmax    temp .PARENT.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 17   17    4 21.9751       NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-09-12 09:01:22 UTC: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-09-15 16:00:59 UTC: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    tmax    temp</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 17    4 21.9751</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 45    2 17.8451</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 50    2 10.2934</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-09-12 09:01:22 UTC: Iteration 3 of 3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-09-15 16:00:59 UTC: Iteration 3 of 3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # experimentsUsedSoFar: 319</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # remainingBudget: 181</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # currentBudget: 181</span>
@@ -384,12 +384,12 @@ on Evolutionary Computation</em>, 2012.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    .ID. tmax    temp .PARENT.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 17   17    4 21.9751       NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-09-12 09:01:24 UTC: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-09-15 16:01:01 UTC: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    tmax    temp</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 17    4 21.9751</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 50    2 10.2934</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 55    6 26.4434</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-09-12 09:01:24 UTC: Stopped because there is not enough budget left to race more than the minimum (3)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-09-15 16:01:01 UTC: Stopped because there is not enough budget left to race more than the minimum (3)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # You may either increase the budget or set 'minNbSurvival' to a lower value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # Iteration: 4</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # nbIterations: 4</span>
@@ -399,7 +399,7 @@ on Evolutionary Computation</em>, 2012.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # currentBudget: 7</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # number of elites: 3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # nbConfigurations: 3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # Total CPU user time: 5.187, CPU sys time: 0, Wall-clock time: 5.189</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # Total CPU user time: 5.542, CPU sys time: 0, Wall-clock time: 5.543</span>
 <span class="r-in"><span> </span></span>
 <span class="r-in"><span> <span class="co">## We can print the best configurations found by irace as follows:</span></span></span>
 <span class="r-in"><span> <span class="fu"><a href="configurations.print.html">configurations.print</a></span><span class="op">(</span><span class="va">tuned_confs</span><span class="op">)</span></span></span>
