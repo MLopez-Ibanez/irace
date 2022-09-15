@@ -31,6 +31,10 @@ ordered_sections <- c("General options",
                       "Adaptive capping",
                       "Recovery",
                       "Testing")
+
+# These options are excluded from the scenario file.
+scenario_file_exclude <- c("scenarioFile", "recoveryFile")
+
 sections <- unique(irace_params[,"section"])
 # All options must have a section.
 stopifnot(setequal(ordered_sections, sections))
@@ -126,7 +130,7 @@ for (i in seq_len(nrow(irace_params))) {
   p <- unlist(irace_params[i, ])
   if (startsWith(p["name"], ".")) next
   if (p["description"] == "") next
-  if (p["name"] %in% c("scenarioFile")) next 
+  if (p["name"] %in% scenario_file_exclude) next 
   out.text <- c(out.text,
                 strwrap(to.plain.text(p["description"]), width = 79,  prefix = "## "),
                 sprintf("# %s = %s\n", p["name"],

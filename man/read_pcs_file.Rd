@@ -33,7 +33,7 @@ whose name is \code{file}) in the expected form.  See the documentation
 for details.  If none of these parameters is given, \pkg{irace}
 will stop with an error.
 
-\strong{FIXME:} Forbidden configurations, default configuration and transformations ("log") are currently ignored. See https://github.com/MLopez-Ibanez/irace/issues/31
+\strong{FIXME:} Forbidden configurations, default configuration and transformations ("log") are currently ignored. See \url{https://github.com/MLopez-Ibanez/irace/issues/31}
 }
 \examples{
  ## Read the parameters directly from text
@@ -58,7 +58,7 @@ will stop with an error.
  dlb | localsearch in {1,2,3}
  '
  parameters_table <- read_pcs_file(text=pcs_table)
- print(parameters_table)
+ cat(parameters_table)
  parameters <- readParameters(text=parameters_table)
  str(parameters)
 

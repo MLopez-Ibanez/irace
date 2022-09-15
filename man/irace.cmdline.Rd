@@ -102,9 +102,15 @@ List of command-line options:\preformatted{-h,--help                Show this he
                          as argument.
 -s,--scenario            File that describes the configuration scenario setup
                          and other irace settings.
+   --exec-dir            Directory where the programs will be run.
 -p,--parameter-file      File that contains the description of the parameters
                          of the target algorithm.
-   --exec-dir            Directory where the programs will be run.
+   --forbidden-file      File that contains a list of logical expressions that
+                         cannot be TRUE for any evaluated configuration. If
+                         empty or NULL, do not use forbidden expressions.
+   --configurations-file  File that contains a table of initial configurations.
+                         If empty or NULL, all initial configurations are
+                         randomly generated.
 -l,--log-file            File to save tuning results as an R dataset, either
                          absolute path or relative to execDir.
    --recovery-file       Previously saved log file to recover the execution of
@@ -119,18 +125,33 @@ List of command-line options:\preformatted{-h,--help                Show this he
                          optionally additional parameters for them. If
                          trainInstancesDir is provided, irace will search for
                          the files in this folder.
-   --configurations-file  File that contains a table of initial configurations.
-                         If empty or NULL, all initial configurations are
-                         randomly generated.
-   --forbidden-file      File that contains a list of logical expressions that
-                         cannot be TRUE for any evaluated configuration. If
-                         empty or NULL, do not use forbidden expressions.
-   --target-runner       Script called for each configuration that executes the
-                         target algorithm to be tuned. See the templates and
-                         examples provided.
-   --target-runner-launcher  An executable that will be used to launch the
-                         target runner, when targetRunner cannot be executed
-                         directly (.e.g, a Python script in Windows).
+   --sample-instances    Randomly sample the training instances or use them in
+                         the order given.
+   --test-instances-dir  Directory where testing instances are located, either
+                         absolute or relative to current directory.
+   --test-instances-file  File containing a list of test instances and
+                         optionally additional parameters for them.
+   --test-num-elites     Number of elite configurations returned by irace that
+                         will be tested if test instances are provided.
+   --test-iteration-elites  Enable/disable testing the elite configurations
+                         found at each iteration.
+   --test-type           Statistical test used for elimination. The default
+                         value selects t-test if capping is enabled or F-test,
+                         otherwise. Valid values are: F-test (Friedman test),
+                         t-test (pairwise t-tests with no correction),
+                         t-test-bonferroni (t-test with Bonferroni's correction
+                         for multiple comparisons), t-test-holm (t-test with
+                         Holm's correction for multiple comparisons).
+   --first-test          Number of instances evaluated before the first
+                         elimination test. It must be a multiple of eachTest.
+   --each-test           Number of instances evaluated between elimination
+                         tests.
+   --target-runner       Executable called for each configuration that executes
+                         the target algorithm to be tuned. See the templates
+                         and examples provided.
+   --target-runner-launcher  Executable that will be used to launch the target
+                         runner, when targetRunner cannot be executed directly
+                         (.e.g, a Python script in Windows).
    --target-runner-args  Command-line arguments provided to
                          targetRunnerLauncher. The substrings \\\{targetRunner\\\}
                          and \\\{targetRunnerArgs\\\} will be replaced by the value
@@ -143,6 +164,9 @@ List of command-line options:\preformatted{-h,--help                Show this he
    --target-evaluator    Optional script or R function that provides a numeric
                          value for each configuration. See
                          templates/target-evaluator.tmpl
+   --deterministic       If the target algorithm is deterministic,
+                         configurations will be evaluated only once per
+                         instance.
    --max-experiments     Maximum number of runs (invocations of targetRunner)
                          that will be performed. It determines the maximum
                          budget of experiments for the tuning.
@@ -154,39 +178,6 @@ List of command-line options:\preformatted{-h,--help                Show this he
                          Only used when maxTime > 0
    --min-measurable-time  Minimum time unit that is still (significantly)
                          measureable.
-   --digits              Maximum number of decimal places that are significant
-                         for numerical (real) parameters.
-   --debug-level         Debug level of the output of irace. Set this to 0 to
-                         silence all debug messages. Higher values provide more
-                         verbose debug messages.
-   --iterations          Maximum number of iterations.
-   --experiments-per-iteration  Number of runs of the target algorithm per
-                         iteration.
-   --sample-instances    Randomly sample the training instances or use them in
-                         the order given.
-   --test-type           Statistical test used for elimination. The default
-                         value selects t-test if capping is enabled or F-test,
-                         otherwise. Valid values are: F-test (Friedman test),
-                         t-test (pairwise t-tests with no correction),
-                         t-test-bonferroni (t-test with Bonferroni's correction
-                         for multiple comparisons), t-test-holm (t-test with
-                         Holm's correction for multiple comparisons).
-   --first-test          Number of instances evaluated before the first
-                         elimination test. It must be a multiple of eachTest.
-   --each-test           Number of instances evaluated between elimination
-                         tests.
-   --min-survival        Minimum number of configurations needed to continue
-                         the execution of each race (iteration).
-   --num-configurations  Number of configurations to be sampled and evaluated
-                         at each iteration.
-   --mu                  Parameter used to define the number of configurations
-                         sampled and evaluated at each iteration.
-   --confidence          Confidence level for the elimination test.
-   --deterministic       If the target algorithm is deterministic,
-                         configurations will be evaluated only once per
-                         instance.
-   --seed                Seed of the random number generator (by default,
-                         generate a random seed).
    --parallel            Number of calls to targetRunner to execute in
                          parallel. Values 0 or 1 mean no parallelization.
    --load-balancing      Enable/disable load-balancing when executing
@@ -201,19 +192,19 @@ List of command-line options:\preformatted{-h,--help                Show this he
                          targetRunner submits jobs to a batch cluster: sge,
                          pbs, torque, slurm or htcondor. targetRunner must
                          submit jobs to the cluster using, for example, qsub.
+   --digits              Maximum number of decimal places that are significant
+                         for numerical (real) parameters.
+-q,--quiet               Reduce the output generated by irace to a minimum.
+   --debug-level         Debug level of the output of irace. Set this to 0 to
+                         silence all debug messages. Higher values provide more
+                         verbose debug messages.
+   --seed                Seed of the random number generator (by default,
+                         generate a random seed).
    --soft-restart        Enable/disable the soft restart strategy that avoids
                          premature convergence of the probabilistic model.
    --soft-restart-threshold  Soft restart threshold value for numerical
                          parameters. If NA, NULL or "", it is computed as
                          10^-digits.
-   --test-instances-dir  Directory where testing instances are located, either
-                         absolute or relative to current directory.
-   --test-instances-file  File containing a list of test instances and
-                         optionally additional parameters for them.
-   --test-num-elites     Number of elite configurations returned by irace that
-                         will be tested if test instances are provided.
-   --test-iteration-elites  Enable/disable testing the elite configurations
-                         found at each iteration.
 -e,--elitist             Enable/disable elitist irace.
    --elitist-new-instances  Number of instances added to the execution list
                          before previous instances in elitist irace.
@@ -243,7 +234,16 @@ List of command-line options:\preformatted{-h,--help                Show this he
    --aclib               Enable/disable AClib mode. This option enables
                          compatibility with GenericWrapper4AC as targetRunner
                          script.
--q,--quiet               Reduce the output generated by irace to a minimum.
+   --iterations          Maximum number of iterations.
+   --experiments-per-iteration  Number of runs of the target algorithm per
+                         iteration.
+   --min-survival        Minimum number of configurations needed to continue
+                         the execution of each race (iteration).
+   --num-configurations  Number of configurations to be sampled and evaluated
+                         at each iteration.
+   --mu                  Parameter used to define the number of configurations
+                         sampled and evaluated at each iteration.
+   --confidence          Confidence level for the elimination test.
 }
 }
 \examples{

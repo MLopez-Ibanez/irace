@@ -6,21 +6,25 @@
 ## the parameter (comment it out in this file, and do not give any
 ## value on the command line).
 
+## Directory where the programs will be run.
+# execDir = "./"
+
 ## File that contains the description of the parameters of the target
 ## algorithm.
 # parameterFile = "./parameters.txt"
 
-## Directory where the programs will be run.
-# execDir = "./"
+## File that contains a list of logical expressions that cannot be TRUE for
+## any evaluated configuration. If empty or NULL, do not use forbidden
+## expressions.
+# forbiddenFile = ""
+
+## File that contains a table of initial configurations. If empty or NULL, all
+## initial configurations are randomly generated.
+# configurationsFile = ""
 
 ## File to save tuning results as an R dataset, either absolute path or
 ## relative to execDir.
 # logFile = "./irace.Rdata"
-
-## Previously saved log file to recover the execution of irace, either
-## absolute path or relative to the current directory.  If empty or NULL,
-## recovery is not performed.
-# recoveryFile = ""
 
 ## Directory where training instances are located; either absolute path or
 ## relative to current directory. If no trainInstancesFiles is provided, all
@@ -32,22 +36,44 @@
 ## for the files in this folder.
 # trainInstancesFile = ""
 
-## File that contains a table of initial configurations. If empty or NULL, all
-## initial configurations are randomly generated.
-# configurationsFile = ""
+## Randomly sample the training instances or use them in the order given.
+# sampleInstances = 1
 
-## File that contains a list of logical expressions that cannot be TRUE for
-## any evaluated configuration. If empty or NULL, do not use forbidden
-## expressions.
-# forbiddenFile = ""
+## Directory where testing instances are located, either absolute or relative
+## to current directory.
+# testInstancesDir = ""
 
-## Script called for each configuration that executes the target algorithm to
-## be tuned. See the templates and examples provided.
+## File containing a list of test instances and optionally additional
+## parameters for them.
+# testInstancesFile = ""
+
+## Number of elite configurations returned by irace that will be tested if
+## test instances are provided.
+# testNbElites = 1
+
+## Enable/disable testing the elite configurations found at each iteration.
+# testIterationElites = 0
+
+## Statistical test used for elimination. The default value selects t-test if
+## capping is enabled or F-test, otherwise. Valid values are: F-test (Friedman
+## test), t-test (pairwise t-tests with no correction), t-test-bonferroni
+## (t-test with Bonferroni's correction for multiple comparisons), t-test-holm
+## (t-test with Holm's correction for multiple comparisons).
+# testType = ""
+
+## Number of instances evaluated before the first elimination test. It must be
+## a multiple of eachTest.
+# firstTest = 5
+
+## Number of instances evaluated between elimination tests.
+# eachTest = 1
+
+## Executable called for each configuration that executes the target algorithm
+## to be tuned. See the templates and examples provided.
 # targetRunner = "./target-runner"
 
-## An executable that will be used to launch the target runner, when
-## targetRunner cannot be executed directly (.e.g, a Python script in
-## Windows).
+## Executable that will be used to launch the target runner, when targetRunner
+## cannot be executed directly (.e.g, a Python script in Windows).
 # targetRunnerLauncher = ""
 
 ## Command-line arguments provided to targetRunnerLauncher. The substrings
@@ -72,6 +98,10 @@
 ## configuration. See templates/target-evaluator.tmpl
 # targetEvaluator = ""
 
+## If the target algorithm is deterministic, configurations will be evaluated
+## only once per instance.
+# deterministic = 0
+
 ## Maximum number of runs (invocations of targetRunner) that will be
 ## performed. It determines the maximum budget of experiments for the tuning.
 # maxExperiments = 0
@@ -86,58 +116,6 @@
 
 ## Minimum time unit that is still (significantly) measureable.
 # minMeasurableTime = 0.01
-
-## Maximum number of decimal places that are significant for numerical (real)
-## parameters.
-# digits = 4
-
-## Debug level of the output of irace. Set this to 0 to silence all debug
-## messages. Higher values provide more verbose debug messages.
-# debugLevel = 0
-
-## Maximum number of iterations.
-# nbIterations = 0
-
-## Number of runs of the target algorithm per iteration.
-# nbExperimentsPerIteration = 0
-
-## Randomly sample the training instances or use them in the order given.
-# sampleInstances = 1
-
-## Statistical test used for elimination. The default value selects t-test if
-## capping is enabled or F-test, otherwise. Valid values are: F-test (Friedman
-## test), t-test (pairwise t-tests with no correction), t-test-bonferroni
-## (t-test with Bonferroni's correction for multiple comparisons), t-test-holm
-## (t-test with Holm's correction for multiple comparisons).
-# testType = ""
-
-## Number of instances evaluated before the first elimination test. It must be
-## a multiple of eachTest.
-# firstTest = 5
-
-## Number of instances evaluated between elimination tests.
-# eachTest = 1
-
-## Minimum number of configurations needed to continue the execution of each
-## race (iteration).
-# minNbSurvival = 0
-
-## Number of configurations to be sampled and evaluated at each iteration.
-# nbConfigurations = 0
-
-## Parameter used to define the number of configurations sampled and evaluated
-## at each iteration.
-# mu = 5
-
-## Confidence level for the elimination test.
-# confidence = 0.95
-
-## If the target algorithm is deterministic, configurations will be evaluated
-## only once per instance.
-# deterministic = 0
-
-## Seed of the random number generator (by default, generate a random seed).
-# seed = NA
 
 ## Number of calls to targetRunner to execute in parallel. Values 0 or 1 mean
 ## no parallelization.
@@ -158,6 +136,20 @@
 ## submit jobs to the cluster using, for example, qsub.
 # batchmode = 0
 
+## Maximum number of decimal places that are significant for numerical (real)
+## parameters.
+# digits = 4
+
+## Reduce the output generated by irace to a minimum.
+# quiet = 0
+
+## Debug level of the output of irace. Set this to 0 to silence all debug
+## messages. Higher values provide more verbose debug messages.
+# debugLevel = 0
+
+## Seed of the random number generator (by default, generate a random seed).
+# seed = NA
+
 ## Enable/disable the soft restart strategy that avoids premature convergence
 ## of the probabilistic model.
 # softRestart = 1
@@ -165,21 +157,6 @@
 ## Soft restart threshold value for numerical parameters. If NA, NULL or "",
 ## it is computed as 10^-digits.
 # softRestartThreshold = ""
-
-## Directory where testing instances are located, either absolute or relative
-## to current directory.
-# testInstancesDir = ""
-
-## File containing a list of test instances and optionally additional
-## parameters for them.
-# testInstancesFile = ""
-
-## Number of elite configurations returned by irace that will be tested if
-## test instances are provided.
-# testNbElites = 1
-
-## Enable/disable testing the elite configurations found at each iteration.
-# testIterationElites = 0
 
 ## Enable/disable elitist irace.
 # elitist = 1
@@ -232,8 +209,25 @@
 ## GenericWrapper4AC as targetRunner script.
 # aclib = 0
 
-## Reduce the output generated by irace to a minimum.
-# quiet = 0
+## Maximum number of iterations.
+# nbIterations = 0
+
+## Number of runs of the target algorithm per iteration.
+# nbExperimentsPerIteration = 0
+
+## Minimum number of configurations needed to continue the execution of each
+## race (iteration).
+# minNbSurvival = 0
+
+## Number of configurations to be sampled and evaluated at each iteration.
+# nbConfigurations = 0
+
+## Parameter used to define the number of configurations sampled and evaluated
+## at each iteration.
+# mu = 5
+
+## Confidence level for the elimination test.
+# confidence = 0.95
 
 ## END of scenario file
 ############################################################################
