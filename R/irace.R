@@ -763,7 +763,7 @@ irace_run <- function(scenario, parameters)
         } else {
           nconfigurations <- min(1024, nconfigurations + new.conf)
         }
-      }
+      } # end of while(TRUE)
       
       if (length(rejectedIDs) > 0) {
         irace.note ("Immediately rejected configurations: ",
@@ -866,15 +866,16 @@ irace_run <- function(scenario, parameters)
                                boundEstimate = boundEstimate,
                                rejectedIDs = rejectedIDs,
                                forbiddenExps = forbiddenExps,
-                               completed = "Unknown")
-    # Consistency checks
-    irace.assert(nrow(iraceResults$experimentLog) == experimentsUsedSoFar)
-    if (scenario$elitist)
-      irace.assert(sum(!is.na(iraceResults$experiments)) == experimentsUsedSoFar)
-
+                               completed = "Incomplete")
     ## Save to the log file
     iraceResults$allConfigurations <- allConfigurations
     irace_save_logfile(iraceResults, scenario)
+
+    # Consistency checks
+    irace.assert(nrow(iraceResults$experimentLog) == experimentsUsedSoFar)
+    # With elitist=0 we may re-run the same configuration on the same (instance,seed) pair
+    if (scenario$elitist)
+      irace.assert(sum(!is.na(iraceResults$experiments)) == experimentsUsedSoFar)
 
     if (remainingBudget <= 0) {
       catInfo("Stopped because budget is exhausted")
