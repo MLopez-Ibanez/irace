@@ -163,7 +163,7 @@ The scenario list contains the following elements:</p><ul><li><p>General options
 <dd><p>Executable that will be used to launch the target runner, when <code>targetRunner</code> cannot be executed directly (.e.g, a Python script in Windows). (Default: <code>""</code>)</p></dd>
 
 <dt><code>targetRunnerLauncherArgs</code></dt>
-<dd><p>Command-line arguments provided to <code>targetRunnerLauncher</code>. The substrings <code>{targetRunner}</code> and <code>{targetRunnerArgs}</code> will be replaced by the value of the option <code>targetRunner</code> and by the arguments usually passed when calling <code>targetRunner</code>, respectively. Example: <code>"-m \{targetRunner\} --args \{targetRunnerArgs\}"</code>. (Default: <code>"{targetRunner} {targetRunnerArgs}"</code>)</p></dd>
+<dd><p>Command-line arguments provided to <code>targetRunnerLauncher</code>. The substrings <code>{targetRunner}</code> and <code>{targetRunnerArgs}</code> will be replaced by the value of the option <code>targetRunner</code> and by the arguments usually passed when calling <code>targetRunner</code>, respectively. Example: <code>"-m {targetRunner} --args {targetRunnerArgs}"</code>. (Default: <code>"{targetRunner} {targetRunnerArgs}"</code>)</p></dd>
 
 <dt><code>targetRunnerRetries</code></dt>
 <dd><p>Number of times to retry a call to <code>targetRunner</code> if the call failed. (Default: <code>0</code>)</p></dd>
