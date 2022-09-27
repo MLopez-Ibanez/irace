@@ -101,10 +101,10 @@ List of command-line options:\preformatted{-h,--help                Show this he
    --only-test           Only test the configurations given in the file passed
                          as argument.
 -s,--scenario            File that describes the configuration scenario setup
-                         and other irace settings.
-   --exec-dir            Directory where the programs will be run.
+                         and other irace settings. Default: ./scenario.txt.
+   --exec-dir            Directory where the programs will be run. Default: ./.
 -p,--parameter-file      File that contains the description of the parameters
-                         of the target algorithm.
+                         of the target algorithm. Default: ./parameters.txt.
    --forbidden-file      File that contains a list of logical expressions that
                          cannot be TRUE for any evaluated configuration. If
                          empty or NULL, do not use forbidden expressions.
@@ -112,7 +112,8 @@ List of command-line options:\preformatted{-h,--help                Show this he
                          If empty or NULL, all initial configurations are
                          randomly generated.
 -l,--log-file            File to save tuning results as an R dataset, either
-                         absolute path or relative to execDir.
+                         absolute path or relative to execDir. Default:
+                         ./irace.Rdata.
    --recovery-file       Previously saved log file to recover the execution of
                          irace, either absolute path or relative to the current
                          directory.  If empty or NULL, recovery is not
@@ -121,20 +122,22 @@ List of command-line options:\preformatted{-h,--help                Show this he
                          either absolute path or relative to current directory.
                          If no trainInstancesFiles is provided, all the files
                          in trainInstancesDir will be listed as instances.
+                         Default: ./Instances.
    --train-instances-file  File that contains a list of training instances and
                          optionally additional parameters for them. If
                          trainInstancesDir is provided, irace will search for
                          the files in this folder.
    --sample-instances    Randomly sample the training instances or use them in
-                         the order given.
+                         the order given. Default: 1.
    --test-instances-dir  Directory where testing instances are located, either
                          absolute or relative to current directory.
    --test-instances-file  File containing a list of test instances and
                          optionally additional parameters for them.
    --test-num-elites     Number of elite configurations returned by irace that
                          will be tested if test instances are provided.
+                         Default: 1.
    --test-iteration-elites  Enable/disable testing the elite configurations
-                         found at each iteration.
+                         found at each iteration. Default: 0.
    --test-type           Statistical test used for elimination. The default
                          value selects t-test if capping is enabled or F-test,
                          otherwise. Valid values are: F-test (Friedman test),
@@ -144,11 +147,12 @@ List of command-line options:\preformatted{-h,--help                Show this he
                          Holm's correction for multiple comparisons).
    --first-test          Number of instances evaluated before the first
                          elimination test. It must be a multiple of eachTest.
+                         Default: 5.
    --each-test           Number of instances evaluated between elimination
-                         tests.
+                         tests. Default: 1.
    --target-runner       Executable called for each configuration that executes
                          the target algorithm to be tuned. See the templates
-                         and examples provided.
+                         and examples provided. Default: ./target-runner.
    --target-runner-launcher  Executable that will be used to launch the target
                          runner, when targetRunner cannot be executed directly
                          (.e.g, a Python script in Windows).
@@ -157,93 +161,103 @@ List of command-line options:\preformatted{-h,--help                Show this he
                          and \\\{targetRunnerArgs\\\} will be replaced by the value
                          of the option targetRunner and by the arguments
                          usually passed when calling targetRunner,
-                         respectively. Example: "-m \\\{targetRunner\\ --args
-                         \\\{targetRunnerArgs\\\}"\}.
+                         respectively. Example: "-m \{targetRunner --args
+                         \{targetRunnerArgs\}"\}. Default: \{targetRunner\}
+                         \{targetRunnerArgs\}.
    --target-runner-retries  Number of times to retry a call to targetRunner if
-                         the call failed.
+                         the call failed. Default: 0.
    --target-evaluator    Optional script or R function that provides a numeric
                          value for each configuration. See
                          templates/target-evaluator.tmpl
    --deterministic       If the target algorithm is deterministic,
                          configurations will be evaluated only once per
-                         instance.
+                         instance. Default: 0.
    --max-experiments     Maximum number of runs (invocations of targetRunner)
                          that will be performed. It determines the maximum
-                         budget of experiments for the tuning.
+                         budget of experiments for the tuning. Default: 0.
    --max-time            Maximum total execution time in seconds for the
                          executions of targetRunner. targetRunner must return
-                         two values: cost and time.
+                         two values: cost and time. Default: 0.
    --budget-estimation   Fraction (smaller than 1) of the budget used to
                          estimate the mean computation time of a configuration.
-                         Only used when maxTime > 0
+                         Only used when maxTime > 0 Default: 0.02.
    --min-measurable-time  Minimum time unit that is still (significantly)
-                         measureable.
+                         measureable. Default: 0.01.
    --parallel            Number of calls to targetRunner to execute in
                          parallel. Values 0 or 1 mean no parallelization.
+                         Default: 0.
    --load-balancing      Enable/disable load-balancing when executing
                          experiments in parallel. Load-balancing makes better
                          use of computing resources, but increases
                          communication overhead. If this overhead is large,
-                         disabling load-balancing may be faster.
+                         disabling load-balancing may be faster. Default: 1.
    --mpi                 Enable/disable MPI. Use Rmpi to execute targetRunner
                          in parallel (parameter parallel is the number of
-                         slaves).
+                         slaves). Default: 0.
    --batchmode           Specify how irace waits for jobs to finish when
                          targetRunner submits jobs to a batch cluster: sge,
                          pbs, torque, slurm or htcondor. targetRunner must
                          submit jobs to the cluster using, for example, qsub.
+                         Default: 0.
    --digits              Maximum number of decimal places that are significant
-                         for numerical (real) parameters.
+                         for numerical (real) parameters. Default: 4.
 -q,--quiet               Reduce the output generated by irace to a minimum.
+                         Default: 0.
    --debug-level         Debug level of the output of irace. Set this to 0 to
                          silence all debug messages. Higher values provide more
-                         verbose debug messages.
+                         verbose debug messages. Default: 0.
    --seed                Seed of the random number generator (by default,
                          generate a random seed).
    --soft-restart        Enable/disable the soft restart strategy that avoids
                          premature convergence of the probabilistic model.
+                         Default: 1.
    --soft-restart-threshold  Soft restart threshold value for numerical
                          parameters. If NA, NULL or "", it is computed as
                          10^-digits.
--e,--elitist             Enable/disable elitist irace.
+-e,--elitist             Enable/disable elitist irace. Default: 1.
    --elitist-new-instances  Number of instances added to the execution list
-                         before previous instances in elitist irace.
+                         before previous instances in elitist irace. Default:
+                         1.
    --elitist-limit       In elitist irace, maximum number per race of
                          elimination tests that do not eliminate a
-                         configuration. Use 0 for no limit.
+                         configuration. Use 0 for no limit. Default: 2.
    --capping             Enable the use of adaptive capping, a technique
                          designed for minimizing the computation time of
                          configurations. This is only available when elitist is
-                         active.
+                         active. Default: 0.
    --capping-type        Measure used to obtain the execution bound from the
                          performance of the elite configurations: median, mean,
-                         worst, best.
+                         worst, best. Default: median.
    --bound-type          Method to calculate the mean performance of elite
-                         configurations: candidate or instance.
+                         configurations: candidate or instance. Default:
+                         candidate.
    --bound-max           Maximum execution bound for targetRunner. It must be
-                         specified when capping is enabled.
+                         specified when capping is enabled. Default: 0.
    --bound-digits        Precision used for calculating the execution time. It
-                         must be specified when capping is enabled.
+                         must be specified when capping is enabled. Default: 0.
    --bound-par           Penalization constant for timed out executions
                          (executions that reach boundMax execution time).
+                         Default: 1.
    --bound-as-timeout    Replace the configuration cost of bounded executions
-                         with boundMax.
+                         with boundMax. Default: 1.
    --postselection       Percentage of the configuration budget used to perform
                          a postselection race of the best configurations of
-                         each iteration after the execution of irace.
+                         each iteration after the execution of irace. Default:
+                         0.
    --aclib               Enable/disable AClib mode. This option enables
                          compatibility with GenericWrapper4AC as targetRunner
-                         script.
-   --iterations          Maximum number of iterations.
+                         script. Default: 0.
+   --iterations          Maximum number of iterations. Default: 0.
    --experiments-per-iteration  Number of runs of the target algorithm per
-                         iteration.
+                         iteration. Default: 0.
    --min-survival        Minimum number of configurations needed to continue
-                         the execution of each race (iteration).
+                         the execution of each race (iteration). Default: 0.
    --num-configurations  Number of configurations to be sampled and evaluated
-                         at each iteration.
+                         at each iteration. Default: 0.
    --mu                  Parameter used to define the number of configurations
-                         sampled and evaluated at each iteration.
-   --confidence          Confidence level for the elimination test.
+                         sampled and evaluated at each iteration. Default: 5.
+   --confidence          Confidence level for the elimination test. Default:
+                         0.95.
 }
 }
 \examples{

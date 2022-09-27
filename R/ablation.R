@@ -1,16 +1,34 @@
 .ablation.params.def <- read.table(header=TRUE, stringsAsFactors = FALSE, text="
 name            type short long          default               description
-iraceResults    p    -i    --log-file    NA                    'path to the (.Rdata) file created by irace from which the `iraceResults` object will be loaded'
-src             i    -S    --src         1                     'Source configuration ID'
-target          i    -T    --target      NA                    'Target configuration ID. By default the best configuration found by irace'
+iraceResults    p    -l    --log-file    NA                    'Path to the (.Rdata) file created by irace from which the  \"iraceResults\" object will be loaded.'
+src             i    -S    --src         1                     'Source configuration ID.'
+target          i    -T    --target      NA                    'Target configuration ID. By default the best configuration found by irace.'
 ab.params       s    -P    --params      ''                    'Specific parameter names to be used for the ablation (separated with commas). By default use all'
-type            s    -t    --type        'full'                'Type of ablation to perform: \"full\" will execute each configuration on all `--n-instances` to determine the best-performing one; \"racing\" will apply racing to find the best configurations'
-n.instances     i    -n    --n-instances NA                    'Number of instances to be used for the \"full\" ablation, if not provided firstTest instances are used'
-seed            i    -s    --seed        1234567               'Integer value to use as seed for the random number generation'
+type            s    -t    --type        'full'                'Type of ablation to perform: \"full\" will execute each configuration on all \"--n-instances\" to determine the best-performing one; \"racing\" will apply racing to find the best configurations.'
+n.instances     i    -n    --n-instances NA                    'Number of instances to be used for the \"full\" ablation, if not provided firstTest instances are used.'
+seed            i    -s    --seed        1234567               'Integer value to use as seed for the random number generation.'
 ablationLogfile p    -o    --output-file 'log-ablation.Rdata'  'Log file to save the ablation log. If \"\", the results are not saved to a file.'
-plot            s    -p    --plot        ''                    'Output filename (.pdf) for the plot. If not given, no plot is created'
-plot_type       s    -O    --plot-type   'mean'                'Type of plot. Supported values are \"mean\" and \"boxplot\"'
+plot            s    -p    --plot        ''                    'Output filename (.pdf) for the plot. If not given, no plot is created.'
+plot_type       s    -O    --plot-type   'mean'                'Type of plot. Supported values are \"mean\" and \"boxplot\".'
 ")
+
+cat_ablation_license <- function()
+{
+  ablation_license <-
+'#------------------------------------------------------------------------------
+# ablation: An implementation in R of Ablation Analysis
+# Version: __VERSION__
+# Copyright (C) 2020--2022
+# Manuel Lopez-Ibanez     <manuel.lopez-ibanez@manchester.ac.uk>
+# Leslie Perez Caceres    <leslie.perez.caceres@ulb.ac.be>
+#
+# This is free software, and you are welcome to redistribute it under certain
+# conditions.  See the GNU General Public License for details. There is NO
+# WARRANTY; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+#------------------------------------------------------------------------------
+'
+  cat(sub("__VERSION__", irace.version, ablation_license, fixed=TRUE))
+}
 
 #' Launch ablation with command-line options.
 #'
@@ -37,7 +55,7 @@ plot_type       s    -O    --plot-type   'mean'                'Type of plot. Su
 #' @export
 ablation_cmdline <- function(argv = commandArgs(trailingOnly = TRUE))
 {
-  cat.irace.license()
+  cat_ablation_license()
   cat ("# installed at: ", system.file(package="irace"), "\n",
        "# called with: ", paste(argv, collapse = " "), "\n", sep = "")
   parser <- CommandArgsParser$new(argv = argv, argsdef = .ablation.params.def)

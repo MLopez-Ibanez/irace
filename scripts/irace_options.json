@@ -289,7 +289,7 @@
     "default": "{targetRunner} {targetRunnerArgs}",
       "vignettes": "Command-line arguments provided to \\parameter{targetRunnerLauncher}. The substrings \\code{\\{targetRunner\\}} and \\code{\\{targetRunnerArgs\\}} will be replaced by the value of the option \\parameter{targetRunner} and by the arguments usually passed when calling \\parameter{targetRunner}, respectively. Example: \\code{\"-m \\{targetRunner\\} --args \\{targetRunnerArgs\\}\"}.",
     "section": "Target algorithm execution",
-    "description": "Command-line arguments provided to \\code{targetRunnerLauncher}. The substrings \\code{\\{targetRunner\\}} and \\code{\\{targetRunnerArgs\\}} will be replaced by the value of the option \\code{targetRunner} and by the arguments usually passed when calling \\code{targetRunner}, respectively. Example: \\code{\"-m \\{targetRunner\\} --args \\{targetRunnerArgs\\}\"}."
+    "description": "Command-line arguments provided to \\code{targetRunnerLauncher}. The substrings \\code{\\{targetRunner\\}} and \\code{\\{targetRunnerArgs\\}} will be replaced by the value of the option \\code{targetRunner} and by the arguments usually passed when calling \\code{targetRunner}, respectively. Example: \\code{\"-m {targetRunner} --args {targetRunnerArgs}\"}."
   },
   {
     "name": "targetRunnerRetries",

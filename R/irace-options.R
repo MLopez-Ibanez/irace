@@ -77,7 +77,7 @@ NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA), description = c("Show this help
 "Number of instances evaluated before the first elimination test. It must be a multiple of eachTest.", 
 "Number of instances evaluated between elimination tests.", "Executable called for each configuration that executes the target algorithm to be tuned. See the templates and examples provided.", 
 "Executable that will be used to launch the target runner, when targetRunner cannot be executed directly (.e.g, a Python script in Windows).", 
-"Command-line arguments provided to targetRunnerLauncher. The substrings \\{targetRunner\\} and \\{targetRunnerArgs\\} will be replaced by the value of the option targetRunner and by the arguments usually passed when calling targetRunner, respectively. Example: \"-m \\{targetRunner\\ --args \\{targetRunnerArgs\\}\"}.", 
+"Command-line arguments provided to targetRunnerLauncher. The substrings \\{targetRunner\\} and \\{targetRunnerArgs\\} will be replaced by the value of the option targetRunner and by the arguments usually passed when calling targetRunner, respectively. Example: \"-m {targetRunner --args {targetRunnerArgs}\"}.", 
 "Number of times to retry a call to targetRunner if the call failed.", 
 "Optional data passed to targetRunner. This is ignored by the default targetRunner function, but it may be used by custom targetRunner functions to pass persistent data around.", 
 "Optional R function to provide custom parallelization of targetRunner.", 

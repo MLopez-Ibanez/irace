@@ -31,27 +31,28 @@ executable (\code{ablation.exe} in Windows).
 The function reads the parameters given on the command line
 used to invoke R, launches \code{\link[=ablation]{ablation()}} and possibly \code{\link[=plotAblation]{plotAblation()}}.
 
-List of command-line options:\preformatted{-i,--log-file            path to the (.Rdata) file created by irace from which
-                         the `iraceResults` object will be loaded
--S,--src                 Source configuration ID
+List of command-line options:\preformatted{-l,--log-file            Path to the (.Rdata) file created by irace from which
+                         the "iraceResults" object will be loaded.
+-S,--src                 Source configuration ID. Default: 1.
 -T,--target              Target configuration ID. By default the best
-                         configuration found by irace
+                         configuration found by irace.
 -P,--params              Specific parameter names to be used for the ablation
                          (separated with commas). By default use all
 -t,--type                Type of ablation to perform: "full" will execute each
-                         configuration on all `--n-instances` to determine the
+                         configuration on all "--n-instances" to determine the
                          best-performing one; "racing" will apply racing to
-                         find the best configurations
+                         find the best configurations. Default: full.
 -n,--n-instances         Number of instances to be used for the "full"
-                         ablation, if not provided firstTest instances are used
+                         ablation, if not provided firstTest instances are
+                         used.
 -s,--seed                Integer value to use as seed for the random number
-                         generation
+                         generation. Default: 1234567.
 -o,--output-file         Log file to save the ablation log. If "", the results
-                         are not saved to a file.
+                         are not saved to a file. Default: log-ablation.Rdata.
 -p,--plot                Output filename (.pdf) for the plot. If not given, no
-                         plot is created
+                         plot is created.
 -O,--plot-type           Type of plot. Supported values are "mean" and
-                         "boxplot"
+                         "boxplot". Default: mean.
 }
 }
 \examples{

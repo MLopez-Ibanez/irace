@@ -53,7 +53,7 @@ irace.license <-
 #     Copyright (C) 2003 Mauro Birattari
 #------------------------------------------------------------------------------
 '
-cat.irace.license <- function()
+cat_irace_license <- function()
 {
   cat(sub("__VERSION__", irace.version, irace.license, fixed=TRUE))
 }
@@ -356,7 +356,7 @@ irace.cmdline <- function(argv = commandArgs(trailingOnly = TRUE))
     op <- options(.irace.quiet = TRUE)
     on.exit(options(op))
   } else {
-    cat.irace.license()
+    cat_irace_license()
     cat("# installed at: ", system.file(package="irace"), "\n",
         "# called with: ", paste(argv, collapse = " "), "\n", sep = "")
   }
