@@ -92,6 +92,10 @@ cmdline_usage <- function(cmdline_args)
     desc <- cmdline_args[i,"description"]
     if (desc == "" || (short == "" && long == "")) next
     if (short != "") short <- paste0(short,",")
+    default <- cmdline_args[i,"default"]
+    if (!is_null_or_empty_or_na(default)) {
+      desc <- paste0(desc, " Default: ", default, ".")
+    }
     cat(sep = "\n", strwrap(desc, width = 80,
                             initial = sprintf("%3s%-20s  ", short, long),
                             exdent = 25))
