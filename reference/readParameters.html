@@ -168,8 +168,8 @@ potential user errors.</p>
 <span class="r-in"><span><span class="st"> rho          "--rho  "        r     (0.01, 1.00)</span></span></span>
 <span class="r-in"><span><span class="st"> ants         "--ants "        i,log (5, 100)</span></span></span>
 <span class="r-in"><span><span class="st"> q0           "--q0 "          r     (0.0, 1.0)           | algorithm == "acs"</span></span></span>
-<span class="r-in"><span><span class="st"> rasrank      "--rasranks "    i     (1, "ants")          | algorithm == "ras"</span></span></span>
-<span class="r-in"><span><span class="st"> elitistants  "--elitistants " i     (1, 750)             | algorithm == "eas"</span></span></span>
+<span class="r-in"><span><span class="st"> rasrank      "--rasranks "    i     (1, "min(ants, 10)") | algorithm == "ras"</span></span></span>
+<span class="r-in"><span><span class="st"> elitistants  "--elitistants " i     (1, ants)            | algorithm == "eas"</span></span></span>
 <span class="r-in"><span><span class="st"> nnls         "--nnls "        i     (5, 50)              | localsearch %in% c(1,2,3)</span></span></span>
 <span class="r-in"><span><span class="st"> dlb          "--dlb "         c     (0, 1)               | localsearch %in% c(1,2,3)</span></span></span>
 <span class="r-in"><span><span class="st"> '</span></span></span>
@@ -189,8 +189,8 @@ potential user errors.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ rho        : num [1:2] 0.01 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ ants       : num [1:2] 5 100</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ q0         : num [1:2] 0 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ rasrank    :  expression(1, ants)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ elitistants: num [1:2] 1 750</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ rasrank    :  expression(1, min(ants, 10))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ elitistants:  expression(1, ants)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nnls       : num [1:2] 5 50</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ dlb        : chr [1:2] "0" "1"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ conditions  :List of 11</span>
@@ -232,7 +232,7 @@ potential user errors.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ ants       : chr(0) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ q0         : chr "algorithm"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ rasrank    : chr [1:2] "ants" "algorithm"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ elitistants: chr "algorithm"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ elitistants: chr [1:2] "ants" "algorithm"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nnls       : chr "localsearch"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ dlb        : chr "localsearch"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ hierarchy   : Named num [1:11] 1 1 1 1 1 1 2 2 2 2 ...</span>
