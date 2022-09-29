@@ -40,6 +40,8 @@ TODO General (in order of importance):
     
  * Fix all FIXMEs.
 
+ * Use 'x <- eval(parse(text=paste0("expression","(1,min(ants,10))")))' to parse domains.
+ 
  * Replace firstTest / eachTest with minBlocksSeen / instancesPerBlock. Replace
    sampleInstances=TRUE with orderedRace=FALSE. With orderedRace=FALSE,
    sampling only affects the order of the blocks. Something like:
@@ -271,8 +273,6 @@ TODO General (in order of importance):
  * Make the update model convergence take into account the hierarchy
    of parameters.
 
- * Error/Warn about unknown irace parameters.
-
  * Error messages start in uppercase and finish with a period.
 
  * Do not add extra parenthesis around simple expressions. Example:
@@ -296,6 +296,8 @@ TODO General (in order of importance):
 
 DONE:
 
+ * Error/Warn about unknown irace parameters. [DONE by Manuel]
+ 
  * irace.Rdata should keep a list with the all the eliteCandidates after each
    race. Right now we only keep the best one. [DONE in iterationElites]
 
