@@ -73,7 +73,7 @@ test_that("cap.irace maxExperiments = 50000", {
 test_that("cap.irace targetRunner = target.runner.reject, maxTime = 10000", {
   skip_on_cran() # This sometimes fails randomly
   generate.set.seed()
-  cap.irace(targetRunner = target.runner.reject, maxTime = 10000)
+  cap.irace(targetRunner = target.runner.reject, maxTime = 10000, debugLevel = 3)
 })
 
 

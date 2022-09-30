@@ -614,22 +614,38 @@ checkScenario <- function(scenario = defaultScenario())
     scenario[[param]] <- as.integer(p)
   }
 
-  if (scenario$firstTest <= 1) {
-    irace.error(quote.param ("firstTest"), " must be larger than 1.")
+  check_positive <- function(scenario, what) {
+    if (any(scenario[what] <= 0L)) {
+      for (op in what) {
+        if (scenario[[op]] <= 0L)
+          irace.error(quote.param (op), " = ", scenario[[op]], " must be larger than 0.")
+      }
+    }
   }
+  check_positive(scenario, c("firstTest", "eachTest", "blockSize"))
 
+  if (length(scenario$instances) %% scenario$blockSize != 0) {
+    irace.error("The number of instances (", length(scenario$instances), ") must be a multiple of ",
+                quote.param("blockSize"), ".")
+  }
+  
   if (scenario$firstTest %% scenario$eachTest != 0) {
     irace.error(quote.param("firstTest"), " must be a multiple of ",
                 quote.param("eachTest"), ".")
   }
   
-  if (scenario$mu < scenario$firstTest) {
+  if (scenario$mu < scenario$firstTest * scenario$blockSize) {
     if (scenario$debugLevel >= 1) {
-      irace.warning("Assuming 'mu = firstTest' because 'mu' cannot be lower than 'firstTest'\n")
+      irace.warning("Assuming 'mu = firstTest * blockSize' because 'mu' cannot be smaller.\n")
     }
-    scenario$mu <- scenario$firstTest
+    scenario$mu <- scenario$firstTest * scenario$blockSize
+  } else if (scenario$mu %% scenario$blockSize != 0) {
+    irace.error(quote.param("mu"), " must be a multiple of ",
+                quote.param("blockSize"), ".")
   }
-
+  
+  scenario$elitistNewInstances <- round.to.next.multiple(scenario$elitistNewInstances, scenario$blockSize)
+    
   # AClib benchmarks use 15 digits
   if (scenario$aclib)
     scenario$digits <- 15L
@@ -673,17 +689,16 @@ checkScenario <- function(scenario = defaultScenario())
   }
   
   if (scenario$deterministic &&
-      scenario$firstTest > length(scenario$instances)) {
+      scenario$firstTest * scenario$blockSize > length(scenario$instances)) {
     irace.error("When deterministic == TRUE, the number of instances (",
                 length(scenario$instances),
-                ") cannot be smaller than firstTest (", scenario$firstTest, ")")
+                ") cannot be smaller than firstTest (", scenario$firstTest, ") * blockSize (", scenario$blockSize, ")")
   }
 
   if (scenario$mpi && scenario$parallel < 2) {
     irace.error (quote.param("parallel"),
                  " must be larger than 1 when mpi is enabled.")
   }
-
 
   if (is.null.or.empty(scenario$batchmode))
     scenario$batchmode <- 0
@@ -839,6 +854,7 @@ printScenario <- function(scenario)
 #'      \item{`instances`}{Character vector of the instances to be used in the \code{targetRunner}. (Default: `""`)}
 #'      \item{`trainInstancesDir`}{Directory where training instances are located; either absolute path or relative to current directory. If no \code{trainInstancesFiles} is provided, all the files in \code{trainInstancesDir} will be listed as instances. (Default: `"./Instances"`)}
 #'      \item{`trainInstancesFile`}{File that contains a list of training instances and optionally additional parameters for them. If \code{trainInstancesDir} is provided, \code{irace} will search for the files in this folder. (Default: `""`)}
+#'      \item{`blockSize`}{Number of training instances, that make up a `block' in \code{trainInstancesFile}. Elimination of configurations will only be performed after evaluating a complete block and never in the middle of a block. Each block typically contains one instance from each instance class (type or family). (Default: `1`)}
 #'    }
 #'  \item Tuning budget:
 #'    \describe{

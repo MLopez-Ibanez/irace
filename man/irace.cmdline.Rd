@@ -148,6 +148,12 @@ List of command-line options:\preformatted{-h,--help                Show this he
    --first-test          Number of instances evaluated before the first
                          elimination test. It must be a multiple of eachTest.
                          Default: 5.
+   --block-size          Number of training instances, that make up a `block'
+                         in trainInstancesFile. Elimination of configurations
+                         will only be performed after evaluating a complete
+                         block and never in the middle of a block. Each block
+                         typically contains one instance from each instance
+                         class (type or family). Default: 1.
    --each-test           Number of instances evaluated between elimination
                          tests. Default: 1.
    --target-runner       Executable called for each configuration that executes

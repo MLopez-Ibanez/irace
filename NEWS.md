@@ -17,6 +17,14 @@
    was removed and replaced by `targetCmdline`, which is more flexible (Fixes
    #38). Please see the user-guide for details.  (Manuel López-Ibáñez)
 
+ * New scenario option `blockSize` for defining blocks of instances.
+   Configurations are only eliminated after evaluating a complete block and
+   never in the middle of a block. This is useful for scenarios when there are
+   clearly defined instance classes and the best configuration should be
+   balanced among them. In that case, `trainInstancesFile` should be written
+   should that each block should contain one instance of each class and
+   `blockSize` should be set to the number of classes. (Manuel López-Ibáñez)
+
 ## Fixes
 
  * Fix (#44): irace now will give an error if the domain of real-valued (r)

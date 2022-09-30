@@ -42,11 +42,6 @@ TODO General (in order of importance):
 
  * Use 'x <- eval(parse(text=paste0("expression","(1,min(ants,10))")))' to parse domains.
  
- * Replace firstTest / eachTest with minBlocksSeen / instancesPerBlock. Replace
-   sampleInstances=TRUE with orderedRace=FALSE. With orderedRace=FALSE,
-   sampling only affects the order of the blocks. Something like:
-   selectedInstances = c(outer(1:blockSize, selectedBlocks * blockSize, "+"))
-
  * Consume all budget.
  
  * Federico's implementation of DAG / Complexity metric.

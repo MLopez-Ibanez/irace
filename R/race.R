@@ -642,14 +642,15 @@ elitist_race <- function(maxExp = 0,
                  full_experiment_log)
 {
   race.env <- new.env(parent = emptyenv())
+  blockSize <- scenario$blockSize
   # FIXME: We should take this from scenario. However, this value should be
   # zero for the first iteration.
   ## FIXME2: Probably, instead of this, we should keep elite.safe in the race.env.
   race.env$elitistNewInstances <- elitistNewInstances
   stat.test <- scenario$testType
   conf.level <- scenario$confidence
-  first.test <- scenario$firstTest
-  each.test <- scenario$eachTest
+  first.test <- blockSize * scenario$firstTest
+  each.test <- blockSize * scenario$eachTest
   elitist <- scenario$elitist
   capping <- scenario$capping
   no.configurations <- nrow(configurations)
@@ -741,12 +742,12 @@ elitist_race <- function(maxExp = 0,
     if (capping) {
       tmp <- generateTimeMatrix(elite_ids = colnames(elite.data), 
                                 experimentLog = full_experiment_log)
-
       experimentsTime[rownames(tmp), colnames(tmp)] <- tmp
     }
     # Preliminary execution of elite configurations to calculate
     # the execution bound of initial configurations (capping only).
     if (capping && race.env$elitistNewInstances > 0L) {
+      irace.assert(race.env$elitistNewInstances %% blockSize == 0)
       # FIXME: This should go into its own function.
       n.elite <- ncol(elite.data)
       which.elites <- which(rep(TRUE, n.elite))
@@ -817,12 +818,14 @@ elitist_race <- function(maxExp = 0,
   no.elimination <- 0 # number of tasks without elimination.
   print_header()
 
-  # Test that all instances that have been previously seen have been evaluated
-  # by at least one configuration.
   all_elite_instances_evaluated <- function() {
-    if (!elitist) return(TRUE)
-    all(rowAnys(!is.na(Results[ as.character(seq_len(.irace$next.instance - 1)),
-                        alive, drop=FALSE])))
+    if (!elitist || .irace$next.instance == 1L) return(TRUE)
+    evaluated <- !is.na(Results[, alive, drop=FALSE])
+    # All instances that have been previously seen have been evaluated by at
+    # least one configuration.
+    if (!all(rowAnys(evaluated))) return(FALSE)
+    # And the number of instances evaluated per configuration is a multiple of blockSize
+    all(colSums2(evaluated) %% blockSize == 0)
   }
 
   # Start main loop
@@ -857,6 +860,15 @@ elitist_race <- function(maxExp = 0,
       }
     }
 
+    # We always stop when we have less configurations than required.
+    if (nbAlive <= minSurvival && all_elite_instances_evaluated()) {
+      # Stop race if we have less or equal than the minimum number of
+      # configurations.
+      break.msg <- paste0("number of alive configurations (", nbAlive,
+                          ") <= minimum number of configurations (",
+                          minSurvival, ")")
+      break
+    }
     # LESLIE: FIXME: Stopping deactivated by Thomas suggestion. Remove second
     # condition to restore.
     # LESLIE: Should we keep the early termination disabled? The difference between keeping it or 
@@ -880,15 +892,6 @@ elitist_race <- function(maxExp = 0,
           # LESLIE:Removing this because now is ponitless because of the elite candidates previos
           # execution
           # || (current.task > elitistNewInstances && nbAlive == 1)))) {
-      # We always stop when we have less configurations than required.
-      if (nbAlive <= minSurvival && all_elite_instances_evaluated()) {
-        # Stop race if we have less or equal than the minimum number of
-        # configurations.
-        break.msg <- paste0("number of alive configurations (", nbAlive,
-                            ") <= minimum number of configurations (",
-                            minSurvival, ")")
-        break
-      }
       # If we just did a test, check that we have enough budget to reach the
       # next test.
       if (maxExp && ( (current.task - 1) %% each.test) == 0
@@ -976,8 +979,10 @@ elitist_race <- function(maxExp = 0,
           is.rejected[which.elite.exe] <- rejected
           is.elite [is.rejected] <- 0
           alive[which.elite.exe] <- !rejected
-          if (!any(alive))
+          if (!any(alive)) {
+            # FIXME: Only report this error if (all(is.rejected)); otherwise restore non-rejected non-alive ones  
             irace.error("All configurations have been immediately rejected (all of them returned Inf) !")
+          }
           which.alive <- which(alive)
           nbAlive     <- length(which.alive)
           elite.safe <- update.elite.safe(Results, is.elite)
@@ -1081,8 +1086,8 @@ elitist_race <- function(maxExp = 0,
     
     ## Dominance elimination (Capping only).
     # The second condition can be false if we eliminated via immediate
-    # rejection
-    if (capping && sum(alive) > minSurvival) {
+    # rejection.  The third condition ensures that we see the block before capping.
+    if (capping && sum(alive) > minSurvival && (current.task %% blockSize) == 0) {
       irace.assert(!any(is.elite > 0) == (current.task >= elite.safe))
       cap.alive <- dom.elim(Results[1:current.task, , drop = FALSE],
                             # Get current elite configurations

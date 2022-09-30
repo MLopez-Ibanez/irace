@@ -2484,16 +2484,17 @@ is 1).
 If finding an overall good configuration for all the instances is the
 objective, then we recommend that instances are randomly sampled (option
 \parameter{sampleInstances}), unless one can provide the instances in a
-particular order that does not bias the tuning towards any subset.  For
-example, let's assume a heterogeneous scenario with two classes of instances.
-If training instances are not sampled and the first ten instances belong to
-only one class, the tuning will be biased towards configurations that perform
-good for those instances.  An optimal order would never present consecutively
-two instances of the same type. One can make sure \irace sees all instance
-classes before discarding configurations by carefully
-specifying the order of instances (disabling \parameter{sampleInstances} and
-specifying the order in \parameter{trainInstancesFile}) and setting both
-\parameter{firstTest} and \parameter{eachTest} appropriately.
+particular order that does not bias the tuning towards any subset.
+
+If instances are easily categorized in different classes, then we recommend to
+create ``blocks'' of instances in \parameter{trainInstancesFile}, where each
+block should contain one instance from each class.  Then set the option
+\parameter{blockSize} to the number of classes within each block, so that
+\irace will always see a complete block of instances before eliminating
+configurations. The value of \parameter{blockSize} will multiply the effective
+values of \parameter{firstTest} and \parameter{eachTest}. Randomly sampling
+instances (\parameter{sampleInstances}\code{=1}) will randomly sample the
+blocks but not break the blocks.
 
 While executing \irace, the homogeneity of the scenario can be observed by
 examining the values of Spearman's rank correlation coefficient and Kendall's

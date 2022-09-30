@@ -215,7 +215,8 @@ computeComputationalBudget <- function(remainingBudget, indexIteration,
 }
 
 ## The number of configurations
-computeNbConfigurations <- function(currentBudget, indexIteration, mu, eachTest,
+computeNbConfigurations <- function(currentBudget, indexIteration,
+                                    mu, eachTest, blockSize,
                                     nElites = 0, nOldInstances = 0, newInstances = 0, 
                                     maxConfigurations = 1024)
 {
@@ -223,8 +224,8 @@ computeNbConfigurations <- function(currentBudget, indexIteration, mu, eachTest,
   # been executed on all nOldInstances. Thus, we need to pass explicitly the
   # budget that we save (that is, number of entries that are not NA).
   savedBudget <- nElites *  nOldInstances
-  n <- max (mu + eachTest * min(5, indexIteration),
-            round.to.next.multiple(nOldInstances + newInstances, eachTest))
+  n <- max (mu + blockSize * eachTest * min(5, indexIteration),
+            round.to.next.multiple(nOldInstances + newInstances, blockSize * eachTest))
   min (floor ((currentBudget + savedBudget) / n), maxConfigurations)
 }
 
@@ -236,7 +237,8 @@ computeTerminationOfRace <- function(nbParameters) (2 + log2(nbParameters))
 ## budget given by the user is insufficient.
 computeMinimumBudget <- function(scenario, minSurvival, nbIterations, boundEstimate)
 {
-  eachTest <- scenario$eachTest
+  blockSize <- scenario$blockSize
+  eachTest <- blockSize * scenario$eachTest
   Tnew <- scenario$elitistNewInstances
   mu <- scenario$mu
   
@@ -381,40 +383,37 @@ irace.init <- function(scenario)
 }
 
 ## Generate instances + seed.
-generateInstances <- function(scenario, remainingBudget)
+generateInstances <- function(scenario, n, instancesList = NULL)
 {
+  # If we are adding and the scenario is deterministic, we have already added all instances.
+  if (!is.null(instancesList) && scenario$deterministic) return(instancesList)
+
   instances <- scenario$instances
-  ntimes <- if (scenario$deterministic) 1 else
+  # Number of times that we need to repeat the set of instances given by the user.
+  ntimes <- if (scenario$deterministic) 1L else
             # "Upper bound"" of instances needed
             # FIXME: We could bound it even further if maxExperiments >> nInstances
-            ceiling (remainingBudget / length(instances))
+            ceiling(n / length(instances))
 
   # Get instances order
   if (scenario$sampleInstances) {
+    blockSize <- scenario$blockSize
+    n_blocks <- length(instances) / blockSize
     # Sample instances index in groups (ntimes)
-    sindex <- as.vector(sapply(rep(length(instances), ntimes), sample.int, replace = FALSE))
+    selected_blocks <- unlist(lapply(rep(n_blocks, ntimes), sample.int, replace = FALSE))
+    sindex <- c(outer(1:blockSize, (selected_blocks - 1) * blockSize, "+"))
   } else {
     sindex <- rep(1L:length(instances), ntimes)
   }
   # Sample seeds.
   # 2147483647 is the maximum value for a 32-bit signed integer.
   # We use replace = TRUE, because replace = FALSE allocates memory for each possible number.
-  data.frame(instance = sindex,
-             seed = sample.int(2147483647L, size = length(sindex), replace = TRUE), stringsAsFactors=FALSE)
-}
-
-addInstances <- function(scenario, instancesList, n.instances)
-{
-  # Generate instance + seed list 
-  if (is.null.or.empty(instancesList))
-    instancesList <- generateInstances(scenario, n.instances)
-  # If deterministic, we have already added all instances.
-  else if (!scenario$deterministic)
-    instancesList <- rbind(instancesList, generateInstances(scenario, n.instances))
-
-  # FIXME: Something is adding rownames. Clear them to avoid future problems.
+  instancesList <- rbind(instancesList,
+                         data.frame(instance = sindex,
+                                    seed = sample.int(2147483647L, size = length(sindex), replace = TRUE), stringsAsFactors=FALSE))
+  # Reset the rownames to 1:nrow(instancesList)
   rownames(instancesList) <- NULL
-  return(instancesList)
+  instancesList
 }
 
 ## Estimate the mean execution time
@@ -667,6 +666,7 @@ irace_run <- function(scenario, parameters)
                               dimnames = list(NULL,
                                               c("iteration", "instance", "configuration", "time", "bound")))
     )
+    blockSize <- scenario$blockSize
     model <- NULL
     nbConfigurations <- 0L
     eliteConfigurations <- data.frame(stringsAsFactors=FALSE)
@@ -682,14 +682,13 @@ irace_run <- function(scenario, parameters)
     minSurvival <- floor(minSurvival)
     
     # Generate initial instance + seed list
-    .irace$instancesList <- addInstances(scenario, NULL, 
-                                         if (scenario$maxExperiments != 0)
-                                           ceiling(scenario$maxExperiments / minSurvival)
-                                         else
-                                           max (scenario$firstTest, length(scenario$instances)))
-
-    indexIteration <- 1
-    experimentsUsedSoFar <- 0
+    .irace$instancesList <- generateInstances(scenario,
+                                              n = if (scenario$maxExperiments != 0)
+                                                    ceiling(scenario$maxExperiments / minSurvival)
+                                                  else
+                                                    max(scenario$firstTest, length(scenario$instances)))
+    indexIteration <- 1L
+    experimentsUsedSoFar <- 0L
     timeUsed <- 0
     boundEstimate <- NA 
     rejectedIDs <- c()
@@ -711,7 +710,8 @@ irace_run <- function(scenario, parameters)
                  "% of ", scenario$maxTime, " = ", estimationTime, "\n")
 
       # Estimate the number of configurations to be used
-      nconfigurations <- max(2, floor(scenario$parallel / ninstances))
+      nconfigurations <- max(2L, floor(scenario$parallel / ninstances))
+      next.configuration <- 1L
 
       # MANUEL: When can we have a null boundMax?
       boundEstimate <- if (!is.null(scenario$boundMax)) scenario$boundMax else 1.0
@@ -936,6 +936,7 @@ irace_run <- function(scenario, parameters)
         computeNbConfigurations(currentBudget, indexIteration,
                                 mu = scenario$mu,
                                 eachTest = scenario$eachTest,
+                                blockSize = blockSize,
                                 nElites = nrow(eliteConfigurations),
                                 nOldInstances = nrow(iraceResults$experiments),
                                 newInstances = scenario$elitistNewInstances)
@@ -944,6 +945,7 @@ irace_run <- function(scenario, parameters)
         computeNbConfigurations(currentBudget, indexIteration,
                                 mu = scenario$mu,
                                 eachTest = scenario$eachTest,
+                                blockSize = blockSize,
                                 nElites = 0, nOldInstances = 0,
                                 newInstances = 0)
     }
@@ -1135,8 +1137,8 @@ irace_run <- function(scenario, parameters)
     # Calculate budget needed for old instances assuming non elitist irace
     if ((nrow(.irace$instancesList) - (.irace$next.instance - 1))
         < ceiling(remainingBudget / minSurvival)) {
-      .irace$instancesList <- addInstances(scenario, .irace$instancesList,
-                                           ceiling(remainingBudget/minSurvival))
+      .irace$instancesList <- generateInstances(scenario, n = ceiling(remainingBudget / minSurvival),
+                                                instancesList = .irace$instancesList)
     }
 
     if (debugLevel >= 1) irace.note("Launch race\n")
