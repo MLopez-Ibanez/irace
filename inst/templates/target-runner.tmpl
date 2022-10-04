@@ -30,12 +30,15 @@ shift 4 || error "Not enough parameters"
 CONFIG_PARAMS=$*
 # End of parsing
 
+## Find our own location.
+# BINDIR=$(dirname "$(readlink -f "$(type -P $0 || echo $0)")")
+
 # EDIT THIS: Path to your executable
 EXE=~/bin/program 
 # EDIT THIS: Specify how parameters are given to your executable
 EXE_PARAMS="--time 5 -i $INSTANCE --seed ${SEED} ${CONFIG_PARAMS}"
 
-if [ ! -x "${EXE}" ]; then
+if [ ! -x "$(command -v ${EXE})" ]; then
     error "${EXE}: not found or not executable (pwd: $(pwd))"
 fi
 
