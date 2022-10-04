@@ -19,11 +19,10 @@ path_rel2abs <- function (path, cwd = getwd())
       x <- newx
     }
   }
-  irace_normalize_path <- function(path) {
-    # FIXME: Why NA and not FALSE?
-    return(suppressWarnings(normalizePath(path, winslash = "/", mustWork = NA)))
-  }
-    
+  # FIXME: Why NA and not FALSE?
+  irace_normalize_path <- function(path)
+    suppressWarnings(normalizePath(path, winslash = "/", mustWork = NA))
+      
   if (is.null.or.na(path)) {
     return (NULL)
   } else if (path == "") {
@@ -68,10 +67,8 @@ path_rel2abs <- function (path, cwd = getwd())
 
     # Speed-up the most common cases.
     # If it is just "."
-    if (path == ".") {
-      return (irace_normalize_path(cwd))
-    }
-    
+    if (path == ".") return (irace_normalize_path(cwd))
+        
     # If it does not contain separators at all and does not start with ".."
     if (!startsWith(path, "..") && !grepl(s, path)) {
       # it may be a command in the path.
@@ -121,11 +118,10 @@ path_rel2abs <- function (path, cwd = getwd())
   }
   # Handle "^/..$" to "/" that is, when ".." is the last thing in the path.
   path <- sub(paste0("^", s, "\\.\\.$"), s, path)
-
   # Add back Windows drive, if any.
   path <- paste0(windrive, path)
 
   # We use normalizePath, which will further simplify the path if
   # the path exists.
-  return (irace_normalize_path(path))
+  irace_normalize_path(path)
 }
