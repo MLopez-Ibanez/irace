@@ -101,6 +101,8 @@
  * New helper script in `bin/parallel-irace-slurm` to launch `irace` in [SLURM](https://slurm.schedmd.com/) computer clusters.
                                                        (Manuel López-Ibáñez)
 
+ * Rename `scenario.update.paths()` to `scenario_update_paths()`. The old name is deprecated. (Manuel López-Ibáñez)
+
 ## Fixes
 
  * Correctly handle clear out-performance cases despite strong bi-modality.

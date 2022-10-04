@@ -271,11 +271,11 @@ strcat <- function(...)
 #' @examples
 #' \dontrun{
 #' scenario <- readScenario(filename = "scenario.txt")
-#' scenario <- scenario.update.paths(scenario, from = "/home/manuel/", to = "/home/leslie")
+#' scenario <- scenario_update_paths(scenario, from = "/home/manuel/", to = "/home/leslie")
 #' }
 #' @seealso [base::grep()]
 #' @export
-scenario.update.paths <- function(scenario, from, to, fixed = TRUE)
+scenario_update_paths <- function(scenario, from, to, fixed = TRUE)
 {
   pathParams <- .irace.params.def[.irace.params.def[, "type"] == "p", "name"]
   # Only consider the ones that actually appear in scenario.
@@ -284,71 +284,58 @@ scenario.update.paths <- function(scenario, from, to, fixed = TRUE)
   scenario
 }
 
+#' @rdname scenario_update_paths
+#' @export
+scenario.update.paths <- function(scenario, from, to, fixed = TRUE)
+{
+  .Deprecated("scenario_update_paths")
+  scenario_update_paths(scenario=scenario, from=from, to=to, fixed=fixed)
+}
+
 # This function is used to trim potentially large strings for printing, since
 # the maximum error/warning length is 8170 characters (R 3.0.2)
 strlimit <- function(str, limit = 5000)
 {
-  if (nchar(str) > limit) {
-    return(paste0(substr(str, 1, limit - 3), "..."))
-  }
+  if (nchar(str) > limit) return(paste0(substr(str, 1, limit - 3), "..."))
   return(str)
 }
 
 test.type.order.str <- function(test.type)
 {
-  return (switch(test.type,
-                 friedman = "sum of ranks",
-                 t.none =, # Fall-throught
-                 t.holm =, # Fall-throught
-                 t.bonferroni = "mean value",
-                 irace.internal.error ("test.type.order.str() Invalid value '",
-                                       test.type, "' of test.type")))
+  switch(test.type,
+         friedman = "sum of ranks",
+         t.none =, # Fall-throught
+         t.holm =, # Fall-throught
+         t.bonferroni = "mean value",
+         irace.internal.error ("test.type.order.str() Invalid value '",
+                               test.type, "' of test.type"))
 }
 
 trim.leading <- function(str)
-{
-  return (sub('^[[:space:]]+', '', str)) ## white space, POSIX-style
-}
+  sub('^[[:space:]]+', '', str) ## white space, POSIX-style
+
 trim.trailing <- function(str)
-{
-  return (sub('[[:space:]]+$', '', str)) ## white space, POSIX-style
-}
+  sub('[[:space:]]+$', '', str) ## white space, POSIX-style
+
 # remove leading and trailing white space characters
-trim <- function(str)
-{
-  return (trim.trailing(trim.leading(str)))
-}
+trim <- function(str) trim.trailing(trim.leading(str))
 
 isFixed <- function (paramName, parameters)
-{
-  return (as.logical(parameters$isFixed[paramName]))
-}
+  as.logical(parameters$isFixed[paramName])
 
 paramDomain <- function (paramName, parameters)
-{
-  return (parameters$domain[[paramName]])
-}
+  parameters$domain[[paramName]]
 
 paramLowerBound <- function (paramName, parameters)
-{
-  return (as.numeric(parameters$domain[[paramName]][1]))
-}
+  as.numeric(parameters$domain[[paramName]][1])
 
 paramUpperBound <- function (paramName, parameters)
-{
-  return (as.numeric(parameters$domain[[paramName]][2]))
-}
+  as.numeric(parameters$domain[[paramName]][2])
 
-inNumericDomain <- function(value, domain) {
-  if (value >= domain[1] && value <= domain[2])
-    return (TRUE)
-  return (FALSE)
-}
 
-nbParam <- function (parameters)
-{
-  return (length(parameters$names))
-}
+inNumericDomain <- function(value, domain) (value >= domain[1] && value <= domain[2])
+
+nbParam <- function (parameters) length(parameters$names)
 
 ## This function takes two matrices x and y and merges them such that the
 ## resulting matrix z has:
@@ -438,8 +425,8 @@ extractElites <- function(scenario, parameters, configurations, nbElites)
 removeConfigurationsMetaData <- function(configurations)
 {
   # Meta-data colnames begin with "."
-  return (configurations[, grep("^\\.", colnames(configurations), invert = TRUE),
-                     drop = FALSE])
+  configurations[, grep("^\\.", colnames(configurations), invert = TRUE),
+                     drop = FALSE]
 }
 
 #' Print configurations as a data frame
@@ -672,7 +659,7 @@ runcommand <- function(command, args, id, debugLevel)
   }
   # TODO: Return elapsed time so that we can report at the end the total
   # elapsed time taken by irace vs the time taken by the target-runner.
-  return(list(output = output, error = NULL))
+  list(output = output, error = NULL)
 }
 
 # Safe sampling of vector: 
@@ -701,9 +688,7 @@ ceiling.digits <- function(x, digits)
 # }
 
 is.file.extension <- function(filename, ext)
-{
-  return(substring(filename, nchar(filename) + 1 - nchar(ext)) == ext)
-}
+  substring(filename, nchar(filename) + 1 - nchar(ext)) == ext
 
 # Same as !(x %in% table)
 "%!in%" <- function(x, table) match(x, table, nomatch = 0L) == 0L

@@ -45,7 +45,7 @@ List of command-line options:\preformatted{-l,--log-file            Path to the 
 -n,--n-instances         Number of instances to be used for the "full"
                          ablation, if not provided firstTest instances are
                          used.
--s,--seed                Integer value to use as seed for the random number
+   --seed                Integer value to use as seed for the random number
                          generation. Default: 1234567.
 -o,--output-file         Log file to save the ablation log. If "", the results
                          are not saved to a file. Default: log-ablation.Rdata.
@@ -53,6 +53,15 @@ List of command-line options:\preformatted{-l,--log-file            Path to the 
                          plot is created.
 -O,--plot-type           Type of plot. Supported values are "mean" and
                          "boxplot". Default: mean.
+   --old-path            Old path found in the log-file (.Rdata) given as input
+                         to be replaced by --new-path.
+   --new-path            New path to replace the path found in the log-file
+                         (.Rdata) given as input.
+-e,--exec-dir            Directory where the target runner will be run.
+-s,--scenario            Scenario file to override the scenario given in the
+                         log-file (.Rdata)
+   --parallel            Number of calls to targetRunner to execute in
+                         parallel. Values 0 or 1 mean no parallelization.
 }
 }
 \examples{
