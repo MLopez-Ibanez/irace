@@ -28,6 +28,8 @@ plotAblation(
 
 \item{ylab}{Label of y-axis.}
 
+\item{ylim}{Numeric vector of length 2, giving the y coordinates ranges.}
+
 \item{...}{Further graphical parameters may also be supplied as
 arguments. See \code{\link[graphics:plot.default]{graphics::plot.default()}}.}
 }

@@ -455,6 +455,7 @@ ablation.labels <- function(trajectory, configurations)
 #' @param type Type of plot. Supported values are `"mean"` and `"boxplot"`.
 #' @param mar Vector with the margins for the ablation plot.
 #' @param ylab Label of y-axis.
+#' @param ylim Numeric vector of length 2, giving the y coordinates ranges. 
 #' @param ... Further graphical parameters may also be supplied as
 #'   arguments. See [graphics::plot.default()].
 #'
