@@ -76,6 +76,7 @@
 <li><p>The package provides a <code>irace.sindef</code> file that may be used for building a standalone container of irace using Singularity. See the <code>README.md</code> file for instructions. (Contributed by Johann Dreo)</p></li>
 <li><p>New example <code>examples/target-runner-python/target-runner-python-win.bat</code> contributed by Levi Ribeiro.</p></li>
 <li><p>New helper script in <code>bin/parallel-irace-slurm</code> to launch <code>irace</code> in <a href="https://slurm.schedmd.com/" class="external-link">SLURM</a> computer clusters. (Manuel López-Ibáñez)</p></li>
+<li><p>Rename <code><a href="../reference/scenario_update_paths.html">scenario.update.paths()</a></code> to <code><a href="../reference/scenario_update_paths.html">scenario_update_paths()</a></code>. The old name is deprecated. (Manuel López-Ibáñez)</p></li>
 </ul></div>
 <div class="section level3">
 <h3 id="fixes-3-5">Fixes<a class="anchor" aria-label="anchor" href="#fixes-3-5"></a></h3>
@@ -138,7 +139,7 @@
 <li><p>Fix symbol printed in elimination test. (Manuel López-Ibáñez)</p></li>
 <li><p>Use <code><a href="https://rdrr.io/r/base/get.html" class="external-link">dynGet()</a></code> to find <code>targetRunner</code> and <code>targetEvaluator</code>. As a result, we now require R &gt;= 3.2. (Manuel López-Ibáñez)</p></li>
 <li><p>All tests now use <code>testthat</code>. (Manuel López-Ibáñez)</p></li>
-<li><p>New function <code><a href="../reference/scenario.update.paths.html">scenario.update.paths()</a></code> (Manuel López-Ibáñez)</p></li>
+<li><p>New function <code><a href="../reference/scenario_update_paths.html">scenario.update.paths()</a></code> (Manuel López-Ibáñez)</p></li>
 <li><p>Fix assert failure that may happen when <code>elitistNewInstances</code> is larger than <code>firstTest</code>. Reported by Jose Riveaux. (Manuel López-Ibáñez)</p></li>
 <li><p>Fix bug in <code>checkTargetFiles()</code> (<code>--check</code>) with capping. (Leslie Pérez Cáceres)</p></li>
 <li><p>Clarify a few errors/warnings when <code>maxTime &gt; 0</code>. (Manuel López-Ibáñez, suggested by Haroldo Gambini Santos)</p></li>
