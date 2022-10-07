@@ -593,7 +593,7 @@ execute.experiments <- function(experiments, scenario)
                             scenario = scenario,
                             target.runner = target.runner)
   }
-  return(target.output)
+  target.output
 }
 
 execute.evaluator <- function(experiments, scenario, target.output, configurations.id)

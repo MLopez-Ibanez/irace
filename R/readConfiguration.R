@@ -50,7 +50,7 @@ readConfigurationsFile <- function(filename, parameters, debugLevel = 0, text)
   # Print the table that has been read.
   cat("# Read ", nbConfigurations, " configuration(s) from file '", filename, "'\n", sep="")
   if (debugLevel >= 2) {
-    print(as.data.frame(configurationTable, stringAsFactor = FALSE), digits=15)
+    print(as.data.frame(configurationTable, stringsAsFactor = FALSE), digits=15)
   }
 
   namesParameters <- names(parameters$conditions)

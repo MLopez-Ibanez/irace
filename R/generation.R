@@ -76,7 +76,7 @@ sampleUniform <- function (parameters, nbConfigurations, digits,
     as.data.frame(matrix(nrow = nbConfigurations,
                          ncol = length(namesParameters) + 1,
                          dimnames = list(NULL, c(namesParameters, ".PARENT."))
-                         ))
+                         ), stringsAsFactors=FALSE)
   empty_configuration <- new_empty_configuration(parameters)
 
   for (idxConfiguration in seq_len(nbConfigurations)) {
@@ -143,7 +143,7 @@ sampleModel <- function (parameters, eliteConfigurations, model,
     as.data.frame(matrix(nrow = nbNewConfigurations,
                          ncol = length(namesParameters) + 1,
                          dimnames = list(NULL, c(namesParameters, ".PARENT."))
-                         ))
+                         ), stringsAsFactors=FALSE)
   empty_configuration <- new_empty_configuration(parameters)
   
   for (idxConfiguration in seq_len(nbNewConfigurations)) {

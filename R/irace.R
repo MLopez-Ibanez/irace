@@ -400,7 +400,7 @@ generateInstances <- function(scenario, remainingBudget)
   # 2147483647 is the maximum value for a 32-bit signed integer.
   # We use replace = TRUE, because replace = FALSE allocates memory for each possible number.
   data.frame(instance = sindex,
-             seed = sample.int(2147483647, size = ntimes * length(instances), replace = TRUE))
+             seed = sample.int(2147483647, size = ntimes * length(instances), replace = TRUE), stringsAsFactors=FALSE)
 }
 
 addInstances <- function(scenario, instancesList, n.instances)
@@ -482,7 +482,7 @@ allConfigurationsInit <- function(scenario, parameters)
                     scenario$configurationsFile, "'.")
     cat("# Adding", nrow(initConfigurations), "initial configuration(s)\n")
     if (scenario$debugLevel >= 2)
-      print(as.data.frame(scenario$initConfigurations, stringAsFactor = FALSE), digits=15)
+      print(as.data.frame(scenario$initConfigurations, stringsAsFactors = FALSE), digits=15)
   } else {
     initConfigurations <- confs_from_file
   }
@@ -504,7 +504,8 @@ allConfigurationsInit <- function(scenario, parameters)
     allConfigurations <-
       as.data.frame(matrix(ncol = length(configurations.colnames),
                            nrow = 0,
-                           dimnames = list(NULL, configurations.colnames)))
+                           dimnames = list(NULL, configurations.colnames)),
+                    stringsAsFactors=FALSE)
   }
   allConfigurations
 }
@@ -664,7 +665,7 @@ irace_run <- function(scenario, parameters)
     )
     model <- NULL
     nbConfigurations <- 0
-    eliteConfigurations <- data.frame()
+    eliteConfigurations <- data.frame(stringsAsFactors=FALSE)
     
     nbIterations <- ifelse (scenario$nbIterations == 0,
                             computeNbIterations(parameters$nbVariable),
@@ -874,7 +875,7 @@ irace_run <- function(scenario, parameters)
     # Consistency checks
     irace.assert(nrow(iraceResults$experimentLog) == experimentsUsedSoFar)
     # With elitist=0 we may re-run the same configuration on the same (instance,seed) pair
-    if (scenario$elitist)
+    if (FALSE && scenario$elitist)
       irace.assert(sum(!is.na(iraceResults$experiments)) == experimentsUsedSoFar)
 
     if (remainingBudget <= 0) {

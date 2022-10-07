@@ -11,6 +11,7 @@ plotAblation(
   type = c("mean", "boxplot"),
   mar = par("mar"),
   ylab = "Mean configuration cost",
+  ylim = NULL,
   ...
 )
 }
