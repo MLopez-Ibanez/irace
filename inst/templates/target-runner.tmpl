@@ -54,10 +54,10 @@ STDERR=c${CONFIG_ID}-${INSTANCE_ID}-${SEED}.stderr
 # # Otherwise, save the output to a file, and parse the result from it.  (If
 # # you wish to ignore segmentation faults you can use '{}' around the
 # # command.)
-$EXE ${EXE_PARAMS} 1> ${STDOUT} 2> ${STDERR}
-# # If the above command fails, but you are not sure why, it may be useful to
-# # print it like:
+# # If the command below fails, but you are not sure why, it may be useful to
+# # print it before executing using 'echo', as in:
 # echo "$EXE ${EXE_PARAMS} 1> ${STDOUT} 2> ${STDERR}"
+$EXE ${EXE_PARAMS} 1> ${STDOUT} 2> ${STDERR}
 
 # # This may be used to introduce a delay if there are filesystem issues.
 # SLEEPTIME=1
