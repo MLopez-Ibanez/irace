@@ -130,7 +130,7 @@ jobs:
       - name: Test coverage
         if: success()
         run: |
-          covr::codecov(type="all", quiet=FALSE)
+          covr::codecov(type="tests", quiet=FALSE)
         shell: Rscript {0}
 
   pkgdown:
