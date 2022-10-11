@@ -722,11 +722,14 @@ read_logfile <- function(filename, name = "iraceResults")
   # If filename is already the iraceResults object, just return it.
   if (valid_iracelog(filename)) return(filename)
 
+  if (file.access(filename, mode=4) != 0)
+    stop("read_logfile: Cannot read file '", filename, "'")
+  
   load(filename)
   iraceResults <- get0(name, inherits=FALSE)
-  if (!valid_iracelog(iraceResults)) {
+  if (!valid_iracelog(iraceResults))
     stop("The file '", filename, "' does not contain the '", name, "' object.")
-  }
+  
   iraceResults
 }
 
