@@ -161,8 +161,8 @@ aux_friedman <- function(results, alive, which.alive, conf.level)
     dropped.any <- TRUE
     PVAL <- 0
     # If only 2 configurations are left, switch to Wilcoxon
-    V1   <- results[, which.alive[1]]
-    V2   <- results[, which.alive[2]]
+    V1 <- results[, which.alive[1]]
+    V2 <- results[, which.alive[2]]
     
     # Avoid the test if the answer is obvious
     if (all(V1 <= V2)) {
@@ -171,11 +171,11 @@ aux_friedman <- function(results, alive, which.alive, conf.level)
       ranks <- c(2,1)
     } else {
       res <- wilcox.test(V1, V2, paired = TRUE, conf.int = TRUE)
-      # We use the pseudo median estimated by the test.
-      ranks <- if (res$estimate <= 0) c(1,2) else c(2,1)
       PVAL <- res$p.value
       irace.assert(!is.nan(PVAL) & !is.na(PVAL))
       if (PVAL >= 1 - conf.level) dropped.any <- FALSE
+      # We use the pseudo median estimated by the test.
+      ranks <- if (res$estimate <= 0) c(1,2) else c(2,1)
     }
     best <- which.alive[ranks[1]]
     if (dropped.any)

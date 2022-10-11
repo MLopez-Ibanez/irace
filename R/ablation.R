@@ -176,7 +176,7 @@ generateAblation <- function(initial.configuration, final.configuration,
     configurations <- rbind.data.frame(configurations, new.configuration) 
   }
   rownames(configurations) <- NULL
-  return (list(configurations=configurations, changed.params=changed.params))
+  list(configurations=configurations, changed.params=changed.params)
 }
 
 #' Performs ablation between two configurations (from source to target).
@@ -232,7 +232,7 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
   
   save_ablog <- function(complete) {
     ablog <- list(changes = changes,
-                  configurations = all.configurations,
+                  configurations = all_configurations,
                   experiments = results,
                   instances   = instances,
                   scenario    = scenario, 
@@ -303,7 +303,7 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
   
   # FIXME: Do we really need to override the ID?
   src.configuration$.ID. <- best.id <-  1
-  best.configuration <- all.configurations <- src.configuration
+  best.configuration <- all_configurations <- src.configuration
   
   # Execute source and target configurations.
   ## FIXME: We may already have these experiments in the logFile!
@@ -346,10 +346,10 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
     # New configurations ids
     ## FIXME: These should be generated with respect to the logFile to make
     ## sure we don't have duplicate IDs.
-    aconfigurations[,".ID."] <- seq(max(all.configurations$.ID.) + 1,
-                                    max(all.configurations$.ID.) + nrow(aconfigurations))
+    aconfigurations[,".ID."] <- seq(max(all_configurations$.ID.) + 1,
+                                    max(all_configurations$.ID.) + nrow(aconfigurations))
     configurations.print(aconfigurations, metadata = FALSE)
-    all.configurations <- rbind(all.configurations, aconfigurations)
+    all_configurations <- rbind(all_configurations, aconfigurations)
     
     # Set variables for the racing procedure
     if (scenario$capping) {
@@ -408,8 +408,8 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
   
   # Add last configuration and its results
   # FIXME: This may be overriding the ID of an existing configuration!!!
-  target.configuration$.ID. <- max(all.configurations$.ID.) + 1
-  all.configurations <- rbind(all.configurations, target.configuration)
+  target.configuration$.ID. <- max(all_configurations$.ID.) + 1
+  all_configurations <- rbind(all_configurations, target.configuration)
   results <- cbind(results, matrix(lastres, ncol = 1,
                                    dimnames=list(seq(1, nrow(instances)),
                                                  target.configuration$.ID.)))
@@ -418,7 +418,7 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
   # Get the overall best
   cranks <- overall.ranks(results[,trajectory, drop=FALSE], scenario$testType)
   best_id <- which.min(cranks)[1]
-  best.configuration <- all.configurations[trajectory[best_id],,drop=FALSE]
+  best.configuration <- all_configurations[trajectory[best_id],,drop=FALSE]
   irace.note("Final best configuration:\n")
   configurations.print(best.configuration)
   
@@ -499,7 +499,8 @@ plotAblation <- function (ablog, pdf.file = NULL, pdf.width = 20,
   inches_to_lines <- (par("mar") / par("mai"))[1]
   lab.width <- max(strwidth(labels, units = "inches")) * inches_to_lines
   old.par <- par(mar = c(lab.width + 2.1, 4.1, 0.1, 0.1), cex.axis = 1)
-  on.exit(par(old.par), add = TRUE)
+  if (!is.null(pdf.file))
+    on.exit(par(old.par), add = TRUE)
 
   experiments <- ablog$experiments
   
