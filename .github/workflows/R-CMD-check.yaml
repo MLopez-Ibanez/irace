@@ -131,6 +131,7 @@ jobs:
       - name: Test coverage
         if: success()
         run: |
+          remotes::install_local(".", build = TRUE, upgrade = "never", force = TRUE, build_opts = c("--no-resave-data"), build_manual = TRUE, build_vignettes = TRUE)
           options(covr.gcov="")
           covr::codecov(type="all", quiet=FALSE)
         shell: Rscript {0}
