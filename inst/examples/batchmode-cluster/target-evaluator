@@ -52,15 +52,15 @@ done
 # This is an example of reading a number from the output of
 # target-runner. It assumes that the objective value is the first number in
 # the first column of the only line starting with a digit.
-if [ -s "${STDOUT}" ]; then
-    # You may need to update this to parse the output of your algorithm.
-    COST=$(cat ${STDOUT} | grep -e '^[[:space:]]*[+-]\?[0-9]' | cut -f1)
-    echo "$COST"
-    TODELETE=$(comm -23 <(ls -1 c*-${INSTANCEID}-${SEED}.* | sort) <(ls -1 $ALLFILES))
-    ## Comment out if you wish to keep all output files around
-    # rm -f $TODELETE
-    exit 0
-else
+if [ ! -s "${STDOUT}" ]; then
     error "${STDOUT}: No such file or directory"
 fi
+# You may need to update this to parse the output of your algorithm.
+COST=$(cat ${STDOUT} | grep -e '^[[:space:]]*[+-]\?[0-9]' | cut -f1)
+echo "$COST"
+## Comment out if you wish to keep all output files around
+# TODELETE=$(comm -23 <(ls -1 c*-${INSTANCEID}-${SEED}.* | sort) <(ls -1 $ALLFILES))
+# rm -f $TODELETE
+exit 0
+
 
