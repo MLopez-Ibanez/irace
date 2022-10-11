@@ -131,6 +131,7 @@ jobs:
       - name: Test coverage
         if: success()
         run: |
+          options(covr.gcov="")
           covr::codecov(type="all", quiet=FALSE)
         shell: Rscript {0}
 
