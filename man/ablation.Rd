@@ -10,7 +10,7 @@ ablation(
   target = NULL,
   ab.params = NULL,
   type = c("full", "racing"),
-  n.instances = NULL,
+  n_instances = 1L,
   seed = 1234567,
   ablationLogFile = "log-ablation.Rdata",
   ...
@@ -23,9 +23,9 @@ ablation(
 
 \item{ab.params}{Specific parameter names to be used for the ablation. They must be in \code{parameters$names}. By default, use all parameters.}
 
-\item{type}{Type of ablation to perform: \code{"full"} will execute each configuration on all \code{n.instances} to determine the best-performing one; \code{"racing"} will apply racing to find the best configurations.}
+\item{type}{Type of ablation to perform: \code{"full"} will execute each configuration on all \code{n_instances} to determine the best-performing one; \code{"racing"} will apply racing to find the best configurations.}
 
-\item{n.instances}{Number of instances to be used for the \code{"full"} ablation, if not provided \code{scenario$firstTest} instances are used.}
+\item{n_instances}{(\code{integer(1)}) Number of instances used in \code{"full"} ablation will be \code{n_instances * scenario$firstTest}.}
 
 \item{seed}{(\code{integer(1)}) Integer value to use as seed for the random number generation.}
 

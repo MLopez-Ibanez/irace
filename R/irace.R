@@ -394,13 +394,13 @@ generateInstances <- function(scenario, remainingBudget)
     # Sample instances index in groups (ntimes)
     sindex <- as.vector(sapply(rep(length(instances), ntimes), sample.int, replace = FALSE))
   } else {
-    sindex <- rep(1:length(instances), ntimes)
+    sindex <- rep(1L:length(instances), ntimes)
   }
   # Sample seeds.
   # 2147483647 is the maximum value for a 32-bit signed integer.
   # We use replace = TRUE, because replace = FALSE allocates memory for each possible number.
   data.frame(instance = sindex,
-             seed = sample.int(2147483647, size = ntimes * length(instances), replace = TRUE), stringsAsFactors=FALSE)
+             seed = sample.int(2147483647L, size = length(sindex), replace = TRUE), stringsAsFactors=FALSE)
 }
 
 addInstances <- function(scenario, instancesList, n.instances)

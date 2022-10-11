@@ -15,9 +15,12 @@
  * The interface to functions `ablation()` and `plotAblation()` has been
    simplified. The `ablation()` function now allows overriding scenario
    settings. The `plotAblation()` function will not create the plot if the
-   ablation log does not reflect a complete ablation.
+   ablation log does not contain a complete ablation.
                                                     (Manuel López-Ibáñez)
 
+ * The argument `n.instances` of `ablation()` has been renamed to `n_instances` and it is now a factor that multiplies `scenario$firstTest`.
+                                                         (Manuel López-Ibáñez)
+ 
  * New command-line option `--quiet` to run without producing any output
    except errors (also available as a scenario option).
                                                      (Manuel López-Ibáñez)
@@ -150,7 +153,7 @@
    users as the same result can be obtained by calling
    `irace.cmdline("--help")`.
                                                          (Manuel López-Ibáñez)
-   
+ 
  
 # irace 3.4.1  (31/03/2020)
 

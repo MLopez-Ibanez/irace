@@ -42,9 +42,8 @@ List of command-line options:\preformatted{-l,--log-file            Path to the 
                          configuration on all "--n-instances" to determine the
                          best-performing one; "racing" will apply racing to
                          find the best configurations. Default: full.
--n,--n-instances         Number of instances to be used for the "full"
-                         ablation, if not provided firstTest instances are
-                         used.
+-n,--n-instances         Number of instances used in "full" ablation will be
+                         n_instances * scenario$firstTest. Default: 1.
    --seed                Integer value to use as seed for the random number
                          generation. Default: 1234567.
 -o,--output-file         Log file to save the ablation log. If "", the results
