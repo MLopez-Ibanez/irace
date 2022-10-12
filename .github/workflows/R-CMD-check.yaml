@@ -120,7 +120,7 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::covr
+          extra-packages: cran::XML any::covr
           needs: coverage
 
       - name: Install latex packages
@@ -134,7 +134,7 @@ jobs:
         run: |
           # options(covr.gcov="") # Bug in covr
           # covr::codecov(type="all", quiet=FALSE)
-          covr::codecov(quiet=FALSE)
+          covr::package_coverage(type="all", quiet=FALSE)
         shell: Rscript {0}
 
   pkgdown:
