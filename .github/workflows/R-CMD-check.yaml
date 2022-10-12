@@ -98,6 +98,7 @@ jobs:
     needs: R-CMD-check
     name: Coverage
     runs-on: ubuntu-latest
+    continue-on-error: true
     timeout-minutes: 60
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
@@ -119,7 +120,7 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: cran::XML any::covr
+          extra-packages: any::covr
           needs: coverage
 
       - name: Install latex packages
@@ -131,9 +132,9 @@ jobs:
       - name: Test coverage
         if: success()
         run: |
-          remotes::install_local(".", build = TRUE, upgrade = "never", force = TRUE, build_opts = c("--no-resave-data"), build_manual = TRUE, build_vignettes = TRUE)
-          options(covr.gcov="")
-          covr::codecov(type="all", quiet=FALSE)
+          # options(covr.gcov="") # Bug in covr
+          # covr::codecov(type="all", quiet=FALSE)
+          covr::codecov(quiet=FALSE)
         shell: Rscript {0}
 
   pkgdown:
