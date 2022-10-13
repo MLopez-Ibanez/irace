@@ -130,12 +130,18 @@ jobs:
         shell: Rscript {0}
 
       - name: Test coverage
-        if: success()
         run: |
           # options(covr.gcov="") # Bug in covr
           # covr::codecov(type="all", quiet=FALSE)
-          covr::package_coverage(type="all", quiet=FALSE)
+          covr::package_coverage(type="all", quiet=FALSE, clean=FALSE, install_path="tmp-covr")
         shell: Rscript {0}
+
+      - name: Upload test results
+        if: failure()
+        uses: actions/upload-artifact@main
+        with:
+          name: covr-log
+          path: tmp-covr
 
   pkgdown:
     needs: R-CMD-check
