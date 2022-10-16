@@ -247,6 +247,11 @@ following commands within the R console:
     R> devtools::install_github("MLopez-Ibanez/irace")
 ```
 
+Python
+------
+
+You can use the irace R package from Python using `rpy2`. An example on how to do this is the implementation of [iracepy](https://github.com/auto-optimization/iracepy).
+
 
 Usage
 =====
