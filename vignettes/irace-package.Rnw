@@ -941,13 +941,13 @@ table. Each line of the table defines a configurable parameter
 \end{center}
 where each field is defined as follows:
 %
-\begin{center}
-\renewcommand{\arraystretch}{1.2}
-\begin{tabularx}{0.98\linewidth}{@{}rX@{}}
-  \code{<name>} & The name of the parameter as an unquoted
-                  alphanumeric string, e.g., `\code{ants}'.\\
+\begin{description}[left=5em,itemindent=-0.5em,align=right,itemsep=0pt]
+%  \DrawEnumitemLabel
+\item[\code{<name>}] The name of the parameter as an unquoted
+                  alphanumeric string, e.g., `\code{ants}'.
                   %
-  \code{<label>}& A \emph{label} for this parameter. This is a
+\item[\code{<label>}]                  
+A \emph{label} for this parameter. This is a
                   string that will be passed together with the parameter
                   to \parameter{targetRunner}. In the default \parameter{targetRunner}
                   provided with the package (\autoref{sec:runner}), this is the
@@ -955,22 +955,22 @@ where each field is defined as follows:
                   instance `\code{"--ants "}'.\newline
                   The value of the parameter is concatenated \emph{without
                   separator} to the label when
-                  invoking \parameter{targetRunner}, thus \emph{any whitespace in the label is significant}. Following the same example, when parameter \code{ants} takes value \code{5}, the default targetRunner will pass the parameter as \code{"--ants 5"}.\\
-                  %
-  \code{{<type>}} & The type of the parameter, either
+                invoking \parameter{targetRunner}, thus \emph{any whitespace in the label is significant}. Following the same example, when parameter \code{ants} takes value \code{5}, the default targetRunner will pass the parameter as \code{"--ants 5"}.
+
+  \item[\code{{<type>}}] The type of the parameter, either
                     \textit{integer}, \textit{real}, \textit{ordinal} or
                     \textit{categorical}, given as a single letter: `\code{i}',
                     `\code{r}', `\code{o}' or `\code{c}'. Numerical parameters
                     can be sampled using a natural logarithmic scale with '\code{i,log}' and
                     '\code{r,log}' (without spaces) for integer and real
-                    parameters, respectively.\\
+                    parameters, respectively.
                     %
-  \code{{<domain>}} & The range or set of values of the parameter delimited by
+  \item[\code{{<domain>}}] The range or set of values of the parameter delimited by
                      parentheses, \eg~\code{(0,1)} or \code{(a,b,c,d)}.
-                     See also parameter dependent domains (\autoref{sec:paramdependant}).\\
+                     See also parameter dependent domains (\autoref{sec:paramdependant}).
                      %
 
-  \code{{<condition>}} & An optional \emph{condition} that determines whether the parameter is
+  \item[\code{{<condition>}}] An optional \emph{condition} that determines whether the parameter is
                          enabled or disabled, thus making the parameter conditional. If the
                          condition evaluates to false, then no value is assigned to this
                          parameter, and neither the parameter value nor the corresponding
@@ -980,9 +980,9 @@ where each field is defined as follows:
                          The condition may contain the name
                          of other parameters as long as the dependency graph does not
                          contain any cycle. Otherwise, \irace will detect the cycle and
-                         stop with an error. \\
-  \end{tabularx}
-\end{center}
+                         stop with an error. 
+                
+                \end{description}
 
 As an example, Figure~\ref{fig:acotsp_parameters} shows the parameters file
 of the \ACOTSP scenario.
