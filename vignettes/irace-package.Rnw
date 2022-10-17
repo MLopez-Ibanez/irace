@@ -1460,6 +1460,14 @@ before \code{"5"}. As a work-around, you can convert the string to numeric in
 the condition with \code{as.numeric(a)}.
 \end{xwarningbox}
 
+If the constraints provided are too strict, \irace may produce the following error:
+\begin{CodeInput}
+irace tried 100 times to sample from the model a configuration not forbidden without success, perhaps your constraints are too strict?
+\end{CodeInput}
+%
+In that case, it may be a good idea to see if the constraints can be reformulated as conditional parameters, parameter-dependent domains (\autoref{sec:paramdependant}) or repairing the configurations (\autoref{sec:repairconf}) or post-processing within the target-algorithm (\autoref{sec:complex_domains}).
+
+
 \subsection{Repairing configurations}\label{sec:repairconf}
 
 In some problems, the parameter values require complex constraints that cannot
@@ -2537,7 +2545,7 @@ strict test discards configurations faster by requiring less evidence against
 them and, therefore, it is more likely to discard good configurations.
 
 
-\subsection{Complex parameter space constraints}
+\subsection{Complex parameter space constraints}\label{sec:complex_domains}
 
 Some parameters may have complex dependencies. Ideally, parameters should be
 defined in the way that is more likely to help the search performed by
