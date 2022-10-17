@@ -922,7 +922,7 @@ p2dum "" r (0, 10)
 and \code{target-runner} will compute $\code{p2} = \code{p2dum} \cdot \code{p1}$.
 
 
-\subsubsection{Conditional parameters}
+\subsubsection{Conditional parameters}\label{sec:conditional}
 
 Conditional parameters are active only when others have certain values. These
 dependencies define a hierarchical relation between parameters. For example,
@@ -1462,10 +1462,11 @@ the condition with \code{as.numeric(a)}.
 
 If the constraints provided are too strict, \irace may produce the following error:
 \begin{CodeInput}
-irace tried 100 times to sample from the model a configuration not forbidden without success, perhaps your constraints are too strict?
+  irace tried 100 times to sample from the model a configuration not forbidden
+  without success, perhaps your constraints are too strict?
 \end{CodeInput}
 %
-In that case, it may be a good idea to see if the constraints can be reformulated as conditional parameters, parameter-dependent domains (\autoref{sec:paramdependant}) or repairing the configurations (\autoref{sec:repairconf}) or post-processing within the target-algorithm (\autoref{sec:complex_domains}).
+In that case, it may be a good idea to reformulate  the constraints as conditional parameters (\autoref{sec:conditional}), parameter-dependent domains (\autoref{sec:paramdependant}),  repairing the configurations (\autoref{sec:repairconf}) or post-processing within the target-algorithm (\autoref{sec:complex_domains}).
 
 
 \subsection{Repairing configurations}\label{sec:repairconf}
