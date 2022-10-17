@@ -129,16 +129,12 @@ jobs:
           tinytex::tlmgr_install(pkgs = strsplit(Sys.getenv("LATEX_PACKAGES"),split=":")[[1]])
         shell: Rscript {0}
 
-      - name: Install package with vignettes
-        run: |
-          remotes::install_local(".", lib = "tmp-cover", build = TRUE, upgrade = "never", force = TRUE, build_opts = c("--no-resave-data"), build_manual = TRUE, build_vignettes = TRUE)
-        shell: Rscript {0}
-
       - name: Test coverage
         run: |
+          remotes::install_local(".", build = TRUE, upgrade = "never", force = TRUE, build_opts = c("--no-resave-data"), build_manual = TRUE, build_vignettes = TRUE)
           # options(covr.gcov="") # Bug in covr
           # covr::codecov(type="all", quiet=FALSE)
-          covr::package_coverage(type="all", quiet=FALSE, clean=FALSE, install_path="tmp-covr")
+          covr::package_coverage(type="all", quiet=FALSE, clean=FALSE)
         shell: Rscript {0}
 
       - name: Upload test results
