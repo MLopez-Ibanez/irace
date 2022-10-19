@@ -129,7 +129,5 @@ iraceResults$scenario$logFile <- "./sann.rda"
 save(iraceResults, file="sann.rda", version = 2)
 
 # Create log-ablation.Rdata
-#load("irace-acotsp.Rdata")
-#target <- iraceResults$iterationElites[length(iraceResults$iterationElites)]
 ablation("irace-acotsp.Rdata")
 
