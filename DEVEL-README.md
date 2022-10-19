@@ -1,7 +1,7 @@
 README file for developers
 ===========================
 
-Subversion commands
+Git commands
 ---------------------
 ```
 # See differences in your local copy
