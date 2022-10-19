@@ -2,14 +2,14 @@ library(irace)
 
 iracebin <- system.file(package="irace", "bin/irace")
 if (0 != file.access(iracebin, mode=1))
-  stop("Error: ", iracbin, " is not executable or not found!")
+  stop("Error: ", iracebin, " is not executable or not found!")
 
 system(paste0("nice -n 19 ", iracebin, " --parallel 2 | tee irace-acotsp-stdout.txt"))
 
 load("irace-acotsp.Rdata")
 
 # Change paths
-# FIXME: Use scenario.update.paths()
+# FIXME: Use irace::scenario_update_paths()
 to.change <- c("logFile", "trainInstancesDir", "trainInstancesFile",
                "testInstancesDir", "testInstancesFile", "parameterFile",
                "targetRunner")
@@ -106,7 +106,7 @@ target.runner <- function(experiment, scenario)
   ##   an external program or function.
   ## - 'call' is a string used to report how target.runner called the
   ##   external program or function.
-  return(list(cost = res$value))
+  list(cost = res$value)
 }
 
 ## We define a configuration scenario by setting targetRunner to the
@@ -129,7 +129,7 @@ iraceResults$scenario$logFile <- "./sann.rda"
 save(iraceResults, file="sann.rda", version = 2)
 
 # Create log-ablation.Rdata
-load("irace-acotsp.Rdata")
-target <- iraceResults$iterationElites[length(iraceResults$iterationElites)]
-ablation("irace-acotsp.Rdata", src = 1, target = target)
+#load("irace-acotsp.Rdata")
+#target <- iraceResults$iterationElites[length(iraceResults$iterationElites)]
+ablation("irace-acotsp.Rdata")
 

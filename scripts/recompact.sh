@@ -16,19 +16,29 @@ if [ ! -r "$PDFFILE" ]; then
     exit 1
 fi
 echo Before: $(du -h "$PDFFILE")
+BEFORE_SIZE=$(stat -c%s "$PDFFILE")
 gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite $GS_OTPIONS -sOutputFile="$PDFFILE-tmp" "$PDFFILE"
 echo After gs: $(du -h "$PDFFILE-tmp")
-mv "$PDFFILE-tmp" "$PDFFILE"
-if [ $? -ne 0 ]; then
-    echo "$0: cannot overwrite $PDFFILE"
-    exit 1
+AFTER_SIZE=$(stat -c%s "$PDFFILE-tmp")
+if (( BEFORE_SIZE > AFTER_SIZE)); then
+    mv "$PDFFILE-tmp" "$PDFFILE"
+    if [ $? -ne 0 ]; then
+        echo "$0: cannot overwrite $PDFFILE"
+        exit 1
+    fi
+    echo "$0: Success !"
 fi
 $QPDF $QPDF_OPTIONS "$PDFFILE" "$PDFFILE-tmp"
 echo After qpdf: $(du -h "$PDFFILE-tmp")
-mv "$PDFFILE-tmp" "$PDFFILE"
-if [ $? -ne 0 ]; then
-    echo "$0: cannot overwrite $PDFFILE"
-    exit 1
+BEFORE_SIZE=$(stat -c%s "$PDFFILE")
+AFTER_SIZE=$(stat -c%s "$PDFFILE-tmp")
+if (( BEFORE_SIZE > AFTER_SIZE)); then
+    mv "$PDFFILE-tmp" "$PDFFILE"
+    if [ $? -ne 0 ]; then
+        echo "$0: cannot overwrite $PDFFILE"
+        exit 1
+    fi
+    echo "$0: Success !"
 fi
 tar -acf "$TARGZFILE" *
 if [ $? -ne 0 ]; then
@@ -36,4 +46,4 @@ if [ $? -ne 0 ]; then
     echo "$0: something failed !"
     exit 1
 fi
-echo "$0: Success !"
+echo "$0: DONE"
