@@ -71,6 +71,8 @@ getDependentBound <- function(parameters, param, configuration)
 sampleUniform <- function (parameters, nbConfigurations, digits,
                            forbidden = NULL, repair = NULL)
 {
+  if (is.null(repair)) repair <- function(c, p, d) c
+  
   namesParameters <- names(parameters$conditions)
   newConfigurations  <-
     as.data.frame(matrix(nrow = nbConfigurations,
@@ -110,9 +112,7 @@ sampleUniform <- function (parameters, nbConfigurations, digits,
         configuration[[p]] <- newVal
       }
       configuration <- as.data.frame(configuration, stringsAsFactors=FALSE)
-      if (!is.null(repair)) {
-        configuration <- repair(configuration, parameters, digits)
-      }
+      configuration <- repair(configuration, parameters, digits)
 
       if (is.null(forbidden)
           || nrow(checkForbidden(configuration, forbidden)) == 1) {
@@ -135,6 +135,8 @@ sampleModel <- function (parameters, eliteConfigurations, model,
                          nbNewConfigurations, digits, forbidden = NULL,
                          repair = NULL)
 {
+  if (is.null(repair)) repair <- function(c, p, d) c
+  
   if (nbNewConfigurations <= 0) {
     irace.error ("The number of configurations to generate appears to be negative or zero.")
   }
@@ -238,9 +240,8 @@ sampleModel <- function (parameters, eliteConfigurations, model,
       }
       
       configuration <- as.data.frame(configuration, stringsAsFactors = FALSE)
-      if (!is.null(repair)) {
-        configuration <- repair(configuration, parameters, digits)
-      }
+      configuration <- repair(configuration, parameters, digits)
+
       if (is.null(forbidden)
           || nrow(checkForbidden(configuration, forbidden)) == 1) {
         newConfigurations[idxConfiguration,] <- configuration
