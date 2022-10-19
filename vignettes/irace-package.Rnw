@@ -1494,6 +1494,7 @@ repairConfiguration = function (configuration, parameters, digits)
 {
   isreal <- parameters$type[colnames(configuration)] %in% "r"
   configuration[isreal] <- configuration[isreal] / sum(configuration[isreal])
+  configurations[isreal] <- round(configuration[isreal], digits)
   return(configuration)
 }
 @
