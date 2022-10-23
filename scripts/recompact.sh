@@ -4,7 +4,7 @@ PDFFILE=$2
 TMP_DIR=$(mktemp -d)
 QPDF=$(which qpdf)
 QPDF_OPTIONS="--compress-streams=y --object-streams=generate"
-GS_OPTIONS="-dPDFSETTINGS=/ebook -dCompatibilityLevel=1.5 -dAutoRotatePages=/None -dPrinted=false -dNOPLATFONTS -dSAFER -dEmbedAllFonts=true"
+GS_OPTIONS="-dPDFSETTINGS=/ebook -dCompatibilityLevel=1.5 -dAutoRotatePages=/None -dPrinted=false -dNOPLATFONTS -dSAFER -dEmbedAllFonts=true -dCompressFonts=true -dSubsetFonts=true"
 if [ ! -x "$QPDF" ]; then
     echo "$0: qpdf not found, cannot compact vignettes"
     exit 1
@@ -40,6 +40,8 @@ if (( BEFORE_SIZE > AFTER_SIZE)); then
     fi
     echo "$0: Success !"
 fi
+R --slave -e "tools::compactPDF('$PDFFILE', gs_quality = 'ebook')"
+echo After compactPDF: $(du -h "$PDFFILE")
 tar -acf "$TARGZFILE" *
 if [ $? -ne 0 ]; then
     tar -atvf "$TARGZFILE"
