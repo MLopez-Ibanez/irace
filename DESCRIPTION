@@ -32,8 +32,7 @@ Suggests:
     withr,
     mlr (>= 2.15.0),
     ParamHelpers,
-    devtools,
-    covr
+    devtools
 VignetteBuilder: knitr
 License: GPL (>= 2)
 URL: https://mlopez-ibanez.github.io/irace/, https://github.com/MLopez-Ibanez/irace
