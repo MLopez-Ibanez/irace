@@ -103,7 +103,7 @@ releasebuild: releasevignette
 		$(PACKAGE)/inst/doc/$(PACKAGE)-package.pdf
 
 cran: releasebuild
-	cd $(BINDIR) && _R_CHECK_FORCE_SUGGESTS_=false _R_CHECK_CRAN_INCOMING_=0 R CMD check --as-cran $(PACKAGE)_$(PACKAGEVERSION).tar.gz
+	cd $(BINDIR) && _R_CHECK_FORCE_SUGGESTS_=false _R_CHECK_CRAN_INCOMING_REMOTE_=true _R_CHECK_CRAN_INCOMING_=true R CMD check --as-cran $(PACKAGE)_$(PACKAGEVERSION).tar.gz
 
 check: build
 ifdef TEST

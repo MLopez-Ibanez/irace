@@ -4,14 +4,14 @@
 <!-- badges: start -->
 [![CRAN Status](https://www.r-pkg.org/badges/version-last-release/irace)](https://cran.r-project.org/package=irace) [![CRAN Downloads](https://cranlogs.r-pkg.org/badges/grand-total/irace)](https://CRAN.R-project.org/package=irace) [![R build
 status](https://github.com/MLopez-Ibanez/irace/workflows/R-CMD-check/badge.svg)](https://github.com/MLopez-Ibanez/irace/actions) 
-[![Codecov test coverage](https://codecov.io/gh/MLopez-Ibanez/irace/branch/master/graph/badge.svg)](https://codecov.io/gh/MLopez-Ibanez/irace?branch=master)
+[![Codecov test coverage](https://codecov.io/gh/MLopez-Ibanez/irace/branch/master/graph/badge.svg)](https://app.codecov.io/gh/MLopez-Ibanez/irace?branch=master)
 <!-- badges: end -->
   
 [ [**Homepage**](https://mlopez-ibanez.github.io/irace/) ] [ [**User Guide (PDF)**](https://cran.r-project.org/package=irace/vignettes/irace-package.pdf) ] 
 
-**Maintainers:** [Manuel López-Ibáñez](http://lopez-ibanez.eu), Leslie Pérez Cáceres
+**Maintainers:** [Manuel López-Ibáñez](https://lopez-ibanez.eu/), Leslie Pérez Cáceres
 
-**Creators:** [Manuel López-Ibáñez](http://lopez-ibanez.eu), Jérémie Dubois-Lacoste
+**Creators:** [Manuel López-Ibáñez](https://lopez-ibanez.eu/), Jérémie Dubois-Lacoste
   
 **Contributors:** Jérémie Dubois-Lacoste, Thomas Stützle, Mauro Birattari, Eric
   Yuan and Prasanna Balaprakash.
@@ -36,15 +36,15 @@ It builds upon the race package by Birattari and it is implemented in R.
  1. M. López-Ibáñez, J. Dubois-Lacoste, L. Pérez Cáceres, T. Stützle, and
     M. Birattari. [The irace package: Iterated Racing for Automatic Algorithm Configuration](http://dx.doi.org/10.1016/j.orp.2016.09.002).
 *Operations Research Perspectives*, 3:43–58, 2016.<br>
-    [ [bibtex](http://lopez-ibanez.eu/LopezIbanez_bib.html#LopDubPerStuBir2016irace) 
+    [ [bibtex](https://lopez-ibanez.eu/LopezIbanez_bib.html#LopDubPerStuBir2016irace) 
     | doi: [10.1016/j.orp.2016.09.002](http://dx.doi.org/10.1016/j.orp.2016.09.002) ]
 
  2. Manuel López-Ibáñez, Jérémie Dubois-Lacoste, Thomas Stützle, and Mauro
-    Birattari. [The irace package, Iterated Race for Automatic Algorithm Configuration](http://iridia.ulb.ac.be/IridiaTrSeries/IridiaTr2011-004.pdf).
+    Birattari. [The irace package, Iterated Race for Automatic Algorithm Configuration](https://iridia.ulb.ac.be/IridiaTrSeries/link/IridiaTr2011-004.pdf).
     Technical Report TR/IRIDIA/2011-004, IRIDIA, Université libre de Bruxelles,
     Belgium, 2011.<br>
-    [ [bibtex](http://iridia.ulb.ac.be/~manuel/LopezIbanez_bib.html#LopDubStu2011irace)
-    | [PDF](http://iridia.ulb.ac.be/IridiaTrSeries/IridiaTr2011-004.pdf) ]
+    [ [bibtex](https://iridia-ulb.github.io/references/index.html#LopDubStu2011irace)
+    | [PDF](https://iridia.ulb.ac.be/IridiaTrSeries/link/IridiaTr2011-004.pdf) ]
 
  3. Thomas Stützle and Manuel López-Ibáñez. [Tutorial: Automated algorithm
     configuration and design](https://doi.org/10.1145/3449726.3461404). GECCO
