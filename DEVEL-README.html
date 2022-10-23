@@ -132,7 +132,6 @@ git help</code></pre>
 <li><p>make examples # Takes a few hours. Inspect the examples in the vignette.</p></li>
 <li><p>make releasebuild # Inspect the output for strange files!</p></li>
 <li><p>make winbuild # passes. Wait for the 2 emails and check logs!</p></li>
-<li><p>Update NEWS (add version number on top)</p></li>
 <li><p>make closeversion</p></li>
 <li>
 <p>Send package as a pre-release to:</p>
@@ -142,14 +141,14 @@ git help</code></pre>
 </ul></li>
 <li><p>If everything is OK, continue, otherwise fix and goto 1.</p></li>
 <li><p>Use <a href="http://cran.r-project.org/submit.html" class="external-link uri">http://cran.r-project.org/submit.html</a> to submit Read <a href="http://cran.r-project.org/web/packages/policies.html" class="external-link uri">http://cran.r-project.org/web/packages/policies.html</a></p></li>
-</ol><p>12.a IF the package requires further changes:</p>
+</ol><p>11.a IF the package requires further changes:</p>
 <ul><li><p>Make the changes.</p></li>
 <li><p>Repeat the whole RELEASE process above without bumping the version number.</p></li>
-</ul><p>12.b IF the package is released in CRAN:</p>
-<ul><li><p>Bump the version number in Makefile.</p></li>
-<li><p>make build # To update DESCRIPTION and other files with the new version.”</p></li>
-<li><p>svn ci -m ” * Bump development version to $NEW_VERSION</p></li>
-</ul><ol start="13" style="list-style-type: decimal"><li>
+</ul><p>11.b IF the package is released in CRAN:</p>
+<ul><li><p>Bump the version number in DESCRIPTION and NEWS.md.</p></li>
+<li><p>make build # To update other files with the new version.”</p></li>
+<li><p>git ci -a -m ” * Bump development version to $NEW_VERSION”</p></li>
+</ul><ol start="12" style="list-style-type: decimal"><li>
 <p>Announce the release in the Google group:</p>
 <p><a href="https://groups.google.com/d/forum/irace-package" class="external-link uri">https://groups.google.com/d/forum/irace-package</a></p>
 </li></ol></div>
@@ -169,11 +168,12 @@ git help</code></pre>
 <p>To: <a href="mailto:cran@R-project.org" class="email">cran@R-project.org</a> Subject: CRAN submission irace $VERSION</p>
 <p>Dear CRAN maintainers,</p>
 <p>I would like to submit version $VERSION of the irace package to CRAN.</p>
-<p>The NEWS section corresponding to this version is:</p>
+<p>The NEWS section corresponding to this version is available from:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>https<span class="sc">:</span><span class="er">//</span>mlopez<span class="sc">-</span>ibanez.github.io<span class="sc">/</span>irace<span class="sc">/</span>news<span class="sc">/</span>index.html<span class="co">#irace-35</span></span></code></pre></div>
 <p>More information about irace may be found at:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>http<span class="sc">:</span><span class="er">//</span>iridia.ulb.ac.be<span class="sc">/</span>irace</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>https<span class="sc">:</span><span class="er">//</span>mlopez<span class="sc">-</span>ibanez.github.io<span class="sc">/</span>irace<span class="sc">/</span></span></code></pre></div>
 <p>Thanks in advance,</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>Manuel López<span class="sc">-</span>Ibáñez.</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>Manuel López<span class="sc">-</span>Ibáñez.</span></code></pre></div>
 </div>
 
 
