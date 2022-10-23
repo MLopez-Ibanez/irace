@@ -106,11 +106,9 @@ RELEASE Process:
 
 6. make winbuild # passes. Wait for the 2 emails and check logs!
 
-7. Update NEWS (add version number on top)
+7. make closeversion
 
-8. make closeversion
-
-9. Send package as a pre-release to:
+8. Send package as a pre-release to:
 
    * The maintainers of the packages listed in "Reverse suggests" or "Reverse
      depend" at https://cran.r-project.org/package=irace so they can check we
@@ -119,27 +117,27 @@ RELEASE Process:
    * Google group
    * IRIDIAns
 
-11. If everything is OK, continue, otherwise fix and goto 1.
+9. If everything is OK, continue, otherwise fix and goto 1.
 
-11. Use http://cran.r-project.org/submit.html to submit
+10. Use http://cran.r-project.org/submit.html to submit
    Read http://cran.r-project.org/web/packages/policies.html
 
-12.a IF the package requires further changes:
+11.a IF the package requires further changes:
 
   * Make the changes.
 
   * Repeat the whole RELEASE process above without bumping the version number.
 
 
-12.b IF the package is released in CRAN:
+11.b IF the package is released in CRAN:
 
-  * Bump the version number in Makefile.
+  * Bump the version number in DESCRIPTION and NEWS.md.
 
-  * make build # To update DESCRIPTION and other files with the new version."
+  * make build # To update other files with the new version."
 
-  * svn ci -m " * Bump development version to $NEW_VERSION
+  * git ci -a -m " * Bump development version to $NEW_VERSION"
 
-13. Announce the release in the Google group:
+12. Announce the release in the Google group:
 
     https://groups.google.com/d/forum/irace-package
 
@@ -153,8 +151,7 @@ Version 2.2 of irace is available from CRAN:
 https://cran.r-project.org/package=irace
 
 
-There are significant bugfixes and only very minor interface changes so we recommend all users to
-upgrade:
+There are significant bugfixes and only very minor interface changes so we recommend all users to upgrade:
 
 NEWS entry
 
@@ -175,11 +172,13 @@ Dear CRAN maintainers,
 
 I would like to submit version $VERSION of the irace package to CRAN.
 
-The NEWS section corresponding to this version is:
+The NEWS section corresponding to this version is available from:
+
+    https://mlopez-ibanez.github.io/irace/news/index.html#irace-35
 
 More information about irace may be found at:
 
-    http://iridia.ulb.ac.be/irace
+    https://mlopez-ibanez.github.io/irace/
 
 Thanks in advance,
 
