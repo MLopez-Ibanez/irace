@@ -146,20 +146,20 @@ configurations through ablation. Journal of Heuristics, 22(4):431–458, 2016.</
 <span class="r-in"><span><span class="va">logfile</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span>package<span class="op">=</span><span class="st">"irace"</span>, <span class="st">"exdata"</span>, <span class="st">"sann.rda"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># Execute ablation between the first and the best configuration found by irace.</span></span></span>
 <span class="r-in"><span><span class="va">ablog</span> <span class="op">&lt;-</span> <span class="fu">ablation</span><span class="op">(</span><span class="va">logfile</span>, ablationLogFile <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-10-18 13:21:56 UTC: Starting ablation from 1 to 128</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-10-23 10:30:33 UTC: Starting ablation from 1 to 143</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # Seed: 1234567</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # Source configuration (row number is ID):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   tmax    temp</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 1905 60.7717</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 3492 56.6509</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # Target configuration (row number is ID):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     tmax   temp</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 128 1925 0.3795</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-10-18 13:21:56 UTC: Executing source and target configurations on the given instances (100)...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     tmax    temp</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 143  429 45.2859</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-10-23 10:30:33 UTC: Executing source and target configurations on the given instances (100)...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # Generating configurations (row number is ID): tmax temp </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   tmax    temp</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 1925 60.7717</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 1905  0.3795</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-10-18 13:22:03 UTC: Ablation (full) of 2 configurations on 100 instances.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  429 56.6509</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 3492 45.2859</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-10-23 10:30:40 UTC: Ablation (full) of 2 configurations on 100 instances.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # Markers:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      x No test is performed.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      c Configurations are discarded only due to capping.</span>
@@ -171,135 +171,135 @@ configurations through ablation. Journal of Heuristics, 22(4):431–458, 2016.</
 <span class="r-out co"><span class="r-pr">#&gt;</span> +-+-----------+-----------+-----------+----------------+-----------+--------+-----+----+------+</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> | |   Instance|      Alive|       Best|       Mean best| Exp so far|  W time|  rho|KenW|  Qvar|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> +-+-----------+-----------+-----------+----------------+-----------+--------+-----+----+------+</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|          1|          2|          3|  0.001400181977|          2|00:00:00|   NA|  NA|    NA|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|          2|          2|          3|     1.446651593|          4|00:00:00|+1.00|1.00|0.0000|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|          3|          2|          3|     1.937189709|          6|00:00:00|-0.33|0.11|0.6667|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|          4|          2|          3|     1.455259998|          8|00:00:00|+0.00|0.25|0.5000|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|          5|          2|          3|     1.180420144|         10|00:00:00|+0.20|0.36|0.4000|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|          6|          2|          3|     1.478445828|         12|00:00:00|+0.33|0.44|0.3333|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|          7|          2|          3|     1.272222507|         14|00:00:00|+0.43|0.51|0.2857|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|          8|          2|          3|     1.114753134|         16|00:00:00|+0.50|0.56|0.2500|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|          9|          2|          3|    0.9939526434|         18|00:00:00|+0.56|0.60|0.2222|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         10|          2|          3|    0.9010952423|         20|00:00:00|+0.29|0.36|0.3556|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         11|          2|          3|     1.083157291|         22|00:00:00|+0.35|0.40|0.3273|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         12|          2|          3|     1.236804117|         24|00:00:00|+0.18|0.25|0.4091|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         13|          2|          3|     1.143393068|         26|00:00:00|+0.23|0.29|0.3846|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         14|          2|          3|     1.067047866|         28|00:00:00|+0.27|0.33|0.3626|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         15|          2|          3|    0.9982436612|         30|00:00:00|+0.31|0.36|0.3429|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         16|          2|          3|     1.115757970|         32|00:00:00|+0.20|0.25|0.4000|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         17|          2|          3|     1.052064860|         34|00:00:00|+0.24|0.28|0.3824|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         18|          2|          3|     1.153956835|         36|00:00:00|+0.15|0.20|0.4248|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         19|          2|          3|     1.247717298|         38|00:00:00|+0.09|0.14|0.4561|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         20|          2|          3|     1.330016060|         40|00:00:00|+0.04|0.09|0.4789|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         21|          2|          3|     1.405665139|         42|00:00:00|+0.01|0.06|0.4952|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         22|          2|          3|     1.342775923|         44|00:00:00|+0.03|0.07|0.4848|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         23|          2|          3|     1.286004186|         46|00:00:00|+0.05|0.09|0.4743|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         24|          2|          3|     1.233285373|         48|00:00:00|+0.07|0.11|0.4638|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         25|          2|          3|     1.344844921|         50|00:00:00|+0.04|0.08|0.4800|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         26|          2|          3|     1.295472961|         52|00:00:00|+0.02|0.05|0.4923|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         27|          2|          3|     1.247682925|         54|00:00:00|+0.03|0.07|0.4843|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         28|          2|          3|     1.203895276|         56|00:00:00|+0.05|0.08|0.4762|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         29|          2|          3|     1.263963552|         58|00:00:00|+0.02|0.06|0.4877|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         30|          2|          3|     1.222724815|         60|00:00:00|+0.04|0.07|0.4805|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         31|          2|          3|     1.183800506|         62|00:00:00|+0.05|0.08|0.4731|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         32|          2|          3|     1.147641115|         64|00:00:00|+0.07|0.10|0.4657|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         33|          2|          3|     1.584984891|         66|00:00:00|+0.05|0.07|0.4773|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         34|          2|          3|     1.538419584|         68|00:00:00|+0.06|0.09|0.4706|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         35|          2|          3|     1.495436146|         70|00:00:00|+0.07|0.10|0.4639|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         36|          2|          3|     1.565084611|         72|00:00:00|+0.05|0.08|0.4746|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         37|          2|          3|     1.601028048|         74|00:00:00|+0.03|0.06|0.4835|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         38|          2|          3|     1.559589223|         76|00:00:00|+0.04|0.07|0.4780|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         39|          2|          3|     1.594864216|         78|00:00:00|+0.03|0.05|0.4858|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         40|          2|          3|     1.627775762|         80|00:00:00|+0.02|0.04|0.4923|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         41|          2|          3|     1.589044899|         82|00:00:00|+0.02|0.05|0.4878|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         42|          2|          3|     1.551415234|         84|00:00:00|+0.03|0.06|0.4832|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         43|          2|          3|     1.582587440|         86|00:00:00|+0.02|0.04|0.4895|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         44|          2|          3|     1.613173933|         88|00:00:00|+0.03|0.05|0.4852|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         45|          2|          3|     1.665876921|         90|00:00:00|+0.02|0.04|0.4909|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         46|          2|          3|     1.717437208|         92|00:00:00|+0.01|0.03|0.4957|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         47|          2|          3|     1.744144501|         94|00:00:00|+0.00|0.02|0.4995|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         48|          2|          3|     1.709133523|         96|00:00:00|+0.01|0.03|0.4965|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         49|          2|          3|     1.674972534|         98|00:00:00|+0.01|0.03|0.4932|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         50|          2|          3|     1.699251754|        100|00:00:00|+0.02|0.04|0.4898|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         51|          2|          3|     1.666267981|        102|00:00:00|+0.03|0.05|0.4863|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         52|          2|          3|     1.635733375|        104|00:00:00|+0.03|0.05|0.4827|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         53|          2|          3|     1.660397567|        106|00:00:00|+0.02|0.04|0.4877|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         54|          2|          3|     1.630841826|        108|00:00:00|+0.03|0.05|0.4843|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         55|          2|          3|     1.601745400|        110|00:00:00|+0.04|0.06|0.4808|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         56|          2|          3|     1.573470060|        112|00:00:00|+0.05|0.06|0.4773|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         57|          2|          3|     1.546870600|        114|00:00:00|+0.05|0.07|0.4737|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         58|          2|          3|     1.571161165|        116|00:00:00|+0.04|0.06|0.4791|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         59|          2|          3|     1.545203312|        118|00:00:00|+0.05|0.06|0.4757|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         60|          2|          3|     1.519912578|        120|00:00:00|+0.06|0.07|0.4723|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         61|          2|          3|     1.496528291|        122|00:00:00|+0.06|0.08|0.4689|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         62|          2|          3|     1.473069178|        124|00:00:00|+0.07|0.08|0.4654|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         63|          2|          3|     1.449771040|        126|00:00:00|+0.08|0.09|0.4619|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         64|          2|          3|     1.472243863|        128|00:00:00|+0.06|0.08|0.4678|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         65|          2|          3|     1.449670812|        130|00:00:00|+0.07|0.09|0.4644|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         66|          2|          3|     1.429150209|        132|00:00:00|+0.08|0.09|0.4611|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         67|          2|          3|     1.467836874|        134|00:00:00|+0.08|0.10|0.4577|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         68|          2|          3|     1.446814435|        136|00:00:00|+0.09|0.10|0.4543|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         69|          2|          3|     1.426556687|        138|00:00:00|+0.10|0.11|0.4510|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         70|          2|          3|     1.406429970|        140|00:00:00|+0.10|0.12|0.4476|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         71|          2|          3|     1.386835811|        142|00:00:00|+0.11|0.12|0.4443|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         72|          2|          3|     1.367998327|        144|00:00:00|+0.12|0.13|0.4409|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         73|          2|          3|     1.349426722|        146|00:00:00|+0.12|0.14|0.4376|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         74|          2|          3|     1.370659631|        148|00:00:00|+0.11|0.12|0.4443|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         75|          2|          3|     1.352710465|        150|00:00:00|+0.12|0.13|0.4411|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         76|          2|          3|     1.335254862|        152|00:00:00|+0.12|0.14|0.4379|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         77|          2|          3|     1.355845561|        154|00:00:00|+0.13|0.14|0.4347|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         78|          2|          3|     1.338717721|        156|00:00:00|+0.14|0.15|0.4316|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         79|          2|          3|     1.322025995|        158|00:00:00|+0.14|0.15|0.4284|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         80|          2|          3|     1.306584776|        160|00:00:00|+0.15|0.16|0.4253|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         81|          2|          3|     1.290707508|        162|00:00:00|+0.16|0.17|0.4222|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         82|          2|          3|     1.275386187|        164|00:00:00|+0.16|0.17|0.4192|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         83|          2|          3|     1.260077340|        166|00:00:00|+0.17|0.18|0.4161|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         84|          2|          3|     1.279459629|        168|00:00:00|+0.15|0.16|0.4231|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         85|          2|          3|     1.264743330|        170|00:00:00|+0.16|0.17|0.4202|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         86|          2|          3|     1.250850785|        172|00:00:00|+0.17|0.18|0.4172|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         87|          2|          3|     1.237079094|        174|00:00:00|+0.17|0.18|0.4143|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         88|          2|          3|     1.223925739|        176|00:00:00|+0.18|0.19|0.4114|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         89|          2|          3|     1.242681026|        178|00:00:00|+0.16|0.17|0.4183|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         90|          2|          3|     1.229046734|        180|00:00:00|+0.17|0.18|0.4155|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         91|          2|          3|     1.259561793|        182|00:00:00|+0.16|0.17|0.4220|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         92|          2|          3|     1.277525066|        184|00:00:00|+0.16|0.17|0.4193|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         93|          2|          3|     1.264142813|        186|00:00:00|+0.17|0.18|0.4165|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         94|          2|          3|     1.250951818|        188|00:00:00|+0.17|0.18|0.4139|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         95|          2|          3|     1.238133866|        190|00:00:00|+0.18|0.19|0.4112|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         96|          2|          3|     1.225322212|        192|00:00:00|+0.18|0.19|0.4086|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         97|          2|          3|     1.212962977|        194|00:00:00|+0.19|0.20|0.4059|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         98|          2|          3|     1.200606008|        196|00:00:00|+0.19|0.20|0.4033|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         99|          2|          3|     1.188540337|        198|00:00:00|+0.20|0.21|0.4007|</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |-|        100|          1|          3|     1.177089938|        200|00:00:00|   NA|  NA|    NA|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|          1|          2|          2|   0.05182655748|          2|00:00:00|   NA|  NA|    NA|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|          2|          2|          2|   0.03380757854|          4|00:00:00|+1.00|1.00|0.0000|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|          3|          2|          2|   0.03538476177|          6|00:00:00|+1.00|1.00|0.0000|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|          4|          2|          2|    0.1748764391|          8|00:00:00|+1.00|1.00|0.0000|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|          5|          2|          2|    0.1650999058|         10|00:00:00|+1.00|1.00|0.0000|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|          6|          2|          2|    0.2249347724|         12|00:00:00|+1.00|1.00|0.0000|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|          7|          2|          2|    0.8720501983|         14|00:00:00|+0.43|0.51|0.2857|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|          8|          2|          2|    0.7678442019|         16|00:00:00|+0.50|0.56|0.2500|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|          9|          2|          2|    0.7045405599|         18|00:00:00|+0.56|0.60|0.2222|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         10|          2|          2|    0.9977131976|         20|00:00:00|+0.60|0.64|0.2000|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         11|          2|          2|    0.9196193270|         22|00:00:00|+0.35|0.40|0.3273|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         12|          2|          2|    0.8784036018|         24|00:00:00|+0.39|0.44|0.3030|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         13|          2|          2|    0.8501874210|         26|00:00:00|+0.44|0.48|0.2821|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         14|          2|          2|    0.8003009482|         28|00:00:00|+0.47|0.51|0.2637|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         15|          2|          2|    0.7573054671|         30|00:00:00|+0.31|0.36|0.3429|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         16|          2|          2|    0.7153761639|         32|00:00:00|+0.35|0.39|0.3250|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         17|          2|          2|    0.6758116117|         34|00:00:00|+0.38|0.42|0.3088|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         18|          2|          2|    0.6854453345|         36|00:00:00|+0.41|0.44|0.2941|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         19|          2|          2|    0.6521113462|         38|00:00:00|+0.44|0.47|0.2807|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         20|          2|          2|    0.6230368953|         40|00:00:00|+0.46|0.49|0.2684|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         21|          2|          2|    0.7531677607|         42|00:00:00|+0.35|0.38|0.3238|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         22|          2|          2|    0.7214416182|         44|00:00:00|+0.38|0.40|0.3117|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         23|          2|          2|    0.6971040700|         46|00:00:00|+0.40|0.43|0.3004|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         24|          2|          2|    0.7233762475|         48|00:00:00|+0.42|0.44|0.2899|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         25|          2|          2|    0.7282000533|         50|00:00:00|+0.44|0.46|0.2800|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         26|          2|          2|    0.7060787681|         52|00:00:00|+0.46|0.48|0.2708|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         27|          2|          2|    0.7033351598|         54|00:00:00|+0.48|0.50|0.2621|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         28|          2|          2|    0.6834121614|         56|00:00:00|+0.49|0.51|0.2540|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         29|          2|          2|    0.6859765353|         58|00:00:00|+0.51|0.52|0.2463|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         30|          2|          2|    0.6791097173|         60|00:00:00|+0.43|0.44|0.2874|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         31|          2|          2|    0.7183922194|         62|00:00:00|+0.44|0.46|0.2796|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         32|          2|          2|    0.6971115737|         64|00:00:00|+0.46|0.47|0.2722|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         33|          2|          2|    0.6797572154|         66|00:00:00|+0.47|0.49|0.2652|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         34|          2|          2|    0.7483183065|         68|00:00:00|+0.40|0.42|0.2995|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         35|          2|          2|    0.7336478601|         70|00:00:00|+0.42|0.43|0.2924|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         36|          2|          2|    0.8037913763|         72|00:00:00|+0.36|0.37|0.3222|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         37|          2|          2|    0.7834596670|         74|00:00:00|+0.37|0.39|0.3153|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         38|          2|          2|    0.7678623142|         76|00:00:00|+0.38|0.40|0.3087|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         39|          2|          2|    0.7550604226|         78|00:00:00|+0.40|0.41|0.3023|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         40|          2|          2|    0.7375433705|         80|00:00:00|+0.41|0.42|0.2962|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         41|          2|          2|    0.8339212819|         82|00:00:00|+0.36|0.37|0.3220|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         42|          2|          2|    0.8152891190|         84|00:00:00|+0.37|0.38|0.3159|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         43|          2|          2|    0.8015150144|         86|00:00:00|+0.38|0.39|0.3101|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         44|          2|          2|    0.7883685834|         88|00:00:00|+0.33|0.35|0.3330|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         45|          2|          2|    0.7775372929|         90|00:00:00|+0.35|0.36|0.3273|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         46|          2|          2|    0.7727868023|         92|00:00:00|+0.30|0.32|0.3478|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         47|          2|          2|    0.7575688216|         94|00:00:00|+0.32|0.33|0.3423|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         48|          2|          2|    0.7450927320|         96|00:00:00|+0.33|0.34|0.3369|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         49|          2|          2|    0.7316839943|         98|00:00:00|+0.34|0.35|0.3316|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         50|          2|          2|    0.7373617200|        100|00:00:00|+0.35|0.36|0.3265|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         51|          2|          2|    0.7240131757|        102|00:00:00|+0.36|0.37|0.3216|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         52|          2|          2|    0.7171968706|        104|00:00:00|+0.37|0.38|0.3167|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         53|          2|          2|    0.7072175514|        106|00:00:00|+0.38|0.39|0.3120|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         54|          2|          2|    0.9677590632|        108|00:00:00|+0.34|0.35|0.3305|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         55|          2|          2|     1.014908982|        110|00:00:00|+0.31|0.32|0.3475|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         56|          2|          2|    0.9979176476|        112|00:00:00|+0.31|0.33|0.3429|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         57|          2|          2|    0.9911489339|        114|00:00:00|+0.28|0.30|0.3584|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         58|          2|          2|    0.9772093680|        116|00:00:00|+0.29|0.30|0.3539|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         59|          2|          2|    0.9629815260|        118|00:00:00|+0.30|0.31|0.3495|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         60|          2|          2|    0.9527012717|        120|00:00:00|+0.31|0.32|0.3452|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         61|          2|          2|    0.9477012469|        122|00:00:00|+0.28|0.29|0.3596|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         62|          2|          2|    0.9330169699|        124|00:00:00|+0.29|0.30|0.3554|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         63|          2|          2|    0.9188703488|        126|00:00:00|+0.30|0.31|0.3513|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         64|          2|          2|    0.9103742963|        128|00:00:00|+0.31|0.32|0.3472|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         65|          2|          2|    0.9463616617|        130|00:00:00|+0.28|0.29|0.3606|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         66|          2|          2|    0.9382313772|        132|00:00:00|+0.29|0.30|0.3566|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         67|          2|          2|    0.9254606523|        134|00:00:00|+0.29|0.30|0.3528|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         68|          2|          2|    0.9568485008|        136|00:00:00|+0.30|0.31|0.3490|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         69|          2|          2|    0.9572493145|        138|00:00:00|+0.28|0.29|0.3615|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         70|          2|          2|    0.9914629007|        140|00:00:00|+0.25|0.26|0.3731|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         71|          2|          2|    0.9783986162|        142|00:00:00|+0.26|0.27|0.3694|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         72|          2|          2|    0.9672884859|        144|00:00:00|+0.27|0.28|0.3658|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         73|          2|          2|    0.9550943804|        146|00:00:00|+0.28|0.29|0.3623|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         74|          2|          2|    0.9833225473|        148|00:00:00|+0.25|0.26|0.3732|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         75|          2|          2|    0.9722521901|        150|00:00:00|+0.26|0.27|0.3697|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         76|          2|          2|    0.9711867698|        152|00:00:00|+0.24|0.25|0.3800|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         77|          2|          2|    0.9596106527|        154|00:00:00|+0.25|0.26|0.3766|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         78|          2|          2|    0.9504697290|        156|00:00:00|+0.23|0.24|0.3863|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         79|          2|          2|    0.9415634214|        158|00:00:00|+0.23|0.24|0.3830|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         80|          2|          2|    0.9335001815|        160|00:00:00|+0.24|0.25|0.3797|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         81|          2|          2|    0.9292496808|        162|00:00:00|+0.25|0.26|0.3765|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         82|          2|          2|    0.9537210697|        164|00:00:00|+0.23|0.24|0.3857|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         83|          2|          2|    0.9426678360|        166|00:00:00|+0.23|0.24|0.3826|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         84|          2|          2|    0.9323135405|        168|00:00:00|+0.24|0.25|0.3795|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         85|          2|          2|    0.9595472142|        170|00:00:00|+0.22|0.23|0.3882|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         86|          2|          2|    0.9525058746|        172|00:00:00|+0.23|0.24|0.3852|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         87|          2|          2|    0.9421752677|        174|00:00:00|+0.24|0.24|0.3823|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         88|          2|          2|    0.9323168634|        176|00:00:00|+0.22|0.23|0.3905|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         89|          2|          2|    0.9281073018|        178|00:00:00|+0.22|0.23|0.3876|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         90|          2|          2|    0.9216526068|        180|00:00:00|+0.23|0.24|0.3848|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         91|          2|          2|    0.9164552625|        182|00:00:00|+0.24|0.24|0.3819|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         92|          2|          2|    0.9099737818|        184|00:00:00|+0.24|0.25|0.3791|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         93|          2|          2|     1.018836503|        186|00:00:00|+0.23|0.23|0.3871|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         94|          2|          2|     1.009439496|        188|00:00:00|+0.21|0.22|0.3946|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         95|          2|          2|     1.005147480|        190|00:00:00|+0.22|0.22|0.3919|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         96|          2|          2|    0.9949935466|        192|00:00:00|+0.22|0.23|0.3893|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         97|          2|          2|    0.9853047802|        194|00:00:00|+0.21|0.22|0.3965|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         98|          2|          2|    0.9785572021|        196|00:00:00|+0.21|0.22|0.3939|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |x|         99|          2|          2|    0.9703768952|        198|00:00:00|+0.22|0.23|0.3913|</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |-|        100|          1|          2|    0.9612593407|        200|00:00:00|   NA|  NA|    NA|</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> +-+-----------+-----------+-----------+----------------+-----------+--------+-----+----+------+</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Best-so-far configuration:           3    mean value:      1.177089938</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Best-so-far configuration:           2    mean value:     0.9612593407</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Description of the best-so-far configuration:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .ID. tmax   temp .PARENT.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3    3 1905 0.3795        1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .ID. tmax    temp .PARENT.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2    2  429 56.6509        1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # Best changed parameters:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # temp : 60.7717 -&gt; 0.3795 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-10-18 13:22:11 UTC: Final best configuration:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   tmax   temp</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 1905 0.3795</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # tmax : 3492 -&gt; 429 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-10-23 10:30:47 UTC: Final best configuration:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   tmax    temp</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  429 45.2859</span>
 <span class="r-in"><span><span class="fu"><a href="plotAblation.html">plotAblation</a></span><span class="op">(</span><span class="va">ablog</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="ablation-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="co"># Execute ablation between two selected configurations, and selecting only a</span></span></span>
 <span class="r-in"><span><span class="co"># subset of parameters, directly reading the setup from the irace log file.</span></span></span>
 <span class="r-in"><span><span class="va">ablog</span> <span class="op">&lt;-</span> <span class="fu">ablation</span><span class="op">(</span><span class="va">logfile</span>, src <span class="op">=</span> <span class="fl">1</span>, target <span class="op">=</span> <span class="fl">10</span>,</span></span>
 <span class="r-in"><span>                  ab.params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"temp"</span><span class="op">)</span>, ablationLogFile <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-10-18 13:22:11 UTC: Starting ablation from 1 to 10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-10-23 10:30:47 UTC: Starting ablation from 1 to 10</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # Seed: 1234567</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # Source configuration (row number is ID):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   tmax    temp</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 1905 60.7717</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 3492 56.6509</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # Target configuration (row number is ID):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    tmax    temp</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10  308 48.0803</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-10-18 13:22:11 UTC: Executing source and target configurations on the given instances (100)...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-10-18 13:22:17 UTC: Final best configuration:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 1020 54.4915</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-10-23 10:30:48 UTC: Executing source and target configurations on the given instances (100)...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2022-10-23 10:30:55 UTC: Final best configuration:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   tmax    temp</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  308 48.0803</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 1020 54.4915</span>
 <span class="r-in"><span><span class="fu"><a href="plotAblation.html">plotAblation</a></span><span class="op">(</span><span class="va">ablog</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="ablation-2.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
