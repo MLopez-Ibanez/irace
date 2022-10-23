@@ -1,3 +1,9 @@
+# irace 3.6
+
+## New features and improvements
+
+## Fixes
+
 # irace 3.5
 
 ## New features and improvements
