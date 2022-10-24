@@ -734,3 +734,5 @@ read_logfile <- function(filename, name = "iraceResults")
 }
 
 do_nothing <- function(...) invisible()
+
+.irace_tolerance <- sqrt(.Machine$double.eps)

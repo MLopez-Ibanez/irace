@@ -348,14 +348,32 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
                            ") for parameter '", param.name, "'")
       }
 
+      valid_real_bound <- function(x, digits) {
+        if (is.na(x)) return(TRUE)
+        rx <- round(x, digits = digits)
+        (abs(rx - x) <= .irace_tolerance * max(1, abs(x)))
+      }
+
       if (param.type == "r") {
-        # FIXME: Given (0.01,0.99) and digits=1, this produces (0, 1), which is
-        # probably not what the user wants.
-        param.value <- round(param.value, digits = digits)
-      } else if (param.type == "i" && any(!is.wholenumber(param.value[!is.na(param.value)]))) {
+        if (digits >= 15L) { # This is almost infinite-precision so we do not complain.
+          param.value <- round(param.value, digits = digits)
+        } else if (!valid_real_bound(param.value[1], digits)
+                   || !valid_real_bound(param.value[2], digits)) {
+          for (i in seq.int(digits+1L,15L)) {
+            if (valid_real_bound(param.value[1], i) &&
+                valid_real_bound(param.value[2], i))
+              break
+          }
           errReadParameters (filename, nbLines, NULL,
-                             "for parameter type 'i' values must be integers (",
-                             result$match, ") for parameter '", param.name, "'")
+                             "for parameter '", param.name, "' of type 'r' domain bounds (",
+                             param.value[1], ", ", param.value[2],
+                             ") must be representable within the given 'digits=",
+                             digits, "'; you would need at least 'digits=", i, "' or adjust the domain")
+        }
+      } else if (param.type == "i" && any(!is.wholenumber(param.value[!is.na(param.value)]))) {
+        errReadParameters (filename, nbLines, NULL,
+                           "for parameter '", param.name, "' of type 'i' values must be integers (",
+                           result$match, ")")
       }
       
       # Time to parse dependent domains or check values

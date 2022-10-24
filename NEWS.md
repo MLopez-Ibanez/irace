@@ -4,6 +4,11 @@
 
 ## Fixes
 
+ * Fix (#44): irace now will give an error if the domain of real-valued (r)
+   parameters would change depending on the value of `'digits'`. The solution
+   is to increase the value of `'digits'` or adjust the domain. (Manuel López-Ibáñez, reported by @mb706)
+ 
+ 
 # irace 3.5
 
 ## New features and improvements
