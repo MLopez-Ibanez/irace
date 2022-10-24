@@ -2,7 +2,7 @@ README file for developers
 ===========================
 
 Git commands
----------------------
+------------
 ```
 # See differences in your local copy
 git diff
@@ -48,12 +48,7 @@ Developing irace
   
 
 CHECKING:
------------
-
-* ./check-reverse requires installing R package devtools, which
-  requires Rcurl, which requires:
-
-  $ sudo apt-get install curl libcurl4-gnutls-dev
+---------
 
 * --as-cran messages of the type: 
 
@@ -108,7 +103,13 @@ RELEASE Process:
 
 7. make closeversion
 
-8. Send package as a pre-release to:
+8. Check reverse dependencies:
+
+8.1. Try to run `./scripts/check-reverse`. It may require installing R package devtools, which requires Rcurl, which requires:
+
+    $ sudo apt-get install curl libcurl4-gnutls-dev
+
+8.2. If it doesn't work send package as a pre-release to:
 
    * The maintainers of the packages listed in "Reverse suggests" or "Reverse
      depend" at https://cran.r-project.org/package=irace so they can check we

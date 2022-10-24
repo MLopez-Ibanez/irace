@@ -1,0 +1,15 @@
+#!/usr/bin/env Rscript
+# Check reverse dependencies
+require("revdepcheck")
+revdepcheck::revdep_check()
+### Old instructions:
+## # You need to install:
+## # sudo apt install default-jdk
+## # sudo R CMD javareconf
+## require("devtools")
+## devtools.revdep.libpath = "../irace.revdep"
+## options(devtools.revdep.libpath = devtools.revdep.libpath)
+## if (!dir.exists(devtools.revdep.libpath)) dir.create(devtools.revdep.libpath)
+## #revdep_check_resume()
+## revdep_check_reset()
+## revdep_check()
