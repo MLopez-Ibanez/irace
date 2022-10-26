@@ -8,6 +8,8 @@
    parameters would change depending on the value of `'digits'`. The solution
    is to increase the value of `'digits'` or adjust the domain. (Manuel López-Ibáñez, reported by @mb706)
  
+ * Fix problem with `n_instances` in `ablation_cmdline()`. 
+                                                           (Manuel López-Ibáñez)
  
 # irace 3.5
 
