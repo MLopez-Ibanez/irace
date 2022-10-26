@@ -92,10 +92,6 @@ git help</code></pre>
 <div class="section level2">
 <h2 id="checking">CHECKING:<a class="anchor" aria-label="anchor" href="#checking"></a></h2>
 <ul><li>
-<p>./check-reverse requires installing R package devtools, which requires Rcurl, which requires:</p>
-<p>$ sudo apt-get install curl libcurl4-gnutls-dev</p>
-</li>
-<li>
 <p>–as-cran messages of the type:</p>
 <p>Undefined global functions or variables: median p.adjust pchisq qt read.table recover rexp rnorm runif t.test wilcox.test</p>
 <p>can be fixed by running:</p>
@@ -122,8 +118,7 @@ git help</code></pre>
 <span><span class="st">   wilcox.test"</span> </span>
 <span><span class="va">R</span><span class="op">&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/writeLines.html" class="external-link">writeLines</a></span><span class="op">(</span><span class="fu">imports_for_undefined_globals</span><span class="op">(</span><span class="va">txt</span>, selective <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span></span></code></pre>
 <p>And adding the result to NAMESPACE. Namespaces newly imported from also need to be listed in the Imports: field of DESCRIPTION.</p>
-</li>
-</ul></div>
+</li></ul></div>
 <div class="section level2">
 <h2 id="release-process">RELEASE Process:<a class="anchor" aria-label="anchor" href="#release-process"></a></h2>
 <ol style="list-style-type: decimal"><li><p>git status # make sure you are up to date and clean</p></li>
@@ -133,13 +128,14 @@ git help</code></pre>
 <li><p>make releasebuild # Inspect the output for strange files!</p></li>
 <li><p>make winbuild # passes. Wait for the 2 emails and check logs!</p></li>
 <li><p>make closeversion</p></li>
-<li>
-<p>Send package as a pre-release to:</p>
+<li><p>Check reverse dependencies:</p></li>
+</ol><p>8.1. Try to run <code>./scripts/check-reverse</code>. It may require installing R package devtools, which requires Rcurl, which requires:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="sc">$</span> sudo apt<span class="sc">-</span>get install curl libcurl4<span class="sc">-</span>gnutls<span class="sc">-</span>dev</span></code></pre></div>
+<p>8.2. If it doesn’t work send package as a pre-release to:</p>
 <ul><li>The maintainers of the packages listed in “Reverse suggests” or “Reverse depend” at <a href="https://cran.r-project.org/package=irace" class="external-link uri">https://cran.r-project.org/package=irace</a> so they can check we do not break their packages (this step would be automatic once ./check-reverse above works).</li>
 <li>Google group</li>
 <li>IRIDIAns</li>
-</ul></li>
-<li><p>If everything is OK, continue, otherwise fix and goto 1.</p></li>
+</ul><ol start="9" style="list-style-type: decimal"><li><p>If everything is OK, continue, otherwise fix and goto 1.</p></li>
 <li><p>Use <a href="http://cran.r-project.org/submit.html" class="external-link uri">http://cran.r-project.org/submit.html</a> to submit Read <a href="http://cran.r-project.org/web/packages/policies.html" class="external-link uri">http://cran.r-project.org/web/packages/policies.html</a></p></li>
 </ol><p>11.a IF the package requires further changes:</p>
 <ul><li><p>Make the changes.</p></li>
@@ -160,8 +156,8 @@ git help</code></pre>
 <p>There are significant bugfixes and only very minor interface changes so we recommend all users to upgrade:</p>
 <p>NEWS entry</p>
 <p>Best wishes,</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>Manuel López<span class="sc">-</span>Ibáñez.</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a> </span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>Manuel López<span class="sc">-</span>Ibáñez.</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a> </span></code></pre></div>
 </div>
 <div class="section level1">
 <h1 id="submission-email">Submission email<a class="anchor" aria-label="anchor" href="#submission-email"></a></h1>
@@ -169,11 +165,11 @@ git help</code></pre>
 <p>Dear CRAN maintainers,</p>
 <p>I would like to submit version $VERSION of the irace package to CRAN.</p>
 <p>The NEWS section corresponding to this version is available from:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>https<span class="sc">:</span><span class="er">//</span>mlopez<span class="sc">-</span>ibanez.github.io<span class="sc">/</span>irace<span class="sc">/</span>news<span class="sc">/</span>index.html<span class="co">#irace-35</span></span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>https<span class="sc">:</span><span class="er">//</span>mlopez<span class="sc">-</span>ibanez.github.io<span class="sc">/</span>irace<span class="sc">/</span>news<span class="sc">/</span>index.html<span class="co">#irace-35</span></span></code></pre></div>
 <p>More information about irace may be found at:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>https<span class="sc">:</span><span class="er">//</span>mlopez<span class="sc">-</span>ibanez.github.io<span class="sc">/</span>irace<span class="sc">/</span></span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>https<span class="sc">:</span><span class="er">//</span>mlopez<span class="sc">-</span>ibanez.github.io<span class="sc">/</span>irace<span class="sc">/</span></span></code></pre></div>
 <p>Thanks in advance,</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>Manuel López<span class="sc">-</span>Ibáñez.</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>Manuel López<span class="sc">-</span>Ibáñez.</span></code></pre></div>
 </div>
 
 
