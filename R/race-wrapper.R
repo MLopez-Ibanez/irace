@@ -26,8 +26,8 @@
 #'   parameters (but none between the switches and the corresponding values).
 #'
 #' @examples
-#' switches <- c("--switch1 ", "--switch2 ")
-#' values <- c("value_1", "value_2")
+#' switches <- c("--switch1 ", "--switch2-", "--switch3=")
+#' values <- list("value_1", 1L, sqrt(2))
 #' buildCommandLine (values, switches)
 #' ## Build a command-line from the results produced by a previous run of irace.
 #' # First, load the data produced by irace.
@@ -44,17 +44,11 @@
 buildCommandLine <- function(values, switches)
 {
   irace.assert(length(values) == length(switches))
-  command <- ""
-  # FIXME: This probably can be implemented faster with apply() and
-  # paste(collapse=" "). But how to get the index i in that case?
-  for (i in seq_along(values)) {
-    value <- values[i]
-    if (!is.na(value)) {
-      command <- paste0(command, " ", switches[i],
-                        format(value, digits=15, scientific=FALSE))
-    }
-  }
-  return(command)
+  values <- as.list(values)
+  switches <- switches[!is.na(values)]
+  values <- values[!is.na(values)]
+  values <- format(values, digits=15, scientific=FALSE)
+  paste0(switches, values, collapse=" ")
 }
 
 # This function tries to convert a, possibly empty, character vector into a
@@ -71,7 +65,7 @@ parse.output <- function(outputRaw, verbose)
     output <- strsplit(trim(outputRaw), "[[:space:]]+")[[1]]
   }
   # suppressWarnings to avoid messages about NAs introduced by coercion
-  return(suppressWarnings (as.numeric (output)))
+  suppressWarnings (as.numeric (output))
 }
 
 target.error <- function(err.msg, output, scenario, target.runner.call,
@@ -312,8 +306,7 @@ exec.target.runner <- function(experiment, scenario, target.runner)
     irace.note("Retrying (", retries, " left).\n")
     retries <- retries - 1
   }
-  output <- doit(experiment, scenario)
-  return (output)
+  doit(experiment, scenario)
 }
 
 parse.aclib.output <- function(outputRaw)
