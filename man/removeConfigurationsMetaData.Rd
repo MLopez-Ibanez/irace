@@ -11,14 +11,14 @@ removeConfigurationsMetaData(configurations)
 target algorithm (one per row).}
 }
 \value{
-The same matrix without the "metadata".
+The same data frame without "metadata".
 }
 \description{
-Remove the columns with "metadata" of a matrix containing some
-configuration configurations. These "metadata" are used internaly
-by \pkg{irace}. This function can be used e.g. before printing
-the configurations, to output only the values for the parameters
-of the configuration without data possibly useless to the user.
+Remove the columns with "metadata" of a data frame containing
+configurations. Currently, metadata corresponds to column names starting
+with a period.  This function should be used before printing the
+configurations to output only the values for the parameters of the
+configuration without metadata possibly useless to the user.
 }
 \seealso{
 \code{\link[=configurations.print.command]{configurations.print.command()}} to print the configurations as command lines.

@@ -405,15 +405,15 @@ extractElites <- function(scenario, parameters, configurations, nbElites)
 
 #' removeConfigurationsMetaData
 #'
-#' Remove the columns with "metadata" of a matrix containing some
-#' configuration configurations. These "metadata" are used internaly
-#' by \pkg{irace}. This function can be used e.g. before printing
-#' the configurations, to output only the values for the parameters
-#' of the configuration without data possibly useless to the user.
+#' Remove the columns with "metadata" of a data frame containing
+#' configurations. Currently, metadata corresponds to column names starting
+#' with a period.  This function should be used before printing the
+#' configurations to output only the values for the parameters of the
+#' configuration without metadata possibly useless to the user.
 #'   
 #' @template arg_configurations
 #' 
-#' @return The same matrix without the "metadata".
+#' @return The same data frame without "metadata".
 #'    
 #' @seealso 
 #'   [configurations.print.command()] to print the configurations as command lines.
@@ -421,13 +421,8 @@ extractElites <- function(scenario, parameters, configurations, nbElites)
 #' 
 #' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
 #' @export
-## Keep only parameters values
 removeConfigurationsMetaData <- function(configurations)
-{
-  # Meta-data colnames begin with "."
-  configurations[, grep("^\\.", colnames(configurations), invert = TRUE),
-                     drop = FALSE]
-}
+  configurations[, !startsWith(colnames(configurations), "."), drop = FALSE]
 
 #' Print configurations as a data frame
 #' 
