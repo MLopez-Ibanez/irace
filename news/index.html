@@ -49,7 +49,9 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="3.6" id="irace-36">irace 3.6<a class="anchor" aria-label="anchor" href="#irace-36"></a></h2>
-<div class="section level3"><h3 id="new-features-and-improvements-3-6">New features and improvements<a class="anchor" aria-label="anchor" href="#new-features-and-improvements-3-6"></a></h3></div>
+<div class="section level3">
+<h3 id="new-features-and-improvements-3-6">New features and improvements<a class="anchor" aria-label="anchor" href="#new-features-and-improvements-3-6"></a></h3>
+</div>
 <div class="section level3">
 <h3 id="fixes-3-6">Fixes<a class="anchor" aria-label="anchor" href="#fixes-3-6"></a></h3>
 <ul><li><p>Fix (<a href="https://github.com/MLopez-Ibanez/irace/issues/44" class="external-link">#44</a>): irace now will give an error if the domain of real-valued (r) parameters would change depending on the value of <code>'digits'</code>. The solution is to increase the value of <code>'digits'</code> or adjust the domain. (Manuel López-Ibáñez, reported by <a href="https://github.com/mb706" class="external-link">@mb706</a>)</p></li>
@@ -185,7 +187,8 @@
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="2.3" id="irace-23">irace 2.3<a class="anchor" aria-label="anchor" href="#irace-23"></a></h2><p class="text-muted">CRAN release: 2017-04-26</p>
-<ul><li>Fix bug that will cause <code>iraceResults$experimentLog</code> to count calls to <code>targetEvaluator</code> as experiments, even if no call to <code>targetRunner</code> was performed. This does not affect the computation of the budget consumed and, thus, it does not affect the termination criteria of irace. The bug triggers an assertion that terminates irace, thus no run that was successful with version 2.2 is affected. (Manuel López-Ibáñez)</li></ul></div>
+<ul><li>Fix bug that will cause <code>iraceResults$experimentLog</code> to count calls to <code>targetEvaluator</code> as experiments, even if no call to <code>targetRunner</code> was performed. This does not affect the computation of the budget consumed and, thus, it does not affect the termination criteria of irace. The bug triggers an assertion that terminates irace, thus no run that was successful with version 2.2 is affected. (Manuel López-Ibáñez)</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="2.2" id="irace-22">irace 2.2<a class="anchor" aria-label="anchor" href="#irace-22"></a></h2><p class="text-muted">CRAN release: 2017-03-24</p>
 <ul><li><p>Command-line parameters are printed to stdout (useful for future replications). (Manuel López-Ibáñez, suggested by Markus Wagner)</p></li>
@@ -212,7 +215,8 @@
 <li><p>New command-line parameter</p></li>
 </ul><pre><code>       --only-test FILE</code></pre>
 <p>which just evaluates the configurations given in FILE on the testing instances defined by the scenario. Useful if you decide on the testing instances only after running irace. (Manuel López-Ibáñez)</p>
-<ul><li>Bugfix: When using <code>maxTime != 0</code>, the number of experiments performed may be miscounted in some cases. (Manuel López-Ibáñez)</li></ul></div>
+<ul><li>Bugfix: When using <code>maxTime != 0</code>, the number of experiments performed may be miscounted in some cases. (Manuel López-Ibáñez)</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="2.1" id="irace-21">irace 2.1<a class="anchor" aria-label="anchor" href="#irace-21"></a></h2><p class="text-muted">CRAN release: 2016-10-18</p>
 <ul><li><p>Fix CRAN errors in tests. (Manuel López-Ibáñez)</p></li>

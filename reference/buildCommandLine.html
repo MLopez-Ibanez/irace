@@ -96,10 +96,10 @@ parameters (but none between the switches and the corresponding values).</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">switches</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"--switch1 "</span>, <span class="st">"--switch2 "</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">values</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"value_1"</span>, <span class="st">"value_2"</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">switches</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"--switch1 "</span>, <span class="st">"--switch2-"</span>, <span class="st">"--switch3="</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">values</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"value_1"</span>, <span class="fl">1L</span>, <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">buildCommandLine</span> <span class="op">(</span><span class="va">values</span>, <span class="va">switches</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] " --switch1 value_1 --switch2 value_2"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "--switch1 value_1 --switch2-1 --switch3=1.4142135623731"</span>
 <span class="r-in"><span><span class="co">## Build a command-line from the results produced by a previous run of irace.</span></span></span>
 <span class="r-in"><span><span class="co"># First, load the data produced by irace.</span></span></span>
 <span class="r-in"><span><span class="va">irace.logfile</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span>package<span class="op">=</span><span class="st">"irace"</span><span class="op">)</span>,</span></span>
@@ -109,26 +109,26 @@ parameters (but none between the switches and the corresponding values).</p>
 <span class="r-in"><span><span class="va">parameters</span> <span class="op">&lt;-</span> <span class="va">iraceResults</span><span class="op">$</span><span class="va">parameters</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/apply.html" class="external-link">apply</a></span><span class="op">(</span><span class="va">allConfigurations</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">parameters</span><span class="op">$</span><span class="va">names</span><span class="op">)</span><span class="op">]</span>, <span class="fl">1</span>, <span class="va">buildCommandLine</span>,</span></span>
 <span class="r-in"><span>      <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">parameters</span><span class="op">$</span><span class="va">switches</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                 1 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                      " --as --localsearch 0 --alpha 1.0000 --beta 1.0000 --rho  0.9500 --ants 10" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                 2 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                   " --eas --localsearch 0 --alpha 3.8873 --beta 7.2545 --rho  0.4842 --ants 17 --elitistants  95" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                 3 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> " --eas --localsearch 2 --alpha 2.8022 --beta 8.5451 --rho  0.9700 --ants 16 --nnls 21 --dlb 1 --elitistants 604" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                 4 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                    " --as --localsearch 1 --alpha 3.1363 --beta 3.0791 --rho  0.0884 --ants 61 --nnls 50 --dlb 1" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                 5 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    " --ras --localsearch 2 --alpha 1.2820 --beta 8.3284 --rho  0.3265 --ants  8 --nnls 40 --dlb 1 --rasranks 100" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                 6 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       " --acs --localsearch 3 --alpha 2.2422 --beta 7.8826 --rho  0.1091 --ants 14 --nnls 40 --q0 0.0174 --dlb 0" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                 7 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                      " --as --localsearch 0 --alpha 0.9008 --beta 4.7482 --rho  0.7845 --ants  5" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                 8 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                    " --mmas --localsearch 0 --alpha 3.2987 --beta 4.1372 --rho  0.9855 --ants 13" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                 9 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                  " --mmas --localsearch 2 --alpha 0.4260 --beta 8.1816 --rho  0.2807 --ants 29 --nnls  5 --dlb 1" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                10 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> " --eas --localsearch 1 --alpha 0.9706 --beta 0.2805 --rho  0.4953 --ants 54 --nnls 50 --dlb 0 --elitistants 281" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                      "--as --localsearch 0 --alpha 1.0000 --beta 1.0000 --rho  0.9500 --ants 10" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                   "--eas --localsearch 0 --alpha 3.8873 --beta 7.2545 --rho  0.4842 --ants 17 --elitistants  95" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                3 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> "--eas --localsearch 2 --alpha 2.8022 --beta 8.5451 --rho  0.9700 --ants 16 --nnls 21 --dlb 1 --elitistants 604" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                4 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                    "--as --localsearch 1 --alpha 3.1363 --beta 3.0791 --rho  0.0884 --ants 61 --nnls 50 --dlb 1" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                5 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    "--ras --localsearch 2 --alpha 1.2820 --beta 8.3284 --rho  0.3265 --ants  8 --nnls 40 --dlb 1 --rasranks 100" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                6 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       "--acs --localsearch 3 --alpha 2.2422 --beta 7.8826 --rho  0.1091 --ants 14 --nnls 40 --q0 0.0174 --dlb 0" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                7 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                      "--as --localsearch 0 --alpha 0.9008 --beta 4.7482 --rho  0.7845 --ants  5" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                8 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                    "--mmas --localsearch 0 --alpha 3.2987 --beta 4.1372 --rho  0.9855 --ants 13" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                9 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                  "--mmas --localsearch 2 --alpha 0.4260 --beta 8.1816 --rho  0.2807 --ants 29 --nnls  5 --dlb 1" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                               10 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> "--eas --localsearch 1 --alpha 0.9706 --beta 0.2805 --rho  0.4953 --ants 54 --nnls 50 --dlb 0 --elitistants 281" </span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

@@ -78,6 +78,7 @@
 <strong>irace</strong>: Iterated Racing for Automatic Algorithm Configuration<a class="anchor" aria-label="anchor" href="#irace-iterated-racing-for-automatic-algorithm-configuration"></a>
 </h1></div>
 <!-- badges: start -->
+
 <p>[ <a href="https://mlopez-ibanez.github.io/irace/"><strong>Homepage</strong></a> ] [ <a href="https://cran.r-project.org/package=irace/vignettes/irace-package.pdf" class="external-link"><strong>User Guide (PDF)</strong></a> ]</p>
 <p><strong>Maintainers:</strong> <a href="https://lopez-ibanez.eu/" class="external-link">Manuel López-Ibáñez</a>, Leslie Pérez Cáceres</p>
 <p><strong>Creators:</strong> <a href="https://lopez-ibanez.eu/" class="external-link">Manuel López-Ibáñez</a>, Jérémie Dubois-Lacoste</p>
@@ -99,7 +100,9 @@
 <div class="section level2">
 <h2 id="requisites">Requisites<a class="anchor" aria-label="anchor" href="#requisites"></a>
 </h2>
-<ul><li>R (<a href="https://www.r-project.org" class="external-link uri">https://www.r-project.org</a>) is required for running irace, but you don’t need to know the R language to use it.</li></ul>
+<ul>
+<li>R (<a href="https://www.r-project.org" class="external-link uri">https://www.r-project.org</a>) is required for running irace, but you don’t need to know the R language to use it.</li>
+</ul>
 </div>
 <div class="section level2">
 <h2 id="user-guide">User guide<a class="anchor" aria-label="anchor" href="#user-guide"></a>
@@ -118,10 +121,14 @@
 <li>Install irace. This command works on CMD and Powershell with R added to PATH (see detailed instructions below).</li>
 </ol>
 <div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>    <span class="ex">$</span> Rscript <span class="at">-e</span> <span class="st">"install.packages('irace', repos='https://cloud.r-project.org')"</span></span></code></pre></div>
-<ol start="3" style="list-style-type: decimal"><li>Add irace to path. For windows user, this step is unfortunately more involved, so please see more detailed instructions below.</li></ol>
+<ol start="3" style="list-style-type: decimal">
+<li>Add irace to path. For windows user, this step is unfortunately more involved, so please see more detailed instructions below.</li>
+</ol>
 <div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>    <span class="ex">$</span> export PATH=<span class="st">"</span><span class="va">$(</span><span class="ex">Rscript</span> <span class="at">-e</span> <span class="st">"cat(paste0(system.file(package='irace', 'bin', mustWork=TRUE), ':'))"</span> <span class="dv">2</span><span class="op">&gt;</span> /dev/null<span class="va">)${PATH}</span><span class="st">"</span></span></code></pre></div>
 <p>Consider adding this line to your <code>~/.bashrc</code>, <code>~/.zshrc</code>, or <code>~/.profile</code> for it to persist between sessions.</p>
-<ol start="4" style="list-style-type: decimal"><li>You can open the user guide with the following command. This command works on CMD and Powershell with R added to PATH (see detailed instructions below).</li></ol>
+<ol start="4" style="list-style-type: decimal">
+<li>You can open the user guide with the following command. This command works on CMD and Powershell with R added to PATH (see detailed instructions below).</li>
+</ol>
 <div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>    <span class="ex">$</span> Rscript <span class="at">-e</span> <span class="st">"vignette('irace-package')"</span></span></code></pre></div>
 </div>
 <div class="section level1">
@@ -159,14 +166,18 @@
 <h1 id="installing-the-irace-package">Installing the irace package<a class="anchor" aria-label="anchor" href="#installing-the-irace-package"></a>
 </h1>
 <p>There are two methods for installing the <a href="https://mlopez-ibanez.github.io/irace/">irace</a> R package on your computer:</p>
-<ol style="list-style-type: decimal"><li>Install within R (automatic download):</li></ol>
+<ol style="list-style-type: decimal">
+<li>Install within R (automatic download):</li>
+</ol>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>        <span class="sc">$</span> R</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>        R<span class="sc">&gt;</span> <span class="fu">install.packages</span>(<span class="st">"irace"</span>)</span></code></pre></div>
 <p>select a mirror close to you, and test the installation with</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span>        <span class="va">R</span><span class="op">&gt;</span> <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://mlopez-ibanez.github.io/irace/">irace</a></span><span class="op">)</span></span>
 <span>        <span class="va">R</span><span class="op">&gt;</span> <span class="va">CTRL</span><span class="op">+</span><span class="va">d</span></span></code></pre></div>
-<ol start="2" style="list-style-type: decimal"><li>Manually <a href="https://cran.r-project.org/package=irace" class="external-link">download the package from CRAN</a> and invoke at the command-line:</li></ol>
+<ol start="2" style="list-style-type: decimal">
+<li>Manually <a href="https://cran.r-project.org/package=irace" class="external-link">download the package from CRAN</a> and invoke at the command-line:</li>
+</ol>
 <div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>        <span class="ex">$</span> R CMD INSTALL <span class="op">&lt;</span>package<span class="op">&gt;</span></span></code></pre></div>
 <p>where <code>&lt;package&gt;</code> is one of the three versions available: <code>.tar.gz</code> (Unix/BSD/GNU/Linux), <code>.tgz</code> (MacOS X), or <code>.zip</code> (Windows).</p>
 <p>If the package fails to install because of insufficient permissions, you need to force a <em>local installation</em> by doing:</p>
@@ -219,10 +230,14 @@
 <div class="section level1">
 <h1 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
 </h1>
-<ol style="list-style-type: decimal"><li>Create a directory for storing the tuning scenario setup</li></ol>
+<ol style="list-style-type: decimal">
+<li>Create a directory for storing the tuning scenario setup</li>
+</ol>
 <div class="sourceCode" id="cb20"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>        <span class="ex">$</span> mkdir ~/tuning</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>        <span class="ex">$</span> cd ~/tuning</span></code></pre></div>
-<ol start="2" style="list-style-type: decimal"><li>Initialize your tuning directory with template config files</li></ol>
+<ol start="2" style="list-style-type: decimal">
+<li>Initialize your tuning directory with template config files</li>
+</ol>
 <div class="sourceCode" id="cb21"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>        <span class="ex">$</span> <span class="va">$IRACE_HOME</span>/bin/irace <span class="at">--init</span></span></code></pre></div>
 <ol start="3" style="list-style-type: decimal">
 <li>
@@ -260,7 +275,9 @@
 <p>This program is free software (software libre); you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.</p>
 <p>This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the <a href="https://cran.r-project.org/web/licenses/GPL-3" class="external-link">GNU General Public License</a> for more details.</p>
 <p><strong>IMPORTANT NOTE:</strong> Please be aware that the fact that this program is released as Free Software does not excuse you from scientific propriety, which obligates you to give appropriate credit! If you write a scientific paper describing research that made substantive use of this program, it is your obligation as a scientist to (a) mention the fashion in which this software was used in the Methods section; (b) mention the algorithm in the References section. The appropriate citation is:</p>
-<ul><li>Manuel López-Ibáñez, Jérémie Dubois-Lacoste, Leslie Pérez Cáceres, Thomas Stützle, and Mauro Birattari. <a href="http://dx.doi.org/10.1016/j.orp.2016.09.002" class="external-link"><strong>The irace package: Iterated Racing for Automatic Algorithm Configuration.</strong></a> <em>Operations Research Perspectives</em>, 2016. doi: 10.1016/j.orp.2016.09.002</li></ul>
+<ul>
+<li>Manuel López-Ibáñez, Jérémie Dubois-Lacoste, Leslie Pérez Cáceres, Thomas Stützle, and Mauro Birattari. <a href="http://dx.doi.org/10.1016/j.orp.2016.09.002" class="external-link"><strong>The irace package: Iterated Racing for Automatic Algorithm Configuration.</strong></a> <em>Operations Research Perspectives</em>, 2016. doi: 10.1016/j.orp.2016.09.002</li>
+</ul>
 <p>The <strong>irace</strong> package uses code under the GPL from the <a href="https://CRAN.R-project.org/package=race" class="external-link">race package</a> is Copyright (C) 2003 Mauro Birattari.</p>
 </div>
 <div class="section level1">
