@@ -425,12 +425,13 @@ executionBound <- function(data, type = "median")
   # been executed on all previous instances.
   
   irace.assert (all(!is.na(data)))
+  colmeans <- colMeans(data)
   bound <- switch (type,
-                   median = median(colMeans(data)),
-                   mean   = mean(colMeans(data)),
-                   worst  = max(colMeans(data)),
+                   median = median(colmeans),
+                   mean   = mean(colmeans),
+                   worst  = max(colmeans),
                    # default:
-                   min(colMeans(data)))
+                   min(colmeans))
   return (bound)
 }
 
@@ -557,17 +558,17 @@ final.execution.bound <- function(experimentsTime, elites, no.configurations,
 # criteria of the stat test.
 overall.ranks <- function(x, stat.test)
 {
-  if (ncol(x) == 1) return(1)
+  if (ncol(x) == 1) return(1L)
     
   ninstances <- colSums(!is.na(x))
   uniq.ninstances <- sort(unique(ninstances), decreasing = TRUE)
-  last.r <- 0
+  last.r <- 0L
   ranks <- rep(Inf, ncol(x))
   # Iterate from the largest to the lowest number of instances.
   for (k in uniq.ninstances) {
     confs <- which(ninstances == k)
     irace.assert(all(is.infinite(ranks[confs])))
-    r <- 1
+    r <- 1L
     if (length(confs) > 1) {
       # Select only non-NA rows
       y <- x[, confs, drop = FALSE]
