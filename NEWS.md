@@ -2,6 +2,10 @@
 
 ## New features and improvements
 
+ * Ablation will report configurations that produced the same results, which
+   points to parameter values that have the same effect on the target algorithm,
+   possibly indicating a bug in the target algorithm.
+
 ## Fixes
 
  * Fix (#44): irace now will give an error if the domain of real-valued (r)
@@ -31,7 +35,8 @@
    ablation log does not contain a complete ablation.
                                                     (Manuel López-Ibáñez)
 
- * The argument `n.instances` of `ablation()` has been renamed to `n_instances` and it is now a factor that multiplies `scenario$firstTest`.
+ * The argument `n.instances` of `ablation()` has been renamed to `n_instances`
+   and it is now a factor that multiplies `scenario$firstTest`.
                                                          (Manuel López-Ibáñez)
  
  * New command-line option `--quiet` to run without producing any output

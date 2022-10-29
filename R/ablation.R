@@ -187,8 +187,12 @@ report_duplicated_results <- function(experiments, configurations)
   dups <- split(rownames(x), apply(x, 1, paste0, collapse=""))
   names(dups) <- NULL
   for (g in dups) {
-    cat("Warning: The following configuration produced the same results (the different parameters had not effect):\n")
-    print(configurations[configurations$.ID. %in% g, , drop=FALSE])
+    cat("Warning: The following configurations are different but produced the same results:\n")
+    df <- configurations[configurations$.ID. %in% g, , drop=FALSE]
+    print(df)
+    cat("Parameters with different values from the above configurations:\n")
+    df <- df[, vapply(removeConfigurationsMetaData(df), function(x) length(unique(x)) > 1L, logical(1L)), drop=FALSE]
+    print(df)
   }
   dups
 }
