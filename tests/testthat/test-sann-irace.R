@@ -48,7 +48,7 @@ target.runner <- function(experiment, scenario)
 target.runner.reject <- function(experiment, scenario)
 {
   if (runif(1) <= 0.05) return (list(cost = -Inf, call = toString(experiment)))
-  return (target.runner(experiment, scenario))
+  target.runner(experiment, scenario)
 }
 
 ## Run function ########################################################
@@ -112,6 +112,13 @@ test_that("log", {
   sann.irace(log.param=TRUE, instances = weights)
 })
 
+test_that("large newInstances", {
+  skip_on_cran()
+  # Reproducible results
+  generate.set.seed()
+  weights <- rnorm(200, mean = 0.9, sd = 0.02)
+  sann.irace(instances = weights, elitistNewInstances = 6, elitistLimit = 2)
+})
 
 
 }) # withr::with_output_sink()
