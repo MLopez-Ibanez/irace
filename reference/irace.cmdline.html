@@ -295,8 +295,8 @@ the command line. It finally starts <span class="pkg">irace</span> by calling
                          configuration. Use 0 for no limit. Default: 2.
    --capping             Enable the use of adaptive capping, a technique
                          designed for minimizing the computation time of
-                         configurations. This is only available when elitist is
-                         active. Default: 0.
+                         configurations. Capping is enabled by default if
+                         elitist is active, maxTime &gt; 0 and boundMax &gt; 0.
    --capping-type        Measure used to obtain the execution bound from the
                          performance of the elite configurations: median, mean,
                          worst, best. Default: median.

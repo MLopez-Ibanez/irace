@@ -242,7 +242,7 @@ The scenario list contains the following elements:</p><ul><li><p>General options
 
 </dl></li>
 <li><p>Adaptive capping:</p><dl><dt><code>capping</code></dt>
-<dd><p>Enable the use of adaptive capping, a technique designed for minimizing the computation time of configurations. This is only available when <code>elitist</code> is active. (Default: <code>0</code>)</p></dd>
+<dd><p>Enable the use of adaptive capping, a technique designed for minimizing the computation time of configurations. Capping is enabled by default if <code>elitist</code> is active, <code>maxTime &gt; 0</code> and  <code>boundMax &gt; 0</code>. (Default: <code>NA</code>)</p></dd>
 
 <dt><code>cappingType</code></dt>
 <dd><p>Measure used to obtain the execution bound from the performance of the elite configurations.</p><ul><li><p>mean: Mean performance of the elite configurations.</p></li>

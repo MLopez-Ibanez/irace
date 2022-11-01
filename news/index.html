@@ -51,7 +51,8 @@
 <h2 class="pkg-version" data-toc-text="3.6" id="irace-36">irace 3.6<a class="anchor" aria-label="anchor" href="#irace-36"></a></h2>
 <div class="section level3">
 <h3 id="new-features-and-improvements-3-6">New features and improvements<a class="anchor" aria-label="anchor" href="#new-features-and-improvements-3-6"></a></h3>
-<ul><li>Ablation will report configurations that produced the same results, which points to parameter values that have the same effect on the target algorithm, possibly indicating a bug in the target algorithm.</li>
+<ul><li><p>Ablation will report configurations that produced the same results, which points to parameter values that have the same effect on the target algorithm, possibly indicating a bug in the target algorithm.</p></li>
+<li><p>Adaptive capping is now enabled by default if <code>maxTime &gt; 0</code> and <code>maxBound &gt; 0</code>. It can be disabled with <code>--capping 0</code> or <code>capping=0</code>. See <a href="https://iridia-ulb.github.io/references/#PerLopHooStu2017:lion" class="external-link uri">https://iridia-ulb.github.io/references/#PerLopHooStu2017:lion</a> for details. (Leslie Pérez Cáceres, Manuel López-Ibáñez)</p></li>
 </ul></div>
 <div class="section level3">
 <h3 id="fixes-3-6">Fixes<a class="anchor" aria-label="anchor" href="#fixes-3-6"></a></h3>
