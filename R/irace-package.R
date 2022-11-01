@@ -4,11 +4,11 @@
 #'
 #' @name irace-package
 #' @docType package
-#' @import stats utils compiler
+#' @import stats utils compiler matrixStats
 #' @importFrom R6 R6Class
-#' @importFrom grDevices dev.new dev.off pdf
-#' @importFrom graphics abline axis barplot boxplot lines matplot mtext par plot points strwidth text bxp grid
-#'  
+#' @importFrom grDevices dev.off pdf
+#' @importFrom graphics abline axis boxplot par plot points strwidth bxp grid
+#'
 #' 
 #' @details  License: GPL (>= 2)
 #' 

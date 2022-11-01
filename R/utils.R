@@ -365,7 +365,7 @@ merge.matrix <- function(x, y)
   # Update
   x[rownames(y), colnames(y)] <- y
   # There must be a non-NA entry for each instance.
-  irace.assert(all(apply(!is.na(x), 1, any)))
+  irace.assert(all(rowAnys(!is.na(x))))
   return(x)
 }
 
@@ -561,7 +561,7 @@ concordance <- function(data)
     return(list(kendall.w = NA, spearman.rho = NA))
 
   # Get rankings by rows (per instance)
-  r <- t(apply(data, 1L, rank))
+  r <- rowRanks(data, ties.method = "average")
   R <- colSums(r)
   # FIXME: This is slow, can we make it faster?
   TIES <- tapply(r, row(r), table)
@@ -583,7 +583,7 @@ concordance <- function(data)
   #STATISTIC <- n * (k - 1) * W
   #PARAMETER <- k - 1
   #pvalue <- pchisq(PARAMETER, df = PARAMETER, lower.tail = FALSE)
-  return(list(kendall.w = W, spearman.rho = rho))
+  list(kendall.w = W, spearman.rho = rho)
 } 
 
 ## FIXME: Move this to the manual page.
@@ -606,8 +606,8 @@ dataVariance <- function(data)
   #normdata <- (data - datamin) / (datamax-datamin) 
   
   #standardize
-  meandata <- rowMeans(data)
-  stddata  <- apply(data, 1L, sd)
+  meandata <- rowMeans2(data)
+  stddata  <- rowSds(data)
   # If stddata == 0, then data is constant and it doesn't matter as long as it
   # is non-zero.
   stddata[stddata == 0] <- 1
@@ -616,8 +616,7 @@ dataVariance <- function(data)
   # We could log-tranform if needed
 
   # Variance of configurations
-  qvar <- mean(apply(zscoredata, 2L, var))
- 
+  qvar <- mean(colVars(zscoredata))
   return(qvar) 
 }
 

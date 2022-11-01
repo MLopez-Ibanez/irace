@@ -116,8 +116,8 @@ aux2.friedman <- function(y, I, alive, conf.level = 0.95)
   dropped.any <- FALSE
   n <- nrow(y)
   k <- length(I)
-  r <- t(apply(y[,I], 1L, rank))
-  R <- colSums(r)
+  r <- rowRanks(y, cols = I, ties.method = "average")
+  R <- colSums2(r)
   o <- order(R)
   best <- I[o[1]]
   TIES <- tapply(r, row(r), table)
@@ -196,7 +196,7 @@ aux.one_ttest <- function(results, alive, which.alive, conf.level,
   adjust <- match.arg(adjust)
   irace.assert(sum(alive) == length(which.alive))
   results <- results[, which.alive]
-  means <- colMeans(results)
+  means <- colMeans2(results)
   best <- which.min(means)
   mean_best <- means[best]
   pvals <- sapply(means, function(x) as.numeric(isTRUE(
@@ -236,7 +236,7 @@ aux.ttest <- function(results, alive, which.alive, conf.level,
   irace.assert(sum(alive) == length(which.alive))
   
   results <- results[, which.alive]
-  means <- colMeans(results)
+  means <- colMeans2(results)
   # FIXME: break ties using median or ranks?
   best <- which.min(means)
   mean_best <- means[best]
@@ -426,7 +426,7 @@ executionBound <- function(data, type = "median")
   # been executed on all previous instances.
   
   irace.assert (all(!is.na(data)))
-  colmeans <- colMeans(data)
+  colmeans <- colMeans2(data)
   bound <- switch (type,
                    median = median(colmeans),
                    mean   = mean(colmeans),
@@ -466,7 +466,7 @@ dom.elim <- function(results, elites, alive, scenario, minSurvival, eps = 1e-5)
 {
   irace.assert(sum(alive) >= minSurvival)
   which.alive <- which(alive)
-  cmeans <- colMeans(results[, alive, drop = FALSE])
+  cmeans <- colMeans2(results[, alive, drop = FALSE])
   irace.assert(!all(is.na(cmeans))) # Only NA values when calculating mean for dominance.
   
   # When there are no protected elites left, select the best configurations to
@@ -532,7 +532,7 @@ final.execution.bound <- function(experimentsTime, elites, no.configurations,
        # FIXME: This minMeasurableTime should be a scenario setting and it
        # should be the same value that we use in check.output.target.runner
        total.time <- (current.task * elite.bound) + minMeasurableTime
-       time.left <- total.time - colSums(experimentsTime[1:current.task, which.exe, drop = FALSE], na.rm = TRUE)
+       time.left <- total.time - colSums2(experimentsTime, rows = 1:current.task, cols = which.exe, na.rm = TRUE)
        final.bounds[which.exe] <- sapply(time.left, min, boundMax)
        # We round up the bounds up to the specified number of digits. This may
        # be necessary if the target-algorithm does not support higher precision.
@@ -554,14 +554,17 @@ final.execution.bound <- function(experimentsTime, elites, no.configurations,
   return(list(final.bounds = final.bounds, elite.bound = elite.bound))
 }
 
+get_ranks <- function(x, test)
+  if (test == "friedman") colSums2(rowRanks(x, ties.method="average")) else rank(colMeans2(x))
+
 # Recompute the best as follows. Given two configurations, the one evaluated
 # on more instances is ranked better. Otherwise, break ties according to the
 # criteria of the stat test.
-overall.ranks <- function(x, stat.test)
+overall.ranks <- function(x, test)
 {
   if (ncol(x) == 1) return(1L)
     
-  ninstances <- colSums(!is.na(x))
+  ninstances <- colSums2(!is.na(x))
   uniq.ninstances <- sort(unique(ninstances), decreasing = TRUE)
   last.r <- 0L
   ranks <- rep(Inf, ncol(x))
@@ -575,11 +578,7 @@ overall.ranks <- function(x, stat.test)
       y <- x[, confs, drop = FALSE]
       y <- y[complete.cases(y), , drop = FALSE]
       irace.assert(!any(is.na(y)))
-      if (stat.test == "friedman") {
-        r <- colSums(t(apply(y, 1L, rank)))
-      } else {
-        r <- rank(colMeans(y))
-      }
+      r <- get_ranks(y, test = test)
     }
     r <- r + last.r
     last.r <- max(r)
@@ -594,15 +593,14 @@ update.is.elite <- function(is.elite, which.exe)
   which.notexecuted <- setdiff(which(is.elite > 0), which.exe) 
   is.elite[which.notexecuted] <- is.elite[which.notexecuted] - 1
   irace.assert (all(is.elite >= 0))
-  return(is.elite)
+  is.elite
 }
 
 update.elite.safe <- function(Results, is.elite)
 {
-  if (any(is.elite > 0L))
-    return(max(which(apply(!is.na(Results[, is.elite > 0, drop=FALSE]), 1, any))))
-  # All elites rejected.
-  return(0L)
+  elites <- is.elite > 0L
+  if (!any(elites)) return(0L) # All elites rejected.
+  max(which(rowAnys(!is.na(Results[, elites, drop=FALSE]))))
 }
 
 race <- function(maxExp = 0,
@@ -677,10 +675,10 @@ race <- function(maxExp = 0,
   } else {
     irace.assert(.irace$next.instance - 1 == nrow(elite.data$experiments))
     # There must be a non-NA entry for each instance.
-    irace.assert(all(apply(!is.na(elite.data$experiments), 1, any)),
+    irace.assert(all(rowAnys(!is.na(elite.data$experiments))),
                  eval.after = { print(elite.data$experiments)})
     # There must be a non-NA entry for each configuration.
-    irace.assert(all(apply(!is.na(elite.data$experiments), 2, any)))
+    irace.assert(all(colAnys(!is.na(elite.data$experiments))))
     
     # elite.safe: maximum instance number for which any configuration may be
     # considered elite. After evaluating this instance, no configuration is
@@ -766,13 +764,13 @@ race <- function(maxExp = 0,
         # Calculate the maximum instance that has any non-NA value.
         # FIXME: Use update.elite.safe()
         if (n.elite > 0L)
-          elite.safe <- max(which(apply(!is.na(Results[, which.elites, drop=FALSE]), 1, any)))
-        else 
+          elite.safe <- max(which(rowAnys(!is.na(Results[, which.elites, drop=FALSE]))))
+        else
           elite.safe <- 0L
       }
     }
     # Compute the elite membership.
-    is.elite <- colSums(!is.na(Results))
+    is.elite <- colSums2(!is.na(Results))
     # Remove rejected configurations.
     is.elite[is.rejected] <- 0L
   }
@@ -786,11 +784,9 @@ race <- function(maxExp = 0,
   # Test that all instances that have been previously seen have been evaluated
   # by at least one configuration.
   all_elite_instances_evaluated <- function() {
-    if (!elitist)
-      return(TRUE)
-    return(all(apply(!is.na(Results[
-                        as.character(seq_len(.irace$next.instance - 1)),
-                        alive, drop=FALSE]), 1, any)))
+    if (!elitist) return(TRUE)
+    all(rowAnys(!is.na(Results[ as.character(seq_len(.irace$next.instance - 1)),
+                        alive, drop=FALSE])))
   }
 
   # Start main loop
@@ -1123,11 +1119,7 @@ race <- function(maxExp = 0,
     } else  {
       tmpResults <- Results[1:current.task, which.alive, drop = FALSE]
       irace.assert(!any(is.na(tmpResults)))
-      if (stat.test == "friedman") {
-        race.ranks <- colSums(t(apply(tmpResults, 1, rank)))
-      } else {
-        race.ranks <- colMeans(tmpResults)
-      }
+      race.ranks <- get_ranks(tmpResults, test = stat.test) 
       # which.min returns only the first minimum.
       best <- which.alive[which.min(race.ranks)]
     }
@@ -1181,9 +1173,9 @@ race <- function(maxExp = 0,
                eval.after = { print(Results[,alive, drop=FALSE])})
   # If we stop the loop before we see all new instances, there may be new
   # instances that have not been executed by any configuration.
-  Results <- Results[apply(!is.na(Results), 1, any), , drop = FALSE]
+  Results <- Results[rowAnys(!is.na(Results)), , drop = FALSE]
   
-  race.ranks <- overall.ranks(Results[, alive, drop = FALSE], stat.test = stat.test)
+  race.ranks <- overall.ranks(Results[, alive, drop = FALSE], test = stat.test)
   best <- which.alive[which.min(race.ranks)]
 
   if (!quiet)

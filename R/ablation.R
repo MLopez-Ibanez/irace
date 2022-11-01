@@ -402,7 +402,7 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
     
     # Get the best configuration based on the criterion of irace
     # MANUEL: Doesn't race.output already give you all this info???
-    cranks <- overall.ranks(results[,aconfigurations$.ID.,drop=FALSE], scenario$testType)
+    cranks <- overall.ranks(results[,aconfigurations$.ID.,drop=FALSE], test = scenario$testType)
     best_id <- which.min(cranks)[1]
     # cand.mean <- colMeans(results[,aconfigurations$.ID.,drop=FALSE], na.rm=TRUE)
     changes[[step]] <- ab.aux$changed.params
@@ -434,7 +434,7 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
   trajectory <- c(trajectory, target.configuration$.ID.)
   
   # Get the overall best
-  cranks <- overall.ranks(results[,trajectory, drop=FALSE], scenario$testType)
+  cranks <- overall.ranks(results[,trajectory, drop=FALSE], test = scenario$testType)
   best_id <- which.min(cranks)[1]
   ## FIXME: At this point, the rownames of all_configurations does not match
   ## all_configurations$.ID.  That is confusing and a potential source of
@@ -539,7 +539,7 @@ plotAblation <- function (ablog, pdf.file = NULL, pdf.width = 20,
                     bx$conf[is.finite(bx$conf)])
     }
   }
-  costs.avg <- colMeans(experiments[, trajectory])
+  costs.avg <- colMeans2(experiments, cols = trajectory)
     
   plot(costs.avg, xaxt = "n", xlab = NA, ylab = ylab, ylim = ylim,
        type = "b", pch = 19, ...,

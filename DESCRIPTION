@@ -23,6 +23,7 @@ Imports:
         stats,
         utils,
         compiler,
+        matrixStats,
         R6
 Suggests:
     Rmpi (>= 0.6.0),

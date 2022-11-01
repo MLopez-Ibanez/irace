@@ -87,7 +87,7 @@ numeric.configurations.equal <- function(x, configurations, parameters, threshol
         if (d[j] > threshold) isSimilar.mat[j,i] <- FALSE
       }
     }
-    index <- which(apply(isSimilar.mat,1,all))
+    index <- which(rowAlls(isSimilar.mat))
     isSimilar.mat <- isSimilar.mat[index, , drop=FALSE]
     d <- d[index]
     selected  <- selected[index]
@@ -444,7 +444,7 @@ do.experiments <- function(configurations, ninstances, scenario, parameters)
                                  if(!is.null(scenario$boundMax)) scenario$boundMax else NA))
   }
   
-  rejectedIDs <- configurations[apply(is.infinite(Results), 2, any), ".ID."]
+  rejectedIDs <- configurations[colAnys(is.infinite(Results)), ".ID."]
   return (list(experiments = Results, experimentLog = experimentLog, rejectedIDs = rejectedIDs))
 }
 
@@ -997,7 +997,7 @@ irace_run <- function(scenario, parameters)
     # happen before the first race due to the initial budget estimation.
     if (firstRace) {
       if (nbConfigurations < nrow(eliteConfigurations)) {
-        eliteRanks <- overall.ranks(iraceResults$experiments, stat.test = scenario$testType)
+        eliteRanks <- overall.ranks(iraceResults$experiments, test = scenario$testType)
         eliteConfigurations <- eliteConfigurations[order(eliteRanks), ]
         eliteConfigurations <- eliteConfigurations[1:nbConfigurations, ]
       }

@@ -11,6 +11,8 @@
    <https://iridia-ulb.github.io/references/#PerLopHooStu2017:lion> for details.
                                      (Leslie Pérez Cáceres, Manuel López-Ibáñez)
 
+ * Matrix operations are faster thanks to `matrixStats`. (Manuel López-Ibáñez)
+
 ## Fixes
 
  * Fix (#44): irace now will give an error if the domain of real-valued (r)
