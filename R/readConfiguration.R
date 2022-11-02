@@ -576,9 +576,14 @@ checkScenario <- function(scenario = defaultScenario())
     file.check (scenario$forbiddenFile, readable = TRUE,
                 text = "forbidden configurations file")
     scenario$forbiddenExps <- readForbiddenFile(scenario$forbiddenFile)
-    irace.note(length(scenario$forbiddenExps),
-               " expression(s) specifying forbidden configurations read from '",
-               scenario$forbiddenFile, "'\n")
+    if (length(scenario$forbiddenExps) == 0L) {
+      irace.warning("no expression(s) specifying forbidden configurations found in '",
+                    scenario$forbiddenFile, "'; is the file empty?\n")
+    } else {
+      irace.note(length(scenario$forbiddenExps),
+                 " expression(s) specifying forbidden configurations read from '",
+                 scenario$forbiddenFile, "'\n")
+    }
   }
 
   # Make it NULL if it is "" or NA
