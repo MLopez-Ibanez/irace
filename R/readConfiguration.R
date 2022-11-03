@@ -493,6 +493,11 @@ checkScenario <- function(scenario = defaultScenario())
     # Byte-compile it.
     scenario$repairConfiguration <- bytecompile(get.function(scenario$repairConfiguration))
   }
+  
+  if (is.na(scenario$capping)) {
+    # FIXME: when capping is enabled, we have to make sure we don't have cost AND time.
+    scenario$capping <- (scenario$elitist && scenario$maxTime > 0 && scenario$boundMax > 0)
+  }
 
   if (is.function.name(scenario$targetRunner)) {
     scenario$targetRunner <- get.function(scenario$targetRunner)
@@ -505,12 +510,16 @@ checkScenario <- function(scenario = defaultScenario())
       if (is.null.or.empty(scenario$targetRunnerLauncher)) {
         file.check (scenario$targetRunner, executable = TRUE,
                     text = paste0("target runner ", quote.param("targetRunner")))
-      } else {
+      } else { 
         scenario$targetRunnerLauncher <- path_rel2abs(scenario$targetRunnerLauncher)
         file.check (scenario$targetRunnerLauncher, executable = TRUE,
                     text = paste0("target runner launcher ", quote.param("targetRunnerLauncher")))
-        check_launcher_args(scenario$targetRunnerLauncherArgs)
+        file.check (scenario$targetRunner, readable = TRUE,
+                    text = paste0("target runner ", quote.param("targetRunner")))
       }
+      check_target_cmdline(scenario$targetCmdline,
+                           launcher = !is.null.or.empty(scenario$targetRunnerLauncher),
+                           capping = scenario$capping)
     } else {
       irace.error(quote.param ('targetRunner'), " must be a function or an executable program")
     }
@@ -699,11 +708,6 @@ checkScenario <- function(scenario = defaultScenario())
                 " cannot be enabled at the same time.")
   }
 
-  if (is.na(scenario$capping)) {
-    # FIXME: when capping is enabled, we have to make sure we don't have cost AND time.
-    scenario$capping <- (scenario$elitist && scenario$maxTime > 0 && scenario$boundMax > 0)
-  }
-
   if (scenario$capping) {
     if (!scenario$elitist) 
       irace.error("When capping == TRUE, elitist must be enabled.")
@@ -819,8 +823,8 @@ printScenario <- function(scenario)
 #'  \item Target algorithm execution:
 #'    \describe{
 #'      \item{`targetRunner`}{Executable called for each configuration that executes the target algorithm to be tuned. See the templates and examples provided. (Default: `"./target-runner"`)}
-#'      \item{`targetRunnerLauncher`}{Executable that will be used to launch the target runner, when \code{targetRunner} cannot be executed directly (.e.g, a Python script in Windows). (Default: `""`)}
-#'      \item{`targetRunnerLauncherArgs`}{Command-line arguments provided to \code{targetRunnerLauncher}. The substrings \code{\{targetRunner\}} and \code{\{targetRunnerArgs\}} will be replaced by the value of the option \code{targetRunner} and by the arguments usually passed when calling \code{targetRunner}, respectively. Example: \code{"-m {targetRunner} --args {targetRunnerArgs}"}. (Default: `"{targetRunner} {targetRunnerArgs}"`)}
+#'      \item{`targetRunnerLauncher`}{Executable that will be used to launch the target runner, when \code{targetRunner} cannot be executed directly (e.g., a Python script in Windows). (Default: `""`)}
+#'      \item{`targetCmdline`}{Command-line arguments provided to \code{targetRunner} (or \code{targetRunnerLauncher} if defined). The substrings \code{\{configurationID\}}, \code{\{instanceID\}},  \code{\{seed\}},  \code{\{instance\}}, and \code{\{bound\}} will be replaced by their corresponding values. The substring \code{\{targetRunnerArgs\}} will be replaced by the concatenation of the switch and value of all active parameters of the particular configuration being evaluated.  The substring \code{\{targetRunner\}}, if present, will be replaced by the value of \code{targetRunner} (useful when using \code{targetRunnerLauncher}). (Default: `"{configurationID} {instanceID} {seed} {instance} {bound} {targetRunnerArgs}"`)}
 #'      \item{`targetRunnerRetries`}{Number of times to retry a call to \code{targetRunner} if the call failed. (Default: `0`)}
 #'      \item{`targetRunnerData`}{Optional data passed to \code{targetRunner}. This is ignored by the default \code{targetRunner} function, but it may be used by custom \code{targetRunner} functions to pass persistent data around. (Default: `""`)}
 #'      \item{`targetRunnerParallel`}{Optional R function to provide custom parallelization of \code{targetRunner}. (Default: `""`)}

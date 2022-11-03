@@ -650,7 +650,7 @@ For setting the tuning budget see \autoref{sec:budget}. For more information on 
     \code{echo "\$COST"} (assuming \parameter{maxExperiments} is used) and the generated files are deleted (you may remove that line if you wish to keep them).
 
     \begin{xwarningbox}
-      The \code{target-runner} script must be an executable file, unless you specify \parameter{targetRunnerLauncher} and \parameter{targetRunnerLauncherArgs}.
+      The \code{target-runner} script must be an executable file, unless you specify \parameter{targetRunnerLauncher}.
     \end{xwarningbox}
 
     You can test the target runner from the \aR console by checking the scenario as 

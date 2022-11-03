@@ -13,6 +13,10 @@
 
  * Matrix operations are faster thanks to `matrixStats`. (Manuel López-Ibáñez)
 
+ * The scenario option `targetRunnerLauncherArgs`, introduced in version 3.5,
+   was removed and replaced by `targetCmdline`, which is more flexible (Fixes
+   #38). Please see the user-guide for details.  (Manuel López-Ibáñez)
+
 ## Fixes
 
  * Fix (#44): irace now will give an error if the domain of real-valued (r)
@@ -22,6 +26,7 @@
  * Fix problem with `n_instances` in `ablation_cmdline()`. 
                                                            (Manuel López-Ibáñez)
  
+
 # irace 3.5
 
 ## New features and improvements

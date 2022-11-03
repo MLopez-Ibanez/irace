@@ -19,7 +19,7 @@ Initialize the working directory with the template config files. This copies the
 File that contains the scenario setup and other irace options. All options listed in this section can be included in this file. See \IRACEHOME{/templates/} for an example. Relative file-system paths specified in the scenario file are relative to the scenario file itself.
 
  \defparameter{execDir}{exec-dir}{./}%
-Directory where the target algorithm executions will be performed. The default execution directory is the current directory.
+Directory where the target runner will be run. The default execution directory is the current directory.
  \begin{xwarningbox}
  The execution directory must exist before executing \irace, it will not be created automatically.
 \end{xwarningbox}
@@ -118,10 +118,13 @@ Maximum number of decimal places that are significant for numerical (real) param
 Executable or \aR function that evaluates a configuration of the target algorithm on a particular instance. See \autoref{sec:runner} for details.
 
  \defparameter{targetRunnerLauncher}{target-runner-launcher}{}%
-Executable that will be used to launch the target runner, when \parameter{targetRunner} cannot be executed directly (.e.g, a Python script in Windows).
+Executable that will be used to launch the target runner, when \parameter{targetRunner} cannot be executed directly (e.g., a Python script in Windows).
 
- \defparameter{targetRunnerLauncherArgs}{target-runner-args}{{targetRunner} {targetRunnerArgs}}%
-Command-line arguments provided to \parameter{targetRunnerLauncher}. The substrings \code{\{targetRunner\}} and \code{\{targetRunnerArgs\}} will be replaced by the value of the option \parameter{targetRunner} and by the arguments usually passed when calling \parameter{targetRunner}, respectively. Example: \code{"-m \{targetRunner\} --args \{targetRunnerArgs\}"}.
+ \defparameter{targetCmdline}{target-cmdline}{{configurationID} {instanceID} {seed} {instance} {bound} {targetRunnerArgs}}%
+Command-line arguments provided to \parameter{targetRunner} (or \parameter{targetRunnerLauncher} if defined). The substrings \code{\{configurationID\}}, \code{\{instanceID\}},  \code{\{seed\}},  \code{\{instance\}}, and \code{\{bound\}} will be replaced by their corresponding values. The substring \code{\{targetRunnerArgs\}} will be replaced by the concatenation of the switch and value of all active parameters of the particular configuration being evaluated.  The substring \code{\{targetRunner\}}, if present, will be replaced by the value of \parameter{targetRunner} (useful when using \parameter{targetRunnerLauncher}).  Example:
+\code{targetRunner="./real_target_runner.py"}
+\code{targetRunnerLauncher="python"}
+\code{targetCmdLine="-m \{targetRunner\} \{configurationID\} \{instanceID\} --seed \{seed\} -i \{instance\} --cutoff \{bound\} \{targetRunnerArgs\}"}.
 
  \defparameter{targetRunnerRetries}{target-runner-retries}{0}%
 Number of times to retry a call to \parameter{targetRunner} if the call failed.

@@ -361,20 +361,33 @@ target.runner.aclib <- function(experiment, scenario)
        outputRaw = output$output, call = paste(cmd, args))
 }
 
-check_launcher_args <- function(targetRunnerLauncherArgs)
+check_target_cmdline <- function(target_cmdline, launcher, capping)
 {
-  if (!grepl("{targetRunner}", targetRunnerLauncherArgs, fixed=TRUE))
-    irace.error("targetRunnerLauncherArgs '", targetRunnerLauncherArgs, "' must contain '{targetRunner}'") 
-  if (!grepl("{targetRunnerArgs}", targetRunnerLauncherArgs, fixed=TRUE))
-    irace.error("targetRunnerLauncherArgs '", targetRunnerLauncherArgs, "' must contain '{targetRunnerArgs}'")
+  required <- c("seed", "instance", "targetRunnerArgs")
+  if (launcher) required <- c(required, "targetRunner")
+  if (capping) required <- c(required, "bound")
+  for (x in required) {
+    if (!grepl(paste0("{", x, "}"), target_cmdline, fixed=TRUE))
+      irace.error("targetCmdline '", target_cmdline, "' must contain '{", x, "}'")
+  }
 }
 
-process_launcher_args <- function(targetRunnerLauncherArgs, targetRunner, args)
+expand_target_cmdline <- function(target_cmdline, experiment, targetRunner, targetRunnerArgs)
 {
-  check_launcher_args(targetRunnerLauncherArgs)
-  targetRunnerLauncherArgs <- gsub("{targetRunner}", targetRunner, targetRunnerLauncherArgs, fixed=TRUE)
-  targetRunnerLauncherArgs <- gsub("{targetRunnerArgs}", args, targetRunnerLauncherArgs, fixed=TRUE)
-  targetRunnerLauncherArgs
+  vars <- list(configurationID=experiment$id.configuration,
+               instanceID      = experiment$id.instance,
+               seed             = experiment$seed,
+               instance         = experiment$instance,
+               bound            = experiment$bound,
+               targetRunner = targetRunner,
+               targetRunnerArgs = targetRunnerArgs)
+    
+  for (x in names(vars)) {
+    value <- vars[[x]]
+    if (is.null(value)) value <- ""
+    target_cmdline <- gsub(paste0("{", x, "}"), value, target_cmdline, fixed=TRUE)
+  }
+  target_cmdline
 }
   
 run_target_runner <- function(experiment, scenario)
@@ -386,11 +399,12 @@ run_target_runner <- function(experiment, scenario)
   instance         <- experiment$instance
   switches         <- experiment$switches
   bound            <- experiment$bound
-  
+
   targetRunner <- scenario$targetRunner
   debugLevel <- scenario$debugLevel
-
+  
   if (scenario$aclib) {
+    # FIXME: Use targetCmdline for this
     has_value <- !is.na(configuration)
     # <executable> [<arg>] [<arg>] ... [--cutoff <cutoff time>] [--instance <instance name>] 
     # [--seed <seed>] --config [-param_name_1 value_1] [-param_name_2 value_2] ...
@@ -400,25 +414,19 @@ run_target_runner <- function(experiment, scenario)
     if (!is.null.or.na(bound))
       args <- paste("--cutoff", bound, args)
   } else {
-    args <- paste(configuration.id, instance.id, seed, instance, bound,
-                  buildCommandLine(configuration, switches))
+    args <- expand_target_cmdline(scenario$targetCmdline, experiment, targetRunner,
+                                  targetRunnerArgs=buildCommandLine(configuration, switches))
   }
-  
+  error <- "targetRunner"
   targetRunnerLauncher <- scenario$targetRunnerLauncher
-  if (is.null.or.empty(scenario$targetRunnerLauncher)) {
-    if (as.logical(file.access(targetRunner, mode = 1))) {
-      irace.error ("targetRunner ", shQuote(targetRunner), " cannot be found or is not executable!\n")
-    }
-    output <- runcommand(targetRunner, args, configuration.id, debugLevel)
-    return(list(cmd=targetRunner, output=output, args=args))
+  if (!is.null.or.empty(targetRunnerLauncher)) {
+    file.check (targetRunner, readable = TRUE, text = "target runner ")
+    targetRunner <- targetRunnerLauncher
+    error <- "targetRunnerLauncher"
   }
-  if (as.logical(file.access(targetRunnerLauncher, mode = 1))) {
-    irace.error ("targetRunnerLauncher ", shQuote(targetRunnerLauncher), " cannot be found or is not executable!\n")
-  }
-  
-  args <- process_launcher_args(scenario$targetRunnerLauncherArgs, targetRunner, args)
-  output <- runcommand(targetRunnerLauncher, args, configuration.id, debugLevel)
-  return(list(cmd=targetRunnerLauncher, output=output, args=args))
+  file.check(targetRunner, executable = TRUE, text = error)
+  output <- runcommand(targetRunner, args, configuration.id, debugLevel)
+  list(cmd=targetRunner, output=output, args=args)
 }
 
 #' Default `targetRunner` function.

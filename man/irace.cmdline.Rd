@@ -155,15 +155,20 @@ List of command-line options:\preformatted{-h,--help                Show this he
                          and examples provided. Default: ./target-runner.
    --target-runner-launcher  Executable that will be used to launch the target
                          runner, when targetRunner cannot be executed directly
-                         (.e.g, a Python script in Windows).
-   --target-runner-args  Command-line arguments provided to
-                         targetRunnerLauncher. The substrings \\\{targetRunner\\\}
-                         and \\\{targetRunnerArgs\\\} will be replaced by the value
-                         of the option targetRunner and by the arguments
-                         usually passed when calling targetRunner,
-                         respectively. Example: "-m \{targetRunner --args
-                         \{targetRunnerArgs\}"\}. Default: \{targetRunner\}
-                         \{targetRunnerArgs\}.
+                         (e.g., a Python script in Windows).
+   --target-cmdline      Command-line arguments provided to targetRunner (or
+                         targetRunnerLauncher if defined). The substrings
+                         \\\{configurationID\\\}, \\\{instanceID\\\}, \\\{seed\\\},
+                         \\\{instance\\\}, and \\\{bound\\\} will be replaced by their
+                         corresponding values. The substring
+                         \\\{targetRunnerArgs\\\} will be replaced by the
+                         concatenation of the switch and value of all active
+                         parameters of the particular configuration being
+                         evaluated.  The substring \\\{targetRunner\\\}, if
+                         present, will be replaced by the value of targetRunner
+                         (useful when using targetRunnerLauncher). Default:
+                         \{configurationID\} \{instanceID\} \{seed\} \{instance\}
+                         \{bound\} \{targetRunnerArgs\}.
    --target-runner-retries  Number of times to retry a call to targetRunner if
                          the call failed. Default: 0.
    --target-evaluator    Optional script or R function that provides a numeric
