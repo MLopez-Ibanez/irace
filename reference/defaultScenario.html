@@ -160,10 +160,10 @@ The scenario list contains the following elements:</p><ul><li><p>General options
 <dd><p>Executable called for each configuration that executes the target algorithm to be tuned. See the templates and examples provided. (Default: <code>"./target-runner"</code>)</p></dd>
 
 <dt><code>targetRunnerLauncher</code></dt>
-<dd><p>Executable that will be used to launch the target runner, when <code>targetRunner</code> cannot be executed directly (.e.g, a Python script in Windows). (Default: <code>""</code>)</p></dd>
+<dd><p>Executable that will be used to launch the target runner, when <code>targetRunner</code> cannot be executed directly (e.g., a Python script in Windows). (Default: <code>""</code>)</p></dd>
 
-<dt><code>targetRunnerLauncherArgs</code></dt>
-<dd><p>Command-line arguments provided to <code>targetRunnerLauncher</code>. The substrings <code>{targetRunner}</code> and <code>{targetRunnerArgs}</code> will be replaced by the value of the option <code>targetRunner</code> and by the arguments usually passed when calling <code>targetRunner</code>, respectively. Example: <code>"-m {targetRunner} --args {targetRunnerArgs}"</code>. (Default: <code>"{targetRunner} {targetRunnerArgs}"</code>)</p></dd>
+<dt><code>targetCmdline</code></dt>
+<dd><p>Command-line arguments provided to <code>targetRunner</code> (or <code>targetRunnerLauncher</code> if defined). The substrings <code>{configurationID}</code>, <code>{instanceID}</code>,  <code>{seed}</code>,  <code>{instance}</code>, and <code>{bound}</code> will be replaced by their corresponding values. The substring <code>{targetRunnerArgs}</code> will be replaced by the concatenation of the switch and value of all active parameters of the particular configuration being evaluated.  The substring <code>{targetRunner}</code>, if present, will be replaced by the value of <code>targetRunner</code> (useful when using <code>targetRunnerLauncher</code>). (Default: <code>"{configurationID} {instanceID} {seed} {instance} {bound} {targetRunnerArgs}"</code>)</p></dd>
 
 <dt><code>targetRunnerRetries</code></dt>
 <dd><p>Number of times to retry a call to <code>targetRunner</code> if the call failed. (Default: <code>0</code>)</p></dd>
