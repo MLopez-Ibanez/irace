@@ -40,11 +40,9 @@ sections <- unique(irace_params[,"section"])
 stopifnot(setequal(ordered_sections, sections))
 
 # Generate Roxygen style comment.
-options.comment.filename <- "./irace_options_comment.R" 
 marker.beg <- "# __IRACE_OPTIONS__BEGIN__"
 marker.end <- "# __IRACE_OPTIONS__END__"
-man.text <- marker.beg
-man.text <- c(man.text, "#' \\itemize{")
+man.text <- c(marker.beg, "#' \\itemize{")
 
 for (section in ordered_sections) {
   man.text <- c(man.text,
@@ -67,14 +65,12 @@ for (section in ordered_sections) {
   man.text <- c(man.text, sec.text, "#'    }")
 }
 man.text <- c(man.text, "#' }", marker.end)
-writeLines(man.text, con = options.comment.filename)
-
+man.text <- paste0(man.text, collapse="\n")
 conf.filename <- "../R/readConfiguration.R"
 text <- paste0(readLines(conf.filename), collapse="\n")
-replace <- paste0(readLines(options.comment.filename), collapse="\n")
 text <- sub(sprintf("(?s)%s.*%s", marker.beg, marker.end),
             paste0(marker.beg, marker.end), text, perl=TRUE)
-text <- sub(paste0(marker.beg, marker.end), replace, text, fixed=TRUE)
+text <- sub(paste0(marker.beg, marker.end), man.text, text, fixed=TRUE)
 writeLines(text, con = conf.filename)
 
 # Generate file with replacement for vignettes
