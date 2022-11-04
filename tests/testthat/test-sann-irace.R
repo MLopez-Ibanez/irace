@@ -29,19 +29,16 @@ target.runner <- function(experiment, scenario)
 
   D <- 3
   par <- runif(D, min = -1, max = 1)
-  fn <- function(x) {
-    weight <- instance
-    return(weight * f_rastrigin(x) + (1 - weight) * f_rosenbrock(x))
-  }
-  tmax = 1 + as.numeric(configuration[["tmax"]])
-  temp = 11.0 + as.numeric(configuration[["temp"]])
+  fn <- function(x) (instance * f_rastrigin(x) + (1 - instance) * f_rosenbrock(x))
+  
+  tmax = 1 + configuration[["tmax"]]
+  temp = 11.0 + configuration[["temp"]]
   stopifnot(tmax > 0)
   stopifnot(temp > 0)
   
   res <- optim(par, fn, method = "SANN", 
                control = list(maxit = 10, tmax = tmax, temp = temp))
-  result <- list(cost = res$value, call = toString(experiment))
-  return(result)
+  list(cost = res$value, call = toString(experiment))
 }
 
 ## target runner ###########################################################

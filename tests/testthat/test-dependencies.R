@@ -80,16 +80,18 @@ p3 "" r (0, p2)
 test_that("checkDependencies", {
 
 target.runner <- function(experiment, scenario)
-  {
-    configuration     <- experiment$configuration
-    tmax <-  as.numeric(configuration[["real"]])
-    if (configuration[["mode"]] %in% c("x1", "x2"))
-      temp <-  as.numeric(configuration[["param1"]])
-    else
-      temp <- 1
-    time <- max(1, abs(rnorm(1, mean=(tmax+temp)/10)))
-    return(list(cost = time, time = time, call = toString(experiment)))
-  }
+{
+  configuration     <- experiment$configuration
+  tmax <-  configuration[["real"]]
+  stopifnot(is.numeric(tmax))
+  if (configuration[["mode"]] %in% c("x1", "x2"))
+    temp <-  configuration[["param1"]]
+  else
+    temp <- 1
+  stopifnot(is.numeric(temp))
+  time <- max(1, abs(rnorm(1, mean=(tmax+temp)/10)))
+  list(cost = time, time = time, call = toString(experiment))
+}
   
 test.checkDependencies <- function(parameterFile, ...)
 {
