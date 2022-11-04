@@ -53,9 +53,9 @@ install: build
 quick-install:
 	cd $(BINDIR) &&	R CMD build $(BUILD_FLAGS) $(NO_BUILD_VIGNETTES) $(PACKAGEDIR) && R CMD INSTALL $(INSTALL_FLAGS) $(PACKAGE)_$(PACKAGEVERSION).tar.gz
 
-genoptions: R/irace-options.R vignettes/section/irace-options.tex scripts/irace_options_comment.R
+genoptions: R/irace-options.R vignettes/section/irace-options.tex
 
-R/irace-options.R vignettes/section/irace-options.tex scripts/irace_options_comment.R: scripts/irace_options.json scripts/generate-options.R
+R/irace-options.R vignettes/section/irace-options.tex: scripts/irace_options.json scripts/generate-options.R
 	cd scripts && R --slave -f generate-options.R && cd ..
 
 gendoc:
