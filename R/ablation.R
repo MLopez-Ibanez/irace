@@ -404,7 +404,7 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
     # MANUEL: Doesn't race.output already give you all this info???
     cranks <- overall.ranks(results[,aconfigurations$.ID.,drop=FALSE], test = scenario$testType)
     best_id <- which.min(cranks)[1]
-    # cand.mean <- colMeans(results[,aconfigurations$.ID.,drop=FALSE], na.rm=TRUE)
+    # cand.mean <- colMeans2(results[,aconfigurations$.ID.,drop=FALSE], na.rm=TRUE)
     changes[[step]] <- ab.aux$changed.params
     best.change <- changes[[step]][[best_id]]
     trajectory <- c(trajectory, aconfigurations[best_id, ".ID."])

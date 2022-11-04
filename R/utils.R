@@ -562,7 +562,7 @@ concordance <- function(data)
 
   # Get rankings by rows (per instance)
   r <- rowRanks(data, ties.method = "average")
-  R <- colSums(r)
+  R <- colSums2(r)
   # FIXME: This is slow, can we make it faster?
   TIES <- tapply(r, row(r), table)
   # If everything is tied, then W=1, perfect homogeneity.

@@ -544,7 +544,7 @@ final.execution.bound <- function(experimentsTime, elites, no.configurations,
        # current.task <- 3; boundDigits=0
        # elite.bound  <- irace:::executionBound(executionTime[1:current.task,1:2], "median") 
        # total.time   <- elite.bound * current.task + 0.01
-       # time.left    <- total.time - colSums(executionTime[1:current.task,3,drop=FALSE], na.rm=TRUE)
+       # time.left    <- total.time - colSums2(executionTime[1:current.task,3,drop=FALSE], na.rm=TRUE)
        # We set the execution time to the elite.bound this should be enough
        # to eliminate a bad candidate for the next task.
        final.bounds[final.bounds <= 0] <- elite.bound 
