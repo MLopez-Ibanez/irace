@@ -142,8 +142,7 @@ fixDependenciesWithReference <- function(configuration, ref.configuration, param
        configuration <- aux$configuration
     }
   }
-  final <- list(configuration=configuration, changed=changed)
-  return(final)
+  list(configuration=configuration, changed=changed)
 }
 
 ## Function that generates the configurations of the ablation path 
@@ -388,13 +387,14 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
                " configurations on ", nrow(instances), " instances.\n")
     # Force the race to see all instances in "full" mode
     if (type == "full") scenario$firstTest <- nrow(instances)
+    # FIXME: what about blockSize?
     race.output <- race(maxExp = nrow(aconfigurations) * nrow(instances),
                         minSurvival = 1,
                         elite.data = elite.data,
                         configurations = race.conf,
                         parameters = parameters,
                         scenario = scenario,
-                        elitistNewInstances = 0)	
+                        elitistNewInstances = 0)
     results <- merge.matrix (results, race.output$experiments)
 
     # Save log
