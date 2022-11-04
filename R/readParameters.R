@@ -498,7 +498,7 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
                      Level = parameters$hierarchy,
                      "Depends on" = sapply(parameters$depends, paste0, collapse=", "),
                      row.names=NULL))
-    cat("\n# ------------------------\n")
+    cat("# ------------------------\n")
   }
 
   irace.assert(length(parameters$conditions) == length(parameters$names))
