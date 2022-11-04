@@ -180,39 +180,27 @@ file.check <- function (file, executable = FALSE, readable = executable,
 }
 
 # Returns the smallest multiple of d that is higher than or equal to x.
-round.to.next.multiple <- function(x, d)
-  return(x + d - 1 - (x - 1) %% d)
+round.to.next.multiple <- function(x, d) (x + d - 1L - (x - 1L) %% d)
 
 # This returns FALSE for Inf/-Inf/NA
 is.wholenumber <- function(x, tol = .Machine$double.eps^0.5)
-{
   is.finite(x) & (abs(x - round(x)) < tol)
-}
+
 
 is.na.nowarn <- function(x)
-{
   length(x) == 1 && suppressWarnings(is.na(x))
-}
 
 is.na.or.empty <- function(x)
-{
   (length(x) == 0) || is.na.nowarn(x)
-}
 
 is.null.or.na <- function(x)
-{
   is.null(x) || is.na.nowarn(x)
-}
 
 is.null.or.empty <- function(x)
-{
   (length(x) == 0) || (length(x) == 1 && !suppressWarnings(is.na(x)) && is.character(x) && x == "")
-}
 
 is_null_or_empty_or_na <- function(x)
-{
   (length(x) == 0) || is.na.nowarn(x) || (length(x) == 1 && !suppressWarnings(is.na(x)) && is.character(x) && x == "")
-}
 
 is.function.name <- function(FUN)
 {
@@ -227,7 +215,7 @@ get.function <- function(FUN)
   if (is.function(FUN)) return(FUN)
   FUN <- dynGet(as.character(FUN), ifnotfound = NULL, inherits = TRUE)
   if (is.function(FUN)) return(FUN)
-  return (NULL)
+  NULL
 }
 
 is.bytecode <- function(x) typeof(x) == "bytecode"
@@ -235,7 +223,7 @@ is.bytecode <- function(x) typeof(x) == "bytecode"
 bytecompile <- function(x)
 {
   if (is.bytecode(x)) return(x)
-  return(compiler::cmpfun(x))
+  compiler::cmpfun(x)
 }
 
 # FIXME: Use stringr function and replace this function
@@ -246,12 +234,18 @@ str_sub <- function(x, start=0, stop=nchar(x))
 
   negs <- stop < 0
   if (any(negs)) stop[negs] <- nchar(x[negs]) + 1  - stop[negs]
-  return(substr(x, start, stop))
+  substr(x, start, stop)
 }
 
 strcat <- function(...)
-{
   do.call(paste0, args = list(..., collapse = NULL))
+
+# This function is used to trim potentially large strings for printing, since
+# the maximum error/warning length is 8170 characters (R 3.0.2)
+strlimit <- function(s, limit = 5000)
+{
+  if (nchar(s) <= limit) return(s)
+  paste0(substr(s, 1, limit - 3), "...")
 }
 
 #' Update filesystem paths of a scenario consistently.
@@ -292,16 +286,8 @@ scenario.update.paths <- function(scenario, from, to, fixed = TRUE)
   scenario_update_paths(scenario=scenario, from=from, to=to, fixed=fixed)
 }
 
-# This function is used to trim potentially large strings for printing, since
-# the maximum error/warning length is 8170 characters (R 3.0.2)
-strlimit <- function(str, limit = 5000)
-{
-  if (nchar(str) > limit) return(paste0(substr(str, 1, limit - 3), "..."))
-  return(str)
-}
 
 test.type.order.str <- function(test.type)
-{
   switch(test.type,
          friedman = "sum of ranks",
          t.none =, # Fall-throught
@@ -309,7 +295,7 @@ test.type.order.str <- function(test.type)
          t.bonferroni = "mean value",
          irace.internal.error ("test.type.order.str() Invalid value '",
                                test.type, "' of test.type"))
-}
+
 
 trim.leading <- function(str)
   sub('^[[:space:]]+', '', str) ## white space, POSIX-style
