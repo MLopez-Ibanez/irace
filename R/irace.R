@@ -422,14 +422,14 @@ do.experiments <- function(configurations, ninstances, scenario, parameters)
 {
   output <- lapply(1:ninstances, race.wrapper, configurations = configurations, 
                    bounds = rep(scenario$boundMax, nrow(configurations)),
-                   which.alive = 1:nrow(configurations), which.exe = 1:nrow(configurations), 
+                   which.alive = 1:nrow(configurations), which.exe = 1:nrow(configurations),
                    parameters = parameters, scenario = scenario)
                                         
   Results <- matrix(nrow = ninstances, ncol = nrow(configurations),
                     dimnames = list(1:ninstances, as.character(configurations[, ".ID."])))
   experimentLog <- matrix(nrow = 0, ncol = 4,
                           dimnames = list(NULL, c("instance", "configuration", "time", "bound")))
-                          
+  
   # Extract results
   for (j in seq_len(ninstances)) {
     vcost <- unlist(lapply(output[[j]], "[[", "cost"))
@@ -876,7 +876,7 @@ irace_run <- function(scenario, parameters)
           "# budget: ", remainingBudget, "\n",
           if (scenario$maxTime == 0) ""
           else paste0("# time budget: ", scenario$maxTime - timeUsed, "\n"),
-          "# mu: ", max(scenario$mu, scenario$firstTest), "\n",
+          "# mu: ", scenario$mu, "\n",
           "# deterministic: ", scenario$deterministic, "\n",
             
           if (scenario$capping) 
@@ -1019,8 +1019,7 @@ irace_run <- function(scenario, parameters)
         catInfo("Stopped because there is not enough budget left to race all configurations up to the first test (or mu)")
         return(irace_finish(iraceResults, scenario, reason = "Not enough budget to race all configurations up to the first test (or mu)"))
       }
-    } else if (nbConfigurations * max(scenario$mu, scenario$firstTest)
-               > currentBudget) {
+    } else if (nbConfigurations * scenario$mu > currentBudget) {
       catInfo("Stopped because there is not enough budget left to race all configurations up to the first test (or mu)")
       return(irace_finish(iraceResults, scenario, reason = "Not enough budget to race all configurations up to the first test (or mu)"))
     }

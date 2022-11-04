@@ -230,7 +230,6 @@ buildForbiddenExp <- function(configurations, parameters)
                paste0("(", pnames[has.value]," == ", values, ")", collapse = "&"))
   }
   exps <- parse(text = lines)
-  # print(exps)
   sapply(exps, compile.forbidden)
 }
 
@@ -421,8 +420,6 @@ checkScenario <- function(scenario = defaultScenario())
 
   check.valid.param <- function(x)
   {
-    cat(x, "\n")
-    cat(.irace.params.def[x, "domain"], "\n")
     valid <- trimws(strsplit(.irace.params.def[x, "domain"],",",fixed=TRUE)[[1]])
     if (scenario[[x]] %!in% valid) {
       irace.error ("Invalid value '", scenario[[x]], "' of ",
@@ -606,15 +603,15 @@ checkScenario <- function(scenario = defaultScenario())
   # Integer control parameters
   intParams <- .irace.params.def[.irace.params.def[, "type"] == "i", "name"]
   for (param in intParams) {
-    if (is.null.or.empty(scenario[[param]]))
+    p <- scenario[[param]]
+    if (is.null.or.empty(p))
       scenario[[param]] <- NA
     if (is.na(scenario[[param]]))
       next # Allow NA default values
-    scenario[[param]] <- suppressWarnings(as.numeric(scenario[[param]]))
-    if (is.null(scenario[[param]])
-        || is.na (scenario[[param]])
-        || !is.wholenumber(scenario[[param]]))
+    p <- suppressWarnings(as.numeric(p))
+    if (is.null(p) || is.na (p) || !is.wholenumber(p))
       irace.error (quote.param (param), " must be an integer.")
+    scenario[[param]] <- as.integer(p)
   }
 
   if (scenario$firstTest <= 1) {
@@ -635,7 +632,7 @@ checkScenario <- function(scenario = defaultScenario())
 
   # AClib benchmarks use 15 digits
   if (scenario$aclib)
-    scenario$digits <- 15
+    scenario$digits <- 15L
   if (scenario$digits > 15 || scenario$digits <= 0)
     irace.error (quote.param ("digits"), " must be within [1,15].")
   
@@ -657,18 +654,15 @@ checkScenario <- function(scenario = defaultScenario())
   ## allowed.
   if (scenario$maxExperiments == 0 && scenario$maxTime == 0) {
     irace.error("Tuning budget was not provided. Set ",
-                quote.param("maxExperiments"), "or ",
-                quote.param("maxTime"), ".")
+                quote.param("maxExperiments"), "or ", quote.param("maxTime"), ".")
   } else if (scenario$maxExperiments > 0 && scenario$maxTime > 0) {
     irace.error("Two different tuning budgets provided, please set only ",
-                quote.param("maxExperiments"), " or only ",
-                quote.param ("maxTime"), ".")
+                quote.param("maxExperiments"), " or only ", quote.param ("maxTime"), ".")
   } else if (scenario$maxExperiments < 0 ) {
     irace.error("Negative budget provided, ", quote.param("maxExperiments"),
                 "must be >= 0." )
   } else if (scenario$maxTime < 0) {
-    irace.error("Negative budget provided, ", quote.param("maxTime"),
-                " must be >= 0.")
+    irace.error("Negative budget provided, ", quote.param("maxTime"), " must be >= 0.")
   }
   
   if (scenario$maxTime > 0 && (scenario$budgetEstimation <= 0 || scenario$budgetEstimation >= 1)) 
