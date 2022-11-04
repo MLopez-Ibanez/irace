@@ -1,4 +1,4 @@
-# irace 3.6
+# irace 3.5.1
 
 ## New features and improvements
 
