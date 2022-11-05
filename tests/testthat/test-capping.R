@@ -28,7 +28,8 @@ target.runner <- function(experiment, scenario)
 ## target runner ###########################################################
 target.runner.reject <- function(experiment, scenario)
 {
-  if (runif(1) <= 0.05) return (list(cost = -Inf, time = 80, call = toString(experiment)))
+  if (experiment$configuration[["reject"]] == "1" && runif(1) <= 0.05)
+    return (list(cost = -Inf, time = 80, call = toString(experiment)))
   target.runner(experiment, scenario)
 }
 
@@ -37,7 +38,8 @@ cap.irace <- function(...)
   args <- list(...)
   parameters.table <- '
    x "" r (0, 1.00)
-   y "" r (0, 1.00)'
+   y "" r (0, 1.00)
+   reject "" c (0,1)'
   
   parameters <- readParameters(text = parameters.table)
 
