@@ -103,11 +103,9 @@ psRace <- function(iraceLogFile=NULL, iraceResults=NULL, conf.ids=NULL,
   # Should we fix the paramenters for the race?
   race.output <- race(maxExp = max.experiments,
                       minSurvival = 1,
-                      elite.data = NULL,
                       configurations = configurations,
                       parameters = parameters,
-                      scenario = scenario,
-                      elitistNewInstances = 0)
+                      scenario = scenario)
   experiments <- race.output$experiments
   
   elite.configurations <- extractElites(scenario, parameters,

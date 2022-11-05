@@ -471,23 +471,6 @@ alloc_configurations <- function(colnames, nrow, parameters)
 }
 
     
-## Gets the elite configurations time matrix from the experiment log
-generateTimeMatrix <- function(elites, experimentLog)
-{
-  is.elite <- experimentLog[,"configuration"] %in% elites$.ID.
-  # Remove everything that we don't need.
-  experimentLog <- experimentLog[is.elite, c("configuration", "instance", "time", "bound"), drop = FALSE]
-  experimentLog[, "time"] <- pmin(experimentLog[,"time"], experimentLog[, "bound"])
-  # FIXME: It would be better to use spread() from tidyr
-  resultsTime <- reshape(as.data.frame(experimentLog), direction = "wide",
-                         idvar = "instance", timevar = "configuration",
-                         drop = "bound")
-  rownames(resultsTime) <- resultsTime$instance
-  resultsTime <- resultsTime[order(resultsTime$instance), , drop = FALSE]
-  colnames(resultsTime) <- substring(colnames(resultsTime), nchar("time.") + 1)
-  resultsTime <- as.matrix(resultsTime[, as.character(elites$.ID.), drop = FALSE])
-  return(resultsTime)           
-}
 
 ## Initialize allConfigurations with any initial configurations provided.
 allConfigurationsInit <- function(scenario, parameters)
@@ -685,7 +668,7 @@ irace_run <- function(scenario, parameters)
                                               c("iteration", "instance", "configuration", "time", "bound")))
     )
     model <- NULL
-    nbConfigurations <- 0
+    nbConfigurations <- 0L
     eliteConfigurations <- data.frame(stringsAsFactors=FALSE)
     
     nbIterations <- ifelse (scenario$nbIterations == 0,
@@ -1142,13 +1125,10 @@ irace_run <- function(scenario, parameters)
 
     # Get data from previous elite tests 
     if (scenario$elitist && nrow(eliteConfigurations) > 0) {
-      elite.data <- list()
-      elite.data[["experiments"]] <- iraceResults$experiments[, as.character(eliteConfigurations[,".ID."]), drop=FALSE]
-      if (scenario$capping)
-        elite.data[["time"]] <- generateTimeMatrix(elites = eliteConfigurations, 
-                                                   experimentLog = iraceResults$experimentLog)
+      elite.data <- iraceResults$experiments[, as.character(eliteConfigurations[,".ID."]), drop=FALSE]
     } else elite.data <- NULL
-        
+
+    irace.assert(max(nrow(iraceResults$experiments), 0) == nrow(iraceResults$experiments))
     .irace$next.instance <- max(nrow(iraceResults$experiments), 0) + 1
     # Add instances if needed
     # Calculate budget needed for old instances assuming non elitist irace
@@ -1159,14 +1139,15 @@ irace_run <- function(scenario, parameters)
     }
 
     if (debugLevel >= 1) irace.note("Launch race\n")
-    raceResults <- race (scenario = scenario,
-                         configurations = raceConfigurations,
-                         parameters = parameters, 
-                         maxExp = currentBudget, 
-                         minSurvival = minSurvival,
-                         elite.data = elite.data,
-                         elitistNewInstances = if (firstRace) 0
-                                               else scenario$elitistNewInstances)
+    raceResults <- elitist_race (scenario = scenario,
+                                 configurations = raceConfigurations,
+                                 parameters = parameters,
+                                 maxExp = currentBudget,
+                                 minSurvival = minSurvival,
+                                 elite.data = elite.data,
+                                 elitistNewInstances = if (firstRace) 0L
+                                                       else scenario$elitistNewInstances,
+                                 full_experiment_log = iraceResults$experimentLog)
     # Update experiments
     # LESLIE: Maybe we can think is make iraceResults an environment, so these values
     # can be updated in the race function.

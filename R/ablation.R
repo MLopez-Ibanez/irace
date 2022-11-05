@@ -388,13 +388,13 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
     # Force the race to see all instances in "full" mode
     if (type == "full") scenario$firstTest <- nrow(instances)
     # FIXME: what about blockSize?
-    race.output <- race(maxExp = nrow(aconfigurations) * nrow(instances),
-                        minSurvival = 1,
-                        elite.data = elite.data,
-                        configurations = race.conf,
-                        parameters = parameters,
-                        scenario = scenario,
-                        elitistNewInstances = 0)
+    race.output <- elitist_race(maxExp = nrow(aconfigurations) * nrow(instances),
+                                minSurvival = 1,
+                                elite.data = elite.data,
+                                configurations = race.conf,
+                                parameters = parameters,
+                                scenario = scenario,
+                                elitistNewInstances = 0L)
     results <- merge.matrix (results, race.output$experiments)
 
     # Save log

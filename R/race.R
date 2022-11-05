@@ -149,45 +149,45 @@ aux2.friedman <- function(y, I, alive, conf.level = 0.95)
     dropped.any <- TRUE
   }
   irace.assert(I[which.min(R)] == best)
-  return(list(best = best, ranks = R, alive = alive, dropped.any = dropped.any, p.value = PVAL))
+  list(best = best, ranks = R, alive = alive, dropped.any = dropped.any, p.value = PVAL)
 }
 
 aux_friedman <- function(results, alive, which.alive, conf.level)
 {
   no.alive <- length(which.alive)
   
-  if (no.alive == 2) {
-    best <- NULL
-    ranks <- NULL
-    dropped.any <- TRUE
-    PVAL <- 0
-    # If only 2 configurations are left, switch to Wilcoxon
-    V1 <- results[, which.alive[1]]
-    V2 <- results[, which.alive[2]]
-    
-    # Avoid the test if the answer is obvious
-    if (all(V1 <= V2)) {
-      ranks <- c(1,2)
-    } else if (all(V2 <= V1)) {
-      ranks <- c(2,1)
-    } else {
-      res <- wilcox.test(V1, V2, paired = TRUE, conf.int = TRUE)
-      PVAL <- res$p.value
-      irace.assert(!is.nan(PVAL) & !is.na(PVAL))
-      if (PVAL >= 1 - conf.level) dropped.any <- FALSE
-      # We use the pseudo median estimated by the test.
-      ranks <- if (res$estimate <= 0) c(1,2) else c(2,1)
-    }
-    best <- which.alive[ranks[1]]
-    if (dropped.any)
-      alive[which.alive[ranks[2]]] <- FALSE
-
-    irace.assert(which.alive[which.min(ranks)] == best)
-    return(list(best = best, ranks = ranks, alive = alive, dropped.any = dropped.any, p.value = PVAL))
-  } else {
+  if (no.alive > 2) {
     # If more then 2 configurations are left, use Friedman
-    return (aux2.friedman(results, which.alive, alive, conf.level = conf.level))
+    return(aux2.friedman(results, which.alive, alive, conf.level = conf.level))
   }
+  
+  best <- NULL
+  ranks <- NULL
+  dropped.any <- TRUE
+  PVAL <- 0
+  # If only 2 configurations are left, switch to Wilcoxon
+  V1 <- results[, which.alive[1]]
+  V2 <- results[, which.alive[2]]
+  
+  # Avoid the test if the answer is obvious
+  if (all(V1 <= V2)) {
+    ranks <- c(1,2)
+  } else if (all(V2 <= V1)) {
+    ranks <- c(2,1)
+  } else {
+    res <- wilcox.test(V1, V2, paired = TRUE, conf.int = TRUE)
+    PVAL <- res$p.value
+    irace.assert(!is.nan(PVAL) & !is.na(PVAL))
+    if (PVAL >= 1 - conf.level) dropped.any <- FALSE
+    # We use the pseudo median estimated by the test.
+    ranks <- if (res$estimate <= 0) c(1,2) else c(2,1)
+  }
+  best <- which.alive[ranks[1]]
+  if (dropped.any)
+    alive[which.alive[ranks[2]]] <- FALSE
+  
+  irace.assert(which.alive[which.min(ranks)] == best)
+  list(best = best, ranks = ranks, alive = alive, dropped.any = dropped.any, p.value = PVAL)
 }
 
 aux.one_ttest <- function(results, alive, which.alive, conf.level,
@@ -225,8 +225,8 @@ aux.one_ttest <- function(results, alive, which.alive, conf.level,
   dropped_any <- length(dropj) > 0
   irace.assert(all(alive[dropj]))
   alive[dropj] <- FALSE
-  return(list(best = which.alive[best], ranks = means, alive = alive,
-              dropped.any = dropped_any, p.value = min(pvals)))
+  list(best = which.alive[best], ranks = means, alive = alive,
+       dropped.any = dropped_any, p.value = min(pvals))
 }
 
 aux.ttest <- function(results, alive, which.alive, conf.level,
@@ -602,13 +602,44 @@ update.elite.safe <- function(Results, is.elite)
   max(which(rowAnys(!is.na(Results[, elites, drop=FALSE]))))
 }
 
+generateTimeMatrix <- function(elite_ids, experimentLog)
+{
+  is.elite <- experimentLog[,"configuration"] %in% elite_ids
+  # Remove everything that we don't need.
+  experimentLog <- experimentLog[is.elite, c("configuration", "instance", "time", "bound"), drop = FALSE]
+  experimentLog[, "time"] <- pmin(experimentLog[,"time"], experimentLog[, "bound"])
+  # FIXME: It would be better to use spread() from tidyr
+  resultsTime <- reshape(as.data.frame(experimentLog), direction = "wide",
+                         idvar = "instance", timevar = "configuration",
+                         drop = "bound")
+  rownames(resultsTime) <- resultsTime$instance
+  resultsTime <- resultsTime[order(resultsTime$instance), , drop = FALSE]
+  colnames(resultsTime) <- substring(colnames(resultsTime), nchar("time.") + 1)
+  as.matrix(resultsTime[, as.character(elite_ids), drop = FALSE])
+}
+
 race <- function(maxExp = 0,
+                 minSurvival = 1,
+                 configurations,
+                 parameters,
+                 scenario)
+  elitist_race(maxExp = maxExp,
+               minSurvival = minSurvival,
+               elite.data = NULL,
+               configurations = configurations,
+               parameters = parameters,
+               scenario = scenario,
+               elitistNewInstances = 0L,
+               full_experiment_log = NULL)
+
+elitist_race <- function(maxExp = 0,
                  minSurvival = 1,
                  elite.data = NULL,
                  configurations,
                  parameters,
                  scenario,
-                 elitistNewInstances)
+                 elitistNewInstances,
+                 full_experiment_log)
 {
   race.env <- new.env(parent = emptyenv())
   # FIXME: We should take this from scenario. However, this value should be
@@ -679,17 +710,17 @@ race <- function(maxExp = 0,
     elite.safe <- 0L
     elite.instances.ID <- NULL
   } else {
-    irace.assert(.irace$next.instance - 1 == nrow(elite.data$experiments))
+    irace.assert(.irace$next.instance - 1 == nrow(elite.data))
     # There must be a non-NA entry for each instance.
-    irace.assert(all(rowAnys(!is.na(elite.data$experiments))),
-                 eval.after = { print(elite.data$experiments)})
+    irace.assert(all(rowAnys(!is.na(elite.data))),
+                 eval.after = { print(elite.data)})
     # There must be a non-NA entry for each configuration.
-    irace.assert(all(colAnys(!is.na(elite.data$experiments))))
+    irace.assert(all(colAnys(!is.na(elite.data))))
     
     # elite.safe: maximum instance number for which any configuration may be
     # considered elite. After evaluating this instance, no configuration is
     # elite.
-    elite.safe <- race.env$elitistNewInstances + nrow(elite.data[["experiments"]])
+    elite.safe <- race.env$elitistNewInstances + nrow(elite.data)
     elite.instances.ID <- as.character(race.instances[1:elite.safe])
   }
 
@@ -705,23 +736,23 @@ race <- function(maxExp = 0,
                               dimnames = list(elite.instances.ID, configurations.ID))
 
   if (! is.null(elite.data)) {
-    Results[rownames(elite.data[["experiments"]]),
-            colnames(elite.data[["experiments"]])] <- elite.data[["experiments"]]
+    Results[rownames(elite.data), colnames(elite.data)] <- elite.data
 
     if (capping) {
-      experimentsTime[rownames(elite.data[["time"]]),
-                      colnames(elite.data[["time"]])] <- elite.data[["time"]]
-    }
+      tmp <- generateTimeMatrix(elite_ids = colnames(elite.data), 
+                                experimentLog = full_experiment_log)
 
+      experimentsTime[rownames(tmp), colnames(tmp)] <- tmp
+    }
     # Preliminary execution of elite configurations to calculate
     # the execution bound of initial configurations (capping only).
-    if (capping && elitistNewInstances != 0) {
+    if (capping && race.env$elitistNewInstances > 0L) {
       # FIXME: This should go into its own function.
-      n.elite <- ncol(elite.data[["experiments"]])
+      n.elite <- ncol(elite.data)
       which.elites <- which(rep(TRUE, n.elite))
       irace.note("Preliminary execution of ", n.elite,
-                 " elite configuration(s) over ", elitistNewInstances, " instance(s).\n")
-      for (k in 1:elitistNewInstances) {
+                 " elite configuration(s) over ", race.env$elitistNewInstances, " instance(s).\n")
+      for (k in 1:race.env$elitistNewInstances) {
         output <- race.wrapper (configurations = configurations[which.elites, , drop = FALSE], 
                                 instance.idx = race.instances[k],
                                 bounds = rep(scenario$boundMax, n.elite),
