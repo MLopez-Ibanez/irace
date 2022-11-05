@@ -633,7 +633,7 @@ checkScenario <- function(scenario = defaultScenario())
   # AClib benchmarks use 15 digits
   if (scenario$aclib)
     scenario$digits <- 15L
-  if (scenario$digits > 15 || scenario$digits <= 0)
+  else if (scenario$digits > 15 || scenario$digits <= 0)
     irace.error (quote.param ("digits"), " must be within [1,15].")
   
   # Real [0, 1] control parameters

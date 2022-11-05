@@ -265,8 +265,8 @@ aux.ttest <- function(results, alive, which.alive, conf.level,
   dropped_any <- length(dropj) > 0
   irace.assert(all(alive[dropj]))
   alive[dropj] <- FALSE
-  return(list(best = which.alive[best], ranks = means, alive = alive,
-              dropped.any = dropped_any, p.value = min(pvals)))
+  list(best = which.alive[best], ranks = means, alive = alive,
+       dropped.any = dropped_any, p.value = min(pvals))
 }
 
 no_elitrace.init.instances <- function(deterministic, max_instances)
@@ -275,7 +275,7 @@ no_elitrace.init.instances <- function(deterministic, max_instances)
   # If deterministic consider all (do not resample).
   if (.irace$next.instance == 1 || deterministic) return(1:max_instances)
   irace.assert(.irace$next.instance < max_instances)
-  return(.irace$next.instance : max_instances)
+  .irace$next.instance : max_instances
 }
 
 elitrace.init.instances <- function(race.env, deterministic, max_instances, sampleInstances)
@@ -317,17 +317,18 @@ elitrace.init.instances <- function(race.env, deterministic, max_instances, samp
 
 table_hline <- function(widths) {
   s <- "+"
-  for(w in widths) {
+  for (w in widths) {
     s <- paste0(s, strrep("-", w), "+")
   }
-  return(paste0(s, "\n"))
+  paste0(s, "\n")
 }
+
 table_sprint <- function(text, widths) {
   s <- "|"
   for (i in seq_along(text)) {
       s <- paste0(s, sprintf("%*s", widths[i], text[i]), "|")
   }
-  return(paste0(s, "\n"))
+  paste0(s, "\n")
 }
 .nocap_table_fields_width <- c(1, 11, 11, 11, 16, 11, 8, 5, 4, 6)
 .nocap_colum_names <- c(" ", "Instance", "Alive", "Best", "Mean best", "Exp so far",
@@ -339,24 +340,21 @@ capping_hline <- table_hline(.capping_table_fields_width)
 capping_header <- table_sprint(.capping_colum_names, .capping_table_fields_width) 
 nocap_hline <- table_hline(.nocap_table_fields_width)
 nocap_header <- table_sprint(.nocap_colum_names, .nocap_table_fields_width) 
-
-# FIXME: Depending on capping here is ugly. We should simply set-up the correct printing functions at the start of race().
-race.print.header <- function(capping)
-{
-  cat(sep = "", "# Markers:
+race_common_header <-  "# Markers:
      x No test is performed.
      c Configurations are discarded only due to capping.
      - The test is performed and some configurations are discarded.
      = The test is performed but no configuration is discarded.
      ! The test is performed and configurations could be discarded but elite configurations are preserved.
-     . All alive configurations are elite and nothing is discarded\n\n")
-  if (capping)
-    cat(sep = "", capping_hline, capping_header, capping_hline)
-  else
-    cat(sep = "", nocap_hline, nocap_header, nocap_hline)
-}
+     . All alive configurations are elite and nothing is discarded\n\n"
 
-race.print.task <- function(res.symb, Results,
+race_print_header_nocap <- function()
+  cat(sep = "", race_common_header, nocap_hline, nocap_header, nocap_hline)
+
+race_print_header_cap <- function()
+  cat(sep = "", race_common_header, capping_hline, capping_header, capping_hline)
+
+race_print_task <- function(res.symb, Results,
                             instance,
                             current.task,
                             alive,
@@ -384,8 +382,9 @@ race.print.task <- function(res.symb, Results,
               sum(alive), id.best, mean_best, experimentsUsed, time_str))
   
   if (current.task > 1 && sum(alive) > 1) {
-    conc <- concordance(Results[1:current.task, alive, drop = FALSE])
-    qvar <- dataVariance(Results[1:current.task, alive, drop = FALSE])
+    res <- Results[1:current.task, alive, drop = FALSE]
+    conc <- concordance(res)
+    qvar <- dataVariance(res)
     # FIXME: We would like to use %+#4.2f but this causes problems with
     # https://github.com/oracle/fastr/issues/191
     cat(sprintf("|%+4.2f|%.2f|%.4f|\n", conc$spearman.rho, conc$kendall.w, qvar))
@@ -394,7 +393,7 @@ race.print.task <- function(res.symb, Results,
   }
 }
 
-race.print.footer <- function(bestconf, mean.best, break.msg, debug.level, capping = FALSE)
+race_print_footer <- function(bestconf, mean.best, break.msg, debug.level, capping = FALSE)
 {
   cat(sep = "",
       if (capping) capping_hline else nocap_hline,
@@ -622,7 +621,6 @@ race <- function(maxExp = 0,
   each.test <- scenario$eachTest
   elitist <- scenario$elitist
   capping <- scenario$capping
-  quiet <- scenario$quiet
   no.configurations <- nrow(configurations)
   experimentLog <- matrix(nrow = 0, ncol = 4,
                           dimnames = list(NULL, c("instance", "configuration", "time", "bound")))
@@ -652,6 +650,14 @@ race <- function(maxExp = 0,
        !is.finite(conf.level) || conf.level < 0 || conf.level > 1))
     stop("conf.level must be a single number between 0 and 1")
 
+  if (scenario$quiet) {
+    print_header <- print_task <- print_footer <- do_nothing
+  } else {
+    print_header <- if (capping) race_print_header_cap else race_print_header_nocap
+    print_task <- race_print_task
+    print_footer <- race_print_footer  
+  }
+  
   # Create the instance list according to the algorithm selected
   if (elitist)
     race.instances <- elitrace.init.instances(race.env,
@@ -778,8 +784,7 @@ race <- function(maxExp = 0,
   best <- 0
   race.ranks <- c()
   no.elimination <- 0 # number of tasks without elimination.
-  if (!quiet)
-    race.print.header(capping)
+  print_header()
 
   # Test that all instances that have been previously seen have been evaluated
   # by at least one configuration.
@@ -810,14 +815,13 @@ race <- function(maxExp = 0,
         # criterion is disabled)
         ## MANUEL: So what is the reason to not immediately terminate here? Is
         ## there a reason to continue?
-        if (!quiet)
-          race.print.task(".", Results[1:current.task, , drop = FALSE],
-                          race.instances[current.task],
-                          current.task, alive = alive,
-                          configurations[best, ".ID."],
-                          best = best, experimentsUsed, Sys.time(),
-                          # FIXME: Why do we pass NA as bound? Why not pass the actual bound if any?
-                          bound = NA, capping)
+        print_task(".", Results[1:current.task, , drop = FALSE],
+                   race.instances[current.task],
+                   current.task, alive = alive,
+                   configurations[best, ".ID."],
+                   best = best, experimentsUsed, Sys.time(),
+                   # FIXME: Why do we pass NA as bound? Why not pass the actual bound if any?
+                   bound = NA, capping)
         next
       }
     }
@@ -951,14 +955,13 @@ race <- function(maxExp = 0,
         # FIXME: There is similar code above.
         if (length(which.exe) == 0L) {
           is.elite <- update.is.elite(is.elite, which.elite.exe)
-          if (!quiet)
-            race.print.task(".", Results[1:current.task, , drop = FALSE],
-                            race.instances[current.task],
-                            current.task, alive = alive,
-                            configurations[best, ".ID."],
-                            best = best, experimentsUsed, start.time,
-                            # FIXME: Why do we pass NA as bound? Why not pass the actual bound if any?
-                            bound = NA, capping)
+          print_task(".", Results[1:current.task, , drop = FALSE],
+                     race.instances[current.task],
+                     current.task, alive = alive,
+                     configurations[best, ".ID."],
+                     best = best, experimentsUsed, start.time,
+                     # FIXME: Why do we pass NA as bound? Why not pass the actual bound if any?
+                     bound = NA, capping)
           next
         }
       }
@@ -1132,13 +1135,12 @@ race <- function(maxExp = 0,
     # Remove the ranks of those that are not alive anymore
     race.ranks <- race.ranks[which.alive]
     irace.assert(length(race.ranks) == sum(alive))
-    if (!quiet)
-      race.print.task(res.symb, Results[1:current.task, , drop = FALSE],
-                      race.instances[current.task],
-                      current.task, alive = alive,
-                      configurations[best, ".ID."],
-                      best = best, experimentsUsed, start.time, 
-                      bound = elite.bound, capping)
+    print_task(res.symb, Results[1:current.task, , drop = FALSE],
+               race.instances[current.task],
+               current.task, alive = alive,
+               configurations[best, ".ID."],
+               best = best, experimentsUsed, start.time, 
+               bound = elite.bound, capping)
     
     if (elitist) {
       # Compute number of statistical tests without eliminations.
@@ -1178,14 +1180,13 @@ race <- function(maxExp = 0,
   race.ranks <- overall.ranks(Results[, alive, drop = FALSE], test = stat.test)
   best <- which.alive[which.min(race.ranks)]
 
-  if (!quiet)
-    race.print.footer(bestconf = configurations[best, , drop = FALSE],
-                      # FIXME: This is the mean of the best, but perhaps it
-                      # should be the sum of ranks in the case of test ==
-                      # friedman?
-                      mean.best = mean(Results[, best]),
-                      break.msg = break.msg, debug.level = scenario$debugLevel, 
-                      capping = capping)
+  print_footer(bestconf = configurations[best, , drop = FALSE],
+               # FIXME: This is the mean of the best, but perhaps it
+               # should be the sum of ranks in the case of test ==
+               # friedman?
+               mean.best = mean(Results[, best]),
+               break.msg = break.msg, debug.level = scenario$debugLevel, 
+               capping = capping)
 
   nbAlive <- sum(alive)
   configurations$.ALIVE. <- as.logical(alive)
