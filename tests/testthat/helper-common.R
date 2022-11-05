@@ -14,6 +14,9 @@ test_irace_detectCores <- function()
   parallel::detectCores()
 }
 
+system_os <- function() tolower(Sys.info()[["sysname"]])
+system_os_is <- function(x) system_os() == x
+
 ## Functions ##########################################################
 f_ackley <- function (x,y, nsize = 0.01) {
   
