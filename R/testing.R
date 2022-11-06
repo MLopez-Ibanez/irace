@@ -49,14 +49,13 @@ testConfigurations <- function(configurations, scenario, parameters)
   experiments <- createExperimentList(configurations, parameters,
                                       testInstances, instances.ID, instanceSeed,
                                       scenario, bounds)
-  startParallel(scenario)
-  on.exit(stopParallel())
-
   if (scenario$debugLevel >= 3) {
     irace.note ("Memory used before execute.experiments in testConfigurations():\n")
     irace.print.memUsed()
   }
 
+  startParallel(scenario)
+  on.exit(stopParallel())
   target.output <- execute.experiments (experiments, scenario)
   # targetEvaluator may be NULL. If so, target.output must
   # contain the right output already.

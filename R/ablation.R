@@ -15,6 +15,7 @@ new_path        p    ''    --new-path    NA                    'New path to repl
 execDir         p    -e    --exec-dir    NA                    'Directory where the target runner will be run.'
 scenarioFile    p    -s    --scenario    NA                    'Scenario file to override the scenario given in the log-file (.Rdata)'
 parallel        i    ''    --parallel    NA                    'Number of calls to targetRunner to execute in parallel. Values 0 or 1 mean no parallelization.'
+instancesFile   s    ''    --instances-file   'train'          'Instances file used for ablation: \"train\", \"test\" or a filename containing the list of instances.'
 ")
 
 cat_ablation_license <- function()
@@ -203,12 +204,13 @@ report_duplicated_results <- function(experiments, configurations)
 #' @description Ablation is a method for analyzing the differences between two configurations.
 #'
 #' @template arg_iraceresults
-#' @param src,target Source and target configuration IDs. By default, the first configuration ever evaluated (ID 1) is used as `src` and the best configuration found by irace is used as target.
+#' @param src,target (`integer(1)`) Source and target configuration IDs. By default, the first configuration ever evaluated (ID 1) is used as `src` and the best configuration found by irace is used as target.
 #' @param ab.params Specific parameter names to be used for the ablation. They must be in `parameters$names`. By default, use all parameters.
 #' @param type Type of ablation to perform: `"full"` will execute each configuration on all `n_instances` to determine the best-performing one; `"racing"` will apply racing to find the best configurations.
 #' @param n_instances (`integer(1)`) Number of instances used in `"full"` ablation will be `n_instances * scenario$firstTest`.
 #' @param seed (`integer(1)`) Integer value to use as seed for the random number generation.
 #' @param ablationLogFile  (`character(1)`) Log file to save the ablation log. If `NULL`, the results are not saved to a file.
+#' @param instancesFile  (`character(1)`) Instances file used for ablation: `'train'`, `'test'` or a filename containing the list of instances.
 #' @param ... Further arguments to override scenario settings, e.g., `debugLevel`, `parallel`, etc.
 #'
 #' @references
@@ -235,7 +237,8 @@ report_duplicated_results <- function(experiments, configurations)
 ablation <- function(iraceResults, src = 1L, target = NULL,
                      ab.params = NULL, type = c("full", "racing"),
                      n_instances = 1L, seed = 1234567,
-                     ablationLogFile = "log-ablation.Rdata", ...)
+                     ablationLogFile = "log-ablation.Rdata",
+                     instancesFile="train", ...)
 {
   # Input check
   if (missing(iraceResults) || is.null(iraceResults)) 
@@ -257,6 +260,7 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
                   configurations = all_configurations,
                   experiments = results,
                   instances   = instances,
+                  parameters = parameters,
                   scenario    = scenario, 
                   trajectory  = trajectory,
                   best = best.configuration,
@@ -293,13 +297,15 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
   }
   scenario$logFile <- ""
   scenario <- checkScenario (scenario)
-  startParallel(scenario)
-  on.exit(stopParallel(), add = TRUE)
-
   n_instances <- if (type == "racing") length(scenario$instances) else n_instances * scenario$firstTest
+  if (instancesFile == "test") {
+    scenario$instances <- scenario$testInstances
+  } else if (instancesFile != "train") {
+    scenario$instances <- readInstances(instancesDir = "", instancesFile = instancesFile)
+  }
   instances <- generateInstances(scenario, n_instances)
   .irace$instancesList <- instances
-    
+  
   # Select the parameters used for ablation
   if (is.null(ab.params)) {
     ab.params <- parameters$names
@@ -333,12 +339,9 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
                                       seeds = instances[, "seed"],
                                       scenario = scenario,
                                       bounds = scenario$boundMax)
-  # Define variables needed
-  trajectory <- 1
-  names(trajectory) <- "source"
-  # FIXME: changes should only store the changed parameters.
-  changes <- list()
   irace.note("Executing source and target configurations on the given instances (", nrow(instances), ")...\n")
+  startParallel(scenario)
+  on.exit(stopParallel(), add = TRUE)
   target.output <- execute.experiments(experiments, scenario)
   if (!is.null(scenario$targetEvaluator))
     target.output <- execute.evaluator (experiments, scenario, target.output,
@@ -350,6 +353,11 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
   results[,1] <- output[1:nrow(instances)]
   lastres <- output[(nrow(instances)+1):(2 * nrow(instances))]
   step <- 1
+  # Define variables needed
+  trajectory <- 1
+  names(trajectory) <- "source"
+  # FIXME: changes should only store the changed parameters.
+  changes <- list()
   ablog <- save_ablog(complete = FALSE)
   while (length(param.names) > 1) {
     # Generate ablation configurations

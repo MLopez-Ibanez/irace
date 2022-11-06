@@ -61,6 +61,9 @@ List of command-line options:\preformatted{-l,--log-file            Path to the 
                          log-file (.Rdata)
    --parallel            Number of calls to targetRunner to execute in
                          parallel. Values 0 or 1 mean no parallelization.
+   --instances-file      Instances file used for ablation: "train", "test" or a
+                         filename containing the list of instances. Default:
+                         train.
 }
 }
 \examples{
