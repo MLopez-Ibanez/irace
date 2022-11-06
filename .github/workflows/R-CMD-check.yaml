@@ -32,7 +32,8 @@ jobs:
           - {os: macOS-latest,   r: 'release'}
           - {os: ubuntu-20.04,   r: 'release'}
           - {os: ubuntu-20.04,   r: '3.6'}
-      #    - {os: ubuntu-20.04,   r: 'devel', http-user-agent: 'release'}
+          # Use latest ubuntu to make it easier to install dependencies
+          - {os: ubuntu-latest,   r: 'devel', http-user-agent: 'release'}
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
@@ -134,8 +135,9 @@ jobs:
           remotes::install_local(".", build = TRUE, upgrade = "never", force = TRUE, build_opts = c("--no-resave-data"), build_manual = TRUE, build_vignettes = TRUE)
           # options(covr.gcov="") # Bug in covr
           # covr::codecov(type="all", quiet=FALSE)
-          # covr::package_coverage(type="examples", quiet=FALSE, clean=TRUE)
           covr::codecov(type="examples", quiet=FALSE)
+          covr::codecov(type="vignettes", quiet=FALSE)
+          covr::codecov(type="tests", quiet=FALSE)
           #covr::package_coverage(type="tests", quiet=FALSE, clean=FALSE)
         shell: Rscript {0}
 
