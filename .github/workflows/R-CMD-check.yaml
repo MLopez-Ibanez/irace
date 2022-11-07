@@ -142,15 +142,26 @@ jobs:
           # covr::codecov(type="all", quiet=FALSE)
           covr::codecov(type=c("examples","vignettes"), quiet=FALSE)
           covr::codecov(type="tests", quiet=FALSE, clean=FALSE)
-          #covr::package_coverage(type="tests", quiet=FALSE, clean=FALSE)
         shell: Rscript {0}
+
+      - name: Show testthat output
+        if: failure()
+        run: find /tmp/ -name 'testthat.Rout*' -exec cat '{}' \; || true
+        shell: bash
+
+      - name: Move output to log dir
+        if: failure()
+        run: |
+          find /tmp/ -name 'irace-tests' -type d | xargs -I 'X' find 'X' -name 'testthat.Rout*' -exec cat '{}' \; || true
+          find /tmp/ -name 'irace-tests' -type d -exec mv '{}' covr-log \; || true
+        shell: bash
 
       - name: Upload test results
         if: failure()
         uses: actions/upload-artifact@main
         with:
           name: covr-log
-          path: /tmp/Rtmp*
+          path: covr-log
 
   pkgdown:
     needs: R-CMD-check
