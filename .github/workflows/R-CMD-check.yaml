@@ -105,7 +105,6 @@ jobs:
     name: Coverage
     runs-on: ubuntu-latest
     continue-on-error: true
-    timeout-minutes: 60
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
 
@@ -137,17 +136,11 @@ jobs:
 
       - name: Test coverage
         run: |
-          remotes::install_local(".", build = TRUE, upgrade = "never", force = TRUE, build_opts = c("--no-resave-data"), build_manual = TRUE, build_vignettes = TRUE)
           # options(covr.gcov="") # Bug in covr
           # covr::codecov(type="all", quiet=FALSE)
-          covr::codecov(type=c("examples","vignettes"), quiet=FALSE)
-          covr::codecov(type="tests", quiet=FALSE, clean=FALSE)
+          covr::codecov(type=c("examples","vignettes"), quiet=FALSE, token = "${{ secrets.CODECOV_TOKEN }}")
+          covr::codecov(type="tests", quiet=FALSE, clean=FALSE, token = "${{ secrets.CODECOV_TOKEN }}")
         shell: Rscript {0}
-
-      - name: Show testthat output
-        if: failure()
-        run: find /tmp/ -name 'testthat.Rout*' -exec cat '{}' \; || true
-        shell: bash
 
       - name: Move output to log dir
         if: failure()
