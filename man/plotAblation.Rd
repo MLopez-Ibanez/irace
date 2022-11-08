@@ -8,7 +8,7 @@ plotAblation(
   ablog,
   pdf.file = NULL,
   pdf.width = 20,
-  type = c("mean", "boxplot"),
+  type = c("mean", "boxplot", "rank"),
   mar = par("mar"),
   ylab = "Mean configuration cost",
   ylim = NULL,
@@ -22,13 +22,13 @@ plotAblation(
 
 \item{pdf.width}{Width provided to create the pdf file.}
 
-\item{type}{Type of plot. Supported values are \code{"mean"} and \code{"boxplot"}.}
+\item{type}{Type of plot. Supported values are \code{"mean"} and \code{"boxplot"}. Adding \code{"rank"} will plot rank per instance instead of raw cost value.}
 
 \item{mar}{Vector with the margins for the ablation plot.}
 
 \item{ylab}{Label of y-axis.}
 
-\item{ylim}{Numeric vector of length 2, giving the y coordinates ranges.}
+\item{ylim}{Numeric vector of length 2 giving the y-axis range.}
 
 \item{...}{Further graphical parameters may also be supplied as
 arguments. See \code{\link[graphics:plot.default]{graphics::plot.default()}}.}
@@ -39,6 +39,8 @@ Create plot from an ablation log
 \examples{
 logfile <- file.path(system.file(package="irace"), "exdata", "log-ablation.Rdata")
 plotAblation(ablog = logfile)
+plotAblation(ablog = logfile, type = "boxplot")
+plotAblation(ablog = logfile, type = c("rank","boxplot"))
 }
 \seealso{
 \code{\link[=ablation]{ablation()}}

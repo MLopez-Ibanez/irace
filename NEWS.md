@@ -25,6 +25,9 @@
    should that each block should contain one instance of each class and
    `blockSize` should be set to the number of classes. (Manuel López-Ibáñez)
 
+ * `plotAblation()` has a new option `type='rank'` to plot ranks per instance instead of raw cost values.  (Manuel López-Ibáñez)
+ 
+ 
 ## Fixes
 
  * Fix (#44): irace now will give an error if the domain of real-valued (r)
