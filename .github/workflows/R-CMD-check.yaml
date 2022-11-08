@@ -53,18 +53,18 @@ jobs:
         run: brew install openmpi
         if: runner.os == 'macOS'
 
-      - name: Install latex
-        uses: r-lib/actions/setup-tinytex@v2
-        env:
-          # install full prebuilt version
-          TINYTEX_INSTALLER: TinyTeX
-
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: cran::XML any::rcmdcheck
           needs: check
           cache-version: 1
           
+      - name: Install latex
+        uses: r-lib/actions/setup-tinytex@v2
+        env:
+          # install full prebuilt version
+          TINYTEX_INSTALLER: TinyTeX
+
       - name: Install latex packages
         run: |
           remotes::install_cran("tinytex")
@@ -107,7 +107,7 @@ jobs:
     continue-on-error: true
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
-
+      CODECOV_TOKEN: ${{secrets.CODECOV_TOKEN}}
     steps:
       - uses: actions/checkout@v2
 
@@ -117,16 +117,16 @@ jobs:
         with:
           use-public-rspm: true
 
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: cran::XML any::covr
+          needs: coverage
+
       - name: Install latex
         uses: r-lib/actions/setup-tinytex@v2
         env:
           # install full prebuilt version
           TINYTEX_INSTALLER: TinyTeX
-
-      - uses: r-lib/actions/setup-r-dependencies@v2
-        with:
-          extra-packages: cran::XML any::covr
-          needs: coverage
 
       - name: Install latex packages
         run: |
@@ -135,11 +135,14 @@ jobs:
         shell: Rscript {0}
 
       - name: Test coverage
+        env:
+          NOT_CRAN: false
         run: |
           # options(covr.gcov="") # Bug in covr
           # covr::codecov(type="all", quiet=FALSE)
-          covr::codecov(type=c("examples","vignettes"), quiet=FALSE, token = "${{ secrets.CODECOV_TOKEN }}")
-          covr::codecov(type="tests", quiet=FALSE, clean=FALSE, token = "${{ secrets.CODECOV_TOKEN }}")
+          covr::codecov(type=c("examples","vignettes", "tests"), quiet=FALSE, clean=FALSE)
+          ## FIXME: This still doesn't work!
+          #covr::codecov(type="tests", quiet=FALSE, clean=FALSE)
         shell: Rscript {0}
 
       - name: Move output to log dir
