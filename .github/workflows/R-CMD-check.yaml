@@ -140,9 +140,7 @@ jobs:
         run: |
           # options(covr.gcov="") # Bug in covr
           # covr::codecov(type="all", quiet=FALSE)
-          covr::codecov(type=c("examples","vignettes", "tests"), quiet=FALSE, clean=FALSE)
-          ## FIXME: This still doesn't work!
-          #covr::codecov(type="tests", quiet=FALSE, clean=FALSE)
+          covr::codecov(type="all", quiet=FALSE, clean=FALSE)
         shell: Rscript {0}
 
       - name: Move output to log dir
