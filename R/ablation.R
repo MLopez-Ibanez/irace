@@ -9,7 +9,7 @@ n_instances     i    -n    --n-instances 1                     'Number of instan
 seed            i    ''    --seed        1234567               'Integer value to use as seed for the random number generation.'
 ablationLogFile p    -o    --output-file 'log-ablation.Rdata'  'Log file to save the ablation log. If \"\", the results are not saved to a file.'
 plot            s    -p    --plot        ''                    'Output filename (.pdf) for the plot. If not given, no plot is created.'
-plot_type       s    -O    --plot-type   'mean'                'Type of plot. Supported values are \"mean\" and \"boxplot\".'
+plot_type       s    -O    --plot-type   'mean'                'Type of plot. Supported values are \"mean\", \"boxplot\", \"rank\" or \"rank,boxplot\".'
 old_path        p    ''    --old-path    NA                    'Old path found in the log-file (.Rdata) given as input to be replaced by --new-path.'
 new_path        p    ''    --new-path    NA                    'New path to replace the path found in the log-file (.Rdata) given as input.'
 execDir         p    -e    --exec-dir    NA                    'Directory where the target runner will be run.'
@@ -108,17 +108,16 @@ ablation_cmdline <- function(argv = commandArgs(trailingOnly = TRUE))
     params$ablationLogFile <- path_rel2abs(params$ablationLogFile)
       
   if (!is.null(params$ab.params))
-    params$ab.params <- sapply(strsplit(params$ab.params, ",")[[1]], trimws, USE.NAMES=FALSE)
+    params$ab.params <- trimws(strsplit(params$ab.params, ",", fixed=TRUE)[[1]])
 
   ablog <- do.call(ablation,
-                   args = c(list(iraceResults = iraceResults,
-                                 src = params$src, target = params$target,
-                                 ab.params = params$ab.params, type = params$type,
-                                 n_instances = params$n_instances, seed = params$seed,
-                                 ablationLogFile = params$ablationLogFile),
-                           scenario))
+                   args = c(list(iraceResults = iraceResults),
+                            params[c("src", "target","ab.params", "type",
+                                     "n_instances", "seed", "ablationLogFile")],
+                            scenario))
   if (!is.null(params[["plot"]]) || base::interactive()) {
-    plotAblation(ablog, pdf.file = params[["plot"]], type = params[["plot_type"]]) 
+    params$plot_type.params <- trimws(strsplit(params$plot_type, ",", fixed=TRUE)[[1]])
+    plotAblation(ablog, pdf.file = params[["plot"]], type = params$plot_type) 
   }
   invisible(ablog)
 }
