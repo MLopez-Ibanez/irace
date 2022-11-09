@@ -50,8 +50,8 @@ List of command-line options:\preformatted{-l,--log-file            Path to the 
                          are not saved to a file. Default: log-ablation.Rdata.
 -p,--plot                Output filename (.pdf) for the plot. If not given, no
                          plot is created.
--O,--plot-type           Type of plot. Supported values are "mean" and
-                         "boxplot". Default: mean.
+-O,--plot-type           Type of plot. Supported values are "mean", "boxplot",
+                         "rank" or "rank,boxplot". Default: mean.
    --old-path            Old path found in the log-file (.Rdata) given as input
                          to be replaced by --new-path.
    --new-path            New path to replace the path found in the log-file
