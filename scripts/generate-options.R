@@ -17,7 +17,8 @@ format.number.or.string <- function(x)
   else
     return(y)
 }
-to.plain.text <- function(x) gsub("\\\\code\\{([^}]+)\\}", "\\1", x)
+to.Rd.text <- function(x) gsub("\\\\code\\{((?:[^{}\\\\]|\\\\{|\\\\})+)\\}", "`\\1`", x, perl=TRUE)
+to.plain.text <- function(x) gsub("\\}", "}", gsub("\\{", "{", to.Rd.text(x), fixed=TRUE), fixed=TRUE)
 
 ordered_sections <- c("General options",
                       "Elitist \\irace",
@@ -142,7 +143,7 @@ writeLines(out.text, con = "../inst/templates/scenario.txt.tmpl")
 
 # Generate R code for options
 irace_params <- irace_params[, c("name", "type", "short", "long", "default", "domain", "description")]
-irace_params$description <- to.plain.text(irace_params$description)
+irace_params$description <- to.Rd.text(irace_params$description)
 rownames (irace_params) <- irace_params[,"name"]
 irace.params.names <- rownames(irace_params)[!startsWith(rownames(irace_params),".")]
 

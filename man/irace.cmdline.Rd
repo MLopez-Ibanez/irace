@@ -106,27 +106,27 @@ List of command-line options:\preformatted{-h,--help                Show this he
 -p,--parameter-file      File that contains the description of the parameters
                          of the target algorithm. Default: ./parameters.txt.
    --forbidden-file      File that contains a list of logical expressions that
-                         cannot be TRUE for any evaluated configuration. If
-                         empty or NULL, do not use forbidden expressions.
+                         cannot be `TRUE` for any evaluated configuration. If
+                         empty or `NULL`, do not use forbidden expressions.
    --configurations-file  File that contains a table of initial configurations.
-                         If empty or NULL, all initial configurations are
+                         If empty or `NULL`, all initial configurations are
                          randomly generated.
 -l,--log-file            File to save tuning results as an R dataset, either
                          absolute path or relative to execDir. Default:
                          ./irace.Rdata.
    --recovery-file       Previously saved log file to recover the execution of
-                         irace, either absolute path or relative to the current
-                         directory.  If empty or NULL, recovery is not
-                         performed.
+                         `irace`, either absolute path or relative to the
+                         current directory.  If empty or `NULL`, recovery is
+                         not performed.
    --train-instances-dir  Directory where training instances are located;
                          either absolute path or relative to current directory.
-                         If no trainInstancesFiles is provided, all the files
-                         in trainInstancesDir will be listed as instances.
+                         If no `trainInstancesFiles` is provided, all the files
+                         in `trainInstancesDir` will be listed as instances.
                          Default: ./Instances.
    --train-instances-file  File that contains a list of training instances and
                          optionally additional parameters for them. If
-                         trainInstancesDir is provided, irace will search for
-                         the files in this folder.
+                         `trainInstancesDir` is provided, `irace` will search
+                         for the files in this folder.
    --sample-instances    Randomly sample the training instances or use them in
                          the order given. Default: 1.
    --test-instances-dir  Directory where testing instances are located, either
@@ -139,17 +139,18 @@ List of command-line options:\preformatted{-h,--help                Show this he
    --test-iteration-elites  Enable/disable testing the elite configurations
                          found at each iteration. Default: 0.
    --test-type           Statistical test used for elimination. The default
-                         value selects t-test if capping is enabled or F-test,
-                         otherwise. Valid values are: F-test (Friedman test),
-                         t-test (pairwise t-tests with no correction),
-                         t-test-bonferroni (t-test with Bonferroni's correction
-                         for multiple comparisons), t-test-holm (t-test with
-                         Holm's correction for multiple comparisons).
+                         value selects `t-test` if `capping` is enabled or
+                         `F-test`, otherwise. Valid values are: F-test
+                         (Friedman test), t-test (pairwise t-tests with no
+                         correction), t-test-bonferroni (t-test with
+                         Bonferroni's correction for multiple comparisons),
+                         t-test-holm (t-test with Holm's correction for
+                         multiple comparisons).
    --first-test          Number of instances evaluated before the first
-                         elimination test. It must be a multiple of eachTest.
+                         elimination test. It must be a multiple of `eachTest`.
                          Default: 5.
    --block-size          Number of training instances, that make up a `block'
-                         in trainInstancesFile. Elimination of configurations
+                         in `trainInstancesFile`. Elimination of configurations
                          will only be performed after evaluating a complete
                          block and never in the middle of a block. Each block
                          typically contains one instance from each instance
@@ -160,61 +161,62 @@ List of command-line options:\preformatted{-h,--help                Show this he
                          the target algorithm to be tuned. See the templates
                          and examples provided. Default: ./target-runner.
    --target-runner-launcher  Executable that will be used to launch the target
-                         runner, when targetRunner cannot be executed directly
-                         (e.g., a Python script in Windows).
-   --target-cmdline      Command-line arguments provided to targetRunner (or
-                         targetRunnerLauncher if defined). The substrings
-                         \\\{configurationID\\\}, \\\{instanceID\\\}, \\\{seed\\\},
-                         \\\{instance\\\}, and \\\{bound\\\} will be replaced by their
-                         corresponding values. The substring
-                         \\\{targetRunnerArgs\\\} will be replaced by the
+                         runner, when `targetRunner` cannot be executed
+                         directly (e.g., a Python script in Windows).
+   --target-cmdline      Command-line arguments provided to `targetRunner` (or
+                         `targetRunnerLauncher` if defined). The substrings
+                         `\\\{configurationID\\\}`, `\\\{instanceID\\\}`, `\\\{seed\\\}`,
+                         `\\\{instance\\\}`, and `\\\{bound\\\}` will be replaced by
+                         their corresponding values. The substring
+                         `\\\{targetRunnerArgs\\\}` will be replaced by the
                          concatenation of the switch and value of all active
                          parameters of the particular configuration being
-                         evaluated.  The substring \\\{targetRunner\\\}, if
-                         present, will be replaced by the value of targetRunner
-                         (useful when using targetRunnerLauncher). Default:
-                         \{configurationID\} \{instanceID\} \{seed\} \{instance\}
-                         \{bound\} \{targetRunnerArgs\}.
-   --target-runner-retries  Number of times to retry a call to targetRunner if
-                         the call failed. Default: 0.
+                         evaluated.  The substring `\\\{targetRunner\\\}`, if
+                         present, will be replaced by the value of
+                         `targetRunner` (useful when using
+                         `targetRunnerLauncher`). Default: \{configurationID\}
+                         \{instanceID\} \{seed\} \{instance\} \{bound\}
+                         \{targetRunnerArgs\}.
+   --target-runner-retries  Number of times to retry a call to `targetRunner`
+                         if the call failed. Default: 0.
    --target-evaluator    Optional script or R function that provides a numeric
                          value for each configuration. See
                          templates/target-evaluator.tmpl
    --deterministic       If the target algorithm is deterministic,
                          configurations will be evaluated only once per
                          instance. Default: 0.
-   --max-experiments     Maximum number of runs (invocations of targetRunner)
+   --max-experiments     Maximum number of runs (invocations of `targetRunner`)
                          that will be performed. It determines the maximum
                          budget of experiments for the tuning. Default: 0.
    --max-time            Maximum total execution time in seconds for the
-                         executions of targetRunner. targetRunner must return
-                         two values: cost and time. Default: 0.
+                         executions of `targetRunner`. `targetRunner` must
+                         return two values: cost and time. Default: 0.
    --budget-estimation   Fraction (smaller than 1) of the budget used to
                          estimate the mean computation time of a configuration.
-                         Only used when maxTime > 0 Default: 0.02.
+                         Only used when `maxTime` > 0 Default: 0.02.
    --min-measurable-time  Minimum time unit that is still (significantly)
                          measureable. Default: 0.01.
-   --parallel            Number of calls to targetRunner to execute in
-                         parallel. Values 0 or 1 mean no parallelization.
+   --parallel            Number of calls to `targetRunner` to execute in
+                         parallel. Values `0` or `1` mean no parallelization.
                          Default: 0.
    --load-balancing      Enable/disable load-balancing when executing
                          experiments in parallel. Load-balancing makes better
                          use of computing resources, but increases
                          communication overhead. If this overhead is large,
                          disabling load-balancing may be faster. Default: 1.
-   --mpi                 Enable/disable MPI. Use Rmpi to execute targetRunner
-                         in parallel (parameter parallel is the number of
-                         slaves). Default: 0.
+   --mpi                 Enable/disable MPI. Use `Rmpi` to execute
+                         `targetRunner` in parallel (parameter `parallel` is
+                         the number of slaves). Default: 0.
    --batchmode           Specify how irace waits for jobs to finish when
-                         targetRunner submits jobs to a batch cluster: sge,
-                         pbs, torque, slurm or htcondor. targetRunner must
-                         submit jobs to the cluster using, for example, qsub.
+                         `targetRunner` submits jobs to a batch cluster: sge,
+                         pbs, torque, slurm or htcondor. `targetRunner` must
+                         submit jobs to the cluster using, for example, `qsub`.
                          Default: 0.
    --digits              Maximum number of decimal places that are significant
                          for numerical (real) parameters. Default: 4.
 -q,--quiet               Reduce the output generated by irace to a minimum.
                          Default: 0.
-   --debug-level         Debug level of the output of irace. Set this to 0 to
+   --debug-level         Debug level of the output of `irace`. Set this to 0 to
                          silence all debug messages. Higher values provide more
                          verbose debug messages. Default: 0.
    --seed                Seed of the random number generator (by default,
@@ -223,8 +225,8 @@ List of command-line options:\preformatted{-h,--help                Show this he
                          premature convergence of the probabilistic model.
                          Default: 1.
    --soft-restart-threshold  Soft restart threshold value for numerical
-                         parameters. If NA, NULL or "", it is computed as
-                         10^-digits.
+                         parameters. If `NA`, `NULL` or `""`, it is computed as
+                         `10^-digits`.
 -e,--elitist             Enable/disable elitist irace. Default: 1.
    --elitist-new-instances  Number of instances added to the execution list
                          before previous instances in elitist irace. Default:
@@ -235,22 +237,22 @@ List of command-line options:\preformatted{-h,--help                Show this he
    --capping             Enable the use of adaptive capping, a technique
                          designed for minimizing the computation time of
                          configurations. Capping is enabled by default if
-                         elitist is active, maxTime > 0 and boundMax > 0.
+                         `elitist` is active, `maxTime > 0` and `boundMax > 0`.
    --capping-type        Measure used to obtain the execution bound from the
                          performance of the elite configurations: median, mean,
                          worst, best. Default: median.
    --bound-type          Method to calculate the mean performance of elite
                          configurations: candidate or instance. Default:
                          candidate.
-   --bound-max           Maximum execution bound for targetRunner. It must be
+   --bound-max           Maximum execution bound for `targetRunner`. It must be
                          specified when capping is enabled. Default: 0.
    --bound-digits        Precision used for calculating the execution time. It
                          must be specified when capping is enabled. Default: 0.
    --bound-par           Penalization constant for timed out executions
-                         (executions that reach boundMax execution time).
+                         (executions that reach `boundMax` execution time).
                          Default: 1.
    --bound-as-timeout    Replace the configuration cost of bounded executions
-                         with boundMax. Default: 1.
+                         with `boundMax`. Default: 1.
    --postselection       Percentage of the configuration budget used to perform
                          a postselection race of the best configurations of
                          each iteration after the execution of irace. Default:

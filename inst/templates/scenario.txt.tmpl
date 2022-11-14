@@ -13,13 +13,13 @@
 ## algorithm.
 # parameterFile = "./parameters.txt"
 
-## File that contains a list of logical expressions that cannot be TRUE for
-## any evaluated configuration. If empty or NULL, do not use forbidden
+## File that contains a list of logical expressions that cannot be `TRUE` for
+## any evaluated configuration. If empty or `NULL`, do not use forbidden
 ## expressions.
 # forbiddenFile = ""
 
-## File that contains a table of initial configurations. If empty or NULL, all
-## initial configurations are randomly generated.
+## File that contains a table of initial configurations. If empty or `NULL`,
+## all initial configurations are randomly generated.
 # configurationsFile = ""
 
 ## File to save tuning results as an R dataset, either absolute path or
@@ -27,13 +27,13 @@
 # logFile = "./irace.Rdata"
 
 ## Directory where training instances are located; either absolute path or
-## relative to current directory. If no trainInstancesFiles is provided, all
-## the files in trainInstancesDir will be listed as instances.
+## relative to current directory. If no `trainInstancesFiles` is provided, all
+## the files in `trainInstancesDir` will be listed as instances.
 # trainInstancesDir = "./Instances"
 
 ## File that contains a list of training instances and optionally additional
-## parameters for them. If trainInstancesDir is provided, irace will search
-## for the files in this folder.
+## parameters for them. If `trainInstancesDir` is provided, `irace` will
+## search for the files in this folder.
 # trainInstancesFile = ""
 
 ## Randomly sample the training instances or use them in the order given.
@@ -54,21 +54,23 @@
 ## Enable/disable testing the elite configurations found at each iteration.
 # testIterationElites = 0
 
-## Statistical test used for elimination. The default value selects t-test if
-## capping is enabled or F-test, otherwise. Valid values are: F-test (Friedman
-## test), t-test (pairwise t-tests with no correction), t-test-bonferroni
-## (t-test with Bonferroni's correction for multiple comparisons), t-test-holm
-## (t-test with Holm's correction for multiple comparisons).
+## Statistical test used for elimination. The default value selects `t-test`
+## if `capping` is enabled or `F-test`, otherwise. Valid values are: F-test
+## (Friedman test), t-test (pairwise t-tests with no correction),
+## t-test-bonferroni (t-test with Bonferroni's correction for multiple
+## comparisons), t-test-holm (t-test with Holm's correction for multiple
+## comparisons).
 # testType = ""
 
 ## Number of instances evaluated before the first elimination test. It must be
-## a multiple of eachTest.
+## a multiple of `eachTest`.
 # firstTest = 5
 
-## Number of training instances, that make up a `block' in trainInstancesFile.
-## Elimination of configurations will only be performed after evaluating a
-## complete block and never in the middle of a block. Each block typically
-## contains one instance from each instance class (type or family).
+## Number of training instances, that make up a `block' in
+## `trainInstancesFile`. Elimination of configurations will only be performed
+## after evaluating a complete block and never in the middle of a block. Each
+## block typically contains one instance from each instance class (type or
+## family).
 # blockSize = 1
 
 ## Number of instances evaluated between elimination tests.
@@ -78,29 +80,30 @@
 ## to be tuned. See the templates and examples provided.
 # targetRunner = "./target-runner"
 
-## Executable that will be used to launch the target runner, when targetRunner
-## cannot be executed directly (e.g., a Python script in Windows).
+## Executable that will be used to launch the target runner, when
+## `targetRunner` cannot be executed directly (e.g., a Python script in
+## Windows).
 # targetRunnerLauncher = ""
 
-## Command-line arguments provided to targetRunner (or targetRunnerLauncher if
-## defined). The substrings \{configurationID\}, \{instanceID\}, \{seed\},
-## \{instance\}, and \{bound\} will be replaced by their corresponding values.
-## The substring \{targetRunnerArgs\} will be replaced by the concatenation of
-## the switch and value of all active parameters of the particular
-## configuration being evaluated.  The substring \{targetRunner\}, if present,
-## will be replaced by the value of targetRunner (useful when using
-## targetRunnerLauncher).
+## Command-line arguments provided to `targetRunner` (or
+## `targetRunnerLauncher` if defined). The substrings `{configurationID}`,
+## `{instanceID}`, `{seed}`, `{instance}`, and `{bound}` will be replaced by
+## their corresponding values. The substring `{targetRunnerArgs}` will be
+## replaced by the concatenation of the switch and value of all active
+## parameters of the particular configuration being evaluated.  The substring
+## `{targetRunner}`, if present, will be replaced by the value of
+## `targetRunner` (useful when using `targetRunnerLauncher`).
 # targetCmdline = "{configurationID} {instanceID} {seed} {instance} {bound} {targetRunnerArgs}"
 
-## Number of times to retry a call to targetRunner if the call failed.
+## Number of times to retry a call to `targetRunner` if the call failed.
 # targetRunnerRetries = 0
 
-## Optional data passed to targetRunner. This is ignored by the default
-## targetRunner function, but it may be used by custom targetRunner functions
-## to pass persistent data around.
+## Optional data passed to `targetRunner`. This is ignored by the default
+## `targetRunner` function, but it may be used by custom `targetRunner`
+## functions to pass persistent data around.
 # targetRunnerData = ""
 
-## Optional R function to provide custom parallelization of targetRunner.
+## Optional R function to provide custom parallelization of `targetRunner`.
 # targetRunnerParallel = ""
 
 ## Optional script or R function that provides a numeric value for each
@@ -111,23 +114,23 @@
 ## only once per instance.
 # deterministic = 0
 
-## Maximum number of runs (invocations of targetRunner) that will be
+## Maximum number of runs (invocations of `targetRunner`) that will be
 ## performed. It determines the maximum budget of experiments for the tuning.
 # maxExperiments = 0
 
-## Maximum total execution time in seconds for the executions of targetRunner.
-## targetRunner must return two values: cost and time.
+## Maximum total execution time in seconds for the executions of
+## `targetRunner`. `targetRunner` must return two values: cost and time.
 # maxTime = 0
 
 ## Fraction (smaller than 1) of the budget used to estimate the mean
-## computation time of a configuration. Only used when maxTime > 0
+## computation time of a configuration. Only used when `maxTime` > 0
 # budgetEstimation = 0.02
 
 ## Minimum time unit that is still (significantly) measureable.
 # minMeasurableTime = 0.01
 
-## Number of calls to targetRunner to execute in parallel. Values 0 or 1 mean
-## no parallelization.
+## Number of calls to `targetRunner` to execute in parallel. Values `0` or `1`
+## mean no parallelization.
 # parallel = 0
 
 ## Enable/disable load-balancing when executing experiments in parallel.
@@ -136,13 +139,13 @@
 ## may be faster.
 # loadBalancing = 1
 
-## Enable/disable MPI. Use Rmpi to execute targetRunner in parallel (parameter
-## parallel is the number of slaves).
+## Enable/disable MPI. Use `Rmpi` to execute `targetRunner` in parallel
+## (parameter `parallel` is the number of slaves).
 # mpi = 0
 
-## Specify how irace waits for jobs to finish when targetRunner submits jobs
-## to a batch cluster: sge, pbs, torque, slurm or htcondor. targetRunner must
-## submit jobs to the cluster using, for example, qsub.
+## Specify how irace waits for jobs to finish when `targetRunner` submits jobs
+## to a batch cluster: sge, pbs, torque, slurm or htcondor. `targetRunner`
+## must submit jobs to the cluster using, for example, `qsub`.
 # batchmode = 0
 
 ## Maximum number of decimal places that are significant for numerical (real)
@@ -152,7 +155,7 @@
 ## Reduce the output generated by irace to a minimum.
 # quiet = 0
 
-## Debug level of the output of irace. Set this to 0 to silence all debug
+## Debug level of the output of `irace`. Set this to 0 to silence all debug
 ## messages. Higher values provide more verbose debug messages.
 # debugLevel = 0
 
@@ -163,8 +166,8 @@
 ## of the probabilistic model.
 # softRestart = 1
 
-## Soft restart threshold value for numerical parameters. If NA, NULL or "",
-## it is computed as 10^-digits.
+## Soft restart threshold value for numerical parameters. If `NA`, `NULL` or
+## `""`, it is computed as `10^-digits`.
 # softRestartThreshold = ""
 
 ## Enable/disable elitist irace.
@@ -184,7 +187,7 @@
 
 ## Enable the use of adaptive capping, a technique designed for minimizing the
 ## computation time of configurations. Capping is enabled by default if
-## elitist is active, maxTime > 0 and boundMax > 0.
+## `elitist` is active, `maxTime > 0` and `boundMax > 0`.
 # capping = NA
 
 ## Measure used to obtain the execution bound from the performance of the
@@ -195,8 +198,8 @@
 ## or instance.
 # boundType = "candidate"
 
-## Maximum execution bound for targetRunner. It must be specified when capping
-## is enabled.
+## Maximum execution bound for `targetRunner`. It must be specified when
+## capping is enabled.
 # boundMax = 0
 
 ## Precision used for calculating the execution time. It must be specified
@@ -204,10 +207,10 @@
 # boundDigits = 0
 
 ## Penalization constant for timed out executions (executions that reach
-## boundMax execution time).
+## `boundMax` execution time).
 # boundPar = 1
 
-## Replace the configuration cost of bounded executions with boundMax.
+## Replace the configuration cost of bounded executions with `boundMax`.
 # boundAsTimeout = 1
 
 ## Percentage of the configuration budget used to perform a postselection race
