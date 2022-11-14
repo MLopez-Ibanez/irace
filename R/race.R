@@ -818,16 +818,20 @@ elitist_race <- function(maxExp = 0,
   no.elimination <- 0 # number of tasks without elimination.
   print_header()
 
-  all_elite_instances_evaluated <- function() {
-    if (!elitist || .irace$next.instance == 1L) return(TRUE)
-    evaluated <- !is.na(Results[, alive, drop=FALSE])
-    # All instances that have been previously seen have been evaluated by at
-    # least one configuration.
-    if (!all(rowAnys(evaluated))) return(FALSE)
-    # And the number of instances evaluated per configuration is a multiple of blockSize
-    all(colSums2(evaluated) %% blockSize == 0)
+  if (elitist) {
+    all_elite_instances_evaluated <- function() {
+      if (.irace$next.instance == 1L) return(TRUE)
+      evaluated <- !is.na(Results[, alive, drop=FALSE])
+      # All instances that have been previously seen have been evaluated by at
+      # least one configuration.
+      if (!all(rowAnys(evaluated))) return(FALSE)
+      # And the number of instances evaluated per configuration is a multiple of blockSize
+      all(colSums2(evaluated) %% blockSize == 0)
+    }
+  } else {
+    all_elite_instances_evaluated <- function() TRUE
   }
-
+  
   # Start main loop
   break.msg <- NULL
   for (current.task in seq_len(no.tasks)) {
