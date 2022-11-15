@@ -192,8 +192,8 @@ report_duplicated_results <- function(experiments, configurations)
     df <- configurations[configurations$.ID. %in% g, , drop=FALSE]
     print(df)
     cat("Parameters with different values from the above configurations:\n")
-    df <- df[, vapply(removeConfigurationsMetaData(df), function(x) length(unique(x)) > 1L, logical(1L)), drop=FALSE]
-    print(df)
+    df <- removeConfigurationsMetaData(df)
+    print(df[, vapply(df, function(x) length(unique(x)) > 1L, logical(1L)), drop=FALSE])
   }
   dups
 }
@@ -470,7 +470,7 @@ ablation.labels <- function(trajectory, configurations)
     labels[i] <- paste0(param.names[select], "=", current[, select], collapse = "\n")
     last <- current
   }
-  return(labels)
+  labels
 }
 
 #' Create plot from an ablation log
