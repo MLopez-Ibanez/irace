@@ -110,10 +110,13 @@ ablation_cmdline <- function(argv = commandArgs(trailingOnly = TRUE))
   if (!is.null(params$ab.params))
     params$ab.params <- trimws(strsplit(params$ab.params, ",", fixed=TRUE)[[1]])
 
+  # We want to select elements that actually appear in params, otherwise we get NA names.
+  ablation_params <- intersect(c("src", "target","ab.params", "type",
+                                 "n_instances", "seed", "ablationLogFile"),
+                               names(params))
   ablog <- do.call(ablation,
                    args = c(list(iraceResults = iraceResults),
-                            params[c("src", "target","ab.params", "type",
-                                     "n_instances", "seed", "ablationLogFile")],
+                            params[ablation_params],
                             scenario))
   if (!is.null(params[["plot"]]) || base::interactive()) {
     params$plot_type.params <- trimws(strsplit(params$plot_type, ",", fixed=TRUE)[[1]])
