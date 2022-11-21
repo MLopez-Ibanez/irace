@@ -537,6 +537,7 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
 #' @references
 #' Frank Hutter, Manuel López-Ibáñez, Chris Fawcett, Marius Thomas Lindauer, Holger H. Hoos, Kevin Leyton-Brown, and Thomas Stützle. **AClib: A Benchmark Library for Algorithm Configuration**. In P. M. Pardalos, M. G. C. Resende, C. Vogiatzis, and J. L. Walteros, editors, _Learning and Intelligent Optimization, 8th International Conference, LION 8_, volume 8426 of Lecture Notes in Computer Science, pages 36–40. Springer, Heidelberg, 2014.
 #' 
+#' @seealso [readParameters()]
 #' @examples
 #'  ## Read the parameters directly from text
 #'  pcs_table <- '
@@ -680,7 +681,7 @@ checkParameters <- function(parameters)
 #' @param params (`list()`) Parameter object stored in `irace.Rdata` or read with `irace::readParameters()`.
 #'
 #' @param digits (`integer()`) The desired number of digits after the decimal point for real-valued parameters. Default is 15, but it should be the value in `scenario$digits`.
-#' 
+#' @seealso [readParameters()]
 #' @examples
 #'  parameters.table <- '
 #'  # name       switch           type  values               [conditions (using R syntax)]

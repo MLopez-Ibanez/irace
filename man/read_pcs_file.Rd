@@ -66,6 +66,9 @@ will stop with an error.
 \references{
 Frank Hutter, Manuel López-Ibáñez, Chris Fawcett, Marius Thomas Lindauer, Holger H. Hoos, Kevin Leyton-Brown, and Thomas Stützle. \strong{AClib: A Benchmark Library for Algorithm Configuration}. In P. M. Pardalos, M. G. C. Resende, C. Vogiatzis, and J. L. Walteros, editors, \emph{Learning and Intelligent Optimization, 8th International Conference, LION 8}, volume 8426 of Lecture Notes in Computer Science, pages 36–40. Springer, Heidelberg, 2014.
 }
+\seealso{
+\code{\link[=readParameters]{readParameters()}}
+}
 \author{
 Manuel López-Ibáñez
 }

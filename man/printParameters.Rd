@@ -26,3 +26,6 @@ FIXME: Dependent parameter bounds are not supported yet.
 parameters <- readParameters(text=parameters.table)
 printParameters(parameters)
 }
+\seealso{
+\code{\link[=readParameters]{readParameters()}}
+}
