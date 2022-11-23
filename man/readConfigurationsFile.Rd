@@ -4,7 +4,13 @@
 \alias{readConfigurationsFile}
 \title{Read parameter configurations from a file}
 \usage{
-readConfigurationsFile(filename, parameters, debugLevel = 0, text)
+readConfigurationsFile(
+  filename,
+  parameters,
+  debugLevel = 0,
+  text,
+  configurationTable
+)
 }
 \arguments{
 \item{filename}{(\code{character(1)}) \cr Filename from which the configurations should be read. The contents should be readable by \code{read.table( , header=TRUE)}.}
@@ -17,6 +23,8 @@ function \code{\link{readParameters}}.}
 
 \item{text}{(\code{character(1)}) \cr If \code{file} is not supplied and this is,
 then parameters are read from the value of \code{text} via a text connection.}
+
+\item{configurationTable}{(\code{data.frame}) Data for the configuration as a data.frame.}
 }
 \value{
 A data frame containing the obtained configurations.
