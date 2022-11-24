@@ -49,64 +49,81 @@ readConfigurationsFile <- function(filename, parameters, debugLevel = 0, text)
   nbConfigurations <- nrow(configurationTable)
   # Print the table that has been read.
   cat("# Read ", nbConfigurations, " configuration(s) from file '", filename, "'\n", sep="")
-  if (debugLevel >= 2) print(configurationTable, digits=15)
+  fix_configurations(configurationTable, parameters, debugLevel = debugLevel,
+                     filename = filename)
+}
 
+fix_configurations <- function(configurations, parameters, debugLevel = 0, filename = NULL)
+{
+  if (debugLevel >= 2) print(configurations, digits=15)
+  nbConfigurations <- nrow(configurations)
   namesParameters <- names(parameters$conditions)
   # This ignores fixed parameters unless they are given with a different value.
-  if (ncol(configurationTable) != length(namesParameters)
-      || !setequal (colnames(configurationTable), namesParameters)) {
+  if (ncol(configurations) != length(namesParameters)
+      || !setequal (colnames(configurations), namesParameters)) {
     # Column names must match a parameter, including fixed ones.
-    missing <- setdiff (colnames(configurationTable), namesParameters)
+    missing <- setdiff (colnames(configurations), namesParameters)
     if (length(missing) > 0) {
-      irace.error("The parameter names (",
-                  strlimit(paste(missing, collapse=", ")),
-                  ") given in the first row of file ", filename,
-                  " do not match the parameter names: ",
-                  paste(namesParameters, collapse=", "))
+      if (is.null(filename)) {
+        irace.error("The parameter names (",
+                    strlimit(paste(missing, collapse=", ")),
+                    ") do not match the parameter names: ",
+                    paste(namesParameters, collapse=", "))
+      } else {
+        irace.error("The parameter names (",
+                    strlimit(paste(missing, collapse=", ")),
+                    ") given in the first row of file ", filename,
+                    " do not match the parameter names: ",
+                    paste(namesParameters, collapse=", "))
+      }
       return(NULL)
     }
-
     # All non-fixed parameters must appear in column names.
     varParameters <- parameters$names[!parameters$isFixed]
-    missing <- setdiff (varParameters, colnames(configurationTable))
+    missing <- setdiff (varParameters, colnames(configurations))
     if (length(missing) > 0) {
-      irace.error("The parameter names (",
-                  strlimit(paste(missing, collapse=", ")),
-                  ") are missing from the first row of file ", filename)
+      if (is.null(filename)) {
+        irace.error("The parameter names (",
+                    strlimit(paste(missing, collapse=", ")),
+                    ") are missing from configurations provided.")
+      } else {
+        irace.error("The parameter names (",
+                    strlimit(paste(missing, collapse=", ")),
+                    ") are missing from the first row of file ", filename)
+      }
       return(NULL)
     }
     # Add any missing fixed parameters.
-    missing <- setdiff (namesParameters, colnames(configurationTable))
+    missing <- setdiff (namesParameters, colnames(configurations))
     if (length(missing) > 0) {
       irace.assert (all(parameters$isFixed[missing]))
       tmp <- lapply(missing, function(x) get.fixed.value(x, parameters))
       names(tmp) <- missing
-      configurationTable <- cbind.data.frame(configurationTable, tmp,
-                                             stringsAsFactors = FALSE)
+      configurations <- cbind.data.frame(configurations, tmp,
+                                         stringsAsFactors = FALSE)
     }
   }
-
   # Reorder columns.
-  configurationTable <- configurationTable[, namesParameters, drop = FALSE]
+  configurations <- configurations[, namesParameters, drop = FALSE]
   # Fix up numeric columns.
   for (currentParameter in namesParameters) {
     type <- parameters$types[[currentParameter]]
     if (type == "i" || type == "r") {
-      configurationTable[, currentParameter] <-
-        suppressWarnings(as.numeric(configurationTable[, currentParameter]))
+      configurations[, currentParameter] <-
+        suppressWarnings(as.numeric(configurations[, currentParameter]))
     }
   }
-
-  # Loop over all configurations in configurationTable
+  
+  # Loop over all configurations in configurations
   for (k in seq_len(nbConfigurations)) {
     # Loop over all parameters, in hierarchical order.
     for (currentParameter in namesParameters) {
-      currentValue <- configurationTable[k, currentParameter]
+      currentValue <- configurations[k, currentParameter]
       type <- parameters$types[[currentParameter]]
-
+      
       # Check the status of the conditions for this parameter to know
       # whether it must be enabled.
-      if (conditionsSatisfied(parameters, configurationTable[k, ], 
+      if (conditionsSatisfied(parameters, configurations[k, ], 
                               currentParameter)) {
         # Check that the value is among the valid ones.
         if (type == "i" || type == "r") {
@@ -115,9 +132,10 @@ readConfigurationsFile <- function(filename, parameters, debugLevel = 0, text)
           upper <- paramUpperBound(currentParameter, parameters)
           if (is.na(currentValue)
               || currentValue < lower || currentValue > upper) {
-            irace.error ("Configuration number ", k, " from file ", filename,
+            irace.error ("Configuration number ", k,
+                         if (is.null(filename)) "" else paste0(" from file ", filename),
                          " is invalid because the value \"",
-                         configurationTable[k, currentParameter],
+                         configurations[k, currentParameter],
                          "\" for the parameter ",
                          currentParameter, " is not within the valid range [",
                          lower,", ", upper,"]")
@@ -125,7 +143,8 @@ readConfigurationsFile <- function(filename, parameters, debugLevel = 0, text)
           }
           # For integers, only accept an integer.
           if (type == "i" && as.integer(currentValue) != currentValue) {
-            irace.error ("Configuration number ", k, " from file ", filename,
+            irace.error ("Configuration number ", k,
+                         if (is.null(filename)) "" else paste0(" from file ", filename),
                          " is invalid because parameter ", currentParameter,
                          " is of type integer but its value ",
                          currentValue, " is not an integer")
@@ -133,7 +152,8 @@ readConfigurationsFile <- function(filename, parameters, debugLevel = 0, text)
           }
           # type == "o" or "c"
         } else if (!(currentValue %in% paramDomain(currentParameter, parameters))) {
-          irace.error ("Configuration number ", k, " from file ", filename,
+          irace.error ("Configuration number ", k,
+                       if (is.null(filename)) "" else paste0(" from file ", filename),
                        " is invalid because the value \"",
                        currentValue, "\" for the parameter \"",
                        currentParameter, "\" is not among the valid values: (\"",
@@ -142,25 +162,28 @@ readConfigurationsFile <- function(filename, parameters, debugLevel = 0, text)
                        "\")")
           return(NULL)
         }
-        
       } else if (!is.na(currentValue)) {
-        irace.error ("Configuration number ", k, " from file ", filename,
+        irace.error ("Configuration number ", k,
+                     if (is.null(filename)) "" else paste0(" from file ", filename),
                      " is invalid because parameter \"", currentParameter,
                      "\" is not enabled because of condition \"",
                      parameters$conditions[[currentParameter]],
                      "\" but its value is \"",
-                    currentValue, "\" instead of NA")
+                     currentValue, "\" instead of NA")
         return(NULL)
       }
     }
   }
-  if (anyDuplicated(configurationTable)) {
-    irace.error("Duplicated configurations in file ", filename, " :\n",
+  if (anyDuplicated(configurations)) {
+    irace.error("Duplicated configurations",
+                if (is.null(filename)) "" else paste0(" in file '", filename, "'"),
+                ":\n",
                 paste0(capture.output(
-                  configurationTable[duplicated(configurationTable), , drop=FALSE]), "\n"))
+                  configurations[duplicated(configurations), , drop=FALSE]), "\n"))
   }
-  configurationTable
+  configurations
 }
+
 # FIXME: It may be faster to create a single expression that concatenates all
 # the elements of forbidden using '|'
 checkForbidden <- function(configurations, forbidden)

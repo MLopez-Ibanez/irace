@@ -482,13 +482,12 @@ allConfigurationsInit <- function(scenario, parameters)
                                               parameters, scenario$debugLevel)
   }
   if (!is.null.or.empty(initConfigurations)) {
-    if (!identical(initConfigurations, confs_from_file))
+    if (!is.null.or.empty(scenario$configurationsFile) && !identical(initConfigurations, confs_from_file))
       irace.warning("'initConfigurations' provided in 'scenario',",
                     " thus ignoring configurations from file '",
                     scenario$configurationsFile, "'.")
     cat("# Adding", nrow(initConfigurations), "initial configuration(s)\n")
-    if (scenario$debugLevel >= 2)
-      print(scenario$initConfigurations, digits=15)
+    fix_configurations(initConfigurations, parameters, debugLevel = scenario$debugLevel)
   } else {
     initConfigurations <- confs_from_file
   }
