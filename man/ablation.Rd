@@ -10,7 +10,7 @@ ablation(
   target = NULL,
   ab.params = NULL,
   type = c("full", "racing"),
-  n_instances = 1L,
+  nrep = 1L,
   seed = 1234567,
   ablationLogFile = "log-ablation.Rdata",
   instancesFile = "train",
@@ -26,7 +26,7 @@ ablation(
 
 \item{type}{Type of ablation to perform: \code{"full"} will execute each configuration on all \code{n_instances} to determine the best-performing one; \code{"racing"} will apply racing to find the best configurations.}
 
-\item{n_instances}{(\code{integer(1)}) Number of instances used in \code{"full"} ablation will be \code{n_instances * scenario$firstTest}.}
+\item{nrep}{(\code{integer(1)}) Number of replications per instance used in \code{"full"} ablation.}
 
 \item{seed}{(\code{integer(1)}) Integer value to use as seed for the random number generation.}
 

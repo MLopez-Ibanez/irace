@@ -5,7 +5,9 @@
  * Ablation will report configurations that produced the same results, which
    points to parameter values that have the same effect on the target algorithm,
    possibly indicating a bug in the target algorithm.
-   
+ 
+ * New option `instancesFile` of `ablation()` for using either the training instances, the test instances or reading instances from a given file.
+ 
  * Adaptive capping is now enabled by default if `maxTime > 0` and `maxBound > 0`.
    It can be disabled with `--capping 0` or `capping=0`. See
    <https://iridia-ulb.github.io/references/#PerLopHooStu2017:lion> for details.

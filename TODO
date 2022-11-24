@@ -41,7 +41,17 @@ TODO General (in order of importance):
  * Fix all FIXMEs.
 
  * Use 'x <- eval(parse(text=paste0("expression","(1,min(ants,10))")))' to parse domains.
- 
+
+ * Add a programmatic interface to create parameters (or use paradox):
+
+  d = ParametersNew(p_real('initial_temp', 0.02, 5e4, transf="log"),
+                  p_real('restart_temp_ratio', 1e-5, 1, transf="log"),
+                  p_real('visit', 1.001, 3),
+                  p_real('b', quote(visit), quote(visit + 10)),
+                  p_real('accept', -1e3, -5, quote(no_local_search == "ccc")),
+                  p_ord('no_local_search', '1', 'ccc')
+                  )
+
  * Consume all budget.
  
  * Federico's implementation of DAG / Complexity metric.

@@ -42,12 +42,15 @@ List of command-line options:\preformatted{-l,--log-file            Path to the 
                          configuration on all "--n-instances" to determine the
                          best-performing one; "racing" will apply racing to
                          find the best configurations. Default: full.
--n,--n-instances         Number of instances used in "full" ablation will be
-                         n_instances * scenario$firstTest. Default: 1.
+-n,--nrep                Number of replications per instance used in "full"
+                         ablation. Default: 1.
    --seed                Integer value to use as seed for the random number
                          generation. Default: 1234567.
 -o,--output-file         Log file to save the ablation log. If "", the results
                          are not saved to a file. Default: log-ablation.Rdata.
+   --instances-file      Instances file used for ablation: "train", "test" or a
+                         filename containing the list of instances. Default:
+                         train.
 -p,--plot                Output filename (.pdf) for the plot. If not given, no
                          plot is created.
 -O,--plot-type           Type of plot. Supported values are "mean", "boxplot",
@@ -61,9 +64,6 @@ List of command-line options:\preformatted{-l,--log-file            Path to the 
                          log-file (.Rdata)
    --parallel            Number of calls to targetRunner to execute in
                          parallel. Values 0 or 1 mean no parallelization.
-   --instances-file      Instances file used for ablation: "train", "test" or a
-                         filename containing the list of instances. Default:
-                         train.
 }
 }
 \examples{
