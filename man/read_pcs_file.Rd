@@ -33,7 +33,7 @@ whose name is \code{file}) in the expected form.  See the documentation
 for details.  If none of these parameters is given, \pkg{irace}
 will stop with an error.
 
-\strong{FIXME:} Forbidden configurations, default configuration and transformations ("log") are currently ignored. See \url{https://github.com/MLopez-Ibanez/irace/issues/31}
+\strong{FIXME:} Forbidden configurations and default configuration are currently ignored. See \url{https://github.com/MLopez-Ibanez/irace/issues/31}
 }
 \examples{
  ## Read the parameters directly from text
@@ -44,7 +44,7 @@ will stop with an error.
  alpha        [0.00, 5.00][1]
  beta         [0.00, 10.00][1]
  rho          [0.01, 1.00][0.95]
- ants         [5, 100][10]i
+ ants         [1, 100][10]il
  q0           [0.0, 1.0][0]
  rasrank      [1, 100][1]i
  elitistants  [1, 750][1]i
