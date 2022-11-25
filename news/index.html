@@ -52,6 +52,7 @@
 <div class="section level3">
 <h3 id="new-features-and-improvements-3-5-1">New features and improvements<a class="anchor" aria-label="anchor" href="#new-features-and-improvements-3-5-1"></a></h3>
 <ul><li><p>Ablation will report configurations that produced the same results, which points to parameter values that have the same effect on the target algorithm, possibly indicating a bug in the target algorithm.</p></li>
+<li><p>New option <code>instancesFile</code> of <code><a href="../reference/ablation.html">ablation()</a></code> for using either the training instances, the test instances or reading instances from a given file.</p></li>
 <li><p>Adaptive capping is now enabled by default if <code>maxTime &gt; 0</code> and <code>maxBound &gt; 0</code>. It can be disabled with <code>--capping 0</code> or <code>capping=0</code>. See <a href="https://iridia-ulb.github.io/references/#PerLopHooStu2017:lion" class="external-link uri">https://iridia-ulb.github.io/references/#PerLopHooStu2017:lion</a> for details. (Leslie Pérez Cáceres, Manuel López-Ibáñez)</p></li>
 <li><p>Matrix operations are faster thanks to <code>matrixStats</code>. (Manuel López-Ibáñez)</p></li>
 <li><p>The scenario option <code>targetRunnerLauncherArgs</code>, introduced in version 3.5, was removed and replaced by <code>targetCmdline</code>, which is more flexible (Fixes <a href="https://github.com/MLopez-Ibanez/irace/issues/38" class="external-link">#38</a>). Please see the user-guide for details. (Manuel López-Ibáñez)</p></li>
