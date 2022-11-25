@@ -349,9 +349,10 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
       }
 
       valid_real_bound <- function(x, digits) {
-        if (is.na(x)) return(TRUE)
+        if (is.na(x) || x == 0) return(TRUE)
         rx <- round(x, digits = digits)
-        (abs(rx - x) <= .irace_tolerance * max(1, abs(x)))
+        ((abs(rx - x) <= .irace_tolerance * max(1, abs(x)))
+          && digits >= -log10(abs(x)))
       }
 
       if (param.type == "r") {

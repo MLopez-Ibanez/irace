@@ -64,7 +64,7 @@ getDependentBound <- function(parameters, param, configuration)
     }
   }
 
-  return(values)
+  values
 }
 
 ### Uniform sampling for the initial generation
@@ -247,7 +247,7 @@ sampleModel <- function (parameters, eliteConfigurations, model,
       irace.error("irace tried 100 times to sample from the model a configuration not forbidden without success, perhaps your constraints are too strict?")
     }
   }
-  return (newConfigurations)
+  newConfigurations
 }
 
 transform.from.log <- function(x, transf, lowerBound, upperBound)
@@ -255,14 +255,14 @@ transform.from.log <- function(x, transf, lowerBound, upperBound)
   trLower <- attr(transf, "lower") 
   trUpper <- attr(transf, "upper")
   x <- exp(trLower + (trUpper - trLower) * x)
-  return(x)
+  x <- min(max(x, lowerBound), upperBound)
 }
 
 transform.to.log <- function(x, transf, lowerBound, upperBound)
 {
   trLower <- attr(transf, "lower") 
   trUpper <- attr(transf, "upper")
-  return((log(x) - trLower)/(trUpper - trLower))
+  (log(x) - trLower)/(trUpper - trLower)
 }
 ## How to sample integer values?
 #
@@ -344,8 +344,7 @@ sample_unif <- function(type, domain, transf, digits)
     value <- runif(1, min = lowerBound, max = upperBound)    
   }
   # We use original upperBound, not the +1L for 'i'.
-  value <- numeric_value_round(type, value, lowerBound, upperBound = domain[2], digits)
-  return(value)
+  numeric_value_round(type, value, lowerBound, upperBound = domain[2], digits)
 }
 
 sample_norm <- function(mean, sd, type, domain, transf, digits)
@@ -372,6 +371,5 @@ sample_norm <- function(mean, sd, type, domain, transf, digits)
     value <- rtnorm(1, mean, sd, lowerBound, upperBound)
   }
   # We use original upperBound, not the +1L for 'i'.
-  value <- numeric_value_round(type, value, lowerBound, upperBound = domain[2], digits)
-  return(value)
+  numeric_value_round(type, value, lowerBound, upperBound = domain[2], digits)
 }
