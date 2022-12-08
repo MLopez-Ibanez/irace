@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 ###############################################################################
 # This script is the command that is executed every run.
 # Check the examples in examples/
