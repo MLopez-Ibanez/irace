@@ -28,7 +28,12 @@
    `blockSize` should be set to the number of classes. (Manuel López-Ibáñez)
 
  * `plotAblation()` has a new option `type='rank'` to plot ranks per instance instead of raw cost values.  (Manuel López-Ibáñez)
- 
+
+ * The previously internal function `check.output.target.runner` is renamed to 
+   `check_output_target_runner` and exported to allow users who write their own 
+   `targetRunnerParallel` to check the output and repair it if possible. 
+   (Deyao Chen)
+  
  
 ## Fixes
 
