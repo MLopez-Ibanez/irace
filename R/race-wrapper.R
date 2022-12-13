@@ -229,7 +229,16 @@ target.evaluator.default <- function(experiment, num.configurations, all.conf.id
               call = paste(targetEvaluator, args, collapse=" ")))
 }
 
-check.output.target.runner <- function (output, scenario)
+#' Check the output of the target runner and repair it if possible. If the 
+#' output is incorrect, this function will throw an error.
+#' 
+#' @param output The output from target runner.
+#' @template arg_scenario
+#' 
+#' @return The output with its contents repaired.
+#' 
+#' @export
+check_output_target_runner <- function (output, scenario)
 {
   if (!is.list(output)) {
     output <- list()
@@ -294,7 +303,7 @@ exec.target.runner <- function(experiment, scenario, target.runner)
   doit <- function(experiment, scenario)
   {
     x <- target.runner(experiment, scenario)
-    return (check.output.target.runner(x, scenario))
+    return (check_output_target_runner(x, scenario))
   }
   
   retries <- scenario$targetRunnerRetries

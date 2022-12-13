@@ -529,7 +529,7 @@ final.execution.bound <- function(experimentsTime, elites, no.configurations,
                                      type = scenario$cappingType)
        elite.bound <- min(elite.bound, boundMax)
        # FIXME: This minMeasurableTime should be a scenario setting and it
-       # should be the same value that we use in check.output.target.runner
+       # should be the same value that we use in check_output_target_runner
        total.time <- (current.task * elite.bound) + minMeasurableTime
        time.left <- total.time - colSums2(experimentsTime, rows = 1:current.task, cols = which.exe, na.rm = TRUE)
        final.bounds[which.exe] <- sapply(time.left, min, boundMax)
