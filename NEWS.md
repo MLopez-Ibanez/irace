@@ -38,7 +38,12 @@
  
  * Fix problem with `n_instances` in `ablation_cmdline()`. 
                                                            (Manuel López-Ibáñez)
- 
+
+ * If scenario option `targetRunnerParallel` is set, irace no longer tries to
+   initialize a parallel environment or setup MPI. It is now the responsibility
+   of the user to do that before calling irace or within the function assigned
+   to `targetRunnerParallel`.  (Manuel López-Ibáñez)
+
 
 # irace 3.5
 
