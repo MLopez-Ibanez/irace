@@ -330,7 +330,7 @@ checkMinimumBudget <- function(scenario, remainingBudget, minSurvival, nbIterati
 
 startParallel <- function(scenario)
 {
-  if (is.null(scenario$targetRunnerParallel) || scenario$parallel <= 1)
+  if (!is.null(scenario$targetRunnerParallel) || scenario$parallel <= 1)
     return(invisible())
 
   parallel <- scenario$parallel
