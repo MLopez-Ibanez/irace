@@ -58,6 +58,7 @@
 <li><p>The scenario option <code>targetRunnerLauncherArgs</code>, introduced in version 3.5, was removed and replaced by <code>targetCmdline</code>, which is more flexible (Fixes <a href="https://github.com/MLopez-Ibanez/irace/issues/38" class="external-link">#38</a>). Please see the user-guide for details. (Manuel López-Ibáñez)</p></li>
 <li><p>New scenario option <code>blockSize</code> for defining blocks of instances. Configurations are only eliminated after evaluating a complete block and never in the middle of a block. This is useful for scenarios when there are clearly defined instance classes and the best configuration should be balanced among them. In that case, <code>trainInstancesFile</code> should be written should that each block should contain one instance of each class and <code>blockSize</code> should be set to the number of classes. (Manuel López-Ibáñez)</p></li>
 <li><p><code><a href="../reference/plotAblation.html">plotAblation()</a></code> has a new option <code>type='rank'</code> to plot ranks per instance instead of raw cost values. (Manuel López-Ibáñez)</p></li>
+<li><p>The previously internal function <code>check.output.target.runner</code> is renamed to <code>check_output_target_runner</code> and exported to allow users who write their own <code>targetRunnerParallel</code> to check the output and repair it if possible. (Deyao Chen)</p></li>
 </ul></div>
 <div class="section level3">
 <h3 id="fixes-3-5-1">Fixes<a class="anchor" aria-label="anchor" href="#fixes-3-5-1"></a></h3>
