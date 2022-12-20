@@ -51,6 +51,9 @@
    of the user to do that before calling irace or within the function assigned
    to `targetRunnerParallel`.  (Manuel López-Ibáñez)
 
+ * Do not set `option(error=utils::recover())` in debug mode to avoid issues
+   when calling irace from Python. The user can set this if desired.
+                                                           (Manuel López-Ibáñez)
 
 # irace 3.5
 
