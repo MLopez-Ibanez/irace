@@ -111,6 +111,9 @@ ablation_cmdline <- function(argv = commandArgs(trailingOnly = TRUE))
   if (!is.null(params$ab.params))
     params$ab.params <- trimws(strsplit(params$ab.params, ",", fixed=TRUE)[[1]])
 
+  # The shell may introduce extra quotes, remove them.
+  params$plot_type <- trimws(gsub("[\"']", "", params$plot_type))
+  
   # We want to select elements that actually appear in params, otherwise we get NA names.
   ablation_params <- intersect(.ablation.params.def[.ablation.params.def$ab == 1, "name", drop=TRUE],
                                names(params))
@@ -581,4 +584,5 @@ plotAblation <- function (ablog, pdf.file = NULL, pdf.width = 20,
   if ("boxplot" %in% type) {
     bxp(bx, show.names = FALSE, add = TRUE)
   }
+  invisible()
 }
