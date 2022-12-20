@@ -84,9 +84,8 @@ irace.internal.error <- function(...)
     paste0("An unexpected condition occurred. ",
            "Please report this bug to the authors of the irace package <https://github.com/MLopez-Ibanez/irace/issues>")
 
-  op <- options(warning.length = 8170,
-                error = if (interactive()) utils::recover
-                        else irace.dump.frames)
+  op <- options(warning.length = 8170)
+  if (!base::interactive()) options(error = irace.dump.frames)
   on.exit(options(op))
   # 6 to not show anything below irace.assert()
   bt <- capture.output(traceback(6))

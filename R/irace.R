@@ -561,9 +561,8 @@ irace_common <- function(scenario, parameters, simple, output.width = 9999L)
   debugLevel <- scenario$debugLevel
 
   if (debugLevel >= 1) {
-    op.debug <- options(warning.length = 8170,
-                        error = if (interactive()) utils::recover
-                                else irace.dump.frames)
+    op.debug <- options(warning.length = 8170)
+    if (!base::interactive()) options(error = irace.dump.frames)
     on.exit(options(op.debug), add = TRUE)
     printScenario (scenario)
   }
