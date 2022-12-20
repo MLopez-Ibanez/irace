@@ -55,7 +55,7 @@ irace.error <- function(...)
   stop (.msg.prefix, ..., call. = FALSE)
 }
 
-## utils::dump.frames is broken and cannot be used with bquote, so we need a wrapper. When irace crashes, it generates a file "iracedump.rda". To debug the crash use:
+## When irace crashes, it generates a file "iracedump.rda". To debug the crash use:
 ## R> load("iracedump.rda")
 ## R> debugger(iracedump)
 ##
@@ -64,24 +64,18 @@ irace.dump.frames <- function()
 {
   execDir <- getOption(".irace.execdir")
   if (!is.null(execDir)) cwd <- setwd(execDir)
-  ## Only a very recent R version allows saving GlovalEnv:
-  ## https://stat.ethz.ch/pipermail/r-devel/2016-November/073378.html
-  # utils::dump.frames(dumpto = "iracedump", to.file = TRUE, include.GlobalEnv = TRUE)
-  ## For now, we use the following work-around:
-  ## http://stackoverflow.com/questions/40421552/r-how-make-dump-frames-include-all-variables-for-later-post-mortem-debugging
-  utils::dump.frames(dumpto = "iracedump")
-  save.image(file = "iracedump.rda")
-
+  utils::dump.frames(dumpto = "iracedump", to.file = TRUE, include.GlobalEnv = TRUE)
+  # FIXME: We want to use on.exit(setwd(cwd)) but q() does not run on.exit.
   if (!is.null(execDir)) setwd(cwd)
-  # We need this to signal an error in R CMD check.
-  if (!interactive()) q("no", status = 1, runLast = FALSE)
+  # We need this to signal an error in R CMD check. See help(dump.frames)
+  if (!interactive()) quit("no", status = 1)
 }
 
 # Print an internal fatal error message that signals a bug in irace.
 irace.internal.error <- function(...)
 {
   .irace.bug.report <-
-    paste0("An unexpected condition occurred. ",
+    paste0(.msg.prefix, "An unexpected condition occurred. ",
            "Please report this bug to the authors of the irace package <https://github.com/MLopez-Ibanez/irace/issues>")
 
   op <- options(warning.length = 8170)
@@ -90,9 +84,9 @@ irace.internal.error <- function(...)
   # 6 to not show anything below irace.assert()
   bt <- capture.output(traceback(6))
   warnings()
-  stop (.msg.prefix, paste0(..., collapse = "\n"),
+  stop (.msg.prefix, paste0(..., collapse = "\n"), "\n",
         paste0(bt, collapse= "\n"), "\n",
-        .msg.prefix, "\n", .irace.bug.report, call. = FALSE)
+        .irace.bug.report, call. = FALSE)
   invisible()
 }
 
@@ -598,11 +592,9 @@ dataVariance <- function(data)
   stddata[stddata == 0] <- 1
   zscoredata <- (data - meandata) / stddata 
   
-  # We could log-tranform if needed
-
+  # FIXME: We could log-tranform if needed
   # Variance of configurations
-  qvar <- mean(colVars(zscoredata))
-  return(qvar) 
+  mean(colVars(zscoredata))
 }
 
 runcommand <- function(command, args, id, debugLevel)
