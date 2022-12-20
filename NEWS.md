@@ -27,7 +27,9 @@
    should that each block should contain one instance of each class and
    `blockSize` should be set to the number of classes. (Manuel López-Ibáñez)
 
- * `plotAblation()` has a new option `type='rank'` to plot ranks per instance instead of raw cost values.  (Manuel López-Ibáñez)
+ * `plotAblation()` has several new options:  (Manuel López-Ibáñez)
+    - `type='rank'` to plot ranks per instance instead of raw cost values.
+    - `n` to limit the number of parameters shown in the plot.
 
  * The previously internal function `check.output.target.runner` is renamed to 
    `check_output_target_runner` and exported to allow users who write their own 

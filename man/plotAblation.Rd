@@ -9,6 +9,7 @@ plotAblation(
   pdf.file = NULL,
   pdf.width = 20,
   type = c("mean", "boxplot", "rank"),
+  n = 0L,
   mar = par("mar"),
   ylab = "Mean configuration cost",
   ylim = NULL,
@@ -23,6 +24,8 @@ plotAblation(
 \item{pdf.width}{Width provided to create the pdf file.}
 
 \item{type}{Type of plot. Supported values are \code{"mean"} and \code{"boxplot"}. Adding \code{"rank"} will plot rank per instance instead of raw cost value.}
+
+\item{n}{(\code{integer(1)}) Number of parameters included in the plot. By default all parameters are included.}
 
 \item{mar}{Vector with the margins for the ablation plot.}
 
