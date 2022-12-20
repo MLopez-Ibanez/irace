@@ -30,7 +30,7 @@ DEVEL-README.md
 ^dist\.sh$
 ^doc$
 ^docs$
-^examples
+^devel-examples
 ^git_version$
 ^hooks/hook-evaluate
 ^hooks/hook-run

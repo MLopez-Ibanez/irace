@@ -292,7 +292,7 @@ check_output_target_runner <- function (output, scenario)
   }
   # Fix too small time.
   output$time <- if (is.null(output$time)) NA else max(output$time, scenario$minMeasurableTime)
-  return (output)
+  return(output)
 }
 
 # This function invokes target.runner.  When used on a remote node by Rmpi,
@@ -625,5 +625,5 @@ execute.evaluator <- function(experiments, scenario, target.output, configuratio
     if (is.null(target.output[[k]]$time) || !is.null.or.na(output$time))
       target.output[[k]]$time <- output$time
   }
-  return(target.output)
+  target.output
 }
