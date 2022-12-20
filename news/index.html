@@ -71,6 +71,7 @@
 <ul><li><p>Fix (<a href="https://github.com/MLopez-Ibanez/irace/issues/44" class="external-link">#44</a>): irace now will give an error if the domain of real-valued (r) parameters would change depending on the value of <code>'digits'</code>. The solution is to increase the value of <code>'digits'</code> or adjust the domain. (Manuel López-Ibáñez, reported by <a href="https://github.com/mb706" class="external-link">@mb706</a>)</p></li>
 <li><p>Fix problem with <code>n_instances</code> in <code><a href="../reference/ablation_cmdline.html">ablation_cmdline()</a></code>. (Manuel López-Ibáñez)</p></li>
 <li><p>If scenario option <code>targetRunnerParallel</code> is set, irace no longer tries to initialize a parallel environment or setup MPI. It is now the responsibility of the user to do that before calling irace or within the function assigned to <code>targetRunnerParallel</code>. (Manuel López-Ibáñez)</p></li>
+<li><p>Do not set <code>option(error=utils::recover())</code> in debug mode to avoid issues when calling irace from Python. The user can set this if desired. (Manuel López-Ibáñez)</p></li>
 </ul></div>
 </div>
     <div class="section level2">
