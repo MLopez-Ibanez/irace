@@ -157,7 +157,7 @@ ifndef RNODE
 	@echo "ERROR: You must specify a remote node (e.g., RNODE=majorana)"
 	@exit 1
 else
-	rsync -rlp -CIzc -L --delete --copy-unsafe-links --exclude=.svn --exclude=.git --exclude=web --exclude=/examples/ --progress --relative \
+	rsync -rlp -CIzc -L --delete --copy-unsafe-links --exclude=.svn --exclude=.git --exclude=web --exclude=/devel-examples/ --progress --relative \
 	.     \
 	$(RNODE):$(RDIR)/$(PACKAGE)/
 	ssh $(RNODE) '. ~/.profile && cd $(RDIR)/$(PACKAGE) && make quick-install'
@@ -185,8 +185,8 @@ winbuild: releasebuild
 
 examples: quick-install
 	@echo "*** Makefile: Regenerating data for vignettes and examples. This will take time..."
-	cd examples/vignette-example/ && R --vanilla --slave --file=create-example-file.R
-	mv -t vignettes/ examples/vignette-example/*.Rdata examples/vignette-example/irace-acotsp-stdout.txt
+	cd devel-examples/vignette-example/ && R --vanilla --slave --file=create-example-file.R
+	mv -t vignettes/ devel-examples/vignette-example/*.Rdata devel-examples/vignette-example/irace-acotsp-stdout.txt
 	mv -t inst/exdata/ vignettes/log-ablation.Rdata
 	$(MAKE) vignettes
 	$(MAKE) check
