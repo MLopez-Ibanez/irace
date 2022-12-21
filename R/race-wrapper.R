@@ -520,16 +520,18 @@ execute.experiments <- function(experiments, scenario)
   cwd <- setwd (execDir)
   on.exit(setwd(cwd), add = TRUE)
    
-  target.output <- vector("list", length(experiments))
   if (!is.null(scenario$targetRunnerParallel)) {
+    # FIXME: We should remove the exec.target.runner parameter from
+    # targetRunnerParallel and do lapply(target.output,
+    # check_output_target_runner, scenario=scenario) after it to make sure the output is valid.    
     # User-defined parallelization
     target.output <-
       scenario$targetRunnerParallel(experiments, exec.target.runner,
                                     scenario = scenario,
                                     target.runner = target.runner)
-    if (is.null(target.output)) {
-      irace.error("Stopping because the output of targetRunnerParallel is NULL.")
-    } 
+    if (length(target.output) != length(experiments)) {
+      irace.error("Stopping because the output of targetRunnerParallel is missing elements. The output was:\n", paste0(capture.output(str(target.output)), collapse="\n"))
+    }
   } else if (scenario$batchmode != 0) {
     target.output <- cluster.lapply (experiments, scenario = scenario)
   } else if (parallel > 1) {
