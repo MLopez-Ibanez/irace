@@ -7,7 +7,9 @@
    possibly indicating a bug in the target algorithm.
  
  * New option `instancesFile` of `ablation()` for using either the training instances, the test instances or reading instances from a given file.
- 
+
+ * New option `nrep` of `ablation()` specifies the number of replications per instance used in `"full"` ablation. It replaces the previous parameter `n_instances`, whose definition was more difficult to use correctly.
+
  * Adaptive capping is now enabled by default if `maxTime > 0` and `maxBound > 0`.
    It can be disabled with `--capping 0` or `capping=0`. See
    <https://iridia-ulb.github.io/references/#PerLopHooStu2017:lion> for details.
@@ -43,9 +45,6 @@
    parameters would change depending on the value of `'digits'`. The solution
    is to increase the value of `'digits'` or adjust the domain. (Manuel López-Ibáñez, reported by @mb706)
  
- * Fix problem with `n_instances` in `ablation_cmdline()`. 
-                                                           (Manuel López-Ibáñez)
-
  * If scenario option `targetRunnerParallel` is set, irace no longer tries to
    initialize a parallel environment or setup MPI. It is now the responsibility
    of the user to do that before calling irace or within the function assigned
