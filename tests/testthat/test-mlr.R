@@ -3,6 +3,7 @@ context("mlr")
 test_that("mlr", {
   skip_on_cran()
   suppressWarnings(skip_if_not_installed("mlr", minimum_version = "2.15.0"))
+  suppressWarnings(skip_if_not_installed("rpart"))
   require(mlr, quietly = TRUE)
 
   ps = ParamHelpers::makeParamSet(
