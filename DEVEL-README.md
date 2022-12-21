@@ -89,39 +89,25 @@ be listed in the Imports: field of DESCRIPTION.
 RELEASE Process:
 -----------------
 
+TODO: See useful release steps here: https://github.com/tidyverse/ggplot2/issues/4965
+
 1. git status # make sure you are up to date and clean
 
 2. make check # passes
 
-3. make cran  # passes
+3. make releasecheck 
 
 4. make examples # Takes a few hours. Inspect the examples in the vignette.
 
-5. make releasebuild # Inspect the output for strange files!
+5. make revdepcheck # Takes a few hours
 
-6. make winbuild # passes. Wait for the 2 emails and check logs!
+6. make releasebuild # Inspect the output for strange files!
 
 7. make closeversion
 
-8. Check reverse dependencies:
+8. Update `cran-comments.md`
 
-8.1. Try to run `./scripts/check-reverse`. It may require installing R package devtools, which requires Rcurl, which requires:
-
-    $ sudo apt-get install curl libcurl4-gnutls-dev
-
-8.2. If it doesn't work send package as a pre-release to:
-
-   * The maintainers of the packages listed in "Reverse suggests" or "Reverse
-     depend" at https://cran.r-project.org/package=irace so they can check we
-     do not break their packages (this step would be automatic once
-     ./check-reverse above works). 
-   * Google group
-   * IRIDIAns
-
-9. If everything is OK, continue, otherwise fix and goto 1.
-
-10. Use http://cran.r-project.org/submit.html to submit
-   Read http://cran.r-project.org/web/packages/policies.html
+9. make submit
 
 11.a IF the package requires further changes:
 
@@ -161,26 +147,3 @@ Best wishes,
     Manuel López-Ibáñez.
      
 
-
-
-Submission email
-================
-
-To: cran@R-project.org
-Subject: CRAN submission irace $VERSION
-
-Dear CRAN maintainers,
-
-I would like to submit version $VERSION of the irace package to CRAN.
-
-The NEWS section corresponding to this version is available from:
-
-    https://mlopez-ibanez.github.io/irace/news/index.html#irace-35
-
-More information about irace may be found at:
-
-    https://mlopez-ibanez.github.io/irace/
-
-Thanks in advance,
-
-    Manuel López-Ibáñez.

@@ -7,10 +7,6 @@ RDIR=~/
 INSTALL_FLAGS="--with-keep.source"
 BUILD_FLAGS=
 PACKAGEDIR=$(CURDIR)
-# This could be replaced by devtools::build_win(version = "R-devel")
-FTP_COMMANDS="user anonymous anonymous\nbinary\ncd incoming\nput $(PACKAGE)_$(PACKAGEVERSION).tar.gz\nquit\n"
-WINBUILD_DEVEL_FTP_COMMANDS="user anonymous anonymous\nbinary\ncd R-devel\nput $(PACKAGE)_$(PACKAGEVERSION).tar.gz\nquit\n"
-WINBUILD_REL_FTP_COMMANDS="user anonymous anonymous\nbinary\ncd R-release\nput $(PACKAGE)_$(PACKAGEVERSION).tar.gz\nquit\n"
 PDFLATEX=pdflatex -shell-escape -file-line-error -halt-on-error -interaction=nonstopmode "\input"
 RHUB_COMMON_ARGS= path='$(BINDIR)/$(PACKAGE)_$(PACKAGEVERSION).tar.gz', env_vars = c('_R_CHECK_FORCE_SUGGESTS_'='false', R_DEFAULT_SAVE_VERSION='2', R_DEFAULT_SERIALIZE_VERSION='2')
 Reval=R --slave -e
@@ -26,7 +22,7 @@ define Rsed
 	R --slave --vanilla -e 'f <- "$(1)"; txt <- sub($(2), $(3), perl=TRUE, readLines(f)); writeLines(txt, f)'
 endef
 
-.PHONY : help build check clean install pdf rsync submit cran winbuild vignettes examples genoptions gendoc pkgdown version
+.PHONY : help build check clean install pdf rsync submit cran winbuild vignettes examples releasecheck genoptions gendoc pkgdown version revdepcheck
 
 help:
 	@echo "quick-install  install the package without rebuilding the vignettes or generating the documentation"
@@ -105,6 +101,14 @@ releasebuild: releasevignette
 cran: releasebuild
 	cd $(BINDIR) && _R_CHECK_FORCE_SUGGESTS_=false _R_CHECK_CRAN_INCOMING_REMOTE_=true _R_CHECK_CRAN_INCOMING_=true R CMD check --as-cran $(PACKAGE)_$(PACKAGEVERSION).tar.gz
 
+revdepcheck:
+	$(Reval) 'devtools::install_github("r-lib/revdepcheck", ref="main", upgrade="never");revdepcheck::revdep_check(bioc=FALSE)'
+
+releasecheck: cran
+	$(Reval) 'urlchecker::url_check()'
+	$(MAKE) winbuild
+	$(MAKE) macbuild
+
 check: build
 ifdef TEST
 	_R_CHECK_FORCE_SUGGESTS_=false NOT_CRAN=true $(Reval) 'devtools::test(filter="$(TEST)", stop_on_failure = TRUE)'
@@ -163,12 +167,8 @@ else
 	ssh $(RNODE) '. ~/.profile && cd $(RDIR)/$(PACKAGE) && make quick-install'
 endif
 
-submit: 
-	@echo "Read http://cran.r-project.org/web/packages/policies.html"
-	@echo "*** You need to use http://cran.r-project.org/submit.html"
-	@exit 1
-	cd $(BINDIR) && echo $(FTP_COMMANDS) | ftp -v -e -g -i -n cran.r-project.org
-	@echo "Don't forget to send email to cran@r-project.org !"
+submit:
+	$(Reval) 'devtools::submit_cran()'
 
 
 remotecran: releasebuild
@@ -178,9 +178,8 @@ macbuild: releasebuild
 	$(Reval) "rhub::check(platform='macos-highsierra-release-cran', $(RHUB_COMMON_ARGS))"
 
 winbuild: releasebuild
-	@echo "Winbuild: http://win-builder.r-project.org/"
-	cd $(BINDIR) && echo $(WINBUILD_DEVEL_FTP_COMMANDS) | ftp -v -p -e -g -i -n win-builder.r-project.org
-	cd $(BINDIR) && echo $(WINBUILD_REL_FTP_COMMANDS) | ftp -v -p -e -g -i -n win-builder.r-project.org
+	$(Reval) "devtools::check_win_release()"
+	$(Reval) "devtools::check_win_devel()"
 	$(Reval) "rhub::check_on_windows($(RHUB_COMMON_ARGS))"
 
 examples: quick-install

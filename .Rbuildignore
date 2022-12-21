@@ -26,6 +26,7 @@ DEVEL-README.md
 ^\.github$
 ^check-reverse
 ^codecov\.yml$
+^cran-comments.md$
 ^devel-tests
 ^dist\.sh$
 ^doc$
