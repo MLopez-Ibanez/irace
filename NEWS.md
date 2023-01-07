@@ -37,8 +37,9 @@
    `check_output_target_runner` and exported to allow users who write their own 
    `targetRunnerParallel` to check the output and repair it if possible. 
    (Deyao Chen)
+
+ * New function `read_ablogfile()`.               (Manuel López-Ibáñez)
   
- 
 ## Fixes
 
  * Fix (#44): irace now will give an error if the domain of real-valued (r)

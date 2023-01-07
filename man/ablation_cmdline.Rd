@@ -73,4 +73,4 @@ List of command-line options:\preformatted{-l,--log-file            Path to the 
 \author{
 Manuel López-Ibáñez
 }
-\concept{running}
+\concept{ablation}

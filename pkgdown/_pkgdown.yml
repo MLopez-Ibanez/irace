@@ -36,6 +36,8 @@ reference:
   contents: has_concept("running")
 - title: Analysis
   contents: has_concept("analysis")
+- title: Ablation
+  contents: has_concept("ablation")
 - title: Other functions
-  contents: lacks_concepts(c("analysis", "running"))
+  contents: lacks_concepts(c("analysis", "running", "ablation"))
   

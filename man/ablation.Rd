@@ -75,3 +75,4 @@ configurations through ablation. Journal of Heuristics, 22(4):431–458, 2016.
 \author{
 Leslie Pérez Cáceres and Manuel López-Ibáñez
 }
+\concept{ablation}

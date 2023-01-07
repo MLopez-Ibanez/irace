@@ -51,3 +51,4 @@ plotAblation(ablog = logfile, type = c("rank","boxplot"))
 \author{
 Leslie Pérez Cáceres and Manuel López-Ibáñez
 }
+\concept{ablation}
