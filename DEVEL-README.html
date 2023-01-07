@@ -123,22 +123,16 @@ git help</code></pre>
 </ul></div>
 <div class="section level2">
 <h2 id="release-process">RELEASE Process:<a class="anchor" aria-label="anchor" href="#release-process"></a></h2>
+<p>TODO: See useful release steps here: <a href="https://github.com/tidyverse/ggplot2/issues/4965" class="external-link uri">https://github.com/tidyverse/ggplot2/issues/4965</a></p>
 <ol style="list-style-type: decimal"><li><p>git status # make sure you are up to date and clean</p></li>
 <li><p>make check # passes</p></li>
-<li><p>make cran # passes</p></li>
+<li><p>make releasecheck</p></li>
 <li><p>make examples # Takes a few hours. Inspect the examples in the vignette.</p></li>
+<li><p>make revdepcheck # Takes a few hours</p></li>
 <li><p>make releasebuild # Inspect the output for strange files!</p></li>
-<li><p>make winbuild # passes. Wait for the 2 emails and check logs!</p></li>
 <li><p>make closeversion</p></li>
-<li><p>Check reverse dependencies:</p></li>
-</ol><p>8.1. Try to run <code>./scripts/check-reverse</code>. It may require installing R package devtools, which requires Rcurl, which requires:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="sc">$</span> sudo apt<span class="sc">-</span>get install curl libcurl4<span class="sc">-</span>gnutls<span class="sc">-</span>dev</span></code></pre></div>
-<p>8.2. If it doesn’t work send package as a pre-release to:</p>
-<ul><li>The maintainers of the packages listed in “Reverse suggests” or “Reverse depend” at <a href="https://cran.r-project.org/package=irace" class="external-link uri">https://cran.r-project.org/package=irace</a> so they can check we do not break their packages (this step would be automatic once ./check-reverse above works).</li>
-<li>Google group</li>
-<li>IRIDIAns</li>
-</ul><ol start="9" style="list-style-type: decimal"><li><p>If everything is OK, continue, otherwise fix and goto 1.</p></li>
-<li><p>Use <a href="http://cran.r-project.org/submit.html" class="external-link uri">http://cran.r-project.org/submit.html</a> to submit Read <a href="http://cran.r-project.org/web/packages/policies.html" class="external-link uri">http://cran.r-project.org/web/packages/policies.html</a></p></li>
+<li><p>Update <code>cran-comments.md</code></p></li>
+<li><p>make submit</p></li>
 </ol><p>11.a IF the package requires further changes:</p>
 <ul><li><p>Make the changes.</p></li>
 <li><p>Repeat the whole RELEASE process above without bumping the version number.</p></li>
@@ -159,20 +153,8 @@ git help</code></pre>
 <p>There are significant bugfixes and only very minor interface changes so we recommend all users to upgrade:</p>
 <p>NEWS entry</p>
 <p>Best wishes,</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>Manuel López<span class="sc">-</span>Ibáñez.</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a> </span></code></pre></div>
-</div>
-<div class="section level1">
-<h1 id="submission-email">Submission email<a class="anchor" aria-label="anchor" href="#submission-email"></a></h1>
-<p>To: <a href="mailto:cran@R-project.org" class="email">cran@R-project.org</a> Subject: CRAN submission irace $VERSION</p>
-<p>Dear CRAN maintainers,</p>
-<p>I would like to submit version $VERSION of the irace package to CRAN.</p>
-<p>The NEWS section corresponding to this version is available from:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>https<span class="sc">:</span><span class="er">//</span>mlopez<span class="sc">-</span>ibanez.github.io<span class="sc">/</span>irace<span class="sc">/</span>news<span class="sc">/</span>index.html<span class="co">#irace-35</span></span></code></pre></div>
-<p>More information about irace may be found at:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>https<span class="sc">:</span><span class="er">//</span>mlopez<span class="sc">-</span>ibanez.github.io<span class="sc">/</span>irace<span class="sc">/</span></span></code></pre></div>
-<p>Thanks in advance,</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>Manuel López<span class="sc">-</span>Ibáñez.</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>Manuel López<span class="sc">-</span>Ibáñez.</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a> </span></code></pre></div>
 </div>
 
 
