@@ -39,7 +39,9 @@
    (Deyao Chen)
 
  * New function `read_ablogfile()`.               (Manuel López-Ibáñez)
-  
+
+ * New function `has_testing_data()`.             (Manuel López-Ibáñez)
+ 
 ## Fixes
 
  * Fix (#44): irace now will give an error if the domain of real-valued (r)
