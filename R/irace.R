@@ -725,7 +725,6 @@ irace_run <- function(scenario, parameters)
         if (nrow(allConfigurations) < nconfigurations) {
           newConfigurations <- sampleUniform(parameters,
                                              nconfigurations - nrow(allConfigurations),
-                                             digits = scenario$digits,
                                              forbidden = forbiddenExps,
                                              repair = scenario$repairConfiguration)
           newConfigurations <-
@@ -1029,7 +1028,6 @@ irace_run <- function(scenario, parameters)
                   " configurations from uniform distribution", verbose = FALSE)
         }
         newConfigurations <- sampleUniform(parameters, nbNewConfigurations,
-                                           digits = scenario$digits,
                                            forbidden = forbiddenExps,
                                            repair = scenario$repairConfiguration)
         newConfigurations <-
@@ -1070,7 +1068,6 @@ irace_run <- function(scenario, parameters)
       
       newConfigurations <- sampleModel(parameters, eliteConfigurations,
                                        model, nbNewConfigurations,
-                                       digits = scenario$digits,
                                        forbidden = forbiddenExps,
                                        repair = scenario$repairConfiguration)
 
@@ -1090,7 +1087,7 @@ irace_run <- function(scenario, parameters)
           if (debugLevel >= 1)
             irace.note("Soft restart: ", paste(collapse = " ", tmp.ids), " !\n")
           model <- restartConfigurations (raceConfigurations, tmp.ids, model,
-                                          parameters, nbNewConfigurations, scenario$digits)
+                                          parameters, nbNewConfigurations)
           iraceResults$softRestart[indexIteration] <- TRUE
           ## FIXME: What is this for?
           # iraceResults$model$afterSR[[indexIteration]] <- model
@@ -1099,7 +1096,6 @@ irace_run <- function(scenario, parameters)
           #cat("# ", format(Sys.time(), usetz=TRUE), " sampleModel()\n")
           newConfigurations <- sampleModel(parameters, eliteConfigurations,
                                            model, nbNewConfigurations,
-                                           digits = scenario$digits,
                                            forbidden = forbiddenExps,
                                            repair = scenario$repairConfiguration)
           #cat("# ", format(Sys.time(), usetz=TRUE), " sampleModel() DONE\n")
@@ -1205,7 +1201,7 @@ irace_run <- function(scenario, parameters)
     
     if (firstRace) {
       if (debugLevel >= 1)  { irace.note("Initialise model\n") }
-      model <- initialiseModel(parameters, eliteConfigurations, scenario$digits)
+      model <- initialiseModel(parameters, eliteConfigurations)
     }
       
     if (debugLevel >= 1) {

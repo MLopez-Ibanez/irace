@@ -70,8 +70,8 @@ test_that("test inactive dependent", {
 p1 "" r (0,1)
 p2 "" r (0, p1) | p1 < 0.5
 p3 "" r (0, p2)
-')
-  confs <- irace:::sampleUniform(parameters, 50, digits = 2)
+', digits = 2)
+  confs <- irace:::sampleUniform(parameters, 50)
   for (i in 1:nrow(confs)) {
     checkConditionalAndDependency(confs[i,], parameters)
   }
@@ -103,15 +103,15 @@ test.checkDependencies <- function(parameterFile, ...)
   scenario <- checkScenario (scenario)
  
   nconf <- 100
-  conf <- irace:::sampleUniform(parameters, nconf, 4)
+  conf <- irace:::sampleUniform(parameters, nconf)
   conf <- cbind(seq(1,nrow(conf)), conf)
   names(conf)[1]<- ".ID."
 
   for (i in 1:nconf)
     checkConditionalAndDependency(conf[i,], parameters)
  
-  model <- irace:::initialiseModel(parameters, conf, 4)
-  conf2 <- irace:::sampleModel(parameters, conf, model, nconf, 4)
+  model <- irace:::initialiseModel(parameters, conf)
+  conf2 <- irace:::sampleModel(parameters, conf, model, nconf)
   for (i in 1:nconf)
     checkConditionalAndDependency(conf2[i,], parameters)
 

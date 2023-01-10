@@ -5,10 +5,13 @@
  * Ablation will report configurations that produced the same results, which
    points to parameter values that have the same effect on the target algorithm,
    possibly indicating a bug in the target algorithm.
- 
- * New option `instancesFile` of `ablation()` for using either the training instances, the test instances or reading instances from a given file.
 
- * New option `nrep` of `ablation()` specifies the number of replications per instance used in `"full"` ablation. It replaces the previous parameter `n_instances`, whose definition was more difficult to use correctly.
+ * New option `instancesFile` of `ablation()` for using either the training
+   instances, the test instances or reading instances from a given file.
+
+ * New option `nrep` of `ablation()` specifies the number of replications per
+   instance used in `"full"` ablation. It replaces the previous parameter
+   `n_instances`, whose definition was more difficult to use correctly.
 
  * Adaptive capping is now enabled by default if `maxTime > 0` and `maxBound > 0`.
    It can be disabled with `--capping 0` or `capping=0`. See
@@ -33,21 +36,28 @@
     - `type='rank'` to plot ranks per instance instead of raw cost values.
     - `n` to limit the number of parameters shown in the plot.
 
- * The previously internal function `check.output.target.runner` is renamed to 
-   `check_output_target_runner` and exported to allow users who write their own 
-   `targetRunnerParallel` to check the output and repair it if possible. 
+ * The previously internal function `check.output.target.runner` is renamed to
+   `check_output_target_runner` and exported to allow users who write their own
+   `targetRunnerParallel` to check the output and repair it if possible.
    (Deyao Chen)
 
  * New function `read_ablogfile()`.               (Manuel López-Ibáñez)
 
  * New function `has_testing_data()`.             (Manuel López-Ibáñez)
- 
+
+ * The `parameters` object now stores the number of `digits` (decimal places
+   after the point) for each parameter of type `r`. As a result, the
+   `repairConfiguration` function (see `defaultScenario()`) only needs two
+   arguments: `configuration` and `parameters`. See examples in the user-guide.
+                                                           (Manuel López-Ibáñez)
+
 ## Fixes
 
  * Fix (#44): irace now will give an error if the domain of real-valued (r)
    parameters would change depending on the value of `'digits'`. The solution
-   is to increase the value of `'digits'` or adjust the domain. (Manuel López-Ibáñez, reported by @mb706)
- 
+   is to increase the value of `'digits'` or adjust the domain. 
+                                       (Manuel López-Ibáñez, reported by @mb706)
+
  * If scenario option `targetRunnerParallel` is set, irace no longer tries to
    initialize a parallel environment or setup MPI. It is now the responsibility
    of the user to do that before calling irace or within the function assigned

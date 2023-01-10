@@ -16,8 +16,6 @@ elitistants  "--elitistants " i    (1, 750)             | algorithm == "eas"
 nnls         "--nnls "        i    (5, 50)              | localsearch %in% c(1,2,3)
 dlb          "--dlb "         c    (0, 1)               | localsearch %in% c(1,2,3)
 '
-parameters <- irace:::readParameters(text=parameters.txt)
-  
 lookup <- readRDS("bug-13-lookup.rds")
 counter <- 0
 target.runner <- function(experiment, scenario) {
@@ -37,7 +35,7 @@ target.runner <- function(experiment, scenario) {
     cat("# ", args, "\n")
     cat(cost, "\n")
   }
-  return(list(cost = cost, call = toString(experiment)))
+  list(cost = cost, call = toString(experiment))
 }
 
 withr::with_options(list(warning=2), {
@@ -62,6 +60,7 @@ elitist = 0,
 targetRunner = target.runner,
 debugLevel=3)
   scenario <- checkScenario (scenario)
+  parameters <- irace:::readParameters(text=parameters.txt, digits = scenario$digits)
   confs <- irace(scenario = scenario, parameters = parameters)
   expect_equal(counter, 548)
 })

@@ -31,6 +31,7 @@
 #'     which parameters depend on this one.}
 #'     \item{`isDependent`}{Logical vector that specifies which parameter has
 #'       a dependent domain.}
+#'     \item{`digits`}{Integer vector that specifies the number of digits per parameter.}
 #'   }
 #'
 #' @details Either `file` or `text` must be given. If `file` is given, the
@@ -71,7 +72,7 @@
 #' 
 #' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
 #' @export
-readParameters <- function (file, digits = 4, debugLevel = 0, text)
+readParameters <- function (file, digits = 4L, debugLevel = 0L, text)
 {
   if (missing(file) && !missing(text)) {
     filename <- strcat("text=", deparse(substitute(text)))
@@ -84,6 +85,8 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
     irace.error("'file' must be a character string")
   }
 
+  digits <- as.integer(digits)
+  
   field.match <- function (line, pattern, delimited = FALSE, sep = "[[:space:]]")
   {
     #cat ("pattern:", pattern, "\n")
@@ -461,14 +464,15 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
 
   # Generate dependency flag
   # FIXME: check if we really need this vector
-  parameters$isDependent <- sapply(parameters$domain, is.expression)
-
+  
   names(parameters$types) <- 
     names(parameters$switches) <- 
       names(parameters$domain) <- 
         names(parameters$isFixed) <-
-            names(parameters$transform) <-
-              names(parameters$isDependent) <- parameters$names
+            names(parameters$transform) <- parameters$names
+
+  parameters$isDependent <- sapply(parameters$domain, is.expression)
+  parameters$digits <- sapply(parameters$types[parameters$types == 'r'], function(x) digits)
 
   # Obtain the variables in each condition
   ## FIXME: In R 3.2, all.vars does not work with byte-compiled expressions,
@@ -568,7 +572,7 @@ readParameters <- function (file, digits = 4, debugLevel = 0, text)
 #' 
 #' @author Manuel López-Ibáñez
 #' @export
-read_pcs_file <- function(file, digits = 4, debugLevel = 0, text)
+read_pcs_file <- function(file, digits = 4L, debugLevel = 0L, text)
 {
   if (missing(file) && !missing(text)) {
     filename <- strcat("text=", deparse(substitute(text)))
@@ -680,9 +684,8 @@ checkParameters <- function(parameters)
 #' 
 #' FIXME: Dependent parameter bounds are not supported yet.
 #'
-#' @param params (`list()`) Parameter object stored in `irace.Rdata` or read with `irace::readParameters()`.
+#' @param parameters (`list()`) Parameter object stored in `irace.Rdata` or read with `irace::readParameters()`.
 #'
-#' @param digits (`integer()`) The desired number of digits after the decimal point for real-valued parameters. Default is 15, but it should be the value in `scenario$digits`.
 #' @seealso [readParameters()]
 #' @examples
 #'  parameters.table <- '
@@ -696,18 +699,18 @@ checkParameters <- function(parameters)
 #' parameters <- readParameters(text=parameters.table)
 #' printParameters(parameters)
 #' @export
-printParameters <- function(params, digits = 15L)
+printParameters <- function(parameters)
 {
-  names_len <- max(nchar(params$names))
-  switches_len <- max(nchar(params$switches)) + 2
-  for (name in params$names) {
-    switch <- paste0('"', params$switches[[name]], '"')
-    type <- params$types[[name]]
-    transf <- params$transform[[name]]
-    domain <- params$domain[[name]]
-    if (type == "r") domain <- formatC(domain, digits=digits, format="f", drop0trailing=TRUE)
+  names_len <- max(nchar(parameters$names))
+  switches_len <- max(nchar(parameters$switches)) + 2
+  for (name in parameters$names) {
+    switch <- paste0('"', parameters$switches[[name]], '"')
+    type <- parameters$types[[name]]
+    transf <- parameters$transform[[name]]
+    domain <- parameters$domain[[name]]
+    if (type == "r") domain <- formatC(domain, digits = parameters$digits[[name]], format="f", drop0trailing=TRUE)
     domain <- paste0('(', paste0(domain, collapse=","), ')')
-    condition <- params$conditions[[name]]
+    condition <- parameters$conditions[[name]]
     condition <- if (isTRUE(condition)) "" else paste0(" | ", condition)
     if (!is.null(transf) && transf != "") type <- paste0(type, ",", transf)
     cat(sprintf('%*s %*s %s %-15s%s\n', -names_len, name, -switches_len, switch, type, domain, condition))

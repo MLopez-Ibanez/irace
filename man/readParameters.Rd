@@ -5,7 +5,7 @@
 \title{Reads the parameters to be tuned by \pkg{irace} from a file or from a
 character string.}
 \usage{
-readParameters(file, digits = 4, debugLevel = 0, text)
+readParameters(file, digits = 4L, debugLevel = 0L, text)
 }
 \arguments{
 \item{file}{(\code{character(1)}) \cr Filename containing the definitions of
@@ -43,6 +43,7 @@ and, thus, it does not need to be tuned.}
 which parameters depend on this one.}
 \item{\code{isDependent}}{Logical vector that specifies which parameter has
 a dependent domain.}
+\item{\code{digits}}{Integer vector that specifies the number of digits per parameter.}
 }
 }
 \description{

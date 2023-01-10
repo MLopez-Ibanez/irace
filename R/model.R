@@ -10,7 +10,7 @@
 # one element per categorical parameter.  Each categorical parameter
 # contains a list of vector. This list contains elements which are the
 # .ID. of the configuration. 
-initialiseModel <- function (parameters, configurations, digits)
+initialiseModel <- function (parameters, configurations)
 {
   model <- list()
   nbConfigurations <- nrow(configurations)
@@ -128,7 +128,7 @@ printModel <- function (model)
 }
 
 restartConfigurations <- function (configurations, restart.ids, model, parameters,
-                               nbConfigurations, digits)
+                                   nbConfigurations)
 {
   #print(configurations)
   tmp.ids <- c()

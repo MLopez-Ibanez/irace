@@ -20,7 +20,7 @@ conditionsSatisfied <- function (parameters, partialConfiguration, paramName)
 
 new_empty_configuration <- function(parameters)
 {
-  newConfigurationsColnames <- c(names(parameters$conditions), ".PARENT.")
+  newConfigurationsColnames <- names(parameters$conditions)
   setNames(as.vector(rep(NA, length(newConfigurationsColnames)), mode="list"),
            newConfigurationsColnames)
 }
@@ -68,10 +68,10 @@ getDependentBound <- function(parameters, param, configuration)
 }
 
 ### Uniform sampling for the initial generation
-sampleUniform <- function (parameters, nbConfigurations, digits,
+sampleUniform <- function (parameters, nbConfigurations,
                            forbidden = NULL, repair = NULL)
 {
-  if (is.null(repair)) repair <- function(c, p, d) c
+  if (is.null(repair)) repair <- function(c, p) c
   
   namesParameters <- names(parameters$conditions)
   newConfigurations  <- alloc_configurations(
@@ -100,7 +100,7 @@ sampleUniform <- function (parameters, nbConfigurations, digits,
           domain <- getDependentBound(parameters, currentParameter, configuration)
           newVal <- sample_unif(currentType, domain,
                                 transf = parameters$transform[[currentParameter]],
-                                digits)
+                                digits = parameters$digits[[currentParameter]])
         } else {
           irace.assert(currentType %in% c("c","o"))
           possibleValues <- parameters$domain[[currentParameter]]
@@ -109,10 +109,11 @@ sampleUniform <- function (parameters, nbConfigurations, digits,
         configuration[[p]] <- newVal
       }
       configuration <- data.frame(configuration, check.names = FALSE, stringsAsFactors=FALSE)
-      configuration <- repair(configuration, parameters, digits)
+      configuration <- repair(configuration, parameters)
 
       if (is.null(forbidden)
           || nrow(checkForbidden(configuration, forbidden)) == 1) {
+        configuration[[".PARENT."]] <- NA
         newConfigurations[idxConfiguration,] <- configuration
         break
       }
@@ -129,10 +130,10 @@ sampleUniform <- function (parameters, nbConfigurations, digits,
 # 2) Nb configurations is the number of configurations at the end
 # included the elite ones obtained from the previous iteration
 sampleModel <- function (parameters, eliteConfigurations, model,
-                         nbNewConfigurations, digits, forbidden = NULL,
+                         nbNewConfigurations, forbidden = NULL,
                          repair = NULL)
 {
-  if (is.null(repair)) repair <- function(c, p, d) c
+  if (is.null(repair)) repair <- function(c, p) c
   
   if (nbNewConfigurations <= 0) {
     irace.error ("The number of configurations to generate appears to be negative or zero.")
@@ -150,9 +151,8 @@ sampleModel <- function (parameters, eliteConfigurations, model,
       indexEliteParent <- sample.int (n = nrow(eliteConfigurations), size = 1,
                                       prob = eliteConfigurations[[".WEIGHT."]])
       eliteParent <- eliteConfigurations[indexEliteParent, ]
-      idEliteParent <- eliteParent[[".ID."]]
       configuration <- empty_configuration
-      configuration[[".PARENT."]] <- idEliteParent
+      idEliteParent <- eliteParent[[".ID."]]
       
       # Sample a value for every parameter of the new configuration.
       for (p in seq_along(namesParameters)) {
@@ -180,7 +180,8 @@ sampleModel <- function (parameters, eliteConfigurations, model,
             # The elite parent does not have any value for this parameter,
             # let's sample uniformly.
             newVal <- sample_unif(currentType, domain,
-                                  transf = parameters$transform[[currentParameter]], digits)
+                                  transf = parameters$transform[[currentParameter]],
+                                  digits = parameters$digits[[currentParameter]])
           } else {
             stdDev <- model[[currentParameter]][[as.character(idEliteParent)]][1]
             # If parameters are dependent standard deviation must be computed
@@ -191,7 +192,7 @@ sampleModel <- function (parameters, eliteConfigurations, model,
             }
             newVal <- sample_norm(mean, stdDev, currentType, domain,
                                   transf = parameters$transform[[currentParameter]],
-                                  digits)
+                                  digits = parameters$digits[[currentParameter]])
           }
         } else if (currentType == "o") {
           possibleValues <- paramDomain(currentParameter, parameters)  
@@ -235,9 +236,10 @@ sampleModel <- function (parameters, eliteConfigurations, model,
       }
       # FIXME: This is slow. See: https://stackoverflow.com/questions/20689650/how-to-append-rows-to-an-r-data-frame
       configuration <- data.frame(configuration, stringsAsFactors = FALSE, check.names = FALSE)
-      configuration <- repair(configuration, parameters, digits)
+      configuration <- repair(configuration, parameters)
       if (is.null(forbidden)
           || nrow(checkForbidden(configuration, forbidden)) == 1) {
+        configuration[[".PARENT."]] <- idEliteParent
         newConfigurations[idxConfiguration,] <- configuration
         break
       }
@@ -344,7 +346,7 @@ sample_unif <- function(type, domain, transf, digits)
     value <- runif(1, min = lowerBound, max = upperBound)    
   }
   # We use original upperBound, not the +1L for 'i'.
-  numeric_value_round(type, value, lowerBound, upperBound = domain[2], digits)
+  numeric_value_round(type, value, lowerBound, upperBound = domain[2], digits = digits)
 }
 
 sample_norm <- function(mean, sd, type, domain, transf, digits)
@@ -371,5 +373,5 @@ sample_norm <- function(mean, sd, type, domain, transf, digits)
     value <- rtnorm(1, mean, sd, lowerBound, upperBound)
   }
   # We use original upperBound, not the +1L for 'i'.
-  numeric_value_round(type, value, lowerBound, upperBound = domain[2], digits)
+  numeric_value_round(type, value, lowerBound, upperBound = domain[2], digits = digits)
 }

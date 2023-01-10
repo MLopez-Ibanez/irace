@@ -986,7 +986,6 @@ checkTargetFiles <- function(scenario, parameters)
   ## Create two random configurations
   conf.id <- c("testConfig1", "testConfig2")
   configurations <- sampleUniform(parameters, length(conf.id),
-                                  digits = scenario$digits,
                                   forbidden = scenario$forbiddenExps,
                                   repair = scenario$repairConfiguration)
   configurations <- cbind(.ID. = conf.id, configurations, stringsAsFactors=FALSE)

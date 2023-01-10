@@ -38,10 +38,10 @@ test_that("ordered assert", {
   parameters <- readParameters(text='
 x "" o (a,b,c,d)
 ')
-  confs <- irace:::sampleUniform(parameters, 1, 0)
+  confs <- irace:::sampleUniform(parameters, 1)
   confs$.ID. <- 1
-  model <- irace:::initialiseModel(parameters, confs, 0)
-  confs <- irace:::sampleModel(parameters, confs, model, 1, 0)
+  model <- irace:::initialiseModel(parameters, confs)
+  confs <- irace:::sampleModel(parameters, confs, model, 1)
   expect_true(confs$x %in% parameters$domain$x)
 })
 

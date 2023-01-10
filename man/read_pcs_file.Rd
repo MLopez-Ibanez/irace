@@ -4,7 +4,7 @@
 \alias{read_pcs_file}
 \title{Read parameters in PCS (AClib) format and write them in irace format.}
 \usage{
-read_pcs_file(file, digits = 4, debugLevel = 0, text)
+read_pcs_file(file, digits = 4L, debugLevel = 0L, text)
 }
 \arguments{
 \item{file}{(\code{character(1)}) \cr Filename containing the definitions of

@@ -1483,25 +1483,25 @@ parameter values.
 %
 The \parameter{repairConfiguration} function is called after generating a
 configuration and before checking for forbidden configurations. The first
-argument is a 1-row \code{data.frame} with parameter names as the column names,
-the second argument is the \code{parameters} list (\autoref{sec:parameters
-  object}), and the third argument is the scenario
-variable \parameter{digits}. An example that makes all real-valued parameters
+argument is a 1-row \code{data.frame} with parameter names as the column names and the second argument is the \code{parameters} list (\autoref{sec:parameters
+  object}).  An example that makes all real-valued parameters
 sum up to one would be:
 %
 <<repairEx,prompt=FALSE, eval=FALSE>>=
-repairConfiguration = function (configuration, parameters, digits)
+repairConfiguration = function(configuration, parameters)
 {
-  isreal <- parameters$type[colnames(configuration)] %in% "r"
-  configuration[isreal] <- configuration[isreal] / sum(configuration[isreal])
-  configurations[isreal] <- round(configuration[isreal], digits)
+  isreal <- names(which(parameters$types[colnames(configuration)] == "r"))
+  # This ignores 'digits'
+  c_real <- unlist(configuration[isreal])
+  c_real <- c_real / sum(c_real)
+  configuration[isreal] <- c_real
   return(configuration)
 }
 @
 The following example forces  three specific parameters to be in increasing order:
 %
 <<repairEx2,prompt=FALSE, eval=FALSE>>=
-repairConfiguration = function (configuration, parameters, digits)
+repairConfiguration = function(configuration, parameters)
 {
  columns <- c("p1","p2","p3")
  # cat("Before"); print(configuration)

@@ -4,12 +4,10 @@
 \alias{printParameters}
 \title{Print parameter space in the textual format accepted by irace.}
 \usage{
-printParameters(params, digits = 15L)
+printParameters(parameters)
 }
 \arguments{
-\item{params}{(\code{list()}) Parameter object stored in \code{irace.Rdata} or read with \code{irace::readParameters()}.}
-
-\item{digits}{(\code{integer()}) The desired number of digits after the decimal point for real-valued parameters. Default is 15, but it should be the value in \code{scenario$digits}.}
+\item{parameters}{(\code{list()}) Parameter object stored in \code{irace.Rdata} or read with \code{irace::readParameters()}.}
 }
 \description{
 FIXME: Dependent parameter bounds are not supported yet.
