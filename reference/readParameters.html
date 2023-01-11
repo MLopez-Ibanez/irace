@@ -60,7 +60,7 @@ character string.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">readParameters</span><span class="op">(</span><span class="va">file</span>, digits <span class="op">=</span> <span class="fl">4</span>, debugLevel <span class="op">=</span> <span class="fl">0</span>, <span class="va">text</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">readParameters</span><span class="op">(</span><span class="va">file</span>, digits <span class="op">=</span> <span class="fl">4L</span>, debugLevel <span class="op">=</span> <span class="fl">0L</span>, <span class="va">text</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -131,6 +131,9 @@ which parameters depend on this one.</p></dd>
 <dd><p>Logical vector that specifies which parameter has
 a dependent domain.</p></dd>
 
+<dt><code>digits</code></dt>
+<dd><p>Integer vector that specifies the number of digits per parameter.</p></dd>
+
 
 </dl></div>
     <div class="section level2">
@@ -175,7 +178,7 @@ potential user errors.</p>
 <span class="r-in"><span><span class="st"> '</span></span></span>
 <span class="r-in"><span> <span class="va">parameters</span> <span class="op">&lt;-</span> <span class="fu">readParameters</span><span class="op">(</span>text<span class="op">=</span><span class="va">parameters.table</span><span class="op">)</span></span></span>
 <span class="r-in"><span> <span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">parameters</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> List of 13</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> List of 14</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ names       : chr [1:11] "algorithm" "localsearch" "alpha" "beta" ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ types       : Named chr [1:11] "c" "c" "r" "r" ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..- attr(*, "names")= chr [1:11] "algorithm" "localsearch" "alpha" "beta" ...</span>
@@ -223,6 +226,8 @@ potential user errors.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ dlb        : chr ""</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ isDependent : Named logi [1:11] FALSE FALSE FALSE FALSE FALSE FALSE ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..- attr(*, "names")= chr [1:11] "algorithm" "localsearch" "alpha" "beta" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ digits      : Named int [1:4] 4 4 4 4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..- attr(*, "names")= chr [1:4] "alpha" "beta" "rho" "q0"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ depends     :List of 11</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ algorithm  : chr(0) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ localsearch: chr(0) </span>
