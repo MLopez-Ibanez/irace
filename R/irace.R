@@ -498,7 +498,7 @@ allConfigurationsInit <- function(scenario, parameters)
                                allConfigurations, .PARENT. = NA)
     rownames(allConfigurations) <- allConfigurations$.ID.
     num <- nrow(allConfigurations)
-    allConfigurations <- checkForbidden(allConfigurations, scenario$forbiddenExps)
+    allConfigurations <- checkForbidden(allConfigurations, parameters$forbidden)
     if (nrow(allConfigurations) < num) {
       irace.warning(num - nrow(allConfigurations), " of the ", num,
                     " initial configurations were forbidden",
@@ -530,8 +530,8 @@ allConfigurationsInit <- function(scenario, parameters)
 #' @template return_irace
 #' @examples
 #' \dontrun{
-#' parameters <- readParameters("parameters.txt")
 #' scenario <- readScenario(filename = "scenario.txt")
+#' parameters <- readParameters("parameters.txt")
 #' irace(scenario = scenario, parameters = parameters)
 #' }
 #'
@@ -644,7 +644,6 @@ irace_run <- function(scenario, parameters)
   } else { # Do not recover
     firstRace <- TRUE
     scenario <- irace.init(scenario)
-    forbiddenExps <- scenario$forbiddenExps
     # Set options controlling debug level.
     # FIXME: This should be the other way around, the options set the debugLevel.
     options(.race.debug.level = debugLevel)
@@ -725,7 +724,6 @@ irace_run <- function(scenario, parameters)
         if (nrow(allConfigurations) < nconfigurations) {
           newConfigurations <- sampleUniform(parameters,
                                              nconfigurations - nrow(allConfigurations),
-                                             forbidden = forbiddenExps,
                                              repair = scenario$repairConfiguration)
           newConfigurations <-
             cbind (.ID. = max(0, allConfigurations$.ID.) + 1:nrow(newConfigurations),
@@ -747,10 +745,10 @@ irace_run <- function(scenario, parameters)
         rownames(iraceResults$experiments) <- 1:nrow(iraceResults$experiments)
         rejectedIDs <- c(rejectedIDs, output$rejectedIDs)
         iraceResults$rejectedConfigurations <- rejectedIDs
-        forbiddenExps <- c(forbiddenExps,
-                           buildForbiddenExp(configurations = allConfigurations[
-                                               allConfigurations$.ID. %in% output$rejectedIDs, , drop = FALSE],
-                                             parameters = parameters))
+        parameters$forbidden <- c(parameters$forbidden,
+                                  buildForbiddenExp(configurations = allConfigurations[
+                                                      allConfigurations$.ID. %in% output$rejectedIDs, , drop = FALSE],
+                                                    parameters = parameters))
                 
         # For the used time, we count the time reported in all configurations
         # including rejected ones. 
@@ -887,7 +885,6 @@ irace_run <- function(scenario, parameters)
                                timeUsed = timeUsed,
                                boundEstimate = boundEstimate,
                                rejectedIDs = rejectedIDs,
-                               forbiddenExps = forbiddenExps,
                                completed = "Incomplete")
     ## Save to the log file
     iraceResults$allConfigurations <- allConfigurations
@@ -1028,7 +1025,6 @@ irace_run <- function(scenario, parameters)
                   " configurations from uniform distribution", verbose = FALSE)
         }
         newConfigurations <- sampleUniform(parameters, nbNewConfigurations,
-                                           forbidden = forbiddenExps,
                                            repair = scenario$repairConfiguration)
         newConfigurations <-
           cbind (.ID. = max(0, allConfigurations$.ID.) + 1:nrow(newConfigurations),
@@ -1068,7 +1064,6 @@ irace_run <- function(scenario, parameters)
       
       newConfigurations <- sampleModel(parameters, eliteConfigurations,
                                        model, nbNewConfigurations,
-                                       forbidden = forbiddenExps,
                                        repair = scenario$repairConfiguration)
 
       # Set ID of the new configurations.
@@ -1096,7 +1091,6 @@ irace_run <- function(scenario, parameters)
           #cat("# ", format(Sys.time(), usetz=TRUE), " sampleModel()\n")
           newConfigurations <- sampleModel(parameters, eliteConfigurations,
                                            model, nbNewConfigurations,
-                                           forbidden = forbiddenExps,
                                            repair = scenario$repairConfiguration)
           #cat("# ", format(Sys.time(), usetz=TRUE), " sampleModel() DONE\n")
           # Set ID of the new configurations.
@@ -1161,7 +1155,7 @@ irace_run <- function(scenario, parameters)
     if (length(raceResults$rejectedIDs) > 0) {
       rejectedIDs <- c(rejectedIDs, raceResults$rejectedIDs)
       iraceResults$rejectedConfigurations <- rejectedIDs
-      forbiddenExps <- c(forbiddenExps,
+      parameters$forbiddenExps <- c(parameters$forbiddenExps,
                          buildForbiddenExp(
                            configurations = allConfigurations[
                              allConfigurations$.ID. %in% raceResults$rejectedIDs, , drop = FALSE],

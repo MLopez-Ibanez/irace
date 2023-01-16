@@ -32,6 +32,7 @@
 #'     \item{`isDependent`}{Logical vector that specifies which parameter has
 #'       a dependent domain.}
 #'     \item{`digits`}{Integer vector that specifies the number of digits per parameter.}
+#'     \item{`forbidden`}{List of expressions that define which parameter configurations are forbidden.}
 #'   }
 #'
 #' @details Either `file` or `text` must be given. If `file` is given, the
@@ -66,6 +67,9 @@
 #'  elitistants  "--elitistants " i     (1, ants)            | algorithm == "eas"
 #'  nnls         "--nnls "        i     (5, 50)              | localsearch %in% c(1,2,3)
 #'  dlb          "--dlb "         c     (0, 1)               | localsearch %in% c(1,2,3)
+#'
+#'  [forbidden]
+#'  (alpha == 0.0) && (beta == 0.0)
 #'  '
 #'  parameters <- readParameters(text=parameters.table)
 #'  str(parameters)
@@ -276,12 +280,22 @@ readParameters <- function (file, digits = 4L, debugLevel = 0L, text)
   lines <- readLines(con = file)
   nbLines <- 0
   count <- 0
-
+  forbidden <- NULL
+  has_forbidden <- FALSE
   for (line in lines) {
     nbLines <- nbLines + 1
     # Delete comments 
     line <- trim(sub("#.*$", "", line))
     if (nchar(line) == 0) {
+      next
+    }
+    if (has_forbidden) {
+      exp <- str2expression(line)
+      forbidden <- c(forbidden, exp)
+      next
+    }
+    if (grepl("^[[:space:]]*\\[forbidden\\]", line)) {
+      has_forbidden <- TRUE
       next
     }
     ## Match param.name (unquoted alphanumeric string)
@@ -292,7 +306,7 @@ readParameters <- function (file, digits = 4L, debugLevel = 0L, text)
       errReadParameters (filename, nbLines, line,
                          "parameter name must be alphanumeric")
     }
-
+    
     if (param.name %in% parameters$names) {
       errReadParameters (filename, nbLines, NULL,
                          "duplicated parameter name '", param.name, "'")
@@ -411,7 +425,7 @@ readParameters <- function (file, digits = 4L, debugLevel = 0L, text)
     parameters$types[count] <- param.type
     parameters$domain[[count]] <- param.value
     parameters$transform[[count]] <- param.transform
-
+    
     parameters$isFixed[count] <- isFixed(type = param.type,
                                          domain = parameters$domain[[count]])
     # Reject non-categorical fixed parameters. They are often the
@@ -474,6 +488,36 @@ readParameters <- function (file, digits = 4L, debugLevel = 0L, text)
   parameters$isDependent <- sapply(parameters$domain, is.expression)
   parameters$digits <- sapply(parameters$types[parameters$types == 'r'], function(x) digits)
 
+  check_forbidden_params <- function(x, pnames, filename = NULL)
+  {
+    if (length(NULL) || all(all.vars(x) %in% pnames)) return(invisible())
+    for (exp in x) {
+      v <- setdiff(all.vars(exp), pnames)
+      if (length(v)) {
+        v <- paste0(v, collapse=", ")
+        if (is.null(filename)) {
+          irace.error("Expression '", deparse(exp), "' after [forbidden] contains unknown parameter(s): ", v)
+        } else {
+          irace.error("Expression '", deparse(exp), "' in '", filename, "' contains unknown parameter(s): ", v)
+        }
+      }
+    }
+  }
+
+  if (length(forbidden)) {
+    irace.note(length(forbidden), " expression(s) specifying forbidden configurations read\n")
+    check_forbidden_params(forbidden, parameters$names)
+    # FIXME: Using && or || instead of & and | will not work. Detect
+    # this and give an error to the user.
+
+    # FIXME: Instead of a list, we should generate a single expression that is
+    # the logical-OR of all elements of the list.
+    # First we would need to handle the "is.na(x) | !(x)" case here.
+    # Maybe: sapply(forbiddenExps, function(x) substitute(is.na(x) | !(x), list(x=x)))
+    # x <- parse(text=paste0("(", paste0(forbiddenExps,collapse=")||("), ")"))
+    parameters$forbidden <- sapply(forbidden, compile_forbidden)
+  }
+    
   # Obtain the variables in each condition
   ## FIXME: In R 3.2, all.vars does not work with byte-compiled expressions,
   ## thus we do not byte-compile them; but we could use

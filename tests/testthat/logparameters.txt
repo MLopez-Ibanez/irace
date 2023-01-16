@@ -4,3 +4,14 @@ mode            "--"                 c  ("x1" ,"x2", "x3")
 real            "--paramreal="       r,log  (1.5, 4.5)
 mutation        "--mutation="        o  ("none", "very low", "low", "medium", "high", "very high", "all")
 #unused         "-u "                c  (1, 2, 10, 20)
+
+[forbidden]
+## The format is one constraint per line. Each constraint is a logical
+## expression (in R syntax). If a parameter configuration
+## is generated that makes the logical expression evaluate to TRUE,
+## then the configuration is discarded.
+##
+## Examples of valid logical operators are: ==  !=  >=  <=  >  <  &  |  !  %in%
+param1 < 5 & mode == "x1"
+(param2 > 6 & mode == "x1") | (param2 <= 6 & mode == "x3")
+real < 4 & mode %in% c("x2", "x3")

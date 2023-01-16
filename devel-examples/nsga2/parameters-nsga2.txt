@@ -4,3 +4,12 @@ pcross          ""                   r  	(0.00, 1.00)
 pmut            ""                   r  	(0.00, 1.00)
 eta_c           ""                   i  	(1,50)
 eta_m           ""                   i  	(1,50)
+
+[forbidden]
+## The format is one constraint per line. Each constraint is a logical
+## expression (in R syntax). If a parameter configuration
+## is generated that makes the logical expression evaluate to TRUE,
+## then the configuration is discarded.
+##
+## Examples of valid logical operators are: ==  !=  >=  <=  >  <  &  |  !  %in%
+(pcross == 0.0) & (pmut == 0.0)

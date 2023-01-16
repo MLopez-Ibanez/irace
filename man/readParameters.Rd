@@ -44,6 +44,7 @@ which parameters depend on this one.}
 \item{\code{isDependent}}{Logical vector that specifies which parameter has
 a dependent domain.}
 \item{\code{digits}}{Integer vector that specifies the number of digits per parameter.}
+\item{\code{forbidden}}{List of expressions that define which parameter configurations are forbidden.}
 }
 }
 \description{
@@ -83,6 +84,9 @@ potential user errors.
  elitistants  "--elitistants " i     (1, ants)            | algorithm == "eas"
  nnls         "--nnls "        i     (5, 50)              | localsearch \%in\% c(1,2,3)
  dlb          "--dlb "         c     (0, 1)               | localsearch \%in\% c(1,2,3)
+
+ [forbidden]
+ (alpha == 0.0) && (beta == 0.0)
  '
  parameters <- readParameters(text=parameters.table)
  str(parameters)

@@ -81,26 +81,6 @@
     "section": "Target algorithm parameters"
   },
   {
-    "name": "forbiddenExps",
-    "type": "x",
-    "short": "",
-    "long": "",
-    "default": "",
-    "description": "",
-    "man": "Vector of R logical expressions that cannot evaluate to \\code{TRUE} for any evaluated configuration.",
-    "section": "Target algorithm parameters"
-  },
-  {
-    "name": "forbiddenFile",
-    "type": "p",
-    "short": "",
-    "long": "--forbidden-file",
-    "default": "",
-     "vignettes": "File containing a list of logical expressions that cannot be true for any evaluated configuration. If empty or \\code{NULL}, no forbidden configurations are considered. See \\autoref{sec:forbidden} for more information.",
-    "section": "Target algorithm parameters",
-    "description": "File that contains a list of logical expressions that cannot be \\code{TRUE} for any evaluated configuration. If empty or \\code{NULL}, do not use forbidden expressions."
-  },
-  {
     "name": "initConfigurations",
     "type": "x",
     "short": "",

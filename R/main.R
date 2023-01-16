@@ -214,7 +214,7 @@ testing_fromfile <- function(filename, scenario)
                              .PARENT. = NA)
   rownames(configurations) <- configurations$.ID.
   num <- nrow(configurations)
-  configurations <- checkForbidden(configurations, scenario$forbiddenExps)
+  configurations <- checkForbidden(configurations, parameters$forbidden)
   if (nrow(configurations) < num) {
     irace.warning("Some of the configurations in the configurations file were forbidden",
                   "and, thus, discarded")

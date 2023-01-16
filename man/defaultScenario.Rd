@@ -51,8 +51,6 @@ The scenario list contains the following elements:
 \item Target algorithm parameters:
 \describe{
 \item{\code{parameterFile}}{File that contains the description of the parameters of the target algorithm. (Default: \code{"./parameters.txt"})}
-\item{\code{forbiddenExps}}{Vector of R logical expressions that cannot evaluate to \code{TRUE} for any evaluated configuration. (Default: \code{""})}
-\item{\code{forbiddenFile}}{File that contains a list of logical expressions that cannot be \code{TRUE} for any evaluated configuration. If empty or \code{NULL}, do not use forbidden expressions. (Default: \code{""})}
 \item{\code{digits}}{Maximum number of decimal places that are significant for numerical (real) parameters. (Default: \code{4})}
 }
 \item Target algorithm execution:

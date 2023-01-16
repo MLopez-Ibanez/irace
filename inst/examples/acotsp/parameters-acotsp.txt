@@ -11,3 +11,12 @@ rasrank      "--rasranks "    i    (1, 100)             | algorithm == "ras"
 elitistants  "--elitistants " i    (1, 750)             | algorithm == "eas"
 nnls         "--nnls "        i    (5, 50)              | localsearch %in% c(1,2,3)
 dlb          "--dlb "         c    (0, 1)               | localsearch %in% c(1,2,3)
+
+[forbidden]
+## The format is one constraint per line. Each constraint is a logical
+## expression (in R syntax). If a parameter configuration
+## is generated that makes the logical expression evaluate to TRUE,
+## then the configuration is discarded.
+##
+## Examples of valid logical operators are: ==  !=  >=  <=  >  <  &  |  !  %in%
+(alpha == 0.0) & (beta == 0.0)

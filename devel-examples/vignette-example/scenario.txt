@@ -10,5 +10,5 @@ testInstancesFile = "instances-test.txt"
 configurationsFile = "default.txt"
 testNbElites = 5
 testIterationElites = 1
-
+seed = 687542627L
 ############################################################################

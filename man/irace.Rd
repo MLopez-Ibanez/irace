@@ -97,8 +97,8 @@ in \code{scenario$logFile}.
 }
 \examples{
 \dontrun{
-parameters <- readParameters("parameters.txt")
 scenario <- readScenario(filename = "scenario.txt")
+parameters <- readParameters("parameters.txt")
 irace(scenario = scenario, parameters = parameters)
 }
 

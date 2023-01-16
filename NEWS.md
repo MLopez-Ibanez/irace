@@ -1,5 +1,12 @@
 # irace 3.5.1
 
+## Major breaking changes
+
+ * The scenario options `forbiddenFile` and `forbiddenExps` have been removed
+   and will give an error if present.  Forbidden configurations are now
+   specified in the parameter space description. See the example in
+   `readParameters()`.
+ 
 ## New features and improvements
 
  * Ablation will report configurations that produced the same results, which
@@ -18,11 +25,11 @@
    <https://iridia-ulb.github.io/references/#PerLopHooStu2017:lion> for details.
                                      (Leslie Pérez Cáceres, Manuel López-Ibáñez)
 
- * Matrix operations are faster thanks to `matrixStats`. (Manuel López-Ibáñez)
+ * Matrix operations are faster thanks to `matrixStats`. 
 
  * The scenario option `targetRunnerLauncherArgs`, introduced in version 3.5,
    was removed and replaced by `targetCmdline`, which is more flexible (Fixes
-   #38). Please see the user-guide for details.  (Manuel López-Ibáñez)
+   #38). Please see the user-guide for details.
 
  * New scenario option `blockSize` for defining blocks of instances.
    Configurations are only eliminated after evaluating a complete block and
@@ -30,9 +37,9 @@
    clearly defined instance classes and the best configuration should be
    balanced among them. In that case, `trainInstancesFile` should be written
    should that each block should contain one instance of each class and
-   `blockSize` should be set to the number of classes. (Manuel López-Ibáñez)
+   `blockSize` should be set to the number of classes.
 
- * `plotAblation()` has several new options:  (Manuel López-Ibáñez)
+ * `plotAblation()` has several new options:
     - `type='rank'` to plot ranks per instance instead of raw cost values.
     - `n` to limit the number of parameters shown in the plot.
 
@@ -41,15 +48,14 @@
    `targetRunnerParallel` to check the output and repair it if possible.
    (Deyao Chen)
 
- * New function `read_ablogfile()`.               (Manuel López-Ibáñez)
+ * New function `read_ablogfile()`.
 
- * New function `has_testing_data()`.             (Manuel López-Ibáñez)
+ * New function `has_testing_data()`.
 
  * The `parameters` object now stores the number of `digits` (decimal places
    after the point) for each parameter of type `r`. As a result, the
    `repairConfiguration` function (see `defaultScenario()`) only needs two
    arguments: `configuration` and `parameters`. See examples in the user-guide.
-                                                           (Manuel López-Ibáñez)
 
 ## Fixes
 
@@ -61,11 +67,11 @@
  * If scenario option `targetRunnerParallel` is set, irace no longer tries to
    initialize a parallel environment or setup MPI. It is now the responsibility
    of the user to do that before calling irace or within the function assigned
-   to `targetRunnerParallel`.  (Manuel López-Ibáñez)
+   to `targetRunnerParallel`.
 
  * Do not set `option(error=utils::recover())` in debug mode to avoid issues
    when calling irace from Python. The user can set this if desired.
-                                                           (Manuel López-Ibáñez)
+
 
 # irace 3.5
 

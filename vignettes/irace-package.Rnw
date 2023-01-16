@@ -518,7 +518,6 @@ parameters of the algorithm. The tuning scenario is composed of the following el
 \item Training instances list (see \autoref{sec:training})
 \item \irace options (see \autoref{sec:irace options}).
 \item \textit{Optional:} Initial configurations (see \autoref{sec:initial}).
-\item \textit{Optional:} Forbidden configurations (see \autoref{sec:forbidden}).
 \item \textit{Optional:} Target algorithm evaluator (see \autoref{sec:evaluator}).
 \end{enumerate}
 
@@ -567,13 +566,6 @@ algorithm, which  allows you to provide good starting configurations (if you kno
 some) for the tuning. Follow the instructions in \code{configurations.txt} and set \parameter{configurationsFile}\code{="configurations.txt"} in \code{scenario.txt}. More
 information in \autoref{sec:initial}. If you do not need to
 define initial configurations remove this file from the directory.
-
-\item \textit{Optional}: Define forbidden parameter value combinations,
-that is, configurations that \irace must not consider in the tuning.
-Follow the instructions in \code{forbidden.txt} and update \code{scenario.txt} with \parameter{forbiddenFile} \code{=} \code{"forbidden.txt"}. More information about
-forbidden configurations in \autoref{sec:forbidden}. 
-If you do not need to define forbidden configurations remove this file from
-the directory.
 
 \item Place the instances you would like to use for the tuning of your
   algorithm in the folder \path{~/tuning/Instances/}. In addition, you can
@@ -931,7 +923,7 @@ the target algorithm may have a parameter \code{localsearch} that takes values
 set if the first parameter takes precisely the value \code{ts}. Thus, parameter
 \code{ts-length} is conditional on \code{localsearch == "ts"}.
 
-\subsubsection{Parameter file format}\label{sec:parameters file}
+\subsubsection{Parameter file format}\label{sec:parameters file}\label{sec:forbidden}
 
 For simplicity, the description of the parameters space is given as a
 table. Each line of the table defines a configurable parameter
@@ -974,15 +966,52 @@ A \emph{label} for this parameter. This is a
                          enabled or disabled, thus making the parameter conditional. If the
                          condition evaluates to false, then no value is assigned to this
                          parameter, and neither the parameter value nor the corresponding
-                         label are passed to \parameter{targetRunner}. The condition must follow the same syntax as those for specifying forbidden configurations (\autoref{sec:forbidden}), that is, it must be a
+                         label are passed to \parameter{targetRunner}. The condition must follow the same syntax as those for specifying forbidden configurations (see below), that is, it must be a
                          valid \aR logical expression\footnote{For a list of \aR operators
                          see: \url{https://stat.ethz.ch/R-manual/R-devel/library/base/html/Syntax.html}}. 
                          The condition may contain the name
                          of other parameters as long as the dependency graph does not
                          contain any cycle. Otherwise, \irace will detect the cycle and
                          stop with an error. 
-                
-                \end{description}
+\end{description}
+
+A line containing just \texttt{[forbidden]} ends the list of parameters and starts the list of forbidden expressions.
+Each line is a logical expression (in \aR syntax) containing
+parameter names as defined by the \parameter{parameterFile}
+(\autoref{sec:target parameters}), values and logical operators. For a list of \aR logical operators see:
+\begin{center}
+ \url{https://stat.ethz.ch/R-manual/R-devel/library/base/html/Syntax.html}
+\end{center}
+If \irace generates a parameter configuration that makes any of the logical
+expressions evaluate to \code{TRUE}, then the configuration is considered
+forbidden and it is never evaluated. This is useful when some combination
+of parameter values could cause the target algorithm to crash, consume
+excessive CPU time or memory, or when it is known that they do no produce
+satisfactory results.
+
+\begin{xwarningbox}
+Initial configuration (\autoref{sec:initial}) that are forbidden will be discarded with a warning.
+\end{xwarningbox}
+
+\begin{xwarningbox}
+Categorical and ordinal parameters are always treated as strings. Given a parameter like:
+\begin{CodeInput}
+a "" c (0, 5, 10, 20)
+\end{CodeInput}
+then, a condition like \code{a > 10} will be true when \code{a} is \code{5},
+because comparisons between strings are lexicographic and \code{"10"} is sorted
+before \code{"5"}. As a work-around, you can convert the string to numeric in
+the condition with \code{as.numeric(a)}.
+\end{xwarningbox}
+
+If the forbidden constraints provided are too strict, \irace may produce the following error:
+\begin{CodeInput}
+  irace tried 100 times to sample from the model a configuration not forbidden
+  without success, perhaps your constraints are too strict?
+\end{CodeInput}
+%
+In that case, it may be a good idea to reformulate  the forbidden constraints as conditional parameters (\autoref{sec:conditional}), parameter-dependent domains (\autoref{sec:paramdependant}),  repairing the configurations (\autoref{sec:repairconf}) or post-processing within the target-algorithm (\autoref{sec:complex_domains}).
+
 
 As an example, Figure~\ref{fig:acotsp_parameters} shows the parameters file
 of the \ACOTSP scenario.
@@ -1002,6 +1031,11 @@ q0          "--q0 "           r    (0.0, 1.0)           | algorithm == "acs"
 dlb         "--dlb "          c    (0, 1)               | localsearch %in% c(1,2,3)
 rasrank     "--rasranks "     i    (1, "ants")          | algorithm == "ras"
 elitistants "--elitistants "  i    (1, 750)             | algorithm == "eas"
+
+[forbidden]
+## Examples of valid logical operators are:
+## ==  !=  >=  <=  >  <  &  |  !  %in%
+(alpha == 0.0) & (beta == 0.0)
 \end{CodeInput}
 \caption{Parameter file (\code{parameters.txt}) for tuning \ACOTSP.}\label{fig:acotsp_parameters}
 \end{figure}
@@ -1038,6 +1072,8 @@ The structure of the parameter list that is created is as follows:
     \code{nbVariable}   & Number of variable (i.e., to be tuned) parameters.\\
     \code{isDependent}  & Logical vector that specifies which parameter defines
                           a dependent domain.\\
+    \code{digits}  & The number of digits for real valued parameters\\
+    \code{forbidden}  & List of R logical expressions that cannot evaluate to \code{TRUE} for any evaluated configuration.\\
   \end{tabularx}
 \end{center}
 
@@ -1409,70 +1445,11 @@ different sets of good parameter values are known. This will allow \irace to sta
 from those parameter values and attempt to improve their performance.
 
 
-\subsection{Forbidden configurations}\label{sec:forbidden}
-
-The scenario option \parameter{forbiddenFile} specifies a text file containing
-logical expressions of parameter values that valid configurations should not
-satisfy, that is, no configuration that satisfies any of these logical
-expressions will be evaluated by \irace. This is useful when some combination
-of parameter values could cause the target algorithm to crash, consume
-excessive CPU time or memory, or when it is known that they do no produce
-satisfactory results.
-
-The format of the forbidden configurations file is one constraint per line,
-where each constraint is a logical expression (in \aR syntax) containing
-parameter names as defined by the \parameter{parameterFile}
-(\autoref{sec:target parameters}), values and logical operators. For a list of \aR logical operators see:
-\begin{center}
- \url{https://stat.ethz.ch/R-manual/R-devel/library/base/html/Syntax.html}
-\end{center}
-
-If a parameter configuration is generated that makes any of the logical
-expressions evaluate to \code{TRUE}, then the configuration is considered
-forbidden and it is discarded. Figure~\ref{fig:acotsp_forbidden} shows an
-example file that corresponds to the \ACOTSP scenario.
-
-\begin{figure}[!ht]
-  \centering
-  \begin{minipage}{0.5\linewidth}
-\begin{CodeInput}
-## Examples of valid logical operators are:
-## ==  !=  >=  <=  >  <  &  |  !  %in%
-(alpha == 0.0) & (beta == 0.0)
-\end{CodeInput}
-\end{minipage}
-\caption{Forbidden configurations file (\code{forbidden.txt}) for tuning \ACOTSP.}\label{fig:acotsp_forbidden}
-\end{figure}
-
-\begin{xwarningbox}
-If initial configuration are provided (\autoref{sec:initial}), they must also comply with the
-constraints defined in \parameter{forbiddenFile}.
-\end{xwarningbox}
-
-\begin{xwarningbox}
-Categorical and ordinal parameters are always treated as strings. Given a parameter like:
-\begin{CodeInput}
-a "" c (0, 5, 10, 20)
-\end{CodeInput}
-then, a condition like \code{a > 10} will be true when \code{a} is \code{5},
-because comparisons between strings are lexicographic and \code{"10"} is sorted
-before \code{"5"}. As a work-around, you can convert the string to numeric in
-the condition with \code{as.numeric(a)}.
-\end{xwarningbox}
-
-If the constraints provided are too strict, \irace may produce the following error:
-\begin{CodeInput}
-  irace tried 100 times to sample from the model a configuration not forbidden
-  without success, perhaps your constraints are too strict?
-\end{CodeInput}
-%
-In that case, it may be a good idea to reformulate  the constraints as conditional parameters (\autoref{sec:conditional}), parameter-dependent domains (\autoref{sec:paramdependant}),  repairing the configurations (\autoref{sec:repairconf}) or post-processing within the target-algorithm (\autoref{sec:complex_domains}).
-
 
 \subsection{Repairing configurations}\label{sec:repairconf}
 
 In some problems, the parameter values require complex constraints that cannot
-be implemented by constraints defined in \parameter{forbiddenFile}
+be implemented by constraints defined in the parameter space
 (\autoref{sec:forbidden}).
 %
 The scenario option \parameter{repairConfiguration} can be set to a
@@ -2646,7 +2623,7 @@ successful.
 
 If the target algorithm consistently fails for a particular set of
 configurations, these configurations may be declared as forbidden
-(\parameter{forbiddenFile}) so that \irace avoids them.  On the other hand, if
+(\autoref{sec:forbidden}) so that \irace avoids them.  On the other hand, if
 the configurations that cause the problem are unknown,
 the \parameter{targetRunner} should return \code{Inf} so that \irace
 immediately rejects the failing configuration. This immediate rejection should

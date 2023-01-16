@@ -13,7 +13,7 @@ conditionsSatisfied <- function (parameters, partialConfiguration, paramName)
   v <- eval(condition, as.list(partialConfiguration))
   # Return TRUE if TRUE, FALSE if FALSE or NA
   ## FIXME: If we byte-compile the condition, then we should incorporate the
-  ## following into the condition directly. See readForbiddenFile.
+  ## following into the condition directly.
   v <- !is.na(v) && v
   return(v)
 }
@@ -68,10 +68,10 @@ getDependentBound <- function(parameters, param, configuration)
 }
 
 ### Uniform sampling for the initial generation
-sampleUniform <- function (parameters, nbConfigurations,
-                           forbidden = NULL, repair = NULL)
+sampleUniform <- function (parameters, nbConfigurations, repair = NULL)
 {
   if (is.null(repair)) repair <- function(c, p) c
+  forbidden <- parameters$forbidden
   
   namesParameters <- names(parameters$conditions)
   newConfigurations  <- alloc_configurations(
@@ -130,10 +130,10 @@ sampleUniform <- function (parameters, nbConfigurations,
 # 2) Nb configurations is the number of configurations at the end
 # included the elite ones obtained from the previous iteration
 sampleModel <- function (parameters, eliteConfigurations, model,
-                         nbNewConfigurations, forbidden = NULL,
-                         repair = NULL)
+                         nbNewConfigurations, repair = NULL)
 {
   if (is.null(repair)) repair <- function(c, p) c
+  forbidden <- parameters$forbidden
   
   if (nbNewConfigurations <= 0) {
     irace.error ("The number of configurations to generate appears to be negative or zero.")

@@ -162,10 +162,6 @@ firstTest = 7
 ## NULL, recovery is not performed.
 # recoveryFile = ""
 
-## File containing a list of logical expressions that cannot be true
-## for any evaluated configuration. If empty or NULL, do not use a file.
-# forbiddenFile = ""
-
 ## Enable/disable elitist irace.
 # elitist = 1
 

@@ -202,9 +202,9 @@ checkForbidden <- function(configurations, forbidden)
   configurations
 }
 
-compile.forbidden <- function(x)
+compile_forbidden <- function(x)
 {
-  if (is.bytecode(x)) return(x)
+  if (is.null(x) || is.bytecode(x)) return(x)
   # If we are given an expression, it must be a single one.
   irace.assert(is.language(x) && (!is.expression(x) || length(x) == 1))
   if (is.expression(x)) x <- x[[1]]
@@ -219,24 +219,6 @@ compile.forbidden <- function(x)
   attr(expr, "source") <- as.character(as.expression(x))
   expr
 }
-
-readForbiddenFile <- function(filename)
-{
-  forbiddenExps <- parse(file = filename)
-  # FIXME: Using && or || instead of & and | will not work. Detect
-  # this and give an error to the user.
-
-  # FIXME: Check that the parameter names that appear in forbidden
-  # all appear in parameters$names to catch typos.
-
-  # FIXME: Instead of a list, we should generate a single expression that is
-  # the logical-OR of all elements of the list.
-  # First we would need to handle the "is.na(x) | !(x)" case here.
-  # Maybe: sapply(forbiddenExps, function(x) substitute(is.na(x) | !(x), list(x=x)))
-  # x <- parse(text=paste0("(", paste0(forbiddenExps,collapse=")||("), ")"))
-  # Byte-compile them.
-  sapply(forbiddenExps, compile.forbidden)
-}      
 
 buildForbiddenExp <- function(configurations, parameters)
 {
@@ -253,7 +235,7 @@ buildForbiddenExp <- function(configurations, parameters)
                paste0("(", pnames[has.value]," == ", values, ")", collapse = "&"))
   }
   exps <- parse(text = lines)
-  sapply(exps, compile.forbidden)
+  sapply(exps, compile_forbidden)
 }
 
 #' Reads from a file the scenario settings to be used by \pkg{irace}. 
@@ -597,29 +579,6 @@ checkScenario <- function(scenario = defaultScenario())
     irace.error("if given, initConfigurations must be a matrix or data.frame")
   }
   
-  # This prevents loading the file two times and overriding forbiddenExps if
-  # the user specified them explicitly.
-  if (is.null.or.empty(scenario$forbiddenExps)
-      && !is.null.or.empty(scenario$forbiddenFile)) {
-    scenario$forbiddenFile <- path_rel2abs(scenario$forbiddenFile)
-    file.check (scenario$forbiddenFile, readable = TRUE,
-                text = "forbidden configurations file")
-    scenario$forbiddenExps <- readForbiddenFile(scenario$forbiddenFile)
-    if (length(scenario$forbiddenExps) == 0L) {
-      irace.warning("no expression(s) specifying forbidden configurations found in '",
-                    scenario$forbiddenFile, "'; is the file empty?\n")
-    } else {
-      irace.note(length(scenario$forbiddenExps),
-                 " expression(s) specifying forbidden configurations read from '",
-                 scenario$forbiddenFile, "'\n")
-    }
-  }
-
-  # Make it NULL if it is "" or NA
-  # FIXME: If it is a non-empty vector of strings, parse them as above.
-  if (is_null_or_empty_or_na(scenario$forbiddenExps))
-    scenario$forbiddenExps <- NULL
-
   # We have characters everywhere, set to the right types to avoid
   # problems later.
 
@@ -848,8 +807,6 @@ printScenario <- function(scenario)
 #'  \item Target algorithm parameters:
 #'    \describe{
 #'      \item{`parameterFile`}{File that contains the description of the parameters of the target algorithm. (Default: `"./parameters.txt"`)}
-#'      \item{`forbiddenExps`}{Vector of R logical expressions that cannot evaluate to \code{TRUE} for any evaluated configuration. (Default: `""`)}
-#'      \item{`forbiddenFile`}{File that contains a list of logical expressions that cannot be \code{TRUE} for any evaluated configuration. If empty or \code{NULL}, do not use forbidden expressions. (Default: `""`)}
 #'      \item{`digits`}{Maximum number of decimal places that are significant for numerical (real) parameters. (Default: `4`)}
 #'    }
 #'  \item Target algorithm execution:
@@ -986,7 +943,6 @@ checkTargetFiles <- function(scenario, parameters)
   ## Create two random configurations
   conf.id <- c("testConfig1", "testConfig2")
   configurations <- sampleUniform(parameters, length(conf.id),
-                                  forbidden = scenario$forbiddenExps,
                                   repair = scenario$repairConfiguration)
   configurations <- cbind(.ID. = conf.id, configurations, stringsAsFactors=FALSE)
 

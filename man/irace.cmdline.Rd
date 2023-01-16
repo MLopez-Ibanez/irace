@@ -105,9 +105,6 @@ List of command-line options:\preformatted{-h,--help                Show this he
    --exec-dir            Directory where the programs will be run. Default: ./.
 -p,--parameter-file      File that contains the description of the parameters
                          of the target algorithm. Default: ./parameters.txt.
-   --forbidden-file      File that contains a list of logical expressions that
-                         cannot be `TRUE` for any evaluated configuration. If
-                         empty or `NULL`, do not use forbidden expressions.
    --configurations-file  File that contains a table of initial configurations.
                          If empty or `NULL`, all initial configurations are
                          randomly generated.
