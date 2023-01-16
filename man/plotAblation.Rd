@@ -42,11 +42,11 @@ Create plot from an ablation log
 \examples{
 logfile <- file.path(system.file(package="irace"), "exdata", "log-ablation.Rdata")
 plotAblation(ablog = logfile)
-plotAblation(ablog = logfile, type = "boxplot")
+plotAblation(ablog = logfile, type = "mean")
 plotAblation(ablog = logfile, type = c("rank","boxplot"))
 }
 \seealso{
-\code{\link[=ablation]{ablation()}}
+\code{\link[=ablation]{ablation()}} \code{\link[=ablation_cmdline]{ablation_cmdline()}}
 }
 \author{
 Leslie Pérez Cáceres and Manuel López-Ibáñez

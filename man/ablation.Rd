@@ -70,7 +70,7 @@ C. Fawcett and H. H. Hoos. Analysing differences between algorithm
 configurations through ablation. Journal of Heuristics, 22(4):431–458, 2016.
 }
 \seealso{
-\code{\link[=plotAblation]{plotAblation()}}
+\code{\link[=plotAblation]{plotAblation()}} \code{\link[=ablation_cmdline]{ablation_cmdline()}}
 }
 \author{
 Leslie Pérez Cáceres and Manuel López-Ibáñez

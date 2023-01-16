@@ -53,9 +53,11 @@ cat_ablation_license <- function()
 #' cmdline_usage(.ablation.params.def)
 #' ```
 #' @template ret_ablog
+#' @seealso [plotAblation()] [ablation()]
 #' @examples
-#' # ablation_cmdline("--help")
-#' 
+#' ablation_cmdline("--help")
+#' # Find the ablation command-line executable:
+#' Sys.glob(file.path(system.file(package="irace", "bin"), "ablation*"))
 #' @author Manuel López-Ibáñez
 #' @concept ablation
 #' @export
@@ -248,7 +250,7 @@ ab_generate_instances <- function(scenario, nrep, type, instancesFile)
 #' configurations through ablation. Journal of Heuristics, 22(4):431–458, 2016.
 #' 
 #' @template ret_ablog
-#' @seealso [plotAblation()]
+#' @seealso [plotAblation()] [ablation_cmdline()]
 #' @examples
 #' \donttest{
 #' logfile <- system.file(package="irace", "exdata", "sann.rda")
@@ -513,11 +515,11 @@ ablation.labels <- function(trajectory, configurations)
 #'   arguments. See [graphics::plot.default()].
 #'
 #' @author Leslie Pérez Cáceres and Manuel López-Ibáñez
-#' @seealso [ablation()]
+#' @seealso [ablation()] [ablation_cmdline()]
 #' @examples
 #' logfile <- file.path(system.file(package="irace"), "exdata", "log-ablation.Rdata")
 #' plotAblation(ablog = logfile)
-#' plotAblation(ablog = logfile, type = "boxplot")
+#' plotAblation(ablog = logfile, type = "mean")
 #' plotAblation(ablog = logfile, type = c("rank","boxplot"))
 #' @concept ablation
 #' @export
