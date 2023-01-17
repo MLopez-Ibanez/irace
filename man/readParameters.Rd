@@ -84,7 +84,7 @@ potential user errors.
  elitistants  "--elitistants " i     (1, ants)            | algorithm == "eas"
  nnls         "--nnls "        i     (5, 50)              | localsearch \%in\% c(1,2,3)
  dlb          "--dlb "         c     (0, 1)               | localsearch \%in\% c(1,2,3)
-
+ 
  [forbidden]
  (alpha == 0.0) && (beta == 0.0)
  '

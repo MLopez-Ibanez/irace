@@ -214,7 +214,7 @@ ab_generate_instances <- function(scenario, nrep, type, instancesFile)
   if (instancesFile == "test") {
     scenario$instances <- scenario$testInstances
   } else if (instancesFile != "train") {
-    scenario$instances <- readInstances(instancesDir = "", instancesFile = instancesFile)
+    scenario$instances <- readInstances(instancesFile = path_rel2abs(instancesFile))
   }
   n_inst <- length(scenario$instances)
   instancesList <- generateInstances(scenario, n_inst * nrep)
