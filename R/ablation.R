@@ -240,7 +240,7 @@ ab_generate_instances <- function(scenario, nrep, type, instancesFile)
 #' @param src,target (`integer(1)`) Source and target configuration IDs. By default, the first configuration ever evaluated (ID 1) is used as `src` and the best configuration found by irace is used as target.
 #' @param ab.params Specific parameter names to be used for the ablation. They must be in `parameters$names`. By default, use all parameters.
 #' @param type Type of ablation to perform: `"full"` will execute each configuration on all `n_instances` to determine the best-performing one; `"racing"` will apply racing to find the best configurations.
-#' @param nrep (`integer(1)`) Number of replications per instance used in `"full"` ablation. If `nrep > 1`, the each configuration will be executed `nrep` times on each instance with different random seeds.
+#' @param nrep (`integer(1)`) Number of replications per instance used in `"full"` ablation. When `nrep > 1`, each configuration will be executed `nrep` times on each instance with different random seeds.
 #' @param seed (`integer(1)`) Integer value to use as seed for the random number generation.
 #' @param ablationLogFile  (`character(1)`) Log file to save the ablation log. If `NULL`, the results are not saved to a file.
 #' @param instancesFile  (`character(1)`) Instances file used for ablation: `'train'`, `'test'` or a filename containing the list of instances.
