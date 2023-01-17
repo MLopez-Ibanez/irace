@@ -1155,11 +1155,11 @@ irace_run <- function(scenario, parameters)
     if (length(raceResults$rejectedIDs) > 0) {
       rejectedIDs <- c(rejectedIDs, raceResults$rejectedIDs)
       iraceResults$rejectedConfigurations <- rejectedIDs
-      parameters$forbiddenExps <- c(parameters$forbiddenExps,
-                         buildForbiddenExp(
-                           configurations = allConfigurations[
-                             allConfigurations$.ID. %in% raceResults$rejectedIDs, , drop = FALSE],
-                           parameters = parameters))
+      parameters$forbidden <- c(parameters$forbidden,
+                                buildForbiddenExp(
+                                  configurations = allConfigurations[
+                                    allConfigurations$.ID. %in% raceResults$rejectedIDs, , drop = FALSE],
+                                  parameters = parameters))
     }
 
     experimentsUsedSoFar <- experimentsUsedSoFar + raceResults$experimentsUsed
