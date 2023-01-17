@@ -749,14 +749,10 @@ checkScenario <- function(scenario = defaultScenario())
 #' @export
 printScenario <- function(scenario)
 {
-  params_names <- .irace.params.names
+  scenario_names <- .irace.params.names
   cat("## irace scenario:\n")
-  for (param in params_names) {
-    if (param == "forbiddenExps")
-      extra <- paste0(" = expression(", paste0(collapse=", ",
-                                  sapply(scenario[[param]], attr, "source")), ")")
-    else extra <- ""
-    cat(param, " = ", deparse(scenario[[param]]), extra, "\n", sep = "")
+  for (name in scenario_names) {
+    cat(name, " = ", deparse(scenario[[name]]), "\n", sep = "")
   }
   cat("## end of irace scenario\n")
 }

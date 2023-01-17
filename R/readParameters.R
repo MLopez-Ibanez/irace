@@ -67,7 +67,7 @@
 #'  elitistants  "--elitistants " i     (1, ants)            | algorithm == "eas"
 #'  nnls         "--nnls "        i     (5, 50)              | localsearch %in% c(1,2,3)
 #'  dlb          "--dlb "         c     (0, 1)               | localsearch %in% c(1,2,3)
-#'
+#'  
 #'  [forbidden]
 #'  (alpha == 0.0) && (beta == 0.0)
 #'  '
@@ -758,5 +758,10 @@ printParameters <- function(parameters)
     condition <- if (isTRUE(condition)) "" else paste0(" | ", condition)
     if (!is.null(transf) && transf != "") type <- paste0(type, ",", transf)
     cat(sprintf('%*s %*s %s %-15s%s\n', -names_len, name, -switches_len, switch, type, domain, condition))
+  }
+  if (!is.null(parameters$forbidden)) {
+    cat("\n[forbidden]\n",
+        paste0(collapse="\n", sapply(parameters[["forbidden"]], attr, "source")),
+        "\n", sep="")
   }
 }
