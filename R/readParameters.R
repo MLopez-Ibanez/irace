@@ -278,17 +278,16 @@ readParameters <- function (file, digits = 4L, debugLevel = 0L, text)
 
   conditions <- list()
   lines <- readLines(con = file)
+  # Delete comments 
+  lines <- trim(sub("#.*$", "", lines))
   nbLines <- 0
   count <- 0
   forbidden <- NULL
   has_forbidden <- FALSE
   for (line in lines) {
     nbLines <- nbLines + 1
-    # Delete comments 
-    line <- trim(sub("#.*$", "", line))
-    if (nchar(line) == 0) {
-      next
-    }
+    if (nchar(line) == 0) next
+    
     if (has_forbidden) {
       exp <- str2expression(line)
       forbidden <- c(forbidden, exp)
@@ -302,7 +301,7 @@ readParameters <- function (file, digits = 4L, debugLevel = 0L, text)
     result <- field.match (line, "[._[:alnum:]]+")
     param.name <- result$match
     line <- result$line
-    if (is.null (result$match)) {
+    if (is.null(result$match)) {
       errReadParameters (filename, nbLines, line,
                          "parameter name must be alphanumeric")
     }
