@@ -74,6 +74,278 @@
 <p>(<code><a href="https://rdrr.io/r/base/list.html" class="external-link">list()</a></code>)</p>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">irace_results</span> <span class="op">&lt;-</span> <span class="fu">read_logfile</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"exdata/irace-acotsp.Rdata"</span>, package<span class="op">=</span><span class="st">"irace"</span>, mustWork<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">irace_results</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> List of 11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ scenario         :List of 56</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ scenarioFile             : chr "/home/manu/work/irace/git/devel-examples/vignette-example/scenario.txt"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ configurationsFile       : chr "/home/manu/work/irace/git/devel-examples/vignette-example/default.txt"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ logFile                  : chr "./irace-acotsp.Rdata"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ trainInstancesDir        : chr "./instances"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ trainInstancesFile       : chr "./instances.txt"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ testInstancesDir         : chr "./instances"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ testInstancesFile        : chr "./instances-test.txt"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ testNbElites             : int 5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ testIterationElites      : logi TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ maxExperiments           : int 1000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ seed                     : int 687542627</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ execDir                  : chr "./"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ parameterFile            : chr "./parameters.txt"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ recoveryFile             : chr ""</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ instances                : chr [1:10] "./instances/1000-1.tsp" "./instances/1000-2.tsp" "./instances/1000-3.tsp" "./instances/1000-4.tsp" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ sampleInstances          : logi TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ testInstances            : chr [1:10] "./instances/1000-10.tsp" "./instances/1000-11.tsp" "./instances/1000-12.tsp" "./instances/1000-13.tsp" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ testType                 : chr "friedman"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ firstTest                : int 5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ blockSize                : int 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ eachTest                 : int 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ targetRunner             : chr "./target-runner"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ targetRunnerLauncher     : chr ""</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ targetCmdline            : chr "{configurationID} {instanceID} {seed} {instance} {bound} {targetRunnerArgs}"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ targetRunnerRetries      : int 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ targetRunnerData         : chr ""</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ deterministic            : logi FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ maxTime                  : int 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ budgetEstimation         : num 0.02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ minMeasurableTime        : num 0.01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ parallel                 : int 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ loadBalancing            : logi TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ mpi                      : logi FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ batchmode                : chr "0"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ digits                   : int 4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ quiet                    : logi FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ debugLevel               : int 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ softRestart              : logi TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ softRestartThreshold     : num 1e-04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ elitist                  : logi TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ elitistNewInstances      : int 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ elitistLimit             : int 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ capping                  : logi FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ cappingType              : chr "median"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ boundType                : chr "candidate"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ boundDigits              : int 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ boundPar                 : int 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ boundAsTimeout           : logi TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ postselection            : num 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ aclib                    : logi FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nbIterations             : int 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nbExperimentsPerIteration: int 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ minNbSurvival            : int 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nbConfigurations         : int 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ mu                       : int 5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ confidence               : num 0.95</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ irace.version    : chr "3.5.1.22532d5"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ parameters       :List of 14</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ names       : chr [1:11] "algorithm" "localsearch" "alpha" "beta" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ types       : Named chr [1:11] "c" "c" "r" "r" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..- attr(*, "names")= chr [1:11] "algorithm" "localsearch" "alpha" "beta" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ switches    : Named chr [1:11] "--" "--localsearch " "--alpha " "--beta " ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..- attr(*, "names")= chr [1:11] "algorithm" "localsearch" "alpha" "beta" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ domain      :List of 11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ algorithm  : chr [1:5] "as" "mmas" "eas" "ras" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ localsearch: chr [1:4] "0" "1" "2" "3"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ alpha      : num [1:2] 0 5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ beta       : num [1:2] 0 10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ rho        : num [1:2] 0.01 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ ants       : num [1:2] 5 100</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ nnls       : num [1:2] 5 50</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ q0         : num [1:2] 0 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ dlb        : chr [1:2] "0" "1"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ rasrank    : num [1:2] 1 100</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ elitistants: num [1:2] 1 750</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ conditions  :List of 11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ algorithm  : logi TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ localsearch: logi TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ alpha      : logi TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ beta       : logi TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ rho        : logi TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ ants       : logi TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ nnls       :  expression(localsearch %in% c(1, 2, 3))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ q0         :  expression(algorithm %in% c("acs"))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ dlb        :  expression(localsearch %in% c(1, 2, 3))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ rasrank    :  expression(algorithm %in% c("ras"))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ elitistants:  expression(algorithm %in% c("eas"))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ isFixed     : Named logi [1:11] FALSE FALSE FALSE FALSE FALSE FALSE ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..- attr(*, "names")= chr [1:11] "algorithm" "localsearch" "alpha" "beta" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ transform   :List of 11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ algorithm  : chr ""</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ localsearch: chr ""</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ alpha      : chr ""</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ beta       : chr ""</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ rho        : chr ""</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ ants       : chr "log"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..- attr(*, "lower")= num 1.61</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..- attr(*, "upper")= num 4.62</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ nnls       : chr ""</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ q0         : chr ""</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ dlb        : chr ""</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ rasrank    : chr ""</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ elitistants: chr ""</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ isDependent : Named logi [1:11] FALSE FALSE FALSE FALSE FALSE FALSE ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..- attr(*, "names")= chr [1:11] "algorithm" "localsearch" "alpha" "beta" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ digits      : Named int [1:4] 4 4 4 4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..- attr(*, "names")= chr [1:4] "alpha" "beta" "rho" "q0"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ depends     :List of 11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ algorithm  : chr(0) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ localsearch: chr(0) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ alpha      : chr(0) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ beta       : chr(0) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ rho        : chr(0) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ ants       : chr(0) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ nnls       : chr "localsearch"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ q0         : chr "algorithm"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ dlb        : chr "localsearch"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ rasrank    : chr "algorithm"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ elitistants: chr "algorithm"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ hierarchy   : Named num [1:11] 1 1 1 1 1 1 2 2 2 2 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..- attr(*, "names")= chr [1:11] "algorithm" "localsearch" "alpha" "beta" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nbParameters: int 11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nbFixed     : int 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nbVariable  : int 11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ allElites        :List of 7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : num [1:4] 2 29 3 20</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : num [1:5] 50 2 38 29 34</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : num [1:5] 86 50 88 64 73</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : num 108</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : num [1:4] 108 127 136 145</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : num [1:5] 149 151 127 147 145</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : num [1:5] 149 151 147 127 145</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ experiments      : num [1:15, 1:163] 28407696 28402347 29166659 28417102 28823388 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..- attr(*, "dimnames")=List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ : chr [1:15] "1" "2" "3" "4" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ : chr [1:163] "1" "2" "3" "4" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ experimentLog    : num [1:1000, 1:5] 1 1 1 1 1 1 1 1 1 1 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..- attr(*, "dimnames")=List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ : NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ : chr [1:5] "iteration" "instance" "configuration" "time" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ state            :List of 17</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ .Random.seed        : int [1:626] 10403 176 74450096 -488718086 1971160917 1271940195 -1466109272 593734952 -700000720 -249115685 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ .irace              :&lt;environment: 0x555f7da38778&gt; </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ currentBudget       : num 25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ debugLevel          : int 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ eliteConfigurations :'data.frame':	5 obs. of  16 variables:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ .ID.       : num [1:5] 149 151 147 127 145</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ algorithm  : chr [1:5] "acs" "acs" "acs" "acs" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ localsearch: chr [1:5] "3" "3" "3" "3" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ alpha      : num [1:5] 1.563 1.361 1.64 0.993 1.884</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ beta       : num [1:5] 1.1449 5.3681 3.8003 4.4442 0.0659</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ rho        : num [1:5] 0.269 0.345 0.441 0.459 0.239</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ ants       : num [1:5] 8 5 10 7 7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ nnls       : num [1:5] 14 16 21 21 18</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ q0         : num [1:5] 0.36 0.513 0.624 0.486 0.346</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ dlb        : chr [1:5] "1" "1" "1" "1" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ rasrank    : num [1:5] NA NA NA NA NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ elitistants: num [1:5] NA NA NA NA NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ .PARENT.   : num [1:5] 145 127 127 108 108</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ .ALIVE.    : logi [1:5] TRUE TRUE TRUE TRUE TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ .RANK.     : num [1:5] 49 49 50 53 54</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ .WEIGHT.   : num [1:5] 0.3333 0.2667 0.2 0.1333 0.0667</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ experimentsUsedSoFar: int 1000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ indexIteration      : num 8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ minSurvival         : num 5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ model               :List of 11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ algorithm  :List of 5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ 149: num [1:5] 0.000235 0.000235 0.000235 0.005177 0.994119</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ 151: num [1:5] 0.000235 0.000235 0.000235 0.005177 0.994119</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ 127: num [1:5] 0.000235 0.000235 0.000235 0.005177 0.994119</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ 147: num [1:5] 0.000235 0.000235 0.000235 0.005177 0.994119</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ 145: num [1:5] 0.000235 0.000235 0.000235 0.005177 0.994119</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ localsearch:List of 5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ 149: num [1:4] 0.000341 0.000341 0.000341 0.998978</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ 151: num [1:4] 0.000341 0.000341 0.000341 0.998978</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ 127: num [1:4] 0.000341 0.000341 0.000341 0.998978</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ 147: num [1:4] 0.000341 0.000341 0.000341 0.998978</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ 145: num [1:4] 0.000341 0.000341 0.000341 0.998978</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ alpha      :List of 5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ 149: num [1:2] 0.577 1.563</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ 151: num [1:2] 0.577 1.361</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ 127: num [1:2] 0.577 0.993</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ 147: num [1:2] 0.577 1.64</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ 145: num [1:2] 0.577 1.884</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ beta       :List of 5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ 149: num [1:2] 1.15 1.14</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ 151: num [1:2] 1.15 5.37</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ 127: num [1:2] 1.15 4.44</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ 147: num [1:2] 1.15 3.8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ 145: num [1:2] 1.1532 0.0659</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ rho        :List of 5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ 149: num [1:2] 0.114 0.269</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ 151: num [1:2] 0.114 0.345</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ 127: num [1:2] 0.114 0.459</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ 147: num [1:2] 0.114 0.441</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ 145: num [1:2] 0.114 0.239</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ ants       :List of 5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ 149: num [1:2] 0.115 8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ 151: num [1:2] 0.115 5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ 127: num [1:2] 0.115 7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ 147: num [1:2] 0.115 10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ 145: num [1:2] 0.115 7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ nnls       :List of 5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ 149: num [1:2] 5.19 14</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ 151: num [1:2] 5.19 16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ 127: num [1:2] 5.19 21</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ 147: num [1:2] 5.19 21</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ 145: num [1:2] 5.19 18</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ q0         :List of 5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ 149: num [1:2] 0.115 0.36</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ 151: num [1:2] 0.115 0.513</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ 127: num [1:2] 0.115 0.486</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ 147: num [1:2] 0.115 0.624</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ 145: num [1:2] 0.115 0.346</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ dlb        :List of 5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ 149: num [1:2] 0.00102 0.99898</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ 151: num [1:2] 0.00102 0.99898</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ 127: num [1:2] 0.00102 0.99898</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ 147: num [1:2] 0.00102 0.99898</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ 145: num [1:2] 0.00102 0.99898</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ rasrank    :List of 5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ 149: num [1:2] 11.4 12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ 151: num [1:2] 11.4 12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ 127: num [1:2] 11.4 12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ 147: num [1:2] 11.4 12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ 145: num [1:2] 11.4 12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ elitistants:List of 5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ 149: num [1:2] 86.4 NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ 151: num [1:2] 86.4 NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ 127: num [1:2] 86.4 NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ 147: num [1:2] 86.4 NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ 145: num [1:2] 86.4 NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nbConfigurations    : num 6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nbIterations        : num 7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ remainingBudget     : int 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ timeUsed            : num 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ boundEstimate       : logi NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ rejectedIDs         : NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ completed           : chr "Budget exhausted"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ elapsed             : Named num [1:3] 10059 44.7 5274.2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..- attr(*, "names")= chr [1:3] "user" "system" "wallclock"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ allConfigurations:'data.frame':	163 obs. of  13 variables:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ .ID.       : num [1:163] 1 2 3 4 5 6 7 8 9 10 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ algorithm  : chr [1:163] "as" "acs" "eas" "ras" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ localsearch: chr [1:163] "0" "3" "3" "1" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ alpha      : num [1:163] 1 1.13 3.72 4.84 4.21 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ beta       : num [1:163] 1 3.35 5.52 5.93 5.23 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ rho        : num [1:163] 0.95 0.647 0.6 0.761 0.761 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ ants       : num [1:163] 10 36 75 5 22 16 40 15 67 7 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nnls       : num [1:163] NA 43 29 40 8 26 8 11 28 27 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ q0         : num [1:163] NA 0.905 NA NA NA ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ dlb        : chr [1:163] NA "0" "1" "0" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ rasrank    : num [1:163] NA NA NA 61 49 NA NA NA NA NA ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ elitistants: num [1:163] NA NA 91 NA NA NA NA 336 350 NA ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ .PARENT.   : num [1:163] NA NA NA NA NA NA NA NA NA NA ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ softRestart      : logi [1:7] FALSE FALSE FALSE FALSE FALSE FALSE ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ iterationElites  : num [1:7] 2 50 86 108 108 149 149</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ testing          :List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ experiments: num [1:10, 1:18] 23454147 23272450 23038445 23113076 23249037 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..- attr(*, "dimnames")=List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ : chr [1:10] "1t" "2t" "3t" "4t" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ : chr [1:18] "2" "29" "3" "20" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ seeds      : Named int [1:10] 1475363490 1986478844 635764558 2018927617 1736421458 1828952358 1530093410 1928089170 680468367 471709667</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..- attr(*, "names")= chr [1:10] "1t" "2t" "3t" "4t" ...</span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside></div>
 
