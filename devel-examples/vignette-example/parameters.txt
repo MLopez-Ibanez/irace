@@ -13,3 +13,8 @@ q0              "--q0 "              r  	(0.0, 1.0) 		| algorithm %in% c("acs")
 dlb             "--dlb "             c  	(0, 1) 			| localsearch %in% c(1,2,3)
 rasrank         "--rasranks "        i  	(1, 100) 		| algorithm %in% c("ras")
 elitistants     "--elitistants "     i  	(1, 750) 		| algorithm %in% c("eas")
+
+[forbidden]
+(alpha == 0) && (beta == 0)
+
+
