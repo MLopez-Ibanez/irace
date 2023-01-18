@@ -26,7 +26,7 @@ ablation(
 
 \item{type}{Type of ablation to perform: \code{"full"} will execute each configuration on all \code{n_instances} to determine the best-performing one; \code{"racing"} will apply racing to find the best configurations.}
 
-\item{nrep}{(\code{integer(1)}) Number of replications per instance used in \code{"full"} ablation. If \code{nrep > 1}, the each configuration will be executed \code{nrep} times on each instance with different random seeds.}
+\item{nrep}{(\code{integer(1)}) Number of replications per instance used in \code{"full"} ablation. When \code{nrep > 1}, each configuration will be executed \code{nrep} times on each instance with different random seeds.}
 
 \item{seed}{(\code{integer(1)}) Integer value to use as seed for the random number generation.}
 
