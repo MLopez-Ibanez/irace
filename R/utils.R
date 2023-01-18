@@ -690,6 +690,9 @@ valid_iracelog <- function(x)
 #' @param name Optional argument that allows overriding the default name of the object in the file.
 #' 
 #' @return (`list()`)
+#' @examples
+#' irace_results <- read_logfile(system.file("exdata/irace-acotsp.Rdata", package="irace", mustWork=TRUE))
+#' str(irace_results)
 #' @concept analysis
 #' @export
 read_logfile <- function(filename, name = "iraceResults")

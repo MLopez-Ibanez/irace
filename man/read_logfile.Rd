@@ -17,4 +17,8 @@ read_logfile(filename, name = "iraceResults")
 \description{
 Read the log file produced by irace (\code{irace.Rdata}).
 }
+\examples{
+irace_results <- read_logfile(system.file("exdata/irace-acotsp.Rdata", package="irace", mustWork=TRUE))
+str(irace_results)
+}
 \concept{analysis}
