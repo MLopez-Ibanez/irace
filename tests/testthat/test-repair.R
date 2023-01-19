@@ -57,9 +57,9 @@ target_order <- function(experiment, scenario)
 repair_order <- function(configuration, parameters)
 {
  columns <- c("p1","p2","p3")
- # cat("Before"); print(configuration)
- configuration[columns] <- sort(configuration[columns])
- # cat("After"); print(configuration)
+ #cat("Before"); print(configuration)
+ configuration[columns] <- sort(unlist(configuration[columns], use.names=FALSE))
+ #cat("After"); print(configuration)
  return(configuration)
 }
 
