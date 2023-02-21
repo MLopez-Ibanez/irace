@@ -199,14 +199,16 @@ target.evaluator.default <- function(experiment, num.configurations, all.conf.id
 
   debugLevel <- scenario$debugLevel
   targetEvaluator <- scenario$targetEvaluator
-  if (as.logical(file.access(targetEvaluator, mode = 1))) {
+  use_std <- targetEvaluator == 'stdout://'
+  if (use_std) targetEvaluator <- 'stdout://targetEvaluator'
+  if (!use_std && as.logical(file.access(targetEvaluator, mode = 1))) {
     irace.error ("targetEvaluator", shQuote(targetEvaluator),
                  "cannot be found or is not executable!\n")
   }
 
   cwd <- setwd (scenario$execDir)
   args <- c(configuration.id, instance.id, seed, instance, num.configurations, all.conf.id)
-  output <- runcommand(targetEvaluator, args, configuration.id, debugLevel)
+  output <- runcommand(targetEvaluator, args, configuration.id, debugLevel, use_std = use_std)
   setwd (cwd)
 
   cost <- time <- NULL
@@ -411,6 +413,8 @@ run_target_runner <- function(experiment, scenario)
 
   targetRunner <- scenario$targetRunner
   debugLevel <- scenario$debugLevel
+  use_std <- targetRunner == 'stdout://'
+  if (use_std) targetRunner <- 'stdout://targetRunner'
   
   if (scenario$aclib) {
     # FIXME: Use targetCmdline for this
@@ -433,8 +437,8 @@ run_target_runner <- function(experiment, scenario)
     targetRunner <- targetRunnerLauncher
     error <- "targetRunnerLauncher"
   }
-  file.check(targetRunner, executable = TRUE, text = error)
-  output <- runcommand(targetRunner, args, configuration.id, debugLevel)
+  if (!use_std) {file.check(targetRunner, executable = TRUE, text = error)}
+  output <- runcommand(targetRunner, args, configuration.id, debugLevel, use_std = use_std)
   list(cmd=targetRunner, output=output, args=args)
 }
 

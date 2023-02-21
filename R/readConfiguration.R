@@ -506,17 +506,18 @@ checkScenario <- function(scenario = defaultScenario())
     .irace$target.runner <- bytecompile(scenario$targetRunner)
   } else if (is.null(scenario$targetRunnerParallel)) {
     if (is.character(scenario$targetRunner)) {
-      scenario$targetRunner <- path_rel2abs(scenario$targetRunner)
+      use_std = scenario$targetRunner == 'stdout://'
+      if (!use_std) {scenario$targetRunner <- path_rel2abs(scenario$targetRunner)}
       .irace$target.runner <- if (scenario$aclib)
                                 target.runner.aclib else target.runner.default
       if (is.null.or.empty(scenario$targetRunnerLauncher)) {
-        file.check (scenario$targetRunner, executable = TRUE,
-                    text = paste0("target runner ", quote.param("targetRunner")))
+        if (!use_std) {file.check (scenario$targetRunner, executable = TRUE,
+                    text = paste0("target runner ", quote.param("targetRunner")))}
       } else { 
         scenario$targetRunnerLauncher <- path_rel2abs(scenario$targetRunnerLauncher)
         file.check (scenario$targetRunnerLauncher, executable = TRUE,
                     text = paste0("target runner launcher ", quote.param("targetRunnerLauncher")))
-        file.check (scenario$targetRunner, readable = TRUE,
+        if (!use_std) file.check (scenario$targetRunner, readable = TRUE,
                     text = paste0("target runner ", quote.param("targetRunner")))
       }
       check_target_cmdline(scenario$targetCmdline,
@@ -534,9 +535,11 @@ checkScenario <- function(scenario = defaultScenario())
     scenario$targetEvaluator <- get.function(scenario$targetEvaluator)
     .irace$target.evaluator <- bytecompile(scenario$targetEvaluator)
   } else if (is.character(scenario$targetEvaluator)) {
-    scenario$targetEvaluator <- path_rel2abs(scenario$targetEvaluator)
-    file.check (scenario$targetEvaluator, executable = TRUE,
-                text = "target evaluator")
+    if (scenario$targetEvaluator != "stdout://") {
+      scenario$targetEvaluator <- path_rel2abs(scenario$targetEvaluator)
+      file.check (scenario$targetEvaluator, executable = TRUE,
+                  text = "target evaluator")
+    }
     .irace$target.evaluator <- target.evaluator.default
   } else {
     irace.error(quote.param('targetEvaluator'), " must be a function or an executable program")
@@ -680,6 +683,12 @@ checkScenario <- function(scenario = defaultScenario())
   if (scenario$mpi && scenario$parallel < 2) {
     irace.error (quote.param("parallel"),
                  " must be larger than 1 when mpi is enabled.")
+  }
+  
+  if (scenario$targetRunner == 'stdout://' && scenario$parallel > 1) {
+    irace.error (quote.param("parallel"), " cannot be larger than one when stdout:// is set for ",
+    quote.param("targetRunner"), ". If you want parallelism, consider using ",
+    quote.param("targetEvaluator"), ", which you can use to return the actual outputs after all the calls to targetRunner are printed to stdout.")
   }
 
   if (is.null.or.empty(scenario$batchmode))

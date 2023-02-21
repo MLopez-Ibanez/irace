@@ -597,22 +597,30 @@ dataVariance <- function(data)
   mean(colVars(zscoredata))
 }
 
-runcommand <- function(command, args, id, debugLevel)
+runcommand <- function(command, args, id, debugLevel, use_std = FALSE)
 {
   if (debugLevel >= 2L) {
     irace.note (command, " ", args, "\n")
     elapsed <- proc.time()["elapsed"]
   }
   err <- NULL
-  output <- withCallingHandlers(
-    tryCatch(system2(command, args, stdout = TRUE, stderr = TRUE),
-             error = function(e) {
-               err <<- c(err, paste(conditionMessage(e), collapse="\n"))
-               NULL
-             }), warning = function(w) {
-               err <<- c(err, paste(conditionMessage(w), collapse="\n"))
-               invokeRestart("muffleWarning")
-             })
+  if (use_std) {
+    write(paste(c(command, args), collapse = ' '), stdout())
+    output <- readLines(file("stdin"), n=1)
+    if (startsWith(output, "err ")) {
+      attr(output, "errmsg") <- substring(output, 5)
+    }
+  } else {
+    output <- withCallingHandlers(
+      tryCatch(system2(command, args, stdout = TRUE, stderr = TRUE),
+              error = function(e) {
+                err <<- c(err, paste(conditionMessage(e), collapse="\n"))
+                NULL
+              }), warning = function(w) {
+                err <<- c(err, paste(conditionMessage(w), collapse="\n"))
+                invokeRestart("muffleWarning")
+              })
+  }
   if (is.null(output))
     output <- ""
   # If the command could not be run an R error is generated.  If ‘command’
