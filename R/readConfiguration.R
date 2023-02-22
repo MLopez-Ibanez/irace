@@ -685,7 +685,7 @@ checkScenario <- function(scenario = defaultScenario())
                  " must be larger than 1 when mpi is enabled.")
   }
   
-  if (scenario$targetRunner == 'stdout://' && scenario$parallel > 1) {
+  if (is.character(scenario$targetRunner) && scenario$targetRunner == 'stdout://' && scenario$parallel > 1) {
     irace.error (quote.param("parallel"), " cannot be larger than one when stdout:// is set for ",
     quote.param("targetRunner"), ". If you want parallelism, consider using ",
     quote.param("targetEvaluator"), ", which you can use to return the actual outputs after all the calls to targetRunner are printed to stdout.")

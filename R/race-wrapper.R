@@ -199,7 +199,7 @@ target.evaluator.default <- function(experiment, num.configurations, all.conf.id
 
   debugLevel <- scenario$debugLevel
   targetEvaluator <- scenario$targetEvaluator
-  use_std <- targetEvaluator == 'stdout://'
+  use_std <- is.character(targetEvaluator) && targetEvaluator == 'stdout://'
   if (use_std) targetEvaluator <- 'stdout://targetEvaluator'
   if (!use_std && as.logical(file.access(targetEvaluator, mode = 1))) {
     irace.error ("targetEvaluator", shQuote(targetEvaluator),
@@ -413,7 +413,7 @@ run_target_runner <- function(experiment, scenario)
 
   targetRunner <- scenario$targetRunner
   debugLevel <- scenario$debugLevel
-  use_std <- targetRunner == 'stdout://'
+  use_std <- is.character(targetRunner) && targetRunner == 'stdout://'
   if (use_std) targetRunner <- 'stdout://targetRunner'
   
   if (scenario$aclib) {
