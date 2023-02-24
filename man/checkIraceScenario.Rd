@@ -25,9 +25,10 @@ settings provided and trying to run the target-algorithm.
 }
 \details{
 If the \code{parameters} argument is missing, then the parameters
-will be read from the file \code{parameterFile}  given by \code{scenario}. If
-\code{parameters} is provided, then \code{parameterFile} will not be read.  This function will
-try to execute the target-algorithm.
+will be read from the file \code{parameterFile} or string \code{parameterText}
+given by \code{scenario}. If \code{parameters} is provided, then \code{parameterFile}
+or \code{parameterText} will not be read.  This function will try to execute
+the target-algorithm.
 }
 \seealso{
 \describe{

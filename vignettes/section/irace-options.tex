@@ -72,7 +72,7 @@ Enable/disable elitist \irace.
 \subsection[Internal irace options]{Internal \irace options}
 \begin{description}
  \defparameter{sampleInstances}{sample-instances}{1}%
-Enable/disable the sampling of the training instances. If the option \parameter{sampleInstances} is disabled, the instances are used in the order provided in the \parameter{trainInstancesFile} or in the order they are read from the \parameter{trainInstancesDir} when\parameter{trainInstancesFile} is not provided. For more information about training instances see \autoref{sec:training}.
+Enable/disable the sampling of the training instances. If the option \parameter{sampleInstances} is disabled, the instances are used in the order provided in the \parameter{trainInstancesFile} or \parameter{trainInstancesText} or in the order they are read from the \parameter{trainInstancesDir} when\parameter{trainInstancesFile} nor \parameter{trainInstancesText} is provided. For more information about training instances see \autoref{sec:training}.
 
  \defparameter{softRestart}{soft-restart}{1}%
   Enable/disable the soft-restart strategy that avoids premature convergence of the probabilistic model. When a sampled configuration is \emph{similar} to its parent configuration, the probabilistic model of these configurations is soft restarted. The soft-restart mechanism is explained in the \irace paper~\citep{LopDubPerStuBir2016irace}. The similarity of categorical and ordinal parameters is given by the hamming distance, and the option \parameter{softRestartThreshold} defines the similarity of numerical parameters.
@@ -103,6 +103,9 @@ We recommend to use the default value.
 \begin{description}
  \defparameter[p]{parameterFile}{parameter-file}{./parameters.txt}%
 File that contains the description of the parameters of the target algorithm. See \autoref{sec:target parameters}.
+
+ \defparameter{parameterText}{parameter-text}{}%
+A string that contains the description of the parameters of the target algorithm. See \autoref{sec:target parameters}.
 
  \defparameter{digits}{digits}{4}%
 Maximum number of decimal places that are significant for numerical (real) parameters.
@@ -160,7 +163,13 @@ Number of calls of the \parameter{targetRunner} to execute in parallel. Values  
  \defparameter{configurationsFile}{configurations-file}{}%
 File containing a table of initial configurations. If empty or \code{NULL}, \irace will not use initial configurations. See \autoref{sec:initial}.
 \begin{xwarningbox}
-The provided configurations must not violate the constraints described in \parameter{parameterFile} and \parameter{forbiddenFile}.
+The provided configurations must not violate the constraints described in \parameter{parameterFile} or \parameter{parameterText} and \parameter{forbiddenFile}.
+\end{xwarningbox}
+
+ \defparameter{configurationsText}{configurations-text}{}%
+A string containing a table of initial configurations. If empty or \code{NULL}, \irace will not use initial configurations. See \autoref{sec:initial}.
+\begin{xwarningbox}
+The provided configurations must not violate the constraints described in \parameter{parameterFile} or \parameter{parameterText} and \parameter{forbiddenFile}.
 \end{xwarningbox}
 
 \end{description}
@@ -174,6 +183,12 @@ Directory where training instances are located; either absolute path or relative
 File that contains a list of instances and optionally additional parameters for them. See \autoref{sec:training}.
 \begin{xwarningbox}
 The list of instances in \parameter{trainInstancesFile} is interpreted as file-system paths  relative to \parameter{trainInstancesDir}. When using an absolute path or instances that are not files, set \code{trainInstancesDir=""}.
+\end{xwarningbox}
+
+ \defparameter{trainInstancesText}{train-instances-text}{}%
+A string that contains a list of instances and optionally additional parameters for them. See \autoref{sec:training}.
+\begin{xwarningbox}
+The list of instances in \parameter{trainInstancesText} is interpreted as file-system paths  relative to \parameter{trainInstancesDir}. When using an absolute path or instances that are not files, set \code{trainInstancesDir=""}.
 \end{xwarningbox}
 
 \end{description}
@@ -278,6 +293,9 @@ Directory where testing instances are located, either absolute or relative to th
 
  \defparameter{testInstancesFile}{test-instances-file}{}%
 File containing a list of test instances and, optionally, additional parameters for them.
+
+ \defparameter{testInstancesText}{test-instances-text}{}%
+A string containing a list of test instances and, optionally, additional parameters for them.
 
  \defparameter{testNbElites}{test-num-elites}{1}%
   Number of elite configurations returned by irace that will be tested if test instances are provided. For more information about the testing, see \autoref{sec:testing}.

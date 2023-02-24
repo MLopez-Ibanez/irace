@@ -479,13 +479,15 @@ allConfigurationsInit <- function(scenario, parameters)
   confs_from_file <- NULL
   if (!is.null.or.empty(scenario$configurationsFile)) {
     confs_from_file <- readConfigurationsFile(scenario$configurationsFile,
-                                              parameters, scenario$debugLevel)
+                                              parameters, scenario$debugLevel,
+                                              scenario$configurationsText)
   }
   if (!is.null.or.empty(initConfigurations)) {
-    if (!is.null.or.empty(scenario$configurationsFile) && !identical(initConfigurations, confs_from_file))
+    if ((!is.null.or.empty(scenario$configurationsFile) || !is.null.or.empty(scenario$configurationsText)) 
+      && !identical(initConfigurations, confs_from_file))
       irace.warning("'initConfigurations' provided in 'scenario',",
                     " thus ignoring configurations from file '",
-                    scenario$configurationsFile, "'.")
+                    scenario$configurationsFile, "'and text '", scenario$configurationsText, "'.")
     cat("# Adding", nrow(initConfigurations), "initial configuration(s)\n")
     fix_configurations(initConfigurations, parameters, debugLevel = scenario$debugLevel)
   } else {
@@ -571,7 +573,8 @@ irace_common <- function(scenario, parameters, simple, output.width = 9999L)
     # Read parameters definition
     parameters <- readParameters (file = scenario$parameterFile,
                                   digits = scenario$digits,
-                                  debugLevel = debugLevel)
+                                  debugLevel = debugLevel,
+                                  text = scenario$parameterText)
   } else {
     parameters <- checkParameters(parameters)
   }

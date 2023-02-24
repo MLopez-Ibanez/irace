@@ -57,6 +57,11 @@
    `repairConfiguration` function (see `defaultScenario()`) only needs two
    arguments: `configuration` and `parameters`. See examples in the user-guide.
 
+ * New options `trainInstancesText`, `testInstancesText`, `parameterText`, and
+   `configurationsText` which accepts the content that is normally in
+   `trainInstancesFile`, `testInstancesFile`, `parameterText`, and 
+   `configurationsText` as a string. (Deyao Chen)
+
 ## Fixes
 
  * Fix (#44): irace now will give an error if the domain of real-valued (r)

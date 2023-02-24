@@ -355,14 +355,16 @@ setup_test_instances <- function(scenario)
 {
   if (is.null.or.empty(scenario[["testInstances"]])) {
     if (!is.null.or.empty(scenario$testInstancesDir) || 
-        !is.null.or.empty(scenario$testInstancesFile)) {
+        !is.null.or.empty(scenario$testInstancesFile) ||
+        !is.null.or.empty(scenario$trainInstancesText)) {
       scenario$testInstancesDir <- path_rel2abs(scenario$testInstancesDir)
       if (!is.null.or.empty(scenario$testInstancesFile)) {
         scenario$testInstancesFile <- path_rel2abs(scenario$testInstancesFile)
       }
       scenario[["testInstances"]] <-
         readInstances(instancesDir = scenario$testInstancesDir,
-                      instancesFile = scenario$testInstancesFile)
+                      instancesFile = scenario$testInstancesFile,
+                      instancesText = scenario$testInstancesText)
     } else {
       scenario[["testInstances"]] <- NULL
     }
@@ -558,7 +560,8 @@ checkScenario <- function(scenario = defaultScenario())
     
     scenario$instances <-
       readInstances(instancesDir = scenario$trainInstancesDir,
-                    instancesFile = scenario$trainInstancesFile)
+                    instancesFile = scenario$trainInstancesFile,
+                    instancesText = scenario$trainInstancesText)
   }
   
   # Testing instances
@@ -803,6 +806,7 @@ printScenario <- function(scenario)
 #'  \item Target algorithm parameters:
 #'    \describe{
 #'      \item{`parameterFile`}{File that contains the description of the parameters of the target algorithm. (Default: `"./parameters.txt"`)}
+#'      \item{`parameterText`}{A string that contains the description of the parameters of the target algorithm. (Default: `""`)}
 #'      \item{`digits`}{Maximum number of decimal places that are significant for numerical (real) parameters. (Default: `4`)}
 #'    }
 #'  \item Target algorithm execution:
@@ -824,12 +828,14 @@ printScenario <- function(scenario)
 #'    \describe{
 #'      \item{`initConfigurations`}{Data frame describing initial configurations (usually read from a file using \code{readConfigurations}). (Default: `""`)}
 #'      \item{`configurationsFile`}{File that contains a table of initial configurations. If empty or \code{NULL}, all initial configurations are randomly generated. (Default: `""`)}
+#'      \item{`configurationsText`}{A string that contains a table of initial configurations. If empty or \code{NULL}, all initial configurations are randomly generated. (Default: `""`)}
 #'    }
 #'  \item Training instances:
 #'    \describe{
 #'      \item{`instances`}{Character vector of the instances to be used in the \code{targetRunner}. (Default: `""`)}
-#'      \item{`trainInstancesDir`}{Directory where training instances are located; either absolute path or relative to current directory. If no \code{trainInstancesFiles} is provided, all the files in \code{trainInstancesDir} will be listed as instances. (Default: `"./Instances"`)}
+#'      \item{`trainInstancesDir`}{Directory where training instances are located; either absolute path or relative to current directory. If no \code{trainInstancesFiles} or \code{trainInstancesText} is provided, all the files in \code{trainInstancesDir} will be listed as instances. (Default: `"./Instances"`)}
 #'      \item{`trainInstancesFile`}{File that contains a list of training instances and optionally additional parameters for them. If \code{trainInstancesDir} is provided, \code{irace} will search for the files in this folder. (Default: `""`)}
+#'      \item{`trainInstancesText`}{A string that contains a list of training instances and optionally additional parameters for them. If \code{trainInstancesDir} is provided, \code{irace} will search for the files in this folder. (Default: `""`)}
 #'      \item{`blockSize`}{Number of training instances, that make up a `block' in \code{trainInstancesFile}. Elimination of configurations will only be performed after evaluating a complete block and never in the middle of a block. Each block typically contains one instance from each instance class (type or family). (Default: `1`)}
 #'    }
 #'  \item Tuning budget:
@@ -864,6 +870,7 @@ printScenario <- function(scenario)
 #'    \describe{
 #'      \item{`testInstancesDir`}{Directory where testing instances are located, either absolute or relative to current directory. (Default: `""`)}
 #'      \item{`testInstancesFile`}{File containing a list of test instances and optionally additional parameters for them. (Default: `""`)}
+#'      \item{`testInstancesText`}{A string containing a list of test instances and optionally additional parameters for them. (Default: `""`)}
 #'      \item{`testInstances`}{Character vector of the instances to be used in the \code{targetRunner} when executing the testing. (Default: `""`)}
 #'      \item{`testNbElites`}{Number of elite configurations returned by irace that will be tested if test instances are provided. (Default: `1`)}
 #'      \item{`testIterationElites`}{Enable/disable testing the elite configurations found at each iteration. (Default: `0`)}
@@ -901,15 +908,22 @@ defaultScenario <- function(scenario = list(),
   scenario
 }
 
-readInstances <- function(instancesDir = NULL, instancesFile = NULL)
+readInstances <- function(instancesDir = NULL, instancesFile = NULL, instancesText = NULL)
 {
-  if (is.null.or.empty(instancesDir) && is.null.or.empty(instancesFile))
-    irace.error("Both instancesDir and instancesFile are empty: No instances provided")
+  if (is.null.or.empty(instancesDir) && is.null.or.empty(instancesFile) && is.null.or.empty(instancesText))
+    irace.error("All instancesDir, instancesFile, and instanceText are empty: No instances provided")
   
   instances <- NULL
-  
+
+  if (!is.null.or.empty(instancesText)) {
+    if (!is.null.or.empty(instancesFile)) {
+      irace.warning("Both instanceText and instanceFile are set. instanceText Takes precedent so ignoring instanceFile.")
+    }
+    instancesFile <- strcat("text=", deparse(substitute(text)))
+  }
+
   if (!is.null.or.empty(instancesFile)) {
-    file.check (instancesFile, readable = TRUE, text = "instance file")
+    if (is.null.or.empty(instancesText)) file.check (instancesFile, readable = TRUE, text = "instance file")
     # We do not warn if the last line does not finish with a newline.
     instances <- readLines (instancesFile, warn = FALSE)
     instances <- sub("#.*$", "", instances) # Remove comments

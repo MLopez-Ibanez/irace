@@ -66,11 +66,12 @@ cat_irace_license <- function()
 #'   output.
 #'
 #' @details This function checks the correctness of the scenario, reads the
-#'   parameter space from \code{scenario$parameterFile}, invokes [irace()],
-#'   prints its results in various formatted ways, (optionally) calls
-#'   [psRace()] and, finally, evaluates the best configurations on the test
-#'   instances (if provided). If you want a lower-level interface that just
-#'   runs irace, please see function [irace()].
+#'   parameter space from \code{scenario$parameterFile} or 
+#'   \code{scenario$parameterText}, invokes [irace()], prints its results in 
+#'   various formatted ways, (optionally) calls [psRace()] and, finally, 
+#'   evaluates the best configurations on the test instances (if provided). 
+#'   If you want a lower-level interface that just runs irace, 
+#'   please see function [irace()].
 #'
 #' @templateVar return_invisible TRUE
 #' @template return_irace
@@ -206,8 +207,10 @@ testing_fromfile <- function(filename, scenario)
   if (!scenario$quiet) printScenario(scenario)
 
   irace.note("Reading parameter file '", scenario$parameterFile, "'.\n")
+  irace.note("Parsing parameter text '", scenario$parameterText, "'.\n")
   parameters <- readParameters (file = scenario$parameterFile,
-                                digits = scenario$digits)
+                                digits = scenario$digits,
+                                text = scenario$parameterText)
   configurations <- readConfigurationsFile (filename, parameters)
   configurations <- cbind(.ID. = 1:nrow(configurations),
                              configurations,
@@ -255,9 +258,10 @@ testing_common <- function(configurations, scenario, parameters, iraceResults)
 #' \code{FALSE} otherwise.
 #' 
 #' @details If the `parameters` argument is missing, then the parameters 
-#'   will be read from the file `parameterFile`  given by `scenario`. If
-#'   `parameters` is provided, then `parameterFile` will not be read.  This function will
-#'   try to execute the target-algorithm.
+#'   will be read from the file `parameterFile` or string `parameterText` 
+#'   given by `scenario`. If `parameters` is provided, then `parameterFile` 
+#'   or `parameterText` will not be read.  This function will try to execute 
+#'   the target-algorithm.
 #'
 #' @seealso
 #'  \describe{
@@ -280,11 +284,13 @@ checkIraceScenario <- function(scenario, parameters)
     irace.note("Reading parameter file '", scenario$parameterFile, "'.\n")
     parameters <- readParameters (file = scenario$parameterFile,
                                   digits = scenario$digits,
-                                  debugLevel = 2)
-  } else if (!is.null.or.empty(scenario$parameterFile)) {
+                                  debugLevel = 2,
+                                  text = scenario$parameterText)
+  } else if (!is.null.or.empty(scenario$parameterFile) || !is.null.or.empty(scenario$parameterText)) {
     if (!scenario$quiet) 
       cat("# checkIraceScenario(): 'parameters' provided by user. ",
-          "Parameter file '", scenario$parameterFile, "' will be ignored\n", sep = "")
+          "Parameter file '", scenario$parameterFile, "' and parameter text '", 
+          scenario$parameterText, "' will be ignored\n", sep = "")
   }
   checkParameters(parameters)
   irace.note("Checking target runner.\n")

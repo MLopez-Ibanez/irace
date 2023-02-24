@@ -13,23 +13,37 @@
 ## algorithm.
 # parameterFile = "./parameters.txt"
 
+## A string that contains the description of the parameters of the target
+## algorithm.
+# parameterText = ""
+
 ## File that contains a table of initial configurations. If empty or `NULL`,
 ## all initial configurations are randomly generated.
 # configurationsFile = ""
+
+## A string that contains a table of initial configurations. If empty or
+## `NULL`, all initial configurations are randomly generated.
+# configurationsText = ""
 
 ## File to save tuning results as an R dataset, either absolute path or
 ## relative to execDir.
 # logFile = "./irace.Rdata"
 
 ## Directory where training instances are located; either absolute path or
-## relative to current directory. If no `trainInstancesFiles` is provided, all
-## the files in `trainInstancesDir` will be listed as instances.
+## relative to current directory. If no `trainInstancesFiles` or
+## `trainInstancesText` is provided, all the files in `trainInstancesDir` will
+## be listed as instances.
 # trainInstancesDir = "./Instances"
 
 ## File that contains a list of training instances and optionally additional
 ## parameters for them. If `trainInstancesDir` is provided, `irace` will
 ## search for the files in this folder.
 # trainInstancesFile = ""
+
+## A string that contains a list of training instances and optionally
+## additional parameters for them. If `trainInstancesDir` is provided, `irace`
+## will search for the files in this folder.
+# trainInstancesText = ""
 
 ## Randomly sample the training instances or use them in the order given.
 # sampleInstances = 1
@@ -41,6 +55,10 @@
 ## File containing a list of test instances and optionally additional
 ## parameters for them.
 # testInstancesFile = ""
+
+## A string containing a list of test instances and optionally additional
+## parameters for them.
+# testInstancesText = ""
 
 ## Number of elite configurations returned by irace that will be tested if
 ## test instances are provided.

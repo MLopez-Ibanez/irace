@@ -87,11 +87,12 @@ Higher-level interface to launch irace.
 }
 \details{
 This function checks the correctness of the scenario, reads the
-parameter space from \code{scenario$parameterFile}, invokes \code{\link[=irace]{irace()}},
-prints its results in various formatted ways, (optionally) calls
-\code{\link[=psRace]{psRace()}} and, finally, evaluates the best configurations on the test
-instances (if provided). If you want a lower-level interface that just
-runs irace, please see function \code{\link[=irace]{irace()}}.
+parameter space from \code{scenario$parameterFile} or
+\code{scenario$parameterText}, invokes \code{\link[=irace]{irace()}}, prints its results in
+various formatted ways, (optionally) calls \code{\link[=psRace]{psRace()}} and, finally,
+evaluates the best configurations on the test instances (if provided).
+If you want a lower-level interface that just runs irace,
+please see function \code{\link[=irace]{irace()}}.
 }
 \seealso{
 \code{\link[=irace.cmdline]{irace.cmdline()}} a higher-level command-line interface to
