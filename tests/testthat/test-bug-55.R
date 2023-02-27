@@ -14,7 +14,7 @@ foo2 "--foo2 " c (true, false) | foo == 0
 2   1  <NA>
 '
   confs <- readConfigurationsFile(text=configurations.txt, parameters = params)
-  expect_equal(confs, data.frame(foo=c(0L,1L), foo2=c("false",NA), row.names=c("1", "2")))
+  expect_equal(confs, data.frame(foo=c(0L,1L), foo2=c("false",NA), row.names=c("1", "2"), stringsAsFactors=FALSE))
 })
 })
 
