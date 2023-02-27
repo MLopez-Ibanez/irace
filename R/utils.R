@@ -691,7 +691,8 @@ valid_iracelog <- function(x)
 #' 
 #' @return (`list()`)
 #' @examples
-#' irace_results <- read_logfile(system.file("exdata/irace-acotsp.Rdata", package="irace", mustWork=TRUE))
+#' irace_results <- read_logfile(system.file("exdata/irace-acotsp.Rdata", package="irace",
+#'                                           mustWork=TRUE))
 #' str(irace_results)
 #' @concept analysis
 #' @export
@@ -719,7 +720,8 @@ read_logfile <- function(filename, name = "iraceResults")
 #'
 #' @return `logical(1)`
 #' @examples
-#' irace_results <- read_logfile(system.file("exdata/irace-acotsp.Rdata", package="irace", mustWork=TRUE))
+#' irace_results <- read_logfile(system.file("exdata/irace-acotsp.Rdata", package="irace",
+#'                                           mustWork=TRUE))
 #' print(has_testing_data(irace_results))
 #' @export
 has_testing_data <- function(iraceResults)
