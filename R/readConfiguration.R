@@ -37,11 +37,13 @@ readConfigurationsFile <- function(filename, parameters, debugLevel = 0, text)
   if (missing(filename) && !missing(text)) {
     filename <- strcat("text=", deparse(substitute(text)))
     configurationTable <- read.table(text = text, header = TRUE,
+                                     na.strings = c("NA", "<NA>"),
                                      colClasses = "character",
                                      stringsAsFactors = FALSE)
   } else {
     # Read the file.
     configurationTable <- read.table(filename, header = TRUE,
+                                     na.strings = c("NA", "<NA>"),
                                      colClasses = "character",
                                      stringsAsFactors = FALSE)
   }
