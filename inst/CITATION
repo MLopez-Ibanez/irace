@@ -1,12 +1,12 @@
-citHeader("To cite package 'irace' in publications use:")
-citEntry(
-  entry = "article",
+bibentry(
+  bibtype = "Article",
+  header = "To cite package 'irace' in publications, please use",
   title = "The irace package: Iterated Racing for Automatic Algorithm Configuration",
-  author = personList(as.person("Manuel López-Ibáñez"),
-                      as.person("Jérémie Dubois-Lacoste"),
-                      person(given = "Leslie", family = "Pérez Cáceres"),
-                      as.person("Thomas Stützle"),
-                      as.person("Mauro Birattari")),
+  author = c(person("Manuel", "López-Ibáñez"),
+             person("Jérémie", "Dubois-Lacoste"),
+             person("Leslie", "Pérez Cáceres"),
+             person("Thomas", "Stützle"),
+             person("Mauro", "Birattari")),
   year = 2016,
   journal = "Operations Research Perspectives",
   doi = "10.1016/j.orp.2016.09.002",
@@ -15,4 +15,5 @@ citEntry(
   textVersion = paste0(
     "Manuel López-Ibáñez, Jérémie Dubois-Lacoste, Leslie Pérez Cáceres, Thomas Stützle, and Mauro Birattari. ",
     "The irace package: Iterated Racing for Automatic Algorithm Configuration. ",
-    "Operations Research Perspectives, 3:43-58, 2016. doi:10.1016/j.orp.2016.09.002"))
+    "Operations Research Perspectives, 3:43-58, 2016. doi:10.1016/j.orp.2016.09.002")
+)
