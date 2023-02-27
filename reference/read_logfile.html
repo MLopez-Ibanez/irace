@@ -76,7 +76,8 @@
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">irace_results</span> <span class="op">&lt;-</span> <span class="fu">read_logfile</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"exdata/irace-acotsp.Rdata"</span>, package<span class="op">=</span><span class="st">"irace"</span>, mustWork<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">irace_results</span> <span class="op">&lt;-</span> <span class="fu">read_logfile</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"exdata/irace-acotsp.Rdata"</span>, package<span class="op">=</span><span class="st">"irace"</span>,</span></span>
+<span class="r-in"><span>                                          mustWork<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">irace_results</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> List of 11</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ scenario         :List of 56</span>
@@ -222,7 +223,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ : chr [1:5] "iteration" "instance" "configuration" "time" ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ state            :List of 17</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ .Random.seed        : int [1:626] 10403 176 74450096 -488718086 1971160917 1271940195 -1466109272 593734952 -700000720 -249115685 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ .irace              :&lt;environment: 0x55624db80e20&gt; </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ .irace              :&lt;environment: 0x55d0069bf340&gt; </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ currentBudget       : num 25</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ debugLevel          : int 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ eliteConfigurations :'data.frame':	5 obs. of  16 variables:</span>
