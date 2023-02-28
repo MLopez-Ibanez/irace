@@ -562,7 +562,9 @@ checkScenario <- function(scenario = defaultScenario())
       readInstances(instancesDir = scenario$trainInstancesDir,
                     instancesFile = scenario$trainInstancesFile)
   }
-  
+  if (length(scenario$instances) == 0 || !is.null(dim(scenario$instances))) {
+    irace.error("Instances must be a one-dimensional vector or a list. If your instances are matrices or datasets in R, you can use scenario(instances=list(data1, data2, data3)).")
+  }
   # Testing instances
   scenario <- setup_test_instances(scenario)
 
