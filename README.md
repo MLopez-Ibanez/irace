@@ -7,7 +7,7 @@ status](https://github.com/MLopez-Ibanez/irace/workflows/R-CMD-check/badge.svg)]
 [![Codecov test coverage](https://codecov.io/gh/MLopez-Ibanez/irace/branch/master/graph/badge.svg)](https://app.codecov.io/gh/MLopez-Ibanez/irace?branch=master)
 <!-- badges: end -->
   
-[ [**Homepage**](https://mlopez-ibanez.github.io/irace/) ] [ [**User Guide (PDF)**](https://cran.r-project.org/package=irace/vignettes/irace-package.pdf) ] 
+[ [**Homepage**](https://mlopez-ibanez.github.io/irace/) ] [ [**User Guide (PDF)**](https://cran.r-project.org/package=irace/vignettes/irace-package.pdf) ]
 
 **Maintainers:** [Manuel López-Ibáñez](https://lopez-ibanez.eu/), Leslie Pérez Cáceres
 
@@ -28,6 +28,8 @@ generalization of the Iterated F-race method for the automatic configuration of
 optimization algorithms, that is, the tuning of their parameters by finding the
 most appropriate settings given a set of instances of an optimization problem.
 It builds upon the race package by Birattari and it is implemented in R.
+
+You may also find the [**iraceplot**](https://auto-optimization.github.io/iraceplot/) package useful for analyzing the output of irace.
 
 **Keywords:** automatic configuration, offline tuning, parameter tuning, racing, F-race.
 
