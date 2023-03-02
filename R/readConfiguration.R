@@ -285,17 +285,20 @@ readScenario <- function(filename = "", scenario = list(),
   }
 
   # First find out which file...
-  if (filename == "") {
+  
+  no_filename_given <- filename == ""
+
+  if (no_filename_given) {
     filename <- path_rel2abs(params_def["scenarioFile","default"])
     if (file.exists(filename)) {
       irace.warning("A default scenario file ", shQuote(filename),
                     " has been found and will be read.")
     } else {
-      irace.error ("Not scenario file given (use ",
+      irace.warning ("Not scenario file given (use ",
                    params_def["scenarioFile", "short"], " or ",
                    params_def["scenarioFile", "long"],
                    ") and no default scenario file ", shQuote(filename),
-                   " has been found.")
+                   " has been found. Using options given through command line...")
     }
   } else {
     filename <- path_rel2abs(filename)
@@ -316,7 +319,7 @@ readScenario <- function(filename = "", scenario = list(),
       tryCatch(source(filename, local = scenario_env, chdir = TRUE),
                error = handle.source.error, warning = handle.source.error))
     if (debug.level >= 1) cat (" done!\n")
-  } else {
+  } else if (!no_filename_given) {
     irace.error ("The scenario file ", shQuote(filename), " does not exist.")
   }
       
