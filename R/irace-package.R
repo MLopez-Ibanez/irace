@@ -88,6 +88,15 @@
 #'      weight <- instance
 #'      return(weight * f_rastrigin(x) + (1 - weight) * f_rosenbrock(x))
 #'    }
+#'    # FIXME: For reproducible results,
+#'    # we should set/restore the random seed given by instance$seed
+#'    # res <- withr::with_seed(instance$seed,
+#'    #               stats::optim(par,fn, method="SANN",
+#'    #                            control=list(maxit=1000
+#'    #                                       , tmax = as.numeric(configuration[["tmax"]])
+#'    #                                       , temp = as.numeric(configuration[["temp"]])
+#'    #                ))
+#'    # )
 #'    res <- stats::optim(par,fn, method="SANN",
 #'                 control=list(maxit=1000
 #'                   , tmax = as.numeric(configuration[["tmax"]])
