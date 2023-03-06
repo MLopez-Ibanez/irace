@@ -35,9 +35,10 @@ target.runner <- function(experiment, scenario)
   temp = 11.0 + configuration[["temp"]]
   stopifnot(tmax > 0)
   stopifnot(temp > 0)
-  
-  res <- optim(par, fn, method = "SANN", 
-               control = list(maxit = 10, tmax = tmax, temp = temp))
+  res <- withr::with_seed(seed,
+                  optim(par, fn, method = "SANN", 
+                        control = list(maxit = 10, tmax = tmax, temp = temp))
+                )
   list(cost = res$value, call = toString(experiment))
 }
 
