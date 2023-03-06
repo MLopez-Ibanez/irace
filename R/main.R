@@ -360,7 +360,7 @@ irace.cmdline <- function(argv = commandArgs(trailingOnly = TRUE))
     cat("# installed at: ", system.file(package="irace"), "\n",
         "# called with: ", paste(argv, collapse = " "), "\n", sep = "")
   }
-  if (!is.null(parser$readArg (short = "-h", long = "--help"))) {
+  if (!is.null(parser$readArg(short = "-h", long = "--help"))) {
     parser$cmdline_usage()
     return(invisible(NULL))
   }

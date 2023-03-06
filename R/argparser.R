@@ -8,7 +8,8 @@ CommandArgsParser <- R6::R6Class("CommandArgsParser", cloneable = FALSE, list(
     # Handle the case where we are given a single character string like a
     # command-line.
     if (!missing(argv) && length(argv) == 1) {
-      argv <- strsplit(trim(argv), " +")[[1]]
+      # strsplit does not respect quoted strings.
+      argv <- scan(text=argv, what='character', quiet=TRUE)
     }
     self$argv <- argv
     required_colnames <- c("name", "short", "long", "type", "default")
@@ -20,12 +21,13 @@ CommandArgsParser <- R6::R6Class("CommandArgsParser", cloneable = FALSE, list(
     self
   },
   readCmdLineParameter = function (paramName, default = NULL) {
-    value <- self$readArg(short = self$argsdef[paramName, "short"],
-                          long  = self$argsdef[paramName,"long"])
+    short <- self$argsdef[paramName, "short"]
+    long <- self$argsdef[paramName,"long"]
+    value <- self$readArg(short = short, long = long)
     if (is.null(value)) {
       value <- if (is.null(default)) self$argsdef[paramName, "default"] else default
     } else if (is.na(value) && self$argsdef[paramName,"type"] != 'x') {
-      stop("option '", self$argsdef[paramName,"long"],"' requires an argument", call. = FALSE)
+      stop("option '", long, "' requires an argument", call. = FALSE)
     }
     return(value)
   },
@@ -33,31 +35,39 @@ CommandArgsParser <- R6::R6Class("CommandArgsParser", cloneable = FALSE, list(
   ## FIXME: This function always consumes two arguments. This is problematic
   ## for flags that have no arguments, like --check.
   readArg = function(short = "", long = "") {
+    if (length(short) == 0) short <- ""
+    if (length(long) == 0) long <- ""
+    if (short == "" && long == "") return(NULL)
     argv <- self$argv
     pos <- c()
-    if (length(short) > 0) {
-      # FIXME: use match()
-      pos <- grep(paste0("^", short, "$"), argv)
-      if (length(pos) == 0) {
-        # FIXME: use pmatch()
-        pos <- grep(paste0("^", short, "="), argv)
+    pattern <- ""
+    if (short != "") {
+      pattern_equal <- paste0("^", short, "=")
+      pattern <- paste0("^", short, "$|", pattern_equal)
+    }
+    if (long != "") {
+      pattern_long_equal <- paste0("^", long, "=")
+      pattern_long <- paste0("^", long, "$|", pattern_long_equal)
+      if (short != "") {
+        pattern <-  paste0(pattern, "|", pattern_long)
+        pattern_equal <- paste0(pattern_equal, "|", pattern_long_equal)
+      } else {
+        pattern <- pattern_long
+        pattern_equal <- pattern_long_equal
       }
     }
-    if (length(long) > 0 && length(pos) == 0)  {
-      pos <- grep(paste0("^", long, "$"), argv)
-      if (length(pos) == 0) {
-        pos <- grep(paste0("^", long, "="), argv)
-      }
-    }
+    pos <- grep(pattern, argv)
     if (length(pos) == 0) {
-      return(NULL)
-    } else if(length(pos) > 0) {
+      return(NULL) # Not found
+    } else if (length(pos) > 0) {
       # Allow repeated parameters
       pos <- max(pos)
     }
-  
-    value <- unlist(strsplit(argv[pos], '=', fixed = TRUE))[2]
-    if (is.null (value) || is.na(value)) {
+    if (grepl(pattern_equal, argv[pos])) {
+      value <- unlist(strsplit(argv[pos], '=', fixed = TRUE))[2]
+      if (is.null (value) || is.na(value))
+        value <- ""
+    } else {
       value <- argv[pos + 1]
       self$argv <- argv[-(pos + 1)]
     }

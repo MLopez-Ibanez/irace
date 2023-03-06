@@ -287,8 +287,8 @@ readScenario <- function(filename = "", scenario = list(),
   }
 
   # First find out which file...
-  no_filename_given <- filename == ""
-  if (no_filename_given) {
+  filename_given <- filename != ""
+  if (!filename_given) {
     filename <- path_rel2abs(params_def["scenarioFile","default"])
     if (file.exists(filename)) {
       irace.warning("A default scenario file ", shQuote(filename),
@@ -319,7 +319,7 @@ readScenario <- function(filename = "", scenario = list(),
       tryCatch(source(filename, local = scenario_env, chdir = TRUE),
                error = handle.source.error, warning = handle.source.error))
     if (debug.level >= 1) cat (" done!\n")
-  } else if (!no_filename_given) {
+  } else if (filename_given) {
     irace.error ("The scenario file ", shQuote(filename), " does not exist.")
   }
       
@@ -334,8 +334,7 @@ readScenario <- function(filename = "", scenario = list(),
   for (param in params_names) {
     if (exists (param, envir = scenario_env, inherits = FALSE)) {
       value <- get(param, envir = scenario_env, inherits = FALSE)
-      if (!is.null.or.empty(value) && is.character(value)
-          && (param %in% pathParams)) {
+      if (filename_given && !is.null.or.empty(value) && is.character(value) && (param %in% pathParams)) {
         value <- path_rel2abs(value, cwd = dirname(filename))
       }
       scenario[[param]] <- value
