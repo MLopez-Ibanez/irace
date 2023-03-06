@@ -59,6 +59,9 @@
 
  * `readScenario()` (and command-line irace) do not require a `scenario.txt` file. (Contributed by @DE0CH)
  
+ * Command-line options in joined form, given as "--log-file= --check", without any argument after the '=' will be interpreted as an empty argument,  equivalent to using `logFile=""` in `scenario.txt`.
+ 
+
 ## Fixes
 
  * Fix #55: Configurations provided may use `<NA>` in addition to `NA` to denote
