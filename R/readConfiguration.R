@@ -287,9 +287,7 @@ readScenario <- function(filename = "", scenario = list(),
   }
 
   # First find out which file...
-  
   no_filename_given <- filename == ""
-
   if (no_filename_given) {
     filename <- path_rel2abs(params_def["scenarioFile","default"])
     if (file.exists(filename)) {
@@ -300,7 +298,7 @@ readScenario <- function(filename = "", scenario = list(),
                    params_def["scenarioFile", "short"], " or ",
                    params_def["scenarioFile", "long"],
                    ") and no default scenario file ", shQuote(filename),
-                   " has been found. Using options given through command line...")
+                   " has been found.")
     }
   } else {
     filename <- path_rel2abs(filename)

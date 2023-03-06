@@ -57,6 +57,8 @@
    `repairConfiguration` function (see `defaultScenario()`) only needs two
    arguments: `configuration` and `parameters`. See examples in the user-guide.
 
+ * `readScenario()` (and command-line irace) do not require a `scenario.txt` file. (Contributed by @DE0CH)
+ 
 ## Fixes
 
  * Fix #55: Configurations provided may use `<NA>` in addition to `NA` to denote
