@@ -94,10 +94,12 @@ instances (if provided). If you want a lower-level interface that just
 runs irace, please see function \code{\link[=irace]{irace()}}.
 }
 \seealso{
-\code{\link[=irace.cmdline]{irace.cmdline()}} a higher-level command-line interface to
-\code{\link[=irace]{irace()}}
-\code{\link[=readScenario]{readScenario()}} to read the scenario setup from  a file.
-\code{\link[=defaultScenario]{defaultScenario()}} to provide a default scenario for \pkg{irace}.
+\describe{
+\item{\code{\link[=irace.cmdline]{irace.cmdline()}}}{a command-line interface to \code{\link[=irace]{irace()}}.}
+\item{\code{\link[=readScenario]{readScenario()}}}{for reading a configuration scenario from a file.}
+\item{\code{\link[=readParameters]{readParameters()}}}{read the target algorithm parameters from a file.}
+\item{\code{\link[=defaultScenario]{defaultScenario()}}}{returns the default scenario settings of \pkg{irace}.}
+}
 }
 \author{
 Manuel López-Ibáñez and Jérémie Dubois-Lacoste

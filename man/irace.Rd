@@ -97,16 +97,144 @@ in \code{scenario$logFile}.
 }
 \examples{
 \dontrun{
+# In general, there are three steps: 
 scenario <- readScenario(filename = "scenario.txt")
 parameters <- readParameters("parameters.txt")
 irace(scenario = scenario, parameters = parameters)
 }
-
+ #######################################################################
+ # This example illustrates how to tune the parameters of the simulated
+ # annealing algorithm (SANN) provided by the optim() function in the
+ # R base package.  The goal in this example is to optimize instances of
+ # the following family:
+ #      f(x) = lambda * f_rastrigin(x) + (1 - lambda) * f_rosenbrock(x)
+ # where lambda follows a normal distribution whose mean is 0.9 and
+ # standard deviation is 0.02. f_rastrigin and f_rosenbrock are the
+ # well-known Rastrigin and Rosenbrock benchmark functions (taken from
+ # the cmaes package). In this scenario, different instances are given
+ # by different values of lambda.
+ #######################################################################
+ ## First we provide an implementation of the functions to be optimized:
+ f_rosenbrock <- function (x) {
+   d <- length(x)
+   z <- x + 1
+   hz <- z[1:(d - 1)]
+   tz <- z[2:d]
+   sum(100 * (hz^2 - tz)^2 + (hz - 1)^2)
+ }
+ f_rastrigin <- function (x) {
+   sum(x * x - 10 * cos(2 * pi * x) + 10)
+ }
+ 
+ ## We generate 20 instances (in this case, weights):
+ weights <- rnorm(20, mean = 0.9, sd = 0.02)
+   
+ ## On this set of instances, we are interested in optimizing two
+ ## parameters of the SANN algorithm: tmax and temp. We setup the
+ ## parameter space as follows:
+ parameters_table <- '
+   tmax "" i,log (1, 5000)
+   temp "" r (0, 100)
+   '
+ ## We use the irace function readParameters to read this table:
+ parameters <- readParameters(text = parameters_table)
+ 
+ ## Next, we define the function that will evaluate each candidate
+ ## configuration on a single instance. For simplicity, we restrict to
+ ## three-dimensional functions and we set the maximum number of
+ ## iterations of SANN to 1000.
+ target_runner <- function(experiment, scenario)
+ {
+     instance <- experiment$instance
+     configuration <- experiment$configuration
+   
+     D <- 3
+     par <- runif(D, min=-1, max=1)
+     fn <- function(x) {
+       weight <- instance
+       return(weight * f_rastrigin(x) + (1 - weight) * f_rosenbrock(x))
+     }
+     # For reproducible results, we should use the random seed given by
+     # experiment$seed to set the random seed of the target algorithm.
+     if (require("withr")) {
+       res <- withr::with_seed(experiment$seed,
+                       stats::optim(par,fn, method="SANN",
+                                    control=list(maxit=1000
+                                               , tmax = as.numeric(configuration[["tmax"]])
+                                               , temp = as.numeric(configuration[["temp"]])
+                                                 ))
+                     )
+     } else {
+       ## withr is only a suggested package and we want this example to work regardless.
+       res <- stats::optim(par,fn, method="SANN",
+                           control=list(maxit=1000
+                                      , tmax = as.numeric(configuration[["tmax"]])
+                                      , temp = as.numeric(configuration[["temp"]])
+                                        ))
+     }
+     ## This list may also contain:
+     ## - 'time' if irace is called with 'maxTime'
+     ## - 'error' is a string used to report an error
+     ## - 'outputRaw' is a string used to report the raw output of calls to
+     ##   an external program or function.
+     ## - 'call' is a string used to report how target_runner called the
+     ##   external program or function.
+     return(list(cost = res$value))
+ }
+ 
+ ## We define a configuration scenario by setting targetRunner to the
+ ## function define above, instances to the first 10 random weights, and
+ ## a maximum budget of 'maxExperiments' calls to targetRunner.
+ scenario <- list(targetRunner = target_runner,
+                  instances = weights[1:10],
+                  maxExperiments = 500,
+                  # Do not create a logFile
+                  logFile = "")
+ 
+ ## We check that the scenario is valid. This will also try to execute
+ ## target_runner.
+ checkIraceScenario(scenario, parameters = parameters)
+ 
+ \donttest{
+ ## We are now ready to launch irace. We do it by means of the irace
+ ## function. The function will print information about its
+ ## progress. This may require a few minutes, so it is not run by default.
+ tuned_confs <- irace(scenario = scenario, parameters = parameters)
+ 
+ ## We can print the best configurations found by irace as follows:
+ configurations.print(tuned_confs)
+ 
+ ## We can evaluate the quality of the best configuration found by
+ ## irace versus the default configuration of the SANN algorithm on
+ ## the other 10 instances previously generated.
+ test <- function(configuration)
+ {
+   res <- lapply(weights[11:20],
+                 function(x) target_runner(
+                               experiment = list(instance = x,
+                                                 seed = sample.int(2147483647, size = 1L, replace = TRUE),
+                                                 configuration = configuration),
+                               scenario = scenario))
+   return (sapply(res, getElement, name = "cost"))
+ }
+ ## To do so, first we apply the default configuration of the SANN
+ ## algorithm to these instances:
+ default <- test(data.frame(tmax=10, temp=10))
+ 
+ ## We extract and apply the winning configuration found by irace
+ ## to these instances:
+ tuned <- test(removeConfigurationsMetaData(tuned_confs[1,]))
+ 
+ ## Finally, we can compare using a boxplot the quality obtained with the
+ ## default parametrization of SANN and the quality obtained with the
+ ## best configuration found by irace.
+ boxplot(list(default = default, tuned = tuned))
+ }
 }
 \seealso{
 \describe{
-\item{\code{\link[=irace.main]{irace.main()}}}{a higher-level interface to \code{irace}.}
-\item{\code{\link[=irace.cmdline]{irace.cmdline()}}}{a command-line interface to \code{irace}.}
+\item{\code{\link[=irace.main]{irace.main()}}}{a higher-level interface to \code{\link[=irace]{irace()}}.}
+\item{\code{\link[=irace.cmdline]{irace.cmdline()}}}{a command-line interface to \code{\link[=irace]{irace()}}.}
 \item{\code{\link[=readScenario]{readScenario()}}}{for reading a configuration scenario from a file.}
 \item{\code{\link[=readParameters]{readParameters()}}}{read the target algorithm parameters from a file.}
 \item{\code{\link[=defaultScenario]{defaultScenario()}}}{returns the default scenario settings of \pkg{irace}.}

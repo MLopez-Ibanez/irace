@@ -75,11 +75,12 @@ cat_irace_license <- function()
 #' @templateVar return_invisible TRUE
 #' @template return_irace
 #' @seealso
-#' [irace.cmdline()] a higher-level command-line interface to
-#'  [irace()]
-#'  [readScenario()] to read the scenario setup from  a file.
-#'  [defaultScenario()] to provide a default scenario for \pkg{irace}.
-#' 
+#'  \describe{
+#'  \item{[irace.cmdline()]}{a command-line interface to [irace()].}
+#'  \item{[readScenario()]}{for reading a configuration scenario from a file.}
+#'  \item{[readParameters()]}{read the target algorithm parameters from a file.}
+#'  \item{[defaultScenario()]}{returns the default scenario settings of \pkg{irace}.}
+#' }
 #' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
 #' @concept running
 #' @export
@@ -266,7 +267,6 @@ testing_common <- function(configurations, scenario, parameters, iraceResults)
 #'  \item{\code{\link{defaultScenario}}}{returns the default scenario settings of \pkg{irace}.}
 #'  \item{\code{\link{checkScenario}}}{to check that the scenario is valid.}
 #' }
-#' 
 #' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
 #' @export
 checkIraceScenario <- function(scenario, parameters)
