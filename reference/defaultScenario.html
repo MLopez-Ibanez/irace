@@ -162,6 +162,9 @@ The scenario list contains the following elements:</p><ul><li><p>General options
 <dt><code>targetRunnerRetries</code></dt>
 <dd><p>Number of times to retry a call to <code>targetRunner</code> if the call failed. (Default: <code>0</code>)</p></dd>
 
+<dt><code>targetRunnerTimeout</code></dt>
+<dd><p>Timeout in seconds of any <code>targetRunner</code> call, ignored if 0. (Default: <code>0</code>)</p></dd>
+
 <dt><code>targetRunnerData</code></dt>
 <dd><p>Optional data passed to <code>targetRunner</code>. This is ignored by the default <code>targetRunner</code> function, but it may be used by custom <code>targetRunner</code> functions to pass persistent data around. (Default: <code>""</code>)</p></dd>
 

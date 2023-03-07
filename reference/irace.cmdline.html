@@ -248,6 +248,8 @@ the command line. It finally starts <span class="pkg">irace</span> by calling
                          {targetRunnerArgs}.
    --target-runner-retries  Number of times to retry a call to `targetRunner`
                          if the call failed. Default: 0.
+   --target-runner-timeout  Timeout in seconds of any `targetRunner` call,
+                         ignored if 0. Default: 0.
    --target-evaluator    Optional script or R function that provides a numeric
                          value for each configuration. See
                          templates/target-evaluator.tmpl
