@@ -8,6 +8,10 @@ on:
 
 name: R-CMD-check
 
+concurrency:
+  group: ${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: true
+  
 env:
   R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
   _R_CHECK_FORCE_SUGGESTS_: false
@@ -17,11 +21,8 @@ env:
 
 jobs:
   R-CMD-check:
-
     if: "! contains(github.event.head_commit.message, '[skip ci]')"
-
     runs-on: ${{ matrix.config.os }}
-
     name: Check ${{ matrix.config.os }} (${{ matrix.config.r }})
 
     strategy:
@@ -30,8 +31,8 @@ jobs:
         config:
           - {os: windows-latest, r: 'release'}
           - {os: macOS-latest,   r: 'release'}
-          - {os: ubuntu-20.04,   r: 'release'}
-          - {os: ubuntu-20.04,   r: '3.6'}
+          - {os: ubuntu-latest,  r: 'release'}
+          - {os: ubuntu-20.04,   r: '3.5'}
           # Use latest ubuntu to make it easier to install dependencies
           - {os: ubuntu-latest,   r: 'devel', http-user-agent: 'release'}
 
@@ -109,7 +110,7 @@ jobs:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       CODECOV_TOKEN: ${{secrets.CODECOV_TOKEN}}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - uses: r-lib/actions/setup-pandoc@v2
 
@@ -169,12 +170,12 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - {os: ubuntu-20.04, r: 'release'}
+          - {os: ubuntu-latest, r: 'release'}
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - uses: r-lib/actions/setup-pandoc@v2
 
