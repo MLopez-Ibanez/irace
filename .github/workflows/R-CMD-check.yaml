@@ -32,7 +32,7 @@ jobs:
           - {os: windows-latest, r: 'release'}
           - {os: macOS-latest,   r: 'release'}
           - {os: ubuntu-latest,  r: 'release'}
-          - {os: ubuntu-20.04,   r: '3.5'}
+          - {os: ubuntu-20.04,   r: '3.6'}
           # Use latest ubuntu to make it easier to install dependencies
           - {os: ubuntu-latest,   r: 'devel', http-user-agent: 'release'}
 

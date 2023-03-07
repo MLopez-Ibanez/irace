@@ -6,6 +6,8 @@
    and will give an error if present.  Forbidden configurations are now
    specified in the parameter space description. See the example in
    `readParameters()`.
+
+ * Requires R version >= 3.6.0.
  
 ## New features and improvements
 
