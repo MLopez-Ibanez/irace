@@ -126,6 +126,9 @@ Command-line arguments provided to \parameter{targetRunner} (or \parameter{targe
  \defparameter{targetRunnerRetries}{target-runner-retries}{0}%
 Number of times to retry a call to \parameter{targetRunner} if the call failed.
 
+ \defparameter{targetRunnerTimeout}{target-runner-timeout}{0}%
+Timeout in seconds of any \parameter{targetRunner} call (only applies to \code{target-runner} executables not to R functions), ignored if 0.
+
  \defparameter{targetRunnerData}{}{}%
 Optional data passed to \parameter{targetRunner}. This is ignored by the default \parameter{targetRunner} function, but it may be used by custom \parameter{targetRunner} functions to pass persistent data around.
 

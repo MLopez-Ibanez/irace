@@ -176,6 +176,9 @@ List of command-line options:\preformatted{-h,--help                Show this he
                          \{targetRunnerArgs\}.
    --target-runner-retries  Number of times to retry a call to `targetRunner`
                          if the call failed. Default: 0.
+   --target-runner-timeout  Timeout in seconds of any `targetRunner` call (only
+                         applies to `target-runner` executables not to R
+                         functions), ignored if 0. Default: 0.
    --target-evaluator    Optional script or R function that provides a numeric
                          value for each configuration. See
                          templates/target-evaluator.tmpl

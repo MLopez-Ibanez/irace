@@ -206,7 +206,7 @@ target.evaluator.default <- function(experiment, num.configurations, all.conf.id
 
   cwd <- setwd (scenario$execDir)
   args <- c(configuration.id, instance.id, seed, instance, num.configurations, all.conf.id)
-  output <- runcommand(targetEvaluator, args, configuration.id, debugLevel)
+  output <- runcommand(targetEvaluator, args, configuration.id, debugLevel, timeout = scenario$targetRunnerTimeout)
   setwd (cwd)
 
   cost <- time <- NULL
@@ -434,7 +434,7 @@ run_target_runner <- function(experiment, scenario)
     error <- "targetRunnerLauncher"
   }
   file.check(targetRunner, executable = TRUE, text = error)
-  output <- runcommand(targetRunner, args, configuration.id, debugLevel)
+  output <- runcommand(targetRunner, args, configuration.id, debugLevel, timeout = scenario$targetRunnerTimeout)
   list(cmd=targetRunner, output=output, args=args)
 }
 

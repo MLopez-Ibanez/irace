@@ -597,7 +597,7 @@ dataVariance <- function(data)
   mean(colVars(zscoredata))
 }
 
-runcommand <- function(command, args, id, debugLevel)
+runcommand <- function(command, args, id, debugLevel, timeout = 0)
 {
   if (debugLevel >= 2L) {
     irace.note (command, " ", args, "\n")
@@ -605,7 +605,7 @@ runcommand <- function(command, args, id, debugLevel)
   }
   err <- NULL
   output <- withCallingHandlers(
-    tryCatch(system2(command, args, stdout = TRUE, stderr = TRUE),
+    tryCatch(system2(command, args, stdout = TRUE, stderr = TRUE, timeout = timeout),
              error = function(e) {
                err <<- c(err, paste(conditionMessage(e), collapse="\n"))
                NULL

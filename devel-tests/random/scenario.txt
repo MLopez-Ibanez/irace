@@ -2,3 +2,4 @@ trainInstancesFile = "instances.txt"
 maxExperiments = 1000
 nbConfigurations = 9
 logFile = ""
+# targetRunnerTimeout = 1

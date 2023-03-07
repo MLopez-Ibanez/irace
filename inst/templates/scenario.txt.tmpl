@@ -93,6 +93,10 @@
 ## Number of times to retry a call to `targetRunner` if the call failed.
 # targetRunnerRetries = 0
 
+## Timeout in seconds of any `targetRunner` call (only applies to
+## `target-runner` executables not to R functions), ignored if 0.
+# targetRunnerTimeout = 0
+
 ## Optional data passed to `targetRunner`. This is ignored by the default
 ## `targetRunner` function, but it may be used by custom `targetRunner`
 ## functions to pass persistent data around.

@@ -291,6 +291,16 @@
     "description": "Number of times to retry a call to \\code{targetRunner} if the call failed."
   },
   {
+    "name": "targetRunnerTimeout",
+    "type": "i",
+    "short": "",
+    "long": "--target-runner-timeout",
+    "default": 0,
+    "section": "Target algorithm execution",
+    "vignettes": "Timeout in seconds of any \\parameter{targetRunner} call (only applies to \\code{target-runner} executables not to R functions), ignored if 0.",
+    "description": "Timeout in seconds of any \\code{targetRunner} call (only applies to \\code{target-runner} executables not to R functions), ignored if 0."
+  },
+  {
     "name": "targetRunnerData",
     "type": "x",
     "short": "",

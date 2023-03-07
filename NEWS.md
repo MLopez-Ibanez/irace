@@ -60,7 +60,8 @@
  * `readScenario()` (and command-line irace) do not require a `scenario.txt` file. (Contributed by @DE0CH)
  
  * Command-line options in joined form, given as "--log-file= --check", without any argument after the '=' will be interpreted as an empty argument,  equivalent to using `logFile=""` in `scenario.txt`.
- 
+
+ * New scenario option `targetRunnerTimeout`: Timeout in seconds of any `targetRunner` call (only applies to `target-runner` executables not to R functions).
 
 ## Fixes
 

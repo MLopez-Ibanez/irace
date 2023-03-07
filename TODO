@@ -287,10 +287,6 @@ TODO General (in order of importance):
 
  * Add a hook that after sampling post-processes the candidates.
 
- * system2 now has a timeout parameter (R 3.5). Add a scenario parameter
-   that specifies the maximum time to wait for any run of target-runner to
-   avoid infinite loops.
-   
  * Many of our "objects" could be defined as S4 classes. For example:
    setClass("Parameters", slots=c(names="character", types="character",
                                   switches = "character", domain = "list",
@@ -302,6 +298,10 @@ TODO General (in order of importance):
 ------------------------------------------------------------------------------
 
 DONE:
+
+ * system2 now has a timeout parameter (R 3.5). Add a scenario parameter
+   that specifies the maximum time to wait for any run of target-runner to
+   avoid infinite loops. [DONE by Manuel]
 
  * Error/Warn about unknown irace parameters. [DONE by Manuel]
  
