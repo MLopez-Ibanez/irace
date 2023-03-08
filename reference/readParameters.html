@@ -150,7 +150,7 @@ for details.  If none of these parameters is given, <span class="pkg">irace</spa
 will stop with an error.</p>
 <p>A fixed parameter is a parameter that should not be sampled but
 instead should be always set to the only value of its domain.  In this
-function we set isFixed to TRUE only if the parameter is a categorical
+function we set <code>isFixed</code> to TRUE only if the parameter is a categorical
 and has only one possible value.  If it is an integer and the minimum
 and maximum are equal, or it is a real and the minimum and maximum
 values satisfy <code>round(minimum, digits) == round(maximum, digits)</code>,
@@ -183,7 +183,7 @@ potential user errors.</p>
 <span class="r-in"><span><span class="st"> (alpha == 0.0) &amp;&amp; (beta == 0.0)</span></span></span>
 <span class="r-in"><span><span class="st"> '</span></span></span>
 <span class="r-in"><span> <span class="va">parameters</span> <span class="op">&lt;-</span> <span class="fu">readParameters</span><span class="op">(</span>text<span class="op">=</span><span class="va">parameters.table</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2023-03-07 18:11:22 UTC: 1 expression(s) specifying forbidden configurations read</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2023-03-08 16:27:48 UTC: 1 expression(s) specifying forbidden configurations read.</span>
 <span class="r-in"><span> <span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">parameters</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> List of 15</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ names       : chr [1:11] "algorithm" "localsearch" "alpha" "beta" ...</span>
