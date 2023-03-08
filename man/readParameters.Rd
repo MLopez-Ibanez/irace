@@ -62,7 +62,7 @@ will stop with an error.
 
 A fixed parameter is a parameter that should not be sampled but
 instead should be always set to the only value of its domain.  In this
-function we set isFixed to TRUE only if the parameter is a categorical
+function we set \code{isFixed} to TRUE only if the parameter is a categorical
 and has only one possible value.  If it is an integer and the minimum
 and maximum are equal, or it is a real and the minimum and maximum
 values satisfy \code{round(minimum, digits) == round(maximum, digits)},

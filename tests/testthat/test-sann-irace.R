@@ -1,7 +1,5 @@
 context("irace")
-
 withr::with_output_sink("test-sann-irace.Rout", {
-
 
 ## Functions ##########################################################
 f_rosenbrock <- function (x) {
@@ -9,13 +7,10 @@ f_rosenbrock <- function (x) {
   z  <- x + 1
   hz <- z[1:(d - 1)]
   tz <- z[2:d]
-  s  <- sum(100 * (hz^2 - tz)^2 + (hz - 1)^2)
-  return(s)
+  sum(100 * (hz^2 - tz)^2 + (hz - 1)^2)
 }
 
-f_rastrigin <- function (x) {
-  sum(x * x - 10 * cos(2 * pi * x) + 10)
-}
+f_rastrigin <- function (x) sum(x * x - 10 * cos(2 * pi * x) + 10)
 
 ## target runner ###########################################################
 target.runner <- function(experiment, scenario)
@@ -87,7 +82,6 @@ test_that("parallel", {
 })
 
 test_that("parallel reject", {
-
   # Reproducible results
   generate.set.seed()
   weights <- rnorm(200, mean = 0.9, sd = 0.02)

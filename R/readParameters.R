@@ -45,7 +45,7 @@
 #'
 #'  A fixed parameter is a parameter that should not be sampled but
 #'  instead should be always set to the only value of its domain.  In this
-#'  function we set isFixed to TRUE only if the parameter is a categorical
+#'  function we set `isFixed` to TRUE only if the parameter is a categorical
 #'  and has only one possible value.  If it is an integer and the minimum
 #'  and maximum are equal, or it is a real and the minimum and maximum
 #'  values satisfy `round(minimum, digits) == round(maximum, digits)`,
@@ -206,7 +206,7 @@ readParameters <- function (file, digits = 4L, debugLevel = 0L, text)
   {
     if (transf == "") return(transf)
     
-    # We do not support transformation of dependent parameters, yet
+    # We do not support transformation of dependent parameters, yet.
     # TODO: think about dependent domain transfomation
     if (is.expression(domain))
       irace.error("Parameter domain transformations are not yet available for",
@@ -504,7 +504,7 @@ readParameters <- function (file, digits = 4L, debugLevel = 0L, text)
   }
 
   if (length(forbidden)) {
-    irace.note(length(forbidden), " expression(s) specifying forbidden configurations read\n")
+    irace.note(length(forbidden), " expression(s) specifying forbidden configurations read.\n")
     check_forbidden_params(forbidden, parameters$names)
     # FIXME: Using && or || instead of & and | will not work. Detect
     # this and give an error to the user.
@@ -518,11 +518,6 @@ readParameters <- function (file, digits = 4L, debugLevel = 0L, text)
   }
     
   # Obtain the variables in each condition
-  ## FIXME: In R 3.2, all.vars does not work with byte-compiled expressions,
-  ## thus we do not byte-compile them; but we could use
-  ## all.vars(.Internal(disassemble(condition))[[3]][[1]])
-  ## LESLIE: should we make then an all.vars in utils.R so we can
-  ##   use it without problems?
   parameters$depends <- lapply(parameters$domain, all.vars)
   # Check that dependencies are ok
   check_parameter_dependencies(parameters)

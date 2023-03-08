@@ -207,12 +207,14 @@ irace(scenario = scenario, parameters = parameters)
  ## We can evaluate the quality of the best configuration found by
  ## irace versus the default configuration of the SANN algorithm on
  ## the other 10 instances previously generated.
+ test_index <- 11:20
+ test_seeds <- sample.int(2147483647, size = length(test_index), replace = TRUE)
  test <- function(configuration)
  {
-   res <- lapply(weights[11:20],
+   res <- lapply(1:length(test_index),
                  function(x) target_runner(
-                               experiment = list(instance = x,
-                                                 seed = sample.int(2147483647, size = 1L, replace = TRUE),
+                               experiment = list(instance = weights[test_index[x]],
+                                                 seed = test_seeds[x],
                                                  configuration = configuration),
                                scenario = scenario))
    return (sapply(res, getElement, name = "cost"))
