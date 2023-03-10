@@ -1504,11 +1504,13 @@ to \parameter{targetRunner} (the runs of the target algorithm) in
 parallel. There are four ways to parallelize a single run of \irace:
 
 \begin{enumerate}
-\item \textbf{Parallel processes}: The option \parameter{parallel} allows
-  executing in parallel, within a single computer, the calls
-  to \parameter{targetRunner}, by means of the \pkg{parallel} \aR package. For
-  example, adding \code{--parallel N} to the command line of \irace will launch
-  in parallel up to $N$ calls of the target algorithm.
+\item \textbf{Parallel processes}: The option \parameter{parallel} executes
+  multiple calls to \parameter{targetRunner} in parallel within a single
+  computer, by means of the \pkg{parallel} \aR package. For example, adding
+  \code{--parallel N} to the command line of \irace will launch in parallel up
+  to $N$ calls of the target algorithm. When using this option within a
+  computing cluster, \irace will be submitted as a \emph{job} in some way that
+  ``reserves'' $N$ CPUs.
 
 \item \textbf{MPI}: By enabling the option \parameter{mpi}, calls
   to \parameter{targetRunner} will be executed in parallel by using the message
