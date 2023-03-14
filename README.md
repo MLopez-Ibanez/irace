@@ -117,15 +117,14 @@ prompt install the irace package. See instructions below.
 OS X
 ----
 
-You can install R directly from a CRAN mirror
-(<https://cran.r-project.org/bin/macosx/>).
+You can install R directly from a CRAN mirror (<https://cran.r-project.org/bin/macosx/>).
 
 Alternatively, if you use homebrew, you can just do
 ```
     $ brew install --cask r
 ```
 
-(Using `brew install r` is not recommended because that will build R from source and you will not be able to use any CRAN binary, possibly resulting in annoying build failiures). 
+(Using `brew install r` is not recommended because that will build R from source and you will not be able to use any CRAN binary, possibly resulting in annoying build failures). 
 
 Once R is installed, you can launch R from the Terminal (or from your
 Applications), and from the R prompt install the irace package. See

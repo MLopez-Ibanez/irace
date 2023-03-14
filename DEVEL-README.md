@@ -87,7 +87,7 @@ be listed in the Imports: field of DESCRIPTION.
 
 
 RELEASE Process:
------------------
+----------------
 
 TODO: See useful release steps here: https://github.com/tidyverse/ggplot2/issues/4965
 
