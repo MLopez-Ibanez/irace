@@ -168,7 +168,7 @@ else
 endif
 
 submit:
-	$(Reval) 'devtools::submit_cran()'
+	@echo 'Edit cran-comments.md and run devtools::submit() in R'
 
 remotecran: releasebuild
 	$(Reval) "rhub::check_for_cran($(RHUB_COMMON_ARGS), show_status = TRUE)"
