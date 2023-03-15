@@ -21,9 +21,6 @@ TODO R package:
    to convert the user-guide to Rmarkdown, then use pkgdown to generate a nice
    website.
 
- * use devtools::release() to release
-   http://r-pkgs.had.co.nz/release.html#release-submission
- 
  * Add inst/COPYRIGHTS. See race package.
 
  * Fix check-reverse so we can check reverse dependencies before
@@ -298,6 +295,10 @@ TODO General (in order of importance):
 ------------------------------------------------------------------------------
 
 DONE:
+
+ * use devtools::release() to release
+   http://r-pkgs.had.co.nz/release.html#release-submission
+   [DONE by Manuel] 
 
  * system2 now has a timeout parameter (R 3.5). Add a scenario parameter
    that specifies the maximum time to wait for any run of target-runner to
