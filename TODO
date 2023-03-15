@@ -53,11 +53,6 @@ TODO General (in order of importance):
  
  * Federico's implementation of DAG / Complexity metric.
 
- * In src/irace/irace.c, use https://github.com/gpakosz/whereami to find the
-   directory containing the 'irace' executable, then set
-   ".libPaths(c(.libPaths(), EXEC_DIR))" so that we load the package from the
-   directory holding the executable.
-
  * Use both cost and time to calculate wins, then use a prop.test
    prop.test(x=c(sum(x <0.5),sum(y<0.5)), n=c(length(x), length(y)))
 
@@ -295,6 +290,11 @@ TODO General (in order of importance):
 ------------------------------------------------------------------------------
 
 DONE:
+
+ * In src/irace/irace.c, use https://github.com/gpakosz/whereami to find the
+   directory containing the 'irace' executable, then set
+   ".libPaths(c(.libPaths(), EXEC_DIR))" so that we load the package from the
+   directory holding the executable.    [DONE by Manuel] 
 
  * use devtools::release() to release
    http://r-pkgs.had.co.nz/release.html#release-submission

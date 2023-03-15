@@ -2,12 +2,35 @@
 
 ## Major breaking changes
 
+ * Requires R version >= 3.6.0.
+
  * The scenario options `forbiddenFile` and `forbiddenExps` have been removed
    and will give an error if present.  Forbidden configurations are now
    specified in the parameter space description. See the example in
    `readParameters()`.
+ 
+ * The command-line executables `irace` and `ablation` (`irace.exe` and
+   `ablation.exe` in Windows) will load the version of the `irace` package that
+   is found in the same path where the executables are. In earlier versions,
+   the executables will always load the version found via `base::.libPaths()`.
+   This change allows installing multiple versions of the irace package in
+   different locations and each executable will use its corresponding version.
+   The correct location can be verified by looking at the line `"installed at:"`
+   printed in the output.
+   
+ * Adaptive capping is now enabled by default if `maxTime > 0` and `maxBound > 0`.
+   It can be disabled with `--capping 0` or `capping=0`. See
+   <https://iridia-ulb.github.io/references/#PerLopHooStu2017:lion> for details.
+                                     (Leslie Pérez Cáceres, Manuel López-Ibáñez)
 
- * Requires R version >= 3.6.0.
+ * The scenario option `targetRunnerLauncherArgs`, introduced in version 3.5,
+   was removed and replaced by `targetCmdline`, which is more flexible (fixes #38). 
+   Please see the user-guide for details.
+
+ * Command-line options in joined form, given as "--log-file= --check", without
+   any argument after the '=' will be interpreted as an empty argument,
+   equivalent to using `logFile=""` in `scenario.txt`.
+
  
 ## New features and improvements
 
@@ -22,16 +45,7 @@
    instance used in `"full"` ablation. It replaces the previous parameter
    `n_instances`, whose definition was more difficult to use correctly.
 
- * Adaptive capping is now enabled by default if `maxTime > 0` and `maxBound > 0`.
-   It can be disabled with `--capping 0` or `capping=0`. See
-   <https://iridia-ulb.github.io/references/#PerLopHooStu2017:lion> for details.
-                                     (Leslie Pérez Cáceres, Manuel López-Ibáñez)
-
  * Matrix operations are faster thanks to `matrixStats`. 
-
- * The scenario option `targetRunnerLauncherArgs`, introduced in version 3.5,
-   was removed and replaced by `targetCmdline`, which is more flexible (Fixes
-   #38). Please see the user-guide for details.
 
  * New scenario option `blockSize` for defining blocks of instances.
    Configurations are only eliminated after evaluating a complete block and
@@ -61,8 +75,6 @@
 
  * `readScenario()` (and command-line irace) do not require a `scenario.txt` file. (Contributed by @DE0CH)
  
- * Command-line options in joined form, given as "--log-file= --check", without any argument after the '=' will be interpreted as an empty argument,  equivalent to using `logFile=""` in `scenario.txt`.
-
  * New scenario option `targetRunnerTimeout`: Timeout in seconds of any `targetRunner` call (only applies to `target-runner` executables not to R functions).
 
 ## Fixes
