@@ -97,41 +97,40 @@ instances IDs from <code>iraceResults$scenario$instances</code>, second column t
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>The function reads the parameters given on the command line
 used to invoke R, launches <code><a href="ablation.html">ablation()</a></code> and possibly <code><a href="plotAblation.html">plotAblation()</a></code>.</p>
-<p>List of command-line options:</p><div class="sourceCode"><pre><code>-l,--log-file            Path to the (.Rdata) file created by irace from which
-                         the "iraceResults" object will be loaded.
--S,--src                 Source configuration ID. Default: 1.
--T,--target              Target configuration ID. By default the best
-                         configuration found by irace.
--P,--params              Specific parameter names to be used for the ablation
-                         (separated with commas). By default use all
--t,--type                Type of ablation to perform: "full" will execute each
-                         configuration on all "--n-instances" to determine the
-                         best-performing one; "racing" will apply racing to
-                         find the best configurations. Default: full.
--n,--nrep                Number of replications per instance used in "full"
-                         ablation. Default: 1.
-   --seed                Integer value to use as seed for the random number
-                         generation. Default: 1234567.
--o,--output-file         Log file to save the ablation log. If "", the results
-                         are not saved to a file. Default: log-ablation.Rdata.
-   --instances-file      Instances file used for ablation: "train", "test" or a
-                         filename containing the list of instances. Default:
-                         train.
--p,--plot                Output filename (.pdf) for the plot. If not given, no
-                         plot is created.
--O,--plot-type           Type of plot. Supported values are "mean", "boxplot",
-                         "rank" or "rank,boxplot". Default: mean.
-   --old-path            Old path found in the log-file (.Rdata) given as input
-                         to be replaced by --new-path.
-   --new-path            New path to replace the path found in the log-file
-                         (.Rdata) given as input.
--e,--exec-dir            Directory where the target runner will be run.
--s,--scenario            Scenario file to override the scenario given in the
-                         log-file (.Rdata)
-   --parallel            Number of calls to targetRunner to execute in
-                         parallel. Values 0 or 1 mean no parallelization.
-</code></pre></div>
-
+<p>List of command-line options:</p>
+<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="sc">-</span>l,<span class="sc">--</span>log<span class="sc">-</span>file            Path to <span class="fu">the</span> (.Rdata) file created by irace from which</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>                         the <span class="st">"iraceResults"</span> object will be loaded.</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="sc">-</span>S,<span class="sc">--</span>src                 Source configuration ID. Default<span class="sc">:</span> <span class="fl">1.</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="sc">-</span>T,<span class="sc">--</span>target              Target configuration ID. By default the best</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>                         configuration found by irace.</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="sc">-</span>P,<span class="sc">--</span>params              Specific parameter names to be used <span class="cf">for</span> the ablation</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>                         (separated with commas). By default use all</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="sc">-</span>t,<span class="sc">--</span>type                Type of ablation to perform<span class="sc">:</span> <span class="st">"full"</span> will execute each</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>                         configuration on all <span class="st">"--n-instances"</span> to determine the</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>                         best<span class="sc">-</span>performing one; <span class="st">"racing"</span> will apply racing to</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>                         find the best configurations. Default<span class="sc">:</span> full.</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="sc">-</span>n,<span class="sc">--</span>nrep                Number of replications per instance used <span class="cf">in</span> <span class="st">"full"</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>                         ablation. Default<span class="sc">:</span> <span class="fl">1.</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>   <span class="sc">--</span>seed                Integer value to use as seed <span class="cf">for</span> the random number</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>                         generation. Default<span class="sc">:</span> <span class="fl">1234567.</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="sc">-</span>o,<span class="sc">--</span>output<span class="sc">-</span>file         Log file to save the ablation log. If <span class="st">""</span>, the results</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>                         are not saved to a file. Default<span class="sc">:</span> log<span class="sc">-</span>ablation.Rdata.</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>   <span class="sc">--</span>instances<span class="sc">-</span>file      Instances file used <span class="cf">for</span> ablation<span class="sc">:</span> <span class="st">"train"</span>, <span class="st">"test"</span> or a</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>                         filename containing the list of instances. Default<span class="sc">:</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>                         train.</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="sc">-</span>p,<span class="sc">--</span>plot                Output <span class="fu">filename</span> (.pdf) <span class="cf">for</span> the plot. If not given, no</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>                         plot is created.</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="sc">-</span>O,<span class="sc">--</span>plot<span class="sc">-</span>type           Type of plot. Supported values are <span class="st">"mean"</span>, <span class="st">"boxplot"</span>,</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"rank"</span> or <span class="st">"rank,boxplot"</span>. Default<span class="sc">:</span> mean.</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>   <span class="sc">--</span>old<span class="sc">-</span>path            Old path found <span class="cf">in</span> the log<span class="sc">-</span><span class="fu">file</span> (.Rdata) given as input</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>                         to be replaced by <span class="sc">--</span>new<span class="sc">-</span>path.</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>   <span class="sc">--</span>new<span class="sc">-</span>path            New path to replace the path found <span class="cf">in</span> the log<span class="sc">-</span>file</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>                         (.Rdata) given as input.</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="sc">-</span>e,<span class="sc">--</span>exec<span class="sc">-</span>dir            Directory where the target runner will be run.</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="sc">-</span>s,<span class="sc">--</span>scenario            Scenario file to override the scenario given <span class="cf">in</span> the</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>                         log<span class="sc">-</span><span class="fu">file</span> (.Rdata)</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>   <span class="sc">--</span>parallel            Number of calls to targetRunner to execute <span class="cf">in</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>                         parallel. Values <span class="dv">0</span> or <span class="dv">1</span> mean no parallelization.</span></code></pre><p></p></div>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
