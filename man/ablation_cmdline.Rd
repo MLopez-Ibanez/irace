@@ -31,7 +31,9 @@ executable (\code{ablation.exe} in Windows).
 The function reads the parameters given on the command line
 used to invoke R, launches \code{\link[=ablation]{ablation()}} and possibly \code{\link[=plotAblation]{plotAblation()}}.
 
-List of command-line options:\preformatted{-l,--log-file            Path to the (.Rdata) file created by irace from which
+List of command-line options:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{-l,--log-file            Path to the (.Rdata) file created by irace from which
                          the "iraceResults" object will be loaded.
 -S,--src                 Source configuration ID. Default: 1.
 -T,--target              Target configuration ID. By default the best
@@ -64,7 +66,7 @@ List of command-line options:\preformatted{-l,--log-file            Path to the 
                          log-file (.Rdata)
    --parallel            Number of calls to targetRunner to execute in
                          parallel. Values 0 or 1 mean no parallelization.
-}
+}\if{html}{\out{</div>}}
 }
 \examples{
 ablation_cmdline("--help")

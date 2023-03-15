@@ -93,7 +93,9 @@ initializes the scenario from the file (with the function
 the command line. It finally starts \pkg{irace} by calling
 \code{\link{irace.main}}.
 
-List of command-line options:\preformatted{-h,--help                Show this help.
+List of command-line options:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{-h,--help                Show this help.
 -v,--version             Show irace package version.
 -c,--check               Check scenario.
 -i,--init                Initialize the working directory with template config
@@ -271,7 +273,7 @@ List of command-line options:\preformatted{-h,--help                Show this he
                          sampled and evaluated at each iteration. Default: 5.
    --confidence          Confidence level for the elimination test. Default:
                          0.95.
-}
+}\if{html}{\out{</div>}}
 }
 \examples{
 irace.cmdline("--version")
