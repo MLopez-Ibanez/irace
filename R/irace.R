@@ -196,11 +196,8 @@ similarConfigurations <- function(configurations, parameters, threshold)
   }
   
   if (debug.level >= 1) cat(" DONE\n")
-  if (nrow(configurations) == 0) {
-    return (NULL)
-  } else {
-    return(configurations[,".ID."])
-  }
+  if (nrow(configurations) == 0) return (NULL)
+  configurations[,".ID."]
 }
 
 
@@ -210,9 +207,7 @@ computeNbIterations <- function(nbParameters) (2 + log2(nbParameters))
 ## Computational budget at each iteration.
 computeComputationalBudget <- function(remainingBudget, indexIteration,
                                        nbIterations)
-{
-  return (floor (remainingBudget / (nbIterations - indexIteration + 1)))
-}
+  floor (remainingBudget / (nbIterations - indexIteration + 1))
 
 ## The number of configurations
 computeNbConfigurations <- function(currentBudget, indexIteration,
