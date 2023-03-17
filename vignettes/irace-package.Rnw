@@ -850,6 +850,20 @@ types supported by \irace are the following:
 
 \end{itemize}
 
+\begin{xwarningbox}
+  Boolean (or logical) parameters are best encoded as categorical ones with just two values rather than integer ones with domain $(0,1)$. Some boolean parameters take an explicit value (0/1 or true/false) such as:
+\begin{CodeInput}
+dlb "--dlb " c (0, 1)
+\end{CodeInput}
+Others are switches whose presence activates the parameter:
+\begin{CodeInput}
+dlb "" c ("", "--dlb")
+\end{CodeInput}
+\end{xwarningbox}
+
+
+
+
 \subsubsection{Parameter domains}
 
 For each target parameter, an interval or a set of values must be defined
