@@ -1,5 +1,3 @@
-context("similarConfigurations")
-
 test_that("similarConfigurations", {
 
   parameters <- irace:::readParameters(text = '

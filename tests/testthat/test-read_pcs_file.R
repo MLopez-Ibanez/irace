@@ -1,5 +1,3 @@
-context("Test read_pcs_file")
-
 withr::with_output_sink("test-read_pcs_file.Rout", {
 
   pcs_table <- '

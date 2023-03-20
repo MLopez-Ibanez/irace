@@ -1,5 +1,3 @@
-context("path_rel2abs")
-
 test_that("test.path_rel2abs", {
   # Try to set wd; otherwise fail silently.
   old.cwd <- getwd()

@@ -1,5 +1,3 @@
-context("Test read configurations")
-
 withr::with_output_sink("test-readconfs.Rout", {
 
 test_that("checkDuplicates", {

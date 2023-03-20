@@ -1,4 +1,3 @@
-context("targetRunnerParallel")
 withr::with_output_sink("test-targetRunnerParallel.Rout", {
 
 test_that("targetRunnerParallel", {
@@ -17,11 +16,10 @@ targetRunnerParallel = function(experiment, exec.target.runner, scenario, target
   # the instance is always the same for all different param setting
   theinst = experiment[[1L]]$instance
   # we check that we have instances of correct class
-  expect_is(theinst, "foo")
+  expect_s3_class(theinst, "foo", exact = TRUE)
   # fabricate some random fitness vals
   ys = rnorm(length(cands))
-  ys = lapply(ys, function(y) list(cost = y, time = NA_real_))
-  return(ys)
+  lapply(ys, function(y) list(cost = y, time = NA_real_))
 }
 
    n.inst = 7L

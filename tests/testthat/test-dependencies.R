@@ -1,5 +1,3 @@
-context("Test dependencies")
-
 withr::with_output_sink("test-dependencies.Rout", {
 
 test_that("param depend error checking", {

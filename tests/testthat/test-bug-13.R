@@ -1,8 +1,7 @@
-context("bug")
-skip_on_cran()
 # https://github.com/MLopez-Ibanez/irace/issues/13
 withr::with_output_sink("test-bug-13.Rout", {
-
+test_that("bug 13", {
+skip_on_cran()
 parameters.txt <- '
 algorithm    "--"             c    (as,mmas,eas,ras,acs)
 localsearch  "--localsearch " c    (0, 1, 2, 3)
@@ -64,5 +63,5 @@ debugLevel=3)
   confs <- irace(scenario = scenario, parameters = parameters)
   expect_equal(counter, 548)
 })
-
+})
 })

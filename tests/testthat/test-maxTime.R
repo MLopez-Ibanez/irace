@@ -1,5 +1,3 @@
-context("irace")
-
 withr::with_output_sink("test-maxTime.Rout", {
 
 target.runner <- function(experiment, scenario)
@@ -42,7 +40,7 @@ time.irace <- function(...)
     expect_gte(ncol(iraceResults$testing$experiments), scenario$testNbElites)
   } else {
     test_ids <- sort(colnames(iraceResults$testing$experiments))
-    expect_equivalent(final_ids, test_ids)
+    expect_equal(final_ids, test_ids)
   }
   confs
 }

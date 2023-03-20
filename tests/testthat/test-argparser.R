@@ -1,4 +1,3 @@
-context("argparse")
 withr::with_output_sink("test-argparser.Rout", {
 test_that("argparse", {
   params_def <- data.frame(name =".param", type ="s", short = "-p", long=NA, default=NA, domain=NA, description="")

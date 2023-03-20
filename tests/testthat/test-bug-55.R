@@ -1,4 +1,3 @@
-context("bug")
 # https://github.com/MLopez-Ibanez/irace/issues/55
 withr::with_output_sink("test-bug-55.Rout", {
 test_that("bug-55", {

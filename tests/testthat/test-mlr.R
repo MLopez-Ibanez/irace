@@ -1,5 +1,3 @@
-context("mlr")
-
 test_that("mlr", {
   skip_on_cran()
   suppressWarnings(skip_if_not_installed("mlr", minimum_version = "2.15.0"))

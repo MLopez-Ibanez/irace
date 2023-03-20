@@ -1,4 +1,3 @@
-context("Capping")
 withr::with_output_sink("test-capping.Rout", {
 
 ## target runner ###########################################################
@@ -48,6 +47,7 @@ cap.irace <- function(...)
                    capping = TRUE,
                    boundMax = 80,
                    testType = "t-test",
+                   logFile = tempfile(fileext=".Rdata"),
                    parallel = if (system_os_is("windows")) 1L else test_irace_detectCores())
   scenario <- modifyList(scenario, args)
   scenario <- checkScenario (scenario)

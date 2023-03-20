@@ -1,10 +1,8 @@
-context("bugs")
-
 withr::with_output_sink("test-bugs.Rout", {
 
 test_that("target.runner as string", {
 
-  target.runner.local <- function(experiment, scenario) return(list(cost=1L))
+  target.runner.local <- function(experiment, scenario) list(cost=1L)
 
   expect_true(irace:::is.function.name("target.runner.local"))
 
@@ -14,10 +12,10 @@ test_that("target.runner as string", {
   scenario <- checkScenario (scenario)
 
   expect_equal(scenario$targetRunner, target.runner.local)
-  expect_is(scenario$targetRunner, "function")
+  expect_true(is.function(scenario$targetRunner))
 })
 
-target.runner.global <- function(experiment, scenario) return(list(cost=1L))
+target.runner.global <- function(experiment, scenario) list(cost=1L)
 
 test_that("target.runner as string (global)", {
 
@@ -29,7 +27,7 @@ test_that("target.runner as string (global)", {
   scenario <- checkScenario (scenario)
 
   expect_equal(scenario$targetRunner, target.runner.global)
-  expect_is(scenario$targetRunner, "function")
+  expect_true(is.function(scenario$targetRunner))
 })
 
 

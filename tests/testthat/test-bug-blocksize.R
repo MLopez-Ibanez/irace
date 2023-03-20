@@ -1,7 +1,7 @@
-context("bug")
-skip_on_cran()
 # https://github.com/MLopez-Ibanez/irace/issues/10
 withr::with_output_sink("test-bug-blocksize.Rout", {
+test_that("bug blocksize", {
+  skip_on_cran()
 
 parameters.txt <- '
 algorithm    "--"             c    (as,mmas,eas,ras,acs)
@@ -30,5 +30,7 @@ withr::with_options(list(warning=2), {
                    elitist = TRUE)
   scenario <- checkScenario (scenario)
   confs <- irace(scenario = scenario, parameters = parameters)
+  expect_false(is.null(confs))
+})
 })
 })

@@ -1,4 +1,3 @@
-context("blockSize")
 withr::with_output_sink("test-blocksize.Rout", {
 
 ## target runner ###########################################################

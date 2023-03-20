@@ -1,5 +1,3 @@
-context("raceconfs")
-
 withr::with_output_sink("test-raceconfs.Rout", {
 
 parameters.txt <- '

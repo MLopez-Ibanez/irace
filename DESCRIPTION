@@ -29,7 +29,7 @@ Suggests:
     Rmpi (>= 0.6.0),
     parallel,
     knitr,
-    testthat,
+    testthat (>= 3.0.0),
     withr,
     mlr (>= 2.15.0),
     ParamHelpers,
@@ -43,3 +43,5 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
 SystemRequirements: GNU make
+Config/testthat/edition: 3
+Config/testthat/parallel: true

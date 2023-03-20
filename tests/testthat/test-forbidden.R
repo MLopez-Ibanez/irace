@@ -1,5 +1,3 @@
-context("Test forbidden")
-
 withr::with_output_sink("test-forbidden.Rout", {
 
 test_that("checkForbidden", {

@@ -1,5 +1,3 @@
-context("targeteval")
-
 withr::with_output_sink("test-targeteval.Rout", {
 
 test_that("target.evaluator", {

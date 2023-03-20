@@ -1,5 +1,3 @@
-context("irace")
-
 withr::with_output_sink("test-repair.Rout", {
 
 repair_irace <- function(targetRunner, repair)

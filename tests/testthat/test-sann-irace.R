@@ -1,4 +1,3 @@
-context("irace")
 withr::with_output_sink("test-sann-irace.Rout", {
 
 ## Functions ##########################################################
