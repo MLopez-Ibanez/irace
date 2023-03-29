@@ -64,9 +64,7 @@
    `targetRunnerParallel` to check the output and repair it if possible.
    (Deyao Chen)
 
- * New function `read_ablogfile()`.
-
- * New function `has_testing_data()`.
+ * New functions `read_ablogfile()`, `has_testing_data()`, `irace_summarise()`.
 
  * The `parameters` object now stores the number of `digits` (decimal places
    after the point) for each parameter of type `r`. As a result, the
