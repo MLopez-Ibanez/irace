@@ -7,13 +7,16 @@
 #' @examples
 #' irace_results <- read_logfile(system.file("exdata/irace-acotsp.Rdata", package="irace",
 #'                                           mustWork=TRUE))
-#  irace_summarise(irace_results)
+#'  irace_summarise(irace_results)
 #' 
 #' @author Manuel López-Ibáñez
 #' @concept analysis
 #' @export
 irace_summarise <- function(iraceResults)
 {
+  if (missing(iraceResults)) stop("argument 'iraceResults' is missing")
+  iraceResults <- read_logfile(iraceResults)
+
   niterations <- length(iraceResults$allElites)
 
   time_cpu_user <- time_cpu_sys <- time_cpu_total <- time_wallclock <- NA
