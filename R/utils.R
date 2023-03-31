@@ -517,6 +517,7 @@ mpiInit <- function(nslaves, debugLevel = 0)
 }
 
 ## FIXME: Move this to the manual page.
+## FIXME: Export this function.
 # Computes:
 # * Kendall's W (also known as Kendall's coefficient of concordance)
 #   If 1, all configurations have ranked in the same order in all instances.
@@ -527,7 +528,7 @@ mpiInit <- function(nslaves, debugLevel = 0)
 #   ranks of all pairs of raters. If there are no repeated data values, a
 #   perfect Spearman correlation of +1 or −1 occurs when each of the variables
 #   is a perfect monotone function of the other.
-
+#
 # data: matrix with the data, instances in rows (judges), configurations in
 # columns.
 concordance <- function(data)
@@ -572,11 +573,12 @@ concordance <- function(data)
 #             in columns.
 # Returns: variance value [0,1], where 0 is a homogeneous set of instances and 
 #          1 is a heterogeneous set.
+# FIXME: How to handle missing values?
 dataVariance <- function(data)
 {
   irace.assert (is.matrix(data) && is.numeric(data))
   # LESLIE: should we rank data??
-  # MANUEL: Why?
+  # MANUEL: We should add the option.
   if (nrow(data) <= 1 || ncol(data) <= 1) return(NA)
   
   # Normalize

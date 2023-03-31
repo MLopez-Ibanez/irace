@@ -723,6 +723,8 @@ checkParameters <- function(parameters)
 #' 
 #' @template arg_parameters
 #'
+#' @return `character()`
+#' 
 #' @seealso [readParameters()]
 #' @examples
 #' parameters.table <- '
@@ -764,7 +766,7 @@ printParameters <- function(parameters)
         } else if (is.character(x)) {
           x <- as.character(x)
         } else {
-          x <- dQuote(x, FALSE)
+          x <- paste0("\"", deparse(x, width.cutoff = 500L), "\"")
         }
         x
       })

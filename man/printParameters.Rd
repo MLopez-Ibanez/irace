@@ -11,6 +11,9 @@ printParameters(parameters)
 space definition. The data structure has to similar to the one returned by the
 function \code{\link{readParameters}}.}
 }
+\value{
+\code{character()}
+}
 \description{
 Print parameter space in the textual format accepted by irace.
 }
