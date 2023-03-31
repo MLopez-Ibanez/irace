@@ -16,9 +16,9 @@ irace_summarise(iraceResults)
 Summarise the results of a run of irace
 }
 \examples{
-irace_results <- read_logfile(system.file("exdata/irace-acotsp.Rdata", package="irace",
-                                          mustWork=TRUE))
- irace_summarise(irace_results)
+irace_results <- read_logfile(system.file("exdata/irace-acotsp.Rdata",
+                                          package="irace", mustWork=TRUE))
+irace_summarise(irace_results)
 
 }
 \author{

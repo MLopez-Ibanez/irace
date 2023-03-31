@@ -5,9 +5,9 @@
 #' @return `list()`
 #' 
 #' @examples
-#' irace_results <- read_logfile(system.file("exdata/irace-acotsp.Rdata", package="irace",
-#'                                           mustWork=TRUE))
-#'  irace_summarise(irace_results)
+#' irace_results <- read_logfile(system.file("exdata/irace-acotsp.Rdata",
+#'                                           package="irace", mustWork=TRUE))
+#' irace_summarise(irace_results)
 #' 
 #' @author Manuel López-Ibáñez
 #' @concept analysis
@@ -21,10 +21,10 @@ irace_summarise <- function(iraceResults)
 
   time_cpu_user <- time_cpu_sys <- time_cpu_total <- time_wallclock <- NA
   if (!is.null(iraceResults$state$elapsed)) {
-    time_cpu_user <- iraceResults$state$elapsed["user"]
-    time_cpu_sys <- iraceResults$state$elapsed["system"]
+    time_cpu_user <- iraceResults$state$elapsed[["user"]]
+    time_cpu_sys <- iraceResults$state$elapsed[["system"]]
     time_cpu_total <- time_cpu_user + time_cpu_sys
-    time_wallclock <- iraceResults$state$elapsed["wallclock"]
+    time_wallclock <- iraceResults$state$elapsed[["wallclock"]]
   }
   
   list(
