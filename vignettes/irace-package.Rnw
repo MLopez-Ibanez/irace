@@ -2458,8 +2458,8 @@ instances, while they perform poorly for a different subset.
 
 When facing a heterogeneous scenario, the first question should be whether the
 objective of tuning is to find configurations that perform reasonably well over
-all instances, even if they are not the best ones in any of them. If this is
-not the case, then it would be better to partition instances into more similar
+all instances, even if that configuration is not the best ones in any particular instance (a generalist). If this is
+not the goal, then it would be better to partition instances into more similar
 subsets and execute \irace separately on each subset. This will lead to a
 portfolio of algorithm configurations, one for each subset, and algorithm
 selection techniques can be used to select the best configuration from the

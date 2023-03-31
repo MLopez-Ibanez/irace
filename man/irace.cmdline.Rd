@@ -153,7 +153,8 @@ List of command-line options:
                          will only be performed after evaluating a complete
                          block and never in the middle of a block. Each block
                          typically contains one instance from each instance
-                         class (type or family). Default: 1.
+                         class (type or family) and the block size is the
+                         number of classes. Default: 1.
    --each-test           Number of instances evaluated between elimination
                          tests. Default: 1.
    --target-runner       Executable called for each configuration that executes

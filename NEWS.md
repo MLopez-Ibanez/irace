@@ -52,8 +52,8 @@
    never in the middle of a block. This is useful for scenarios when there are
    clearly defined instance classes and the best configuration should be
    balanced among them. In that case, `trainInstancesFile` should be written
-   should that each block should contain one instance of each class and
-   `blockSize` should be set to the number of classes.
+   so that each block contains one instance of each class and
+   `blockSize` is set to the number of classes.
 
  * `plotAblation()` has several new options:
     - `type='rank'` to plot ranks per instance instead of raw cost values.
