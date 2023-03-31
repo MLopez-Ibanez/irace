@@ -27,8 +27,8 @@ target.runner <- function(experiment, scenario)
 ## target runner ###########################################################
 target.runner.reject <- function(experiment, scenario)
 {
-  if (experiment$configuration[["reject"]] == "1" && runif(1) <= 0.05)
-    return (list(cost = -Inf, time = 80, call = toString(experiment)))
+  if (experiment$configuration[["reject"]] == "1" && runif(1) <= 0.01)
+    return(list(cost = -Inf, time = 80, call = toString(experiment)))
   target.runner(experiment, scenario)
 }
 
