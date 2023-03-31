@@ -174,6 +174,7 @@ potential user errors.</p>
 <span class="r-in"><span><span class="st"> rho          "--rho  "        r     (0.01, 1.00)</span></span></span>
 <span class="r-in"><span><span class="st"> ants         "--ants "        i,log (5, 100)</span></span></span>
 <span class="r-in"><span><span class="st"> q0           "--q0 "          r     (0.0, 1.0)           | algorithm == "acs"</span></span></span>
+<span class="r-in"><span><span class="st"> q0dep       "--q0 "           r     (0.0, q0)            | algorithm != "acs" </span></span></span>
 <span class="r-in"><span><span class="st"> rasrank      "--rasranks "    i     (1, "min(ants, 10)") | algorithm == "ras"</span></span></span>
 <span class="r-in"><span><span class="st"> elitistants  "--elitistants " i     (1, ants)            | algorithm == "eas"</span></span></span>
 <span class="r-in"><span><span class="st"> nnls         "--nnls "        i     (5, 50)              | localsearch %in% c(1,2,3)</span></span></span>
@@ -183,15 +184,15 @@ potential user errors.</p>
 <span class="r-in"><span><span class="st"> (alpha == 0.0) &amp;&amp; (beta == 0.0)</span></span></span>
 <span class="r-in"><span><span class="st"> '</span></span></span>
 <span class="r-in"><span> <span class="va">parameters</span> <span class="op">&lt;-</span> <span class="fu">readParameters</span><span class="op">(</span>text<span class="op">=</span><span class="va">parameters.table</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2023-03-31 07:56:10 UTC: 1 expression(s) specifying forbidden configurations read.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2023-03-31 09:24:36 UTC: 1 expression(s) specifying forbidden configurations read.</span>
 <span class="r-in"><span> <span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">parameters</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> List of 15</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ names       : chr [1:11] "algorithm" "localsearch" "alpha" "beta" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ types       : Named chr [1:11] "c" "c" "r" "r" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..- attr(*, "names")= chr [1:11] "algorithm" "localsearch" "alpha" "beta" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ switches    : Named chr [1:11] "--" "--localsearch " "--alpha " "--beta " ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..- attr(*, "names")= chr [1:11] "algorithm" "localsearch" "alpha" "beta" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ domain      :List of 11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ names       : chr [1:12] "algorithm" "localsearch" "alpha" "beta" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ types       : Named chr [1:12] "c" "c" "r" "r" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..- attr(*, "names")= chr [1:12] "algorithm" "localsearch" "alpha" "beta" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ switches    : Named chr [1:12] "--" "--localsearch " "--alpha " "--beta " ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..- attr(*, "names")= chr [1:12] "algorithm" "localsearch" "alpha" "beta" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ domain      :List of 12</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ algorithm  : chr [1:5] "as" "mmas" "eas" "ras" ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ localsearch: chr [1:4] "0" "1" "2" "3"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ alpha      : num [1:2] 0 5</span>
@@ -199,11 +200,12 @@ potential user errors.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ rho        : num [1:2] 0.01 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ ants       : num [1:2] 5 100</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ q0         : num [1:2] 0 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ q0dep      :  expression(0, q0)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ rasrank    :  expression(1, min(ants, 10))</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ elitistants:  expression(1, ants)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nnls       : num [1:2] 5 50</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ dlb        : chr [1:2] "0" "1"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ conditions  :List of 11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ conditions  :List of 12</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ algorithm  : logi TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ localsearch: logi TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ alpha      : logi TRUE</span>
@@ -215,9 +217,10 @@ potential user errors.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ elitistants:  expression(algorithm == "eas")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nnls       :  expression(localsearch %in% c(1, 2, 3))</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ dlb        :  expression(localsearch %in% c(1, 2, 3))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ isFixed     : Named logi [1:11] FALSE FALSE FALSE FALSE FALSE FALSE ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..- attr(*, "names")= chr [1:11] "algorithm" "localsearch" "alpha" "beta" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ transform   :List of 11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ q0dep      :  expression(algorithm != "acs")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ isFixed     : Named logi [1:12] FALSE FALSE FALSE FALSE FALSE FALSE ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..- attr(*, "names")= chr [1:12] "algorithm" "localsearch" "alpha" "beta" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ transform   :List of 12</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ algorithm  : chr ""</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ localsearch: chr ""</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ alpha      : chr ""</span>
@@ -227,18 +230,19 @@ potential user errors.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..- attr(*, "lower")= num 1.61</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..- attr(*, "upper")= num 4.62</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ q0         : chr ""</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ q0dep      : chr ""</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ rasrank    : chr ""</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ elitistants: chr ""</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nnls       : chr ""</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ dlb        : chr ""</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ isDependent : Named logi [1:11] FALSE FALSE FALSE FALSE FALSE FALSE ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..- attr(*, "names")= chr [1:11] "algorithm" "localsearch" "alpha" "beta" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ digits      : Named int [1:4] 4 4 4 4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..- attr(*, "names")= chr [1:4] "alpha" "beta" "rho" "q0"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ isDependent : Named logi [1:12] FALSE FALSE FALSE FALSE FALSE FALSE ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..- attr(*, "names")= chr [1:12] "algorithm" "localsearch" "alpha" "beta" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ digits      : Named int [1:5] 4 4 4 4 4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..- attr(*, "names")= chr [1:5] "alpha" "beta" "rho" "q0" ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ forbidden   :List of 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ :&lt;bytecode&gt; </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..- attr(*, "source")= chr "(alpha == 0) &amp;&amp; (beta == 0)"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ depends     :List of 11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ depends     :List of 12</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ algorithm  : chr(0) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ localsearch: chr(0) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ alpha      : chr(0) </span>
@@ -246,15 +250,16 @@ potential user errors.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ rho        : chr(0) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ ants       : chr(0) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ q0         : chr "algorithm"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ q0dep      : chr [1:2] "q0" "algorithm"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ rasrank    : chr [1:2] "ants" "algorithm"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ elitistants: chr [1:2] "ants" "algorithm"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ nnls       : chr "localsearch"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ dlb        : chr "localsearch"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ hierarchy   : Named num [1:11] 1 1 1 1 1 1 2 2 2 2 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..- attr(*, "names")= chr [1:11] "algorithm" "localsearch" "alpha" "beta" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ nbParameters: int 11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ hierarchy   : Named num [1:12] 1 1 1 1 1 1 2 3 2 2 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..- attr(*, "names")= chr [1:12] "algorithm" "localsearch" "alpha" "beta" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ nbParameters: int 12</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ nbFixed     : int 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ nbVariable  : int 11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ nbVariable  : int 12</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
