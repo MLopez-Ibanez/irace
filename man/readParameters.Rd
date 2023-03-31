@@ -80,6 +80,7 @@ potential user errors.
  rho          "--rho  "        r     (0.01, 1.00)
  ants         "--ants "        i,log (5, 100)
  q0           "--q0 "          r     (0.0, 1.0)           | algorithm == "acs"
+ q0dep       "--q0 "           r     (0.0, q0)            | algorithm != "acs" 
  rasrank      "--rasranks "    i     (1, "min(ants, 10)") | algorithm == "ras"
  elitistants  "--elitistants " i     (1, ants)            | algorithm == "eas"
  nnls         "--nnls "        i     (5, 50)              | localsearch \%in\% c(1,2,3)

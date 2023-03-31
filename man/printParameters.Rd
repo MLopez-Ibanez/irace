@@ -7,20 +7,32 @@
 printParameters(parameters)
 }
 \arguments{
-\item{parameters}{(\code{list()}) Parameter object stored in \code{irace.Rdata} or read with \code{irace::readParameters()}.}
+\item{parameters}{(\code{list()}) \cr Data structure containing the parameter
+space definition. The data structure has to similar to the one returned by the
+function \code{\link{readParameters}}.}
 }
 \description{
-FIXME: Dependent parameter bounds are not supported yet.
+Print parameter space in the textual format accepted by irace.
 }
 \examples{
- parameters.table <- '
+parameters.table <- '
  # name       switch           type  values               [conditions (using R syntax)]
  algorithm    "--"             c     (as,mmas,eas,ras,acs)
  localsearch  "--localsearch " c     (0, 1, 2, 3)
+ alpha        "--alpha "       r     (0.00, 5.00)
+ beta         "--beta "        r     (0.00, 10.00)
+ rho          "--rho  "        r     (0.01, 1.00)
  ants         "--ants "        i,log (5, 100)
  q0           "--q0 "          r     (0.0, 1.0)           | algorithm == "acs"
+ q0dep       "--q0 "           r     (0.0, q0)            | algorithm != "acs"
+ rasrank      "--rasranks "    i     (1, "min(ants, 10)") | algorithm == "ras"
+ elitistants  "--elitistants " i     (1, ants)            | algorithm == "eas"
  nnls         "--nnls "        i     (5, 50)              | localsearch \%in\% c(1,2,3)
- '
+ dlb          "--dlb "         c     (0, 1)               | localsearch \%in\% c(1,2,3)
+ 
+ [forbidden]
+ (alpha == 0.0) && (beta == 0.0)
+'
 parameters <- readParameters(text=parameters.table)
 printParameters(parameters)
 }
