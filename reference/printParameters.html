@@ -66,6 +66,14 @@ function <code><a href="readParameters.html">readParameters</a></code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
+    <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
+    
+
+<p><code><a href="https://rdrr.io/r/base/character.html" class="external-link">character()</a></code></p>
+
+
+    </div>
+    <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p><code><a href="readParameters.html">readParameters()</a></code></p></div>
     </div>
@@ -91,7 +99,7 @@ function <code><a href="readParameters.html">readParameters</a></code>.</p></dd>
 <span class="r-in"><span><span class="st"> (alpha == 0.0) &amp;&amp; (beta == 0.0)</span></span></span>
 <span class="r-in"><span><span class="st">'</span></span></span>
 <span class="r-in"><span><span class="va">parameters</span> <span class="op">&lt;-</span> <span class="fu"><a href="readParameters.html">readParameters</a></span><span class="op">(</span>text<span class="op">=</span><span class="va">parameters.table</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2023-03-31 09:24:36 UTC: 1 expression(s) specifying forbidden configurations read.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2023-03-31 16:16:11 UTC: 1 expression(s) specifying forbidden configurations read.</span>
 <span class="r-in"><span><span class="fu">printParameters</span><span class="op">(</span><span class="va">parameters</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> algorithm   "--"             c (as,mmas,eas,ras,acs)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> localsearch "--localsearch " c (0,1,2,3)      </span>
@@ -101,7 +109,7 @@ function <code><a href="readParameters.html">readParameters</a></code>.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ants        "--ants "        i,log (5,100)        </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> q0          "--q0 "          r (0,1)           | algorithm == "acs"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> q0dep       "--q0 "          r (0,"q0")        | algorithm != "acs"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rasrank     "--rasranks "    i (1,c("\"min\"", "\"ants\"", "\"10\"")) | algorithm == "ras"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rasrank     "--rasranks "    i (1,"min(ants, 10)") | algorithm == "ras"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> elitistants "--elitistants " i (1,"ants")      | algorithm == "eas"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> nnls        "--nnls "        i (5,50)          | localsearch %in% c(1, 2, 3)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> dlb         "--dlb "         c (0,1)           | localsearch %in% c(1, 2, 3)</span>
