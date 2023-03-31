@@ -294,11 +294,13 @@ readScenario <- function(filename = "", scenario = list(),
       irace.warning("A default scenario file ", shQuote(filename),
                     " has been found and will be read.")
     } else {
-      irace.warning ("Not scenario file given (use ",
+      irace.warning ("No scenario file given (use ",
                    params_def["scenarioFile", "short"], " or ",
                    params_def["scenarioFile", "long"],
                    ") and no default scenario file ", shQuote(filename),
                    " has been found.")
+      scenario[["scenarioFile"]] <- filename
+      return(scenario)
     }
   } else {
     filename <- path_rel2abs(filename)

@@ -1305,7 +1305,7 @@ irace_run <- function(scenario, parameters)
       configurations.print (raceResults$configurations, metadata = TRUE)
     }
 
-    if (debugLevel >= 1) { irace.note("Extracting elites\n") }
+    if (debugLevel >= 1) irace.note("Extracting elites\n")
     # FIXME: Since we only actually keep the alive ones, we don't need
     # to carry around rejected ones in raceResults$configurations. This
     # would reduce overhead.
@@ -1320,14 +1320,11 @@ irace_run <- function(scenario, parameters)
     iraceResults$allElites[[indexIteration]] <- eliteConfigurations$.ID.
     
     if (firstRace) {
-      if (debugLevel >= 1)  { irace.note("Initialise model\n") }
+      if (debugLevel >= 1) irace.note("Initialise model\n")
       model <- initialiseModel(parameters, eliteConfigurations)
     }
       
-    if (debugLevel >= 1) {
-      irace.note("End of iteration ", indexIteration, "\n")
-    }
-
+    if (debugLevel >= 1) irace.note("End of iteration ", indexIteration, "\n")
     if (debugLevel >= 3) {
       irace.note("All configurations (sampling order):\n")
       configurations.print(allConfigurations, metadata = TRUE)
@@ -1336,7 +1333,7 @@ irace_run <- function(scenario, parameters)
     indexIteration <- indexIteration + 1
     firstRace <- FALSE
     if (scenario$debugLevel >= 3) {
-      irace.note ("Memory used in irace():\n")
+      irace.note("Memory used in irace():\n")
       irace.print.memUsed()
     }
   }

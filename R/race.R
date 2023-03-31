@@ -716,7 +716,11 @@ elitist_race <- function(maxExp = 0,
     irace.assert(all(rowAnys(!is.na(elite.data))),
                  eval.after = { print(elite.data)})
     # There must be a non-NA entry for each configuration.
-    irace.assert(all(colAnys(!is.na(elite.data))))
+    irace.assert(all(colAnys(!is.na(elite.data))),
+                 eval.after = {
+                   print(elite.data)
+                   print(full_experiment_log)
+                 })
     
     # elite.safe: maximum instance number for which any configuration may be
     # considered elite. After evaluating this instance, no configuration is
@@ -1249,10 +1253,10 @@ elitist_race <- function(maxExp = 0,
   # nrow(Results) may be smaller, equal or larger than current.task.
   irace.assert(nrow(experimentLog) == experimentsUsed)
 
-  return(list(experiments = Results,
-              experimentLog = experimentLog,
-              experimentsUsed = experimentsUsed,
-              nbAlive = nbAlive,
-              configurations = configurations,
-              rejectedIDs = configurations[is.rejected, ".ID."]))
+  list(experiments = Results,
+       experimentLog = experimentLog,
+       experimentsUsed = experimentsUsed,
+       nbAlive = nbAlive,
+       configurations = configurations,
+       rejectedIDs = configurations[is.rejected, ".ID."])
 }
