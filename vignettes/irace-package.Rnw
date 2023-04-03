@@ -1601,14 +1601,17 @@ parallel. There are four ways to parallelize a single run of \irace:
    %
    However, the user is free to set up the calls in any way, perhaps
    implementing its own replacement for \code{target.runner} and/or
-   \code{exec.target.runner}.
+   \code{exec.target.runner}. The user may load and call other \aR packages, such as \pkg{batchtools} (\url{https://mllg.github.io/batchtools/}).
+
    
    The only requirement is that the \parameter{targetRunnerParallel} function
    must return a list of the same length as \code{experiments}, where each
    element is the output expected from the corresponding call
-   to \parameter{targetRunner} (see \autoref{sec:runner}). The following is an
-   example of the output of a call to \parameter{targetRunnerParallel} with 2
-   experiments, in which the execution time is not reported:
+   to \parameter{targetRunner} (see \autoref{sec:runner}).
+   
+   The following is an example of the output of a call to
+   \parameter{targetRunnerParallel} with 2 experiments, in which the execution
+   time is not reported:
   
   <<targetRunnerParallel3,prompt=FALSE, eval=TRUE>>=
      print(output)
