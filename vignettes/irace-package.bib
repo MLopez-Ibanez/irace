@@ -30,13 +30,15 @@
 
 @string{cec = { Congress on Evolutionary Computation (CEC}}
 
-@string{cec06 = proc_of_the # {2006} # cec # { 2006)}}
+@string{cec2006 = proc_of_the # {2006} # cec # { 2006)}}
 
 @string{icml = { International Conference on Machine Learning, {ICML} }}
 
 @string{icml2014 = proc_of_the # {31st} # icml # {2014}}
 
 @string{acm-cs = {{ACM} Computing Surveys}}
+
+@string{cor = {Computers \& Operations Research}}
 
 @string{jair = {Journal of Artificial Intelligence Research}}
 
@@ -96,24 +98,6 @@
 
 @string{yuan_z = { Zhi Yuan }}
 
-@inproceedings{BieLinEggFraFawHoo2017,
-  author = biedenkapp # and # lindauer_m # and # {Eggensperger,
-                  Katharina} # and # hutter # and # fawcett # and # hoos,
-  title = {Efficient Parameter Importance Analysis via Ablation with
-                  Surrogates},
-  crossref = {AAAI2017},
-  url = {https://aaai.org/ocs/index.php/AAAI/AAAI17/paper/view/14750}
-}
-
-@incollection{BirYuaBal2010:emaoa,
-  author = birattari # and # yuan_z # and # balaprakash # and # stuetzle,
-  title = {{F}-Race and Iterated {F}-Race: An Overview},
-  pages = {311--336},
-  crossref = {BarChiPaqPre2010emaoa},
-  keywords = {F-race, iterated F-race, irace, tuning},
-  doi = {10.1007/978-3-642-02538-9_13}
-}
-
 @article{DesRitLopPer2021acviz,
   author = desouza # and # ritt # and # lopez-ibanez # and # perez_l,
   title = {{\softwarepackage{ACVIZ}}: A Tool for the Visual Analysis of
@@ -145,6 +129,119 @@
   volume = 22,
   number = 4,
   year = 2016
+}
+
+@article{HutHooLeyStu2009jair,
+  author = hutter # and # hoos # and # leyton-brown # and # stuetzle,
+  title = {{\softwarepackage{ParamILS}:} An Automatic Algorithm Configuration Framework},
+  journal = jair,
+  year = 2009,
+  volume = 36,
+  pages = {267--306},
+  month = oct,
+  doi = {10.1613/jair.2861}
+}
+
+@article{LopDubPerStuBir2016irace,
+  author = lopez-ibanez # and # dubois-lacoste # and # perez_l # and # stuetzle # and # birattari,
+  title = {The {\rpackage{irace}} Package: Iterated Racing for Automatic
+                  Algorithm Configuration},
+  journal = orp,
+  year = 2016,
+  supplement = {http://iridia.ulb.ac.be/supp/IridiaSupp2016-003/},
+  doi = {10.1016/j.orp.2016.09.002},
+  volume = 3,
+  pages = {43--58}
+}
+
+@article{McG1992vrt,
+  author = mcgeoch_cc,
+  title = {Analyzing Algorithms by Simulation: Variance Reduction
+                  Techniques and Simulation Speedups},
+  abstract = {Although experimental studies have been widely applied to the
+                  investigation of algorithm performance, very little attention
+                  has been given to experimental method in this area. This is
+                  unfortunate, since much can be done to improve the quality of
+                  the data obtained; often, much improvement may be needed for
+                  the data to be useful. This paper gives a tutorial discussion
+                  of two aspects of good experimental technique: the use of
+                  variance reduction techniques and simulation speedups in
+                  algorithm studies.  In an illustrative study, application of
+                  variance reduction techniques produces a decrease in variance
+                  by a factor 1000 in one case, giving a dramatic improvement
+                  in the precision of experimental results. Furthermore, the
+                  complexity of the simulation program is improved from
+                  $\Theta(m n/H_n)$ to $\Theta(m + n \log n)$ (where $m$ is
+                  typically much larger than $n$), giving a much faster
+                  simulation program and therefore more data per unit of
+                  computation time. The general application of variance
+                  reduction techniques is also discussed for a variety of
+                  algorithm problem domains.},
+  volume = 24,
+  doi = {10.1145/130844.130853},
+  number = 2,
+  journal = acm-cs,
+  year = 1992,
+  keywords = {experimental analysis of algorithms, move-to-front rule,
+                  self-organizing sequential search, statistical analysis of
+                  algorithms, transpose rule, variance reduction techniques},
+  pages = {195--212}
+}
+
+@article{SouRitLop2021cap,
+  author = desouza # and # ritt # and # lopez-ibanez,
+  title = {Capping Methods for the Automatic Configuration of
+                  Optimization Algorithms},
+  journal = cor,
+  doi = {10.1016/j.cor.2021.105615},
+  year = 2022,
+  volume = 139,
+  pages = 105615,
+  supplement = {https://github.com/souzamarcelo/supp-cor-capopt},
+  abstract = {Automatic configuration techniques are widely and
+                  successfully used to find good parameter settings for
+                  optimization algorithms. Configuration is costly, because it
+                  is necessary to evaluate many configurations on different
+                  instances. For decision problems, when the objective is to
+                  minimize the running time of the algorithm, many
+                  configurators implement capping methods to discard poor
+                  configurations early. Such methods are not directly
+                  applicable to optimization problems, when the objective is to
+                  optimize the cost of the best solution found, given a
+                  predefined running time limit. We propose new capping methods
+                  for the automatic configuration of optimization
+                  algorithms. They use the previous executions to determine a
+                  performance envelope, which is used to evaluate new
+                  executions and cap those that do not satisfy the envelope
+                  conditions. We integrate the capping methods into the irace
+                  configurator and evaluate them on different optimization
+                  scenarios. Our results show that the proposed methods can
+                  save from about 5\% to 78\% of the configuration effort,
+                  while finding configurations of the same quality. Based on
+                  the computational analysis, we identify two conservative and
+                  two aggressive methods, that save an average of about 20\%
+                  and 45\% of the configuration effort, respectively. We also
+                  provide evidence that capping can help to better use the
+                  available budget in scenarios with a configuration time
+                  limit.}
+}
+
+@inproceedings{BieLinEggFraFawHoo2017,
+  author = biedenkapp # and # lindauer_m # and # {Eggensperger,
+                  Katharina} # and # hutter # and # fawcett # and # hoos,
+  title = {Efficient Parameter Importance Analysis via Ablation with
+                  Surrogates},
+  crossref = {AAAI2017},
+  doi = {10.1609/aaai.v31i1.10657}
+}
+
+@incollection{BirYuaBal2010:emaoa,
+  author = birattari # and # yuan_z # and # balaprakash # and # stuetzle,
+  title = {{F}-Race and Iterated {F}-Race: An Overview},
+  pages = {311--336},
+  crossref = {BarChiPaqPre2010emaoa},
+  keywords = {F-race, iterated F-race, irace, tuning},
+  doi = {10.1007/978-3-642-02538-9_13}
 }
 
 @incollection{FonPaqLop06:hypervolume,
@@ -187,19 +284,8 @@
                   Importance},
   crossref = {ICML2014},
   pages = {754--762},
-  url = {http://jmlr.org/proceedings/papers/v32/hutter14.html},
+  url = {https://proceedings.mlr.press/v32/hutter14.html},
   keywords = {fANOVA, parameter importance}
-}
-
-@article{HutHooLeyStu2009jair,
-  author = hutter # and # hoos # and # leyton-brown # and # stuetzle,
-  title = {{\softwarepackage{ParamILS}:} An Automatic Algorithm Configuration Framework},
-  journal = jair,
-  year = 2009,
-  volume = 36,
-  pages = {267--306},
-  month = oct,
-  doi = {10.1613/jair.2861}
 }
 
 @techreport{IRIDIA-2004-001,
@@ -210,18 +296,6 @@
   number = {TR/IRIDIA/2004-001}
 }
 
-@article{LopDubPerStuBir2016irace,
-  author = lopez-ibanez # and # dubois-lacoste # and # perez_l # and # stuetzle # and # birattari,
-  title = {The {\rpackage{irace}} Package: Iterated Racing for Automatic
-                  Algorithm Configuration},
-  journal = orp,
-  year = 2016,
-  supplement = {http://iridia.ulb.ac.be/supp/IridiaSupp2016-003/},
-  doi = {10.1016/j.orp.2016.09.002},
-  volume = 3,
-  pages = {43--58}
-}
-
 @techreport{LopDubStu2011irace,
   author = lopez-ibanez # and # dubois-lacoste # and # stuetzle # and # birattari,
   title = {The {\rpackage{irace}} package, Iterated Race for Automatic
@@ -229,42 +303,8 @@
   institution = iridia,
   year = 2011,
   number = {TR/IRIDIA/2011-004},
-  url = {http://iridia.ulb.ac.be/IridiaTrSeries/IridiaTr2011-004.pdf},
+  url = {http://iridia.ulb.ac.be/IridiaTrSeries/link/IridiaTr2011-004.pdf},
   note = {Published in } # orp # {~\cite{LopDubPerStuBir2016irace}}
-}
-
-@article{McG1992vrt,
-  author = mcgeoch_cc,
-  title = {Analyzing Algorithms by Simulation: Variance Reduction
-                  Techniques and Simulation Speedups},
-  abstract = {Although experimental studies have been widely applied to the
-                  investigation of algorithm performance, very little attention
-                  has been given to experimental method in this area. This is
-                  unfortunate, since much can be done to improve the quality of
-                  the data obtained; often, much improvement may be needed for
-                  the data to be useful. This paper gives a tutorial discussion
-                  of two aspects of good experimental technique: the use of
-                  variance reduction techniques and simulation speedups in
-                  algorithm studies.  In an illustrative study, application of
-                  variance reduction techniques produces a decrease in variance
-                  by a factor 1000 in one case, giving a dramatic improvement
-                  in the precision of experimental results. Furthermore, the
-                  complexity of the simulation program is improved from
-                  $\Theta(m n/H_n)$ to $\Theta(m + n \log n)$ (where $m$ is
-                  typically much larger than $n$), giving a much faster
-                  simulation program and therefore more data per unit of
-                  computation time. The general application of variance
-                  reduction techniques is also discussed for a variety of
-                  algorithm problem domains.},
-  volume = 24,
-  doi = {10.1145/130844.130853},
-  number = 2,
-  journal = acm-cs,
-  year = 1992,
-  keywords = {experimental analysis of algorithms, move-to-front rule,
-                  self-organizing sequential search, statistical analysis of
-                  algorithms, transpose rule, variance reduction techniques},
-  pages = {195--212}
 }
 
 @incollection{PerLopHooStu2017:lion,
@@ -314,7 +354,7 @@
   key = {IEEE CEC},
   title = {Proceedings of the 2006 Congress on Evolutionary
                   Computation (CEC 2006)},
-  booktitle = cec06,
+  booktitle = cec2006,
   year = 2006,
   month = jul,
   publisher = ieeep,

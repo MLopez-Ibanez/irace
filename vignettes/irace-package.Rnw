@@ -2376,6 +2376,10 @@ Note that bounded executions are not timed out executions and thus, they will no
   described in \autoref{sec:runner} and \autoref{sec:evaluator} .
 \end{xwarningbox}
 
+\begin{xwarningbox}
+More advanced capping methods that are applicable to minimizing solution cost are available when combining irace with the \texttt{capopt} package described by \citet{SouRitLop2021cap}.
+\end{xwarningbox}
+
 
 
 \subsection{Hyper-parameter optimization of machine learning methods}
@@ -3049,7 +3053,7 @@ collaborated in the development and improvement of \irace:
 \ifthenelse {\boolean{Release}}{%
 \bibliography{irace-package}%
 }{%
-\bibliography{optbib/abbrev,optbib/journals,optbib/authors,optbib/biblio,optbib/crossref}%
+\bibliography{optbib/abbrev,optbib/journals,optbib/authors,optbib/articles,optbib/biblio,optbib/crossref}%
 }
 
 \newpage
