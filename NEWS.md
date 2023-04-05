@@ -1,4 +1,4 @@
-# irace 3.5.1
+# irace (development version)
 
 ## Major breaking changes
 

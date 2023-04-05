@@ -14,10 +14,6 @@ template:
   
 development:
   mode: unreleased
-  destination: devel
-  version_label: default
-  version_tooltip: "Github version"
-
 
 navbar:
   structure:
