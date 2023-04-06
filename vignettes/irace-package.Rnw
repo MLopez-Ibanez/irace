@@ -1542,30 +1542,28 @@ parallel. There are four ways to parallelize a single run of \irace:
    may significantly increase communication overhead in some parallel
    environments and disabling \parameter{loadBalancing} may be faster.
 
- \item \textbf{Batch jobs clusters}: Some computing clusters work by submitting
+ \item \textbf{Batch queue mode}: Some computing clusters work by submitting
    jobs to a batch queue and waiting for the jobs to finish. With the
    option \parameter{batchmode} (\code{--batchmode} \code{[sge|pbs|} \code{torque|slurm]}),
    \irace will launch in parallel as many calls of \parameter{targetRunner} as
    possible and use a
    cluster-specific method to wait for jobs to finish. In this mode, \parameter{parallel} controls how many jobs are queued and should be set to the queue limit of your cluster.  If your cluster type is
    not supported or not working as expected, please submit a pull request (\url{https://github.com/MLopez-Ibanez/irace/pulls}) adding support to your cluster type.
-
-   \begin{xwarningbox}
-     In this mode, \irace must run in the submission node of the cluster, and
-     hence, \irace should not be submitted to the cluster as a job (that is,
-     neither \code{qsub} nor \code{squeue} should be used to invoke \irace
-     itself). The user must call the appropriate job submission command (e.g., \code{qsub}) from within
-     \parameter{targetRunner} with the appropriate settings for their cluster,
-     otherwise \parameter{targetRunner} will not submit jobs to the
-     cluster. The script must return a single string: The job ID that allows
-     \irace to determine the status of the running job. Moreover, the use of a
-     separate
-   \parameter{targetEvaluator} script is required to evaluate the results of
-   \parameter{targetRunner} and return them to \irace.
-   \end{xwarningbox}
- See the examples in
+See the examples in
     \IRACEHOME{/examples/batchmode-cluster/}.
 
+   \begin{xwarningbox}
+     In batchmode, \irace runs in the submission node of the cluster, 
+     hence, \irace is not submitted to the cluster as a job (that is,
+     neither \code{qsub} nor \code{squeue} should be used to invoke \irace
+     itself). The user must call the appropriate job submission command (e.g., \code{qsub} or \code{squeue}) from \parameter{targetRunner} with the appropriate settings for their cluster, that is,  \parameter{targetRunner} submits one job to the
+     cluster and prints a single string: The job ID that allows
+     \irace to determine the status of the running job. Moreover, the use of a
+     separate
+   \parameter{targetEvaluator} script is required to collect the results of
+   \parameter{targetRunner} and return them to \irace.
+   \end{xwarningbox}
+ 
   \item \parameter{targetRunnerParallel}: This option allows users to fully
     control the parallelization of the execution of \parameter{targetRunner}. 
     Its value must be an \aR function that will be invoked by \irace as follows:
@@ -1631,7 +1629,7 @@ parallel. There are four ways to parallelize a single run of \irace:
  options if there is always some CPUs available in the cluster but the queue
  for requesting many CPUs at once is very long.
 
- As a rule-of-thumb, if you only have access to a single machine, then you only need option 1. If you have access to a computing cluster with multiple machines, then  use option 1 with the maximum number of CPUs that a single node has in your computing cluster. If that number is 64 or more, it should be enough unless a single run of irace evaluates thousands of configurations. Otherwise, investigate option 2. If option 2 doesn't work, then investigate option 3.
+ As a rule-of-thumb, if you only have access to a single machine, then you only need option 1. If you have access to a computing cluster with multiple machines, then  use option 1 with the maximum number of CPUs that a single node has in your computing cluster. If that number is 64 or more, it should be enough unless a single run of irace evaluates thousands of configurations. Otherwise, investigate option 2. If option 2 does not work, then investigate option 3.
  
 %%
 %%
