@@ -1523,8 +1523,7 @@ parallel. There are four ways to parallelize a single run of \irace:
   computer, by means of the \pkg{parallel} \aR package. For example, adding
   \code{--parallel N} to the command line of \irace will launch in parallel up
   to $N$ calls of the target algorithm. When using this option within a
-  computing cluster, \irace will be submitted as a \emph{job} in some way that
-  ``reserves'' $N$ CPUs.
+  computing cluster, \irace will be submitted as a \emph{job} in some way  that tells the cluster to   ``reserve'' $N$ CPUs (or tasks depending on the cluster) within a single cluster node (a single machine).
 
 \item \textbf{MPI}: By enabling the option \parameter{mpi}, calls
   to \parameter{targetRunner} will be executed in parallel by using the message
@@ -1541,16 +1540,15 @@ parallel. There are four ways to parallelize a single run of \irace:
    
    By default, \irace dynamically balances the load among nodes, however, this
    may significantly increase communication overhead in some parallel
-   environments, where disabling \parameter{loadBalancing} may be faster.
+   environments and disabling \parameter{loadBalancing} may be faster.
 
  \item \textbf{Batch jobs clusters}: Some computing clusters work by submitting
    jobs to a batch queue and waiting for the jobs to finish. With the
    option \parameter{batchmode} (\code{--batchmode} \code{[sge|pbs|} \code{torque|slurm]}),
    \irace will launch in parallel as many calls of \parameter{targetRunner} as
-   possible (\parameter{parallel} can be used to set a limit) and use a
-   cluster-specific method to wait for jobs to finish. If your cluster type is
-   not supported or not working as expected, please contact us and we will
-   gladly add support for it.
+   possible and use a
+   cluster-specific method to wait for jobs to finish. In this mode, \parameter{parallel} controls how many jobs are queued and should be set to the queue limit of your cluster.  If your cluster type is
+   not supported or not working as expected, please submit a pull request (\url{https://github.com/MLopez-Ibanez/irace/pulls}) adding support to your cluster type.
 
    \begin{xwarningbox}
      In this mode, \irace must run in the submission node of the cluster, and
@@ -1620,6 +1618,21 @@ parallel. There are four ways to parallelize a single run of \irace:
 
  \end{enumerate}
 
+ The best option will depend on the resources available to you. Option 1 is
+ usually the fastest and simplest to setup.  Running on a node (machine) with
+ 128 CPUs will be faster than running on 8 nodes with 16 CPUs because the
+ communication between nodes required by MPI can be very slow depending on the
+ cluster.  Option 2 may be faster if irace generates more configurations per
+ iteration than the number of CPUs of a single node. However, depending on the
+ configuration of your cluster, requesting many CPUs may require waiting in the
+ queue a long time. Option 3 may be the slowest since irace has to check the
+ queue frequently. However, irace will start running experiments as soon as 1
+ CPU is available, thus option 3 may actually finish earlier than the other
+ options if there is always some CPUs available in the cluster but the queue
+ for requesting many CPUs at once is very long.
+
+ As a rule-of-thumb, if you only have access to a single machine, then you only need option 1. If you have access to a computing cluster with multiple machines, then  use option 1 with the maximum number of CPUs that a single node has in your computing cluster. If that number is 64 or more, it should be enough unless a single run of irace evaluates thousands of configurations. Otherwise, investigate option 2. If option 2 doesn't work, then investigate option 3.
+ 
 %%
 %%
 %%
