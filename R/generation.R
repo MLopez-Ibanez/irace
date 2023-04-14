@@ -80,7 +80,7 @@ sampleUniform <- function (parameters, nbConfigurations, repair = NULL)
 
   for (idxConfiguration in seq_len(nbConfigurations)) {
     forbidden.retries <- 0
-    while (forbidden.retries < 100) {
+    repeat {
       configuration <- empty_configuration
       for (p in seq_along(namesParameters)) {
         currentParameter <- namesParameters[p]
@@ -118,12 +118,12 @@ sampleUniform <- function (parameters, nbConfigurations, repair = NULL)
         break
       }
       forbidden.retries <- forbidden.retries + 1
-    }
-    if (forbidden.retries >= 100) {
-      irace.error("irace tried 100 times to sample from the model a configuration not forbidden without success, perhaps your constraints are too strict?")
+      if (forbidden.retries >= 100) {
+        irace.error("irace tried 100 times to sample from the model a configuration not forbidden without success, perhaps your constraints are too strict?")
+      }
     }
   }
-  return (newConfigurations)
+  newConfigurations
 }
 
 # To be called the first time before the second race (with indexIter =
@@ -146,7 +146,7 @@ sampleModel <- function (parameters, eliteConfigurations, model,
   
   for (idxConfiguration in seq_len(nbNewConfigurations)) {
     forbidden.retries <- 0
-    while (forbidden.retries < 100) {
+    repeat {
       # Choose the elite which will be the parent.
       indexEliteParent <- sample.int (n = nrow(eliteConfigurations), size = 1,
                                       prob = eliteConfigurations[[".WEIGHT."]])
@@ -244,9 +244,9 @@ sampleModel <- function (parameters, eliteConfigurations, model,
         break
       }
       forbidden.retries <- forbidden.retries + 1
-    }
-    if (forbidden.retries >= 100) {
-      irace.error("irace tried 100 times to sample from the model a configuration not forbidden without success, perhaps your constraints are too strict?")
+      if (forbidden.retries >= 100) {
+        irace.error("irace tried 100 times to sample from the model a configuration not forbidden without success, perhaps your constraints are too strict?")
+      }
     }
   }
   newConfigurations
