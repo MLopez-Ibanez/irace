@@ -25,7 +25,7 @@ new_empty_configuration <- function(parameters)
            newConfigurationsColnames)
 }
 
-get.fixed.value <- function(param, parameters)
+get_fixed_value <- function(param, parameters)
 {
   value <- parameters$domain[[param]][1]
   type <- parameters$types[[param]]
@@ -94,7 +94,7 @@ sampleUniform <- function (parameters, nbConfigurations, repair = NULL)
         currentType <- parameters$types[[currentParameter]]
         if (isFixed(currentParameter, parameters)) {
           # We don't even need to sample, there is only one possible value !
-          newVal <- get.fixed.value (currentParameter, parameters)
+          newVal <- get_fixed_value (currentParameter, parameters)
           # The parameter is not a fixed and should be sampled          
         } else if (currentType %in% c("i","r")) {
           domain <- getDependentBound(parameters, currentParameter, configuration)
@@ -168,7 +168,7 @@ sampleModel <- function (parameters, eliteConfigurations, model,
           
         } else if (isFixed(currentParameter, parameters)) {
           # We don't even need to sample, there is only one possible value !
-          newVal <- get.fixed.value (currentParameter, parameters)
+          newVal <- get_fixed_value (currentParameter, parameters)
           # The parameter is not a fixed and should be sampled
         } else if (currentType %in% c("i", "r")) {
           domain <- getDependentBound(parameters, currentParameter, configuration)

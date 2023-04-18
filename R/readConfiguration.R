@@ -17,11 +17,10 @@
 #' Example of an input file:
 #' ```
 #' # This is a comment line
-#' <param_name_1>  <param_name_2> ... 
-#'       0.5           "value_1"    ...
-#'       1.0           "value_2"    ...
-#'       1.2           "value_3"    ...
-#'       ...           ...
+#' param_1    param_2
+#'     0.5  "value_1"
+#'     1.0         NA
+#'     1.2  "value_3"
 #' ```
 #' The order of the columns does not necessarily have to be the same
 #' as in the file containing the definition of the parameters.
@@ -99,7 +98,7 @@ fix_configurations <- function(configurations, parameters, debugLevel = 0, filen
     missing <- setdiff (namesParameters, colnames(configurations))
     if (length(missing) > 0) {
       irace.assert (all(parameters$isFixed[missing]))
-      tmp <- lapply(missing, function(x) get.fixed.value(x, parameters))
+      tmp <- lapply(missing, get_fixed_value, parameters = parameters)
       names(tmp) <- missing
       configurations <- cbind.data.frame(configurations, tmp,
                                          stringsAsFactors = FALSE)
