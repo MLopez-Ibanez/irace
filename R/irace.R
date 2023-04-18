@@ -912,7 +912,7 @@ irace_run <- function(scenario, parameters)
       # Update budget
       remainingBudget <- round((scenario$maxTime - timeUsed) / boundEstimate)
       experimentsUsedSoFar <- experimentsUsedSoFar + nrow(iraceResults$experimentLog)
-      eliteConfigurations <- allConfigurations[allConfigurations$.ID. %!in% rejectedIDs, ,drop = FALSE]
+      eliteConfigurations <- allConfigurations[allConfigurations$.ID. %not_in% rejectedIDs, ,drop = FALSE]
 
       # Without elitist, the racing does not re-use the results computed during
       # the estimation.  This means that the time used during estimation needs
@@ -1147,7 +1147,7 @@ irace_run <- function(scenario, parameters)
     # Sample for the first time.
     if (firstRace) {
       # If we need more configurations, sample uniformly.
-      nbNewConfigurations <- nbConfigurations - sum(allConfigurations$.ID. %!in% rejectedIDs)
+      nbNewConfigurations <- nbConfigurations - sum(allConfigurations$.ID. %not_in% rejectedIDs)
       if (nbNewConfigurations > 0) {
         # Sample new configurations.
         if (debugLevel >= 1) {
@@ -1161,7 +1161,7 @@ irace_run <- function(scenario, parameters)
                  newConfigurations)
         allConfigurations <- rbind(allConfigurations, newConfigurations)
         rownames(allConfigurations) <- allConfigurations$.ID.
-        raceConfigurations <- allConfigurations[allConfigurations$.ID. %!in% rejectedIDs, , drop = FALSE]
+        raceConfigurations <- allConfigurations[allConfigurations$.ID. %not_in% rejectedIDs, , drop = FALSE]
       } else if (nbNewConfigurations <= 0) {
         # We let the user know that not all configurations will be used.
         if (nbUserConfigurations > nbConfigurations) {
@@ -1175,7 +1175,7 @@ irace_run <- function(scenario, parameters)
         if (nrow(eliteConfigurations) == nbConfigurations) {
           raceConfigurations <- eliteConfigurations
         } else {
-          raceConfigurations <- allConfigurations[allConfigurations$.ID. %!in% rejectedIDs, , drop = FALSE]
+          raceConfigurations <- allConfigurations[allConfigurations$.ID. %not_in% rejectedIDs, , drop = FALSE]
           raceConfigurations <- raceConfigurations[1:nbConfigurations,]
         }
       } # end of indexIteration == 1

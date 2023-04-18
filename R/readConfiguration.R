@@ -429,7 +429,7 @@ checkScenario <- function(scenario = defaultScenario())
   check.valid.param <- function(x)
   {
     valid <- trimws(strsplit(.irace.params.def[x, "domain"],",",fixed=TRUE)[[1]])
-    if (scenario[[x]] %!in% valid) {
+    if (scenario[[x]] %not_in% valid) {
       irace.error ("Invalid value '", scenario[[x]], "' of ",
                    quote.param(x), ", valid values are: ",
                    paste0(valid, collapse = ", "))

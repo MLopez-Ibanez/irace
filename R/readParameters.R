@@ -180,7 +180,7 @@ readParameters <- function (file, digits = 4L, debugLevel = 0L, text)
                     "One parameter of this cycle is '", rootParam, "'")
       
       # The following line detects a missing definition
-      if (child %!in% names(varsTree))
+      if (child %not_in% names(varsTree))
         irace.error("A parameter definition is missing! ",
                     "Check definition of parameters.\n",
                     "Parameter '", paramName,

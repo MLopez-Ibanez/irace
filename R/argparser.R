@@ -13,7 +13,7 @@ CommandArgsParser <- R6::R6Class("CommandArgsParser", cloneable = FALSE, list(
     }
     self$argv <- argv
     required_colnames <- c("name", "short", "long", "type", "default")
-    if (any(required_colnames %!in% colnames(argsdef))) {
+    if (any(required_colnames %not_in% colnames(argsdef))) {
       stop("argsdef must contain the column names: ", paste0(required_colnames, collapse=", "))
     }
     self$argsdef <- argsdef

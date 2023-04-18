@@ -319,9 +319,9 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
 
   if (is.null(target)) target <- iraceResults$iterationElites[length(iraceResults$iterationElites)]
   irace.note ("Starting ablation from ", src, " to ", target, "\n# Seed: ", seed, "\n")
-  if (src %!in% iraceResults$allConfigurations$.ID.)
+  if (src %not_in% iraceResults$allConfigurations$.ID.)
     stop("Source configuration ID (", src, ") cannot be found")
-  if (target %!in% iraceResults$allConfigurations$.ID.)
+  if (target %not_in% iraceResults$allConfigurations$.ID.)
     stop("Target configuration ID (", target, ") cannot be found")
 
   cat("# Source configuration (row number is ID):\n")
