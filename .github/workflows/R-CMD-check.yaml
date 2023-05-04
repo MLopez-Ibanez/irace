@@ -63,7 +63,7 @@ jobs:
       
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: cran::XML any::rcmdcheck
+          extra-packages: any::rcmdcheck, mlr=?ignore-before-r=4.0.0
           needs: check
           cache-version: 1
 
@@ -120,7 +120,7 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: cran::XML any::covr
+          extra-packages: any::covr, mlr=?ignore 
           needs: coverage
 
       - name: Test coverage
@@ -179,7 +179,7 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: cran::XML any::pkgdown
+          extra-packages: any::pkgdown, mlr=?ignore
           needs: website
 
       - name: Install package with vignettes
