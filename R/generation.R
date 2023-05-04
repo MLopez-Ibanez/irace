@@ -4,7 +4,7 @@
 
 ## When called with an unconditional parameter, it
 ## must return TRUE
-conditionsSatisfied <- function (parameters, partialConfiguration, paramName)
+conditionsSatisfied <- function(parameters, partialConfiguration, paramName)
 {
   condition <- parameters$conditions[[paramName]]
   # If there is no condition, do not waste time evaluating it.
@@ -14,8 +14,7 @@ conditionsSatisfied <- function (parameters, partialConfiguration, paramName)
   # Return TRUE if TRUE, FALSE if FALSE or NA
   ## FIXME: If we byte-compile the condition, then we should incorporate the
   ## following into the condition directly.
-  v <- !is.na(v) && v
-  return(v)
+  !is.na(v) && v
 }
 
 new_empty_configuration <- function(parameters)
