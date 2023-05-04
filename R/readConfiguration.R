@@ -47,9 +47,8 @@ readConfigurationsFile <- function(filename, parameters, debugLevel = 0, text)
                                      stringsAsFactors = FALSE)
   }
   irace.assert(is.data.frame(configurationTable))
-  nbConfigurations <- nrow(configurationTable)
-  cat("# Read ", nbConfigurations, " configuration(s)",
-      if (is.null(filename)) "\n" else paste0("from file '", filename, "'\n"), sep="")
+  irace.note("Read ", nrow(configurationTable), " configuration(s)",
+             if (is.null(filename)) "\n" else paste0("from file '", filename, "'\n"))
   fix_configurations(configurationTable, parameters, debugLevel = debugLevel,
                      filename = filename)
 }
