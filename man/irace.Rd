@@ -88,7 +88,7 @@ The function \code{irace} implements the Iterated Racing procedure for parameter
 tuning. It receives a configuration scenario and a parameter space to be
 tuned, and returns the best configurations found, namely, the elite
 configurations obtained from the last iterations. As a first step, it checks
-the correctness of \code{scenario} using \code{checkScenario()} and recovers a
+the correctness of \code{scenario} using \code{\link[=checkScenario]{checkScenario()}} and recovers a
 previous execution if \code{scenario$recoveryFile} is set. A R data file log of
 the execution is created in \code{scenario$logFile}.
 }
@@ -119,7 +119,7 @@ irace(scenario = scenario, parameters = parameters)
 f_rosenbrock <- function (x) {
   d <- length(x)
   z <- x + 1
-  hz <- z[1:(d - 1L)]
+  hz <- z[1L:(d - 1L)]
   tz <- z[2L:d]
   sum(100 * (hz^2 - tz)^2 + (hz - 1)^2)
 }

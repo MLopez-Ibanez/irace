@@ -220,7 +220,7 @@ computeNbConfigurations <- function(currentBudget, indexIteration,
   # been executed on all nOldInstances. Thus, we need to pass explicitly the
   # budget that we save (that is, number of entries that are not NA).
   savedBudget <- nElites *  nOldInstances
-  n <- max (mu + blockSize * eachTest * min(5, indexIteration),
+  n <- max (mu + blockSize * eachTest * min(5L, indexIteration),
             round.to.next.multiple(nOldInstances + newInstances, blockSize * eachTest))
   min (floor ((currentBudget + savedBudget) / n), maxConfigurations)
 }
@@ -324,7 +324,9 @@ checkMinimumBudget <- function(scenario, remainingBudget, minSurvival, nbIterati
 
 startParallel <- function(scenario)
 {
-  if (!is.null(scenario$targetRunnerParallel) || scenario$parallel <= 1)
+  parallel <- scenario$parallel
+  data.table::setDTthreads(if (parallel <= 1) 1L else min(4L, parallel))
+  if (!is.null(scenario$targetRunnerParallel) || parallel <= 1)
     return(invisible())
 
   parallel <- scenario$parallel
@@ -443,30 +445,6 @@ do.experiments <- function(configurations, ninstances, scenario, parameters)
   list(experiments = Results, experimentLog = experimentLog, rejectedIDs = rejectedIDs)
 }
 
-alloc_configurations <- function(colnames, nrow, parameters)
-{
-  parameter_type <- function(type) {
-    stopifnot(type %in% c("i","r","o","c"))
-    switch(type,
-           i = NA_integer_,
-           r = NA_real_,
-           NA_character_)
-  }
-
-  column_type <- function(x, n, types)
-    rep(switch(x,
-               .ID. = NA_integer_,
-               .PARENT. = NA_integer_,
-               .WEIGHT. = NA_real_,
-               parameter_type(types[x])), n)
-
-  x <- sapply(colnames, column_type, n=nrow, types = parameters$types,
-              simplify=FALSE, USE.NAMES=TRUE)
-  data.frame(x, stringsAsFactors = FALSE)
-}
-
-    
-
 ## Initialize allConfigurations with any initial configurations provided.
 allConfigurationsInit <- function(scenario, parameters)
 {
@@ -490,19 +468,20 @@ allConfigurationsInit <- function(scenario, parameters)
     
   if (!is.null.or.empty(initConfigurations)) {
     allConfigurations <- cbind(.ID. = seq_nrow(initConfigurations),
-                               initConfigurations, .PARENT. = NA)
+                               initConfigurations, .PARENT. = NA_integer_)
     rownames(allConfigurations) <- allConfigurations[[".ID."]]
     num <- nrow(allConfigurations)
     allConfigurations <- checkForbidden(allConfigurations, parameters$forbidden)
     if (nrow(allConfigurations) < num) {
       irace.warning(num - nrow(allConfigurations), " of the ", num,
                     " initial configurations were forbidden",
-                    " and, thus, discarded")
+                    " and, thus, discarded.")
     }
   } else {
-    allConfigurations <- alloc_configurations(
+    allConfigurations <- as.data.frame(configurations_alloc(
       c(".ID.", names(parameters$conditions), ".PARENT."),
-      nrow = 0, parameters = parameters)
+      nrow = 0, parameters = parameters),
+      stringsAsFactors = FALSE)
   }
   allConfigurations
 }
@@ -513,7 +492,7 @@ allConfigurationsInit <- function(scenario, parameters)
 #' tuning. It receives a configuration scenario and a parameter space to be
 #' tuned, and returns the best configurations found, namely, the elite
 #' configurations obtained from the last iterations. As a first step, it checks
-#' the correctness of `scenario` using `checkScenario()` and recovers a
+#' the correctness of `scenario` using [checkScenario()] and recovers a
 #' previous execution if `scenario$recoveryFile` is set. A R data file log of
 #' the execution is created in `scenario$logFile`.
 #'
@@ -549,7 +528,7 @@ allConfigurationsInit <- function(scenario, parameters)
 #' f_rosenbrock <- function (x) {
 #'   d <- length(x)
 #'   z <- x + 1
-#'   hz <- z[1:(d - 1L)]
+#'   hz <- z[1L:(d - 1L)]
 #'   tz <- z[2L:d]
 #'   sum(100 * (hz^2 - tz)^2 + (hz - 1)^2)
 #' }
@@ -766,6 +745,7 @@ irace_run <- function(scenario, parameters)
     options(.irace.debug.level = debugLevel)
     # Create a data frame of all configurations ever generated.
     allConfigurations <- allConfigurationsInit(scenario, parameters)
+    irace.assert(is.integer(allConfigurations[[".ID."]]))
     nbUserConfigurations <- nrow(allConfigurations)
   
     # To save the logs
@@ -848,9 +828,8 @@ irace_run <- function(scenario, parameters)
           newConfigurations <- sampleUniform(parameters,
                                              nconfigurations - nrow(allConfigurations),
                                              repair = scenario$repairConfiguration)
-          newConfigurations <-
-            cbind (.ID. = max(0L, allConfigurations[[".ID."]]) + seq_nrow(newConfigurations),
-                   newConfigurations)
+          newConfigurations <- cbind (.ID. = max(0L, allConfigurations[[".ID."]]) + seq_nrow(newConfigurations),
+                                      newConfigurations)
           allConfigurations <- rbind(allConfigurations, newConfigurations)
           rownames(allConfigurations) <- allConfigurations[[".ID."]]
         }
@@ -904,11 +883,7 @@ irace_run <- function(scenario, parameters)
       remainingBudget <- round((scenario$maxTime - timeUsed) / boundEstimate)
       experimentsUsedSoFar <- experimentsUsedSoFar + nrow(iraceResults$experimentLog)
       eliteConfigurations <- allConfigurations[allConfigurations[[".ID."]] %not_in% rejectedIDs, ,drop = FALSE]
-      # We assign this to the first iteration just in case we break early but it will be overwritten later.
-      iraceResults$iterationElites[1L] <- eliteConfigurations[[".ID."]][1L]
-      iraceResults$allElites[[1L]] <- eliteConfigurations[[".ID."]]
-
-      
+      irace.assert(is.integer(eliteConfigurations[[".ID."]]))
       # Without elitist, the racing does not re-use the results computed during
       # the estimation.  This means that the time used during estimation needs
       # to be spent again during racing, thus leaving less time for racing.  We
@@ -1038,8 +1013,7 @@ irace_run <- function(scenario, parameters)
     # Compute the current budget (nb of experiments for this iteration),
     # or take the value given as parameter.
     currentBudget <- if (scenario$nbExperimentsPerIteration == 0)
-                       computeComputationalBudget(remainingBudget, indexIteration,
-                                                  nbIterations)
+                       computeComputationalBudget(remainingBudget, indexIteration, nbIterations)
                      else scenario$nbExperimentsPerIteration
     
     # Compute the number of configurations for this race.
@@ -1179,7 +1153,7 @@ irace_run <- function(scenario, parameters)
       if (debugLevel >= 2) printModel (model)
       if (debugLevel >= 1)
         irace.note("Sample ", nbNewConfigurations, " configurations from model\n")
-      
+      irace.assert(is.integer(eliteConfigurations[[".ID."]]))
       newConfigurations <- sampleModel(parameters, eliteConfigurations,
                                        model, nbNewConfigurations,
                                        repair = scenario$repairConfiguration)
@@ -1190,19 +1164,19 @@ irace_run <- function(scenario, parameters)
       raceConfigurations <- rbind(eliteConfigurations[, colnames(newConfigurations)],
                                   newConfigurations)
       rownames(raceConfigurations) <- raceConfigurations[[".ID."]]
-                  
-      if (scenario$softRestart) {
+
+      if (scenario[["softRestart"]]) {
         #          Rprof("profile.out")
-        tmp.ids <- similarConfigurations (raceConfigurations, parameters,
-                                          threshold = scenario$softRestartThreshold)
+        restart_ids <- similarConfigurations (raceConfigurations, parameters,
+                                              threshold = scenario$softRestartThreshold)
         #          Rprof(NULL)
-        if (!is.null(tmp.ids)) {
+        if (!is.null(restart_ids)) {
           if (debugLevel >= 1)
-            irace.note("Soft restart: ", paste(collapse = " ", tmp.ids), " !\n")
-          model <- restartConfigurations (raceConfigurations, tmp.ids, model,
-                                          parameters, nbNewConfigurations)
+            irace.note("Soft restart: ", paste(collapse = " ", restart_ids), " !\n")
+          model <- restartModel(model, raceConfigurations, restart_ids,
+                                parameters, nbNewConfigurations)
           iraceResults$softRestart[indexIteration] <- TRUE
-          if (debugLevel >= 2) { printModel (model) }
+          if (debugLevel >= 2L) { printModel (model) }
           # Re-sample after restart like above
           #cat("# ", format(Sys.time(), usetz=TRUE), " sampleModel()\n")
           newConfigurations <- sampleModel(parameters, eliteConfigurations,
@@ -1210,8 +1184,8 @@ irace_run <- function(scenario, parameters)
                                            repair = scenario$repairConfiguration)
           #cat("# ", format(Sys.time(), usetz=TRUE), " sampleModel() DONE\n")
           # Set ID of the new configurations.
-          newConfigurations <- cbind (.ID. = max(0L, allConfigurations[[".ID."]]) + 
-                                  seq_nrow(newConfigurations), newConfigurations)
+          newConfigurations <- cbind(.ID. = max(0L, allConfigurations[[".ID."]]) + 
+                                       seq_nrow(newConfigurations), newConfigurations)
           raceConfigurations <- rbind(eliteConfigurations[, colnames(newConfigurations)],
                                       newConfigurations)
           rownames(raceConfigurations) <- raceConfigurations[[".ID."]]
@@ -1268,7 +1242,7 @@ irace_run <- function(scenario, parameters)
     iraceResults$experiments <- merge.matrix (iraceResults$experiments,
                                               raceResults$experiments)
                                              
-    if (length(raceResults$rejectedIDs) > 0) {
+    if (length(raceResults$rejectedIDs) > 0L) {
       rejectedIDs <- c(rejectedIDs, raceResults$rejectedIDs)
       iraceResults$rejectedConfigurations <- rejectedIDs
       parameters$forbidden <- c(parameters$forbidden,

@@ -202,7 +202,7 @@ testing_fromlog <- function(logFile, testNbElites, testIterationElites,
 #' @export
 testing_fromfile <- function(filename, scenario)
 {
-  irace.note ("Checking scenario\n")
+  irace.note ("Checking scenario.\n")
   scenario <- checkScenario(scenario)
   if (!scenario$quiet) printScenario(scenario)
 
@@ -211,12 +211,12 @@ testing_fromfile <- function(filename, scenario)
                                 digits = scenario$digits)
   configurations <- readConfigurationsFile(filename, parameters)
   configurations <- cbind(.ID. = seq_nrow(configurations), configurations, .PARENT. = NA_integer_)
-  rownames(configurations) <- configurations$.ID.
+  rownames(configurations) <- configurations[[".ID."]]
   num <- nrow(configurations)
   configurations <- checkForbidden(configurations, parameters$forbidden)
   if (nrow(configurations) < num) {
     irace.warning("Some of the configurations in the configurations file were forbidden",
-                  "and, thus, discarded")
+                  "and, thus, discarded.")
   }
   # To save the logs
   iraceResults <- list(scenario = scenario,

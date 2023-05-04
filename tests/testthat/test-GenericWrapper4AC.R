@@ -10,7 +10,7 @@ test_that("GenericWrapper4AC", {
    cost "cost" r (0.1, 1.00)
    runtime "runtime" r (0.1, 1.00)')
 
-  configurations <- data.frame(.ID. = 1, cost = 0.5, runtime = 0.8)
+  configurations <- data.frame(.ID. = 1L, cost = 0.5, runtime = 0.8)
 
   instances = c("time", "cost", "cost+time")
   names(instances) = instances
