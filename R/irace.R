@@ -118,7 +118,7 @@ similarConfigurations <- function(configurations, parameters, threshold)
   vecNum <- parameters$names[!p & !parameters$isFixed]
 
   irace.assert(all(parameters$types[vecCat] %in% c("c","o")))
-  irace.assert(all(!(parameters$types[vecNum] %in% c("c","o"))))
+  irace.assert(all(parameters$types[vecNum] %not_in% c("c","o")))
   irace.assert(length(intersect(vecCat, vecNum)) == 0)
 
   nbCater <- length(vecCat)

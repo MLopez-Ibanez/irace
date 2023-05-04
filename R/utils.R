@@ -482,7 +482,7 @@ configurations.print.command <- function(configurations, parameters)
 mpiInit <- function(nslaves, debugLevel = 0)
 {
   # Load the Rmpi package if it is not already loaded.
-  if (! ("Rmpi" %in% loadedNamespaces())) {
+  if ("Rmpi" %not_in% loadedNamespaces()) {
     if (! suppressPackageStartupMessages
         (requireNamespace("Rmpi", quietly = TRUE)))
       irace.error("The 'Rmpi' package is required for using MPI")
@@ -667,7 +667,7 @@ ceiling.digits <- function(x, digits)
 is.file.extension <- function(filename, ext)
   substring(filename, nchar(filename) + 1 - nchar(ext)) == ext
 
-# Same as !(x %in% table)
+# Same as !(x %in% table). Package data.table has %notin%.
 "%not_in%" <- function(x, table) match(x, table, nomatch = 0L) == 0L
 
 irace_save_logfile <- function(iraceResults, scenario)

@@ -450,7 +450,7 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
   
     best.configuration <- aconfigurations[best_id,,drop=FALSE]
     best.id <- best.configuration$.ID.
-    param.names <- param.names[!(param.names %in% best.change)]
+    param.names <- param.names[param.names %not_in% best.change]
     step <- step + 1
   }
   
