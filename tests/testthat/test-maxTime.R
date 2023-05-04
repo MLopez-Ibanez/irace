@@ -31,7 +31,7 @@ time.irace <- function(...)
   irace:::checkTargetFiles(scenario = scenario, parameters = parameters)
   
   confs <- irace(scenario = scenario, parameters = parameters)
-  final_ids <- as.character(sort(confs$.ID.[1:scenario$testNbElites]))
+  final_ids <- sort(as.character(confs$.ID.[1:scenario$testNbElites]))
   expect_gt(nrow(confs), 0L)
   testing_fromlog(scenario$logFile)
   iraceResults <- read_logfile(scenario$logFile)

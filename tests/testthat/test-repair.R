@@ -20,6 +20,7 @@ repair_irace <- function(targetRunner, repair)
   final_ids <- as.character(sort(confs$.ID.[1:scenario$testNbElites]))
   expect_gt(nrow(confs), 0L)
 }
+
 target_sum2one <- function(experiment, scenario)
 {
   configuration <- experiment$configuration

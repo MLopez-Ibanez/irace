@@ -2,70 +2,73 @@ withr::with_output_sink("test-readconfs.Rout", {
 
 params <- irace::readParameters("parameters.txt")
 
+expect_error_readconfs <- function(table, exp)
+  expect_error(irace::readConfigurationsFile(text=table, parameters = params), exp)
+
 test_that("checkDuplicates", {
-  expect_error(irace::readConfigurationsFile(text='
+  expect_error_readconfs('
 param1 param2 mode   real mutation
 5        NA    "x2"   4.0   "low"
 1        NA    "x2"   4.0   "low"
 5        NA    "x2"   4.0   "low"
 NA        NA   "x3"   4.5   "low"
-', parameters = params), "Duplicated")
+', "Duplicated")
 
-  expect_error(irace::readConfigurationsFile(text='
+  expect_error_readconfs('
 param1 param2 mode   real mutation
 5        NA    "x2"   4.0   "low"
 1        NA    "x2"   4.0   "low"
 5        NA    "x2"   4.0   "low"
 1        NA    "x2"   4.0   "low"
-', parameters = params), "Duplicated")
+', "Duplicated")
 
 })
 
 test_that("parameter values", {
-  expect_error(irace::readConfigurationsFile(text='
+  expect_error_readconfs('
 param1 param2 mode   real mutation
 5       NA    "x2"   4.0   "low"
 1       NA    "x2"   4.0   "low"
 11      NA    "x2"   4.0   "low"
-', parameters = params), "is not within the valid range")
-  expect_error(irace::readConfigurationsFile(text='
+', "is not within the valid range")
+  expect_error_readconfs('
 param1 param2 mode   real mutation
 5       NA    "x2"   4.0   "low"
 1       NA    "x2"   4.5001 "low"
-', parameters = params), "is not within the valid range")
-  expect_error(irace::readConfigurationsFile(text='
+', "is not within the valid range")
+  expect_error_readconfs('
 param1 param2 mode   real mutation
 5       NA    "x2"   4.0   "low"
 1.1     NA    "x2"   4.5   "low"
-', parameters = params), "is not an integer")
-  expect_error(irace::readConfigurationsFile(text='
+', "is not an integer")
+  expect_error_readconfs('
 param1 param2 mode   real mutation
 5       NA    "x2"   4.0   "low"
 1       NA    "x2"   4.5   "lower"
-', parameters = params), "is not among the valid values")
-  expect_error(irace::readConfigurationsFile(text='
+', "is not among the valid values")
+  expect_error_readconfs('
 param1 param2 mode   real mutation
 5       NA    "x3"   4.0   "low"
 1       NA    "x2"   4.5   "low"
-', parameters = params), "is not enabled")
+', "is not enabled")
 })
 
 test_that("parameter names", {
-  expect_error(irace::readConfigurationsFile(text='
+  expect_error_readconfs('
 param1 param0 mode   real mutation
 5        NA    "x2"   4.0   "low"
 1        NA    "x2"   4.0   "low"
-', parameters = params), "do not match")
-  expect_error(irace::readConfigurationsFile(text='
+', "do not match")
+  expect_error_readconfs('
 param1 mode   real mutation
 5       "x2"   4.0   "low"
 1       "x2"   4.0   "low"
-', parameters = params), "are missing")
-  expect_error(irace::readConfigurationsFile(text='
+', "are missing")
+  expect_error_readconfs('
 param1 param2 mode   real mutation param3
 5        NA    "x2"   4.0   "low"  NA
 1        NA    "x2"   4.0   "low"  NA
-', parameters = params), "do not match")
+', "do not match")
 })
 
 }) # withr::with_output_sink
