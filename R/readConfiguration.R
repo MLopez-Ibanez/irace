@@ -34,7 +34,7 @@
 readConfigurationsFile <- function(filename, parameters, debugLevel = 0, text)
 {
   if (missing(filename) && !missing(text)) {
-    filename <- strcat("text=", deparse(substitute(text)))
+    filename <- NULL
     configurationTable <- read.table(text = text, header = TRUE,
                                      na.strings = c("NA", "<NA>"),
                                      colClasses = "character",
@@ -48,8 +48,8 @@ readConfigurationsFile <- function(filename, parameters, debugLevel = 0, text)
   }
   irace.assert(is.data.frame(configurationTable))
   nbConfigurations <- nrow(configurationTable)
-  # Print the table that has been read.
-  cat("# Read ", nbConfigurations, " configuration(s) from file '", filename, "'\n", sep="")
+  cat("# Read ", nbConfigurations, " configuration(s)",
+      if (is.null(filename)) "\n" else paste0("from file '", filename, "'\n"), sep="")
   fix_configurations(configurationTable, parameters, debugLevel = debugLevel,
                      filename = filename)
 }
@@ -86,7 +86,7 @@ fix_configurations <- function(configurations, parameters, debugLevel = 0, filen
       if (is.null(filename)) {
         irace.error("The parameter names (",
                     strlimit(paste(missing, collapse=", ")),
-                    ") are missing from configurations provided.")
+                    ") are missing from the configurations provided.")
       } else {
         irace.error("The parameter names (",
                     strlimit(paste(missing, collapse=", ")),
@@ -152,7 +152,7 @@ fix_configurations <- function(configurations, parameters, debugLevel = 0, filen
             return(NULL)
           }
           # type == "o" or "c"
-        } else if (!(currentValue %in% paramDomain(currentParameter, parameters))) {
+        } else if (currentValue %not_in% paramDomain(currentParameter, parameters)) {
           irace.error ("Configuration number ", k,
                        if (is.null(filename)) "" else paste0(" from file ", filename),
                        " is invalid because the value \"",
