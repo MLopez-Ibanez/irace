@@ -24,6 +24,7 @@ Imports:
         utils,
         compiler,
         fs,
+        data.table (>= 1.15.0),
         matrixStats,
         R6,
         withr

@@ -12,7 +12,7 @@
    and will give an error if present.  Forbidden configurations are now
    specified in the parameter space description. See the example in
    `readParameters()`.
- 
+   
  * The command-line executables `irace` and `ablation` (`irace.exe` and
    `ablation.exe` in Windows) will load the version of the `irace` package that
    is found in the same path where the executables are. In earlier versions,
@@ -38,9 +38,10 @@
    a different version of irace, since such attempts typically end up in errors
    that are difficult to understand.
    
- * irace warns about using `'&&'` and `'||'` instead of `'&'` and `'|'` in parameter conditions.
-   A future version of irace will reject those uses as errors.
-
+ * irace warns about using `'&&'` and `'||'` instead of `'&'` and `'|'` in
+   parameter conditions and forbidden expressions. A future version of irace
+   will reject those uses as errors.
+   
  * The internal function `irace.reload.debug()` has been removed.
    Use `devtools::reload()` instead.
  
@@ -62,6 +63,8 @@
 
 ## New features and improvements
 
+ * `sampleUniform()` and `sampleModel()` are significantly faster thanks to using [`data.table`](https://r-datatable.com).
+ 
  * Ablation will report configurations that produced the same results, which
    points to parameter values that have the same effect on the target algorithm,
    possibly indicating a bug in the target algorithm.

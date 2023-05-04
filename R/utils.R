@@ -713,3 +713,5 @@ do_nothing <- function(...) invisible()
 
 seq_nrow <- function(x) seq_len(nrow(x))
 
+clamp <- function(x, lower, upper) pmax.int(lower, pmin.int(x, upper))
+

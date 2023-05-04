@@ -3,7 +3,7 @@
 #' \packageDescription{irace}
 #'
 #' @name irace-package
-#' @import stats utils compiler matrixStats withr
+#' @import stats utils compiler matrixStats withr data.table
 #' @importFrom R6 R6Class
 #' @importFrom grDevices dev.off pdf
 #' @importFrom graphics abline axis boxplot par plot points strwidth bxp grid
