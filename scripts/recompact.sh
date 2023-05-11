@@ -1,4 +1,6 @@
 #!/bin/bash
+set -u
+set -o pipefail
 TARGZFILE=$1
 PDFFILE=$2
 TMP_DIR=$(mktemp -d)
@@ -17,7 +19,7 @@ if [ ! -r "$PDFFILE" ]; then
 fi
 echo Before: $(du -h "$PDFFILE")
 BEFORE_SIZE=$(stat -c%s "$PDFFILE")
-gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite $GS_OTPIONS -sOutputFile="$PDFFILE-tmp" "$PDFFILE"
+gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite $GS_OPTIONS -sOutputFile="$PDFFILE-tmp" "$PDFFILE"
 echo After gs: $(du -h "$PDFFILE-tmp")
 AFTER_SIZE=$(stat -c%s "$PDFFILE-tmp")
 if (( BEFORE_SIZE > AFTER_SIZE)); then
