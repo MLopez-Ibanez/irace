@@ -314,8 +314,6 @@ paramUpperBound <- function (paramName, parameters)
 
 inNumericDomain <- function(value, domain) (value >= domain[1] && value <= domain[2])
 
-nbParam <- function (parameters) length(parameters$names)
-
 ## This function takes two matrices x and y and merges them such that the
 ## resulting matrix z has:
 # rownames(z) <- setunion(rownames(x), rownames(y)) and 
