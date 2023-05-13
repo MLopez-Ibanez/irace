@@ -71,34 +71,32 @@ jobs:
           needs: check
           cache-version: 1
 
-      - name: Check (NOT CRAN)
-        if: success()
-        env:
-          NOT_CRAN: true
-        run: |
-          options(crayon.enabled = TRUE)
-          rcmdcheck::rcmdcheck(args = c("--no-manual", "--run-donttest","--timings"), error_on = "warning", check_dir = "check")
-        shell: Rscript {0}
-
-      - name: Check (CRAN)
+      - name: Check (as CRAN)
         env:
           NOT_CRAN: false
-        run: |
-          options(crayon.enabled = TRUE)
-          rcmdcheck::rcmdcheck(build_args=c("--compact-vignettes=gs+qpdf"), args = c("--no-manual", "--as-cran"), error_on = "warning", check_dir = "check")
-        shell: Rscript {0}
-
+        uses: r-lib/actions/check-r-package@v2
+        with:
+          args: 'c("--no-manual", "--as-cran")'
+          build_args: 'c("--compact-vignettes=gs+qpdf")'
+      
+      - name: Check
+        env:
+          NOT_CRAN: true
+        uses: r-lib/actions/check-r-package@v2
+        with:
+          args: 'c("--no-manual", "--run-donttest", "--timings")'
+          
       - name: Show testthat output
         if: failure()
         run: find check -name 'testthat.Rout*' -exec cat '{}' \; || true
         shell: bash
         
-      - name: Upload check results
-        if: failure()
-        uses: actions/upload-artifact@main
-        with:
-          name: ${{ runner.os }}-r${{ matrix.config.r }}-results
-          path: check
+      # - name: Upload check results
+      #   if: failure()
+      #   uses: actions/upload-artifact@main
+      #   with:
+      #     name: ${{ runner.os }}-r${{ matrix.config.r }}-results
+      #     path: check
 
   coverage:
     needs: R-CMD-check
