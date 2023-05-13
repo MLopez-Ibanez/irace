@@ -346,7 +346,7 @@ race_common_header <-  "# Markers:
      - The test is performed and some configurations are discarded.
      = The test is performed but no configuration is discarded.
      ! The test is performed and configurations could be discarded but elite configurations are preserved.
-     . All alive configurations are elite and nothing is discarded\n\n"
+     . All alive configurations are elite and nothing is discarded.\n\n"
 
 race_print_header_nocap <- function()
   cat(sep = "", race_common_header, nocap_hline, nocap_header, nocap_hline)
