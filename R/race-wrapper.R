@@ -426,14 +426,10 @@ run_target_runner <- function(experiment, scenario)
     args <- expand_target_cmdline(scenario$targetCmdline, experiment, targetRunner,
                                   targetRunnerArgs=buildCommandLine(configuration, switches))
   }
-  error <- "targetRunner"
   targetRunnerLauncher <- scenario$targetRunnerLauncher
-  if (!is.null.or.empty(targetRunnerLauncher)) {
-    file.check (targetRunner, readable = TRUE, text = "target runner ")
+  if (!is.null.or.empty(targetRunnerLauncher))
     targetRunner <- targetRunnerLauncher
-    error <- "targetRunnerLauncher"
-  }
-  file.check(targetRunner, executable = TRUE, text = error)
+  
   output <- runcommand(targetRunner, args, configuration.id, debugLevel, timeout = scenario$targetRunnerTimeout)
   list(cmd=targetRunner, output=output, args=args)
 }
