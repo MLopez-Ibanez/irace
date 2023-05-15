@@ -47,7 +47,7 @@ buildCommandLine <- function(values, switches)
   values <- as.list(values)
   switches <- switches[!is.na(values)]
   values <- values[!is.na(values)]
-  values <- format(values, digits=15, scientific=FALSE)
+  values <- format.default(values, digits=15, scientific=FALSE)
   paste0(switches, values, collapse=" ")
 }
 
