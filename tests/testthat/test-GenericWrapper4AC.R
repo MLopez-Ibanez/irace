@@ -1,6 +1,7 @@
 # This requires the installation of https://github.com/automl/GenericWrapper4AC
 test_that("GenericWrapper4AC", {
   skip_on_cran()
+  skip_on_coverage()
   skip_on_ci()
   skip_on_travis()
   skip_on_os("mac")

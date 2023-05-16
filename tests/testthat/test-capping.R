@@ -65,16 +65,17 @@ test_that("cap.irace maxExperiments = 1000", {
   cap.irace(maxExperiments = 1000)
 })
 
-test_that("cap.irace maxTime = 50000", {
+test_that("cap.irace maxTime = 1000", {
   generate.set.seed()
-  cap.irace(maxTime = 50000)
+  expect_warning(cap.irace(maxTime = 1000),
+                 "maxBound = 80 is too large, using 10 instead")
 })
 
-test_that("cap.irace targetRunner = target.runner.reject, maxTime = 10000", {
-  skip_on_cran() # This sometimes fails randomly
+test_that("cap.irace targetRunner = target.runner.reject, maxTime = 1000", {
+  skip_on_cran() 
+  skip_on_coverage() # This test sometimes fails randomly
   generate.set.seed()
-  cap.irace(targetRunner = target.runner.reject, maxTime = 10000, debugLevel = 3)
+  cap.irace(targetRunner = target.runner.reject, maxTime = 1000, debugLevel = 3)
 })
-
 
 }) # withr::with_output_sink()

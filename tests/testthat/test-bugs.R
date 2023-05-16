@@ -45,6 +45,7 @@ x "" o (a,b,c,d)
 
 test_that("non-normal", {
   skip_on_cran()
+  skip_on_coverage()
   df <- as.matrix(read.table(text='
 0.007858276 0.007934570 0.007949829
 0.009384155 0.009521484 0.009719849

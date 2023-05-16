@@ -111,5 +111,4 @@ test_that("large newInstances", {
   sann.irace(instances = weights, elitistNewInstances = 6, elitistLimit = 2)
 })
 
-
 }) # withr::with_output_sink()

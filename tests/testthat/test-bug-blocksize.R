@@ -2,7 +2,7 @@
 withr::with_output_sink("test-bug-blocksize.Rout", {
 test_that("bug blocksize", {
   skip_on_cran()
-
+  skip_on_coverage()
 parameters.txt <- '
 algorithm    "--"             c    (as,mmas,eas,ras,acs)
 localsearch  "--localsearch " c    (0, 1, 2, 3)

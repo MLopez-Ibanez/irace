@@ -127,26 +127,38 @@ jobs:
 
       - name: Test coverage
         env:
-          NOT_CRAN: false
+          NOT_CRAN: true
+          COVR_COVERAGE: true
         run: |
-          # options(covr.gcov="") # Bug in covr
-          # covr::codecov(type="all", quiet=FALSE)
-          covr::codecov(type="all", quiet=FALSE, clean=FALSE)
+          options(covr.fix_parallel_mcexit = TRUE)
+          coverage <- covr::package_coverage(type = "all",
+                                             quiet = FALSE, clean = FALSE,
+                                             install_path = file.path(Sys.getenv("RUNNER_TEMP"), "package"))
+          print(coverage)
+          covr::codecov(coverage = coverage)
         shell: Rscript {0}
 
-      - name: Move output to log dir
+        
+      - name: Show testthat output
+        if: always()
+        run: |
+          ## --------------------------------------------------------------------
+          find ${{ runner.temp }}/package -name 'testthat.Rout*' -exec cat '{}' \; || true
+        shell: bash
+        
+      - name: Show failures
         if: failure()
         run: |
-          find /tmp/ -name 'irace-tests' -type d | xargs -I 'X' find 'X' -name 'testthat.Rout*' -exec cat '{}' \; || true
-          find /tmp/ -name 'irace-tests' -type d -exec mv '{}' covr-log \; || true
+          ## --------------------------------------------------------------------
+          find ${{ runner.temp }}/package -type d | xargs -I 'X' find 'X' -name 'testthat.Rout*' -exec cat '{}' \; || true
         shell: bash
 
       - name: Upload test results
         if: failure()
         uses: actions/upload-artifact@main
         with:
-          name: covr-log
-          path: covr-log
+          name: coverage-test-failures
+          path: ${{ runner.temp }}/package
 
   pkgdown:
     needs: R-CMD-check

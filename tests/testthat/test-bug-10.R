@@ -2,6 +2,7 @@
 withr::with_output_sink("test-bug-10.Rout", {
 test_that("bug 10", {
   skip_on_cran()
+  skip_on_coverage()
 
 parameters.txt <- '
 algorithm    "--"             c    (as,mmas,eas,ras,acs)
