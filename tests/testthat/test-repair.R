@@ -17,8 +17,8 @@ repair_irace <- function(targetRunner, repair)
   scenario <- checkScenario (scenario)
   irace:::checkTargetFiles(scenario = scenario, parameters = parameters)
   confs <- irace(scenario = scenario, parameters = parameters)
-  final_ids <- as.character(sort(confs$.ID.[1:scenario$testNbElites]))
   expect_gt(nrow(confs), 0L)
+  confs
 }
 
 target_sum2one <- function(experiment, scenario)
@@ -64,12 +64,14 @@ repair_order <- function(configuration, parameters)
 
 test_that("repair: sum to one", {
   generate.set.seed()
-  repair_irace(target_sum2one, repair_sum2one)
+  confs <- repair_irace(target_sum2one, repair_sum2one)
+  expect_equal(unique(apply(confs[, c("p1", "p2", "p3")], 1L, sum)), 1)
 })
 
 test_that("repair: increasing order", {
   generate.set.seed()
-  repair_irace(target_order, repair_order)
+  confs <- repair_irace(target_order, repair_order)
+  expect_true(all(apply(confs[, c("p1", "p2", "p3")], 1L, diff) >= 0))
 })
 
 }) # withr::with_output_sink()
