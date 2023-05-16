@@ -21,21 +21,25 @@
 ## Christopher Jackson <chris.jackson at mrc-bsu.cam.ac.uk>
 # 
 # Package: msm
-# Version: 1.2
-# Date: 2013-05-14
-# Title: Multi-state Markov and hidden Markov models in continuous time
+# Version: 1.7.1
+# Date: 2023-03-23
+# Title: Multi-State Markov and Hidden Markov Models in Continuous Time
 # Author: Christopher Jackson <chris.jackson@mrc-bsu.cam.ac.uk>
 # Maintainer: Christopher Jackson <chris.jackson@mrc-bsu.cam.ac.uk>
-# Description: Functions for fitting general continuous-time Markov and
-#         hidden Markov multi-state models to longitudinal data.  A
-#         variety of observation schemes are supported, including
-#         processes observed at arbitrary times (panel data),
-#         continuously-observed processes, and censored states. Both
-#         Markov transition rates and the hidden Markov output process
-#         can be modelled in terms of covariates, which may be constant
-#         or piecewise-constant in time.
+# Description: Functions for fitting continuous-time Markov and hidden
+#     Markov multi-state models to longitudinal data.  Designed for
+#     processes observed at arbitrary times in continuous time (panel data)
+#     but some other observation schemes are supported. Both Markov
+#     transition rates and the hidden Markov output process can be modelled
+#     in terms of covariates, which may be constant or piecewise-constant
+#     in time.
 # License: GPL (>= 2)
-# Repository: CRAN
+# Imports:
+#     survival,mvtnorm,expm
+# Suggests:
+#     mstate,minqa,doParallel,foreach,numDeriv,testthat,flexsurv
+# URL: https://github.com/chjackson/msm
+# # Repository: CRAN
 
 ## Rejection sampling algorithm by Robert (Stat. Comp (1995), 5, 121-5)
 ## for simulating from the truncated normal distribution.
@@ -44,6 +48,7 @@ rtnorm <- function (n, mean = 0, sd = 1, lower = -Inf, upper = Inf) {
     if (length(n) > 1)
         n <- length(n)
     mean <- rep_len(mean, n)
+    sd <- pmax.int(sd, 1e-15) # Small values of sd break the function.
     sd <- rep_len(sd, n)
     lower <- rep_len(lower, n)
     upper <- rep_len(upper, n)
@@ -51,16 +56,18 @@ rtnorm <- function (n, mean = 0, sd = 1, lower = -Inf, upper = Inf) {
     upper <- (upper - mean) / sd
     ind <- seq_len(n)
     ret <- numeric(n)
+    nas <- is.na(mean) | is.na(sd) | is.na(lower) | is.na(upper)
+    if (any(nas)) warning("NAs produced")
     ## Different algorithms depending on where upper/lower limits lie.
     alg <- ifelse(
-                  lower > upper,
-                  -1,# return NaN if lower > upper
+                  ((lower > upper) | nas),
+                  -1,# return NaN
                   ifelse(
                          ((lower < 0 & upper == Inf) |
                           (lower == -Inf & upper > 0) |
                           (is.finite(lower) & is.finite(upper) & (lower < 0) & (upper > 0) & (upper-lower > sqrt(2*pi)))
                           ),
-                         0, # standard "simulate from normal and reject if outside limits" method. Use if bounds are wide.  FIXME HSOULD BE 
+                         0, # standard "simulate from normal and reject if outside limits" method. Use if bounds are wide.
                          ifelse(
                                 (lower >= 0 & (upper > lower + 2*sqrt(exp(1)) /
                                  (lower + sqrt(lower^2 + 4)) * exp((lower*2 - lower*sqrt(lower^2 + 4)) / 4))),
@@ -69,7 +76,7 @@ rtnorm <- function (n, mean = 0, sd = 1, lower = -Inf, upper = Inf) {
                                        (-upper + sqrt(upper^2 + 4)) * exp((upper*2 - -upper*sqrt(upper^2 + 4)) / 4)),
                                        2, # rejection sampling with exponential proposal. Use if upper << mean.
                                        3)))) # rejection sampling with uniform proposal. Use if bounds are narrow and central.
-    
+
     ind.nan <- ind[alg==-1]; ind.no <- ind[alg==0]; ind.expl <- ind[alg==1]; ind.expu <- ind[alg==2]; ind.u <- ind[alg==3]
     ret[ind.nan] <- NaN
     while (length(ind.no) > 0) {
