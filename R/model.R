@@ -20,7 +20,7 @@ initialiseModel <- function (parameters, configurations)
     nbValues <- length(parameters$domain[[currentParameter]])
     if (type == "c") {
       value <- rep((1 / nbValues), nbValues)
-    } else if (type %in% c("i","r")) {
+    } else if (type == "r" || type == "i") {
       value <- init.model.numeric(currentParameter, parameters)
     } else {
       irace.assert(type == "o")
@@ -31,7 +31,7 @@ initialiseModel <- function (parameters, configurations)
     for (indexConfig in seq_len(nbConfigurations)) {
       idCurrentConfig <- as.character(configurations[indexConfig, ".ID."])
       # Assign current parameter value to model
-      if (type %in% c("i","r")) {
+      if (type == "r" || type == "i") {
         value[2] <- configurations[indexConfig, currentParameter]
       }
       param[[idCurrentConfig]] <- value
@@ -135,7 +135,7 @@ restartConfigurations <- function (configurations, restart.ids, model, parameter
   # FIXME: This loop is very slow!
   for (param in parameters$names[!parameters$isFixed]) {
     for (id in restart.ids) {
-      if (!(id %in% names(model[[param]]))) {
+      if (id %not_in% names(model[[param]])) {
         # FIXME: This indexing is slow!
         id <- configurations[configurations$.ID. == id, ".PARENT."]
       }
