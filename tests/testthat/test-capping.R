@@ -65,7 +65,7 @@ test_that("cap.irace maxExperiments = 1000", {
   cap.irace(maxExperiments = 1000)
 })
 
-test_that("cap.irace maxExperiments = 50000", {
+test_that("cap.irace maxTime = 50000", {
   generate.set.seed()
   cap.irace(maxTime = 50000)
 })
