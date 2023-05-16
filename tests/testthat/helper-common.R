@@ -38,8 +38,7 @@ f_ackley <- function (x,y, nsize = 0.01) {
   # to [0,100]
   fmin <- 0
   fmax <- 15*(1+nsize)
-  f <- ((f - fmin) / (fmax-fmin)) * (100-0) + 0
-  return(f)
+  ((f - fmin) / (fmax-fmin)) * (100-0) + 0
 }
 
 f_goldestein_price <- function (x,y, nsize = 0.01) {
@@ -61,8 +60,7 @@ f_goldestein_price <- function (x,y, nsize = 0.01) {
   # to [0,100]
   fmin <- 0
   fmax <- 1000000*(1+nsize)
-  f <- ((f - fmin) / (fmax-fmin)) * (100-0) + 0
-  return(f)
+  ((f - fmin) / (fmax-fmin)) * (100-0) + 0
 }
 
 f_matyas <- function (x,y, nsize = 0.01) {
@@ -82,8 +80,7 @@ f_matyas <- function (x,y, nsize = 0.01) {
   # to [0,100]
   fmin <- 0
   fmax <- 100*(1+nsize)
-  f <- ((f - fmin) / (fmax-fmin)) * (100-0) + 0
-  return(f)
+  ((f - fmin) / (fmax-fmin)) * (100-0) + 0
 }
 
 f_himmelblau <- function (x,y, nsize = 0.01) {  
@@ -94,7 +91,6 @@ f_himmelblau <- function (x,y, nsize = 0.01) {
   x <- (x*(vmax-vmin)) + vmin
   y <- (y*(vmax-vmin)) + vmin
   
-  
   f <- (x^2 + y - 11)^2 + (x + y^2 - 7)^2
   # Simulating stochasticity
   noise <- runif(1, min = (1-nsize), max = (1+nsize))
@@ -104,6 +100,5 @@ f_himmelblau <- function (x,y, nsize = 0.01) {
   # to [0,100]
   fmin <- 0
   fmax <- 2000*(1+nsize)
-  f <- ((f - fmin) / (fmax-fmin)) * (100-0) + 0
-  return(f)
+  ((f - fmin) / (fmax-fmin)) * (100-0) + 0
 }
