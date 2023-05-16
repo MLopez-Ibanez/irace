@@ -15,6 +15,6 @@ rasrank         "--rasranks "        i  	(1, 100) 		| algorithm %in% c("ras")
 elitistants     "--elitistants "     i  	(1, 750) 		| algorithm %in% c("eas")
 
 [forbidden]
-(alpha == 0) && (beta == 0)
+(alpha == 0) & (beta == 0)
 
 

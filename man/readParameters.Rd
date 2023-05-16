@@ -87,7 +87,7 @@ potential user errors.
  dlb          "--dlb "         c     (0, 1)               | localsearch \%in\% c(1,2,3)
  
  [forbidden]
- (alpha == 0.0) && (beta == 0.0)
+ (alpha == 0.0) & (beta == 0.0)
  '
  parameters <- readParameters(text=parameters.table)
  str(parameters)

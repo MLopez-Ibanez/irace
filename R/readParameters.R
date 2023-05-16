@@ -70,7 +70,7 @@
 #'  dlb          "--dlb "         c     (0, 1)               | localsearch %in% c(1,2,3)
 #'  
 #'  [forbidden]
-#'  (alpha == 0.0) && (beta == 0.0)
+#'  (alpha == 0.0) & (beta == 0.0)
 #'  '
 #'  parameters <- readParameters(text=parameters.table)
 #'  str(parameters)
@@ -202,6 +202,25 @@ readParameters <- function (file, digits = 4L, debugLevel = 0L, text)
     irace.error (paste0 (...),
                  " at ", filename, ", line ", line, context)
   }
+  
+  warnReadParameters <- function(filename, line, context, ...)
+  {
+    if (!is.null (context)) {
+      context <- paste0(" when reading: \"", context, "\"")
+    }
+    irace.warning (paste0 (...),
+                   " at ", filename, ", line ", line, context)
+  }
+
+  parse_condition <- function(s, filename, nbLines, line, context) {
+    if (grepl("||", s, fixed=TRUE) || grepl("&&", s, fixed=TRUE)) {
+      warnReadParameters (filename, nbLines, line,
+                          paste0("Please use '&' and '|' instead of '&&' and '|'", context))
+      s <- gsub("||", "|", fixed=TRUE, gsub("&&", "&", fixed=TRUE, s))
+    }
+    str2expression(s)
+  }
+  
 
   transform.domain <- function(transf, domain, type)
   {
@@ -285,12 +304,14 @@ readParameters <- function (file, digits = 4L, debugLevel = 0L, text)
   count <- 0
   forbidden <- NULL
   has_forbidden <- FALSE
+
   for (line in lines) {
     nbLines <- nbLines + 1
     if (nchar(line) == 0) next
     
     if (has_forbidden) {
-      exp <- str2expression(line)
+      # FIXME: Better error reporting.
+      exp <- parse_condition(line, filename, nbLines, line, " for forbidden expressions")
       forbidden <- c(forbidden, exp)
       next
     }
@@ -455,11 +476,9 @@ readParameters <- function (file, digits = 4L, debugLevel = 0L, text)
                            "expected condition after '|'")
       # FIXME: Provide a better error for invalid conditions like "a 2 0"
       conditions[[param.name]] <- NA
-      # keep.source = FALSE avoids adding useless attributes.
-      try(conditions[[param.name]] <- parse(text=result$match, keep.source = FALSE))
-      if (!is.expression (conditions[[param.name]]))
-        errReadParameters (filename, nbLines, line,
-                           "invalid condition after '|'")
+      try(conditions[[param.name]] <- parse_condition(result$match, filename, nbLines, line, " for condition"))
+      if (!is.expression(conditions[[param.name]]))
+        errReadParameters (filename, nbLines, line, "invalid condition after '|'")
       line <- result$line
     } else if (!is.null(result$line) && nchar(result$line)) {
       errReadParameters (filename, nbLines, line,
@@ -507,9 +526,6 @@ readParameters <- function (file, digits = 4L, debugLevel = 0L, text)
   if (length(forbidden)) {
     irace.note(length(forbidden), " expression(s) specifying forbidden configurations read.\n")
     check_forbidden_params(forbidden, parameters$names)
-    # FIXME: Using && or || instead of & and | will not work. Detect
-    # this and give an error to the user.
-
     # FIXME: Instead of a list, we should generate a single expression that is
     # the logical-OR of all elements of the list.
     # First we would need to handle the "is.na(x) | !(x)" case here.
@@ -743,7 +759,7 @@ checkParameters <- function(parameters)
 #'  dlb          "--dlb "         c     (0, 1)               | localsearch %in% c(1,2,3)
 #'  
 #'  [forbidden]
-#'  (alpha == 0.0) && (beta == 0.0)
+#'  (alpha == 0.0) & (beta == 0.0)
 #' '
 #' parameters <- readParameters(text=parameters.table)
 #' printParameters(parameters)
