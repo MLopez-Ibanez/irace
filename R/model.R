@@ -12,33 +12,32 @@
 # .ID. of the configuration. 
 initialiseModel <- function (parameters, configurations)
 {
-  model <- list()
   nbConfigurations <- nrow(configurations)
-  
-  for (currentParameter in parameters$names[!parameters$isFixed]) {
+  ids <- as.character(configurations[[".ID."]])
+  param_names <- parameters$names[!parameters$isFixed]
+  model <- setNames(vector("list", length(param_names)), param_names)
+                    
+  for (currentParameter in param_names) {
     type <- parameters$types[[currentParameter]]
-    nbValues <- length(parameters$domain[[currentParameter]])
-    if (type == "c") {
-      value <- rep((1 / nbValues), nbValues)
-    } else if (type == "r" || type == "i") {
+    if (type == "r" || type == "i") {
       value <- init.model.numeric(currentParameter, parameters)
-    } else {
-      irace.assert(type == "o")
-      value <- (nbValues - 1) / 2
-    }
-
-    param <- list()
-    for (indexConfig in seq_len(nbConfigurations)) {
-      idCurrentConfig <- as.character(configurations[indexConfig, ".ID."])
       # Assign current parameter value to model
-      if (type == "r" || type == "i") {
-        value[2] <- configurations[indexConfig, currentParameter]
+      param <- mapply(c, value, configurations[[currentParameter]],
+                      SIMPLIFY=FALSE, USE.NAMES=FALSE)
+    } else {
+      nbValues <- length(parameters$domain[[currentParameter]])
+      if (type == "c") {
+        value <- rep((1 / nbValues), nbValues)
+      } else {
+        irace.assert(type == "o")
+        value <- (nbValues - 1) / 2
       }
-      param[[idCurrentConfig]] <- value
+      param <- rep(list(value), nbConfigurations)
     }
+    names(param) <- ids
     model[[currentParameter]] <- param
   }
-  return (model)
+  model
 }
 
 ## FIXME (MANUEL): This function needs a description.
