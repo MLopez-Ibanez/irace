@@ -48,7 +48,7 @@ readConfigurationsFile <- function(filename, parameters, debugLevel = 0, text)
   }
   irace.assert(is.data.frame(configurationTable))
   irace.note("Read ", nrow(configurationTable), " configuration(s)",
-             if (is.null(filename)) "\n" else paste0("from file '", filename, "'\n"))
+             if (is.null(filename)) "\n" else paste0(" from file '", filename, "'\n"))
   fix_configurations(configurationTable, parameters, debugLevel = debugLevel,
                      filename = filename)
 }
@@ -113,6 +113,11 @@ fix_configurations <- function(configurations, parameters, debugLevel = 0, filen
         suppressWarnings(as.numeric(configurations[, currentParameter]))
     }
   }
+
+  conf_error <- function(k, ...)
+    irace.error("Configuration number ", k,
+                if (is.null(filename)) "" else paste0(" from file '", filename, "'"),
+                ...)
   
   # Loop over all configurations in configurations
   for (k in seq_len(nbConfigurations)) {
@@ -130,46 +135,37 @@ fix_configurations <- function(configurations, parameters, debugLevel = 0, filen
           currentValue <- as.numeric(currentValue)
           lower <- paramLowerBound(currentParameter, parameters)
           upper <- paramUpperBound(currentParameter, parameters)
-          if (is.na(currentValue)
-              || currentValue < lower || currentValue > upper) {
-            irace.error ("Configuration number ", k,
-                         if (is.null(filename)) "" else paste0(" from file ", filename),
-                         " is invalid because the value \"",
-                         configurations[k, currentParameter],
-                         "\" for the parameter ",
-                         currentParameter, " is not within the valid range [",
-                         lower,", ", upper,"]")
+          if (is.na(currentValue) || currentValue < lower || currentValue > upper) {
+            conf_error (k, " is invalid because the value \"",
+                        configurations[k, currentParameter],
+                        "\" for the parameter ",
+                        currentParameter, " is not within the valid range [",
+                        lower,", ", upper,"]")
             return(NULL)
           }
           # For integers, only accept an integer.
           if (type == "i" && as.integer(currentValue) != currentValue) {
-            irace.error ("Configuration number ", k,
-                         if (is.null(filename)) "" else paste0(" from file ", filename),
-                         " is invalid because parameter ", currentParameter,
-                         " is of type integer but its value ",
-                         currentValue, " is not an integer")
+            conf_error (k, " is invalid because parameter ", currentParameter,
+                        " is of type integer but its value ",
+                        currentValue, " is not an integer")
             return(NULL)
           }
           # type == "o" or "c"
         } else if (currentValue %not_in% paramDomain(currentParameter, parameters)) {
-          irace.error ("Configuration number ", k,
-                       if (is.null(filename)) "" else paste0(" from file ", filename),
-                       " is invalid because the value \"",
-                       currentValue, "\" for the parameter \"",
-                       currentParameter, "\" is not among the valid values: (\"",
-                       paste(paramDomain(currentParameter, parameters),
-                             collapse="\", \""),
-                       "\")")
+          conf_error (k, " is invalid because the value \"",
+                      currentValue, "\" for the parameter \"",
+                      currentParameter, "\" is not among the valid values: (\"",
+                      paste(paramDomain(currentParameter, parameters),
+                            collapse="\", \""),
+                      "\")")
           return(NULL)
         }
       } else if (!is.na(currentValue)) {
-        irace.error ("Configuration number ", k,
-                     if (is.null(filename)) "" else paste0(" from file ", filename),
-                     " is invalid because parameter \"", currentParameter,
-                     "\" is not enabled because of condition \"",
-                     parameters$conditions[[currentParameter]],
-                     "\" but its value is \"",
-                     currentValue, "\" instead of NA")
+        conf_error (k, " is invalid because parameter \"", currentParameter,
+                    "\" is not enabled because of condition \"",
+                    parameters$conditions[[currentParameter]],
+                    "\" but its value is \"",
+                    currentValue, "\" instead of NA")
         return(NULL)
       }
     }
