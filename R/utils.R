@@ -41,7 +41,8 @@ irace.print.memUsed <- function(objects)
 irace.warning <- function(...)
 {
   if (getOption(".irace.quiet", default=FALSE)) return()
-  cat(sep="", .msg.prefix, "WARNING: ", ..., "\n")
+  warning(paste0(.irace_msg_prefix, ..., collapse=""),
+          call. = FALSE, immediate. = TRUE)
 }
 
 # Print a user-level fatal error message, when the calling context
@@ -52,7 +53,7 @@ irace.error <- function(...)
   # value allowed up to R 3.0.2
   op <- options(warning.length = 8170)
   on.exit(options(op))
-  stop (.msg.prefix, ..., call. = FALSE)
+  stop (.irace_msg_prefix, ..., call. = FALSE)
 }
 
 ## When irace crashes, it generates a file "iracedump.rda". To debug the crash use:
@@ -75,7 +76,7 @@ irace.dump.frames <- function()
 irace.internal.error <- function(...)
 {
   .irace.bug.report <-
-    paste0(.msg.prefix, "An unexpected condition occurred. ",
+    paste0(.irace_msg_prefix, "An unexpected condition occurred. ",
            "Please report this bug to the authors of the irace package <https://github.com/MLopez-Ibanez/irace/issues>")
 
   op <- options(warning.length = 8170)
@@ -84,7 +85,7 @@ irace.internal.error <- function(...)
   # 6 to not show anything below irace.assert()
   bt <- capture.output(traceback(6))
   warnings()
-  stop (.msg.prefix, paste0(..., collapse = "\n"), "\n",
+  stop (.irace_msg_prefix, paste0(..., collapse = "\n"), "\n",
         paste0(bt, collapse= "\n"), "\n",
         .irace.bug.report, call. = FALSE)
   invisible()

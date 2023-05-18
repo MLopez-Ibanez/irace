@@ -36,4 +36,4 @@
 NULL
 
 # Prefix for printing messages to the user.
-.msg.prefix <- "== irace == "
+.irace_msg_prefix <- "== irace == "
