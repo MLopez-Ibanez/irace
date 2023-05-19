@@ -955,7 +955,7 @@ checkTargetFiles <- function(scenario, parameters)
                     sample.int(length(scenario$instances), 1L) else 1L
   experiments <- createExperimentList(
     configurations, parameters, instances = scenario$instances,
-    instances.ID = instances.ID, seeds = 1234567, scenario, bounds = bounds)
+    instances.ID = instances.ID, seeds = 1234567, bounds = bounds)
 
   startParallel(scenario)
   on.exit(stopParallel(), add = TRUE)

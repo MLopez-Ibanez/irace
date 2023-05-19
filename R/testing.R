@@ -46,9 +46,9 @@ testConfigurations <- function(configurations, scenario, parameters)
     configurations$.ID. <- 1:nrow(configurations)
   }
   # Create experiment list
-  experiments <- createExperimentList(configurations, parameters,
-                                      testInstances, instances.ID, instanceSeed,
-                                      scenario, bounds)
+  experiments <- createExperimentList(configurations, parameters = parameters,
+                                      instances = testInstances, instances.ID = instances.ID, seeds = instanceSeed,
+                                      bounds = bounds)
   if (scenario$debugLevel >= 3) {
     irace.note ("Memory used before execute.experiments in testConfigurations():\n")
     irace.print.memUsed()

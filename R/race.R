@@ -28,42 +28,32 @@
 # Av. F. D. Roosevelt 50                                    mbiro@ulb.ac.be #
 # 1050 Brussels, Belgium                     http://iridia.ulb.ac.be/~mbiro #
 # ========================================================================= #
-
 # $Id: race.R,v 1.54 2005/03/30 12:40:42 mbiro Exp $ #
 
 createExperimentList <- function(configurations, parameters,
                                  instances, instances.ID, seeds,
-                                 scenario, bounds = NULL)
+                                 bounds = NULL)
 {
   instances <- instances[instances.ID]
-  experiments <- vector("list", nrow(configurations) * length(instances))
-  configurations.ID <- configurations[, ".ID."]
+  n_configurations <- nrow(configurations)
+  n_instances <- length(instances)
   pnames <- parameters$names
-  values <- configurations[, pnames, drop = FALSE]
   switches <- parameters$switches[pnames]
-
-  # There must be a bound for each configuration.
-  # FIXME: There must be a bound for each configuration AND each instance.
-  irace.assert(is.null(bounds) || length(bounds) == nrow(configurations))
-  bounds <- rep(bounds, length(instances))
-
-  count <- 1
-  for (i in seq_len(nrow(configurations))) {
-    # FIXME: This indexing is slow!
-    values_i <- values[i, , drop = FALSE]
-    for (j in seq_along(instances)) {
-      experiments[[count]] <- list (id.configuration = configurations.ID[i],
-                                    id.instance  = instances.ID[j],
-                                    seed = seeds[j],
-                                    configuration = values_i,
-                                    # mlr uses lists of objects as instances.
-                                    instance = instances[[j]],
-                                    bound = bounds[count],
-                                    switches = switches) 
-      count <- count + 1 
-    }
+  configurations_id <- configurations[[".ID."]]
+  configurations <- configurations[, pnames, drop=FALSE]
+  # FIXME: How to do this faster? purrr::transpose()
+  configurations <- lapply(seq_len(n_configurations), function(i) configurations[i, , drop=TRUE])
+  dots <- list(id.configuration = rep(configurations_id, each=n_instances), id.instance = instances.ID,
+               seed = seeds, configuration = rep(configurations, each = n_instances),
+               instance = instances)
+  if (!is.null(bounds)) {
+    # There must be a bound for each configuration.
+    # FIXME: There must be a bound for each configuration AND each instance.
+    irace.assert(length(bounds) == n_configurations)
+    dots$bound <- rep.int(bounds, n_instances)
   }
-  return(experiments)
+  dots$switches <- list(switches)
+  .mapply(list, dots, MoreArgs = NULL)
 }
 
 
@@ -86,10 +76,10 @@ race.wrapper <- function(configurations, instance.idx, bounds = NULL,
   seed <- .irace$instancesList[instance.idx, "seed"]
   id.instance  <- .irace$instancesList[instance.idx, "instance"]
   # Experiment list to execute
-  experiments <- createExperimentList(configurations, parameters,
+  experiments <- createExperimentList(configurations, parameters = parameters,
                                       instances = scenario$instances,
                                       instances.ID = id.instance,
-                                      seeds = seed, scenario, bounds = bounds)
+                                      seeds = seed, bounds = bounds)
 
   target.output <- vector("list", length(experiments))
   # Execute commands

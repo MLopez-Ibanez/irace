@@ -18,10 +18,10 @@ test_that("GenericWrapper4AC", {
 
   scenario <- checkScenario (scenario)
   experiments <- irace:::createExperimentList(configurations,
-                                              parameters,
+                                              parameters = parameters,
                                               instances = scenario$instances,
                                               instances.ID = rep("cost", 2),
-                                              seeds = 0:1, scenario)
+                                              seeds = 0:1)
   output <- irace:::execute.experiments(experiments, scenario)
   expect_equal(output[[1]]$status, "SUCCESS")
   expect_equal(output[[1]]$cost, 0.5)
@@ -31,17 +31,17 @@ test_that("GenericWrapper4AC", {
   expect_true(is.null(output[[2]]$error))
   
   experiments <- irace:::createExperimentList(configurations,
-                                              parameters,
+                                              parameters = parameters,
                                               instances = scenario$instances,
                                               instances.ID = rep("cost", 2),
-                                              seeds = 2, scenario)
+                                              seeds = 2)
   expect_error(irace:::execute.experiments(experiments, scenario), "CRASHED")
                
   experiments <- irace:::createExperimentList(configurations,
-                                              parameters,
+                                              parameters = parameters,
                                               instances = scenario$instances,
                                               instances.ID = rep("cost", 2),
-                                              seeds = 3, scenario)
+                                              seeds = 3)
   expect_error(irace:::execute.experiments(experiments, scenario), "ABORT")
   
   
@@ -50,10 +50,10 @@ test_that("GenericWrapper4AC", {
                               maxExperiments = NULL))
   scenario <- checkScenario (scenario)
   experiments <- irace:::createExperimentList(configurations,
-                                              parameters,
+                                              parameters = parameters,
                                               instances = scenario$instances,
                                               instances.ID = rep("time", 2),
-                                              seeds = 0:1, scenario,
+                                              seeds = 0:1,
                                               bounds = scenario$boundMax)
   output <- irace:::execute.experiments(experiments, scenario)
 
@@ -69,26 +69,26 @@ test_that("GenericWrapper4AC", {
   expect_true(is.null(output[[2]]$error))
 
   experiments <- irace:::createExperimentList(configurations,
-                                              parameters,
+                                              parameters = parameters,
                                               instances = scenario$instances,
                                               instances.ID = rep("time", 2),
-                                              seeds = 2, scenario,
+                                              seeds = 2,
                                               bounds = scenario$boundMax)
   expect_error(irace:::execute.experiments(experiments, scenario), "CRASHED")
                
   experiments <- irace:::createExperimentList(configurations,
-                                              parameters,
+                                              parameters = parameters,
                                               instances = scenario$instances,
                                               instances.ID = rep("time", 2),
-                                              seeds = 3, scenario,
+                                              seeds = 3,
                                               bounds = scenario$boundMax)
   expect_error(irace:::execute.experiments(experiments, scenario), "ABORT")
 
   experiments <- irace:::createExperimentList(configurations,
-                                              parameters,
+                                              parameters = parameters,
                                               instances = scenario$instances,
                                               instances.ID = rep("cost+time", 2),
-                                              seeds = 0:1, scenario,
+                                              seeds = 0:1,
                                               bounds = scenario$boundMax)
   output <- irace:::execute.experiments(experiments, scenario)
 
@@ -104,19 +104,18 @@ test_that("GenericWrapper4AC", {
   expect_true(is.null(output[[2]]$error))
 
   experiments <- irace:::createExperimentList(configurations,
-                                              parameters,
+                                              parameters = parameters,
                                               instances = scenario$instances,
                                               instances.ID = rep("cost+time", 2),
-                                              seeds = 2, scenario,
+                                              seeds = 2,
                                               bounds = scenario$boundMax)
   expect_error(irace:::execute.experiments(experiments, scenario), "CRASHED")
                
   experiments <- irace:::createExperimentList(configurations,
-                                              parameters,
+                                              parameters = parameters,
                                               instances = scenario$instances,
                                               instances.ID = rep("cost+time", 2),
-                                              seeds = 3, scenario,
+                                              seeds = 3,
                                               bounds = scenario$boundMax)
   expect_error(irace:::execute.experiments(experiments, scenario), "ABORT")
-
 })

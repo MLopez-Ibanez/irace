@@ -356,7 +356,6 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
                                       instances = scenario$instances,
                                       instances.ID = .irace$instancesList[, "instance"],
                                       seeds = .irace$instancesList[, "seed"],
-                                      scenario = scenario,
                                       bounds = scenario$boundMax)
   irace.note("Executing source and target configurations on the given instances * nrep (", nrow(.irace$instancesList), ")...\n")
   
