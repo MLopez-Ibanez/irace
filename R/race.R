@@ -40,9 +40,9 @@ createExperimentList <- function(configurations, parameters,
   pnames <- parameters$names
   switches <- parameters$switches[pnames]
   configurations_id <- configurations[[".ID."]]
-  configurations <- configurations[, pnames, drop=FALSE]
+  configurations <- as.list(configurations[, pnames, drop=FALSE])
   # FIXME: How to do this faster? purrr::transpose()
-  configurations <- lapply(seq_len(n_configurations), function(i) configurations[i, , drop=TRUE])
+  configurations <- lapply(seq_len(n_configurations), function(i) lapply(configurations, `[`, i))
   dots <- list(id.configuration = rep(configurations_id, each=n_instances), id.instance = instances.ID,
                seed = seeds, configuration = rep(configurations, each = n_instances),
                instance = instances)
@@ -110,7 +110,7 @@ aux2.friedman <- function(y, I, alive, conf.level = 0.95)
   R <- colSums2(r)
   o <- order(R)
   best <- I[o[1]]
-  TIES <- tapply(r, row(r), table)
+  TIES <- tapply(c(r), row(r), table)
   STATISTIC <- ((12 * sum((R - n * (k + 1) / 2)^2)) /
                 (n * k * (k + 1)
                   - (sum(unlist(lapply(TIES, function (u) {u^3 - u}))) /
