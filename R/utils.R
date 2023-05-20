@@ -231,9 +231,6 @@ str_sub <- function(x, start=0, stop=nchar(x))
   substr(x, start, stop)
 }
 
-strcat <- function(...)
-  do.call(paste0, args = list(..., collapse = NULL))
-
 # This function is used to trim potentially large strings for printing, since
 # the maximum error/warning length is 8170 characters (R 3.0.2)
 strlimit <- function(s, limit = 5000)
@@ -543,7 +540,7 @@ concordance <- function(data)
   r <- rowRanks(data, ties.method = "average")
   R <- colSums2(r)
   # FIXME: This is slow, can we make it faster?
-  TIES <- tapply(r, row(r), table)
+  TIES <- tapply(c(r), row(r), table)
   # If everything is tied, then W=1, perfect homogeneity.
   if (all(unlist(TIES) == ncol(data))) {
     W <- 1

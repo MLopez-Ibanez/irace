@@ -368,7 +368,7 @@ setup_test_instances <- function(scenario)
   if (!is.null(scenario[["testInstances"]])
       && is.null(names(scenario[["testInstances"]]))) {
     # Create unique IDs for testInstances
-    names(scenario[["testInstances"]]) <- paste0(1:length(scenario[["testInstances"]]), "t")
+    names(scenario[["testInstances"]]) <- paste0(seq_along(scenario[["testInstances"]]), "t")
   }
   scenario
 }    

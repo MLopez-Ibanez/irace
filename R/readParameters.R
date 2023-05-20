@@ -80,7 +80,7 @@
 readParameters <- function (file, digits = 4L, debugLevel = 0L, text)
 {
   if (missing(file) && !missing(text)) {
-    filename <- strcat("text=", deparse(substitute(text)))
+    filename <- paste0("text=", deparse(substitute(text)))
     file <- textConnection(text)
     on.exit(close(file))
   } else if (is.character(file)) {
@@ -95,12 +95,12 @@ readParameters <- function (file, digits = 4L, debugLevel = 0L, text)
   field.match <- function (line, pattern, delimited = FALSE, sep = "[[:space:]]")
   {
     #cat ("pattern:", pattern, "\n")
-    positions <- lapply(1:length(pattern), function(x) regexpr (paste0("^", pattern[x], sep), line))
+    positions <- lapply(seq_along(pattern), function(x) regexpr (paste0("^", pattern[x], sep), line))
     if (all(sapply(positions, "[[", 1) == -1)) {
       #cat("no match: NULL\n")
       return (list(match = NULL, line = line))
     }
-    pos.matched.list <- lapply(1:length(pattern), function(x) regexpr (paste0("^", pattern[x]), line))
+    pos.matched.list <- lapply(seq_along(pattern), function(x) regexpr (paste0("^", pattern[x]), line))
     #cat("pos.matched:", pos.matched, "\n")
     if (all(sapply(pos.matched.list, "[[", 1) == -1)) {
       #cat(line)
@@ -630,7 +630,7 @@ readParameters <- function (file, digits = 4L, debugLevel = 0L, text)
 read_pcs_file <- function(file, digits = 4L, debugLevel = 0L, text)
 {
   if (missing(file) && !missing(text)) {
-    filename <- strcat("text=", deparse(substitute(text)))
+    filename <- paste0("text=", deparse(substitute(text)))
     file <- textConnection(text)
     on.exit(close(file))
   } else if (is.character(file)) {
