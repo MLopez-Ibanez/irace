@@ -126,50 +126,51 @@ printModel <- function (model)
   print(model)
 }
 
-restartConfigurations <- function (configurations, restart.ids, model, parameters,
+restartConfigurations <- function (configurations, restart_ids, model, parameters,
                                    nbConfigurations)
 {
-  #print(configurations)
-  tmp.ids <- c()
-  # FIXME: This loop is very slow!
-  for (param in parameters$names[!parameters$isFixed]) {
-    for (id in restart.ids) {
-      if (id %not_in% names(model[[param]])) {
-        # FIXME: This indexing is slow!
-        id <- configurations[configurations$.ID. == id, ".PARENT."]
-      }
-      tmp.ids <- c(tmp.ids, id)
-    }
-  }
-  restart.ids <- unique(tmp.ids)
-  #print(restart.ids)
-  for (param in parameters$names[!parameters$isFixed]) {
+  model_ids <- names(model[[1L]])
+  restart_ids <- as.character(sort.int(as.integer(restart_ids)))
+  not_in <- restart_ids %not_in% model_ids
+  configurations <- configurations[configurations[[".ID."]] %in% restart_ids, c(".ID.", ".PARENT.")]
+  restart_ids[not_in] <- configurations[[".PARENT."]][order(as.integer(configurations[[".ID."]]))][not_in]
+  restart_ids <- as.character(unique(restart_ids))
+  restart_ids <- restart_ids[!is.na(restart_ids)]
+  
+  back_factor <- nbConfigurations^(2 / parameters$nbVariable)
+  second_factor <- (1 / nbConfigurations)^(1 / parameters$nbVariable)
+  namesParameters <- parameters$names[!parameters$isFixed]
+  for (param in namesParameters) {
+    model_param <- model[[param]]
+    irace.assert (all(restart_ids %in% names(model_param)), {
+      cat("Param:", param, "\n")
+      print(restart_ids)
+      print(model)
+      print(configurations[, c(".ID.", ".PARENT.")])
+    })
     type <- parameters$types[[param]]
-    for (id in restart.ids) {
-      id <- as.character(id)
-      irace.assert (id %in% names(model[[param]]))
-
-      if (type == "c") {
-        probVector <- model[[param]][[id]]
+    if (type == "c") {
+      for (id in restart_ids) {
+        probVector <- model_param[[id]]
         probVector <- 0.9 * probVector + 0.1 * max(probVector)
         model[[param]][[id]] <- probVector / sum(probVector)
+      }
+    } else {
+      if (type == "i" || type == "r") {
+        value <- init.model.numeric(param, parameters)
       } else {
-        if (type == "i" || type == "r") {
-          value <- c(init.model.numeric(param, parameters),
-                     # We keep the value of the configuration as last known
-                     configurations[id, param])
-        } else {
-          irace.assert(type == "o")
-          value <- (length(parameters$domain[[param]]) - 1) / 2
-        }
+        irace.assert(type == "o")
+        value <- (length(parameters$domain[[param]]) - 1) / 2
+      }
+      for (id in restart_ids) {
         # Bring back the value 2 iterations or to the second iteration value.
-        stdev <- model[[param]][[id]][1]
-        model[[param]][[id]][1] <- min(stdev * (nbConfigurations^(2 / parameters$nbVariable)),
-                                       value[1] * ((1 / nbConfigurations)^(1 / parameters$nbVariable)))
+        stdev <- model_param[[id]][1L]
+        model[[param]][[id]][1L] <- min(stdev * back_factor,
+                                        value * second_factor)
       }
     }
   }
-  return (model) 
+  model
 }
 
 # Initialise model in case of numerical variables.
