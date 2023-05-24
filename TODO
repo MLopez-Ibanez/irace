@@ -49,7 +49,7 @@ TODO General (in order of importance):
                   p_ord('no_local_search', '1', 'ccc')
                   )
 
- * Consume all budget.
+ * Consume all budget by using post-selection
  
  * Federico's implementation of DAG / Complexity metric.
 
