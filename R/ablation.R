@@ -111,7 +111,7 @@ ablation_cmdline <- function(argv = commandArgs(trailingOnly = TRUE))
     params$ablationLogFile <- path_rel2abs(params$ablationLogFile)
       
   if (!is.null(params$ab.params))
-    params$ab.params <- trimws(strsplit(params$ab.params, ",", fixed=TRUE)[[1]])
+    params$ab.params <- trimws(strsplit(params$ab.params, ",", fixed=TRUE)[[1L]])
 
   # The shell may introduce extra quotes, remove them.
   params$plot_type <- trimws(gsub("[\"']", "", params$plot_type))
@@ -176,8 +176,8 @@ generateAblation <- function(initial.configuration, final.configuration,
     # Set newly activated parameters if needed.
     aux <- fixDependenciesWithReference(new.configuration, final.configuration, parameters)
     new.configuration <- aux[["configuration"]] 
-    changed.params[[length(changed.params) + 1]] <- c(pname, aux[["changed"]])
-    new.configuration[, ".PARENT."] <- initial.configuration$.ID.
+    changed.params[[length(changed.params) + 1L]] <- c(pname, aux[["changed"]])
+    new.configuration[[".PARENT."]] <- initial.configuration[[".ID."]]
     configurations <- rbind.data.frame(configurations, new.configuration) 
   }
   rownames(configurations) <- NULL
@@ -189,11 +189,11 @@ report_duplicated_results <- function(experiments, configurations)
   x <- t(experiments)
   x <- x[duplicated(x) | duplicated(x, fromLast = TRUE), , drop=FALSE]
   if (nrow(x) == 0L) return(NULL) # No duplicates
-  dups <- split(rownames(x), apply(x, 1, paste0, collapse=""))
+  dups <- split(rownames(x), apply(x, 1L, paste0, collapse=""))
   names(dups) <- NULL
   for (g in dups) {
     cat("Warning: The following configurations are different but produced the same results:\n")
-    df <- configurations[configurations$.ID. %in% g, , drop=FALSE]
+    df <- configurations[configurations[[".ID."]] %in% g, , drop=FALSE]
     print(df)
     cat("Parameters with different values from the above configurations:\n")
     df <- removeConfigurationsMetaData(df)
@@ -319,9 +319,9 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
 
   if (is.null(target)) target <- iraceResults$iterationElites[length(iraceResults$iterationElites)]
   irace.note ("Starting ablation from ", src, " to ", target, "\n# Seed: ", seed, "\n")
-  if (src %not_in% iraceResults$allConfigurations$.ID.)
+  if (src %not_in% iraceResults$allConfigurations[[".ID."]])
     stop("Source configuration ID (", src, ") cannot be found")
-  if (target %not_in% iraceResults$allConfigurations$.ID.)
+  if (target %not_in% iraceResults$allConfigurations[[".ID."]])
     stop("Target configuration ID (", target, ") cannot be found")
 
   cat("# Source configuration (row number is ID):\n")
@@ -341,12 +341,12 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
   # Select parameters that are different in both configurations
   neq.params <- which(src.configuration[,ab.params] != target.configuration[,ab.params])
   
-  if (length(neq.params) < 1) 
+  if (length(neq.params) < 1L) 
     irace.error("src and target configurations are equal considering the parameters selected.\n")
   param.names <- colnames(src.configuration[,ab.params])[neq.params]
   
   # FIXME: Do we really need to override the ID?
-  src.configuration$.ID. <- best.id <-  1
+  src.configuration$.ID. <- best.id <-  1L
   best.configuration <- all_configurations <- src.configuration
   
   # Execute source and target configurations.
@@ -367,18 +367,18 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
                                         src.configuration)
   # Save results
   output <- sapply(target.output, getElement, "cost") 
-  results <- matrix(NA, ncol = 1, nrow = nrow(.irace$instancesList), 
-                    dimnames = list(seq(1,nrow(.irace$instancesList)), 1))
-  results[,1] <- output[1:nrow(.irace$instancesList)]
-  lastres <- output[(nrow(.irace$instancesList)+1):(2 * nrow(.irace$instancesList))]
-  step <- 1
+  results <- matrix(NA, ncol = 1L, nrow = nrow(.irace$instancesList), 
+                    dimnames = list(seq_nrow(.irace$instancesList), 1L))
+  results[,1L] <- output[seq_nrow(.irace$instancesList)]
+  lastres <- output[(nrow(.irace$instancesList)+1L):(2L * nrow(.irace$instancesList))]
+  step <- 1L
   # Define variables needed
-  trajectory <- 1
+  trajectory <- 1L
   names(trajectory) <- "source"
   # FIXME: changes should only store the changed parameters.
   changes <- list()
   ablog <- save_ablog(complete = FALSE)
-  while (length(param.names) > 1) {
+  while (length(param.names) > 1L) {
     # Generate ablation configurations
     cat("# Generating configurations (row number is ID):", param.names,"\n")
     ab.aux <- generateAblation(best.configuration, target.configuration, parameters, 
@@ -392,24 +392,23 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
     # New configurations ids
     ## FIXME: These should be generated with respect to the logFile to make
     ## sure we don't have duplicate IDs.
-    aconfigurations[,".ID."] <- seq(max(all_configurations$.ID.) + 1,
-                                    max(all_configurations$.ID.) + nrow(aconfigurations))
+    aconfigurations[[".ID."]] <- max(0L, all_configurations[[".ID."]]) + seq_nrow(aconfigurations)
     configurations.print(aconfigurations, metadata = FALSE)
     all_configurations <- rbind(all_configurations, aconfigurations)
     
     # Set variables for the racing procedure
     if (scenario$capping) {
       # For using capping we must set elite data
-      elite.data <- list(experiments = results[,best.configuration$.ID., drop=FALSE])
+      elite.data <- list(experiments = results[,best.configuration[[".ID."]], drop=FALSE])
       race.conf <-  rbind(best.configuration, aconfigurations)
-      .irace$next.instance <- nrow(.irace$instancesList) + 1
+      .irace$next.instance <- nrow(.irace$instancesList) + 1L
     } else {
       #LESLIE: for now we apply the non-elitis irace when type=="racing"
       # we should define what is the standard
       elite.data <- NULL
       race.conf <-  aconfigurations
       scenario$elitist <- FALSE
-      .irace$next.instance <- 1
+      .irace$next.instance <- 1L
     }
           
     irace.note("Ablation (", type, ") of ", nrow(aconfigurations),
@@ -418,7 +417,7 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
     if (type == "full") scenario$firstTest <- nrow(.irace$instancesList)
     # FIXME: what about blockSize?
     race.output <- elitist_race(maxExp = nrow(aconfigurations) * nrow(.irace$instancesList),
-                                minSurvival = 1,
+                                minSurvival = 1L,
                                 elite.data = elite.data,
                                 configurations = race.conf,
                                 parameters = parameters,
@@ -431,12 +430,12 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
     
     # Get the best configuration based on the criterion of irace
     # MANUEL: Doesn't race.output already give you all this info???
-    cranks <- overall.ranks(results[,aconfigurations$.ID.,drop=FALSE], test = scenario$testType)
-    best_id <- which.min(cranks)[1]
+    cranks <- overall.ranks(results[,aconfigurations[[".ID."]],drop=FALSE], test = scenario$testType)
+    best_id <- which.min(cranks)[1L]
     # cand.mean <- colMeans2(results[,aconfigurations$.ID.,drop=FALSE], na.rm=TRUE)
     changes[[step]] <- ab.aux$changed.params
     best.change <- changes[[step]][[best_id]]
-    trajectory <- c(trajectory, aconfigurations[best_id, ".ID."])
+    trajectory <- c(trajectory, aconfigurations[[".ID."]][best_id])
     
     # Report best
     # FIXME: This ID does not actually match the configuration ID
@@ -448,25 +447,25 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
     }
   
     best.configuration <- aconfigurations[best_id,,drop=FALSE]
-    best.id <- best.configuration$.ID.
+    best.id <- best.configuration[[".ID."]]
     param.names <- param.names[param.names %not_in% best.change]
-    step <- step + 1
+    step <- step + 1L
   }
   
   # Add last configuration and its results
   # FIXME: This may be overriding the ID of an existing configuration!!!
-  target.configuration$.ID. <- max(all_configurations$.ID.) + 1
+  target.configuration[[".ID."]] <- max(all_configurations[[".ID."]]) + 1L
   all_configurations <- rbind(all_configurations, target.configuration)
-  results <- cbind(results, matrix(lastres, ncol = 1,
-                                   dimnames=list(seq(1, nrow(.irace$instancesList)),
-                                                 target.configuration$.ID.)))
-  trajectory <- c(trajectory, target.configuration$.ID.)
+  results <- cbind(results, matrix(lastres, ncol = 1L,
+                                   dimnames=list(seq_nrow(.irace$instancesList),
+                                                 target.configuration[[".ID."]])))
+  trajectory <- c(trajectory, target.configuration[[".ID."]])
   
   # Get the overall best
   cranks <- overall.ranks(results[,trajectory, drop=FALSE], test = scenario$testType)
-  best_id <- which.min(cranks)[1]
+  best_id <- which.min(cranks)[1L]
   ## FIXME: At this point, the rownames of all_configurations does not match
-  ## all_configurations$.ID.  That is confusing and a potential source of
+  ## all_configurations[[".ID."]]  That is confusing and a potential source of
   ## bugs. Instead of fixing it here, we should not generate the discrepancy
   ## ever.
   best.configuration <- all_configurations[trajectory[best_id],,drop=FALSE]
@@ -487,9 +486,9 @@ ablation.labels <- function(trajectory, configurations)
 {
   configurations <- removeConfigurationsMetaData(configurations[trajectory, , drop = FALSE])
   labels <- names(trajectory)
-  last <- configurations[1, , drop = FALSE]
+  last <- configurations[1L, , drop = FALSE]
   param.names <- colnames(last)
-  for (i in 2:length(trajectory)) {
+  for (i in 2L:length(trajectory)) {
     current <- configurations[i, , drop = FALSE]
     # Select everything that is NOT NA now and was different or NA before.
     select <- !is.na(current) & (is.na(last) | (current != last))
@@ -551,14 +550,14 @@ plotAblation <- function (ablog, pdf.file = NULL, pdf.width = 20,
   }
   
   trajectory <- ablog$trajectory
-  if (n > 0) trajectory <- trajectory[1:(n+1)]
+  if (n > 0) trajectory <- trajectory[seq_len(n+1L)]
 
   configurations <- ablog$configurations
   # Generate labels
   # FIXME: allow overriding these labels.
   labels <- ablation.labels(trajectory, configurations)
 
-  inches_to_lines <- (par("mar") / par("mai"))[1]
+  inches_to_lines <- (par("mar") / par("mai"))[1L]
   lab.width <- max(strwidth(labels, units = "inches")) * inches_to_lines
   old.par <- par(mar = c(lab.width + 2.1, 4.1, 0.1, 0.1), cex.axis = 1)
   if (!is.null(pdf.file))
@@ -587,7 +586,7 @@ plotAblation <- function (ablog, pdf.file = NULL, pdf.width = 20,
          grid(nx = NA, ny = NULL, lwd = 2);
          abline(h = c(costs.avg[1], tail(costs.avg, n = 1)),
                 col = "lightgray", lty = "dotted", lwd = 2) })
-  axis(1, at = 1:length(costs.avg), labels = labels, las = 3)
+  axis(1, at = seq_along(costs.avg), labels = labels, las = 3)
   if ("boxplot" %in% type) {
     bxp(bx, show.names = FALSE, add = TRUE)
   }

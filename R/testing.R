@@ -43,7 +43,7 @@ testConfigurations <- function(configurations, scenario, parameters)
   bounds <- rep(scenario$boundMax, nrow(configurations))
   # If there is no ID (e.g., after using readConfigurations), then add it.
   if (".ID." %not_in% colnames(configurations)) {
-    configurations$.ID. <- 1:nrow(configurations)
+    configurations$.ID. <- seq_nrow(configurations)
   }
   # Create experiment list
   experiments <- createExperimentList(configurations, parameters = parameters,

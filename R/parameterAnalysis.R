@@ -30,7 +30,7 @@ getFinalElites <- function(iraceResults, n = 0L, drop.metadata = FALSE)
     cat("Only", length(last.elites), "configurations available, reducing n,")
     n <- length(last.elites)
   }
-  last.elites <- last.elites[1:n]
+  last.elites <- last.elites[seq_len(n)]
   
   configurations <- subset(iraceResults$allConfigurations,
                            get(".ID.") %in% as.character(last.elites),

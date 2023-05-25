@@ -117,7 +117,7 @@ psRace <- function(iraceLogFile=NULL, iraceResults=NULL, conf.ids=NULL,
   configurations.print(elite.configurations, metadata = scenario$debugLevel >= 1)
 
   psrace.log <-  list(configurations = configurations,
-                      instances = instances[1:nrow(experiments),],
+                      instances = instances[seq_nrow(experiments), ],
                       maxExperiments = max.experiments,
                       experiments = experiments,
                       elites = elite.configurations$.ID.)   

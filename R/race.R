@@ -97,7 +97,7 @@ race.wrapper <- function(configurations, instance.idx, bounds = NULL,
   # Otherwise, targetEvaluator always re-evaluates.
   if (!is.null(scenario$targetEvaluator))
     target.output <- execute.evaluator (experiments, scenario, target.output,
-                                        configurations[, ".ID."])
+                                        configurations[[".ID."]])
   target.output
 }
 
@@ -263,7 +263,7 @@ no_elitrace.init.instances <- function(deterministic, max_instances)
 {
   # if next.instance == 1 then this is the first iteration.
   # If deterministic consider all (do not resample).
-  if (.irace$next.instance == 1 || deterministic) return(1:max_instances)
+  if (.irace$next.instance == 1 || deterministic) return(seq_len(max_instances))
   irace.assert(.irace$next.instance < max_instances)
   .irace$next.instance : max_instances
 }
@@ -271,7 +271,7 @@ no_elitrace.init.instances <- function(deterministic, max_instances)
 elitrace.init.instances <- function(race.env, deterministic, max_instances, sampleInstances)
 {
   # if next.instance == 1 then this is the first iteration.
-  if (.irace$next.instance == 1) return(1:max_instances) # Consider all
+  if (.irace$next.instance == 1) return(seq_len(max_instances)) # Consider all
 
   new.instances <- NULL
   last.new <- .irace$next.instance + race.env$elitistNewInstances - 1
@@ -299,9 +299,8 @@ elitrace.init.instances <- function(race.env, deterministic, max_instances, samp
   }
   # new.instances + past.instances + future.instances
   # FIXME: we should sample taking into account the block-size, so we sample blocks, not instances.
-  past_instances <- if (sampleInstances)
-                      sample.int(.irace$next.instance - 1) else
-                                                             1:.irace$next.instance
+  past_instances <- if (sampleInstances) sample.int(.irace$next.instance - 1)
+                    else seq_len(.irace$next.instance)
   c(new.instances, past_instances, future.instances)
 }
 
@@ -372,7 +371,7 @@ race_print_task <- function(res.symb, Results,
               sum(alive), id.best, mean_best, experimentsUsed, time_str))
   
   if (current.task > 1 && sum(alive) > 1) {
-    res <- Results[1:current.task, alive, drop = FALSE]
+    res <- Results[seq_len(current.task), alive, drop = FALSE]
     conc <- concordance(res)
     qvar <- dataVariance(res)
     # FIXME: We would like to use %+#4.2f but this causes problems with
@@ -466,7 +465,7 @@ dom.elim <- function(results, elites, alive, scenario, minSurvival, eps = 1e-5)
     if (sum(alive) <= 2)
       elites <- which.alive[which.min(cmeans)]
     else
-      elites <- which.alive[order(cmeans, na.last = TRUE, decreasing = FALSE)[1:minSurvival]]
+      elites <- which.alive[order(cmeans, na.last = TRUE, decreasing = FALSE)[seq_len(minSurvival)]]
   }
   
   bound <- executionBound(results[, elites, drop = FALSE], type = scenario$cappingType)
@@ -515,13 +514,13 @@ final.execution.bound <- function(experimentsTime, elites, no.configurations,
        final.bounds[which.exe] <- min(elite.bound + minMeasurableTime, boundMax)
        final.bounds[which.exe] <- ceiling.digits(final.bounds[which.exe], scenario$boundDigits)
      } else {
-       elite.bound <- executionBound(experimentsTime[1:current.task, elites, drop = FALSE],
+       elite.bound <- executionBound(experimentsTime[seq_len(current.task), elites, drop = FALSE],
                                      type = scenario$cappingType)
        elite.bound <- min(elite.bound, boundMax)
        # FIXME: This minMeasurableTime should be a scenario setting and it
        # should be the same value that we use in check_output_target_runner
        total.time <- (current.task * elite.bound) + minMeasurableTime
-       time.left <- total.time - colSums2(experimentsTime, rows = 1:current.task, cols = which.exe, na.rm = TRUE)
+       time.left <- total.time - colSums2(experimentsTime, rows = seq_len(current.task), cols = which.exe, na.rm = TRUE)
        final.bounds[which.exe] <- sapply(time.left, min, boundMax)
        # We round up the bounds up to the specified number of digits. This may
        # be necessary if the target-algorithm does not support higher precision.
@@ -716,10 +715,10 @@ elitist_race <- function(maxExp = 0,
     # considered elite. After evaluating this instance, no configuration is
     # elite.
     elite.safe <- race.env$elitistNewInstances + nrow(elite.data)
-    elite.instances.ID <- as.character(race.instances[1:elite.safe])
+    elite.instances.ID <- as.character(race.instances[seq_len(elite.safe)])
   }
 
-  configurations.ID <- as.character(configurations[, ".ID."])
+  configurations.ID <- as.character(configurations[[".ID."]])
   Results <- matrix(NA,
                     nrow = elite.safe,
                     ncol = no.configurations,
@@ -741,13 +740,13 @@ elitist_race <- function(maxExp = 0,
     # Preliminary execution of elite configurations to calculate
     # the execution bound of initial configurations (capping only).
     if (capping && race.env$elitistNewInstances > 0L) {
-      irace.assert(race.env$elitistNewInstances %% blockSize == 0)
+      irace.assert(race.env$elitistNewInstances %% blockSize == 0L)
       # FIXME: This should go into its own function.
       n.elite <- ncol(elite.data)
       which.elites <- which(rep(TRUE, n.elite))
       irace.note("Preliminary execution of ", n.elite,
                  " elite configuration(s) over ", race.env$elitistNewInstances, " instance(s).\n")
-      for (k in 1:race.env$elitistNewInstances) {
+      for (k in seq_len(race.env$elitistNewInstances)) {
         output <- race.wrapper (configurations = configurations[which.elites, , drop = FALSE], 
                                 instance.idx = race.instances[k],
                                 bounds = rep(scenario$boundMax, n.elite),
@@ -764,7 +763,7 @@ elitist_race <- function(maxExp = 0,
         vcost <- unlist(lapply(output, "[[", "cost"))
         irace.assert(length(vcost) == n.elite)
         vcost <- applyPAR(vcost, boundMax = scenario$boundMax, boundPar = scenario$boundPar)
-        Results[k, 1:n.elite] <- vcost
+        Results[k, seq_len(n.elite)] <- vcost
         vtimes <- unlist(lapply(output, "[[", "time"))
         irace.assert(length(vtimes) == n.elite)
         experimentsTime[k, which.elites] <- vtimes
@@ -847,7 +846,7 @@ elitist_race <- function(maxExp = 0,
         # criterion is disabled)
         ## MANUEL: So what is the reason to not immediately terminate here? Is
         ## there a reason to continue?
-        print_task(".", Results[1:current.task, , drop = FALSE],
+        print_task(".", Results[seq_len(current.task), , drop = FALSE],
                    race.instances[current.task],
                    current.task, alive = alive,
                    configurations[best, ".ID."],
@@ -924,10 +923,10 @@ elitist_race <- function(maxExp = 0,
                                 
     if (nrow(Results) < current.task) {
       Results <- rbind(Results, rep(NA, ncol(Results)))
-      rownames(Results) <- race.instances[1:nrow(Results)]
+      rownames(Results) <- race.instances[seq_nrow(Results)]
       if (capping) {
         experimentsTime <- rbind(experimentsTime, rep(NA, ncol(experimentsTime)))
-        rownames(experimentsTime) <- race.instances[1:nrow(experimentsTime)]
+        rownames(experimentsTime) <- race.instances[seq_nrow(experimentsTime)]
       }
     }
 
@@ -989,7 +988,7 @@ elitist_race <- function(maxExp = 0,
         # FIXME: There is similar code above.
         if (length(which.exe) == 0L) {
           is.elite <- update.is.elite(is.elite, which.elite.exe)
-          print_task(".", Results[1:current.task, , drop = FALSE],
+          print_task(".", Results[seq_len(current.task), , drop = FALSE],
                      race.instances[current.task],
                      current.task, alive = alive,
                      configurations[best, ".ID."],
@@ -1072,7 +1071,7 @@ elitist_race <- function(maxExp = 0,
       # FIXME: Should we stop  if (nbAlive <= minSurvival) ???
       elite.safe <- update.elite.safe(Results, is.elite)  
     }
-    irace.assert(!anyNA(Results[1:current.task, alive, drop=FALSE]))
+    irace.assert(!anyNA(Results[seq_len(current.task), alive, drop=FALSE]))
     irace.assert(!any(is.infinite(Results[, alive, drop=FALSE])))
     
     # Variables required to produce output of elimination test.
@@ -1087,7 +1086,7 @@ elitist_race <- function(maxExp = 0,
     # rejection.  The third condition ensures that we see the block before capping.
     if (capping && sum(alive) > minSurvival && (current.task %% blockSize) == 0) {
       irace.assert(!any(is.elite > 0) == (current.task >= elite.safe))
-      cap.alive <- dom.elim(Results[1:current.task, , drop = FALSE],
+      cap.alive <- dom.elim(Results[seq_len(current.task), , drop = FALSE],
                             # Get current elite configurations
                             elites = which(is.elite > 0),
                             alive, scenario, minSurvival)
@@ -1103,10 +1102,10 @@ elitist_race <- function(maxExp = 0,
       irace.assert(sum(alive) == nbAlive)
       test.res <-
         switch(stat.test,
-               friedman = aux_friedman(Results[1:current.task, ], alive, which.alive, conf.level),
-               t.none = aux.ttest(Results[1:current.task, ], alive, which.alive, conf.level, adjust = "none"),
-               t.holm = aux.ttest(Results[1:current.task, ], alive, which.alive, conf.level, adjust = "holm"),
-               t.bonferroni = aux.ttest(Results[1:current.task, ], alive, which.alive, conf.level, adjust = "bonferroni"))
+               friedman = aux_friedman(Results[seq_len(current.task), ], alive, which.alive, conf.level),
+               t.none = aux.ttest(Results[seq_len(current.task), ], alive, which.alive, conf.level, adjust = "none"),
+               t.holm = aux.ttest(Results[seq_len(current.task), ], alive, which.alive, conf.level, adjust = "holm"),
+               t.bonferroni = aux.ttest(Results[seq_len(current.task), ], alive, which.alive, conf.level, adjust = "bonferroni"))
       
       best <- test.res$best
       race.ranks <- test.res$ranks
@@ -1154,7 +1153,7 @@ elitist_race <- function(maxExp = 0,
       race.ranks <- 1
       best <- which.alive
     } else  {
-      tmpResults <- Results[1:current.task, which.alive, drop = FALSE]
+      tmpResults <- Results[seq_len(current.task), which.alive, drop = FALSE]
       irace.assert(!any(is.na(tmpResults)))
       race.ranks <- get_ranks(tmpResults, test = stat.test) 
       # which.min returns only the first minimum.
@@ -1169,7 +1168,7 @@ elitist_race <- function(maxExp = 0,
     # Remove the ranks of those that are not alive anymore
     race.ranks <- race.ranks[which.alive]
     irace.assert(length(race.ranks) == sum(alive))
-    print_task(res.symb, Results[1:current.task, , drop = FALSE],
+    print_task(res.symb, Results[seq_len(current.task), , drop = FALSE],
                race.instances[current.task],
                current.task, alive = alive,
                configurations[best, ".ID."],
@@ -1228,9 +1227,9 @@ elitist_race <- function(maxExp = 0,
   configurations$.RANK. <- Inf
   configurations[which.alive, ".RANK."] <- race.ranks
   # Now we can sort the data.frame by the rank.
-  configurations <- configurations[order(as.numeric(configurations[, ".RANK."])), ]
+  configurations <- configurations[order(as.numeric(configurations[[".RANK."]])), ]
   # Consistency check.
-  irace.assert (all(configurations[1:nbAlive, ".ALIVE."]))
+  irace.assert (all(configurations[seq_len(nbAlive), ".ALIVE."]))
   if (nbAlive < nrow(configurations))
     irace.assert(!any(configurations[(nbAlive + 1):nrow(configurations),
                                      ".ALIVE."]))

@@ -371,9 +371,9 @@ extractElites <- function(scenario, parameters, configurations, nbElites)
 
   nbElites <- min(after, nbElites)
   # Sort by rank.
-  elites <- configurations[order(configurations$.RANK.), , drop = FALSE]
-  elites <- elites[1:nbElites, , drop = FALSE]
-  elites[, ".WEIGHT."] <- ((nbElites - (1:nbElites) + 1)
+  elites <- configurations[order(configurations[[".RANK."]]), , drop = FALSE]
+  elites <- elites[seq_len(nbElites), , drop = FALSE]
+  elites[[".WEIGHT."]] <- ((nbElites - (1:nbElites) + 1)
                            / (nbElites * (nbElites + 1) / 2))
   elites
 }
@@ -450,7 +450,7 @@ configurations.print.command <- function(configurations, parameters)
   # A better way to do this? We cannot use apply() because that coerces
   # to a character matrix thus messing up numerical values.
   len <- nchar(max(ids))
-  for (i in seq_len (nrow(configurations))) {
+  for (i in seq_nrow(configurations)) {
     cat(sprintf("%-*d %s\n", len, ids[i],
                 buildCommandLine(configurations[i, , drop=FALSE], parameters$switches)))
   }
@@ -734,4 +734,6 @@ has_testing_data <- function(iraceResults)
 do_nothing <- function(...) invisible()
 
 .irace_tolerance <- sqrt(.Machine$double.eps)
+
+seq_nrow <- function(x) seq_len(nrow(x))
 

@@ -118,8 +118,8 @@ irace(scenario = scenario, parameters = parameters)
  f_rosenbrock <- function (x) {
    d <- length(x)
    z <- x + 1
-   hz <- z[1:(d - 1)]
-   tz <- z[2:d]
+   hz <- z[1:(d - 1L)]
+   tz <- z[2L:d]
    sum(100 * (hz^2 - tz)^2 + (hz - 1)^2)
  }
  f_rastrigin <- function (x) {
@@ -211,7 +211,7 @@ irace(scenario = scenario, parameters = parameters)
  test_seeds <- sample.int(2147483647, size = length(test_index), replace = TRUE)
  test <- function(configuration)
  {
-   res <- lapply(1:length(test_index),
+   res <- lapply(seq_along(test_index),
                  function(x) target_runner(
                                experiment = list(instance = weights[test_index[x]],
                                                  seed = test_seeds[x],

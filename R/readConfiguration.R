@@ -223,7 +223,7 @@ buildForbiddenExp <- function(configurations, parameters)
   pnames <- parameters$names
   lines <- c()
   # We cannot use apply() because it converts numeric to character.
-  for (k in 1:nrow(configurations)) {
+  for (k in seq_nrow(configurations)) {
     values <- as.list(configurations[k, pnames])
     has.value <- !is.na(values)
     values <- lapply(values[has.value], function(x) deparse(substitute(x, list(x=x))))

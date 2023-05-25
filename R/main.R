@@ -168,11 +168,11 @@ testing_fromlog <- function(logFile, testNbElites, testIterationElites,
   
   # Get configurations that will be tested
   if (scenario$testIterationElites)
-    testing_id <- sapply(iraceResults$allElites, function(x)
-      x[1:min(length(x), scenario$testNbElites)])
+    testing_id <- sapply(iraceResults$allElites,
+                         function(x) x[seq_len(min(length(x), scenario$testNbElites))])
   else {
     tmp <- iraceResults$allElites[[length(iraceResults$allElites)]]
-    testing_id <- tmp[1:min(length(tmp), scenario$testNbElites)]
+    testing_id <- tmp[seq_len(min(length(tmp), scenario$testNbElites))]
   }
   testing_id <- unique.default(unlist(testing_id))
   configurations <- iraceResults$allConfigurations[testing_id, , drop=FALSE]
@@ -210,9 +210,7 @@ testing_fromfile <- function(filename, scenario)
   parameters <- readParameters (file = scenario$parameterFile,
                                 digits = scenario$digits)
   configurations <- readConfigurationsFile (filename, parameters)
-  configurations <- cbind(.ID. = 1:nrow(configurations),
-                             configurations,
-                             .PARENT. = NA)
+  configurations <- cbind(.ID. = seq_nrow(configurations), configurations, .PARENT. = NA_integer_)
   rownames(configurations) <- configurations$.ID.
   num <- nrow(configurations)
   configurations <- checkForbidden(configurations, parameters$forbidden)

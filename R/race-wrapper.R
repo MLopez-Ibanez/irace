@@ -541,7 +541,7 @@ execute.experiments <- function(experiments, scenario)
         # of size parallel.
         target.output <- unlist(use.names = FALSE,
                                 tapply(experiments,
-                                       ceiling(1:length(experiments) / parallel),
+                                       ceiling(seq_along(experiments) / parallel),
                                        Rmpi::mpi.apply, exec.target.runner,
                                        scenario = scenario,
                                        target.runner = target.runner))
