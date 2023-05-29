@@ -486,15 +486,14 @@ allConfigurationsInit <- function(scenario, parameters)
                     " thus ignoring configurations from file '",
                     scenario$configurationsFile, "'.")
     cat("# Adding", nrow(initConfigurations), "initial configuration(s)\n")
-    fix_configurations(initConfigurations, parameters, debugLevel = scenario$debugLevel)
+    initConfigurations <- fix_configurations(initConfigurations, parameters, debugLevel = scenario$debugLevel)
   } else {
     initConfigurations <- confs_from_file
   }
     
   if (!is.null.or.empty(initConfigurations)) {
-    allConfigurations <- initConfigurations
-    allConfigurations <- cbind(.ID. = seq_nrow(allConfigurations),
-                               allConfigurations, .PARENT. = NA)
+    allConfigurations <- cbind(.ID. = seq_nrow(initConfigurations),
+                               initConfigurations, .PARENT. = NA)
     rownames(allConfigurations) <- allConfigurations[[".ID."]]
     num <- nrow(allConfigurations)
     allConfigurations <- checkForbidden(allConfigurations, parameters$forbidden)
