@@ -270,7 +270,7 @@ testing_common <- function(configurations, scenario, parameters, iraceResults)
 checkIraceScenario <- function(scenario, parameters)
 {
   irace.note ("Checking scenario\n")
-  scenario$debugLevel <- 2 
+  scenario$debugLevel <- 2L
   scenario <- checkScenario(scenario)
   if (!scenario$quiet) printScenario(scenario)
  
@@ -278,7 +278,7 @@ checkIraceScenario <- function(scenario, parameters)
     irace.note("Reading parameter file '", scenario$parameterFile, "'.\n")
     parameters <- readParameters (file = scenario$parameterFile,
                                   digits = scenario$digits,
-                                  debugLevel = 2)
+                                  debugLevel = 2L)
   } else if (!is.null.or.empty(scenario$parameterFile)) {
     if (!scenario$quiet) 
       cat("# checkIraceScenario(): 'parameters' provided by user. ",
@@ -303,7 +303,7 @@ init <- function()
   for (file in tmplFiles) {
     if (grepl(".tmpl", file) && (file != "target-evaluator.tmpl")) {
       newFile <- gsub(".tmpl", "", file)
-      if ((file == "target-runner.tmpl") && .Platform$OS.type == 'windows') {
+      if (file == "target-runner.tmpl" && .Platform$OS.type == 'windows') {
         file.copy(file.path(libPath, "templates", "windows", "target-runner.bat"), file.path(getwd(), "target-runner.bat"), overwrite = FALSE)
       } else {
         file.copy(file.path(libPath, "templates", file), file.path(getwd(), newFile), overwrite = FALSE)

@@ -4,7 +4,7 @@
 \alias{readConfigurationsFile}
 \title{Read parameter configurations from a file}
 \usage{
-readConfigurationsFile(filename, parameters, debugLevel = 0, text)
+readConfigurationsFile(filename, parameters, debugLevel = 0L, text)
 }
 \arguments{
 \item{filename}{(\code{character(1)}) \cr Filename from which the configurations should be read. The contents should be readable by \code{read.table( , header=TRUE)}.}

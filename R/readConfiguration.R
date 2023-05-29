@@ -31,7 +31,7 @@
 #' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
 #' @export
 ## FIXME: What about digits?
-readConfigurationsFile <- function(filename, parameters, debugLevel = 0, text)
+readConfigurationsFile <- function(filename, parameters, debugLevel = 0L, text)
 {
   if (missing(filename) && !missing(text)) {
     filename <- NULL
@@ -53,7 +53,7 @@ readConfigurationsFile <- function(filename, parameters, debugLevel = 0, text)
                      filename = filename)
 }
 
-fix_configurations <- function(configurations, parameters, debugLevel = 0, filename = NULL)
+fix_configurations <- function(configurations, parameters, debugLevel = 0L, filename = NULL)
 {
   if (debugLevel >= 2) print(configurations, digits=15)
   nbConfigurations <- nrow(configurations)
@@ -938,10 +938,10 @@ readInstances <- function(instancesDir = NULL, instancesFile = NULL)
 checkTargetFiles <- function(scenario, parameters)
 {
   ## Create two random configurations
-  conf.id <- c("testConfig1", "testConfig2")
-  configurations <- sampleUniform(parameters, length(conf.id),
+  conf_id <- c("testConfig1", "testConfig2")
+  configurations <- sampleUniform(parameters, length(conf_id),
                                   repair = scenario$repairConfiguration)
-  configurations <- cbind(.ID. = conf.id, configurations, stringsAsFactors=FALSE)
+  configurations[[".ID."]] <- conf_id
 
   # Read initial configurations provided by the user.
   initConfigurations <- allConfigurationsInit(scenario, parameters)
@@ -950,12 +950,11 @@ checkTargetFiles <- function(scenario, parameters)
     configurations <- rbind(configurations, initConfigurations)
   }
   bounds <- rep(scenario$boundMax, nrow(configurations))
-
-  instances.ID <- if (scenario$sampleInstances)
+  instances_ID <- if (scenario$sampleInstances)
                     sample.int(length(scenario$instances), 1L) else 1L
   experiments <- createExperimentList(
     configurations, parameters, instances = scenario$instances,
-    instances.ID = instances.ID, seeds = 1234567, bounds = bounds)
+    instances.ID = instances_ID, seeds = 1234567L, bounds = bounds)
 
   startParallel(scenario)
   on.exit(stopParallel(), add = TRUE)
@@ -978,9 +977,9 @@ checkTargetFiles <- function(scenario, parameters)
                    paste0(conditionMessage(w), collapse="\n"))
                invokeRestart("muffleWarning")})
 
-  if (scenario$debugLevel >= 1) {
+  if (scenario$debugLevel >= 1L) {
     cat ("# targetRunner returned:\n")
-    print(output, digits = 15)
+    print(output, digits = 15L)
   }
   
   irace.assert(is.null(scenario$targetEvaluator) == is.null(.irace$target.evaluator))
@@ -989,7 +988,7 @@ checkTargetFiles <- function(scenario, parameters)
   if (!is.null(scenario$targetEvaluator)) {
     cat("# Executing targetEvaluator...\n")
     output <-  withCallingHandlers(
-      tryCatch(execute.evaluator(experiments, scenario, output, configurations[, ".ID."]),
+      tryCatch(execute.evaluator(experiments, scenario, output, configurations[[".ID."]]),
                  error = function(e) {
                    cat(sep = "\n",
                        "\n# Error ocurred while executing targetEvaluator:",
@@ -1001,9 +1000,9 @@ checkTargetFiles <- function(scenario, parameters)
                        "\n# Warning ocurred while executing targetEvaluator:",
                        paste0(conditionMessage(w), collapse="\n"))
                    invokeRestart("muffleWarning")})
-    if (scenario$debugLevel >= 1) {
+    if (scenario$debugLevel >= 1L) {
       cat ("# targetEvaluator returned:\n")
-      print(output, digits = 15)
+      print(output, digits = 15L)
     }
   }
   result
