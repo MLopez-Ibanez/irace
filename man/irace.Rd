@@ -208,7 +208,7 @@ irace(scenario = scenario, parameters = parameters)
  ## irace versus the default configuration of the SANN algorithm on
  ## the other 10 instances previously generated.
  test_index <- 11:20
- test_seeds <- sample.int(2147483647, size = length(test_index), replace = TRUE)
+ test_seeds <- sample.int(2147483647L, size = length(test_index), replace = TRUE)
  test <- function(configuration)
  {
    res <- lapply(seq_along(test_index),

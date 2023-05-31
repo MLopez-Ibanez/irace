@@ -33,7 +33,7 @@ testConfigurations <- function(configurations, scenario, parameters)
   # We use replace = TRUE, because replace = FALSE allocates memory for each possible number.
   ## FIXME: scenario[["testInstances"]] and scenario$instances behave differently,
   ## we should unify them so that the seeds are also saved in scenario.
-  instanceSeed <- sample.int(2147483647, size = length(testInstances), replace = TRUE)
+  instanceSeed <- sample.int(2147483647L, size = length(testInstances), replace = TRUE)
   names(instanceSeed) <- instances.ID
   
   values <- removeConfigurationsMetaData(configurations)
