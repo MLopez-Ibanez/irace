@@ -592,7 +592,7 @@ readParameters <- function (file, digits = 4L, debugLevel = 0L, text)
 #'  for details.  If none of these parameters is given, \pkg{irace}
 #'  will stop with an error.
 #'
-#' **FIXME:** Forbidden configurations and default configuration are currently ignored. See <https://github.com/MLopez-Ibanez/irace/issues/31>
+#' **FIXME:** Multiple conditions and default configuration are currently ignored. See <https://github.com/MLopez-Ibanez/irace/issues/31>
 #'
 #' @references
 #' Frank Hutter, Manuel López-Ibáñez, Chris Fawcett, Marius Thomas Lindauer, Holger H. Hoos, Kevin Leyton-Brown, and Thomas Stützle. **AClib: A Benchmark Library for Algorithm Configuration**. In P. M. Pardalos, M. G. C. Resende, C. Vogiatzis, and J. L. Walteros, editors, _Learning and Intelligent Optimization, 8th International Conference, LION 8_, volume 8426 of Lecture Notes in Computer Science, pages 36–40. Springer, Heidelberg, 2014.
@@ -618,8 +618,8 @@ readParameters <- function (file, digits = 4L, debugLevel = 0L, text)
 #'  rasrank | algorithm in {ras}
 #'  elitistants | algorithm in {eas}
 #'  nnls | localsearch in {1,2,3}
-#'  dlb | localsearch in {1,2,3}
-#'  '
+#'  dlb | localsearch in {1,2,3} 
+#'  {alpha=0, beta=0}'
 #'  parameters_table <- read_pcs_file(text=pcs_table)
 #'  cat(parameters_table)
 #'  parameters <- readParameters(text=parameters_table)
@@ -640,74 +640,83 @@ read_pcs_file <- function(file, digits = 4L, debugLevel = 0L, text)
     irace.error("'file' must be a character string")
   }
   lines <- readLines(con = file)
-  handle_conditionals <- FALSE
+  lines <- trim(lines) # Remove leading and trailing whitespace
+  lines <- lines[!grepl("Conditionals:", lines, fixed=TRUE)] # useless line
   conditions <- list()
+  forbidden <- NULL
+  regex_cond <- "^([^[:space:]]+)[[:space:]]+\\|[[:space:]]+(.+)$"
+  regex_forbidden <- "^{(.+)}$"
   for (k in seq_along(lines)) {
-    if (grepl("Conditionals:", lines[k])) {
-      handle_conditionals <- TRUE
-      lines[k] <- NA
-    } else if (handle_conditionals) {
+    if (grepl(regex_cond, lines[k], perl=TRUE)) {
       matches <- regmatches(lines[k],
-                            regexec("^[[:space:]]*([^[:space:]]+)[[:space:]]+\\|[[:space:]]+(.+)$",
-                                    lines[k], perl=TRUE))[[1]]
-      if (length(matches) > 0) {
-        lines[k] <- NA
-        conditions[[matches[2]]] <- matches[3]
-      }
+                            regexec(regex_cond, lines[k], perl=TRUE))[[1L]]
+      stopifnot(length(matches) > 0)
+      lines[k] <- NA
+      conditions[[matches[[2L]]]] <- matches[[3L]]
+    } else if (grepl(regex_forbidden, lines[k], perl=TRUE)) {
+      forbidden <- c(forbidden, sub(regex_forbidden, "\\1", lines[k], perl=TRUE))
+      lines[k] <- NA
     }
   }
   
   parse_pcs_condition <- function(x, types) {
     if (is.null(x)) return ("")
-    matches <- regmatches(x, regexec("([^[:space:]]+)[[:space:]]+in[[:space:]]+\\{([^}]+)\\}[[:space:]]*$", x, perl=TRUE))[[1]]
-    if (length(matches) == 0) irace.error("unknown condition ", x)
-    type <- types[[matches[2]]]
-    if (is.null(type)) irace.error("unknown type for ", matches[2], " in condition: ", x)
-    cond <- matches[3]
-    if (type %in% c("c", "o"))
-      cond <- paste0('"', strsplit(cond, ",[[:space:]]*")[[1]], '"', collapse=',')
-    # FIXME: Use "==" if there is only one element in cond.
-    return(paste0(" | ", matches[2], " %in% c(", cond, ")"))
+    matches <- regmatches(x, regexec("([^[:space:]]+)[[:space:]]+in[[:space:]]+\\{([^}]+)\\}$", x, perl=TRUE))[[1L]]
+    if (length(matches) == 0L) irace.error("unknown condition ", x)
+    param <- matches[[2L]]
+    type <- types[[param]]
+    if (is.null(type)) irace.error("unknown type for ", param, " in condition: ", x)
+    cond <- matches[[3L]]
+    if (type == "c" || type == "o") {
+      cond <- strsplit(cond, ",[[:space:]]*")[[1L]]
+      equal <- (length(cond) == 1L)
+      cond <- paste0('"', cond, '"', collapse=',')
+    } else { 
+      equal <- grepl(",", cond, fixed=TRUE)
+    }
+    if (equal)
+      return(paste0(" | ", param, ' == ', cond))
+    return(paste0(" | ", param, " %in% c(", cond, ")"))
   }
   param_types <- list()
   param_domains <- list()
   param_comments <- list()
+  lines <- lines[!is.na(lines)]
   for (line in lines) {
-    if (grepl("^[[:space:]]*#", line) || grepl("^[[:space:]]*$", line)) next
+    if (startsWith(line, "#") || line == "") next
     # match a parameter
-    matches <- regmatches(line, regexec("^[[:space:]]*([^[:space:]]+)[[:space:]]+\\[([^,]+),[[:space:]]*([^]]+)\\][[:space:]]*\\[[^]]+\\](i?l?i?)(.*)$", line, perl=TRUE))[[1]]
+    matches <- regmatches(line, regexec("^([^[:space:]]+)[[:space:]]+\\[([^,]+),[[:space:]]*([^]]+)\\][[:space:]]*\\[[^]]+\\](i?l?i?)(.*)$", line, perl=TRUE))[[1]]
     if (length(matches) > 0) {
-      param_name <- matches[2]
+      param_name <- matches[[2L]]
       
-      param_type <- paste0(if(grepl("i", matches[5], fixed=TRUE)) "i" else "r",
-                           if(grepl("l", matches[5], fixed=TRUE)) ",log" else "")
+      param_type <- paste0(if(grepl("i", matches[5L], fixed=TRUE)) "i" else "r",
+                           if(grepl("l", matches[5L], fixed=TRUE)) ",log" else "")
       param_types[[param_name]] <- param_type
-      param_domains[[param_name]] <- paste0("(", matches[3], ", ", matches[4], ")")
-      param_comments[[param_name]] <- matches[6]
+      param_domains[[param_name]] <- paste0("(", matches[3L], ", ", matches[4L], ")")
+      param_comments[[param_name]] <- matches[6L]
       next
     }
-    matches <- regmatches(line, regexec("^[[:space:]]*([^[:space:]]+)[[:space:]]+\\{([^}]+)\\}[[:space:]]*\\[[^]]+\\](.*)$", line, perl=TRUE))[[1]]
+    matches <- regmatches(line, regexec("^([^[:space:]]+)[[:space:]]+\\{([^}]+)\\}[[:space:]]*\\[[^]]+\\](.*)$", line, perl=TRUE))[[1L]]
     if (length(matches) > 0) {
-      param_name <- matches[2]
+      param_name <- matches[[2L]]
       param_type <- "c"
       param_types[[param_name]] <- param_type
       param_types[[param_name]] <- param_type
-      param_domains[[param_name]] <- paste0("(", matches[3], ")")
-      param_comments[[param_name]] <- matches[4]
+      param_domains[[param_name]] <- paste0("(", matches[3L], ")")
+      param_comments[[param_name]] <- matches[4L]
       next
     }
   }
   output <- ""
   for (line in lines) {
-    if (is.na(line)) next
-    if (grepl("^[[:space:]]*#", line) || grepl("^[[:space:]]*$", line)) {
+    if (startsWith(line, "#") || line == "") {
       output <- paste0(output, line, "\n")
       next
     }
     # match a parameter
-    matches <- regmatches(line, regexec("^[[:space:]]*([^[:space:]]+)[[:space:]]+", line, perl=TRUE))[[1]]
+    matches <- regmatches(line, regexec("^([^[:space:]]+)[[:space:]]+", line, perl=TRUE))[[1L]]
     if (length(matches) > 0) {
-      param_name <- matches[2]
+      param_name <- matches[[2L]]
       cond <- parse_pcs_condition(conditions[[param_name]], param_types)
       output <- paste0(output,
                        sprintf('%s "%s" %s %s%s%s\n',
@@ -715,6 +724,20 @@ read_pcs_file <- function(file, digits = 4L, debugLevel = 0L, text)
       next
     }
     irace.error("unrecognized line: ", line)
+  }
+  if (length(forbidden) > 0L) {
+    exp <- sapply(forbidden, function(x) {
+      # FIXME: this will break if there are "," within the values.
+      x <- strsplit(x, ",[[:space:]]*")[[1L]]
+      paste0(collapse=" & ",
+             sapply(regmatches(x, regexec("^([^=]+)=(.+)$", x, perl=TRUE)), function(matches) {
+               rhs <- trim(matches[[3L]])
+               if (!any(startsWith(rhs, c("'", "\""))) && suppressWarnings(is.na(as.numeric(rhs))))
+                 rhs <- paste0('"', rhs, '"')
+               paste0("(", trim(matches[[2L]]), " == ", rhs, ")")
+             }, USE.NAMES=FALSE))
+    }, USE.NAMES=FALSE)
+    output <- paste0(output, "\n[forbidden]\n", paste0(collapse="\n", exp), "\n")
   }
   output
 }

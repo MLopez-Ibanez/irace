@@ -80,6 +80,8 @@
  * `readScenario()` (and command-line irace) do not require a `scenario.txt` file. (Contributed by @DE0CH)
  
  * New scenario option `targetRunnerTimeout`: Timeout in seconds of any `targetRunner` call (only applies to `target-runner` executables not to R functions).
+ 
+ * `read_pcs_file()` now supports forbidden configurations.
 
 ## Fixes
 

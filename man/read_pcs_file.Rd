@@ -33,7 +33,7 @@ whose name is \code{file}) in the expected form.  See the documentation
 for details.  If none of these parameters is given, \pkg{irace}
 will stop with an error.
 
-\strong{FIXME:} Forbidden configurations and default configuration are currently ignored. See \url{https://github.com/MLopez-Ibanez/irace/issues/31}
+\strong{FIXME:} Multiple conditions and default configuration are currently ignored. See \url{https://github.com/MLopez-Ibanez/irace/issues/31}
 }
 \examples{
  ## Read the parameters directly from text
@@ -55,8 +55,8 @@ will stop with an error.
  rasrank | algorithm in {ras}
  elitistants | algorithm in {eas}
  nnls | localsearch in {1,2,3}
- dlb | localsearch in {1,2,3}
- '
+ dlb | localsearch in {1,2,3} 
+ {alpha=0, beta=0}'
  parameters_table <- read_pcs_file(text=pcs_table)
  cat(parameters_table)
  parameters <- readParameters(text=parameters_table)
