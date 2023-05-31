@@ -238,8 +238,7 @@ buildForbiddenExp <- function(configurations, parameters)
 #' 
 #' @param filename (`character(1)`) \cr Filename from which the scenario will
 #'   be read. If empty, the default `scenarioFile` is used.  An example
-#'   scenario file is provided in `system.file(``package="irace",`
-#'   `"templates/scenario.txt.tmpl")`.
+#'   scenario file is provided in `system.file(package="irace", "templates/scenario.txt.tmpl")`.
 #' @templateVar arg_appendix This is an initial scenario that is overwritten
 #'   for every setting specified in the file to be read.
 #' @template arg_scenario

@@ -9,8 +9,7 @@ readScenario(filename = "", scenario = list(), params_def = .irace.params.def)
 \arguments{
 \item{filename}{(\code{character(1)}) \cr Filename from which the scenario will
 be read. If empty, the default \code{scenarioFile} is used.  An example
-scenario file is provided in \verb{system.file(``package="irace",}
-\verb{"templates/scenario.txt.tmpl")}.}
+scenario file is provided in \code{system.file(package="irace", "templates/scenario.txt.tmpl")}.}
 
 \item{scenario}{(\code{list()}) \cr Data structure containing \pkg{irace}
 settings. The data structure has to be the one returned by the function
