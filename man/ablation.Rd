@@ -8,10 +8,10 @@ ablation(
   iraceResults,
   src = 1L,
   target = NULL,
-  ab.params = NULL,
+  ab_params = NULL,
   type = c("full", "racing"),
   nrep = 1L,
-  seed = 1234567,
+  seed = 1234567L,
   ablationLogFile = "log-ablation.Rdata",
   instancesFile = "train",
   ...
@@ -22,7 +22,7 @@ ablation(
 
 \item{src, target}{(\code{integer(1)}) Source and target configuration IDs. By default, the first configuration ever evaluated (ID 1) is used as \code{src} and the best configuration found by irace is used as target.}
 
-\item{ab.params}{Specific parameter names to be used for the ablation. They must be in \code{parameters$names}. By default, use all parameters.}
+\item{ab_params}{Specific parameter names to be used for the ablation. They must be in \code{parameters$names}. By default, use all parameters.}
 
 \item{type}{Type of ablation to perform: \code{"full"} will execute each configuration on all \code{n_instances} to determine the best-performing one; \code{"racing"} will apply racing to find the best configurations.}
 
@@ -60,7 +60,7 @@ plotAblation(ablog)
 # Execute ablation between two selected configurations, and selecting only a
 # subset of parameters, directly reading the setup from the irace log file.
 ablog <- ablation(logfile, src = 1, target = 10,
-                  ab.params = c("temp"), ablationLogFile = NULL)
+                  ab_params = c("temp"), ablationLogFile = NULL)
 plotAblation(ablog)
 }
 
