@@ -220,17 +220,6 @@ bytecompile <- function(x)
   compiler::cmpfun(x)
 }
 
-# FIXME: Use stringr function and replace this function
-str_sub <- function(x, start=0, stop=nchar(x))
-{
-  negs <- start < 0
-  if (any(negs)) start[negs] <- nchar(x[negs]) + 1  - start[negs]
-
-  negs <- stop < 0
-  if (any(negs)) stop[negs] <- nchar(x[negs]) + 1  - stop[negs]
-  substr(x, start, stop)
-}
-
 # This function is used to trim potentially large strings for printing, since
 # the maximum error/warning length is 8170 characters (R 3.0.2)
 strlimit <- function(s, limit = 5000)
