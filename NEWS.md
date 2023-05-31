@@ -99,6 +99,8 @@
 
  * Do not set `option(error=utils::recover())` in debug mode to avoid issues
    when calling irace from Python. The user can set this if desired.
+   
+ * Fix bug failing to restart with parameters that have dependent domains. 
 
 
 # irace 3.5
