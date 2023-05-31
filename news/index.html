@@ -79,6 +79,7 @@
 <li><p>The <code>parameters</code> object now stores the number of <code>digits</code> (decimal places after the point) for each parameter of type <code>r</code>. As a result, the <code>repairConfiguration</code> function (see <code><a href="../reference/defaultScenario.html">defaultScenario()</a></code>) only needs two arguments: <code>configuration</code> and <code>parameters</code>. See examples in the user-guide.</p></li>
 <li><p><code><a href="../reference/readScenario.html">readScenario()</a></code> (and command-line irace) do not require a <code>scenario.txt</code> file. (Contributed by <a href="https://github.com/DE0CH" class="external-link">@DE0CH</a>)</p></li>
 <li><p>New scenario option <code>targetRunnerTimeout</code>: Timeout in seconds of any <code>targetRunner</code> call (only applies to <code>target-runner</code> executables not to R functions).</p></li>
+<li><p><code><a href="../reference/read_pcs_file.html">read_pcs_file()</a></code> now supports forbidden configurations.</p></li>
 </ul></div>
 <div class="section level3">
 <h3 id="fixes-development-version">Fixes<a class="anchor" aria-label="anchor" href="#fixes-development-version"></a></h3>
@@ -86,6 +87,7 @@
 <li><p>Fix <a href="https://github.com/MLopez-Ibanez/irace/issues/44" class="external-link">#44</a>: irace now will give an error if the domain of real-valued (r) parameters would change depending on the value of <code>'digits'</code>. The solution is to increase the value of <code>'digits'</code> or adjust the domain. (Manuel López-Ibáñez, reported by <a href="https://github.com/mb706" class="external-link">@mb706</a>)</p></li>
 <li><p>If scenario option <code>targetRunnerParallel</code> is set, irace no longer tries to initialize a parallel environment or setup MPI. It is now the responsibility of the user to do that before calling irace or within the function assigned to <code>targetRunnerParallel</code>.</p></li>
 <li><p>Do not set <code>option(error=utils::recover())</code> in debug mode to avoid issues when calling irace from Python. The user can set this if desired.</p></li>
+<li><p>Fix bug failing to restart with parameters that have dependent domains.</p></li>
 </ul></div>
 </div>
     <div class="section level2">
