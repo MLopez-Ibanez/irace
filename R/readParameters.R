@@ -3,8 +3,7 @@
 #' 
 #' @param file (`character(1)`) \cr Filename containing the definitions of
 #'   the parameters to be tuned.
-#' @param digits The number of decimal places to be considered for the real
-#'   parameters.
+#' @template arg_param_digits
 #' @template arg_debuglevel
 #' @template arg_text
 #'
@@ -80,7 +79,7 @@
 readParameters <- function (file, digits = 4L, debugLevel = 0L, text)
 {
   if (missing(file) && !missing(text)) {
-    filename <- paste0("text=", deparse(substitute(text)))
+    filename <- NA
     file <- textConnection(text)
     on.exit(close(file))
   } else if (is.character(file)) {
@@ -119,12 +118,10 @@ readParameters <- function (file, digits = 4L, debugLevel = 0L, text)
                     nchar(line))
     line <- trim.leading (line)
     #cat(line)
-    return (list(match = match, line = line))
+    list(match = match, line = line)
   }
 
-  # FIXME: Make quotes mandatory for categorical and ordered parameters.
-  string2vector <- function(str)
-  {
+  string2vector <- function(str) {
     v <- c()
     str <- trim(str)
     #cat("string2vector:", str, "\n")
@@ -196,20 +193,16 @@ readParameters <- function (file, digits = 4L, debugLevel = 0L, text)
 
   errReadParameters <- function(filename, line, context, ...)
   {
-    if (!is.null (context)) {
-      context <- paste0(" when reading: \"", context, "\"")
-    }
-    irace.error (paste0 (...),
-                 " at ", filename, ", line ", line, context)
+    context <- if (is.null (context)) "" else paste0(" when reading: \"", context, "\"")
+    fileloc <- if (is.na(filename)) "" else paste0("'", filename, "'," ) 
+    irace.error(paste0(..., collapse = ""), " at ", fileloc, "line ", line, context)
   }
   
   warnReadParameters <- function(filename, line, context, ...)
   {
-    if (!is.null (context)) {
-      context <- paste0(" when reading: \"", context, "\"")
-    }
-    irace.warning (paste0 (...),
-                   " at ", filename, ", line ", line, context)
+    context <- if (is.null (context)) "" else paste0(" when reading: \"", context, "\"")
+    fileloc <- if (is.na(filename)) "" else paste0("'", filename, "'," ) 
+    irace.warning(paste0(..., collapse = ""), " at ", fileloc, "line ", line, context)
   }
 
   parse_condition <- function(s, filename, nbLines, line, context) {
@@ -577,8 +570,7 @@ readParameters <- function (file, digits = 4L, debugLevel = 0L, text)
 #' 
 #' @param file (`character(1)`) \cr Filename containing the definitions of
 #'   the parameters to be tuned.
-#' @param digits The number of decimal places to be considered for the real
-#'   parameters.
+#' @template arg_param_digits
 #' @template arg_debuglevel
 #' @template arg_text
 #' 
@@ -790,9 +782,9 @@ checkParameters <- function(parameters)
 printParameters <- function(parameters)
 {
   names_len <- max(nchar(parameters$names))
-  switches_len <- max(nchar(parameters$switches)) + 2
+  label_len <- max(nchar(parameters$switches)) + 2
   for (name in parameters$names) {
-    switch <- paste0('"', parameters$switches[[name]], '"')
+    label <- paste0('"', parameters$switches[[name]], '"')
     type <- parameters$types[[name]]
     transf <- parameters$transform[[name]]
     domain <- parameters$domain[[name]]
@@ -814,7 +806,7 @@ printParameters <- function(parameters)
     condition <- parameters$conditions[[name]]
     condition <- if (isTRUE(condition)) "" else paste0(" | ", condition)
     if (!is.null(transf) && transf != "") type <- paste0(type, ",", transf)
-    cat(sprintf('%*s %*s %s %-15s%s\n', -names_len, name, -switches_len, switch, type, domain, condition))
+    cat(sprintf('%*s %*s %s %-15s%s\n', -names_len, name, -label_len, label, type, domain, condition))
   }
   if (!is.null(parameters$forbidden)) {
     cat("\n[forbidden]\n",

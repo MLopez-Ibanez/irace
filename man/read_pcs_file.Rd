@@ -10,8 +10,7 @@ read_pcs_file(file, digits = 4L, debugLevel = 0L, text)
 \item{file}{(\code{character(1)}) \cr Filename containing the definitions of
 the parameters to be tuned.}
 
-\item{digits}{The number of decimal places to be considered for the real
-parameters.}
+\item{digits}{(\code{integer(1)}) \cr The number of decimal places to be considered for real-valued parameters.}
 
 \item{debugLevel}{(\code{integer(1)}) \cr Larger values produce more verbose output.}
 
