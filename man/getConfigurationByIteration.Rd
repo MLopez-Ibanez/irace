@@ -12,9 +12,9 @@ getConfigurationByIteration(iraceResults, iterations, drop.metadata = FALSE)
 \item{iterations}{The iteration number or a vector of iteration numbers from where
 the configurations should be obtained.}
 
-\item{drop.metadata}{(\code{FALSE}) Remove metadata, such the configuration ID and
-the ID of the parent, from the returned configurations. See
-\code{\link{removeConfigurationsMetaData}}.}
+\item{drop.metadata}{(\code{logical(1)})\cr Remove metadata, such as the
+configuration ID and the ID of the parent, from the returned
+configurations.  See \code{\link[=removeConfigurationsMetaData]{removeConfigurationsMetaData()}}.}
 }
 \value{
 A data frame containing the elite configurations required.

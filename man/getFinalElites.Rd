@@ -12,9 +12,9 @@ getFinalElites(iraceResults, n = 0L, drop.metadata = FALSE)
 \item{n}{Number of elite configurations to return, if \code{n} is larger than the
 number of configurations, then only the existing ones are returned. The default (\code{n=0}) returns all of them.}
 
-\item{drop.metadata}{Remove metadata, such the configuration ID and
-the ID of the parent, from the returned configurations. See
-\code{\link{removeConfigurationsMetaData}}.}
+\item{drop.metadata}{(\code{logical(1)})\cr Remove metadata, such as the
+configuration ID and the ID of the parent, from the returned
+configurations.  See \code{\link[=removeConfigurationsMetaData]{removeConfigurationsMetaData()}}.}
 }
 \value{
 A data frame containing the elite configurations required.

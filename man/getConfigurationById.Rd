@@ -11,9 +11,9 @@ getConfigurationById(iraceResults, ids, drop.metadata = FALSE)
 
 \item{ids}{The id or a vector of ids of the candidates configurations to obtain.}
 
-\item{drop.metadata}{Remove metadata, such the configuration ID and
-the ID of the parent, from the returned configurations. See
-\code{\link[=removeConfigurationsMetaData]{removeConfigurationsMetaData()}}.}
+\item{drop.metadata}{(\code{logical(1)})\cr Remove metadata, such as the
+configuration ID and the ID of the parent, from the returned
+configurations.  See \code{\link[=removeConfigurationsMetaData]{removeConfigurationsMetaData()}}.}
 }
 \value{
 A data frame containing the elite configurations required.
