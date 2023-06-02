@@ -10,7 +10,7 @@
 #' @param postselection NULL Percentage of the maxExperiments provided in the scenario to be used in the race.
 #' @param max.experiments NULL Number of experiments available for the race. If NULL budget for the race is set
 #'  by the parameter scenario$postselection, which defines the percentage of the total budget of \pkg{irace}
-#' (iraceResults$scenario$maxExperiments or iraceResults$scenario$maxTime/iraceResults$state$timeEstimate) to use
+#' (iraceResults$scenario$maxExperiments or iraceResults$scenario$maxTime / iraceResults$state$boundEstimate) to use
 #'  for the postselection.
 #' @param elites FALSE Flag for selecting configurations. If FALSE, the best configurations of each
 #' iteration are used for the race. If TRUE, the elite configurtions of each iteration are used for the race. 
@@ -89,7 +89,7 @@ psRace <- function(iraceLogFile=NULL, iraceResults=NULL, conf.ids=NULL,
   # FIXME: add numerical checks
   if (is.null(max.experiments)) {
     budget <- if (scenario$maxExperiments > 0)
-                scenario$maxExperiments else (scenario$maxTime/iraceResults$state$timeEstimate)
+                scenario$maxExperiments else (scenario$maxTime/iraceResults$state$boundEstimate)
     max.experiments <- ceiling(postselection *  budget)
   }
   

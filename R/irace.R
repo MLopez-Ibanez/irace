@@ -834,7 +834,7 @@ irace_run <- function(scenario, parameters)
 
       # Estimate the number of configurations to be used
       nconfigurations <- max(2L, floor(scenario$parallel / ninstances))
-      next.configuration <- 1L
+      next_configuration <- 1L
 
       # MANUEL: When can we have a null boundMax?
       boundEstimate <- if (!is.null(scenario$boundMax)) scenario$boundMax else 1.0
@@ -843,9 +843,8 @@ irace_run <- function(scenario, parameters)
         irace.warning("maxBound = ", scenario$boundMax, " is too large, using ", boundEstimate, " instead.\n")
         scenario$boundMax <- boundEstimate
       }
-      next.configuration <- 1
         
-      while (TRUE) {
+      repeat {
         # Sample new configurations if needed
         if (nrow(allConfigurations) < nconfigurations) {
           newConfigurations <- sampleUniform(parameters,
@@ -859,7 +858,7 @@ irace_run <- function(scenario, parameters)
         }
         # Execute tests
         # FIXME: Shouldn't we pass the bounds?
-        output <- do.experiments(configurations = allConfigurations[next.configuration:nconfigurations, ],
+        output <- do.experiments(configurations = allConfigurations[next_configuration:nconfigurations, ],
                                  ninstances = ninstances, scenario = scenario, parameters = parameters)
         # FIXME: Here we should check if everything timed out and increase the bound dynamically.
         iraceResults$experimentLog <- rbind(iraceResults$experimentLog,
@@ -884,7 +883,7 @@ irace_run <- function(scenario, parameters)
         if (boundEstimate <= 0)
           boundEstimate <- if (!is.null(scenario$boundMax)) scenario$boundMax else 1.0
         
-        next.configuration <- nconfigurations + 1L
+        next_configuration <- nconfigurations + 1L
         
         # Calculate how many new configurations:
         # 1. We do not want to overrun estimationTime
@@ -898,7 +897,7 @@ irace_run <- function(scenario, parameters)
         } else {
           nconfigurations <- min(1024, nconfigurations + new.conf)
         }
-      } # end of while(TRUE)
+      } # end of repeat
       
       if (length(rejectedIDs) > 0) {
         irace.note ("Immediately rejected configurations: ",
@@ -919,7 +918,7 @@ irace_run <- function(scenario, parameters)
       if (!scenario$elitist) timeUsed <- 0
 
       irace.note("Estimated execution time is ", boundEstimate, " based on ",
-                 next.configuration - 1, " configurations and ",
+                 next_configuration - 1L, " configurations and ",
                  ninstances," instances. Used time: ", timeUsed,
                  ", remaining time: ", (scenario$maxTime - timeUsed),
                  ", remaining budget (experiments): ", remainingBudget, "\n")
@@ -994,7 +993,7 @@ irace_run <- function(scenario, parameters)
           verbose = FALSE)
 
   
-  while (TRUE) {
+  repeat {
     # Recovery info 
     iraceResults$state <- list(.Random.seed = get(".Random.seed", .GlobalEnv),
                                .irace = .irace,
@@ -1334,6 +1333,6 @@ irace_run <- function(scenario, parameters)
       irace.note("Memory used in irace():\n")
       irace.print.memUsed()
     }
-  }
+  } # end of repeat
   irace.internal.error("This code is actually never executed because we return above")
 }

@@ -27,7 +27,7 @@ If NULL, the elites argument will be used.}
 
 \item{max.experiments}{NULL Number of experiments available for the race. If NULL budget for the race is set
 by the parameter scenario$postselection, which defines the percentage of the total budget of \pkg{irace}
-(iraceResults$scenario$maxExperiments or iraceResults$scenario$maxTime/iraceResults$state$timeEstimate) to use
+(iraceResults$scenario$maxExperiments or iraceResults$scenario$maxTime / iraceResults$state$boundEstimate) to use
 for the postselection.}
 
 \item{elites}{FALSE Flag for selecting configurations. If FALSE, the best configurations of each
