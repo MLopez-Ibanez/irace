@@ -95,9 +95,8 @@ numeric.configurations.equal <- function(x, configurations, parameters, threshol
     if (nrow(isSimilar.mat) == 0) break
   }
   
-  if (length(selected) != 0)
-    return(c(x[[".ID."]], configurations[selected,".ID."]))
-  return(NULL)
+  if (length(selected) == 0L) return(NULL)
+  c(x[[".ID."]], configurations[selected,".ID."])
 }
 
 ##
@@ -157,7 +156,7 @@ similarConfigurations <- function(configurations, parameters, threshold)
     if (nbCater > 0) {
       ## In this case the object "string" is available to define blocks
       ## Loop over blocks:
-      beginBlock <- 1
+      beginBlock <- 1L
       while (beginBlock < nrow(configurations)) {
         ## The current block is made of all configurations that have the same
         ## categorical string as the one of configuration[beginBlock, ]
@@ -166,20 +165,20 @@ similarConfigurations <- function(configurations, parameters, threshold)
 
         irace.assert (endBlock > beginBlock)
         ## Loop inside blocks:
-        for (i in seq(beginBlock, endBlock - 1)) {
+        for (i in seq(beginBlock, endBlock - 1L)) {
           ## Compare configuration i with all the ones that are after in the block
           similar <- c(similar,
-                       numeric.configurations.equal(configurations[i, ], configurations[(i+1):endBlock,],
+                       numeric.configurations.equal(configurations[i, ], configurations[(i+1L):endBlock,],
                                                 parameters, threshold = threshold, param.names = vecNum))
           if (debug.level >= 1) cat(".")
         }
-        beginBlock <- endBlock + 1 # Next block starts after the end of the current one
+        beginBlock <- endBlock + 1L # Next block starts after the end of the current one
       }
     } else {
       ## No categorical, so no blocks, just do the basic check without blocks
-      for (i in seq_len(nrow(configurations) - 1)) {
+      for (i in seq_len(nrow(configurations) - 1L)) {
         similar <- c(similar,
-                     numeric.configurations.equal(configurations[i, ], configurations[(i+1):nrow(configurations),],
+                     numeric.configurations.equal(configurations[i, ], configurations[(i+1L):nrow(configurations),],
                                               parameters, threshold = threshold, param.names = vecNum))
         if (debug.level >= 1) cat(".")
       }
@@ -193,12 +192,12 @@ similarConfigurations <- function(configurations, parameters, threshold)
     # and A /= C, but this is also OK because we will compare A with B,C then B
     # with C.
     similar <- unique(similar)
-    configurations <- configurations[configurations[, ".ID."] %in% similar, ]
+    configurations <- configurations[configurations[[".ID."]] %in% similar, ]
   }
   
   if (debug.level >= 1) cat(" DONE\n")
-  if (nrow(configurations) == 0) return (NULL)
-  configurations[,".ID."]
+  if (nrow(configurations) == 0L) return(NULL)
+  configurations[[".ID."]]
 }
 
 
@@ -208,13 +207,13 @@ computeNbIterations <- function(nbParameters) (2 + log2(nbParameters))
 ## Computational budget at each iteration.
 computeComputationalBudget <- function(remainingBudget, indexIteration,
                                        nbIterations)
-  floor (remainingBudget / (nbIterations - indexIteration + 1))
+  floor (remainingBudget / (nbIterations - indexIteration + 1L))
 
 ## The number of configurations
 computeNbConfigurations <- function(currentBudget, indexIteration,
                                     mu, eachTest, blockSize,
-                                    nElites = 0, nOldInstances = 0, newInstances = 0, 
-                                    maxConfigurations = 1024)
+                                    nElites = 0L, nOldInstances = 0L, newInstances = 0L, 
+                                    maxConfigurations = 1024L)
 {
   # FIXME: This is slightly incorrect, because we may have elites that have not
   # been executed on all nOldInstances. Thus, we need to pass explicitly the
@@ -299,8 +298,7 @@ computeMinimumBudget <- function(scenario, minSurvival, nbIterations, boundEstim
     #   B >= (min_surv + 1) * I * (mu + 5 * T_each)
     minimumBudget <- minimumBudget * (mu + 5L * eachTest)
   }
-
-  return(minimumBudget)
+  minimumBudget
 }
 
 checkMinimumBudget <- function(scenario, remainingBudget, minSurvival, nbIterations,
@@ -794,16 +792,16 @@ irace_run <- function(scenario, parameters)
     nbConfigurations <- 0L
     eliteConfigurations <- data.frame(stringsAsFactors=FALSE)
     
-    nbIterations <- ifelse (scenario$nbIterations == 0,
-                            computeNbIterations(parameters$nbVariable),
-                            scenario$nbIterations)
+    nbIterations <- if (scenario$nbIterations == 0)
+                      computeNbIterations(parameters$nbVariable)
+                    else scenario$nbIterations
     nbIterations <- floor(nbIterations)
     
-    minSurvival <- ifelse (scenario$minNbSurvival == 0,
-                           computeTerminationOfRace(parameters$nbVariable),
-                           scenario$minNbSurvival)
+    minSurvival <- if (scenario$minNbSurvival == 0)
+                     computeTerminationOfRace(parameters$nbVariable)
+                   else scenario$minNbSurvival
     minSurvival <- floor(minSurvival)
-    
+
     # Generate initial instance + seed list
     .irace$instancesList <- generateInstances(scenario,
                                               n = if (scenario$maxExperiments != 0)
@@ -890,12 +888,12 @@ irace_run <- function(scenario, parameters)
         new.conf <- floor(((estimationTime - timeUsed) / boundEstimate) / ninstances)
         # 2. But there is no point in executing more configurations than those
         # that we can execute in parallel.
-        new.conf <- min(new.conf, max(1, floor(scenario$parallel / ninstances)))
+        new.conf <- min(new.conf, max(1L, floor(scenario$parallel / ninstances)))
 
-        if (timeUsed >= estimationTime || new.conf == 0 || nconfigurations == 1024) {
+        if (timeUsed >= estimationTime || new.conf == 0 || nconfigurations == 1024L) {
           break
         } else {
-          nconfigurations <- min(1024, nconfigurations + new.conf)
+          nconfigurations <- min(1024L, nconfigurations + new.conf)
         }
       } # end of repeat
       
@@ -933,11 +931,10 @@ irace_run <- function(scenario, parameters)
 
     # Compute the total initial budget, that is, the maximum number of
     # experiments that we can perform.
-    currentBudget <-
-      ifelse (scenario$nbExperimentsPerIteration == 0,
-              computeComputationalBudget(remainingBudget, indexIteration,
-                                         nbIterations),
-              scenario$nbExperimentsPerIteration)
+    currentBudget <- if (scenario$nbExperimentsPerIteration == 0)
+                       computeComputationalBudget(remainingBudget, indexIteration,
+                                                  nbIterations)
+                     else scenario$nbExperimentsPerIteration
 
     # Check that the budget is enough, for the time estimation case we reduce
     # the number of iterations.
@@ -955,11 +952,11 @@ irace_run <- function(scenario, parameters)
                  " is too high and reducing the minimum number of iterations,",
                  " however, if the estimation was correct or too low,",
                  " results might not be better than random sampling.\n")
-      nbIterations <- nbIterations - 1
+      nbIterations <- nbIterations - 1L
       # FIXME: We should also reduce the number of configurations to minSurvival * 2
-      scenario$nbConfigurations <- ifelse (scenario$nbConfigurations > 0,
-                                           min(minSurvival * 2, scenario$nbConfigurations),
-                                           minSurvival * 2)
+      scenario$nbConfigurations <- if (scenario$nbConfigurations > 0)
+                                     min(minSurvival * 2L, scenario$nbConfigurations)
+                                   else minSurvival * 2L
     }
     if (!is.null(warn_msg)) irace.warning(warn_msg)
     
@@ -1043,11 +1040,10 @@ irace_run <- function(scenario, parameters)
     }
     # Compute the current budget (nb of experiments for this iteration),
     # or take the value given as parameter.
-    currentBudget <-
-      ifelse (scenario$nbExperimentsPerIteration == 0,
-              computeComputationalBudget(remainingBudget, indexIteration,
-                                         nbIterations),
-              scenario$nbExperimentsPerIteration)
+    currentBudget <- if (scenario$nbExperimentsPerIteration == 0)
+                       computeComputationalBudget(remainingBudget, indexIteration,
+                                                  nbIterations)
+                     else scenario$nbExperimentsPerIteration
     
     # Compute the number of configurations for this race.
     if (scenario$elitist && !firstRace) {
@@ -1079,7 +1075,7 @@ irace_run <- function(scenario, parameters)
         # We skip one iteration
         catInfo("Not enough budget for this iteration, ",
                 "skipping to the next one.")
-        indexIteration <- indexIteration + 1
+        indexIteration <- indexIteration + 1L
         next
       } else {
         catInfo("Stopped because ",
@@ -1319,20 +1315,18 @@ irace_run <- function(scenario, parameters)
     if (firstRace) {
       if (debugLevel >= 1) irace.note("Initialise model\n")
       model <- initialiseModel(parameters, eliteConfigurations)
+      firstRace <- FALSE
     }
       
-    if (debugLevel >= 1) irace.note("End of iteration ", indexIteration, "\n")
-    if (debugLevel >= 3) {
-      irace.note("All configurations (sampling order):\n")
-      configurations.print(allConfigurations, metadata = TRUE)
+    if (debugLevel >= 1)  {
+      irace.note("End of iteration ", indexIteration, "\n")
+      if (debugLevel >= 3) {
+        irace.note("All configurations (sampling order):\n")
+        configurations.print(allConfigurations, metadata = TRUE)
+        irace.note("Memory used in irace():\n")
+        irace.print.memUsed()
+      }
     }
-
-    indexIteration <- indexIteration + 1
-    firstRace <- FALSE
-    if (scenario$debugLevel >= 3) {
-      irace.note("Memory used in irace():\n")
-      irace.print.memUsed()
-    }
+    indexIteration <- indexIteration + 1L
   } # end of repeat
-  irace.internal.error("This code is actually never executed because we return above")
 }
