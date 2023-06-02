@@ -61,9 +61,6 @@ pkgdown: gendoc
 	$(Reval) 'pkgdown::build_site()'
 	@$(MAKE) clean
 
-version:
-	./scripts/version.sh
-
 build: 
 	@$(MAKE) genoptions
 	$(MAKE) releasevignette
@@ -118,7 +115,7 @@ else
 endif
 
 clean: 
-	cd $(PACKAGEDIR) && (./cleanup; make -C src -f Makevars clean; git checkout --force R/version.R)
+	cd $(PACKAGEDIR) && (./cleanup; make -C src -f Makevars clean)
 
 ## FIXME: building the vignettes is a bit complicated and sometimes fails.
 # If \setboolean{Release}{false}, entries are taken from optbib and everything

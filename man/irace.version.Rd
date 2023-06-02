@@ -3,7 +3,7 @@
 \docType{data}
 \name{irace.version}
 \alias{irace.version}
-\title{irace.version}
+\title{A character string containing the version of \code{irace} including git SHA.}
 \format{
 An object of class \code{character} of length 1.
 }
@@ -11,6 +11,6 @@ An object of class \code{character} of length 1.
 irace.version
 }
 \description{
-A character string containing the version of \code{irace}.
+A character string containing the version of \code{irace} including git SHA.
 }
 \keyword{datasets}

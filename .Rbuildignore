@@ -74,3 +74,4 @@ DEVEL-README.md
 ^web
 _pkgdown.yml
 _snaps
+^R/aaa.R$
