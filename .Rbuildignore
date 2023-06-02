@@ -4,6 +4,7 @@ DEVEL-README.md
 \.Rhistory$
 \.auctex-auto
 \.bak$
+\.covrignore$
 \.diff$
 \.o$
 \.orig$
