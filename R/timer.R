@@ -1,8 +1,7 @@
-Timer <- R6::R6Class("Timer", cloneable = FALSE, list(
+Timer <- R6::R6Class("Timer", lock_class = TRUE, list(
   start = NULL,
   initialize = function() {
     self$start <- proc.time()
-    self
   },
   elapsed = function() {
     x <- proc.time() - self$start
