@@ -95,7 +95,8 @@ numeric.configurations.equal <- function(x, configurations, parameters, threshol
     if (nrow(isSimilar.mat) == 0) break
   }
   
-  if (length(selected) == 0L) return(NULL)
+  if (length(selected) == 0L)
+    return(NULL)
   c(x[[".ID."]], configurations[selected,".ID."])
 }
 
@@ -306,20 +307,19 @@ checkMinimumBudget <- function(scenario, remainingBudget, minSurvival, nbIterati
 {
   minimumBudget <- computeMinimumBudget (scenario, minSurvival, nbIterations, boundEstimate)
 
-  if (remainingBudget < minimumBudget) {
-    if (scenario$maxTime == 0) {
-      irace.error("Insufficient budget: ",
-                  "With the current settings, irace will require a value of ",
-                  "'maxExperiments' of at least '",  minimumBudget, "'.")
-    } else if (nbIterations == 1L) {
-      irace.error("Insufficient budget: ",
-                  "With the current settings and estimated time per run (",
-                  boundEstimate, ") irace will require a value of 'maxTime' of at least '",
-                  (minimumBudget * boundEstimate) + timeUsed, "'.")
-    }
-    return(FALSE)
+  if (remainingBudget >= minimumBudget)
+    return(TRUE)
+  if (scenario$maxTime == 0) {
+    irace.error("Insufficient budget: ",
+                "With the current settings, irace will require a value of ",
+                "'maxExperiments' of at least '",  minimumBudget, "'.")
+  } else if (nbIterations == 1L) {
+    irace.error("Insufficient budget: ",
+                "With the current settings and estimated time per run (",
+                boundEstimate, ") irace will require a value of 'maxTime' of at least '",
+                (minimumBudget * boundEstimate) + timeUsed, "'.")
   }
-  return(TRUE)
+  FALSE
 }
 
 startParallel <- function(scenario)
@@ -395,9 +395,9 @@ generateInstances <- function(scenario, n, instancesList = NULL)
     n_blocks <- length(instances) / blockSize
     # Sample instances index in groups (ntimes)
     selected_blocks <- unlist(lapply(rep(n_blocks, ntimes), sample.int, replace = FALSE))
-    sindex <- c(outer(seq_len(blockSize), (selected_blocks - 1) * blockSize, "+"))
+    sindex <- c(outer(seq_len(blockSize), (selected_blocks - 1L) * blockSize, "+"))
   } else {
-    sindex <- rep(1L:length(instances), ntimes)
+    sindex <- rep(seq_along(instances), ntimes)
   }
   # Sample seeds.
   # 2147483647 is the maximum value for a 32-bit signed integer.
@@ -420,7 +420,7 @@ do.experiments <- function(configurations, ninstances, scenario, parameters)
                                         
   Results <- matrix(nrow = ninstances, ncol = nrow(configurations),
                     dimnames = list(seq_len(ninstances), as.character(configurations[[".ID."]])))
-  experimentLog <- matrix(nrow = 0, ncol = 4,
+  experimentLog <- matrix(nrow = 0L, ncol = 4L,
                           dimnames = list(NULL, c("instance", "configuration", "time", "bound")))
   
   # Extract results
@@ -434,11 +434,11 @@ do.experiments <- function(configurations, ninstances, scenario, parameters)
     irace.assert(!any(is.null(vtimes)))
     experimentLog <- rbind(experimentLog,
                            cbind(j, configurations[[".ID."]], vtimes, 
-                                 if(!is.null(scenario$boundMax)) scenario$boundMax else NA))
+                                 if (!is.null(scenario$boundMax)) scenario$boundMax else NA))
   }
   
   rejectedIDs <- configurations[colAnys(is.infinite(Results)), ".ID."]
-  return (list(experiments = Results, experimentLog = experimentLog, rejectedIDs = rejectedIDs))
+  list(experiments = Results, experimentLog = experimentLog, rejectedIDs = rejectedIDs)
 }
 
 alloc_configurations <- function(colnames, nrow, parameters)
@@ -1087,8 +1087,8 @@ irace_run <- function(scenario, parameters)
     # Stop if the number of configurations to test is NOT larger than the minimum.
     if (nbConfigurations <= minSurvival) {
       catInfo("Stopped because there is not enough budget left to race more than ",
-              "the minimum (", minSurvival,")\n",
-              "# You may either increase the budget or set 'minNbSurvival' to a lower value")
+              "the minimum (", minSurvival,").\n",
+              "# You may either increase the budget or set 'minNbSurvival' to a lower value.")
       return(irace_finish(iraceResults, scenario, reason = "Not enough budget to race more than the minimum configurations"))
     }
 
@@ -1105,7 +1105,7 @@ irace_run <- function(scenario, parameters)
       # Stop if  the number of configurations to produce is not greater than
       # the number of elites.
       catInfo("Stopped because ",
-              "there is not enough budget left to race newly sampled configurations")
+              "there is not enough budget left to race newly sampled configurations.")
       #(number of elites  + 1) * (mu + min(5, indexIteration)) > remainingBudget" 
       return(irace_finish(iraceResults, scenario, reason = "Not enough budget left to race newly sampled configurations"))
     }
@@ -1116,11 +1116,11 @@ irace_run <- function(scenario, parameters)
       if ((nbConfigurations - nrow(eliteConfigurations)) * scenario$mu
           + nrow(eliteConfigurations) * min(scenario$elitistNewInstances, scenario$mu)
           > currentBudget) {
-        catInfo("Stopped because there is not enough budget left to race all configurations up to the first test (or mu)")
+        catInfo("Stopped because there is not enough budget left to race all configurations up to the first test (or mu).")
         return(irace_finish(iraceResults, scenario, reason = "Not enough budget to race all configurations up to the first test (or mu)"))
       }
     } else if (nbConfigurations * scenario$mu > currentBudget) {
-      catInfo("Stopped because there is not enough budget left to race all configurations up to the first test (or mu)")
+      catInfo("Stopped because there is not enough budget left to race all configurations up to the first test (or mu).")
       return(irace_finish(iraceResults, scenario, reason = "Not enough budget to race all configurations up to the first test (or mu)"))
     }
 
@@ -1193,7 +1193,7 @@ irace_run <- function(scenario, parameters)
       raceConfigurations <- rbind(eliteConfigurations[, colnames(newConfigurations)],
                                   newConfigurations)
       rownames(raceConfigurations) <- raceConfigurations[[".ID."]]
-
+                  
       if (scenario$softRestart) {
         #          Rprof("profile.out")
         tmp.ids <- similarConfigurations (raceConfigurations, parameters,
@@ -1233,11 +1233,11 @@ irace_run <- function(scenario, parameters)
     }
 
     # Get data from previous elite tests 
-    if (scenario$elitist && nrow(eliteConfigurations) > 0) {
-      elite.data <- iraceResults$experiments[, as.character(eliteConfigurations[,".ID."]), drop=FALSE]
-    } else elite.data <- NULL
+    elite.data <- if (scenario$elitist && nrow(eliteConfigurations) > 0)
+                    iraceResults$experiments[, as.character(eliteConfigurations[[".ID."]]), drop=FALSE]
+                  else NULL
 
-    # FIXME: Remove this assert after a while)
+    # FIXME: Remove this assert after a while
     irace.assert(max(nrow(iraceResults$experiments), 0) == nrow(iraceResults$experiments))
     .irace$next.instance <- nrow(iraceResults$experiments) + 1
     # Add instances if needed
@@ -1315,6 +1315,7 @@ irace_run <- function(scenario, parameters)
     if (firstRace) {
       if (debugLevel >= 1) irace.note("Initialise model\n")
       model <- initialiseModel(parameters, eliteConfigurations)
+      if (debugLevel >= 2) printModel (model)
       firstRace <- FALSE
     }
       

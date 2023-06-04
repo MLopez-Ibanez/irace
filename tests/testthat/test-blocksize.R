@@ -78,7 +78,7 @@ time.irace <- function(...)
 check_blocksize <- function(results)
 {
   expect_equal(rowMeans(matrix(results$state$.irace$instancesList[,"instance"],nrow=results$scenario$blockSize)),
-               rowMeans(matrix(1:length(results$scenario$instances), nrow=results$scenario$blockSize)))
+               rowMeans(matrix(seq_along(results$scenario$instances), nrow=results$scenario$blockSize)))
   expect_equal(sum(colSums(!is.na(results$experiments)) %% results$scenario$blockSize), 0)
 }
 

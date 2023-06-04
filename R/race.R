@@ -71,15 +71,12 @@ race.wrapper <- function(configurations, instance.idx, bounds = NULL,
 {
   irace.assert (parameters$nbVariable > 0)
   irace.assert (length(parameters$names) == parameters$nbParameters)
-
-  # FIXME: Accessing 'seed' and 'instance' should be moved to createExperimentList.
-  seed <- .irace$instancesList[instance.idx, "seed"]
-  id.instance  <- .irace$instancesList[instance.idx, "instance"]
   # Experiment list to execute
   experiments <- createExperimentList(configurations, parameters = parameters,
                                       instances = scenario$instances,
-                                      instances.ID = id.instance,
-                                      seeds = seed, bounds = bounds)
+                                      instances.ID = .irace$instancesList[instance.idx, "instance"],
+                                      seeds = .irace$instancesList[instance.idx, "seed"],
+                                      bounds = bounds)
 
   target.output <- vector("list", length(experiments))
   # Execute commands
@@ -1149,8 +1146,8 @@ elitist_race <- function(maxExp = 0,
     # LESLIE: we have to make the ranking outside: we can have configurations eliminated by capping
     # that are not eliminated by the test.
     # MANUEL: I don't understand the above comment.
-    if (length(which.alive) == 1) {
-      race.ranks <- 1
+    if (length(which.alive) == 1L) {
+      race.ranks <- 1L
       best <- which.alive
     } else  {
       tmpResults <- Results[seq_len(current.task), which.alive, drop = FALSE]

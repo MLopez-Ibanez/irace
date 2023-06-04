@@ -83,5 +83,5 @@ testConfigurations <- function(configurations, scenario, parameters)
   }
 
   ## FIXME: Shouldn't we record these experiments in experimentLog ?
-  return(list(experiments = testResults, seeds = instanceSeed))
+  list(experiments = testResults, seeds = instanceSeed)
 }

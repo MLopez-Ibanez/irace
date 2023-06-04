@@ -134,14 +134,14 @@ check.output.target.evaluator <- function (output, scenario, target.runner.call 
 }
 
 exec.target.evaluator <- function (experiment, num.configurations, all.conf.id,
-                                   scenario, target.runner.call)
+                                   scenario, target_evaluator, target.runner.call)
 {
-  output <- .irace$target.evaluator(experiment, num.configurations, all.conf.id,
-                                    scenario, target.runner.call)
+  output <- target_evaluator(experiment, num.configurations, all.conf.id,
+                             scenario, target.runner.call)
   check.output.target.evaluator (output, scenario, target.runner.call = target.runner.call)
   # Fix too small time.
   output$time <- if (is.null(output$time)) NA else max(output$time, scenario$minMeasurableTime)
-  return (output)
+  output
 }
 
 #' target.evaluator.default
@@ -508,7 +508,7 @@ execute.experiments <- function(experiments, scenario)
 {
   parallel <- scenario$parallel
   mpi <- scenario$mpi
-  target.runner <- .irace$target.runner
+  target_runner <- .irace$target.runner
   execDir <- scenario$execDir
   if (!isTRUE (file.info(execDir)$isdir)) {
     irace.error ("Execution directory '", execDir, "' is not found or not a directory\n")
@@ -524,7 +524,7 @@ execute.experiments <- function(experiments, scenario)
     target.output <-
       scenario$targetRunnerParallel(experiments, exec.target.runner,
                                     scenario = scenario,
-                                    target.runner = target.runner)
+                                    target.runner = target_runner)
     if (length(target.output) != length(experiments)) {
       irace.error("Stopping because the output of targetRunnerParallel is missing elements. The output was:\n", paste0(capture.output(str(target.output)), collapse="\n"))
     }
@@ -535,7 +535,7 @@ execute.experiments <- function(experiments, scenario)
       if (scenario$loadBalancing) {
         target.output <- Rmpi::mpi.applyLB(experiments, exec.target.runner,
                                            scenario = scenario,
-                                           target.runner = target.runner)
+                                           target.runner = target_runner)
       } else {
         # Without load-balancing, we need to split the experiments into chunks
         # of size parallel.
@@ -544,7 +544,7 @@ execute.experiments <- function(experiments, scenario)
                                        ceiling(seq_along(experiments) / parallel),
                                        Rmpi::mpi.apply, exec.target.runner,
                                        scenario = scenario,
-                                       target.runner = target.runner))
+                                       target.runner = target_runner))
       }
       # FIXME: if stop() is called from mpi.applyLB, it does not
       # terminate the execution of the parent process, so it will
@@ -565,12 +565,12 @@ execute.experiments <- function(experiments, scenario)
           target.output <-
             parallel::parLapplyLB(.irace$cluster, experiments, exec.target.runner,
                                   scenario = scenario,
-                                  target.runner = target.runner)
+                                  target.runner = target_runner)
         } else {
           target.output <-
             parallel::parLapply(.irace$cluster, experiments, exec.target.runner,
                                 scenario = scenario,
-                                target.runner = target.runner)
+                                target.runner = target_runner)
         }
         # FIXME: if stop() is called from parLapply, then the parent
         # process also terminates, and we cannot give further errors.
@@ -581,7 +581,7 @@ execute.experiments <- function(experiments, scenario)
                              mc.preschedule = !scenario$loadBalancing,
                              mc.cores = parallel,
                              scenario = scenario,
-                             target.runner = target.runner)
+                             target.runner = target_runner)
         # FIXME: if stop() is called from mclapply, it does not
         # terminate the execution of the parent process, so it will
         # continue and give more errors later. We have to terminate
@@ -602,7 +602,7 @@ execute.experiments <- function(experiments, scenario)
     # One process, all sequential
     target.output <- lapply(experiments, exec.target.runner,
                             scenario = scenario,
-                            target.runner = target.runner)
+                            target.runner = target_runner)
   }
   target.output
 }
@@ -619,6 +619,7 @@ execute.evaluator <- function(experiments, scenario, target.output, configuratio
     output <- exec.target.evaluator(experiment = experiments[[k]],
                                     num.configurations = length(configurations.id),
                                     all.conf.id, scenario = scenario,
+                                    target_evaluator = .irace$target.evaluator,
                                     target.runner.call = target.output[[k]]$call)
     target.output[[k]]$cost <- output$cost
     if (is.null(target.output[[k]]$call))

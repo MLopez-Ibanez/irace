@@ -407,11 +407,11 @@ configurations.print <- function(configurations, metadata = FALSE)
   if (!is.data.frame(configurations))
     configurations <- as.data.frame(configurations, stringsAsFactors = FALSE)
 
-  rownames(configurations) <- configurations$.ID.
-  if (!metadata) {
+  rownames(configurations) <- configurations[[".ID."]]
+  if (!metadata)
     configurations <- removeConfigurationsMetaData(configurations)
-  }
-  print.data.frame(configurations, digits = 15)
+  
+  print.data.frame(configurations, digits = 15L)
 }
 
 #' Print configurations as command-line strings.

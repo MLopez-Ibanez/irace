@@ -11,7 +11,7 @@ psRace(
   postselection = NULL,
   max.experiments = NULL,
   elites = FALSE,
-  seed = 1234567
+  seed = 1234567L
 )
 }
 \arguments{

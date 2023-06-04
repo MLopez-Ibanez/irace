@@ -1,7 +1,7 @@
 #' R6 Class for parsing command-line arguments
 #' 
 #' @export
-CommandArgsParser <- R6::R6Class("CommandArgsParser", cloneable = FALSE, list(
+CommandArgsParser <- R6::R6Class("CommandArgsParser", cloneable = FALSE, lock_class = TRUE, list(
   argv = NULL,
   argsdef = NULL,
   initialize = function(argv, argsdef) {

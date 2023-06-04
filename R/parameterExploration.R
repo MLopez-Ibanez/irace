@@ -42,7 +42,7 @@
 #' @author Leslie Pérez Cáceres
 #' @export
 psRace <- function(iraceLogFile=NULL, iraceResults=NULL, conf.ids=NULL,
-                   postselection=NULL, max.experiments=NULL, elites=FALSE, seed=1234567)
+                   postselection=NULL, max.experiments=NULL, elites=FALSE, seed=1234567L)
 {
   # Input check
   if (is.null(iraceLogFile) && is.null(iraceResults)) 
