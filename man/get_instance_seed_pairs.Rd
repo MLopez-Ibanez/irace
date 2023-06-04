@@ -7,13 +7,18 @@
 get_instance_seed_pairs(iraceResults)
 }
 \arguments{
-\item{iraceResults}{(\code{list()}|\code{character(1)}) \code{iraceResults} object created by \pkg{irace} and typically saved in the log file \code{irace.Rdata}. If a character string is given, then it is interpreted as the path to the log file from which the \code{iraceResults} object will be loaded.}
+\item{iraceResults}{(\code{list()}|\code{character(1)})\cr Object created by \pkg{irace} and typically saved in the log file \code{irace.Rdata}. If a character string is given, then it is interpreted as the path to the log file from which the \code{iraceResults} object will be loaded.}
 }
 \value{
 A data frame containing two columns \code{"instance"} and \code{"seed"}.
 }
 \description{
 Returns the pairs of instance indexes and seeds used as instances in the race.
+}
+\examples{
+log_file <- system.file("exdata/irace-acotsp.Rdata", package="irace", mustWork=TRUE)
+head(get_instance_seed_pairs(log_file))
+
 }
 \author{
 Manuel López-Ibáñez

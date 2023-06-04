@@ -41,10 +41,13 @@ getFinalElites <- function(iraceResults, n = 0L, drop.metadata = FALSE)
 #' Returns the configurations selected by ID.
 #' 
 #' @template arg_iraceresults
-#' @param ids The id or a vector of ids of the candidates configurations to obtain.
+#' @param ids (`integer()`)\cr The id or a vector of ids of the candidates configurations to obtain.
 #' @template arg_drop_metadata
 #' 
 #' @return A data frame containing the elite configurations required.
+#' @examples
+#' log_file <- system.file("exdata/irace-acotsp.Rdata", package="irace", mustWork=TRUE)
+#' getConfigurationById(log_file, ids = c(1,2), drop.metadata = TRUE)
 #'
 #' @author Manuel López-Ibáñez and Leslie Pérez Cáceres
 #' @concept analysis
@@ -62,17 +65,20 @@ getConfigurationById <- function(iraceResults, ids, drop.metadata = FALSE)
 #' Returns the configurations by the iteration in which they were executed.
 #'
 #' @template arg_iraceresults
-#' @param iterations The iteration number or a vector of iteration numbers from where 
-#'  the configurations should be obtained.
+#' @param iterations (`integer()`)\cr The iteration number or a vector of iteration numbers from where 
+#'  the configurations should be obtained. Negative values start counting from the last iteration.
 #' @template arg_drop_metadata
 #' 
 #' @return A data frame containing the elite configurations required.
 #'
+#' @examples
+#' log_file <- system.file("exdata/irace-acotsp.Rdata", package="irace", mustWork=TRUE)
+#' getConfigurationByIteration(log_file, iterations = c(-2, -1), drop.metadata = TRUE)
+#' 
 #' @author Manuel López-Ibáñez and Leslie Pérez Cáceres
 #' @concept analysis
 #' @export
-getConfigurationByIteration <- function(iraceResults,
-                                        iterations, drop.metadata = FALSE)
+getConfigurationByIteration <- function(iraceResults, iterations, drop.metadata = FALSE)
 {
   if (missing(iraceResults)) stop("argument 'iraceResults' is missing")
   iraceResults <- read_logfile(iraceResults)
@@ -80,6 +86,9 @@ getConfigurationByIteration <- function(iraceResults,
   if (length(iterations) < 1L)
     stop("You must provide at least one configuration ID.")
 
+  n_iterations <- length(iraceResults$iterationElites)
+  iterations <- as.integer(iterations)
+  iterations <- ifelse(iterations >= 0L, iterations, n_iterations + 1L + iterations)
   # To silence warning.
   iteration <- NULL
   ids <- unique(subset(as.data.frame(iraceResults$experimentLog),
@@ -105,6 +114,10 @@ get_configuration_by_id_helper <- function(allConfigurations, ids, drop.metadata
 #' @template arg_iraceresults
 #' 
 #' @return A data frame containing two columns `"instance"` and `"seed"`.
+#'
+#' @examples
+#' log_file <- system.file("exdata/irace-acotsp.Rdata", package="irace", mustWork=TRUE)
+#' head(get_instance_seed_pairs(log_file))
 #'
 #' @author Manuel López-Ibáñez
 #' @concept analysis

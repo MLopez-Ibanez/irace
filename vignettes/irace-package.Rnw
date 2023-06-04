@@ -2135,7 +2135,7 @@ irace:::concordance(iraceResults$testing$experiments)
 % # Get last iteration number
 % last <- length(iraceResults$iterationElites)
 % # Get configurations in the last two iterations
-% conf <- getConfigurationByIteration(iraceResults = iraceResults,
+% conf <- getConfigurationByIteration(iraceResults,
 %                                     iterations = c(last - 1, last))
 % parallelCoordinatesPlot (conf, iraceResults$parameters,
 %                          param_names = c("algorithm", "alpha", "beta", "rho",
