@@ -1888,7 +1888,7 @@ statistical test:
 Other columns have the following meaning:
 \begin{description}
   \item \code{Instance}: Index of \code{(instance, seed)} pair executed. This number
-corresponds to the index of the list found in \code{state$.irace$instancesList}. See \autoref{sec:output r}
+corresponds to the row in the data frame returned by \code{get_instance_seed_pairs()}. See \autoref{sec:output r}
 for more information. This is different from the instance ID passed to \parameter{targetRunner}.
 \item \code{Bound}: Only when \parameter{capping} is enabled. Execution time used as bound
 for the execution of new candidate configurations. 
@@ -2013,7 +2013,7 @@ discarded by the statistical test and not executed on subsequent instances, or
 3) the race terminated before this instance was considered.
 
 Row names correspond to the identifier of the \code{(instance, seed)} pairs
-defined in \code{state\$.irace\$instancesList}. The instance and seed used
+defined by the data frame returned by \code{get_instance_seed_pairs()}. The instance and seed used
 for a particular experiment can be obtained with:\sloppy
 
 <<get_instance_seed, prompt=TRUE, eval=TRUE, comment="">>=
@@ -2021,15 +2021,15 @@ for a particular experiment can be obtained with:\sloppy
 # of the best candidate.
 # Get index of the instances
 pair.id <- which(!is.na(all.exp))
-index <- iraceResults$state$.irace$instancesList[pair.id, "instance"]
+index <- get_instance_seed_pairs(iraceResults)[pair.id, "instance"]
 # Obtain the instance names
 iraceResults$scenario$instances[index]
 # Get the seeds
-iraceResults$state$.irace$instancesList[pair.id, "seed"]
+get_instance_seed_pairs(iraceResults)[pair.id, "seed"]
 @
 \item \code{experimentLog}: A matrix with columns \code{iteration, instance, configuration}. This matrix contains the log of all the experiments that \irace
 performs during its execution. The \code{instance} column refers to the index of the
-\code{state$.irace$instancesList} data frame. When \parameter{capping} is enabled a column \code{bound} is added to log the execution bound applied 
+data frame returned by \code{get_instance_seed_pairs()}. When \parameter{capping} is enabled a column \code{bound} is added to log the execution bound applied 
 for each execution.
 
 \item \code{softRestart}: A logical vector that indicates if a soft restart was

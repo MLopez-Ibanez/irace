@@ -362,8 +362,8 @@ extractElites <- function(scenario, parameters, configurations, nbElites)
   # Sort by rank.
   elites <- configurations[order(configurations[[".RANK."]]), , drop = FALSE]
   elites <- elites[seq_len(nbElites), , drop = FALSE]
-  elites[[".WEIGHT."]] <- ((nbElites - (1:nbElites) + 1)
-                           / (nbElites * (nbElites + 1) / 2))
+  elites[[".WEIGHT."]] <- (((nbElites + 1) - seq_len(nbElites))
+                           / (nbElites * (nbElites + 1L) / 2))
   elites
 }
 

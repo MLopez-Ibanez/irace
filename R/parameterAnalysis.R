@@ -100,3 +100,18 @@ get_configuration_by_id_helper <- function(allConfigurations, ids, drop.metadata
   configurations
 }
 
+#' Returns the pairs of instance indexes and seeds used as instances in the race.
+#'
+#' @template arg_iraceresults
+#' 
+#' @return A data frame containing two columns `"instance"` and `"seed"`.
+#'
+#' @author Manuel López-Ibáñez
+#' @concept analysis
+#' @export
+get_instance_seed_pairs <- function(iraceResults)
+{
+  if (missing(iraceResults)) stop("argument 'iraceResults' is missing")
+  iraceResults <- read_logfile(iraceResults)
+  iraceResults$state$.irace$instancesList
+}
