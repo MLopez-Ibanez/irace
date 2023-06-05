@@ -413,31 +413,34 @@ generateInstances <- function(scenario, n, instancesList = NULL)
 ## Estimate the mean execution time
 do.experiments <- function(configurations, ninstances, scenario, parameters)
 {
-  output <- lapply(seq_len(ninstances), race.wrapper, configurations = configurations, 
+  instances <- seq_len(ninstances)
+  output <- lapply(instances, race.wrapper, configurations = configurations, 
                    bounds = rep(scenario$boundMax, nrow(configurations)),
                    which.alive = seq_nrow(configurations), which.exe = seq_nrow(configurations),
                    parameters = parameters, scenario = scenario)
-                                        
-  Results <- matrix(nrow = ninstances, ncol = nrow(configurations),
-                    dimnames = list(seq_len(ninstances), as.character(configurations[[".ID."]])))
-  experimentLog <- matrix(nrow = 0L, ncol = 4L,
-                          dimnames = list(NULL, c("instance", "configuration", "time", "bound")))
-  
   # Extract results
-  for (j in seq_len(ninstances)) {
+  times <- c()
+  costs <- c()
+  # FIXME: Convert output to a matrix so that we can skip this loop
+  for (j in instances) {
     vcost <- unlist(lapply(output[[j]], "[[", "cost"))
-    if (scenario$capping)
-      vcost <- applyPAR(vcost, boundMax = scenario$boundMax, boundPar = scenario$boundPar)
-    # Convert output to a matrix so that we can skip this loop
-    Results[j, ] <- vcost
+    costs <- c(costs, vcost)
     vtimes <- unlist(lapply(output[[j]], "[[", "time"))
     irace.assert(!any(is.null(vtimes)))
-    experimentLog <- rbind(experimentLog,
-                           cbind(j, configurations[[".ID."]], vtimes, 
-                                 if (!is.null(scenario$boundMax)) scenario$boundMax else NA))
+    times <- c(times, vtimes)
   }
-  
-  rejectedIDs <- configurations[colAnys(is.infinite(Results)), ".ID."]
+  if (scenario$capping)
+    costs <- applyPAR(costs, boundMax = scenario$boundMax, boundPar = scenario$boundPar)
+
+  Results <- matrix(costs, nrow = ninstances, ncol = nrow(configurations),
+                    byrow = TRUE,
+                    dimnames = list(instances, as.character(configurations[[".ID."]])))
+
+  experimentLog <- cbind(instance = rep(instances, each = nrow(configurations)),
+                         configuration = rep(configurations[[".ID."]], times = ninstances),
+                         time = times,
+                         bound = if (!is.null(scenario$boundMax)) scenario$boundMax else NA)
+  rejectedIDs <- configurations[[".ID."]][colAnys(is.infinite(Results))]
   list(experiments = Results, experimentLog = experimentLog, rejectedIDs = rejectedIDs)
 }
 
@@ -757,8 +760,7 @@ irace_run <- function(scenario, parameters)
   if (!is.null.or.empty(scenario$recoveryFile)) {
     irace.note ("Resuming from file: '", scenario$recoveryFile,"'\n")
     recoverFromFile(scenario$recoveryFile)
-    # We call checkScenario again to fix any inconsistencies in the recovered
-    # data.
+    # We call checkScenario again to fix any inconsistencies in the recovered data.
     # FIXME: Do not call checkScenario earlier and instead do the minimum to check recoveryFile.
     scenario <- checkScenario(scenario)
     firstRace <- FALSE
