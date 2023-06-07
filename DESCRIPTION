@@ -29,7 +29,7 @@ Suggests:
     Rmpi (>= 0.6.0),
     parallel,
     knitr,
-    testthat (>= 3.0.0),
+    testthat (>= 3.1.8),
     withr,
     mlr (>= 2.15.0),
     ParamHelpers,
