@@ -89,6 +89,7 @@
 <li><p>If scenario option <code>targetRunnerParallel</code> is set, irace no longer tries to initialize a parallel environment or setup MPI. It is now the responsibility of the user to do that before calling irace or within the function assigned to <code>targetRunnerParallel</code>.</p></li>
 <li><p>Do not set <code>option(error=utils::recover())</code> in debug mode to avoid issues when calling irace from Python. The user can set this if desired.</p></li>
 <li><p>Fix bug failing to restart with parameters that have dependent domains.</p></li>
+<li><p>Fix bug with <code>sampleInstances=FALSE</code> that could re-evaluate the same (instance, seed) pair more than once.</p></li>
 </ul></div>
 </div>
     <div class="section level2">
