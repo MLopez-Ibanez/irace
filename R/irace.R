@@ -836,12 +836,19 @@ irace_run <- function(scenario, parameters)
       nconfigurations <- max(2L, floor(scenario$parallel / ninstances))
       next_configuration <- 1L
 
-      # MANUEL: When can we have a null boundMax?
-      boundEstimate <- if (!is.null(scenario$boundMax)) scenario$boundMax else 1.0
-      if (estimationTime < boundEstimate * nconfigurations) {
-        boundEstimate <- estimationTime / nconfigurations
-        irace.warning("maxBound = ", scenario$boundMax, " is too large, using ", boundEstimate, " instead.\n")
-        scenario$boundMax <- boundEstimate
+      if (is.null(scenario$boundMax)) {
+        boundEstimate <- 1.0
+        if (estimationTime < boundEstimate * nconfigurations) {
+          boundEstimate <- estimationTime / nconfigurations
+        }
+      } else {
+        boundEstimate <- scenario$boundMax
+        if (estimationTime < boundEstimate * nconfigurations) {
+          boundEstimate <- estimationTime / nconfigurations
+          irace.warning("boundMax = ", scenario$boundMax, " is too large, using ", boundEstimate, " instead.\n")
+          # FIXME: We should not modify the scenario
+          scenario$boundMax <- boundEstimate
+        }
       }
         
       repeat {
@@ -881,7 +888,7 @@ irace_run <- function(scenario, parameters)
         # User should return time zero for rejectedIDs.
         boundEstimate <- mean(iraceResults$experimentLog[, "time"], na.rm = TRUE)
         if (boundEstimate <= 0)
-          boundEstimate <- if (!is.null(scenario$boundMax)) scenario$boundMax else 1.0
+          boundEstimate <- if (is.null(scenario$boundMax)) 1.0 else scenario$boundMax
         
         next_configuration <- nconfigurations + 1L
         
@@ -922,10 +929,8 @@ irace_run <- function(scenario, parameters)
                  ninstances," instances. Used time: ", timeUsed,
                  ", remaining time: ", (scenario$maxTime - timeUsed),
                  ", remaining budget (experiments): ", remainingBudget, "\n")
-      # FIXME: Here we should check if the estimatedTime is more than a constant times
-      # the boundMax and update the boundMax
       if (!is.null(scenario$boundMax) && 2 * boundEstimate < scenario$boundMax) {
-        irace.warning("maxBound = ", scenario$boundMax, " is much larger than estimated execution time, using ",
+        irace.warning("boundMax = ", scenario$boundMax, " is much larger than estimated execution time, using ",
                       2 * boundEstimate, " instead.\n")
         scenario$boundMax <- 2 * boundEstimate
       }
@@ -946,7 +951,7 @@ irace_run <- function(scenario, parameters)
     {
       if (is.null(warn_msg))
         warn_msg <- 
-          paste0("with the current settings and estimated time per run (",
+          paste0("With the current settings and estimated time per run (",
                  boundEstimate,
                  ") irace will not have enough budget to execute the minimum",
                  " number of iterations (", nbIterations, "). ",
