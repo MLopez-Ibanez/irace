@@ -269,35 +269,35 @@ elitrace.init.instances <- function(race.env, deterministic, max_instances, samp
 {
   # if next.instance == 1 then this is the first iteration.
   if (.irace$next.instance == 1) return(seq_len(max_instances)) # Consider all
-
+  next_instance <- .irace$next.instance
   new.instances <- NULL
-  last.new <- .irace$next.instance + race.env$elitistNewInstances - 1
+  last.new <- next_instance - 1L + race.env$elitistNewInstances
   # Do we need to add new instances?
   if (race.env$elitistNewInstances > 0) {
     if (last.new > max_instances) {
       # This may happen if the scenario is deterministic and we would need
       # more instances than what we have.
       irace.assert(deterministic)
-      if (.irace$next.instance <= max_instances) {
+      if (next_instance <= max_instances) {
         # Add all instances that we have not seen yet as new ones.
         last.new <- max_instances
-        new.instances <- .irace$next.instance : last.new
+        new.instances <- next_instance : last.new
       } # else new.instances remains NULL and last.new remains > number of instances.
       # We need to update this because the value is used below and now there
       # may be fewer than expected, even zero.
       race.env$elitistNewInstances <- length(new.instances)
     } else {
-      new.instances <- .irace$next.instance : last.new
+      new.instances <- next_instance : last.new
     }
   }
   future.instances <- NULL
   if ((last.new + 1) <= max_instances) {
     future.instances <- (last.new + 1) : max_instances
   }
-  # new.instances + past.instances + future.instances
+  # new.instances + past_instances + future.instances
   # FIXME: we should sample taking into account the block-size, so we sample blocks, not instances.
-  past_instances <- if (sampleInstances) sample.int(.irace$next.instance - 1)
-                    else seq_len(.irace$next.instance)
+  past_instances <- if (sampleInstances) sample.int(next_instance - 1L)
+                    else seq_len(next_instance - 1L)
   c(new.instances, past_instances, future.instances)
 }
 
@@ -536,7 +536,7 @@ final.execution.bound <- function(experimentsTime, elites, no.configurations,
        irace.assert(all(final.bounds > 0))
      }
   }
-  return(list(final.bounds = final.bounds, elite.bound = elite.bound))
+  list(final.bounds = final.bounds, elite.bound = elite.bound)
 }
 
 get_ranks <- function(x, test)
@@ -547,7 +547,7 @@ get_ranks <- function(x, test)
 # criteria of the stat test.
 overall.ranks <- function(x, test)
 {
-  if (ncol(x) == 1) return(1L)
+  if (ncol(x) == 1L) return(1L)
     
   ninstances <- colSums2(!is.na(x))
   uniq.ninstances <- sort(unique(ninstances), decreasing = TRUE)
@@ -558,7 +558,7 @@ overall.ranks <- function(x, test)
     confs <- which(ninstances == k)
     irace.assert(all(is.infinite(ranks[confs])))
     r <- 1L
-    if (length(confs) > 1) {
+    if (length(confs) > 1L) {
       # Select only non-NA rows
       y <- x[, confs, drop = FALSE]
       y <- y[complete.cases(y), , drop = FALSE]
@@ -569,14 +569,14 @@ overall.ranks <- function(x, test)
     last.r <- max(r)
     ranks[confs] <- r
   }
-  return(ranks)
+  ranks
 }
 
 # Remove one elite count from every configuration not executed.
 update.is.elite <- function(is.elite, which.exe)
 {
   which.notexecuted <- setdiff(which(is.elite > 0), which.exe) 
-  is.elite[which.notexecuted] <- is.elite[which.notexecuted] - 1
+  is.elite[which.notexecuted] <- is.elite[which.notexecuted] - 1L
   irace.assert (all(is.elite >= 0))
   is.elite
 }
@@ -600,7 +600,7 @@ generateTimeMatrix <- function(elite_ids, experimentLog)
                          drop = "bound")
   rownames(resultsTime) <- resultsTime$instance
   resultsTime <- resultsTime[order(resultsTime$instance), , drop = FALSE]
-  colnames(resultsTime) <- substring(colnames(resultsTime), nchar("time.") + 1)
+  colnames(resultsTime) <- substring(colnames(resultsTime), nchar("time.") + 1L)
   as.matrix(resultsTime[, as.character(elite_ids), drop = FALSE])
 }
 
@@ -685,6 +685,8 @@ elitist_race <- function(maxExp = 0,
   else
     race.instances <- no_elitrace.init.instances(scenario$deterministic,
                                                  max_instances = nrow(.irace$instancesList))
+  irace.assert(!anyDuplicated(race.instances))
+  irace.assert(identical(sort(race.instances), seq_along(race.instances)))
   no.tasks <- length(race.instances)
 
   # Initialize some variables...
@@ -697,7 +699,7 @@ elitist_race <- function(maxExp = 0,
     elite.safe <- 0L
     elite.instances.ID <- NULL
   } else {
-    irace.assert(.irace$next.instance - 1 == nrow(elite.data))
+    irace.assert(.irace$next.instance - 1L == nrow(elite.data))
     # There must be a non-NA entry for each instance.
     irace.assert(all(rowAnys(!is.na(elite.data))),
                  eval.after = { print(elite.data)})
@@ -768,7 +770,7 @@ elitist_race <- function(maxExp = 0,
                                cbind(race.instances[k],
                                      configurations[which.elites, ".ID."],
                                      vtimes,
-                                     scenario$boundMax))     
+                                     scenario$boundMax))
         experimentsUsed <- experimentsUsed + n.elite
         
         # We remove elite configurations that are rejected given that
@@ -1007,20 +1009,20 @@ elitist_race <- function(maxExp = 0,
     }
     
     # Execute experiments
-    output <- race.wrapper (configurations = configurations[which.alive, , drop = FALSE],
-                            instance.idx = race.instances[current.task],
-                            # FIXME: Why are we computing bounds for configurations that are dead?
-                            # Also, do we use the final.bounds of which.alive or only the ones of which.exe?
-                            bounds = final.bounds[which.alive],
-                            which.alive = which.alive, which.exe = which.exe,
-                            parameters = parameters, scenario = scenario)
+    output <- race.wrapper(configurations = configurations[which.alive, , drop = FALSE],
+                           instance.idx = race.instances[current.task],
+                           # FIXME: Why are we keeping final.bounds values for configurations that are dead?
+                           # Also, do we use the final.bounds of which.alive or only the ones of which.exe?
+                           bounds = final.bounds[which.alive],
+                           which.alive = which.alive, which.exe = which.exe,
+                           parameters = parameters, scenario = scenario)
 
     # Extract results
     vcost <- unlist(lapply(output, "[[", "cost"))
     # If the experiment was executed or target.evaluator exists
     # then the result is in the output.
     ## Currently, targetEvaluator always re-evaluates, which implies that the
-    ## value may change. We do this to allow online normalization.
+    ## value may change without counting as an evaluation. We do this to allow online normalization.
     which.exps <- if (is.null(scenario$targetEvaluator)) which.exe else which.alive
     irace.assert(length(vcost) == length(which.exps))
     # Set max execution bound to timed out executions which have execution
@@ -1039,7 +1041,8 @@ elitist_race <- function(maxExp = 0,
     irace.assert(length(vtimes) == length(which.exe))
     if (capping) {
       # Correct higher execution times.
-      experimentsTime[current.task, which.exps] <- pmin(vtimes, final.bounds[which.exps])
+      # final.bounds indexes are 1:nbConfigurations, vtimes are 1:length(which.alive)
+      experimentsTime[current.task, which.exps] <- pmin(vtimes, final.bounds[which.exe])
     }
     experimentLog <- rbind(experimentLog,
                            cbind(race.instances[current.task],
@@ -1047,6 +1050,10 @@ elitist_race <- function(maxExp = 0,
                                  vtimes, 
                                  if (is.null(final.bounds)) NA else final.bounds[which.exe]))
 
+    irace.assert(anyDuplicated(experimentLog[, c("instance", "configuration")]) == 0,
+                     eval.after = {
+                       print(mget(ls()))
+                     })
     experimentsUsed <- experimentsUsed + length(which.exe)
     # We update the elites that have been executed.
     is.elite <- update.is.elite(is.elite, which.elite.exe)
@@ -1135,12 +1142,11 @@ elitist_race <- function(maxExp = 0,
     }
     
     # Output the result of the elimination test
-    res.symb <- if (cap.dropped && !test.dropped
-                    && prev.sum.alive != sum(alive)) {
+    res.symb <- if (cap.dropped && !test.dropped && prev.sum.alive != sum(alive)) {
                   "c" # Removed just by capping
-                  } else if (cap.dropped || test.dropped) {
-                    if (prev.sum.alive != sum(alive)) "-" else "!"
-                  } else if (cap.done || test.done) "=" else "x"
+                } else if (cap.dropped || test.dropped) {
+                  if (prev.sum.alive != sum(alive)) "-" else "!"
+                } else if (cap.done || test.done) "=" else "x"
     
     # Rank alive configurations: order all configurations (eliminated or not)
     # LESLIE: we have to make the ranking outside: we can have configurations eliminated by capping
@@ -1178,9 +1184,9 @@ elitist_race <- function(maxExp = 0,
       if (!any(is.elite > 0)
           && current.task > first.test && (current.task %% each.test) == 0) {
         if (length(which.alive) == length(prev.alive)) {
-          no.elimination <- no.elimination + 1
+          no.elimination <- no.elimination + 1L
         } else {
-          no.elimination <- 0
+          no.elimination <- 0L
         }
       }
     } 
@@ -1196,7 +1202,7 @@ elitist_race <- function(maxExp = 0,
   # in irace()
   # MANUEL: Leslie, how can we reach this error in normal circumstances?
   # Can we handle this better?
-  if (current.task == 1 && !any(is.elite > 0))
+  if (current.task == 1L && !any(is.elite > 0))
     irace.error ("Maximum number configurations immediately rejected reached!")
   
   # All instances that are not new in this race must have been evaluated by at
@@ -1228,8 +1234,7 @@ elitist_race <- function(maxExp = 0,
   # Consistency check.
   irace.assert (all(configurations[seq_len(nbAlive), ".ALIVE."]))
   if (nbAlive < nrow(configurations))
-    irace.assert(!any(configurations[(nbAlive + 1):nrow(configurations),
-                                     ".ALIVE."]))
+    irace.assert(!any(configurations[(nbAlive + 1L):nrow(configurations), ".ALIVE."]))
 
   if (scenario$debugLevel >= 3) {
     irace.note ("Memory used in race():\n")

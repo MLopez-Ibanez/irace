@@ -105,6 +105,9 @@
    when calling irace from Python. The user can set this if desired.
    
  * Fix bug failing to restart with parameters that have dependent domains. 
+ 
+ * Fix bug with `sampleInstances=FALSE` that could re-evaluate the same
+   (instance, seed) pair more than once.
 
 
 # irace 3.5

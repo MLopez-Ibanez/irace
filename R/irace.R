@@ -1016,9 +1016,8 @@ irace_run <- function(scenario, parameters)
 
     # Consistency checks
     irace.assert(nrow(iraceResults$experimentLog) == experimentsUsedSoFar)
-    # With elitist=0 we may re-run the same configuration on the same (instance,seed) pair
-    # FIXME: This assert is failing when sampleInstances=FALSE because we are re-executing again an instance that was executed at the start of the race. 
-    if (FALSE && scenario$elitist)
+    # With elitist=TRUE we should never re-run the same configuration on the same (instance,seed) pair
+    if (scenario$elitist)
       irace.assert(sum(!is.na(iraceResults$experiments)) == experimentsUsedSoFar)
 
     if (remainingBudget <= 0) {

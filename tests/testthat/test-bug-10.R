@@ -2,8 +2,6 @@
 withr::with_output_sink("test-bug-10.Rout", {
 test_that("bug 10", {
   skip_on_cran()
-  skip_on_coverage()
-
 parameters.txt <- '
 algorithm    "--"             c    (as,mmas,eas,ras,acs)
 localsearch  "--localsearch " c    (0, 1, 2, 3)
@@ -18,7 +16,7 @@ nnls         "--nnls "        i    (5, 50)              | localsearch %in% c(1,2
 dlb          "--dlb "         c    (0, 1)               | localsearch %in% c(1,2,3)
 '
 target.runner <- function(experiment, scenario)
-  return(list(cost = 100, call = toString(experiment)))
+  list(cost = 100, call = toString(experiment))
 
 parameters <- irace:::readParameters(text=parameters.txt)
 
