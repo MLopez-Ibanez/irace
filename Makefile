@@ -4,7 +4,7 @@ PACKAGE=$(shell sh -c 'grep -F "Package: " DESCRIPTION | cut -f2 -d" "')
 BINDIR=$(CURDIR)/..
 RNODE=iridiacluster
 RDIR=~/
-INSTALL_FLAGS="--with-keep.source"
+INSTALL_FLAGS=--with-keep.source
 BUILD_FLAGS=
 PACKAGEDIR=$(CURDIR)
 PDFLATEX=pdflatex -shell-escape -file-line-error -halt-on-error -interaction=nonstopmode "\input"
@@ -96,7 +96,7 @@ releasebuild: releasevignette
 		$(PACKAGE)/inst/doc/$(PACKAGE)-package.pdf
 
 cran: releasebuild
-	cd $(BINDIR) && _R_CHECK_FORCE_SUGGESTS_=false _R_CHECK_CRAN_INCOMING_REMOTE_=true _R_CHECK_CRAN_INCOMING_=true R CMD check --as-cran $(PACKAGE)_$(PACKAGEVERSION).tar.gz
+	cd $(BINDIR) && _R_CHECK_FORCE_SUGGESTS_=false _R_CHECK_CRAN_INCOMING_REMOTE_=true _R_CHECK_CRAN_INCOMING_=true R CMD check --as-cran --install-args="$(INSTALL_FLAGS)" $(PACKAGE)_$(PACKAGEVERSION).tar.gz
 
 revdepcheck:
 	$(Reval) 'devtools::install_github("r-lib/revdepcheck", ref="main", upgrade="never");revdepcheck::revdep_check(bioc=FALSE)'
@@ -111,7 +111,7 @@ ifdef TEST
 	_R_CHECK_FORCE_SUGGESTS_=false NOT_CRAN=true $(Reval) 'devtools::test(filter="$(TEST)", stop_on_failure = TRUE)'
 else
 	test -d ./GenericWrapper4AC/build || (cd GenericWrapper4AC && python3 setup.py install --user)
-	cd $(BINDIR) && (_R_CHECK_FORCE_SUGGESTS_=false NOT_CRAN=true R CMD check --run-donttest --timings $(PACKAGE)_$(PACKAGEVERSION).tar.gz; cat $(PACKAGE).Rcheck/$(PACKAGE)-Ex.timings)
+	cd $(BINDIR) && (_R_CHECK_FORCE_SUGGESTS_=false NOT_CRAN=true R CMD check --run-donttest --timings --install-args="$(INSTALL_FLAGS)" $(PACKAGE)_$(PACKAGEVERSION).tar.gz; cat $(PACKAGE).Rcheck/$(PACKAGE)-Ex.timings)
 endif
 
 clean: 
