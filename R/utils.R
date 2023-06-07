@@ -650,7 +650,7 @@ ceiling.digits <- function(x, digits)
 # }
 
 is.file.extension <- function(filename, ext)
-  substring(filename, nchar(filename) + 1 - nchar(ext)) == ext
+  substring(filename, nchar(filename) + 1L - nchar(ext)) == ext
 
 # Same as !(x %in% table). Package data.table has %notin%.
 "%not_in%" <- function(x, table) match(x, table, nomatch = 0L) == 0L
@@ -715,9 +715,9 @@ has_testing_data <- function(iraceResults)
 {
   ins <- iraceResults$scenario$testInstances
   exp <- iraceResults$testing$experiments
-  !(length(ins) == 0 ||
-    (length(ins) == 1 && (is.na(ins) || nchar(ins) == 0)) ||
-    length(exp) == 0 || !(is.matrix(exp) || is.data.frame(exp)))
+  !(length(ins) == 0L ||
+    (length(ins) == 1L && (is.na(ins) || nchar(ins) == 0L)) ||
+    length(exp) == 0L || !(is.matrix(exp) || is.data.frame(exp)))
 }
 
 do_nothing <- function(...) invisible()

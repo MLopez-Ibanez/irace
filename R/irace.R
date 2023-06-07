@@ -735,7 +735,7 @@ irace_run <- function(scenario, parameters)
            "# experimentsUsedSoFar: ", experimentsUsedSoFar, "\n",
            "# timeUsed: ", timeUsed, "\n",
            "# remainingBudget: ", remainingBudget, "\n",
-             "# currentBudget: ", currentBudget, "\n",
+           "# currentBudget: ", currentBudget, "\n",
            "# number of elites: ", nrow(eliteConfigurations), "\n",
            "# nbConfigurations: ", nbConfigurations, "\n",
            sep = "")
