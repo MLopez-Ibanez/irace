@@ -88,7 +88,9 @@ test_that("blockSize error", {
 
 test_that("blockSize cap.irace maxExperiments = 1000", {
   generate.set.seed()
-  check_blocksize(cap.irace(maxExperiments = 1000, debugLevel = 3))
+  expect_warning(check_blocksize(cap.irace(maxExperiments = 1000, debugLevel = 3)),
+                 "Assuming 'mu = firstTest * blockSize' because 'mu' cannot be smaller",
+                 fixed = TRUE)
 })
 
 test_that("blockSize maxTime=1000", {
