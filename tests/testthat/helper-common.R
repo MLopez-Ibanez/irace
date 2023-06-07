@@ -22,8 +22,7 @@ skip_on_coverage <- function() {
     invisible()
 }
 
-system_os <- function() tolower(Sys.info()[["sysname"]])
-system_os_is <- function(x) system_os() == x
+system_os_is_windows <- function() .Platform$OS.type == "windows"
 
 ## Functions ##########################################################
 f_ackley <- function (x,y, nsize = 0.01) {

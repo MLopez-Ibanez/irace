@@ -48,7 +48,7 @@ cap.irace <- function(...)
                    boundMax = 80,
                    testType = "t-test",
                    logFile = tempfile(fileext=".Rdata"),
-                   parallel = if (system_os_is("windows")) 1L else test_irace_detectCores())
+                   parallel = if (system_os_is_windows()) 1L else test_irace_detectCores())
   scenario <- modifyList(scenario, args)
   scenario <- checkScenario (scenario)
 
