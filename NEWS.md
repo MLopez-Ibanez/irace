@@ -85,6 +85,11 @@
  
  * New function `get_instance_seed_pairs()` to get the pairs of instance and random seed used during the races.
 
+ * The package install a new executable `target-runner-dummy` (or
+   `target-runner-dummy.exe` in Windows) for the purposes of testing.  It may
+   also be useful for understanding the typical setup of `irace`.
+   
+ 
 ## Fixes
 
  * Fix #55: Configurations provided may use `<NA>` in addition to `NA` to denote

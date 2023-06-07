@@ -1,7 +1,10 @@
+# 							-*- mode: makefile -*-
 iraceEXE= iracebin/irace$(EXE)
 ablationEXE= iracebin/ablation$(EXE)
+target_runner_dummy=dummy/target-runner-dummy$(EXE)
 
-all:  $(iraceEXE) $(ablationEXE)
+all:  $(iraceEXE) $(ablationEXE) $(target_runner_dummy)
+
 
 $(iraceEXE): iracebin/irace.o iracebin/whereami.o
 	$(CC) $(PKG_CPPFLAGS) $(CFLAGS) $^ -o $@
@@ -13,5 +16,8 @@ $(ablationEXE): iracebin/ablation.o iracebin/whereami.o
 
 iracebin/ablation.o: iracebin/irace.h
 
+$(target_runner_dummy): dummy/target-runner-dummy.o
+	$(CC) $(PKG_CPPFLAGS) $(CFLAGS) $^ -o $@
+
 clean:
-	@$(RM) iracebin/*.o $(iraceEXE) $(ablationEXE)
+	@$(RM) dummy/*.o iracebin/*.o $(iraceEXE) $(ablationEXE) $(target_runner_dummy)

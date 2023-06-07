@@ -1,4 +1,5 @@
-execs <- file.path("iracebin", c("irace","ablation"))
+execs <- c(file.path("iracebin", c("irace","ablation")),
+           file.path("dummy", "target-runner-dummy"))
 if (WINDOWS) execs <- paste0(execs, ".exe")
 if (any(file.exists(execs))) {
   dest <- file.path(R_PACKAGE_DIR,  paste0('bin', R_ARCH))
