@@ -80,7 +80,7 @@ EOF
 # Issue usage if no parameters are given.
 test $# -ge 1 || usage
 
-# Number of repetitions of iRace
+# Number of repetitions of irace
 REPETITIONS=$1
 shift
 START=1

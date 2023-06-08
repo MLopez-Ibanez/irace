@@ -67,10 +67,10 @@ User guide
 
 A complete [user guide](https://cran.r-project.org/package=irace/vignettes/irace-package.pdf)
 comes with the package. You can access it online or, after installing the irace
-package, invoking from R the following command:
+package, invoking from the R console the following command:
 
 ```R
-        R> vignette("irace-package")
+        vignette("irace-package")
 ```
 
 The following is a quick-start guide. The user guide gives more detailed
@@ -79,20 +79,20 @@ instructions.
 Quick Start 
 ===========
 1. Install R (with your favourite package manager, and see more details below).
-2. Install irace. This command works on CMD and Powershell with R added to PATH (see detailed instructions below).
+2. Install irace. This command works on Bash shell (Linux and MacOS) and Powershell (Windows) with R added to PATH (see detailed instructions below).
 ```bash
-    $ Rscript -e "install.packages('irace', repos='https://cloud.r-project.org')"
+    Rscript -e "install.packages('irace', repos='https://cloud.r-project.org')"
 ```
 
-3. Add irace to path. For windows user, this step is unfortunately more involved, so please see more detailed instructions below.
+3. Add irace to the `PATH` environment variable. This command works in Bash shell (Linux and MacOS). For Windows user, this step is unfortunately more involved, so please see more detailed instructions below.
 ```bash
-    $ export PATH="$(Rscript -e "cat(paste0(system.file(package='irace', 'bin', mustWork=TRUE), ':'))" 2> /dev/null)${PATH}"
+    export PATH="$(Rscript -e "cat(paste0(system.file(package='irace', 'bin', mustWork=TRUE), ':'))" 2> /dev/null)${PATH}"
 ```
 Consider adding this line to your `~/.bashrc`, `~/.zshrc`, or `~/.profile` for it to persist between sessions. 
 
-4. You can open the user guide with the following command. This command works on CMD and Powershell with R added to PATH (see detailed instructions below).
+4. You can open the user guide with the following command. This command works on Bash shell (Linux and MacOS) and and Powershell (Windows) with R added to PATH (see detailed instructions below).
 ```bash
-    $ Rscript -e "vignette('irace-package')"
+    Rscript -e "vignette('irace-package')"
 ```
 
 Installing R
@@ -105,10 +105,10 @@ a quick R installation guide that will work in most cases.
 GNU/Linux
 ---------
 
-You should install R from your package manager. On a Debian/Ubuntu system it
-will be something like:
-
-    $ sudo apt-get install r-base
+You should install R from your package manager. On a Debian/Ubuntu system, you will run in the Bash shell:
+```bash
+    sudo apt-get install r-base
+```
 
 Once R is installed, you can launch R from the Terminal and from the R
 prompt install the irace package. See instructions below.
@@ -119,9 +119,9 @@ OS X
 
 You can install R directly from a CRAN mirror (<https://cran.r-project.org/bin/macosx/>).
 
-Alternatively, if you use homebrew, you can just do
-```
-    $ brew install --cask r
+Alternatively, if you use homebrew, you can just run from the Terminal (Bash shell):
+```bash
+    brew install --cask r
 ```
 
 (Using `brew install r` is not recommended because that will build R from source and you will not be able to use any CRAN binary, possibly resulting in annoying build failures). 
@@ -156,43 +156,42 @@ Installing the irace package
 There are two methods for installing the
 [irace](https://mlopez-ibanez.github.io/irace/) R package on your computer:
 
-1. Install within R (automatic download):
+1. Install within R (automatic download). Run the following from the R console:
 ```R
-        $ R
-        R> install.packages("irace")
+        install.packages("irace", repos = "https://cloud.r-project.org")
 ```
-   select a mirror close to you, and test the installation with
+   and test the installation with:
 ```R
-        R> library(irace)
-        R> CTRL+d
+        library(irace)
+        irace.cmdline("--version")
+        q()
 ```
 
 2. Manually
    [download the package from CRAN](https://cran.r-project.org/package=irace)
-   and invoke at the command-line:
+   and invoke at the Bash shell, Terminal or Powershell:
 ```bash
-        $ R CMD INSTALL <package>
+        R CMD INSTALL <package>
 ```
    where `<package>` is one of the three versions available: `.tar.gz`
    (Unix/BSD/GNU/Linux), `.tgz` (MacOS X), or `.zip` (Windows).
 
 
 If the package fails to install because of insufficient permissions,
-you need to force a *local installation* by doing:
+you need to force a *local installation* by typing in the Bash shell:
 ```bash
-    $ mkdir ~/R
-    $ R CMD INSTALL --library=~/R irace.tar.gz
-    $ export R_LIBS=~/R:${R_LIBS}
+    mkdir ~/R
+    R CMD INSTALL --library=~/R irace.tar.gz
+    export R_LIBS=~/R:${R_LIBS}
 ```
 
-Once installed, test that it is working by doing:
+Once installed, test that it is working by typing in the R console (not in the bash shell):
 ```R
-    $ R
-    R> library(irace)
-    R> cat(system.file(package="irace", "bin", mustWork=TRUE), "\n")
-    /home/user/R/irace/bin
+    library(irace)
+    irace.cmdline("--version")
+    cat(system.file(package="irace", "bin", mustWork=TRUE), "\n")
 ```
-The last command tells you the installation directory of `irace`.
+The last command gives you the installation folder of `irace`, for example, `/home/user/R/irace/bin`.
 
 GNU/Linux and OS X
 ------------------
@@ -210,7 +209,7 @@ After adding this and opening a new terminal, you should be able to
 invoke `irace` as follows:
 
 ```bash
-    $ irace --help
+    irace --help
 ```
 
 
@@ -233,8 +232,8 @@ Then running the following should work:
 You can also launch irace by opening the R console and executing:
 
 ```R
-    R> library(irace)
-    R> irace.cmdline("--help")
+    library(irace)
+    irace.cmdline("--help")
 ```
 
 GitHub (Development version)
@@ -244,8 +243,8 @@ If you wish to try the development version, you can install it by executing the
 following commands within the R console:
 
 ```R
-    R> install.packages("devtools")
-    R> devtools::install_github("MLopez-Ibanez/irace")
+    install.packages("devtools")
+    devtools::install_github("MLopez-Ibanez/irace")
 ```
 
 Python
@@ -257,15 +256,15 @@ You can use the irace R package from Python using `rpy2`. An example on how to d
 Usage
 =====
 
-1. Create a directory for storing the tuning scenario setup
+1. Create a directory for storing the tuning scenario setup (Bash shell):
 ```bash
-        $ mkdir ~/tuning
-        $ cd ~/tuning
+        mkdir ~/tuning
+        cd ~/tuning
 ```
 
-2. Initialize your tuning directory with template config files
+2. Initialize your tuning directory with template config files (Bash shell):
 ```bash
-        $ $IRACE_HOME/bin/irace --init
+        $IRACE_HOME/bin/irace --init
 ```
 
 3. Modify the generated files following the instructions found within each file. In particular,
@@ -287,9 +286,9 @@ Usage
    so it must exist before calling irace. The default `execDir` is the
    current directory.
 
-5. Calling the command:
+5. Calling the command in the Bash shell:
 ```bash
-        $ cd ~/tuning/ && $IRACE_HOME/bin/irace
+        cd ~/tuning/ && $IRACE_HOME/bin/irace
 ```
    performs one run of Iterated Race. See the output of `irace --help` for
    additional irace parameters. Command-line parameters override the
@@ -300,10 +299,10 @@ Many tuning runs in parallel
 ----------------------------
 
 For executing several repetitions of irace in parallel, call the
-program
+program `parallel-irace` from the Bash shell:
 
 ```bash
-    $ cd ~/tuning/ && $IRACE_HOME/bin/parallel-irace N
+    cd ~/tuning/ && $IRACE_HOME/bin/parallel-irace N
 ```
 
 where N is the number of repetitions. By default, the execution directory of

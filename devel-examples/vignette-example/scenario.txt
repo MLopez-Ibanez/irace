@@ -1,5 +1,5 @@
 ###################################################### -*- mode: r -*- #####
-## Scenario setup for Iterated Race (iRace).
+## Scenario setup for Iterated Race (irace).
 ############################################################################
 logFile = "./irace-acotsp.Rdata"
 trainInstancesDir = "./instances"
