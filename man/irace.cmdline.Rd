@@ -191,9 +191,11 @@ List of command-line options:
    --max-experiments     Maximum number of runs (invocations of `targetRunner`)
                          that will be performed. It determines the maximum
                          budget of experiments for the tuning. Default: 0.
-   --max-time            Maximum total execution time in seconds for the
-                         executions of `targetRunner`. `targetRunner` must
-                         return two values: cost and time. Default: 0.
+   --max-time            Maximum total execution time for the executions of
+                         `targetRunner`. `targetRunner` must return two values:
+                         cost and time. This value and the one returned by
+                         `targetRunner` must use the same units (seconds,
+                         minutes, iterations, evaluations, ...). Default: 0.
    --budget-estimation   Fraction (smaller than 1) of the budget used to
                          estimate the mean computation time of a configuration.
                          Only used when `maxTime` > 0 Default: 0.02.

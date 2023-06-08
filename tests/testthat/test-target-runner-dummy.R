@@ -37,4 +37,12 @@ withr::with_output_sink("test-target-runner-dummy.Rout", {
                          'capping "--opt-time " c (1)\n'),
                   '--max-time 100 --bound-max 1 --capping 1 '))
   })
+  test_that("Error cost time", {
+    expect_error(
+      run_cmdline(paste0('p_int   "--p_int "    i (1, 10)\n',
+                         'p_real  "--p_real "   r (1, 10)\n'),
+                  '--max-time 100 '),
+      "The output of targetRunner must be two numbers 'cost time'",
+      fixed = TRUE)
+  })
 }) # withr::with_output_sink()

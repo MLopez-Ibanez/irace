@@ -187,8 +187,8 @@ The list of instances in \parameter{trainInstancesFile} is interpreted as file-s
 The maximum number of runs (invocations of \parameter{targetRunner}) that will be performed. It determines the maximum budget of experiments for the tuning. See \autoref{sec:budget}.
 
  \defparameter{maxTime}{max-time}{0}%
-The maximum total time in seconds for the runs of \parameter{targetRunner} that will be  performed. The mean execution time  of each run is estimated in order to calculate the maximum number of experiments (see option \parameter{budgetEstimation}).
-  When \parameter{maxTime} is positive, then \parameter{targetRunner} \textbf{must} return the execution time as its second output. See \autoref{sec:budget}.
+The maximum total time for the runs of \parameter{targetRunner} that will be  performed. The mean execution time  of each run is estimated in order to calculate the maximum number of experiments (see option \parameter{budgetEstimation}).
+  When \parameter{maxTime} is positive, then \parameter{targetRunner} \textbf{must} return the execution time as its second output. This value and the one returned by \parameter{targetRunner} must use the same units (seconds, minutes, iterations, evaluations, \ldots). See \autoref{sec:budget}.
 
  \defparameter{budgetEstimation}{budget-estimation}{0.02}%
 Fraction (smaller than 1) of the budget used to estimate the mean execution time of a configuration. Only used when \parameter{maxTime} $> 0$. See \autoref{sec:budget}.

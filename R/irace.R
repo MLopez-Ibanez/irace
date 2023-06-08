@@ -317,7 +317,7 @@ checkMinimumBudget <- function(scenario, remainingBudget, minSurvival, nbIterati
     irace.error("Insufficient budget: ",
                 "With the current settings and estimated time per run (",
                 boundEstimate, ") irace will require a value of 'maxTime' of at least '",
-                (minimumBudget * boundEstimate) + timeUsed, "'.")
+                ceiling((minimumBudget * boundEstimate) + timeUsed), "'.")
   }
   FALSE
 }

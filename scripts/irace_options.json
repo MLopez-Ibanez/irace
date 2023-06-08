@@ -356,8 +356,8 @@
     "short": "",
     "long": "--max-time",
     "default": 0,
-    "description": "Maximum total execution time in seconds for the executions of \\code{targetRunner}. \\code{targetRunner} must return two values: cost and time.",
-    "vignettes": "The maximum total time in seconds for the runs of \\parameter{targetRunner} that will be  performed. The mean execution time  of each run is estimated in order to calculate the maximum number of experiments (see option \\parameter{budgetEstimation}).\n  When \\parameter{maxTime} is positive, then \\parameter{targetRunner} \\textbf{must} return the execution time as its second output. See \\autoref{sec:budget}.",
+    "description": "Maximum total execution time for the executions of \\code{targetRunner}. \\code{targetRunner} must return two values: cost and time. This value and the one returned by \\code{targetRunner} must use the same units (seconds, minutes, iterations, evaluations, ...).",
+    "vignettes": "The maximum total time for the runs of \\parameter{targetRunner} that will be  performed. The mean execution time  of each run is estimated in order to calculate the maximum number of experiments (see option \\parameter{budgetEstimation}).\n  When \\parameter{maxTime} is positive, then \\parameter{targetRunner} \\textbf{must} return the execution time as its second output. This value and the one returned by \\parameter{targetRunner} must use the same units (seconds, minutes, iterations, evaluations, \\ldots). See \\autoref{sec:budget}.",
     "section": "Tuning budget"
   },
   {
