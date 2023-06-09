@@ -97,19 +97,21 @@ ablation_cmdline <- function(argv = commandArgs(trailingOnly = TRUE))
   } else if (!is.null(params$old_path)) {
     iraceResults$scenario <- scenario_update_paths(iraceResults$scenario, params$old_path, params$new_path)
   }
+
+  scenario <- list()
   if (!is.null(params$scenarioFile)) {
     scenario <- readScenario(params$scenarioFile)
-  }
-  if (is_null_or_empty_or_na(trim(params$ablationLogFile))) {
-    params$ablationLogFile <- NULL
   }
   for (p in c("execDir", "parallel")) {
     if (!is.null(params[[p]])) scenario[[p]] <- params[[p]]
   }
   
-  if (!is.null(params$ablationLogFile))
+  if (is_null_or_empty_or_na(trim(params$ablationLogFile))) {
+    params$ablationLogFile <- NULL
+  } else {
     params$ablationLogFile <- path_rel2abs(params$ablationLogFile)
-      
+  }
+  
   if (!is.null(params$ab.params))
     params$ab.params <- trimws(strsplit(params$ab.params, ",", fixed=TRUE)[[1L]])
 
@@ -297,10 +299,15 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
     ablog
   }
   
-  # FIXME: The previous seed needs to be saved and restored at the end.
-  set.seed(seed)
+  old_seed <- get_random_seed()
+  on.exit(restore_random_seed(old_seed))
+  set_random_seed(seed)
+
   # Load the data of the log file
   iraceResults <- read_logfile(iraceResults)
+  if (is.null(iraceResults$state$completed) || iraceResults$state$completed == "Incomplete") {
+    stop("This logfile seems to belong to an incomplete run of irace.")
+  }
   parameters <- iraceResults$parameters
   scenario   <- iraceResults$scenario
   scenario_args <- list(...)
@@ -318,12 +325,14 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
   scenario$instances <- res$instances
 
   if (is.null(target)) target <- iraceResults$iterationElites[length(iraceResults$iterationElites)]
-  irace.note ("Starting ablation from ", src, " to ", target, "\n# Seed: ", seed, "\n")
   if (src %not_in% iraceResults$allConfigurations[[".ID."]])
-    stop("Source configuration ID (", src, ") cannot be found")
+    stop("Source configuration ID (", src, ") cannot be found!")
   if (target %not_in% iraceResults$allConfigurations[[".ID."]])
-    stop("Target configuration ID (", target, ") cannot be found")
-
+    stop("Target configuration ID (", target, ") cannot be found!")
+  if (src == target)
+    stop("Source and target configuration IDs must be different!")
+  
+  irace.note ("Starting ablation from ", src, " to ", target, "\n# Seed: ", seed, "\n")
   cat("# Source configuration (row number is ID):\n")
   src_configuration <- iraceResults$allConfigurations[src, , drop = FALSE]
   configurations.print(src_configuration)
