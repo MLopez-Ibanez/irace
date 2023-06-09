@@ -32,7 +32,7 @@
 #'   Multi-Objective Ant Colony Optimization Algorithms. \emph{IEEE Transactions
 #'   on Evolutionary Computation}, 2012.
 #' @seealso
-#'  [irace()] for examples and \code{vignette(package = "irace")} for the user-guide.
+#'  [irace()] for examples and `vignette(package = "irace")` for the user-guide.
 NULL
 
 # Prefix for printing messages to the user.

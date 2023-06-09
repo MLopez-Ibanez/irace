@@ -71,6 +71,11 @@
    (Deyao Chen)
 
  * New functions `read_ablogfile()`, `has_testing_data()`, `irace_summarise()`.
+ 
+ * New functions `get_random_seed()`, `set_random_seed()`, `restore_random_seed()` useful for writing `targetRunner` functions in R.
+
+ * New function `get_instance_seed_pairs()` to get the pairs of instance and random seed used during the races.
+
 
  * The `parameters` object now stores the number of `digits` (decimal places
    after the point) for each parameter of type `r`. As a result, the
@@ -83,8 +88,6 @@
  
  * `read_pcs_file()` now supports forbidden configurations.
  
- * New function `get_instance_seed_pairs()` to get the pairs of instance and random seed used during the races.
-
  * The package provides a new executable `target-runner-dummy` (or
    `target-runner-dummy.exe` in Windows) for the purposes of testing.  It may
    also be useful for understanding the typical setup of `irace`.
