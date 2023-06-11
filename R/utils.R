@@ -1,15 +1,3 @@
-# An internal function to reload irace and set options for debugging
-# errors. It may also be used to reload other packages.
-# FIXME: Reload dynamic libraries? See ?dyn.load
-irace.reload.debug <- function(package = "irace")
-{
-  pkg <- paste0("package:", package)
-  try(detach(pkg, character.only = TRUE, unload = TRUE))
-  library(package, character.only = TRUE)
-  options(error = if (interactive()) utils::recover else
-          quote(utils::dump.frames("iracedump", TRUE)))
-}
-
 irace.print.memUsed <- function(objects)
 {
   object.size.kb <- function (name, envir) {

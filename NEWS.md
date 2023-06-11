@@ -36,7 +36,8 @@
    that are difficult to understand.
    
  * irace warns about using `'&&'` and `'||'` instead of `'&'` and `'|'` in parameter conditions. A future version of irace will reject those uses as errors.
- 
+
+ * The internal function `irace.reload.debug()` has been removed.  Use `devtools::reload()` instead.
   
 ## New features and improvements
 
