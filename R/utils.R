@@ -325,7 +325,7 @@ merge.matrix <- function(x, y)
 # Input: the configurations with the .RANK. field filled.
 #        the number of elites wished
 # Output: nbElites elites, sorted by ranks, with the weights assigned.
-extractElites <- function(scenario, parameters, configurations, nbElites)
+extractElites <- function(scenario, configurations, nbElites)
 {
   # Keep only alive configurations.
   ## FIXME: Shouldn't this be done by the caller?
