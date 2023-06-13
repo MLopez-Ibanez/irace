@@ -1103,7 +1103,7 @@ irace_run <- function(scenario, parameters)
     # happen before the first race due to the initial budget estimation.
     if (firstRace) {
       if (nbConfigurations < nrow(eliteConfigurations)) {
-        eliteRanks <- overall.ranks(iraceResults$experiments, test = scenario$testType)
+        eliteRanks <- overall_ranks(iraceResults$experiments, test = scenario$testType)
         eliteConfigurations <- eliteConfigurations[order(eliteRanks), ]
         eliteConfigurations <- eliteConfigurations[seq_len(nbConfigurations), ]
       }

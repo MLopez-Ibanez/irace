@@ -439,7 +439,7 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
     
     # Get the best configuration based on the criterion of irace
     # MANUEL: Doesn't race.output already give you all this info???
-    cranks <- overall.ranks(results[,aconfigurations[[".ID."]],drop=FALSE], test = scenario$testType)
+    cranks <- overall_ranks(results[,aconfigurations[[".ID."]],drop=FALSE], test = scenario$testType)
     best_id <- which.min(cranks)[1L]
     # cand.mean <- colMeans2(results[,aconfigurations$.ID.,drop=FALSE], na.rm=TRUE)
     changes[[step]] <- ab_aux$changed_params
@@ -471,7 +471,7 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
   trajectory <- c(trajectory, target_configuration[[".ID."]])
   
   # Get the overall best
-  cranks <- overall.ranks(results[,trajectory, drop=FALSE], test = scenario$testType)
+  cranks <- overall_ranks(results[,trajectory, drop=FALSE], test = scenario$testType)
   best_id <- which.min(cranks)[1L]
   ## FIXME: At this point, the rownames of all_configurations does not match
   ## all_configurations[[".ID."]]  That is confusing and a potential source of
