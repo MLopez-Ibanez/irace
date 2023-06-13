@@ -289,10 +289,9 @@ checkIraceScenario <- function(scenario, parameters)
   if (checkTargetFiles(scenario = scenario, parameters = parameters)) {
     irace.note("Check successful.\n")
     return(TRUE)
-  } else {
-    irace.error("Check unsuccessful.\n")
-    return(FALSE)
   }
+  irace.error("Check unsuccessful.\n")
+  return(FALSE)
 }
 
 init <- function() 

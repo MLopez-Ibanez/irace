@@ -328,7 +328,7 @@ startParallel <- function(scenario)
     return(invisible())
 
   parallel <- scenario$parallel
-  cwd <- setwd (scenario$execDir)
+  cwd <- setwd(scenario$execDir)
   on.exit(setwd(cwd), add = TRUE)
   if (scenario$mpi) {
     mpiInit(parallel, scenario$debugLevel)

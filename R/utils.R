@@ -71,7 +71,7 @@ irace.internal.error <- function(...)
   if (!base::interactive()) options(error = irace.dump.frames)
   on.exit(options(op))
   # 6 to not show anything below irace.assert()
-  bt <- capture.output(traceback(6))
+  bt <- capture.output(traceback(5))
   warnings()
   stop (.irace_msg_prefix, paste0(..., collapse = "\n"), "\n",
         paste0(bt, collapse= "\n"), "\n",
@@ -85,7 +85,7 @@ irace.assert <- function(exp, eval.after = NULL)
   # the function that called this one.
   if (exp) return(invisible())
   mc <- match.call()[[2]]
-  msg <- paste0(deparse(mc), " is not TRUE\n")
+  msg <- paste0(deparse(mc), " is not TRUE")
   if (!is.null(eval.after)) {
     msg.after <- eval.parent(capture.output(eval.after))
     msg <- paste0(msg, "\n", paste0(msg.after, collapse="\n"))

@@ -515,10 +515,12 @@ checkScenario <- function(scenario = defaultScenario())
                     text = paste0("target runner launcher ", quote.param("targetRunnerLauncher")))
         file.check (scenario$targetRunner, readable = TRUE,
                     text = paste0("target runner ", quote.param("targetRunner")))
+        if (!grepl("{targetRunner}", scenario$targetCmdline, fixed=TRUE)) {
+          # If missing, we add it to the beginning for compatibility with irace 3.5.
+          scenario$targetCmdline <- paste0("{targetRunner} ", scenario$targetCmdline)
+        }
       }
-      check_target_cmdline(scenario$targetCmdline,
-                           launcher = !is.null.or.empty(scenario$targetRunnerLauncher),
-                           capping = scenario$capping)
+      check_target_cmdline(scenario$targetCmdline, capping = scenario$capping)
     } else {
       irace.error(quote.param ('targetRunner'), " must be a function or an executable program")
     }
@@ -937,17 +939,18 @@ readInstances <- function(instancesDir = NULL, instancesFile = NULL)
 checkTargetFiles <- function(scenario, parameters)
 {
   ## Create two random configurations
-  conf_id <- c("testConfig1", "testConfig2")
-  configurations <- sampleUniform(parameters, length(conf_id),
+  configurations <- sampleUniform(parameters, 2L,
                                   repair = scenario$repairConfiguration)
-  configurations[[".ID."]] <- conf_id
-
+  configurations <- cbind(.ID. = seq_nrow(configurations), configurations)
+  
   # Read initial configurations provided by the user.
   initConfigurations <- allConfigurationsInit(scenario, parameters)
   if (nrow(initConfigurations) > 0L) {
     irace.assert(all(colnames(configurations) == colnames(initConfigurations)))
-    configurations <- rbind(configurations, initConfigurations)
+    configurations <- rbind(initConfigurations, configurations)
+    configurations[[".ID."]] <- seq_nrow(configurations)
   }
+
   bounds <- rep(scenario$boundMax, nrow(configurations))
   instances_ID <- if (scenario$sampleInstances)
                     sample.int(length(scenario$instances), 1L) else 1L

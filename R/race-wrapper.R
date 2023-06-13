@@ -373,7 +373,6 @@ target.runner.aclib <- function(experiment, scenario)
 check_target_cmdline <- function(target_cmdline, launcher, capping)
 {
   required <- c("seed", "instance", "targetRunnerArgs")
-  if (launcher) required <- c(required, "targetRunner")
   if (capping) required <- c(required, "bound")
   for (x in required) {
     if (!grepl(paste0("{", x, "}"), target_cmdline, fixed=TRUE))
@@ -383,17 +382,17 @@ check_target_cmdline <- function(target_cmdline, launcher, capping)
 
 expand_target_cmdline <- function(target_cmdline, experiment, targetRunner, targetRunnerArgs)
 {
-  vars <- list(configurationID=experiment$id.configuration,
+  vars <- list(configurationID = experiment$id.configuration,
                instanceID      = experiment$id.instance,
-               seed             = experiment$seed,
-               instance         = experiment$instance,
-               bound            = experiment$bound,
+               seed            = experiment$seed,
+               instance        = experiment$instance,
+               bound           = experiment$bound,
                targetRunner = targetRunner,
                targetRunnerArgs = targetRunnerArgs)
-    
   for (x in names(vars)) {
     value <- vars[[x]]
     if (is.null(value)) value <- ""
+    if (x == "targetRunner") value <- shQuote(value)
     target_cmdline <- gsub(paste0("{", x, "}"), value, target_cmdline, fixed=TRUE)
   }
   target_cmdline
@@ -409,7 +408,7 @@ run_target_runner <- function(experiment, scenario)
   switches         <- experiment$switches
   bound            <- experiment$bound
 
-  targetRunner <- scenario$targetRunner
+  targetRunner <- scenario[["targetRunner"]]
   debugLevel <- scenario$debugLevel
   
   if (scenario$aclib) {
