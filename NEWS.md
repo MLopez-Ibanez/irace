@@ -117,6 +117,8 @@
  
  * Fix bug with `sampleInstances=FALSE` that could re-evaluate the same
    (instance, seed) pair more than once.
+   
+ * Fix bug when using `targetRunnerLauncher` and `targetRunner` contain whitespace.
 
  * Fix bug in `ablation_cmdline()` about missing `scenario` object.
  
