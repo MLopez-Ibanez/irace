@@ -747,8 +747,9 @@ irace_run <- function(scenario, parameters)
     if (!quiet)
       cat("# Total CPU user time: ", elapsed["user"], ", CPU sys time: ", elapsed["system"],
           ", Wall-clock time: ", elapsed["wallclock"], "\n", sep="")
-    iraceResults$state$elapsed = elapsed
-    iraceResults$state$completed = reason
+    iraceResults$state$elapsed <- elapsed
+    iraceResults$state$completed <- reason
+    iraceResults$state$sessionInfo <- sessionInfo()
     irace_save_logfile(iraceResults, scenario)
     iraceResults$state$eliteConfigurations
   }

@@ -84,7 +84,7 @@ getConfigurationByIteration <- function(iraceResults, iterations, drop.metadata 
   iraceResults <- read_logfile(iraceResults)
 
   if (length(iterations) < 1L)
-    stop("You must provide at least one configuration ID.")
+    stop("You must provide at least one iteration number.")
 
   n_iterations <- length(iraceResults$iterationElites)
   iterations <- as.integer(iterations)
@@ -94,7 +94,7 @@ getConfigurationByIteration <- function(iraceResults, iterations, drop.metadata 
   ids <- unique(subset(as.data.frame(iraceResults$experimentLog),
                        iteration %in% iterations,
                        select="configuration", drop=TRUE))
-  get_configuration_by_id_helper (iraceResults$allConfigurations, ids, drop.metadata = drop.metadata)
+  get_configuration_by_id_helper(iraceResults$allConfigurations, ids, drop.metadata = drop.metadata)
 }
 
 

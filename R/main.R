@@ -239,7 +239,7 @@ testing_common <- function(configurations, scenario, parameters, iraceResults)
   irace.note ("Testing results (column number is configuration ID in no particular order):\n")
   if (verbose) print(iraceResults$testing$experiments)
   irace.note ("Finished testing\n")
-  return(iraceResults)
+  iraceResults
 }
 
 #' Test that the given irace scenario can be run.
