@@ -68,6 +68,7 @@
 <li><p>New option <code>nrep</code> of <code><a href="../reference/ablation.html">ablation()</a></code> specifies the number of replications per instance used in <code>"full"</code> ablation. It replaces the previous parameter <code>n_instances</code>, whose definition was more difficult to use correctly.</p></li>
 <li><p>Matrix operations are faster thanks to <code>matrixStats</code>.</p></li>
 <li><p>New scenario option <code>blockSize</code> for defining blocks of instances. Configurations are only eliminated after evaluating a complete block and never in the middle of a block. This is useful for scenarios when there are clearly defined instance classes and the best configuration should be balanced among them. In that case, <code>trainInstancesFile</code> should be written so that each block contains one instance of each class and <code>blockSize</code> is set to the number of classes.</p></li>
+<li><p>New scenario option <code>targetRunnerTimeout</code>: Timeout in seconds of any <code>targetRunner</code> call (only applies to <code>target-runner</code> executables not to R functions).</p></li>
 <li>
 <p><code><a href="../reference/plotAblation.html">plotAblation()</a></code> has several new options:</p>
 <ul><li>
@@ -81,8 +82,8 @@
 <li><p>New function <code><a href="../reference/get_instance_seed_pairs.html">get_instance_seed_pairs()</a></code> to get the pairs of instance and random seed used during the races.</p></li>
 <li><p>The <code>parameters</code> object now stores the number of <code>digits</code> (decimal places after the point) for each parameter of type <code>r</code>. As a result, the <code>repairConfiguration</code> function (see <code><a href="../reference/defaultScenario.html">defaultScenario()</a></code>) only needs two arguments: <code>configuration</code> and <code>parameters</code>. See examples in the user-guide.</p></li>
 <li><p><code><a href="../reference/readScenario.html">readScenario()</a></code> (and command-line irace) do not require a <code>scenario.txt</code> file. (Contributed by <a href="https://github.com/DE0CH" class="external-link">@DE0CH</a>)</p></li>
-<li><p>New scenario option <code>targetRunnerTimeout</code>: Timeout in seconds of any <code>targetRunner</code> call (only applies to <code>target-runner</code> executables not to R functions).</p></li>
 <li><p><code><a href="../reference/read_pcs_file.html">read_pcs_file()</a></code> now supports forbidden configurations.</p></li>
+<li><p>When testing, <code>irace</code> now prints the random seed used for each instance as an additional column.</p></li>
 <li><p>The package provides a new executable <code>target-runner-dummy</code> (or <code>target-runner-dummy.exe</code> in Windows) for the purposes of testing. It may also be useful for understanding the typical setup of <code>irace</code>.</p></li>
 </ul></div>
 <div class="section level3">
