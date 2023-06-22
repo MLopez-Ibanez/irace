@@ -647,10 +647,10 @@ irace_save_logfile <- function(iraceResults, scenario)
 {
   if (is.null.or.empty(scenario$logFile)) return(invisible())
   cwd <- setwd(scenario$execDir)
+  on.exit(setwd(cwd))
   # FIXME: Use saveRDS
   # FIXME: Bump to version=3 when we bump the minimum R version to >=3.6
   save(iraceResults, file = scenario$logFile, version = 2)
-  setwd(cwd)
 }
 
 valid_iracelog <- function(x)

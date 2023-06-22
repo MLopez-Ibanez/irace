@@ -720,7 +720,6 @@ irace_common <- function(scenario, parameters, simple, output.width = 9999L)
     psRace(iraceLogFile=scenario$logFile, postselection=scenario$postselection, elites=TRUE)
   
   testing_fromlog(logFile = scenario$logFile)
-  
   invisible(eliteConfigurations)
 }
 

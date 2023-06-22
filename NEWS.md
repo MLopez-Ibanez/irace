@@ -62,7 +62,9 @@
    so that each block contains one instance of each class and
    `blockSize` is set to the number of classes.
 
- * `plotAblation()` has several new options:
+  * New scenario option `targetRunnerTimeout`: Timeout in seconds of any `targetRunner` call (only applies to `target-runner` executables not to R functions).
+  
+  * `plotAblation()` has several new options:
     - `type='rank'` to plot ranks per instance instead of raw cost values.
     - `n` to limit the number of parameters shown in the plot.
 
@@ -77,7 +79,6 @@
 
  * New function `get_instance_seed_pairs()` to get the pairs of instance and random seed used during the races.
 
-
  * The `parameters` object now stores the number of `digits` (decimal places
    after the point) for each parameter of type `r`. As a result, the
    `repairConfiguration` function (see `defaultScenario()`) only needs two
@@ -85,9 +86,9 @@
 
  * `readScenario()` (and command-line irace) do not require a `scenario.txt` file. (Contributed by @DE0CH)
  
- * New scenario option `targetRunnerTimeout`: Timeout in seconds of any `targetRunner` call (only applies to `target-runner` executables not to R functions).
- 
  * `read_pcs_file()` now supports forbidden configurations.
+ 
+ * When testing, `irace` now prints the random seed used for each instance as an additional column.
  
  * The package provides a new executable `target-runner-dummy` (or
    `target-runner-dummy.exe` in Windows) for the purposes of testing.  It may

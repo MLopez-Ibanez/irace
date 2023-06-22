@@ -209,7 +209,7 @@ testing_fromfile <- function(filename, scenario)
   irace.note("Reading parameter file '", scenario$parameterFile, "'.\n")
   parameters <- readParameters (file = scenario$parameterFile,
                                 digits = scenario$digits)
-  configurations <- readConfigurationsFile (filename, parameters)
+  configurations <- readConfigurationsFile(filename, parameters)
   configurations <- cbind(.ID. = seq_nrow(configurations), configurations, .PARENT. = NA_integer_)
   rownames(configurations) <- configurations$.ID.
   num <- nrow(configurations)
@@ -225,8 +225,7 @@ testing_fromfile <- function(filename, scenario)
                        allConfigurations = configurations)
     
   irace.note ("Testing configurations (in the order given as input): \n")
-  iraceResults <- testing_common(configurations, scenario, parameters, iraceResults)
-  return(iraceResults)
+  testing_common(configurations, scenario, parameters, iraceResults)
 }
 
 testing_common <- function(configurations, scenario, parameters, iraceResults)
@@ -234,10 +233,10 @@ testing_common <- function(configurations, scenario, parameters, iraceResults)
   verbose <- !scenario$quiet
   if (verbose) configurations.print(configurations)
   iraceResults$testing <- testConfigurations(configurations, scenario, parameters)
-  irace_save_logfile (iraceResults, scenario)
-  # FIXME : We should print the seeds also. As an additional column?
+  irace_save_logfile(iraceResults, scenario)
   irace.note ("Testing results (column number is configuration ID in no particular order):\n")
-  if (verbose) print(iraceResults$testing$experiments)
+  if (verbose) print(cbind(seeds = iraceResults$testing$seeds,
+                           as.data.frame(iraceResults$testing$experiments)))
   irace.note ("Finished testing\n")
   iraceResults
 }
