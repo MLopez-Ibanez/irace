@@ -3194,6 +3194,18 @@ executing \code{target-runner} directly on the execution directory (\parameter{e
 
 This executes the \code{targetRunner} script as \irace does. The output of this script must be only one number. 
 
+\item If your \code{targetRunner} file is an executable script in Python, \aR, Perl, Bash or some other interpreted programming language, make sure that the interpreter specified in the first line of the file exists at the correct location. For example, if the first line of \code{target-runner.py} is:
+%
+\begin{CodeInput}
+#|/usr/bin/python
+\end{CodeInput}
+%
+Then make sure that \path{/usr/bin/python} exists and it is executable. Otherwise, you will get an error such as:
+%
+\begin{CodeInput}
+Error: == irace == error in running command
+\end{CodeInput}
+
 \item Check that your \code{targetRunner} script is actually returning one
   number as output. For example:
 % 
