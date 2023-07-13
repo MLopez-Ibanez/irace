@@ -838,6 +838,17 @@ elitist_race <- function(maxExp = 0,
         # criterion is disabled)
         ## MANUEL: So what is the reason to not immediately terminate here? Is
         ## there a reason to continue?
+        if (current.task == 1L) {
+          # We may reach this point in the first iteration so we need to calculate best.
+          if (sum(alive) == 1L) {
+            best <- which.alive
+          } else  {
+            tmpResults <- Results[1, which.alive, drop = FALSE]
+            irace.assert(!any(is.na(tmpResults)))
+            # which.min returns only the first minimum.
+            best <- which.alive[which.min(get_ranks(tmpResults, test = stat.test))]
+          }
+        }
         id_best <- configurations[[".ID."]][best]
         print_task(".", Results[seq_len(current.task), , drop = FALSE],
                    race.instances[current.task],
