@@ -21,7 +21,7 @@ status](https://github.com/MLopez-Ibanez/irace/workflows/R-CMD-check/badge.svg)]
 ---------------------------------------
 
 Introduction
-============
+------------
 
 The **irace** package implements the Iterated Race method, which is a
 generalization of the Iterated F-race method for the automatic configuration of
@@ -55,15 +55,13 @@ You may also find the [**iraceplot**](https://auto-optimization.github.io/iracep
     [doi:10.1145/3449726.3461404](https://doi.org/10.1145/3449726.3461404)
 
 
-Requisites
-----------
+### Requisites ###
 
  * R (<https://www.r-project.org>) is required for running irace, but
    you don't need to know the R language to use it.
 
 
-User guide
-----------
+### User guide ###
 
 A complete [user guide](https://cran.r-project.org/package=irace/vignettes/irace-package.pdf)
 comes with the package. You can access it online or, after installing the irace
@@ -76,8 +74,9 @@ package, invoking from the R console the following command:
 The following is a quick-start guide. The user guide gives more detailed
 instructions.
 
-Quick Start 
-===========
+Quick Start
+-----------
+
 1. Install R (with your favourite package manager, and see more details below).
 2. Install irace. This command works on Bash shell (Linux and MacOS) and Powershell (Windows) with R added to PATH (see detailed instructions below).
 ```bash
@@ -96,14 +95,13 @@ Consider adding this line to your `~/.bashrc`, `~/.zshrc`, or `~/.profile` for i
 ```
 
 Installing R
-============
+------------
 
 The official instructions are available at
 <https://cran.r-project.org/doc/manuals/r-release/R-admin.html>. We give below
 a quick R installation guide that will work in most cases.
 
-GNU/Linux
----------
+### GNU/Linux ###
 
 You should install R from your package manager. On a Debian/Ubuntu system, you will run in the Bash shell:
 ```bash
@@ -114,8 +112,7 @@ Once R is installed, you can launch R from the Terminal and from the R
 prompt install the irace package. See instructions below.
 
 
-OS X
-----
+### OS X ###
 
 You can install R directly from a CRAN mirror (<https://cran.r-project.org/bin/macosx/>).
 
@@ -130,8 +127,7 @@ Once R is installed, you can launch R from the Terminal (or from your
 Applications), and from the R prompt install the irace package. See
 instructions below.
 
-Windows
--------
+### Windows ###
 
 You can install R from a CRAN mirror
 (<https://cran.r-project.org/bin/windows/>). Once R is installed, you can
@@ -151,7 +147,7 @@ C:\Program Files\R\R-4.1.3\bin\i386
 ```
 
 Installing the irace package
-============================
+----------------------------
 
 There are two methods for installing the
 [irace](https://mlopez-ibanez.github.io/irace/) R package on your computer:
@@ -193,8 +189,7 @@ Once installed, test that it is working by typing in the R console (not in the b
 ```
 The last command gives you the installation folder of `irace`, for example, `/home/user/R/irace/bin`.
 
-GNU/Linux and OS X
-------------------
+### GNU/Linux and OS X ###
 
 Save the installation directory of `irace` to a variable, and add it to your
 `.bash_profile`, `.bashrc` or `.profile`:
@@ -213,8 +208,7 @@ invoke `irace` as follows:
 ```
 
 
-Windows
--------
+### Windows ###
 
 You can find out where the irace binary is installed by running the following in Powershell or CMD:
 
@@ -236,8 +230,7 @@ You can also launch irace by opening the R console and executing:
     irace.cmdline("--help")
 ```
 
-GitHub (Development version)
-----------------------------
+### GitHub (Development version) ###
 
 If you wish to try the development version, you can install it by executing the
 following commands within the R console:
@@ -247,14 +240,13 @@ following commands within the R console:
     devtools::install_github("MLopez-Ibanez/irace")
 ```
 
-Python
-------
+### Python ###
 
 You can use the irace R package from Python using `rpy2`. An example on how to do this is the implementation of [iracepy](https://github.com/auto-optimization/iracepy).
 
 
 Usage
-=====
+-----
 
 1. Create a directory for storing the tuning scenario setup (Bash shell):
 ```bash
@@ -295,8 +287,7 @@ Usage
    scenario setup specified in the `scenario.txt` file.
 
 
-Many tuning runs in parallel
-----------------------------
+### Many tuning runs in parallel ###
 
 For executing several repetitions of irace in parallel, call the
 program `parallel-irace` from the Bash shell:
@@ -315,15 +306,14 @@ scratch, deleting them first if they already exist.
 Check the help of `parallel-irace` by running it without parameters.
 
 
-Parallelize one tuning
-----------------------
+### Parallelize one tuning ###
 
 A single run of irace can be done much faster by executing the calls
 to `targetRunner` (the runs of the algorithm being tuned) in
 parallel. See the [user guide](https://cran.r-project.org/package=irace/vignettes/irace-package.pdf) for the details.
 
 License
-=======
+-------
 
 **irace** is Copyright (C) 2010-2020 Manuel López-Ibáñez, Jérémie Dubois-Lacoste
 and Leslie Pérez-Cáceres.
@@ -357,7 +347,7 @@ Birattari.
 
 
 Building an irace standalone container
-======================================
+--------------------------------------
 
 Thanks to [Singularity](https://sylabs.io/singularity/), you can build a
 standalone container of `irace` using the file `irace.sindef` which is
@@ -375,7 +365,7 @@ and run with:
 
 
 Frequently Asked Questions
-==========================
+--------------------------
 
 The
 [user guide](https://cran.r-project.org/package=irace/vignettes/irace-package.pdf)
