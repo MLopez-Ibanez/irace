@@ -279,6 +279,8 @@ TODO General (in order of importance):
 
  * Add a hook that after sampling post-processes the candidates.
 
+ * Enable saving the logfile within a race. Add a parameter that controls the saving frequency.
+ 
  * Many of our "objects" could be defined as S4 classes. For example:
    setClass("Parameters", slots=c(names="character", types="character",
                                   switches = "character", domain = "list",
