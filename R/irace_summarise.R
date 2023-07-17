@@ -38,6 +38,7 @@ irace_summarise <- function(iraceResults)
     n_elites = length(iraceResults$allElites[[niterations]]),
     n_soft_restarts = sum(iraceResults$softRestart),
     n_rejected = length(iraceResults$state$rejectedIDs),
+    time_targetrunner = iraceResults$state$timeUsed,
     time_cpu_user = time_cpu_user,
     time_cpu_sys = time_cpu_sys,
     time_cpu_total = time_cpu_total,
