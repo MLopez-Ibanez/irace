@@ -350,27 +350,38 @@ readScenario <- function(filename = "", scenario = list(),
 
 setup_test_instances <- function(scenario)
 {
-  if (is.null.or.empty(scenario[["testInstances"]])) {
+  testInstances <- scenario[["testInstances"]]
+  if (is.null.or.empty(testInstances)) {
     if (!is.null.or.empty(scenario$testInstancesDir) || 
         !is.null.or.empty(scenario$testInstancesFile)) {
       scenario$testInstancesDir <- path_rel2abs(scenario$testInstancesDir)
       if (!is.null.or.empty(scenario$testInstancesFile)) {
         scenario$testInstancesFile <- path_rel2abs(scenario$testInstancesFile)
       }
-      scenario[["testInstances"]] <-
-        readInstances(instancesDir = scenario$testInstancesDir,
-                      instancesFile = scenario$testInstancesFile)
+      testInstances <- readInstances(instancesDir = scenario$testInstancesDir,
+                                     instancesFile = scenario$testInstancesFile)
     } else {
-      scenario[["testInstances"]] <- NULL
+      testInstances <- NULL
     }
   }
-  if (!is.null(scenario[["testInstances"]])
-      && is.null(names(scenario[["testInstances"]]))) {
-    # Create unique IDs for testInstances
-    names(scenario[["testInstances"]]) <- paste0(seq_along(scenario[["testInstances"]]), "t")
+  if (!is.null(testInstances)) {
+    if (!is.null(dim(testInstances))) {
+      if (length(dim(estInstances)) == 1L ||
+          (length(dim(testInstances)) == 2L && dim(testInstances)[1] == 1L)) {
+        # Remove useless dimensions
+        testInstances <- c(testInstances)
+      } else {
+        irace.error("testInstances must be a one-dimensional vector or a list. If your instances are matrices or datasets in R, you can use scenario(testInstances=list(data1, data2, data3))")
+      }
+    }
+    if (is.null(names(testInstances))) {
+      # Create unique IDs for testInstances
+      names(testInstances) <- paste0(seq_along(testInstances), "t")
+    }
   }
+  scenario[["testInstances"]] <- testInstances
   scenario
-}    
+}
 
 #' Check and correct the given scenario
 #'
@@ -559,8 +570,16 @@ checkScenario <- function(scenario = defaultScenario())
       readInstances(instancesDir = scenario$trainInstancesDir,
                     instancesFile = scenario$trainInstancesFile)
   }
-  if (length(scenario$instances) == 0 || !is.null(dim(scenario$instances))) {
-    irace.error("Instances must be a one-dimensional vector or a list. If your instances are matrices or datasets in R, you can use scenario(instances=list(data1, data2, data3)).")
+  if (length(scenario$instances) == 0L) {
+    irace.error("No instances found in `scenario$instances`")
+  } else if (!is.null(dim(scenario$instances))) {
+    if (length(dim(scenario$instances)) == 1L ||
+        (length(dim(scenario$instances)) == 2L && dim(scenario$instances)[1] == 1L)) {
+      # Remove useless dimensions
+      scenario$instances <- c(scenario$instances)
+    } else {
+      irace.error("Instances must be a one-dimensional vector or a list. If your instances are matrices or datasets in R, you can use scenario(instances=list(data1, data2, data3))")
+    }
   }
   # Testing instances
   scenario <- setup_test_instances(scenario)
