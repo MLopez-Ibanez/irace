@@ -366,7 +366,7 @@ setup_test_instances <- function(scenario)
   }
   if (!is.null(testInstances)) {
     if (!is.null(dim(testInstances))) {
-      if (length(dim(estInstances)) == 1L ||
+      if (length(dim(testInstances)) == 1L ||
           (length(dim(testInstances)) == 2L && dim(testInstances)[1] == 1L)) {
         # Remove useless dimensions
         testInstances <- c(testInstances)
