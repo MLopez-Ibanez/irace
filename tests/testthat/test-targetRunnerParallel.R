@@ -24,9 +24,7 @@ targetRunnerParallel = function(experiment, exec.target.runner, scenario, target
 
    n.inst = 7L
    instances = replicate(n.inst, setClasses(list(x=123), classes = "foo"), simplify = FALSE)
-   parameters = readParameters(text='
-x1 "" r (0,1)
-')
+   parameters = readParameters(text='x1 "" r (0,1)')
    log.file = tempfile()
    tuner.config = list(maxExperiments = 40L, nbIterations = 1L, minNbSurvival = 1,
                        targetRunnerParallel = targetRunnerParallel,
@@ -47,13 +45,13 @@ test_that("targetRunnerData", {
     return(ys)
   }
   parameters = readParameters(text='
-x "x" i (1,2)
+x "x" r (1,2)
 ')
   expect_output(
     irace(scenario = list(targetRunnerParallel = targetRunnerParallel,
                           instances = lapply(1:5, function(i) 10),
                           targetRunnerData = list(a=1, b=2),
-                          maxExperiments = 500),
+                          maxExperiments = 42L),
           parameters = parameters),
     "a = 1, b = 2")
 })

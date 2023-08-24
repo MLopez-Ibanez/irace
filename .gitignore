@@ -55,6 +55,7 @@ docs/
 /src/iracebin/irace
 /src/iracebin/ablation
 /src/iracebin/irace2pyimp
+/src/dummy/target-runner-dummy
 
 # /vignettes/
 /vignettes/*.out

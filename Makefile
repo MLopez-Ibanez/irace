@@ -114,6 +114,10 @@ else
 	cd $(BINDIR) && (_R_CHECK_FORCE_SUGGESTS_=false NOT_CRAN=true R CMD check --run-donttest --timings --install-args="$(INSTALL_FLAGS)" $(PACKAGE)_$(PACKAGEVERSION).tar.gz; cat $(PACKAGE).Rcheck/$(PACKAGE)-Ex.timings)
 endif
 
+# Using testthat nicer output
+test: clean
+	_R_CHECK_FORCE_SUGGESTS_=false NOT_CRAN=true $(Reval) 'testthat::test_local(stop_on_failure = TRUE)'
+
 clean: 
 	cd $(PACKAGEDIR) && (./cleanup; make -C src -f Makevars clean)
 

@@ -2,8 +2,8 @@ test_that("test.path_rel2abs", {
   # Try to set wd; otherwise fail silently.
   old.cwd <- getwd()
   skip_if(is.null(old.cwd))
-  on.exit(setwd(old.cwd), add = TRUE)
-
+  withr::defer(setwd(old.cwd))
+  # FIXME: Use local_dir() to avoid on.exit
   tryCatch(setwd("/tmp"), error = function(e) { skip(e) })
   
   testcases <- read.table(text='

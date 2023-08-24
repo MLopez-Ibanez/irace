@@ -14,7 +14,8 @@ test_that("GenericWrapper4AC", {
 
   instances = c("time", "cost", "cost+time")
   names(instances) = instances
-  scenario <- list(targetRunner = "./dummy_wrapper.py", instances = instances,
+  dummy_wrapper <- test_path("dummy_wrapper.py")
+  scenario <- list(targetRunner = dummy_wrapper, instances = instances,
                    maxExperiments = 1000, aclib = TRUE)
 
   scenario <- checkScenario (scenario)
