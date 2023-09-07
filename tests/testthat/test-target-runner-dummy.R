@@ -62,4 +62,24 @@ withr::with_output_sink("test-target-runner-dummy.Rout", {
       "The output of targetRunner must be two numbers 'cost time'",
       fixed = TRUE)
   })
+  test_that("low --max-experiments", {
+    expect_warning(
+    expect_error(
+      run_cmdline(paste0('p_int  "--p_int " i (1, 10)\n',
+                         'p_real "--p_real " r (1, 10)\n',
+                         'time   "--time "  c (1)\n'),
+                  '--max-experiments 50'),
+        "With the current settings"),
+      "No scenario file given")
+  })
+  test_that("--min-experiments", {
+    expect_no_warning(
+    expect_warning(
+      run_cmdline(paste0('p_int  "--p_int " i (1, 10)\n',
+                         'p_real "--p_real " r (1, 10)\n',
+                         'time   "--time "  c (1)\n'),
+                  '--min-experiments 50'),
+      "No scenario file given"))
+  })
+  
 }) # withr::with_output_sink()

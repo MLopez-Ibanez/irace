@@ -94,6 +94,9 @@
    `target-runner-dummy.exe` in Windows) for the purposes of testing.  It may
    also be useful for understanding the typical setup of `irace`.
    
+ * New scenario option `minExperiments` to set a minimum budget of runs.
+                                                (proposed by @Saethox, fixes #58)
+   
  
 ## Fixes
 

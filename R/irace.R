@@ -231,7 +231,7 @@ computeTerminationOfRace <- function(nbParameters) (2 + log2(nbParameters))
 
 ## Compute the minimum budget required, and exit early in case the
 ## budget given by the user is insufficient.
-computeMinimumBudget <- function(scenario, minSurvival, nbIterations, boundEstimate)
+computeMinimumBudget <- function(scenario, minSurvival, nbIterations)
 {
   blockSize <- scenario$blockSize
   eachTest <- blockSize * scenario$eachTest
@@ -305,7 +305,7 @@ computeMinimumBudget <- function(scenario, minSurvival, nbIterations, boundEstim
 checkMinimumBudget <- function(scenario, remainingBudget, minSurvival, nbIterations,
                                boundEstimate, timeUsed)
 {
-  minimumBudget <- computeMinimumBudget (scenario, minSurvival, nbIterations, boundEstimate)
+  minimumBudget <- computeMinimumBudget (scenario, minSurvival, nbIterations)
 
   if (remainingBudget >= minimumBudget)
     return(TRUE)
@@ -818,9 +818,14 @@ irace_run <- function(scenario, parameters)
 
     startParallel(scenario)
     on.exit(stopParallel(), add = TRUE)
- 
+    
     if (scenario$maxTime == 0) {
-      remainingBudget <- scenario$maxExperiments
+      if (is.na(scenario$minExperiments)) {
+        remainingBudget <- scenario$maxExperiments
+      } else {
+        remainingBudget <- max(scenario$minExperiments,
+                               computeMinimumBudget(scenario, minSurvival, nbIterations))
+      }
     } else { ## Estimate time when maxTime is defined.
       ## IMPORTANT: This is firstTest because these configurations will be
       ## considered elite later, thus preserved up to firstTest, which is

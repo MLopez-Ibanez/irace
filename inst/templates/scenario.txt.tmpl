@@ -117,6 +117,11 @@
 ## performed. It determines the maximum budget of experiments for the tuning.
 # maxExperiments = 0
 
+## Minimum number of runs (invocations of `targetRunner`) that will be
+## performed. It determines the minimum budget of experiments for the tuning.
+## The actual budget depends on the number of parameters and `minSurvival`.
+# minExperiments = NA
+
 ## Maximum total execution time for the executions of `targetRunner`.
 ## `targetRunner` must return two values: cost and time. This value and the
 ## one returned by `targetRunner` must use the same units (seconds, minutes,

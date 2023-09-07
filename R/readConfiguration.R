@@ -668,6 +668,11 @@ checkScenario <- function(scenario = defaultScenario())
       irace.error (quote.param(param), " must be a real value within [0, 1].")
   }
   
+  if (!is.na(scenario$minExperiments)) {
+    scenario$maxExperiments <- max(scenario$maxExperiments,
+                                   scenario$minExperiments)
+  }
+  
   ## Only maxExperiments or maxTime should be set. Negative values are not
   ## allowed.
   if (scenario$maxExperiments == 0 && scenario$maxTime == 0) {
@@ -856,6 +861,7 @@ printScenario <- function(scenario)
 #'  \item Tuning budget:
 #'    \describe{
 #'      \item{`maxExperiments`}{Maximum number of runs (invocations of \code{targetRunner}) that will be performed. It determines the maximum budget of experiments for the tuning. (Default: `0`)}
+#'      \item{`minExperiments`}{Minimum number of runs (invocations of \code{targetRunner}) that will be performed. It determines the minimum budget of experiments for the tuning. The actual budget depends on the number of parameters and \code{minSurvival}. (Default: `NA`)}
 #'      \item{`maxTime`}{Maximum total execution time for the executions of \code{targetRunner}. \code{targetRunner} must return two values: cost and time. This value and the one returned by \code{targetRunner} must use the same units (seconds, minutes, iterations, evaluations, ...). (Default: `0`)}
 #'      \item{`budgetEstimation`}{Fraction (smaller than 1) of the budget used to estimate the mean computation time of a configuration. Only used when \code{maxTime} > 0 (Default: `0.02`)}
 #'      \item{`minMeasurableTime`}{Minimum time unit that is still (significantly) measureable. (Default: `0.01`)}

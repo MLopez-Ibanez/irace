@@ -191,6 +191,11 @@ List of command-line options:
    --max-experiments     Maximum number of runs (invocations of `targetRunner`)
                          that will be performed. It determines the maximum
                          budget of experiments for the tuning. Default: 0.
+   --min-experiments     Minimum number of runs (invocations of `targetRunner`)
+                         that will be performed. It determines the minimum
+                         budget of experiments for the tuning. The actual
+                         budget depends on the number of parameters and
+                         `minSurvival`.
    --max-time            Maximum total execution time for the executions of
                          `targetRunner`. `targetRunner` must return two values:
                          cost and time. This value and the one returned by
