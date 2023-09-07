@@ -262,91 +262,96 @@ the command line. It finally starts <span class="pkg">irace</span> by calling
 <span id="cb1-94"><a href="#cb1-94" aria-hidden="true" tabindex="-1"></a><span class="at">   --max-experiments     Maximum number of runs (invocations of </span><span class="st">`</span>targetRunner<span class="st">`</span><span class="at">)</span></span>
 <span id="cb1-95"><a href="#cb1-95" aria-hidden="true" tabindex="-1"></a><span class="at">                         that will be performed. It determines the maximum</span></span>
 <span id="cb1-96"><a href="#cb1-96" aria-hidden="true" tabindex="-1"></a><span class="at">                         budget of experiments for the tuning. Default: 0.</span></span>
-<span id="cb1-97"><a href="#cb1-97" aria-hidden="true" tabindex="-1"></a><span class="at">   --max-time            Maximum total execution time for the executions of</span></span>
-<span id="cb1-98"><a href="#cb1-98" aria-hidden="true" tabindex="-1"></a><span class="at">                         </span><span class="st">`</span>targetRunner<span class="st">`</span><span class="at">. </span><span class="st">`</span>targetRunner<span class="st">`</span><span class="at"> must return two values:</span></span>
-<span id="cb1-99"><a href="#cb1-99" aria-hidden="true" tabindex="-1"></a><span class="at">                         cost and time. This value and the one returned by</span></span>
-<span id="cb1-100"><a href="#cb1-100" aria-hidden="true" tabindex="-1"></a><span class="at">                         </span><span class="st">`</span>targetRunner<span class="st">`</span><span class="at"> must use the same units (seconds,</span></span>
-<span id="cb1-101"><a href="#cb1-101" aria-hidden="true" tabindex="-1"></a><span class="at">                         minutes, iterations, evaluations, ...). Default: 0.</span></span>
-<span id="cb1-102"><a href="#cb1-102" aria-hidden="true" tabindex="-1"></a><span class="at">   --budget-estimation   Fraction (smaller than 1) of the budget used to</span></span>
-<span id="cb1-103"><a href="#cb1-103" aria-hidden="true" tabindex="-1"></a><span class="at">                         estimate the mean computation time of a configuration.</span></span>
-<span id="cb1-104"><a href="#cb1-104" aria-hidden="true" tabindex="-1"></a><span class="at">                         Only used when </span><span class="st">`</span>maxTime<span class="st">`</span><span class="at"> &gt; 0 Default: 0.02.</span></span>
-<span id="cb1-105"><a href="#cb1-105" aria-hidden="true" tabindex="-1"></a><span class="at">   --min-measurable-time  Minimum time unit that is still (significantly)</span></span>
-<span id="cb1-106"><a href="#cb1-106" aria-hidden="true" tabindex="-1"></a><span class="at">                         measureable. Default: 0.01.</span></span>
-<span id="cb1-107"><a href="#cb1-107" aria-hidden="true" tabindex="-1"></a><span class="at">   --parallel            Number of calls to </span><span class="st">`</span>targetRunner<span class="st">`</span><span class="at"> to execute in</span></span>
-<span id="cb1-108"><a href="#cb1-108" aria-hidden="true" tabindex="-1"></a><span class="at">                         parallel. Values </span><span class="st">`</span><span class="dv">0</span><span class="st">`</span><span class="at"> or </span><span class="st">`</span><span class="dv">1</span><span class="st">`</span><span class="at"> mean no parallelization.</span></span>
-<span id="cb1-109"><a href="#cb1-109" aria-hidden="true" tabindex="-1"></a><span class="at">                         Default: 0.</span></span>
-<span id="cb1-110"><a href="#cb1-110" aria-hidden="true" tabindex="-1"></a><span class="at">   --load-balancing      Enable/disable load-balancing when executing</span></span>
-<span id="cb1-111"><a href="#cb1-111" aria-hidden="true" tabindex="-1"></a><span class="at">                         experiments in parallel. Load-balancing makes better</span></span>
-<span id="cb1-112"><a href="#cb1-112" aria-hidden="true" tabindex="-1"></a><span class="at">                         use of computing resources, but increases</span></span>
-<span id="cb1-113"><a href="#cb1-113" aria-hidden="true" tabindex="-1"></a><span class="at">                         communication overhead. If this overhead is large,</span></span>
-<span id="cb1-114"><a href="#cb1-114" aria-hidden="true" tabindex="-1"></a><span class="at">                         disabling load-balancing may be faster. Default: 1.</span></span>
-<span id="cb1-115"><a href="#cb1-115" aria-hidden="true" tabindex="-1"></a><span class="at">   --mpi                 Enable/disable MPI. Use </span><span class="st">`</span>Rmpi<span class="st">`</span><span class="at"> to execute</span></span>
-<span id="cb1-116"><a href="#cb1-116" aria-hidden="true" tabindex="-1"></a><span class="at">                         </span><span class="st">`</span>targetRunner<span class="st">`</span><span class="at"> in parallel (parameter </span><span class="st">`</span>parallel<span class="st">`</span><span class="at"> is</span></span>
-<span id="cb1-117"><a href="#cb1-117" aria-hidden="true" tabindex="-1"></a><span class="at">                         the number of slaves). Default: 0.</span></span>
-<span id="cb1-118"><a href="#cb1-118" aria-hidden="true" tabindex="-1"></a><span class="at">   --batchmode           Specify how irace waits for jobs to finish when</span></span>
-<span id="cb1-119"><a href="#cb1-119" aria-hidden="true" tabindex="-1"></a><span class="at">                         </span><span class="st">`</span>targetRunner<span class="st">`</span><span class="at"> submits jobs to a batch cluster: sge,</span></span>
-<span id="cb1-120"><a href="#cb1-120" aria-hidden="true" tabindex="-1"></a><span class="at">                         pbs, torque, slurm or htcondor. </span><span class="st">`</span>targetRunner<span class="st">`</span><span class="at"> must</span></span>
-<span id="cb1-121"><a href="#cb1-121" aria-hidden="true" tabindex="-1"></a><span class="at">                         submit jobs to the cluster using, for example, </span><span class="st">`</span>qsub<span class="st">`</span><span class="at">.</span></span>
-<span id="cb1-122"><a href="#cb1-122" aria-hidden="true" tabindex="-1"></a><span class="at">                         Default: 0.</span></span>
-<span id="cb1-123"><a href="#cb1-123" aria-hidden="true" tabindex="-1"></a><span class="at">   --digits              Maximum number of decimal places that are significant</span></span>
-<span id="cb1-124"><a href="#cb1-124" aria-hidden="true" tabindex="-1"></a><span class="at">                         for numerical (real) parameters. Default: 4.</span></span>
-<span id="cb1-125"><a href="#cb1-125" aria-hidden="true" tabindex="-1"></a><span class="at">-q,--quiet               Reduce the output generated by irace to a minimum.</span></span>
-<span id="cb1-126"><a href="#cb1-126" aria-hidden="true" tabindex="-1"></a><span class="at">                         Default: 0.</span></span>
-<span id="cb1-127"><a href="#cb1-127" aria-hidden="true" tabindex="-1"></a><span class="at">   --debug-level         Debug level of the output of </span><span class="st">`</span>irace<span class="st">`</span><span class="at">. Set this to 0 to</span></span>
-<span id="cb1-128"><a href="#cb1-128" aria-hidden="true" tabindex="-1"></a><span class="at">                         silence all debug messages. Higher values provide more</span></span>
-<span id="cb1-129"><a href="#cb1-129" aria-hidden="true" tabindex="-1"></a><span class="at">                         verbose debug messages. Default: 0.</span></span>
-<span id="cb1-130"><a href="#cb1-130" aria-hidden="true" tabindex="-1"></a><span class="at">   --seed                Seed of the random number generator (by default,</span></span>
-<span id="cb1-131"><a href="#cb1-131" aria-hidden="true" tabindex="-1"></a><span class="at">                         generate a random seed).</span></span>
-<span id="cb1-132"><a href="#cb1-132" aria-hidden="true" tabindex="-1"></a><span class="at">   --soft-restart        Enable/disable the soft restart strategy that avoids</span></span>
-<span id="cb1-133"><a href="#cb1-133" aria-hidden="true" tabindex="-1"></a><span class="at">                         premature convergence of the probabilistic model.</span></span>
-<span id="cb1-134"><a href="#cb1-134" aria-hidden="true" tabindex="-1"></a><span class="at">                         Default: 1.</span></span>
-<span id="cb1-135"><a href="#cb1-135" aria-hidden="true" tabindex="-1"></a><span class="at">   --soft-restart-threshold  Soft restart threshold value for numerical</span></span>
-<span id="cb1-136"><a href="#cb1-136" aria-hidden="true" tabindex="-1"></a><span class="at">                         parameters. If </span><span class="st">`</span>NA<span class="st">`</span><span class="at">, </span><span class="st">`</span>NULL<span class="st">`</span><span class="at"> or </span><span class="st">`""`</span><span class="at">, it is computed as</span></span>
-<span id="cb1-137"><a href="#cb1-137" aria-hidden="true" tabindex="-1"></a><span class="at">                         </span><span class="st">`</span><span class="dv">10</span><span class="sc">^-</span>digits<span class="st">`</span><span class="at">.</span></span>
-<span id="cb1-138"><a href="#cb1-138" aria-hidden="true" tabindex="-1"></a><span class="at">-e,--elitist             Enable/disable elitist irace. Default: 1.</span></span>
-<span id="cb1-139"><a href="#cb1-139" aria-hidden="true" tabindex="-1"></a><span class="at">   --elitist-new-instances  Number of instances added to the execution list</span></span>
-<span id="cb1-140"><a href="#cb1-140" aria-hidden="true" tabindex="-1"></a><span class="at">                         before previous instances in elitist irace. Default:</span></span>
-<span id="cb1-141"><a href="#cb1-141" aria-hidden="true" tabindex="-1"></a><span class="at">                         1.</span></span>
-<span id="cb1-142"><a href="#cb1-142" aria-hidden="true" tabindex="-1"></a><span class="at">   --elitist-limit       In elitist irace, maximum number per race of</span></span>
-<span id="cb1-143"><a href="#cb1-143" aria-hidden="true" tabindex="-1"></a><span class="at">                         elimination tests that do not eliminate a</span></span>
-<span id="cb1-144"><a href="#cb1-144" aria-hidden="true" tabindex="-1"></a><span class="at">                         configuration. Use 0 for no limit. Default: 2.</span></span>
-<span id="cb1-145"><a href="#cb1-145" aria-hidden="true" tabindex="-1"></a><span class="at">   --capping             Enable the use of adaptive capping, a technique</span></span>
-<span id="cb1-146"><a href="#cb1-146" aria-hidden="true" tabindex="-1"></a><span class="at">                         designed for minimizing the computation time of</span></span>
-<span id="cb1-147"><a href="#cb1-147" aria-hidden="true" tabindex="-1"></a><span class="at">                         configurations. Capping is enabled by default if</span></span>
-<span id="cb1-148"><a href="#cb1-148" aria-hidden="true" tabindex="-1"></a><span class="at">                         </span><span class="st">`</span>elitist<span class="st">`</span><span class="at"> is active, </span><span class="st">`</span>maxTime <span class="sc">&gt;</span> <span class="dv">0</span><span class="st">`</span><span class="at"> and </span><span class="st">`</span>boundMax <span class="sc">&gt;</span> <span class="dv">0</span><span class="st">`</span><span class="at">.</span></span>
-<span id="cb1-149"><a href="#cb1-149" aria-hidden="true" tabindex="-1"></a><span class="at">   --capping-type        Measure used to obtain the execution bound from the</span></span>
-<span id="cb1-150"><a href="#cb1-150" aria-hidden="true" tabindex="-1"></a><span class="at">                         performance of the elite configurations: median, mean,</span></span>
-<span id="cb1-151"><a href="#cb1-151" aria-hidden="true" tabindex="-1"></a><span class="at">                         worst, best. Default: median.</span></span>
-<span id="cb1-152"><a href="#cb1-152" aria-hidden="true" tabindex="-1"></a><span class="at">   --bound-type          Method to calculate the mean performance of elite</span></span>
-<span id="cb1-153"><a href="#cb1-153" aria-hidden="true" tabindex="-1"></a><span class="at">                         configurations: candidate or instance. Default:</span></span>
-<span id="cb1-154"><a href="#cb1-154" aria-hidden="true" tabindex="-1"></a><span class="at">                         candidate.</span></span>
-<span id="cb1-155"><a href="#cb1-155" aria-hidden="true" tabindex="-1"></a><span class="at">   --bound-max           Maximum execution bound for </span><span class="st">`</span>targetRunner<span class="st">`</span><span class="at">. It must be</span></span>
-<span id="cb1-156"><a href="#cb1-156" aria-hidden="true" tabindex="-1"></a><span class="at">                         specified when capping is enabled. Default: 0.</span></span>
-<span id="cb1-157"><a href="#cb1-157" aria-hidden="true" tabindex="-1"></a><span class="at">   --bound-digits        Precision used for calculating the execution time. It</span></span>
-<span id="cb1-158"><a href="#cb1-158" aria-hidden="true" tabindex="-1"></a><span class="at">                         must be specified when capping is enabled. Default: 0.</span></span>
-<span id="cb1-159"><a href="#cb1-159" aria-hidden="true" tabindex="-1"></a><span class="at">   --bound-par           Penalization constant for timed out executions</span></span>
-<span id="cb1-160"><a href="#cb1-160" aria-hidden="true" tabindex="-1"></a><span class="at">                         (executions that reach </span><span class="st">`</span>boundMax<span class="st">`</span><span class="at"> execution time).</span></span>
-<span id="cb1-161"><a href="#cb1-161" aria-hidden="true" tabindex="-1"></a><span class="at">                         Default: 1.</span></span>
-<span id="cb1-162"><a href="#cb1-162" aria-hidden="true" tabindex="-1"></a><span class="at">   --bound-as-timeout    Replace the configuration cost of bounded executions</span></span>
-<span id="cb1-163"><a href="#cb1-163" aria-hidden="true" tabindex="-1"></a><span class="at">                         with </span><span class="st">`</span>boundMax<span class="st">`</span><span class="at">. Default: 1.</span></span>
-<span id="cb1-164"><a href="#cb1-164" aria-hidden="true" tabindex="-1"></a><span class="at">   --postselection       Percentage of the configuration budget used to perform</span></span>
-<span id="cb1-165"><a href="#cb1-165" aria-hidden="true" tabindex="-1"></a><span class="at">                         a postselection race of the best configurations of</span></span>
-<span id="cb1-166"><a href="#cb1-166" aria-hidden="true" tabindex="-1"></a><span class="at">                         each iteration after the execution of irace. Default:</span></span>
-<span id="cb1-167"><a href="#cb1-167" aria-hidden="true" tabindex="-1"></a><span class="at">                         0.</span></span>
-<span id="cb1-168"><a href="#cb1-168" aria-hidden="true" tabindex="-1"></a><span class="at">   --aclib               Enable/disable AClib mode. This option enables</span></span>
-<span id="cb1-169"><a href="#cb1-169" aria-hidden="true" tabindex="-1"></a><span class="at">                         compatibility with GenericWrapper4AC as targetRunner</span></span>
-<span id="cb1-170"><a href="#cb1-170" aria-hidden="true" tabindex="-1"></a><span class="at">                         script. Default: 0.</span></span>
-<span id="cb1-171"><a href="#cb1-171" aria-hidden="true" tabindex="-1"></a><span class="at">   --iterations          Maximum number of iterations. Default: 0.</span></span>
-<span id="cb1-172"><a href="#cb1-172" aria-hidden="true" tabindex="-1"></a><span class="at">   --experiments-per-iteration  Number of runs of the target algorithm per</span></span>
-<span id="cb1-173"><a href="#cb1-173" aria-hidden="true" tabindex="-1"></a><span class="at">                         iteration. Default: 0.</span></span>
-<span id="cb1-174"><a href="#cb1-174" aria-hidden="true" tabindex="-1"></a><span class="at">   --min-survival        Minimum number of configurations needed to continue</span></span>
-<span id="cb1-175"><a href="#cb1-175" aria-hidden="true" tabindex="-1"></a><span class="at">                         the execution of each race (iteration). Default: 0.</span></span>
-<span id="cb1-176"><a href="#cb1-176" aria-hidden="true" tabindex="-1"></a><span class="at">   --num-configurations  Number of configurations to be sampled and evaluated</span></span>
-<span id="cb1-177"><a href="#cb1-177" aria-hidden="true" tabindex="-1"></a><span class="at">                         at each iteration. Default: 0.</span></span>
-<span id="cb1-178"><a href="#cb1-178" aria-hidden="true" tabindex="-1"></a><span class="at">   --mu                  Parameter used to define the number of configurations</span></span>
-<span id="cb1-179"><a href="#cb1-179" aria-hidden="true" tabindex="-1"></a><span class="at">                         sampled and evaluated at each iteration. Default: 5.</span></span>
-<span id="cb1-180"><a href="#cb1-180" aria-hidden="true" tabindex="-1"></a><span class="at">   --confidence          Confidence level for the elimination test. Default:</span></span>
-<span id="cb1-181"><a href="#cb1-181" aria-hidden="true" tabindex="-1"></a><span class="at">                         0.95.</span></span></code></pre><p></p></div>
+<span id="cb1-97"><a href="#cb1-97" aria-hidden="true" tabindex="-1"></a><span class="at">   --min-experiments     Minimum number of runs (invocations of </span><span class="st">`</span>targetRunner<span class="st">`</span><span class="at">)</span></span>
+<span id="cb1-98"><a href="#cb1-98" aria-hidden="true" tabindex="-1"></a><span class="at">                         that will be performed. It determines the minimum</span></span>
+<span id="cb1-99"><a href="#cb1-99" aria-hidden="true" tabindex="-1"></a><span class="at">                         budget of experiments for the tuning. The actual</span></span>
+<span id="cb1-100"><a href="#cb1-100" aria-hidden="true" tabindex="-1"></a><span class="at">                         budget depends on the number of parameters and</span></span>
+<span id="cb1-101"><a href="#cb1-101" aria-hidden="true" tabindex="-1"></a><span class="at">                         </span><span class="st">`</span>minSurvival<span class="st">`</span><span class="at">.</span></span>
+<span id="cb1-102"><a href="#cb1-102" aria-hidden="true" tabindex="-1"></a><span class="at">   --max-time            Maximum total execution time for the executions of</span></span>
+<span id="cb1-103"><a href="#cb1-103" aria-hidden="true" tabindex="-1"></a><span class="at">                         </span><span class="st">`</span>targetRunner<span class="st">`</span><span class="at">. </span><span class="st">`</span>targetRunner<span class="st">`</span><span class="at"> must return two values:</span></span>
+<span id="cb1-104"><a href="#cb1-104" aria-hidden="true" tabindex="-1"></a><span class="at">                         cost and time. This value and the one returned by</span></span>
+<span id="cb1-105"><a href="#cb1-105" aria-hidden="true" tabindex="-1"></a><span class="at">                         </span><span class="st">`</span>targetRunner<span class="st">`</span><span class="at"> must use the same units (seconds,</span></span>
+<span id="cb1-106"><a href="#cb1-106" aria-hidden="true" tabindex="-1"></a><span class="at">                         minutes, iterations, evaluations, ...). Default: 0.</span></span>
+<span id="cb1-107"><a href="#cb1-107" aria-hidden="true" tabindex="-1"></a><span class="at">   --budget-estimation   Fraction (smaller than 1) of the budget used to</span></span>
+<span id="cb1-108"><a href="#cb1-108" aria-hidden="true" tabindex="-1"></a><span class="at">                         estimate the mean computation time of a configuration.</span></span>
+<span id="cb1-109"><a href="#cb1-109" aria-hidden="true" tabindex="-1"></a><span class="at">                         Only used when </span><span class="st">`</span>maxTime<span class="st">`</span><span class="at"> &gt; 0 Default: 0.02.</span></span>
+<span id="cb1-110"><a href="#cb1-110" aria-hidden="true" tabindex="-1"></a><span class="at">   --min-measurable-time  Minimum time unit that is still (significantly)</span></span>
+<span id="cb1-111"><a href="#cb1-111" aria-hidden="true" tabindex="-1"></a><span class="at">                         measureable. Default: 0.01.</span></span>
+<span id="cb1-112"><a href="#cb1-112" aria-hidden="true" tabindex="-1"></a><span class="at">   --parallel            Number of calls to </span><span class="st">`</span>targetRunner<span class="st">`</span><span class="at"> to execute in</span></span>
+<span id="cb1-113"><a href="#cb1-113" aria-hidden="true" tabindex="-1"></a><span class="at">                         parallel. Values </span><span class="st">`</span><span class="dv">0</span><span class="st">`</span><span class="at"> or </span><span class="st">`</span><span class="dv">1</span><span class="st">`</span><span class="at"> mean no parallelization.</span></span>
+<span id="cb1-114"><a href="#cb1-114" aria-hidden="true" tabindex="-1"></a><span class="at">                         Default: 0.</span></span>
+<span id="cb1-115"><a href="#cb1-115" aria-hidden="true" tabindex="-1"></a><span class="at">   --load-balancing      Enable/disable load-balancing when executing</span></span>
+<span id="cb1-116"><a href="#cb1-116" aria-hidden="true" tabindex="-1"></a><span class="at">                         experiments in parallel. Load-balancing makes better</span></span>
+<span id="cb1-117"><a href="#cb1-117" aria-hidden="true" tabindex="-1"></a><span class="at">                         use of computing resources, but increases</span></span>
+<span id="cb1-118"><a href="#cb1-118" aria-hidden="true" tabindex="-1"></a><span class="at">                         communication overhead. If this overhead is large,</span></span>
+<span id="cb1-119"><a href="#cb1-119" aria-hidden="true" tabindex="-1"></a><span class="at">                         disabling load-balancing may be faster. Default: 1.</span></span>
+<span id="cb1-120"><a href="#cb1-120" aria-hidden="true" tabindex="-1"></a><span class="at">   --mpi                 Enable/disable MPI. Use </span><span class="st">`</span>Rmpi<span class="st">`</span><span class="at"> to execute</span></span>
+<span id="cb1-121"><a href="#cb1-121" aria-hidden="true" tabindex="-1"></a><span class="at">                         </span><span class="st">`</span>targetRunner<span class="st">`</span><span class="at"> in parallel (parameter </span><span class="st">`</span>parallel<span class="st">`</span><span class="at"> is</span></span>
+<span id="cb1-122"><a href="#cb1-122" aria-hidden="true" tabindex="-1"></a><span class="at">                         the number of slaves). Default: 0.</span></span>
+<span id="cb1-123"><a href="#cb1-123" aria-hidden="true" tabindex="-1"></a><span class="at">   --batchmode           Specify how irace waits for jobs to finish when</span></span>
+<span id="cb1-124"><a href="#cb1-124" aria-hidden="true" tabindex="-1"></a><span class="at">                         </span><span class="st">`</span>targetRunner<span class="st">`</span><span class="at"> submits jobs to a batch cluster: sge,</span></span>
+<span id="cb1-125"><a href="#cb1-125" aria-hidden="true" tabindex="-1"></a><span class="at">                         pbs, torque, slurm or htcondor. </span><span class="st">`</span>targetRunner<span class="st">`</span><span class="at"> must</span></span>
+<span id="cb1-126"><a href="#cb1-126" aria-hidden="true" tabindex="-1"></a><span class="at">                         submit jobs to the cluster using, for example, </span><span class="st">`</span>qsub<span class="st">`</span><span class="at">.</span></span>
+<span id="cb1-127"><a href="#cb1-127" aria-hidden="true" tabindex="-1"></a><span class="at">                         Default: 0.</span></span>
+<span id="cb1-128"><a href="#cb1-128" aria-hidden="true" tabindex="-1"></a><span class="at">   --digits              Maximum number of decimal places that are significant</span></span>
+<span id="cb1-129"><a href="#cb1-129" aria-hidden="true" tabindex="-1"></a><span class="at">                         for numerical (real) parameters. Default: 4.</span></span>
+<span id="cb1-130"><a href="#cb1-130" aria-hidden="true" tabindex="-1"></a><span class="at">-q,--quiet               Reduce the output generated by irace to a minimum.</span></span>
+<span id="cb1-131"><a href="#cb1-131" aria-hidden="true" tabindex="-1"></a><span class="at">                         Default: 0.</span></span>
+<span id="cb1-132"><a href="#cb1-132" aria-hidden="true" tabindex="-1"></a><span class="at">   --debug-level         Debug level of the output of </span><span class="st">`</span>irace<span class="st">`</span><span class="at">. Set this to 0 to</span></span>
+<span id="cb1-133"><a href="#cb1-133" aria-hidden="true" tabindex="-1"></a><span class="at">                         silence all debug messages. Higher values provide more</span></span>
+<span id="cb1-134"><a href="#cb1-134" aria-hidden="true" tabindex="-1"></a><span class="at">                         verbose debug messages. Default: 0.</span></span>
+<span id="cb1-135"><a href="#cb1-135" aria-hidden="true" tabindex="-1"></a><span class="at">   --seed                Seed of the random number generator (by default,</span></span>
+<span id="cb1-136"><a href="#cb1-136" aria-hidden="true" tabindex="-1"></a><span class="at">                         generate a random seed).</span></span>
+<span id="cb1-137"><a href="#cb1-137" aria-hidden="true" tabindex="-1"></a><span class="at">   --soft-restart        Enable/disable the soft restart strategy that avoids</span></span>
+<span id="cb1-138"><a href="#cb1-138" aria-hidden="true" tabindex="-1"></a><span class="at">                         premature convergence of the probabilistic model.</span></span>
+<span id="cb1-139"><a href="#cb1-139" aria-hidden="true" tabindex="-1"></a><span class="at">                         Default: 1.</span></span>
+<span id="cb1-140"><a href="#cb1-140" aria-hidden="true" tabindex="-1"></a><span class="at">   --soft-restart-threshold  Soft restart threshold value for numerical</span></span>
+<span id="cb1-141"><a href="#cb1-141" aria-hidden="true" tabindex="-1"></a><span class="at">                         parameters. If </span><span class="st">`</span>NA<span class="st">`</span><span class="at">, </span><span class="st">`</span>NULL<span class="st">`</span><span class="at"> or </span><span class="st">`""`</span><span class="at">, it is computed as</span></span>
+<span id="cb1-142"><a href="#cb1-142" aria-hidden="true" tabindex="-1"></a><span class="at">                         </span><span class="st">`</span><span class="dv">10</span><span class="sc">^-</span>digits<span class="st">`</span><span class="at">.</span></span>
+<span id="cb1-143"><a href="#cb1-143" aria-hidden="true" tabindex="-1"></a><span class="at">-e,--elitist             Enable/disable elitist irace. Default: 1.</span></span>
+<span id="cb1-144"><a href="#cb1-144" aria-hidden="true" tabindex="-1"></a><span class="at">   --elitist-new-instances  Number of instances added to the execution list</span></span>
+<span id="cb1-145"><a href="#cb1-145" aria-hidden="true" tabindex="-1"></a><span class="at">                         before previous instances in elitist irace. Default:</span></span>
+<span id="cb1-146"><a href="#cb1-146" aria-hidden="true" tabindex="-1"></a><span class="at">                         1.</span></span>
+<span id="cb1-147"><a href="#cb1-147" aria-hidden="true" tabindex="-1"></a><span class="at">   --elitist-limit       In elitist irace, maximum number per race of</span></span>
+<span id="cb1-148"><a href="#cb1-148" aria-hidden="true" tabindex="-1"></a><span class="at">                         elimination tests that do not eliminate a</span></span>
+<span id="cb1-149"><a href="#cb1-149" aria-hidden="true" tabindex="-1"></a><span class="at">                         configuration. Use 0 for no limit. Default: 2.</span></span>
+<span id="cb1-150"><a href="#cb1-150" aria-hidden="true" tabindex="-1"></a><span class="at">   --capping             Enable the use of adaptive capping, a technique</span></span>
+<span id="cb1-151"><a href="#cb1-151" aria-hidden="true" tabindex="-1"></a><span class="at">                         designed for minimizing the computation time of</span></span>
+<span id="cb1-152"><a href="#cb1-152" aria-hidden="true" tabindex="-1"></a><span class="at">                         configurations. Capping is enabled by default if</span></span>
+<span id="cb1-153"><a href="#cb1-153" aria-hidden="true" tabindex="-1"></a><span class="at">                         </span><span class="st">`</span>elitist<span class="st">`</span><span class="at"> is active, </span><span class="st">`</span>maxTime <span class="sc">&gt;</span> <span class="dv">0</span><span class="st">`</span><span class="at"> and </span><span class="st">`</span>boundMax <span class="sc">&gt;</span> <span class="dv">0</span><span class="st">`</span><span class="at">.</span></span>
+<span id="cb1-154"><a href="#cb1-154" aria-hidden="true" tabindex="-1"></a><span class="at">   --capping-type        Measure used to obtain the execution bound from the</span></span>
+<span id="cb1-155"><a href="#cb1-155" aria-hidden="true" tabindex="-1"></a><span class="at">                         performance of the elite configurations: median, mean,</span></span>
+<span id="cb1-156"><a href="#cb1-156" aria-hidden="true" tabindex="-1"></a><span class="at">                         worst, best. Default: median.</span></span>
+<span id="cb1-157"><a href="#cb1-157" aria-hidden="true" tabindex="-1"></a><span class="at">   --bound-type          Method to calculate the mean performance of elite</span></span>
+<span id="cb1-158"><a href="#cb1-158" aria-hidden="true" tabindex="-1"></a><span class="at">                         configurations: candidate or instance. Default:</span></span>
+<span id="cb1-159"><a href="#cb1-159" aria-hidden="true" tabindex="-1"></a><span class="at">                         candidate.</span></span>
+<span id="cb1-160"><a href="#cb1-160" aria-hidden="true" tabindex="-1"></a><span class="at">   --bound-max           Maximum execution bound for </span><span class="st">`</span>targetRunner<span class="st">`</span><span class="at">. It must be</span></span>
+<span id="cb1-161"><a href="#cb1-161" aria-hidden="true" tabindex="-1"></a><span class="at">                         specified when capping is enabled. Default: 0.</span></span>
+<span id="cb1-162"><a href="#cb1-162" aria-hidden="true" tabindex="-1"></a><span class="at">   --bound-digits        Precision used for calculating the execution time. It</span></span>
+<span id="cb1-163"><a href="#cb1-163" aria-hidden="true" tabindex="-1"></a><span class="at">                         must be specified when capping is enabled. Default: 0.</span></span>
+<span id="cb1-164"><a href="#cb1-164" aria-hidden="true" tabindex="-1"></a><span class="at">   --bound-par           Penalization constant for timed out executions</span></span>
+<span id="cb1-165"><a href="#cb1-165" aria-hidden="true" tabindex="-1"></a><span class="at">                         (executions that reach </span><span class="st">`</span>boundMax<span class="st">`</span><span class="at"> execution time).</span></span>
+<span id="cb1-166"><a href="#cb1-166" aria-hidden="true" tabindex="-1"></a><span class="at">                         Default: 1.</span></span>
+<span id="cb1-167"><a href="#cb1-167" aria-hidden="true" tabindex="-1"></a><span class="at">   --bound-as-timeout    Replace the configuration cost of bounded executions</span></span>
+<span id="cb1-168"><a href="#cb1-168" aria-hidden="true" tabindex="-1"></a><span class="at">                         with </span><span class="st">`</span>boundMax<span class="st">`</span><span class="at">. Default: 1.</span></span>
+<span id="cb1-169"><a href="#cb1-169" aria-hidden="true" tabindex="-1"></a><span class="at">   --postselection       Percentage of the configuration budget used to perform</span></span>
+<span id="cb1-170"><a href="#cb1-170" aria-hidden="true" tabindex="-1"></a><span class="at">                         a postselection race of the best configurations of</span></span>
+<span id="cb1-171"><a href="#cb1-171" aria-hidden="true" tabindex="-1"></a><span class="at">                         each iteration after the execution of irace. Default:</span></span>
+<span id="cb1-172"><a href="#cb1-172" aria-hidden="true" tabindex="-1"></a><span class="at">                         0.</span></span>
+<span id="cb1-173"><a href="#cb1-173" aria-hidden="true" tabindex="-1"></a><span class="at">   --aclib               Enable/disable AClib mode. This option enables</span></span>
+<span id="cb1-174"><a href="#cb1-174" aria-hidden="true" tabindex="-1"></a><span class="at">                         compatibility with GenericWrapper4AC as targetRunner</span></span>
+<span id="cb1-175"><a href="#cb1-175" aria-hidden="true" tabindex="-1"></a><span class="at">                         script. Default: 0.</span></span>
+<span id="cb1-176"><a href="#cb1-176" aria-hidden="true" tabindex="-1"></a><span class="at">   --iterations          Maximum number of iterations. Default: 0.</span></span>
+<span id="cb1-177"><a href="#cb1-177" aria-hidden="true" tabindex="-1"></a><span class="at">   --experiments-per-iteration  Number of runs of the target algorithm per</span></span>
+<span id="cb1-178"><a href="#cb1-178" aria-hidden="true" tabindex="-1"></a><span class="at">                         iteration. Default: 0.</span></span>
+<span id="cb1-179"><a href="#cb1-179" aria-hidden="true" tabindex="-1"></a><span class="at">   --min-survival        Minimum number of configurations needed to continue</span></span>
+<span id="cb1-180"><a href="#cb1-180" aria-hidden="true" tabindex="-1"></a><span class="at">                         the execution of each race (iteration). Default: 0.</span></span>
+<span id="cb1-181"><a href="#cb1-181" aria-hidden="true" tabindex="-1"></a><span class="at">   --num-configurations  Number of configurations to be sampled and evaluated</span></span>
+<span id="cb1-182"><a href="#cb1-182" aria-hidden="true" tabindex="-1"></a><span class="at">                         at each iteration. Default: 0.</span></span>
+<span id="cb1-183"><a href="#cb1-183" aria-hidden="true" tabindex="-1"></a><span class="at">   --mu                  Parameter used to define the number of configurations</span></span>
+<span id="cb1-184"><a href="#cb1-184" aria-hidden="true" tabindex="-1"></a><span class="at">                         sampled and evaluated at each iteration. Default: 5.</span></span>
+<span id="cb1-185"><a href="#cb1-185" aria-hidden="true" tabindex="-1"></a><span class="at">   --confidence          Confidence level for the elimination test. Default:</span></span>
+<span id="cb1-186"><a href="#cb1-186" aria-hidden="true" tabindex="-1"></a><span class="at">                         0.95.</span></span></code></pre><p></p></div>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -362,7 +367,7 @@ the command line. It finally starts <span class="pkg">irace</span> by calling
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">irace.cmdline</span><span class="op">(</span><span class="st">"--version"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> #------------------------------------------------------------------------------</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # irace: An implementation in R of (Elitist) Iterated Racing</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # Version: 3.5.1.9000.faa2c4b-dirty</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # Version: 3.5.1.9000.7513fef-dirty</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # Copyright (C) 2010-2020</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # Manuel Lopez-Ibanez     &lt;manuel.lopez-ibanez@manchester.ac.uk&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # Jeremie Dubois-Lacoste  </span>
