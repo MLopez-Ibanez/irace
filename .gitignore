@@ -70,3 +70,6 @@ docs/
 /vignettes/_region_.*
 
 _snaps
+
+.idea
+*.Rproj

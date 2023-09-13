@@ -640,6 +640,8 @@ ceiling.digits <- function(x, digits)
 is.file.extension <- function(filename, ext)
   substring(filename, nchar(filename) + 1L - nchar(ext)) == ext
 
+is.sub.path <- function(x, dir, n = nchar(dir)) substr(x, 1, n) == dir
+
 # Same as !(x %in% table). Package data.table has %notin%.
 "%not_in%" <- function(x, table) match(x, table, nomatch = 0L) == 0L
 

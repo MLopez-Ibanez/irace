@@ -96,7 +96,9 @@
    
  * New scenario option `minExperiments` to set a minimum budget of runs.
                                                 (proposed by @Saethox, fixes #58)
-   
+
+ * New function `multi_irace()` for executing multiple runs of irace with the same or different scenarios and parameters. (Contributed by @Saethox)
+
  
 ## Fixes
 
