@@ -4,6 +4,8 @@ rm -f  irace-Ex.R config.* confdefs.h \
    inst/doc/*.blg inst/doc/*.bbl \
    tests/testthat/*.log tests/testthat/*.Rout tests/testthat/Rplots.pdf tests/testthat/iracedump.rda tests/testthat/irace.Rdata
 
+rm -fr  tests/testthat/run_* tests/testthat/multi_irace*
+
 find . -name '*.orig' -o -name '.Rhistory' -o -name '*.rej' | xargs rm -f
 
 rm -rf autom4te.cache
