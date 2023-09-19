@@ -1491,7 +1491,7 @@ repairConfiguration = function(configuration, parameters)
   return(configuration)
 }
 @
-The following example forces  three specific parameters to be in increasing order:
+The following example forces three specific parameters to be in increasing order:
 %
 <<repairEx2,prompt=FALSE, eval=FALSE>>=
 repairConfiguration = function(configuration, parameters)
@@ -2834,6 +2834,22 @@ irace. This is done, for example, when maximizing the hypervolume (see the last
 lines in \IRACEHOME{/examples/hypervolume/target-evaluator}).
 
 
+\subsection{Are experiments with \irace reproducible?}
+
+Short answer: Yes, under some conditions.\\
+Long answer: According to the terminology described by \citet{LopBraPaq2021telo}, we define \emph{repeatability} as ``\emph{exactly repeating the original experiment, generating precisely the same results}''. Following this definition, a run of \irace is repeatable under the following conditions:
+\begin{itemize}
+\item Same version of \irace.
+\item Same version of \aR (different versions of \aR may change the behavior of functions used by \irace).
+\item The behavior of \parameter{targetRunner} is deterministic or exactly reproducible for the same instance, parameter configuration and random seed. Make sure that \parameter{targetRunner} uses the seed provided by \irace to initialize all random number generators used. If the result of \parameter{targetRunner} depends on CPU-time, wall-clock time or system load in any way, then \parameter{targetRunner} is not reproducible and neither will be \irace.
+\item Same random seed (\parameter{seed}) given to \irace.
+\item Same scenario options (\autoref{sec:irace options}). Although some options should not affect reproducibility (e.g., \parameter{debugLevel}), maintaining a list of such options will be a huge effort, thus the safest assumption is that any change may break reproducibility.
+\item Same parameter space (\autoref{sec:target parameters}), including types, domains, conditions and forbidden configurations. The order of the parameters may also affect reproducibility (the name of the parameters should not) because it affects the order in which random numbers are used.
+\item Same training instances provided and in the same order (\autoref{sec:training}). Even if the instances are sampled randomly (\parameter{sampleInstances}), a different initial order will produce a different sample even with the same random seed.
+\item Same initial configurations (\autoref{sec:initial}), if any.
+\end{itemize}
+
+
 \subsection[Is it possible to configure a MATLAB algorithm with irace?]
 {Is it possible to configure a \MATLAB algorithm with \irace ?}
 
@@ -3064,7 +3080,7 @@ collaborated in the development and improvement of \irace:
 \item Nguyen Dang (\texttt{nttd@st-andrews.ac.uk}) % implemented \code{irace2pyimp}
 \end{acklist}
 
-
+\newcommand{\doi}[1]{doi:\hspace{.16667em plus .08333em}\discretionary{}{}{}\href{https://doi.org/#1}{\urlstyle{rm}\nolinkurl{#1}}}
 \bibliographystyle{abbrvnat}
 \ifthenelse {\boolean{Release}}{%
 \bibliography{irace-package}%
