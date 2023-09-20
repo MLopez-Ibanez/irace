@@ -67,6 +67,10 @@ and maximum are equal, or it is a real and the minimum and maximum
 values satisfy \code{round(minimum, digits) == round(maximum, digits)},
 then the parameter description is rejected as invalid to identify
 potential user errors.
+
+The order of the parameters determines the order in which parameters are
+given to \code{targetRunner}. Changing the order may also change the results
+produced by \code{irace}, even with the same random seed.
 }
 \examples{
  ## Read the parameters directly from text

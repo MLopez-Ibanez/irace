@@ -51,6 +51,10 @@
 #'  then the parameter description is rejected as invalid to identify
 #'  potential user errors.
 #'
+#' The order of the parameters determines the order in which parameters are
+#' given to `targetRunner`. Changing the order may also change the results
+#' produced by `irace`, even with the same random seed.
+#'
 #' @examples
 #'  ## Read the parameters directly from text
 #'  parameters.table <- '
