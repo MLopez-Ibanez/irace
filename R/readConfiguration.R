@@ -677,7 +677,7 @@ checkScenario <- function(scenario = defaultScenario())
   ## allowed.
   if (scenario$maxExperiments == 0 && scenario$maxTime == 0) {
     irace.error("Tuning budget was not provided. Set ",
-                quote.param("maxExperiments"), "or ", quote.param("maxTime"), ".")
+                quote.param("maxExperiments"), " or ", quote.param("maxTime"), ".")
   } else if (scenario$maxExperiments > 0 && scenario$maxTime > 0) {
     irace.error("Two different tuning budgets provided, please set only ",
                 quote.param("maxExperiments"), " or only ", quote.param ("maxTime"), ".")
