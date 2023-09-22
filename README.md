@@ -242,8 +242,11 @@ following commands within the R console:
 
 ### Python ###
 
-You can use the irace R package from Python using `rpy2`. An example on how to do this is the implementation of [iracepy](https://github.com/auto-optimization/iracepy).
+You can use the irace R package from Python using `rpy2`. There are actually two different implementations of this idea:  [iracepy](https://github.com/auto-optimization/iracepy) and [iracepy-tiny](https://github.com/Saethox/iracepy-tiny).
 
+### Rust ###
+
+You can use `irace` from Rust by using [irace-rs](https://github.com/Saethox/irace-rs).
 
 Usage
 -----
