@@ -1230,12 +1230,7 @@ elitist_race <- function(maxExp = 0,
   Results <- Results[rowAnys(!is.na(Results)), , drop = FALSE]
   race.ranks <- overall_ranks(Results[, alive, drop = FALSE], test = stat.test)
   if (!scenario$quiet) {
-    if (is.na(best)) {
-      dump.frames(dumpto = "best_crash", to.file = TRUE,
-                  include.GlobalEnv = TRUE)
-      irace.assert(!is.na(best))
-    }
-    old_best <- best
+    old_best <- best # old_best could be NA.
     best <- which.alive[which.min(race.ranks)]
     mean_best <- mean(Results[, best])
     print_footer(bestconf = configurations[best, , drop = FALSE],
@@ -1245,7 +1240,7 @@ elitist_race <- function(maxExp = 0,
                  mean.best = mean_best,
                  break.msg = break.msg, debug.level = scenario$debugLevel, 
                  capping = capping,
-                 old_best_id  = if (old_best == best) NULL else id_best)
+                 old_best_id  = if (old_best == best || is.na(old_best)) NULL else id_best)
   }
   nbAlive <- sum(alive)
   configurations$.ALIVE. <- as.logical(alive)
