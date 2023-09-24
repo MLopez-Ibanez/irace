@@ -33,7 +33,7 @@ starts_with(const char *s, const char *prefix)
 }
 
 static double
-rand01()
+rand01(void)
 {
     return rand() / (RAND_MAX + 1.);
 }
