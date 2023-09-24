@@ -819,6 +819,7 @@ elitist_race <- function(maxExp = 0,
   
   # Start main loop
   break.msg <- NULL
+  best <- NA
   for (current.task in seq_len(no.tasks)) {
     which.alive <- which(alive)
     nbAlive     <- length(which.alive)
@@ -849,7 +850,11 @@ elitist_race <- function(maxExp = 0,
             best <- which.alive[which.min(get_ranks(tmpResults, test = stat.test))]
           }
         }
-        irace.assert(best > 0)
+        if (is.na(best)) {
+          dump.frames(dumpto = "best_crash", to.file = TRUE,
+                      include.GlobalEnv = TRUE)
+          irace.assert(!is.na(best))
+        }
         id_best <- configurations[[".ID."]][best]
         print_task(".", Results[seq_len(current.task), , drop = FALSE],
                    race.instances[current.task],
@@ -993,7 +998,11 @@ elitist_race <- function(maxExp = 0,
         # FIXME: There is similar code above.
         if (length(which.exe) == 0L) {
           is.elite <- update.is.elite(is.elite, which.elite.exe)
-          irace.assert(best > 0)
+          if (is.na(best)) {
+            dump.frames(dumpto = "best_crash", to.file = TRUE,
+                        include.GlobalEnv = TRUE)
+            irace.assert(!is.na(best))
+          }
           id_best <- configurations[[".ID."]][best]
           print_task(".", Results[seq_len(current.task), , drop = FALSE],
                      race.instances[current.task],
@@ -1221,6 +1230,11 @@ elitist_race <- function(maxExp = 0,
   Results <- Results[rowAnys(!is.na(Results)), , drop = FALSE]
   race.ranks <- overall_ranks(Results[, alive, drop = FALSE], test = stat.test)
   if (!scenario$quiet) {
+    if (is.na(best)) {
+      dump.frames(dumpto = "best_crash", to.file = TRUE,
+                  include.GlobalEnv = TRUE)
+      irace.assert(!is.na(best))
+    }
     old_best <- best
     best <- which.alive[which.min(race.ranks)]
     mean_best <- mean(Results[, best])
