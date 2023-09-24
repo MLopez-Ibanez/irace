@@ -130,7 +130,7 @@
  
  * `ablation()` will now save and restore the previous random seed.
  
- * `ablation()` will detect if the logfile (e.g., `irace.Data`) is incomplete.
+ * `ablation()` will detect if the logfile (e.g., `irace.Rdata`) is incomplete.
  
  
 # irace 3.5

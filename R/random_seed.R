@@ -64,7 +64,8 @@ has_random_seed <- function()
 
 #' @return [gen_random_seeds()] returns a list of `n` seeds that were generated from the `global_seed`.
 #' The generated seeds can then e.g. be used to seed thread-local RNGs.
-gen_random_seeds <- function(n, global_seed = NULL) {
+gen_random_seeds <- function(n, global_seed = NULL)
+{
   # This is taken from the documentation of the `parallel` package.
   RNGkind("L'Ecuyer-CMRG")
 
@@ -72,7 +73,7 @@ gen_random_seeds <- function(n, global_seed = NULL) {
   if (!is.null(global_seed))
     set_random_seed(global_seed)
 
-  # Generate 'n' seeds using the 'globalSeed'.
+  # Generate 'n' seeds using the 'global_seed'.
   seed <- .Random.seed
   seeds <- list()
 
