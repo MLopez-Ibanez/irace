@@ -1,15 +1,26 @@
 withr::with_output_sink("test-target-runner-dummy.Rout", {
   skip_on_cran()
-  get_target_runner_dummy <- function() {
-    exe <- paste0("target-runner-dummy", if (system_os_is_windows()) ".exe" else "")
+  get_executable <- function(filename, src_dir) {
+    exe <- paste0(filename, if (system_os_is_windows()) ".exe" else "")
     p <- file.path(if (.Platform$r_arch == "") "bin" else file.path("bin", .Platform$r_arch), exe)
     res <- system.file(package="irace", mustWork = FALSE, p)
     if (res == "") {
-      res <- test_path(file.path("../../src/dummy", exe))
+      res <- test_path(file.path(src_dir, exe))
     }
     res
   }
-  target_runner_dummy <- get_target_runner_dummy()
+
+  test_that("irace exe works", {
+    iraceexe <- get_executable("irace", "../../src/iracebin")
+    expect_match(paste0(collapse="",system2(iraceexe, "--help", stdout=TRUE,stderr=TRUE)), "irace: An implementation in R of.*called with: --help")
+  })
+
+  test_that("ablation exe works", {
+    ablationexe <- get_executable("ablation", "../../src/iracebin")
+    expect_match(paste0(collapse="",system2(ablationexe, "--help", stdout=TRUE,stderr=TRUE)), "ablation: An implementation in R of Ablation Analysis.*called with: --help")
+  })
+
+  target_runner_dummy <- get_executable("target-runner-dummy", "../../src/dummy")
   skip_if_not(file.exists(target_runner_dummy),
               message = sprintf("target_runner_dummy='%s' not installed", target_runner_dummy))
   
