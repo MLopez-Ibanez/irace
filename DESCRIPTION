@@ -31,7 +31,6 @@ Suggests:
     knitr,
     testthat (>= 3.1.8),
     withr,
-    mlr (>= 2.15.0),
     ParamHelpers,
     devtools
 VignetteBuilder: knitr
