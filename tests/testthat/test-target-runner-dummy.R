@@ -12,11 +12,13 @@ withr::with_output_sink("test-target-runner-dummy.Rout", {
 
   test_that("irace exe works", {
     iraceexe <- get_executable("irace", "../../src/iracebin")
+    expect_true(file.exists(iraceexe))
     expect_match(paste0(collapse="",system2(iraceexe, "--help", stdout=TRUE,stderr=TRUE)), "irace: An implementation in R of.*called with: --help")
   })
 
   test_that("ablation exe works", {
     ablationexe <- get_executable("ablation", "../../src/iracebin")
+    expect_true(file.exists(ablationexe))
     expect_match(paste0(collapse="",system2(ablationexe, "--help", stdout=TRUE,stderr=TRUE)), "ablation: An implementation in R of Ablation Analysis.*called with: --help")
   })
 
