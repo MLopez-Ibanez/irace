@@ -504,7 +504,7 @@ final.execution.bound <- function(experimentsTime, elites, no.configurations,
        elite.bound <- instanceBound(experimentsTime[current.task, elites],
                                     type = scenario$cappingType)
        final.bounds[which.exe] <- min(elite.bound + minMeasurableTime, boundMax)
-       final.bounds[which.exe] <- ceiling.digits(final.bounds[which.exe], scenario$boundDigits)
+       final.bounds[which.exe] <- ceiling_digits(final.bounds[which.exe], scenario$boundDigits)
      } else {
        elite.bound <- executionBound(experimentsTime[seq_len(current.task), elites, drop = FALSE],
                                      type = scenario$cappingType)
@@ -516,7 +516,7 @@ final.execution.bound <- function(experimentsTime, elites, no.configurations,
        final.bounds[which.exe] <- sapply(time.left, min, boundMax)
        # We round up the bounds up to the specified number of digits. This may
        # be necessary if the target-algorithm does not support higher precision.
-       final.bounds[which.exe] <- ceiling.digits(final.bounds[which.exe], scenario$boundDigits)
+       final.bounds[which.exe] <- ceiling_digits(final.bounds[which.exe], scenario$boundDigits)
        # There are cases in which a small negative budget is used. For example:
        # assuming candidates 1 and 2 are elite maxbound=80
        # executionTime <- matrix(c(0.010,0.0170,0.010, 24,28,27, 0.010,0.017,NA), 

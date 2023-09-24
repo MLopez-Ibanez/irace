@@ -616,7 +616,7 @@ runcommand <- function(command, args, id, debugLevel, timeout = 0)
 resample <- function(x, ...) x[sample.int(length(x), ...)]
 
 # Rounds up the number x to the specified number of decimal places 'digits'.
-ceiling.digits <- function(x, digits)
+ceiling_digits <- function(x, digits)
 {
    multiple <- 10^-digits
    div <- x / multiple
