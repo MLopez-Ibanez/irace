@@ -23,13 +23,14 @@ component_management:
     statuses:
       - type: project # in this case every component that doesn't have a status defined will have a project type one
         target: auto
-  individual_components:
-    - component_id: tests  # this is an identifier that should not be changed
-      name: tests  # this is a display name, and can be changed freely
-      paths:
-        - tests/**
-      statuses:          
-        - type: project
-          target: 100%
-          informational: false
-        - type: patch
+        informational: true
+  # individual_components:
+  #   - component_id: tests  # this is an identifier that should not be changed
+  #     name: tests  # this is a display name, and can be changed freely
+  #     paths:
+  #       - tests/**
+  #     statuses:          
+  #       - type: project
+  #         target: 100%
+  #         informational: true
+  #       - type: patch
