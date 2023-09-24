@@ -1,4 +1,5 @@
-comment: false
+comment:
+  layout: "header, diff, flags, components"  # show component info in the PR comment
 
 coverage:
   status:
