@@ -849,6 +849,7 @@ elitist_race <- function(maxExp = 0,
             best <- which.alive[which.min(get_ranks(tmpResults, test = stat.test))]
           }
         }
+        irace.assert(best > 0)
         id_best <- configurations[[".ID."]][best]
         print_task(".", Results[seq_len(current.task), , drop = FALSE],
                    race.instances[current.task],
@@ -992,6 +993,7 @@ elitist_race <- function(maxExp = 0,
         # FIXME: There is similar code above.
         if (length(which.exe) == 0L) {
           is.elite <- update.is.elite(is.elite, which.elite.exe)
+          irace.assert(best > 0)
           id_best <- configurations[[".ID."]][best]
           print_task(".", Results[seq_len(current.task), , drop = FALSE],
                      race.instances[current.task],
