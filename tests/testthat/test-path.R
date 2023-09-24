@@ -78,8 +78,8 @@ test_that("test.path_rel2abs for windows", {
 .\\\\                        N:\\\\tmp\\\\ N:/tmp
 .\\\\.                       N:\\\\tmp\\\\  N:/tmp
 .\\\\.\\\\x.r                   N:\\\\tmp  N:/tmp/x.r
-.\\\\irace\\\\..\\\\x.r            N:\\\\tmp  N:/tmp/x.r
 .\\\\x.r                     N:\\\\tmp  N:/tmp/x.r
+.\\\\irace\\\\..\\\\x.r            N:\\\\tmp  N:/tmp/x.r
 .x.R                      N:\\\\tmp  N:/tmp/.x.R
 .                         N:\\tmp  N:/tmp
 ..                        N:\\tmp  N:/
