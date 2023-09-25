@@ -140,4 +140,17 @@ test_that("global seed", {
   expect_equal(runs.1, runs.2)
 })
 
+test_that("sequential and parallel identical", {
+  skip_on_cran()
+  skip_on_os("windows")
+
+  scenarios <- lapply(list(target.runner.1, target.runner.2, target.runner.3), make.scenario)
+  parameters <- list(parameters.table.1, parameters.table.2, parameters.table.3)
+
+  runs.sequential <- multi_irace(scenarios, parameters, global_seed = 42)
+  runs.parallel <- multi_irace(scenarios, parameters, global_seed = 42, parallel = 3)
+
+  expect_equal(runs.sequential, runs.parallel)
+})
+
 }) # withr::with_output_sink()

@@ -13,6 +13,10 @@
 #' @param parameters (`list()`) \cr A list of parameter space definitions.
 #' If only a single definition is supplied, it is used for all scenarios.
 #' @param n (`integer(1)`) \cr The number of repetitions.
+#' @param parallel (`integer(1)`) \cr The number of workers to use.
+#' A value of `1` means sequential execution. Note that `parallel > 1` is not supported on Windows.
+#' @param split_output (`logical(1)`) \cr If `TRUE`, the output of [irace()] is written to `{execDir}/irace.out`
+#'  instead of the standard output.
 #' @param global_seed (`integer(1)`) \cr The global seed used to seed the individual runs.
 #'
 #' @return A list of the outputs of [irace()].
@@ -24,10 +28,15 @@
 #'
 #' @concept running
 #' @export
-multi_irace <- function(scenarios, parameters, n = 1L, global_seed = NULL)
+multi_irace <- function(scenarios, parameters, n = 1L, parallel = 1, split_output = parallel > 1, global_seed = NULL)
 {
   # Check each scenario.
   scenarios <- lapply(scenarios, checkScenario)
+
+  # Parallel execution is not available on Windows.
+  if(.Platform$OS.type == 'windows') {
+    irace.assert(parallel == 1)
+  }
 
   # Allow either the same number of scenarios and parameters, or a single scenario or parameter space definition.
   if (length(scenarios) != length(parameters)) {
@@ -83,8 +92,36 @@ multi_irace <- function(scenarios, parameters, n = 1L, global_seed = NULL)
   seeds <- gen_random_seeds(length(scenarios), global_seed = global_seed)
   for (i in seq_along(scenarios)) {
     # FIXME: We should store this seed in state not in scenario. We should not modify scenario.
-    scenarios[[i]]$seed <- abs(seeds[[i]])
+    scenarios[[i]]$seed <- seeds[[i]]
   }
 
-  mapply(irace, scenarios, parameters, SIMPLIFY = FALSE)
+  irace.run <- function(scenario, parameters) {
+    if (scenario$quiet || !split_output) {
+      irace(scenario, parameters)
+    } else {
+      withr::with_output_sink(file.path(scenario$execDir, "irace.out"), {
+        irace(scenario, parameters)
+    })
+    }
+  }
+
+  if (parallel > 1) {
+    runs <- parallel::mcmapply(irace.run, scenarios, parameters, mc.cores = parallel, SIMPLIFY = FALSE)
+    # FIXME: if stop() is called from mcmapply, it does not
+    # terminate the execution of the parent process, so it will
+    # continue and give more errors later. We have to terminate
+    # here, but is there a nicer way to detect this and terminate?
+    if (any(sapply(runs, inherits, "try-error")) || any(sapply(runs, is.null))) {
+      # FIXME: mcmapply has some bugs in case of error. In that
+      # case, each element of the list does not keep the output of
+      # each configuration and repetitions may occur.
+      errors <- unique(unlist(runs[sapply(runs, inherits, "try-error")]))
+      cat(errors, file = stderr())
+      irace.error("A child process triggered a fatal error")
+    }
+  } else {
+    runs <- mapply(irace.run, scenarios, parameters, SIMPLIFY = FALSE)
+  }
+
+  runs
 }

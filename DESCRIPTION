@@ -24,13 +24,13 @@ Imports:
         utils,
         compiler,
         matrixStats,
-        R6
+        R6,
+        withr
 Suggests:
     Rmpi (>= 0.6.0),
     parallel,
     knitr,
     testthat (>= 3.1.8),
-    withr,
     ParamHelpers,
     devtools
 VignetteBuilder: knitr

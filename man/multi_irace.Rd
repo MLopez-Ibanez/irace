@@ -4,7 +4,14 @@
 \alias{multi_irace}
 \title{\code{multi_irace} executes \code{\link[=irace]{irace()}} multiple times with the same or different scenarios and parameter space definitions.}
 \usage{
-multi_irace(scenarios, parameters, n = 1L, global_seed = NULL)
+multi_irace(
+  scenarios,
+  parameters,
+  n = 1L,
+  parallel = 1,
+  split_output = parallel > 1,
+  global_seed = NULL
+)
 }
 \arguments{
 \item{scenarios}{(\code{list()}) \cr A list of scenarios.
@@ -14,6 +21,12 @@ If only a single scenario is supplied, it is used for all parameters.}
 If only a single definition is supplied, it is used for all scenarios.}
 
 \item{n}{(\code{integer(1)}) \cr The number of repetitions.}
+
+\item{parallel}{(\code{integer(1)}) \cr The number of workers to use.
+A value of \code{1} means sequential execution. Note that \code{parallel > 1} is not supported on Windows.}
+
+\item{split_output}{(\code{logical(1)}) \cr If \code{TRUE}, the output of \code{\link[=irace]{irace()}} is written to \code{{execDir}/irace.out}
+instead of the standard output.}
 
 \item{global_seed}{(\code{integer(1)}) \cr The global seed used to seed the individual runs.}
 }
