@@ -66,21 +66,10 @@ has_random_seed <- function()
 #' The generated seeds can then e.g. be used to seed thread-local RNGs.
 gen_random_seeds <- function(n, global_seed = NULL)
 {
-  # This is taken from the documentation of the `parallel` package.
-  RNGkind("L'Ecuyer-CMRG")
-
   # Use a random global seed if not set.
   if (!is.null(global_seed))
     set_random_seed(global_seed)
 
   # Generate 'n' seeds using the 'global_seed'.
-  seed <- .Random.seed
-  seeds <- list()
-
-  for (i in 1:n) {
-    seed <- parallel::nextRNGStream(seed)
-    seeds <- append(seeds, seed)
-  }
-
-  seeds
+  trunc(runif(n, 1, .Machine$integer.max))
 }
