@@ -9,7 +9,7 @@ generate.set.seed <- function()
 test_irace_detectCores <- function()
 {
   if (!identical(Sys.getenv("NOT_CRAN"), "true")) return(1L)
-  #if (identical(Sys.getenv("COVR_COVERAGE"), "true")) return(1L)
+  if (identical(Sys.getenv("COVR_COVERAGE"), "true")) return(1L)
   x <- Sys.getenv("_R_CHECK_LIMIT_CORES_", "")
   if (nzchar(x) && x == "TRUE") return(2L)
   parallel::detectCores()
