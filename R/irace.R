@@ -328,8 +328,7 @@ startParallel <- function(scenario)
     return(invisible())
 
   parallel <- scenario$parallel
-  cwd <- setwd(scenario$execDir)
-  on.exit(setwd(cwd), add = TRUE)
+  withr::local_dir(scenario$execDir) # setwd()
   if (scenario$mpi) {
     mpiInit(parallel, scenario$debugLevel)
   } else {
@@ -588,23 +587,12 @@ allConfigurationsInit <- function(scenario, parameters)
 #'     }
 #'     # For reproducible results, we should use the random seed given by
 #'     # experiment$seed to set the random seed of the target algorithm.
-## FIXME: If we ever make withr a dependency, we can remove the non-withr code.
-#'     if (require("withr")) {
-#'       res <- withr::with_seed(experiment$seed,
-#'                       stats::optim(par,fn, method="SANN",
-#'                                    control=list(maxit=1000
-#'                                               , tmax = as.numeric(configuration[["tmax"]])
-#'                                               , temp = as.numeric(configuration[["temp"]])
-#'                                                 ))
-#'                     )
-#'     } else {
-#'       ## withr is only a suggested package and we want this example to work regardless.
-#'       res <- stats::optim(par,fn, method="SANN",
-#'                           control=list(maxit=1000
-#'                                      , tmax = as.numeric(configuration[["tmax"]])
-#'                                      , temp = as.numeric(configuration[["temp"]])
-#'                                        ))
-#'     }
+#'     res <- withr::with_seed(experiment$seed,
+#'                      stats::optim(par,fn, method="SANN",
+#'                                   control=list(maxit=1000
+#'                                              , tmax = as.numeric(configuration[["tmax"]])
+#'                                              , temp = as.numeric(configuration[["temp"]])
+#'                                                )))
 #'     ## This list may also contain:
 #'     ## - 'time' if irace is called with 'maxTime'
 #'     ## - 'error' is a string used to report an error

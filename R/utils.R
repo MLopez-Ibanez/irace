@@ -39,8 +39,7 @@ irace.error <- function(...)
 {
   # The default is only 1000, which is too small. 8170 is the maximum
   # value allowed up to R 3.0.2
-  op <- options(warning.length = 8170)
-  on.exit(options(op))
+  withr::local_options(list(warning.length = 8170))
   stop (.irace_msg_prefix, ..., call. = FALSE)
 }
 
@@ -648,8 +647,7 @@ is.sub.path <- function(x, dir, n = nchar(dir)) substr(x, 1, n) == dir
 irace_save_logfile <- function(iraceResults, scenario)
 {
   if (is.null.or.empty(scenario$logFile)) return(invisible())
-  cwd <- setwd(scenario$execDir)
-  on.exit(setwd(cwd))
+  withr::local_dir(scenario$execDir) # FIXME: This is probably not needed because make sure that scenario$logFile is an absolute path.
   # FIXME: Use saveRDS
   # FIXME: Bump to version=3 when we bump the minimum R version to >=3.6
   save(iraceResults, file = scenario$logFile, version = 2)

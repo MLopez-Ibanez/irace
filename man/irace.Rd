@@ -157,22 +157,12 @@ target_runner <- function(experiment, scenario)
     }
     # For reproducible results, we should use the random seed given by
     # experiment$seed to set the random seed of the target algorithm.
-    if (require("withr")) {
-      res <- withr::with_seed(experiment$seed,
-                      stats::optim(par,fn, method="SANN",
-                                   control=list(maxit=1000
-                                              , tmax = as.numeric(configuration[["tmax"]])
-                                              , temp = as.numeric(configuration[["temp"]])
-                                                ))
-                    )
-    } else {
-      ## withr is only a suggested package and we want this example to work regardless.
-      res <- stats::optim(par,fn, method="SANN",
-                          control=list(maxit=1000
-                                     , tmax = as.numeric(configuration[["tmax"]])
-                                     , temp = as.numeric(configuration[["temp"]])
-                                       ))
-    }
+    res <- withr::with_seed(experiment$seed,
+                     stats::optim(par,fn, method="SANN",
+                                  control=list(maxit=1000
+                                             , tmax = as.numeric(configuration[["tmax"]])
+                                             , temp = as.numeric(configuration[["temp"]])
+                                               )))
     ## This list may also contain:
     ## - 'time' if irace is called with 'maxTime'
     ## - 'error' is a string used to report an error

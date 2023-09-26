@@ -63,8 +63,7 @@ cat_ablation_license <- function()
 #' @export
 ablation_cmdline <- function(argv = commandArgs(trailingOnly = TRUE))
 {
-  op <- options(width = 9999L) # Do not wrap the output.
-  on.exit(options(op), add = TRUE)
+  withr::local_options(list(width = 9999L)) # Do not wrap the output.
 
   cat_ablation_license()
   cat ("# installed at: ", system.file(package="irace"), "\n",

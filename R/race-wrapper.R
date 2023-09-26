@@ -203,11 +203,10 @@ target.evaluator.default <- function(experiment, num.configurations, all.conf.id
     irace.error ("targetEvaluator", shQuote(targetEvaluator),
                  "cannot be found or is not executable!\n")
   }
-
-  cwd <- setwd (scenario$execDir)
   args <- c(configuration.id, instance.id, seed, instance, num.configurations, all.conf.id)
-  output <- runcommand(targetEvaluator, args, configuration.id, debugLevel, timeout = scenario$targetRunnerTimeout)
-  setwd (cwd)
+  withr::with_dir(scenario$execDir, {
+    output <- runcommand(targetEvaluator, args, configuration.id, debugLevel, timeout = scenario$targetRunnerTimeout)
+  })
 
   cost <- time <- NULL
   err.msg <- output$error
@@ -512,8 +511,7 @@ execute.experiments <- function(experiments, scenario)
   if (!isTRUE (file.info(execDir)$isdir)) {
     irace.error ("Execution directory '", execDir, "' is not found or not a directory\n")
   }
-  cwd <- setwd (execDir)
-  on.exit(setwd(cwd), add = TRUE)
+  withr::local_dir(execDir)
    
   if (!is.null(scenario$targetRunnerParallel)) {
     # FIXME: We should remove the exec.target.runner parameter from
