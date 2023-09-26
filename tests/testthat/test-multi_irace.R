@@ -7,11 +7,9 @@ make.target.runner <- function(parameters) {
   }
 }
 
-make.parameters.table <- function(parameters) {
-  rows <- lapply(parameters, function(parameter) sprintf('%s "" r (0, 10)', parameter))
-  text <- paste(rows, sep = "\n")
-  readParameters(text = text)
-}
+make.parameters.table <- function(parameters)
+  readParameters(text = sprintf('%s "" r (0, 10)', parameters))
+
 
 make.scenario <- function(targetRunner, maxExperiments = 1000) {
   list(targetRunner = targetRunner, maxExperiments = maxExperiments, instances = rnorm(200, mean = 0.9, sd = 0.02))
@@ -143,12 +141,13 @@ test_that("global seed", {
 test_that("sequential and parallel identical", {
   skip_on_cran()
   skip_on_os("windows")
-
+  skip_if(test_irace_detectCores() <= 1L,
+          message = "This test only makes sense if multiple cores are available")
   scenarios <- lapply(list(target.runner.1, target.runner.2, target.runner.3), make.scenario)
   parameters <- list(parameters.table.1, parameters.table.2, parameters.table.3)
 
   runs.sequential <- multi_irace(scenarios, parameters, global_seed = 42)
-  runs.parallel <- multi_irace(scenarios, parameters, global_seed = 42, parallel = 3)
+  runs.parallel <- multi_irace(scenarios, parameters, global_seed = 42, parallel = test_irace_detectCores())
 
   expect_equal(runs.sequential, runs.parallel)
 })
