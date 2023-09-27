@@ -1,4 +1,4 @@
-#' `multi_irace` executes [irace()] multiple times with the same or different scenarios and parameter space definitions.
+#' Execute [irace()] multiple times with the same or different scenarios and parameter space definitions.
 #'
 #' There are three modes of operation:
 #' \itemize{
@@ -15,7 +15,7 @@
 #' @param n (`integer(1)`) \cr The number of repetitions.
 #' @param parallel (`integer(1)`) \cr The number of workers to use.
 #' A value of `1` means sequential execution. Note that `parallel > 1` is not supported on Windows.
-#' @param split_output (`logical(1)`) \cr If `TRUE`, the output of [irace()] is written to `{execDir}/irace.out`
+#' @param split_output (`logical(1)`) \cr If `TRUE`, the output of [irace()] is written to `{execDir}/run_{i}/irace.out`
 #'  instead of the standard output.
 #' @param global_seed (`integer(1)`) \cr The global seed used to seed the individual runs.
 #'

@@ -2,7 +2,7 @@
 % Please edit documentation in R/multi_irace.R
 \name{multi_irace}
 \alias{multi_irace}
-\title{\code{multi_irace} executes \code{\link[=irace]{irace()}} multiple times with the same or different scenarios and parameter space definitions.}
+\title{Execute \code{\link[=irace]{irace()}} multiple times with the same or different scenarios and parameter space definitions.}
 \usage{
 multi_irace(
   scenarios,
@@ -25,7 +25,7 @@ If only a single definition is supplied, it is used for all scenarios.}
 \item{parallel}{(\code{integer(1)}) \cr The number of workers to use.
 A value of \code{1} means sequential execution. Note that \code{parallel > 1} is not supported on Windows.}
 
-\item{split_output}{(\code{logical(1)}) \cr If \code{TRUE}, the output of \code{\link[=irace]{irace()}} is written to \code{{execDir}/irace.out}
+\item{split_output}{(\code{logical(1)}) \cr If \code{TRUE}, the output of \code{\link[=irace]{irace()}} is written to \verb{\{execDir\}/run_\{i\}/irace.out}
 instead of the standard output.}
 
 \item{global_seed}{(\code{integer(1)}) \cr The global seed used to seed the individual runs.}
