@@ -62,9 +62,9 @@
    so that each block contains one instance of each class and
    `blockSize` is set to the number of classes.
 
-  * New scenario option `targetRunnerTimeout`: Timeout in seconds of any `targetRunner` call (only applies to `target-runner` executables not to R functions).
+ * New scenario option `targetRunnerTimeout`: Timeout in seconds of any `targetRunner` call (only applies to `target-runner` executables not to R functions).
   
-  * `plotAblation()` has several new options:
+ * `plotAblation()` has several new options:
     - `type='rank'` to plot ranks per instance instead of raw cost values.
     - `n` to limit the number of parameters shown in the plot.
 
