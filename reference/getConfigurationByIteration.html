@@ -90,51 +90,33 @@ configurations.  See <code><a href="removeConfigurationsMetaData.html">removeCon
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">log_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"exdata/irace-acotsp.Rdata"</span>, package<span class="op">=</span><span class="st">"irace"</span>, mustWork<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">getConfigurationByIteration</span><span class="op">(</span><span class="va">log_file</span>, iterations <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">2</span>, <span class="op">-</span><span class="fl">1</span><span class="op">)</span>, drop.metadata <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     algorithm localsearch  alpha   beta    rho ants nnls     q0 dlb rasrank</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 108       acs           3 1.1286 2.3596 0.4745    6   26 0.2144   1      NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 127       acs           3 0.9926 4.4442 0.4589    7   21 0.4865   1      NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 136       acs           3 1.8399 4.2655 0.2080    5   19 0.0432   1      NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 145       acs           3 1.8844 0.0659 0.2390    7   18 0.3465   1      NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 146       acs           3 1.2254 3.9173 0.0899    7   13 0.2308   1      NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 147       acs           3 1.6397 3.8003 0.4405   10   21 0.6243   1      NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 148       acs           3 1.5729 1.1736 0.4995    5   28 0.0632   1      NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 149       acs           3 1.5633 1.1449 0.2693    8   14 0.3597   1      NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 150       acs           3 0.5250 3.9025 0.4135    5   10 0.5168   1      NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 151       acs           3 1.3612 5.3681 0.3453    5   16 0.5135   1      NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 152       acs           3 1.4320 4.0186 0.2922    6   25 0.0605   1      NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 153       acs           3 2.1014 3.4136 0.3419    5   20 0.0419   1      NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 154       acs           3 1.2471 4.2285 0.4869    6   24 0.1930   1      NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 155       acs           3 2.1420 4.0979 0.1330   13   25 0.3081   1      NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 156       acs           3 1.5956 1.5714 0.4958    5   18 0.0573   1      NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 157       acs           3 0.9501 3.6199 0.5686    5   20 0.3571   1      NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 158       acs           3 1.3778 1.0332 0.6207   10   22 0.1170   1      NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 159       acs           3 0.5481 1.2984 0.4588    5   19 0.2591   1      NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 160       acs           3 0.8909 4.1550 0.4147    8   18 0.4353   1      NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 161       acs           3 0.8896 5.6680 0.3289    6   20 0.6432   1      NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 162       acs           3 0.0158 3.3444 0.3754    5   23 0.4801   1      NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 163       acs           3 1.6732 3.9224 0.3918    5    8 0.3633   1      NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 111       acs           2 1.2881 6.4311 0.5859   10   23 0.2126   0      NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 119       acs           2 1.4432 6.4746 0.4582    5   28 0.1931   0      NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 123       acs           2 1.0584 5.8121 0.5587   10   35 0.2575   0      NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 130       acs           2 1.5899 6.9391 0.5529    8   26 0.3796   0      NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 134       acs           2 1.6144 7.8972 0.1999    8   33 0.1415   1      NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 141       acs           2 1.1411 5.6044 0.7223   16   27 0.3231   0      NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 142       acs           2 1.7492 5.1542 0.6186    7   26 0.1344   0      NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 143       acs           2 0.6967 6.8546 0.6225    8   36 0.0928   0      NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 144       acs           2 0.3108 6.3414 0.6865    7   15 0.0829   0      NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 145       acs           2 1.0345 5.0647 0.4385   10   36 0.2845   0      NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 146       acs           2 1.9401 9.0205 0.6431   21   21 0.2613   0      NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 147       acs           2 0.8712 5.4593 0.3944    7   35 0.2770   1      NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 148       acs           2 0.6575 4.0491 0.3320    8   39 0.2268   1      NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     elitistants</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 108          NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 127          NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 136          NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 111          NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 119          NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 123          NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 130          NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 134          NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 141          NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 142          NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 143          NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 144          NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 145          NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 146          NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 147          NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 148          NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 149          NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 150          NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 151          NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 152          NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 153          NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 154          NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 155          NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 156          NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 157          NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 158          NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 159          NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 160          NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 161          NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 162          NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 163          NA</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
