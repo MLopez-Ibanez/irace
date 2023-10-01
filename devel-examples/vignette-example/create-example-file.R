@@ -51,7 +51,7 @@ save(experiment, output, file="examples.Rdata", version = 2)
 
 
 ## Create sann.rda
- 
+cat('**** Creating sann.rda\n')
 ## We generate 200 instances (in this case, weights):
 weights <- rnorm(200, mean = 0.9, sd = 0.02)
 
@@ -129,5 +129,6 @@ iraceResults$scenario$logFile <- "./sann.rda"
 save(iraceResults, file="sann.rda", version = 2)
 
 # Create log-ablation.Rdata
+cat('**** Running ablation("irace-acotsp.Rdata")\n')
 ablation("irace-acotsp.Rdata")
 
