@@ -109,22 +109,42 @@ get_configuration_by_id_helper <- function(allConfigurations, ids, drop.metadata
   configurations
 }
 
-#' Returns the pairs of instance indexes and seeds used as instances in the race.
+#' Returns the pairs of instance IDs and seeds used as instances in the race
+#' (and optionally the actual instances).
 #'
 #' @template arg_iraceresults
+#' @param index  (`integer()`)\cr Indexes of the (instanceID,seed) pairs to be returned. The default returns everything.
+#' @param instances (`logical(1)`)\cr Whether to add the actual instances as an additional column (only if the instances are of atomic type).
 #' 
-#' @return A data frame containing two columns `"instance"` and `"seed"`.
+#' @return With default arguments, a data frame containing two columns
+#'   `"instanceID"` and `"seed"`. With `instances=TRUE` and if the instances
+#'   are of atomic type (see [is.atomic()]) type, another column `instance` is
+#'   added that contains the actual instance.
 #'
 #' @examples
 #' log_file <- system.file("exdata/irace-acotsp.Rdata", package="irace", mustWork=TRUE)
-#' head(get_instance_seed_pairs(log_file))
-#'
+#' head(get_instanceID_seed_pairs(log_file))
+#' # Add the instance names
+#' get_instanceID_seed_pairs(log_file, index=1:10, instances=TRUE)
 #' @author Manuel López-Ibáñez
 #' @concept analysis
 #' @export
-get_instance_seed_pairs <- function(iraceResults)
+get_instanceID_seed_pairs <- function(iraceResults, index, instances = FALSE)
 {
   if (missing(iraceResults)) stop("argument 'iraceResults' is missing")
   iraceResults <- read_logfile(iraceResults)
-  iraceResults$state$.irace$instancesList
+  instancesList <- iraceResults$state$.irace$instancesList
+  if (!missing(index))
+    instancesList <- instancesList[index, ]
+  if (!instances)
+    return(instancesList)
+
+  instances <- iraceResults$scenario$instances
+  if (!is.atomic(instances)) {
+    warning("instances=TRUE requested, but instances are not of atomic type")
+    return(instancesList)
+  }
+    
+  instanceID <- instancesList[, "instanceID"]
+  cbind(instancesList, instance = instances[instanceID])
 }

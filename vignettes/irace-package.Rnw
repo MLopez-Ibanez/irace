@@ -1829,6 +1829,7 @@ evaluations as budget.
  firstline=1,
  lastline=68,
 }
+% FIXME: This doesn't break long lines, find another alternative.
 \VerbatimInput{irace-acotsp-stdout.txt}%
 \caption{Sample text output of \irace.}\label{fig:output}
 \end{figure}}
@@ -1890,8 +1891,8 @@ statistical test:
 Other columns have the following meaning:
 \begin{description}
   \item \code{Instance}: Index of \code{(instance, seed)} pair executed. This number
-corresponds to the row in the data frame returned by \code{get_instance_seed_pairs()}. See \autoref{sec:output r}
-for more information. This is different from the instance ID passed to \parameter{targetRunner}.
+corresponds to the row in the data frame returned by \code{get_instanceID_seed_pairs()}. See \autoref{sec:output r}
+for more information. This index is different from the instance ID passed to \parameter{targetRunner}.
 \item \code{Bound}: Only when \parameter{capping} is enabled. Execution time used as bound
 for the execution of new candidate configurations. 
 \item \code{Alive}: Number of configurations that have not been
@@ -2000,38 +2001,52 @@ configuration can be obtained using:
 
 <<get_experiments, prompt=TRUE, eval=TRUE, comment="">>=
 # As an example, we use the best configuration found
-best.config <- getFinalElites(iraceResults = iraceResults, n = 1)
-id <- best.config$.ID.
-# Obtain the configurations using the identifier
-# of the best configuration
-all.exp <- iraceResults$experiments[,as.character(id)]
-all.exp[!is.na(all.exp)]
+best_config <- getFinalElites(iraceResults, n = 1)
+best_id <- as.character(best_config$.ID.)
+# Obtain the results of the best configuration
+all_exp <- iraceResults$experiments[, best_id]
+# all_exp is a vector and names(all_exp) is the (instance,seed) index.
+all_exp
+# Obtain the results of the first and best configurations
+all_exp <- iraceResults$experiments[, c("1", best_id)]
+# all_exp is a matrix: colnames(all_exp) is configurationID and
+# rownames(all_exp) is the (instance,seed) index.
+all_exp
 @
 
 When a configuration was not executed on an instance, its value is \code{NA}. A
-configuration may not be executed on an instance because: 1) it was not created
-yet when the instance was used, or 2) it was
+configuration may not be executed on an instance because: (1) it was not created
+yet when the instance was used, or (2) it was
 discarded by the statistical test and not executed on subsequent instances, or
-3) the race terminated before this instance was considered.
+(3) the race terminated before this instance was considered.
 
-Row names correspond to the identifier of the \code{(instance, seed)} pairs
-defined by the data frame returned by \code{get_instance_seed_pairs()}. The instance and seed used
+Row names correspond to the row index of the \code{(instance, seed)} pairs
+in the data frame returned by \code{get_instanceID_seed_pairs()}. The instanceID and seed used
 for a particular experiment can be obtained with:\sloppy
 
 <<get_instance_seed, prompt=TRUE, eval=TRUE, comment="">>=
-# As an example, we get seed and instance of the experiments
-# of the best candidate.
-# Get index of the instances
-pair.id <- which(!is.na(all.exp))
-index <- get_instance_seed_pairs(iraceResults)[pair.id, "instance"]
-# Obtain the instance names
-iraceResults$scenario$instances[index]
-# Get the seeds
-get_instance_seed_pairs(iraceResults)[pair.id, "seed"]
+# As an example, we get instanceID, seeds and instances of the experiments
+# of the best configuration.
+# We could get the indexes of the instances on which at least one
+# configuration was executed:
+pair_index <- which(apply(!is.na(all_exp), 1L, any))
+# or the instances on which all configurations were executed:
+pair_index <- which(apply(!is.na(all_exp), 1L, all))
+# but in this example we get the indexes of the instances executed for
+# the best configuration.
+pair_index <- which(!is.na(all_exp[, best_id]))
+instanceID <- get_instanceID_seed_pairs(iraceResults)[pair_index, "instanceID"]
+# or get the seeds
+get_instanceID_seed_pairs(iraceResults)[pair_index, "seed"]
+# or obtain the actual instances.
+iraceResults$scenario$instances[instanceID]
+# If the instances are of atomic type (integers, floating-point numbers or
+# character strings), the above is similar to:
+get_instanceID_seed_pairs(iraceResults, index = pair_index, instances=TRUE)
 @
 \item \code{experimentLog}: A matrix with columns \code{iteration, instance, configuration}. This matrix contains the log of all the experiments that \irace
 performs during its execution. The \code{instance} column refers to the index of the
-data frame returned by \code{get_instance_seed_pairs()}. When \parameter{capping} is enabled a column \code{bound} is added to log the execution bound applied 
+data frame returned by \code{get_instanceID_seed_pairs()}. When \parameter{capping} is enabled a column \code{bound} is added to log the execution bound applied 
 for each execution.
 
 \item \code{softRestart}: A logical vector that indicates if a soft restart was
@@ -3404,9 +3419,9 @@ system.file(package = "irace")
 
 %% NEWS is latin1 but this file is utf8
 \begingroup\inputencoding{utf8}%
+% FIXME: This doesn't break long lines, find another alternative.
 \VerbatimInput{NEWS.txt}%
 \endgroup
-
 \end{appendices}
 
 \end{document}

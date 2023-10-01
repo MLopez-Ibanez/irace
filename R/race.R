@@ -74,7 +74,7 @@ race.wrapper <- function(configurations, instance.idx, bounds = NULL,
   # Experiment list to execute
   experiments <- createExperimentList(configurations, parameters = parameters,
                                       instances = scenario$instances,
-                                      instances.ID = .irace$instancesList[instance.idx, "instance"],
+                                      instances.ID = .irace$instancesList[instance.idx, "instanceID"],
                                       seeds = .irace$instancesList[instance.idx, "seed"],
                                       bounds = bounds)
 

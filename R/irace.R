@@ -402,7 +402,7 @@ generateInstances <- function(scenario, n, instancesList = NULL)
   # 2147483647 is the maximum value for a 32-bit signed integer.
   # We use replace = TRUE, because replace = FALSE allocates memory for each possible number.
   instancesList <- rbind(instancesList,
-                         data.frame(instance = sindex,
+                         data.frame(instanceID = sindex,
                                     seed = sample.int(2147483647L, size = length(sindex), replace = TRUE), stringsAsFactors=FALSE))
   # Reset the rownames to 1:nrow(instancesList)
   rownames(instancesList) <- NULL

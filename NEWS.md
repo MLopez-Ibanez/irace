@@ -38,6 +38,12 @@
  * irace warns about using `'&&'` and `'||'` instead of `'&'` and `'|'` in parameter conditions. A future version of irace will reject those uses as errors.
 
  * The internal function `irace.reload.debug()` has been removed.  Use `devtools::reload()` instead.
+ 
+ * The column `"instance"` of the `instancesList` data frame stored in the
+   logFile has been renamed to `"instanceID"`.  This data frame should not be
+   accessed directly. Instead use the new function
+   `get_instanceID_seed_pairs()`.
+ 
   
 ## New features and improvements
 
@@ -62,7 +68,9 @@
    so that each block contains one instance of each class and
    `blockSize` is set to the number of classes.
 
- * New scenario option `targetRunnerTimeout`: Timeout in seconds of any `targetRunner` call (only applies to `target-runner` executables not to R functions).
+ * New scenario option `targetRunnerTimeout`: Timeout in seconds of any
+   `targetRunner` call (only applies to `target-runner` executables not to R
+   functions).
   
  * `plotAblation()` has several new options:
     - `type='rank'` to plot ranks per instance instead of raw cost values.
@@ -75,16 +83,19 @@
 
  * New functions `read_ablogfile()`, `has_testing_data()`, `irace_summarise()`.
  
- * New functions `get_random_seed()`, `set_random_seed()`, `restore_random_seed()` useful for writing `targetRunner` functions in R.
+ * New functions `get_random_seed()`, `set_random_seed()`,
+   `restore_random_seed()` useful for writing `targetRunner` functions in R.
 
- * New function `get_instance_seed_pairs()` to get the pairs of instance and random seed used during the races.
+ * New function `get_instanceID_seed_pairs()` to get the pairs of instanceID
+   and random seed used during the races (and optionally the actual instances).
 
  * The `parameters` object now stores the number of `digits` (decimal places
    after the point) for each parameter of type `r`. As a result, the
    `repairConfiguration` function (see `defaultScenario()`) only needs two
    arguments: `configuration` and `parameters`. See examples in the user-guide.
 
- * `readScenario()` (and command-line irace) do not require a `scenario.txt` file. (Contributed by @DE0CH)
+ * `readScenario()` (and command-line irace) do not require a `scenario.txt` file.
+                                                         (Contributed by @DE0CH)
  
  * `read_pcs_file()` now supports forbidden configurations.
  
@@ -97,7 +108,9 @@
  * New scenario option `minExperiments` to set a minimum budget of runs.
                                                 (proposed by @Saethox, fixes #58)
 
- * New function `multi_irace()` for executing multiple runs of irace with the same or different scenarios and parameters, possibly in parallel. (Contributed by @Saethox)
+ * New function `multi_irace()` for executing multiple runs of irace with the
+   same or different scenarios and parameters, possibly in parallel. 
+                                                       (Contributed by @Saethox)
 
  
 ## Fixes
