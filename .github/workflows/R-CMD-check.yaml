@@ -128,7 +128,8 @@ jobs:
           options(covr.fix_parallel_mcexit = TRUE)
           coverage <- covr::package_coverage(type = "all",
                                              quiet = FALSE, clean = FALSE,
-                                             install_path = file.path(Sys.getenv("RUNNER_TEMP"), "package"))
+                                             install_path = file.path(Sys.getenv("RUNNER_TEMP"), "package"),
+                                             commentDonttest = FALSE)
           print(coverage)
           covr::codecov(coverage = coverage)
         shell: Rscript {0}
