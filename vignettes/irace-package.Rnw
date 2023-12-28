@@ -1694,8 +1694,8 @@ An example of the output produce by \irace when testing is shown in Fig.~\ref{fi
  rulecolor=\color{Gray},
 }
 % FIXME: This doesn't break long lines, find another alternative.
-\ttfamily\scriptsize\ldots
-\VerbatimInput{irace-acotsp-testing.txt}%
+{\ttfamily\scriptsize\ldots
+\VerbatimInput{irace-acotsp-testing.txt}}%
 \caption{Sample text output of \irace when evaluating on test instances.}\label{fig:testing_output}
 \end{figure}}
 
