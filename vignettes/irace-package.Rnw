@@ -1662,7 +1662,25 @@ once, because evaluating one run on $n$ instances is always better than
 evaluating $n'$ runs on $n/n'$ instances~\citep{IRIDIA-2004-001}. However, if
 the number of instances is limited, one can always duplicate instances as
 needed in the \parameter{testInstancesFile}, and \irace will assign a different
-random seed to each instance.
+random seed to each instance. 
+%
+An example of the output produced by \irace when testing is shown in Fig.~\ref{fig:testing_output}.
+
+\afterpage{\clearpage
+  \begin{figure}[p]
+\RecustomVerbatimCommand{\VerbatimInput}{VerbatimInput}%
+{fontsize=\scriptsize,
+ %
+ frame=none,  % top and bottom rule only
+ framesep=0pt, % separation between frame and text
+ rulecolor=\color{Gray},
+}
+% FIXME: This doesn't break long lines, find another alternative.
+{\ttfamily\scriptsize\ldots
+\VerbatimInput{irace-acotsp-testing.txt}}%
+\caption{Sample text output of \irace when evaluating on test instances.}\label{fig:testing_output}
+\end{figure}}
+
 
 
 The options \parameter{testNbElites} and \parameter{testIterationElites}
@@ -1681,23 +1699,6 @@ configurations considered within each set. Some examples:
   configurations found at each iteration, in addition to the final best and
   second-best configurations.
 \end{itemize}
-
-An example of the output produce by \irace when testing is shown in Fig.~\ref{fig:testing_output}.
-
-\afterpage{\clearpage
-  \begin{figure}[p]
-\RecustomVerbatimCommand{\VerbatimInput}{VerbatimInput}%
-{fontsize=\scriptsize,
- %
- frame=none,  % top and bottom rule only
- framesep=0pt, % separation between frame and text
- rulecolor=\color{Gray},
-}
-% FIXME: This doesn't break long lines, find another alternative.
-{\ttfamily\scriptsize\ldots
-\VerbatimInput{irace-acotsp-testing.txt}}%
-\caption{Sample text output of \irace when evaluating on test instances.}\label{fig:testing_output}
-\end{figure}}
 
 The testing can be also (re-)executed at a later time by using the following
 \aR command (but you may need to override \code{testNbElites} and \code{testIterationElites}):
