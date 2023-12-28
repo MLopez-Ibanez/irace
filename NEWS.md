@@ -1,3 +1,5 @@
+**If you are viewing this file on CRAN, please check [latest news on GitHub](https://github.com/MLopez-Ibanez/irace/blob/master/NEWS.md) where the formatting is also better.**
+
 # irace (development version)
 
 ## Major breaking changes

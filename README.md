@@ -2,7 +2,10 @@
 ================================================================
 
 <!-- badges: start -->
-[![CRAN Status](https://www.r-pkg.org/badges/version-last-release/irace)](https://cran.r-project.org/package=irace) [![CRAN Downloads](https://cranlogs.r-pkg.org/badges/grand-total/irace)](https://CRAN.R-project.org/package=irace) [![R build
+[![CRAN version](https://www.r-pkg.org/badges/version-last-release/irace)](https://cran.r-project.org/package=irace)
+[![CRAN Downloads](https://cranlogs.r-pkg.org/badges/grand-total/irace)](https://CRAN.R-project.org/package=irace)
+[![CRAN status](https://badges.cranchecks.info/flavor/release/irace.svg)](https://cran.r-project.org/web/checks/check_results_irace.html)
+[![R build
 status](https://github.com/MLopez-Ibanez/irace/workflows/R-CMD-check/badge.svg)](https://github.com/MLopez-Ibanez/irace/actions) 
 [![Codecov test coverage](https://codecov.io/gh/MLopez-Ibanez/irace/branch/master/graph/badge.svg)](https://app.codecov.io/gh/MLopez-Ibanez/irace?branch=master)
 <!-- badges: end -->

@@ -51,11 +51,11 @@ jobs:
           http-user-agent: ${{ matrix.config.http-user-agent }}
           use-public-rspm: true
 
-      - name: Install MPI in macOS
-        run: brew install openmpi
+      - name: [macOS] Install openmpi
         if: runner.os == 'macOS'
+        run: brew install openmpi
 
-      - name: Install openmpi on Linux
+      - name: [Linux] Install openmpi
         if: runner.os == 'Linux'
         run: sudo apt-get update -y && sudo apt install -y libopenmpi-dev
       
@@ -67,11 +67,19 @@ jobs:
         run: tlmgr install ${{ env.LATEX_PACKAGES }}
       
       - uses: r-lib/actions/setup-r-dependencies@v2
+        if: runner.os != 'macOS'
         with:
           extra-packages: any::rcmdcheck, mlr=?ignore-before-r=4.0.0
           needs: check
           cache-version: 1
 
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        if: runner.os == 'macOS'
+        with:
+          extra-packages: any::rcmdcheck, Rmpi=?ignore mlr=?ignore-before-r=4.0.0
+          needs: check
+          cache-version: 1
+         
       - name: Check (as CRAN)
         env:
           NOT_CRAN: false
