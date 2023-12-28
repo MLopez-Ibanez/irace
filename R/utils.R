@@ -642,7 +642,7 @@ is.file.extension <- function(filename, ext)
 is.sub.path <- function(x, dir, n = nchar(dir)) substr(x, 1, n) == dir
 
 # Same as !(x %in% table). Package data.table has %notin%.
-"%not_in%" <- function(x, table) match(x, table, nomatch = 0L) == 0L
+"%not_in%" <- function(x, table) is.na(match(x, table))
 
 irace_save_logfile <- function(iraceResults, scenario)
 {
