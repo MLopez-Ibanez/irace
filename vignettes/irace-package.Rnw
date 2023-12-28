@@ -1652,10 +1652,9 @@ typically different from the training set used during the tuning phase. These
 evaluations will use the same settings for parallel
 execution, \parameter{targetRunner} and \parameter{targetEvaluator}.
 
-The test instance set can be specified by the
-options \parameter{testInstancesDir} and \parameter{testInstancesFile}, or by
-setting directly the variable \code{scenario\$testInstances}, which behave the
-same as their counterparts for the training instances
+The test instances can be specified by the
+options \parameter{testInstancesDir} and/or \parameter{testInstancesFile}, or by
+setting directly the variable \code{scenario\$testInstances}. These options behave similarly to their counterparts for the training instances
 (\autoref{sec:training}). In particular, each test instance is assigned a
 different seed in the same way as done for the training instances. In
 principle, \irace evaluates each configuration on each testing instance just
@@ -1682,6 +1681,23 @@ configurations considered within each set. Some examples:
   configurations found at each iteration, in addition to the final best and
   second-best configurations.
 \end{itemize}
+
+An example of the output produce by \irace when testing is shown in Fig.~\ref{fig:testing_output}.
+
+\afterpage{\clearpage
+  \begin{figure}[p]
+\RecustomVerbatimCommand{\VerbatimInput}{VerbatimInput}%
+{fontsize=\scriptsize,
+ %
+ frame=none,  % top and bottom rule only
+ framesep=0pt, % separation between frame and text
+ rulecolor=\color{Gray},
+}
+% FIXME: This doesn't break long lines, find another alternative.
+\ttfamily\scriptsize\ldots
+\VerbatimInput{irace-acotsp-testing.txt}%
+\caption{Sample text output of \irace when evaluating on test instances.}\label{fig:testing_output}
+\end{figure}}
 
 The testing can be also (re-)executed at a later time by using the following
 \aR command (but you may need to override \code{testNbElites} and \code{testIterationElites}):
@@ -2976,7 +2992,7 @@ If the path is set correctly and the problem persists, please check these instru
 This is a bug in \aR 3.2.0 on Windows. The solution is to update your version of
 \aR.
 
-\subsection{Warning: \code{In read.table(filename,}  \code{header = TRUE,} \code{colClasses =} \code{"character",} \code{: incomplete final line found by} \ldots}
+\subsection[Warning: In read.table(filename, header = TRUE, colClasses = "character", : incomplete final line found by \ldots]{Warning: \code{In read.table(filename,}  \code{header = TRUE,} \code{colClasses =} \code{"character",} \code{: incomplete final line found by} \ldots}
 
 This is a warning given by \aR when the last line of an input file does not
 finish with the newline character. The warning is harmless and can be
