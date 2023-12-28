@@ -51,11 +51,11 @@ jobs:
           http-user-agent: ${{ matrix.config.http-user-agent }}
           use-public-rspm: true
 
-      - name: [macOS] Install openmpi
+      - name: "[macOS] Install openmpi"
         if: runner.os == 'macOS'
         run: brew install openmpi
 
-      - name: [Linux] Install openmpi
+      - name: "[Linux] Install openmpi"
         if: runner.os == 'Linux'
         run: sudo apt-get update -y && sudo apt install -y libopenmpi-dev
       
@@ -76,7 +76,7 @@ jobs:
       - uses: r-lib/actions/setup-r-dependencies@v2
         if: runner.os == 'macOS'
         with:
-          extra-packages: any::rcmdcheck, Rmpi=?ignore mlr=?ignore-before-r=4.0.0
+          extra-packages: any::rcmdcheck, Rmpi=?ignore, mlr=?ignore-before-r=4.0.0
           needs: check
           cache-version: 1
          
