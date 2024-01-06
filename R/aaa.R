@@ -8,7 +8,7 @@ update_package_version <- function()
   if (is.null(git_rev))
     git_rev <- "unknown"
   git <- Sys.which("git")
-  if (file.exists(".git") && length(git) > 0L
+  if (fs::file_exists(".git") && length(git) > 0L
       && grepl("[0-9a-z]+$", system2(git, "describe --first-parent --always", stdout = TRUE), perl=TRUE)) {
     git_rev <- system2(git, "describe --dirty --first-parent --always --exclude '*'", stdout = TRUE)
   }

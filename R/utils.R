@@ -639,7 +639,7 @@ ceiling_digits <- function(x, digits)
 is.file.extension <- function(filename, ext)
   substring(filename, nchar(filename) + 1L - nchar(ext)) == ext
 
-is.sub.path <- function(x, dir, n = nchar(dir)) substr(x, 1, n) == dir
+is.sub.path <- function(x, dir, n = nchar(dir)) substr(x, 1L, n) == dir
 
 # Same as !(x %in% table). Package data.table has %notin%.
 "%not_in%" <- function(x, table) is.na(match(x, table))

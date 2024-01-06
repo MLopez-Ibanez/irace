@@ -82,7 +82,7 @@ multi_irace <- function(scenarios, parameters, n = 1L, parallel = 1, split_outpu
         # pathExt <- tools::file_ext(logFile_old)
         # pathWithoutExtWithIndex <- sprintf("%s_%02d", pathWithoutExt, i)
         # paste(pathWithoutExtWithIndex, pathExt, sep = ".")
-        irace.error("Invalid 'logFile' path (", logFile_old, "): ", "The 'logFile' must be located inside the 'execDir' (", execDir_old, ").")
+        irace.error("Invalid 'logFile' path (", logFile_old, ", ",fs::path_norm(logFile_old) , ",", fs::path_tidy(logFile_old),"): ", "The 'logFile' must be located inside the 'execDir' (", execDir_old, ", ", fs::path_norm(execDir_old) , ",", fs::path_tidy(execDir_old), ").")
       }
       scenarios[[i]]$logFile <- logFile
     }
