@@ -15,6 +15,7 @@
 #' @export
 path_rel2abs <- function (path, cwd = getwd())
 {
+  # We need to do this even with the path returned by `getwd()`.
   cwd <- fs::path_norm(fs::path_expand(cwd))
 
   if (fs::is_absolute_path(path)) {
