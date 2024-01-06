@@ -1,6 +1,9 @@
-#' Converts a relative path to an absolute path. It tries really hard to create
-#' canonical paths. If the path passed corresponds to an executable, it tries
-#' to find its path using `Sys.which()`.
+#' Converts a relative path to an absolute path.
+#'
+#' It tries really hard to create canonical paths. If the path passed
+#' corresponds to an executable, it tries to find its path using `Sys.which()`.
+#' Expansion of `'~'` in Windows follows the definition of `fs::path_expand()`
+#' rather than `base::path.expand()`.
 #' 
 #' @param path (`character(1)`) Character string representing a relative path.
 #' @param cwd (`character(1)`) Current working directory.

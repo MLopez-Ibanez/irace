@@ -53,6 +53,8 @@
  
  * `path_rel2abs()` will not expand symlinks to avoid problems with Python's venv.
                                                     (fix #64, reported by @DE0CH)
+ 
+ * Expansion of `'~'` in Windows now follows the definition of `fs::path_expand()` rather than `base::path.expand()`.
   
   
 ## New features and improvements

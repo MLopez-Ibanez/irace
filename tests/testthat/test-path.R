@@ -9,12 +9,12 @@ test_path_rel2abs <- function(testcases)
     if (testcases[i,3L] == "Sys.which") {
       exp <- path_abs(Sys.which(testcases[i,1]))
     } else {
-      exp <- gsub("\\", "/", path.expand(testcases[i,3L]), fixed = TRUE)
+      exp <- gsub("\\", "/", path_expand(testcases[i,3L]), fixed = TRUE)
     }
     if (res == exp) {
       #cat("[OK] ", i, ": path_rel2abs(\"", orig, "\", \"", cwd, "\") -> ", res, "\n", sep="")
     } else {
-      cat("[FAILED] ", i, ": path_rel2abs(\"", orig, "\", \"", cwd, "\") -> ", res, " but expected: ", exp, "\n")
+      cat(sep="", "[FAILED] ", i, ": path_rel2abs(\"", orig, "\", \"", cwd, "\") -> ", res, " but expected: ", exp, "\n")
     }
     expect_match(res, exp, fixed = TRUE)
   }
