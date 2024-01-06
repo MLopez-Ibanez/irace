@@ -61,6 +61,7 @@
 <li><p>irace warns about using <code>'&amp;&amp;'</code> and <code>'||'</code> instead of <code>'&amp;'</code> and <code>'|'</code> in parameter conditions. A future version of irace will reject those uses as errors.</p></li>
 <li><p>The internal function <code>irace.reload.debug()</code> has been removed. Use <code><a href="https://devtools.r-lib.org/reference/reload.html" class="external-link">devtools::reload()</a></code> instead.</p></li>
 <li><p>The column <code>"instance"</code> of the <code>instancesList</code> data frame stored in the logFile has been renamed to <code>"instanceID"</code>. This data frame should not be accessed directly. Instead use the new function <code><a href="../reference/get_instanceID_seed_pairs.html">get_instanceID_seed_pairs()</a></code>.</p></li>
+<li><p>Using <code>maxTime &gt; 0</code> with <code>elitist=0</code> now gives a clear error rather than fail later (fix <a href="https://github.com/MLopez-Ibanez/irace/issues/65" class="external-link">#65</a>).</p></li>
 </ul></div>
 <div class="section level3">
 <h3 id="new-features-and-improvements-development-version">New features and improvements<a class="anchor" aria-label="anchor" href="#new-features-and-improvements-development-version"></a></h3>
