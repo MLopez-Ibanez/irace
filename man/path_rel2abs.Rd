@@ -3,7 +3,8 @@
 \name{path_rel2abs}
 \alias{path_rel2abs}
 \title{Converts a relative path to an absolute path. It tries really hard to create
-canonical paths.}
+canonical paths. If the path passed corresponds to an executable, it tries
+to find its path using \code{Sys.which()}.}
 \usage{
 path_rel2abs(path, cwd = getwd())
 }
@@ -17,7 +18,8 @@ path_rel2abs(path, cwd = getwd())
 }
 \description{
 Converts a relative path to an absolute path. It tries really hard to create
-canonical paths.
+canonical paths. If the path passed corresponds to an executable, it tries
+to find its path using \code{Sys.which()}.
 }
 \examples{
 path_rel2abs("..")

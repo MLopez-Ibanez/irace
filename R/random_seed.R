@@ -62,8 +62,8 @@ has_random_seed <- function()
   exists(".Random.seed", globalenv(), mode = "integer", inherits = FALSE)
 }
 
-#' @return [gen_random_seeds()] returns a list of `n` seeds that were generated from the `global_seed`.
-#' The generated seeds can then e.g. be used to seed thread-local RNGs.
+# @return [gen_random_seeds()] returns a list of `n` seeds that were generated from the `global_seed`.
+# The generated seeds can then e.g. be used to seed thread-local RNGs.
 gen_random_seeds <- function(n, global_seed = NULL)
 {
   # Use a random global seed if not set.

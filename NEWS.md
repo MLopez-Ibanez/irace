@@ -37,16 +37,22 @@
    a different version of irace, since such attempts typically end up in errors
    that are difficult to understand.
    
- * irace warns about using `'&&'` and `'||'` instead of `'&'` and `'|'` in parameter conditions. A future version of irace will reject those uses as errors.
+ * irace warns about using `'&&'` and `'||'` instead of `'&'` and `'|'` in parameter conditions.
+   A future version of irace will reject those uses as errors.
 
- * The internal function `irace.reload.debug()` has been removed.  Use `devtools::reload()` instead.
+ * The internal function `irace.reload.debug()` has been removed.
+   Use `devtools::reload()` instead.
  
  * The column `"instance"` of the `instancesList` data frame stored in the
    logFile has been renamed to `"instanceID"`.  This data frame should not be
    accessed directly. Instead use the new function
    `get_instanceID_seed_pairs()`.
    
- * Using `maxTime > 0` with `elitist=0` now gives a clear error rather than fail later (fix #65).
+ * Using `maxTime > 0` with `elitist=0` now gives a clear error rather than fail later.
+                                                    (fix #65, reported by @DE0CH)
+ 
+ * `path_rel2abs()` will not expand symlinks to avoid problems with Python's venv.
+                                                    (fix #64, reported by @DE0CH)
   
   
 ## New features and improvements

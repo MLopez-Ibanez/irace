@@ -23,6 +23,7 @@ Imports:
         stats,
         utils,
         compiler,
+        fs,
         matrixStats,
         R6,
         withr

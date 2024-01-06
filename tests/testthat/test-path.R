@@ -1,9 +1,29 @@
-test_that("test.path_rel2abs", {
+
+test_path_rel2abs <- function(testcases)
+{
+  for (i in 1:nrow(testcases)) {
+    orig <- testcases[i,1L]
+    cwd <-  testcases[i,2L]
+    res <- path_rel2abs(testcases[i,1L], cwd)
+    if (testcases[i,3L] == "Sys.which") {
+      exp <- normalizePath(Sys.which(testcases[i,1]), winslash = "/", mustWork = NA)
+    } else {
+      exp <- gsub("\\", "/", path.expand(testcases[i,3L]), fixed = TRUE)
+    }
+    if (res == exp) {
+      #cat("[OK] ", i, ": path_rel2abs(\"", orig, "\", \"", cwd, "\") -> ", res, "\n", sep="")
+    } else {
+      cat("[FAILED] ", i, ": path_rel2abs(\"", orig, "\", \"", cwd, "\") -> ", res, " but expected: ", exp, "\n")
+    }
+    expect_match(res, exp, fixed = TRUE)
+  }
+}
+
+test_that("test path_rel2abs", {
   # Try to set wd; otherwise fail silently.
   old.cwd <- getwd()
   skip_if(is.null(old.cwd))
   withr::defer(setwd(old.cwd))
-  # FIXME: Use local_dir() to avoid on.exit
   tryCatch(setwd("/tmp"), error = function(e) { skip(e) })
   
   testcases <- read.table(text='
@@ -31,7 +51,6 @@ test_that("test.path_rel2abs", {
 "/home/leslie/././x.r"      "/tmp"  "/home/leslie/x.r"
 "/home/leslie/~/x.r"        "/tmp"  "/home/leslie/~/x.r"
 "/~/x.r"                    "/tmp"  "/~/x.r"
-"e:/home/leslie/x.r"        "/tmp"  "e:/home/leslie/x.r"
 "leslie/leslie/../../irace" "/tmp"  "/tmp/irace"
 "x.r"                       "/tmp"  "/tmp/x.r"
 "~/irace/../x.r"            "/tmp"  "~/x.r"
@@ -39,27 +58,11 @@ test_that("test.path_rel2abs", {
 "../../../data"             "./"    "/data"
 "../../../data"             "/tmp/a/b/c/" "/tmp/data"
 "..//a"                     ".//"   "/a"
-"R"                         "/tmp/" "Sys.which"
 ', stringsAsFactors=FALSE)
-  for(i in 1:nrow(testcases)) {
-    orig <- testcases[i,1]
-    cwd <-  testcases[i,2]
-    res <- irace:::path_rel2abs(testcases[i,1], cwd)
-    if (testcases[i,3] == "Sys.which") {
-      exp <- normalizePath(Sys.which(testcases[i,1]), winslash = "/", mustWork = NA)
-    } else {
-      exp <- gsub("\\", "/", path.expand(testcases[i,3]), fixed = TRUE)
-    }
-    if (res == exp) {
-      # cat("[OK] (", orig, ", ", cwd, ") -> ", res, "\n", sep="")
-    } else {
-      cat("[FAILED] (", orig, ", ", cwd, ") -> ", res, " but expected: ", exp, "\n")
-    }
-    expect_match(res, exp, fixed = TRUE)
-  }
+  test_path_rel2abs(testcases)
 })
 
-test_that("test.path_rel2abs for windows", {
+test_that("test path_rel2abs without /tmp", {
 
   testcases <- read.table(text='
 .                         N:\\\\tmp  N:/tmp
@@ -154,35 +157,37 @@ test_that("test.path_rel2abs for windows", {
 ./x.r                     N:/tmp  N:/tmp/x.r
 .x.R                      N:/tmp  N:/tmp/.x.R
 D:/./x.r                  N:/tmp  D:/x.r
-D:\\\\.\\\\x.r                  N:/tmp  D:/x.r
-D:\\.\\x.r                  N:/tmp  D:/x.r
+D:\\\\.\\\\x.r            N:/tmp  D:/x.r
+D:\\.\\x.r                N:/tmp  D:/x.r
 D:                        N:/tmp  D:/
-D:\\\\                       N:/tmp  D:/
+D:\\\\                    N:/tmp  D:/
 D:/                       N:/tmp  D:/
 D:/leslie/././x.r         N:/tmp  D:/leslie/x.r
-D:/leslie/~/x.r        N:/tmp  D:/leslie/~/x.r
-e:/home/leslie/x.r        /tmp  e:/home/leslie/x.r
+D:/leslie/~/x.r           N:/tmp  D:/leslie/~/x.r
+e:/home/leslie/x.r        /tmp  E:/home/leslie/x.r
 leslie/leslie/../../irace N:/tmp  N:/tmp/irace
 x.r                       N:/tmp  N:/tmp/x.r
 ~/irace/../x.r            N:/tmp  ~/x.r
 ~/x.r                     N:/tmp  ~/x.r
 "R"                       "/tmp/" "Sys.which"
 ', stringsAsFactors=FALSE)
-  for(i in 1:nrow(testcases)) {
-    orig <- testcases[i,1]
-    cwd <-  testcases[i,2]
-    res <- path_rel2abs(testcases[i,1], cwd)
-    if (testcases[i,3] == "Sys.which") {
-      exp <- normalizePath(Sys.which(testcases[i,1]), winslash = "/", mustWork = NA)
-    } else {
-      exp <- gsub("\\", "/", path.expand(testcases[i,3]), fixed = TRUE)
-    }
-    if (res == exp) {
-      #cat("[OK] ", i, ": path_rel2abs(\"", orig, "\", \"", cwd, "\") -> ", res, "\n", sep="")
-    } else {
-      cat("[FAILED] ", i, ": path_rel2abs(\"", orig, "\", \"", cwd, "\") -> ", res, " but expected: ", exp, "\n")
-    }
-    expect_match(res, exp, fixed = TRUE)
-  }
+  test_path_rel2abs(testcases)
 })
 
+test_that("test path_rel2abs with symlink", {
+  require("fs")
+  # Try to set wd; otherwise fail silently.
+  old.cwd <- getwd()
+  skip_if(is.null(old.cwd))
+  withr::defer(setwd(old.cwd))
+  tryCatch({
+    tmp <- withr::local_tempdir()
+    setwd(tmp)
+    dir_create("a")
+    file_create("a/b")
+    link_create(path_abs("a"), "c")
+  }, error = function(e) { skip(e) })
+  testcases <- data.frame(p = "c/b", wd = ".", res = file.path(tmp, "c/b"),
+    stringsAsFactors=FALSE)
+  test_path_rel2abs(testcases)
+})
