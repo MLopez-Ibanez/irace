@@ -7,7 +7,7 @@ test_path_rel2abs <- function(testcases)
     cwd <-  testcases[i,2L]
     res <- path_rel2abs(testcases[i,1L], cwd)
     if (testcases[i,3L] == "Sys.which") {
-      exp <- path_abs(Sys.which(testcases[i,1]), winslash = "/", mustWork = NA))
+      exp <- path_abs(Sys.which(testcases[i,1]))
     } else {
       exp <- gsub("\\", "/", path.expand(testcases[i,3L]), fixed = TRUE)
     }
