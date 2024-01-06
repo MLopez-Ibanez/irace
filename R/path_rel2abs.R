@@ -15,14 +15,12 @@
 #' @export
 path_rel2abs <- function (path, cwd = getwd())
 {
-  # There is no need to normalize cwd if it was returned by getwd()
-  if (!missing(cwd))
-    cwd <- fs::path_expand(cwd)
+  cwd <- fs::path_norm(fs::path_expand(cwd))
 
   if (fs::is_absolute_path(path)) {
     # Possibly expand ~/path to /home/user/path.
     path <- fs::path_expand(path)
-  } else {
+  } else if (!startsWith(path, ".")) {
     # it may be a command in the path.
     sys_path <- suppressWarnings(Sys.which(path))
     if (nzchar(sys_path)
