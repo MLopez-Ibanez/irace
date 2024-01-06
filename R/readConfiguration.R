@@ -668,10 +668,8 @@ checkScenario <- function(scenario = defaultScenario())
       irace.error (quote.param(param), " must be a real value within [0, 1].")
   }
   
-  if (!is.na(scenario$minExperiments)) {
-    scenario$maxExperiments <- max(scenario$maxExperiments,
-                                   scenario$minExperiments)
-  }
+  if (!is.na(scenario$minExperiments))
+    scenario$maxExperiments <- max(scenario$maxExperiments, scenario$minExperiments)
   
   ## Only maxExperiments or maxTime should be set. Negative values are not
   ## allowed.
@@ -690,10 +688,12 @@ checkScenario <- function(scenario = defaultScenario())
   
   if (scenario$maxTime > 0 && (scenario$budgetEstimation <= 0 || scenario$budgetEstimation >= 1)) 
     irace.error(quote.param("budgetEstimation"), " must be within (0,1).")
+
+  if (scenario$maxTime > 0 && !scenario$elitist)
+    irace.error(quote.param("maxTime"), " requires using 'elitist=1'")
   
-  if (is.na (scenario$softRestartThreshold)) {
-    scenario$softRestartThreshold <- 10^(- scenario$digits)
-  }
+  if (is.na(scenario$softRestartThreshold))
+    scenario$softRestartThreshold <- 10^(-scenario$digits)
   
   if (scenario$deterministic &&
       scenario$firstTest * scenario$blockSize > length(scenario$instances)) {

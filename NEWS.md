@@ -45,7 +45,9 @@
    logFile has been renamed to `"instanceID"`.  This data frame should not be
    accessed directly. Instead use the new function
    `get_instanceID_seed_pairs()`.
- 
+   
+ * Using `maxTime > 0` with `elitist=0` now gives a clear error rather than fail later (fix #65).
+  
   
 ## New features and improvements
 
