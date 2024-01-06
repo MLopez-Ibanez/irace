@@ -1,3 +1,4 @@
+require("fs")
 
 test_path_rel2abs <- function(testcases)
 {
@@ -6,7 +7,7 @@ test_path_rel2abs <- function(testcases)
     cwd <-  testcases[i,2L]
     res <- path_rel2abs(testcases[i,1L], cwd)
     if (testcases[i,3L] == "Sys.which") {
-      exp <- normalizePath(Sys.which(testcases[i,1]), winslash = "/", mustWork = NA)
+      exp <- path_abs(Sys.which(testcases[i,1]), winslash = "/", mustWork = NA))
     } else {
       exp <- gsub("\\", "/", path.expand(testcases[i,3L]), fixed = TRUE)
     }
@@ -175,7 +176,6 @@ x.r                       N:/tmp  N:/tmp/x.r
 })
 
 test_that("test path_rel2abs with symlink", {
-  require("fs")
   # Try to set wd; otherwise fail silently.
   old.cwd <- getwd()
   skip_if(is.null(old.cwd))
