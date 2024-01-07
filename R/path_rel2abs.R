@@ -15,6 +15,10 @@
 #' @export
 path_rel2abs <- function (path, cwd = getwd())
 {
+  # FIXME: split this function into two, one for executable files than handles
+  # finding executables in the PATH with Sys.which() and another for everything
+  # else that doesn't try to be that smart.
+  
   # We need to do this even with the path returned by `getwd()`.
   cwd <- fs::path_norm(fs::path_expand(cwd))
 
@@ -26,7 +30,7 @@ path_rel2abs <- function (path, cwd = getwd())
     sys_path <- suppressWarnings(Sys.which(path))
     if (nzchar(sys_path)
       && fs::file_access(sys_path, "execute")
-      && fs::is_file(sys_path)) {
+      && !fs::is_dir(sys_path)) {
       path <- as.vector(sys_path)
     }
   }
