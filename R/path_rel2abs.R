@@ -30,7 +30,8 @@ path_rel2abs <- function (path, cwd = getwd())
     sys_path <- suppressWarnings(Sys.which(path))
     if (nzchar(sys_path)
       && fs::file_access(sys_path, "execute")
-      && !fs::is_dir(sys_path)) {
+      # fs::is_dir() is broken: https://github.com/r-lib/fs/issues/440
+      && !file.info(sys_path)$isdir) {
       path <- as.vector(sys_path)
     }
   }
