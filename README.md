@@ -137,7 +137,7 @@ You can install R from a CRAN mirror
 launch the R console and install the irace package from it. See instructions
 below.
 
-In addition to using the R console, it might be very useful to add R to PATH so you can run most of the GUN/Linux shell commands without modification in CMD or Powershell. Usually, R is installed in `C:\Program Files\R\R-4.1.3` (the version number depends on your installation).
+In addition to using the R console, it might be very useful to add R to PATH so you can run R commands in CMD or Powershell. Usually, R is installed in `C:\Program Files\R\R-4.1.3` (the version number depends on your installation).
 
 You should add the following line [to PATH](https://www.architectryan.com/2018/03/17/add-to-the-path-on-windows-10/) (if you want to use the 64-bit version)
 ```
