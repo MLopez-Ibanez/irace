@@ -3,7 +3,6 @@
 #' \packageDescription{irace}
 #'
 #' @name irace-package
-#' @docType package
 #' @import stats utils compiler matrixStats withr
 #' @importFrom R6 R6Class
 #' @importFrom grDevices dev.off pdf
@@ -32,7 +31,7 @@
 #'   on Evolutionary Computation}, 2012.
 #' @seealso
 #'  [irace()] for examples and `vignette(package = "irace")` for the user-guide.
-NULL
+"_PACKAGE"
 
 # Prefix for printing messages to the user.
 .irace_msg_prefix <- "== irace == "
