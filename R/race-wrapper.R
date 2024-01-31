@@ -100,7 +100,7 @@ target.error <- function(err.msg, output, scenario, target.runner.call,
               "\n", .irace_msg_prefix, advice.txt)
 }
 
-check.output.target.evaluator <- function (output, scenario, target.runner.call = NULL)
+check_output_target_evaluator <- function (output, scenario, target.runner.call = NULL, bound = NULL)
 {
   if (!is.list(output)) {
     target.error ("The output of targetEvaluator must be a list",
@@ -122,6 +122,8 @@ check.output.target.evaluator <- function (output, scenario, target.runner.call 
         err.msg <- "The time returned by targetEvaluator is not numeric!"
       } else if (is.infinite(output$time)) {
         err.msg <- "The time returned by targetEvaluator is not finite!"
+      } else if (!is.null(bound) && !is.na(bound) && bound > 0 && bound < output$time) {
+        err.msg <- paste0("The time returned by targetEvaluator does not respect the given bound of ", bound, "!")
       }
     }
   }
@@ -138,7 +140,7 @@ exec.target.evaluator <- function (experiment, num.configurations, all.conf.id,
 {
   output <- target_evaluator(experiment, num.configurations, all.conf.id,
                              scenario, target.runner.call)
-  check.output.target.evaluator (output, scenario, target.runner.call = target.runner.call)
+  check_output_target_evaluator(output, scenario, target.runner.call = target.runner.call, bound = experiment$bound)
   # Fix too small time.
   output$time <- if (is.null(output$time)) NA else max(output$time, scenario$minMeasurableTime)
   output
@@ -223,9 +225,9 @@ target.evaluator.default <- function(experiment, num.configurations, all.conf.id
       time <- v.output[2]
     }
   }
-  return(list(cost = cost, time = time,
-              error = err.msg, outputRaw = output$output,
-              call = paste(targetEvaluator, args, collapse=" ")))
+  list(cost = cost, time = time,
+    error = err.msg, outputRaw = output$output,
+    call = paste(targetEvaluator, args, collapse=" "))
 }
 
 #' Check the output of the target runner and repair it if possible. If the 
@@ -233,11 +235,12 @@ target.evaluator.default <- function(experiment, num.configurations, all.conf.id
 #' 
 #' @param output The output from target runner.
 #' @template arg_scenario
+#' @param bound Optional time bound that the target runner should have respected.
 #' 
 #' @return The output with its contents repaired.
 #' 
 #' @export
-check_output_target_runner <- function (output, scenario)
+check_output_target_runner <- function(output, scenario, bound = NULL)
 {
   if (!is.list(output)) {
     output <- list()
@@ -259,6 +262,10 @@ check_output_target_runner <- function (output, scenario)
         err.msg <- paste0("The time returned by targetRunner is not numeric!")
       } else if (is.infinite(output$time)) {
         err.msg <- paste0("The time returned by targetRunner is not finite!")
+      } else if (!is.null(bound) && !is.na(bound) && bound > 0 && bound < output$time) {
+        err.msg <- paste0("The time returned by targetRunner (", output$time, ") does not respect the given bound of ", bound, "!")
+      } else if (!is.null(output$time) && output$time < 0) {
+        err.msg <- paste0("The value of time returned by targetRunner cannot be negative (", output$time, ")!")
       }
     }
   }
@@ -277,12 +284,10 @@ check_output_target_runner <- function (output, scenario)
       } else if (!is.null(output$cost)) {
         err.msg <- "The output of targetRunner must be empty or just one number 'time'!"
       }
-    } else if (scenario$maxTime > 0 && (is.null (output$cost) || is.null(output$time))) {
+    } else if (scenario$maxTime > 0 && (is.null(output$cost) || is.null(output$time))) {
       err.msg <- "The output of targetRunner must be two numbers 'cost time'!"
     } else if (scenario$maxExperiments > 0 && is.null (output$cost)) {
       err.msg <- "The output of targetRunner must be one number 'cost'!"
-    } else if (!is.null(output$time) && output$time < 0) {
-      err.msg <- paste0("The value of time returned by targetRunner cannot be negative (", output$time, ")!")
     } 
   }
 
@@ -291,7 +296,7 @@ check_output_target_runner <- function (output, scenario)
   }
   # Fix too small time.
   output$time <- if (is.null(output$time)) NA else max(output$time, scenario$minMeasurableTime)
-  return(output)
+  output
 }
 
 # This function invokes target.runner.  When used on a remote node by Rmpi,
@@ -302,7 +307,7 @@ exec.target.runner <- function(experiment, scenario, target.runner)
   doit <- function(experiment, scenario)
   {
     x <- target.runner(experiment, scenario)
-    return (check_output_target_runner(x, scenario))
+    check_output_target_runner(x, scenario, bound = experiment$bound)
   }
   
   retries <- scenario$targetRunnerRetries

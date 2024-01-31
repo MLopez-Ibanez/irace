@@ -56,7 +56,9 @@
  
  * Expansion of `'~'` in Windows now follows the definition of `fs::path_expand()` rather than `base::path.expand()`.
   
-  
+ * irace is now more strict in enforcing runtime bounds given with `scenario$boundMax` and will stop with an error if the `target-runner` reports a runtime larger than the given bound.
+ 
+
 ## New features and improvements
 
  * Ablation will report configurations that produced the same results, which
@@ -127,6 +129,13 @@
  
 ## Fixes
 
+ * Fix #66: when using `maxTime > 0`, irace estimates the time per run by
+   executing 2 configurations on `firstTest` instances and adjusts `boundMax`
+   to not go over `budgetEstimation`. This may result in a smaller `boundMax`
+   than before. To reduce this impact, the default value of `budgetEstimation`
+   is now `0.05` instead of `0.02`.
+                                       (Manuel López-Ibáñez, reported by @DE0CH)
+
  * Fix #55: Configurations provided may use `<NA>` in addition to `NA` to denote
    the missing value of a disabled parameter.
                                       (Manuel López-Ibáñez, reported by @TheIronBorn)
@@ -141,7 +150,7 @@
    of the user to do that before calling irace or within the function assigned
    to `targetRunnerParallel`.
 
- * Do not set `option(error=utils::recover())` in debug mode to avoid issues
+ * irace no longer sets `option(error=utils::recover())` in debug mode to avoid issues
    when calling irace from Python. The user can set this if desired.
    
  * Fix bug failing to restart with parameters that have dependent domains. 

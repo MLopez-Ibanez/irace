@@ -773,6 +773,7 @@ irace_run <- function(scenario, parameters)
       scenario = scenario,
       irace.version = irace.version,
       parameters = parameters,
+      iterationElites = c(),
       allElites = list(),
       experiments = matrix(nrow = 0, ncol = 0),
       experimentLog = matrix(nrow = 0, ncol = 5,
@@ -830,16 +831,11 @@ irace_run <- function(scenario, parameters)
       # Estimate the number of configurations to be used
       nconfigurations <- max(2L, floor(scenario$parallel / ninstances))
       next_configuration <- 1L
-
-      if (is.null(scenario$boundMax)) {
-        boundEstimate <- 1.0
-        if (estimationTime < boundEstimate * nconfigurations) {
-          boundEstimate <- estimationTime / nconfigurations
-        }
-      } else {
-        boundEstimate <- scenario$boundMax
-        if (estimationTime < boundEstimate * nconfigurations) {
-          boundEstimate <- estimationTime / nconfigurations
+      nruns <- nconfigurations * ninstances
+      boundEstimate <- if (is.null(scenario$boundMax)) 1.0 else scenario$boundMax
+      if (estimationTime < boundEstimate * nruns) {
+        boundEstimate <- estimationTime / nruns
+        if (!is.null(scenario$boundMax)) {
           irace.warning("boundMax = ", scenario$boundMax, " is too large, using ", boundEstimate, " instead.\n")
           # FIXME: We should not modify the scenario
           scenario$boundMax <- boundEstimate
@@ -889,15 +885,15 @@ irace_run <- function(scenario, parameters)
         
         # Calculate how many new configurations:
         # 1. We do not want to overrun estimationTime
-        new.conf <- floor(((estimationTime - timeUsed) / boundEstimate) / ninstances)
+        new_conf <- floor(((estimationTime - timeUsed) / boundEstimate) / ninstances)
         # 2. But there is no point in executing more configurations than those
         # that we can execute in parallel.
-        new.conf <- min(new.conf, max(1L, floor(scenario$parallel / ninstances)))
+        new_conf <- min(new_conf, max(1L, floor(scenario$parallel / ninstances)))
 
-        if (timeUsed >= estimationTime || new.conf == 0 || nconfigurations == 1024L) {
+        if (timeUsed >= estimationTime || new_conf == 0 || nconfigurations == 1024L) {
           break
         } else {
-          nconfigurations <- min(1024L, nconfigurations + new.conf)
+          nconfigurations <- min(1024L, nconfigurations + new_conf)
         }
       } # end of repeat
       
@@ -910,7 +906,11 @@ irace_run <- function(scenario, parameters)
       remainingBudget <- round((scenario$maxTime - timeUsed) / boundEstimate)
       experimentsUsedSoFar <- experimentsUsedSoFar + nrow(iraceResults$experimentLog)
       eliteConfigurations <- allConfigurations[allConfigurations[[".ID."]] %not_in% rejectedIDs, ,drop = FALSE]
+      # We assign this to the first iteration just in case we break early but it will be overwritten later.
+      iraceResults$iterationElites[1L] <- eliteConfigurations[[".ID."]][1L]
+      iraceResults$allElites[[1L]] <- eliteConfigurations[[".ID."]]
 
+      
       # Without elitist, the racing does not re-use the results computed during
       # the estimation.  This means that the time used during estimation needs
       # to be spent again during racing, thus leaving less time for racing.  We
@@ -918,14 +918,13 @@ irace_run <- function(scenario, parameters)
       # implementation detail, thus we assume that the time was not actually
       # wasted.
       if (!scenario$elitist) timeUsed <- 0
-
       irace.note("Estimated execution time is ", boundEstimate, " based on ",
                  next_configuration - 1L, " configurations and ",
                  ninstances," instances. Used time: ", timeUsed,
                  ", remaining time: ", (scenario$maxTime - timeUsed),
                  ", remaining budget (experiments): ", remainingBudget, "\n")
       if (!is.null(scenario$boundMax) && 2 * boundEstimate < scenario$boundMax) {
-        irace.warning("boundMax = ", scenario$boundMax, " is much larger than estimated execution time, using ",
+        irace.warning("boundMax=", scenario$boundMax, " is much larger than estimated execution time, using ",
                       2 * boundEstimate, " instead.\n")
         scenario$boundMax <- 2 * boundEstimate
       }
@@ -938,7 +937,7 @@ irace_run <- function(scenario, parameters)
                                                   nbIterations)
                      else scenario$nbExperimentsPerIteration
 
-    # Check that the budget is enough, for the time estimation case we reduce
+    # Check that the budget is enough. For the time estimation case we reduce
     # the number of iterations.
     warn_msg <- NULL
     while (!checkMinimumBudget(scenario, remainingBudget, minSurvival, nbIterations,
@@ -955,7 +954,6 @@ irace_run <- function(scenario, parameters)
                  " however, if the estimation was correct or too low,",
                  " results might not be better than random sampling.\n")
       nbIterations <- nbIterations - 1L
-      # FIXME: We should also reduce the number of configurations to minSurvival * 2
       scenario$nbConfigurations <- if (scenario$nbConfigurations > 0)
                                      min(minSurvival * 2L, scenario$nbConfigurations)
                                    else minSurvival * 2L
@@ -1080,7 +1078,7 @@ irace_run <- function(scenario, parameters)
         next
       } else {
         catInfo("Stopped because ",
-                "there is not enough budget to enforce the value of nbConfigurations.")
+          "there is not enough budget to enforce the value of nbConfigurations.")
         return(irace_finish(iraceResults, scenario, reason = "Not enough budget to enforce the value of nbConfigurations"))
       }
     }
@@ -1309,7 +1307,7 @@ irace_run <- function(scenario, parameters)
                " listed from best to worst according to the ",
                test.type.order.str(scenario$testType), "):\n")
     if (!quiet) configurations.print(eliteConfigurations, metadata = debugLevel >= 1L)
-    iraceResults$iterationElites <- c(iraceResults$iterationElites, eliteConfigurations[[".ID."]][1L])
+    iraceResults$iterationElites[indexIteration] <- eliteConfigurations[[".ID."]][1L]
     iraceResults$allElites[[indexIteration]] <- eliteConfigurations[[".ID."]]
     
     if (firstRace) {

@@ -28,7 +28,7 @@ target.runner <- function(experiment, scenario)
 target.runner.reject <- function(experiment, scenario)
 {
   if (experiment$configuration[["reject"]] == "1" && runif(1) <= 0.01)
-    return(list(cost = -Inf, time = 80, call = toString(experiment)))
+    list(cost = -Inf, time = experiment$bound, call = toString(experiment))
   target.runner(experiment, scenario)
 }
 
@@ -68,7 +68,7 @@ test_that("cap.irace maxExperiments = 1000", {
 test_that("cap.irace maxTime = 1000", {
   generate.set.seed()
   expect_warning(cap.irace(maxTime = 1000),
-                 "boundMax = 80 is too large, using 10 instead")
+                 "boundMax = 80 is too large, using 5 instead")
 })
 
 test_that("cap.irace targetRunner = target.runner.reject, maxTime = 1000", {

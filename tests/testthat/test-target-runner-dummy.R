@@ -81,14 +81,43 @@ withr::with_output_sink("test-target-runner-dummy.Rout", {
         "With the current settings and estimated time per run"),
       "No scenario file given")      
   })
-  test_that("--capping", {
+  test_that("boundMax is too large", {
     expect_warning(
       expect_warning(
         run_cmdline(paste0('p_int   "--p_int "    i (1, 10)\n',
                            'p_real  "--p_real "   r (1, 10)\n',
                            'time    "--time "     c (1)\n',
                            'capping "--opt-time " c (1)\n'),
-                    '--max-time 100 --bound-max 1 --capping 1 '),
+                    '--max-time 100 --bound-max 1 --capping 1'),
+        "is too large"),
+      "No scenario file given")      
+  })
+  test_that("--capping", {
+    expect_warning(
+      expect_warning(
+        run_cmdline(paste0('p_int   "--p_int "    i (1, 10)\n',
+                           'p_real  "--p_real "   r (1, 10)\n',
+                           'dummy1 "--dummy1 " r (1, 10)\n',
+                           'dummy2 "--dummy2 " r (1, 10)\n',
+                           'dummy3 "--dummy3 " r (1, 10)\n',
+                           'dummy4 "--dummy4 " r (1, 10)\n',
+                           'dummy5 "--dummy5 " r (1, 10)\n',
+                           'dummy6 "--dummy6 " r (1, 10)\n',
+                           'dummy7 "--dummy7 " r (1, 10)\n',
+                           'dummy8 "--dummy8 " r (1, 10)\n',
+                           'dummy9 "--dummy9 " r (1, 10)\n',
+                           'dummy11 "--dummy11 " r (1, 10)\n',
+                           'dummy12 "--dummy12 " r (1, 10)\n',
+                           'dummy13 "--dummy13 " r (1, 10)\n',
+                           'dummy14 "--dummy14 " r (1, 10)\n',
+                           'dummy15 "--dummy15 " r (1, 10)\n',
+                           'dummy16 "--dummy16 " r (1, 10)\n',
+                           'dummy17 "--dummy17 " r (1, 10)\n',
+                           'dummy18 "--dummy18 " r (1, 10)\n',
+                           'dummy19 "--dummy19 " r (1, 10)\n',
+                           'time    "--time "     c (1)\n',
+                           'capping "--opt-time " c (1)\n'),
+                    '--max-time 500 --bound-max 1 --capping 1 '),
         "With the current settings and estimated time per run"),
       "No scenario file given")      
   })
