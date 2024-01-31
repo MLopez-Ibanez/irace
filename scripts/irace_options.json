@@ -375,7 +375,7 @@
     "type": "r",
     "short": "",
     "long": "--budget-estimation",
-    "default": 0.02,
+    "default": 0.05,
     "description": "Fraction (smaller than 1) of the budget used to estimate the mean computation time of a configuration. Only used when \\code{maxTime} > 0",
     "vignettes": "Fraction (smaller than 1) of the budget used to estimate the mean execution time of a configuration. Only used when \\parameter{maxTime} $> 0$. See \\autoref{sec:budget}.",
     "section": "Tuning budget"

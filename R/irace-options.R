@@ -50,7 +50,7 @@
 ), default = c(NA, NA, NA, "", "", "./scenario.txt", "./", "./parameters.txt", 
 "", "", "./irace.Rdata", "", "", "./Instances", "", "1", "", 
 "", "", "1", "0", "", "5", "1", "1", "./target-runner", "", "{configurationID} {instanceID} {seed} {instance} {bound} {targetRunnerArgs}", 
-"0", "0", "", "", "", "0", "0", NA, "0", "0.02", "0.01", "0", 
+"0", "0", "", "", "", "0", "0", NA, "0", "0.05", "0.01", "0", 
 "1", "0", "0", "4", "0", "0", NA, "1", "", "1", "1", "2", "", 
 NA, "median", "candidate", "0", "0", "1", "1", "0", "0", "0", 
 "0", "0", "0", "5", "0.95"), domain = c(NA, NA, NA, NA, NA, NA, 

@@ -203,7 +203,7 @@ List of command-line options:
                          minutes, iterations, evaluations, ...). Default: 0.
    --budget-estimation   Fraction (smaller than 1) of the budget used to
                          estimate the mean computation time of a configuration.
-                         Only used when `maxTime` > 0 Default: 0.02.
+                         Only used when `maxTime` > 0 Default: 0.05.
    --min-measurable-time  Minimum time unit that is still (significantly)
                          measureable. Default: 0.01.
    --parallel            Number of calls to `targetRunner` to execute in
