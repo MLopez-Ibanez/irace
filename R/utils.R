@@ -83,8 +83,8 @@ irace.assert <- function(exp, eval.after = NULL)
   # FIXME: It would be great if we could save into a file the state of
   # the function that called this one.
   if (exp) return(invisible())
-  mc <- match.call()[[2]]
-  msg <- paste0(deparse(mc), " is not TRUE")
+  mc <- sys.call()[[2L]]
+  msg <- paste0("'", deparse(mc), "' is not TRUE")
   if (!is.null(eval.after)) {
     msg.after <- eval.parent(capture.output(eval.after))
     msg <- paste0(msg, "\n", paste0(msg.after, collapse="\n"))
