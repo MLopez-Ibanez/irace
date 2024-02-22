@@ -834,7 +834,7 @@ irace_run <- function(scenario, parameters)
       nruns <- nconfigurations * ninstances
       boundEstimate <- if (is.null(scenario$boundMax)) 1.0 else scenario$boundMax
       if (estimationTime < boundEstimate * nruns) {
-        boundEstimate <- estimationTime / nruns
+        boundEstimate <- max(ceiling_digits(estimationTime / nruns, scenario$boundDigits), scenario$minMeasurableTime)
         if (!is.null(scenario$boundMax)) {
           irace.warning("boundMax = ", scenario$boundMax, " is too large, using ", boundEstimate, " instead.\n")
           # FIXME: We should not modify the scenario
@@ -878,9 +878,7 @@ irace_run <- function(scenario, parameters)
         timeUsed <- sum(timeUsed, output$experimentLog[, "time"], na.rm = TRUE)
         # User should return time zero for rejectedIDs.
         boundEstimate <- mean(iraceResults$experimentLog[, "time"], na.rm = TRUE)
-        if (boundEstimate <= 0)
-          boundEstimate <- if (is.null(scenario$boundMax)) 1.0 else scenario$boundMax
-        
+        boundEstimate <- max(ceiling_digits(boundEstimate, scenario$boundDigits), scenario$minMeasurableTime)
         next_configuration <- nconfigurations + 1L
         
         # Calculate how many new configurations:

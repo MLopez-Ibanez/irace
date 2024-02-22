@@ -620,7 +620,7 @@ ceiling_digits <- function(x, digits)
    multiple <- 10^-digits
    div <- x / multiple
    int_div <- trunc(div)
-   return (int_div * multiple + ceiling(div - int_div) * multiple)
+   int_div * multiple + ceiling(div - int_div) * multiple
 }
 
 # ceil.decimal <- function(x, d) { 
