@@ -375,8 +375,7 @@ irace.cmdline <- function(argv = commandArgs(trailingOnly = TRUE))
   scenario <- readScenario(scenarioFile)
   for (param in .irace.params.names) {
     scenario[[param]] <-
-      parser$readCmdLineParameter(paramName = param,
-                                  default = scenario[[param]])
+      parser$readCmdLineParameter(paramName = param, default = scenario[[param]])
   }
   if (quiet) scenario$quiet <- TRUE
  
