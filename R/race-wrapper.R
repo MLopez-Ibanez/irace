@@ -129,7 +129,7 @@ check_output_target_evaluator <- function (output, scenario, target.runner.call 
       } else if (is.infinite(output$time)) {
         err.msg <- "The time returned by targetEvaluator is not finite!"
       } else if (output$time <= 0) {
-        err.msg <- paste0("The value of time returned by targetEvaluator must be strictly positive (", output$time, ")!")
+        err.msg <- paste0("The value of time (", output$time, ") returned by targetEvaluator must be strictly positive!")
       } else {
         # Fix time.
         output$time <- max(output$time, scenario$minMeasurableTime)
@@ -274,7 +274,7 @@ check_output_target_runner <- function(output, scenario, bound = NULL)
       } else if (is.infinite(output$time)) {
         err.msg <- paste0("The time returned by targetRunner is not finite!")
       } else if (output$time <= 0) {
-        err.msg <- paste0("The value of time returned by targetRunner must be strictly positive (", output$time, ")!")
+        err.msg <- paste0("The value of time (", output$time, ") returned by targetRunner must be strictly positive!")
       } else {
         # Fix time.
         output$time <- max(output$time, scenario$minMeasurableTime)

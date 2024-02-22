@@ -109,3 +109,21 @@ f_himmelblau <- function (x,y, nsize = 0.01) {
   fmax <- 2000*(1+nsize)
   ((f - fmin) / (fmax-fmin)) * (100-0) + 0
 }
+
+target_runner_capping_xy <- function(experiment, scenario)
+{
+  configuration <- experiment$configuration
+  instance      <- experiment$instance
+  bound         <- experiment$bound
+
+  x <- configuration[["x"]]
+  y <- configuration[["y"]]
+  value <- switch(instance,
+                  ackley     = f_ackley(x, y),
+                  goldestein = f_goldestein_price(x, y),
+                  matyas     = f_matyas(x, y),
+                  himmelblau  = f_himmelblau(x, y))
+  
+  # Simulate execution bound
+  list(cost = value, time=min(value + 0.1, bound), call = toString(experiment))
+}

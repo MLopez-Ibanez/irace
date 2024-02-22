@@ -1,35 +1,12 @@
 withr::with_output_sink("test-capping.Rout", {
 
-## target runner ###########################################################
-target.runner <- function(experiment, scenario)
-{
-  debugLevel    <- scenario$debugLevel
-  configuration.id  <- experiment$id.configuration
-  instance.id   <- experiment$id.instance
-  seed          <- experiment$seed
-  configuration <- experiment$configuration
-  instance      <- experiment$instance
-  bound         <- experiment$bound
-
-  x <- configuration[["x"]]
-  y <- configuration[["y"]]
-  value <- switch(instance,
-                  ackley     = f_ackley(x, y),
-                  goldestein = f_goldestein_price(x, y),
-                  matyas     = f_matyas(x, y),
-                  himmelblau  = f_himmelblau(x, y))
-  
-  # Simulate execution bound
-  if (value > bound) value <- bound
-  list(cost = value, time=value, call = toString(experiment))
-}
 
 ## target runner ###########################################################
 target.runner.reject <- function(experiment, scenario)
 {
   if (experiment$configuration[["reject"]] == "1" && runif(1) <= 0.01)
     list(cost = -Inf, time = experiment$bound, call = toString(experiment))
-  target.runner(experiment, scenario)
+  target_runner_capping_xy(experiment, scenario)
 }
 
 cap.irace <- function(...)
@@ -43,7 +20,7 @@ cap.irace <- function(...)
   parameters <- readParameters(text = parameters.table)
 
   scenario <- list(instances = c("ackley", "goldestein", "matyas", "himmelblau"),
-                   targetRunner = target.runner,
+                   targetRunner = target_runner_capping_xy,
                    capping = TRUE,
                    boundMax = 80,
                    testType = "t-test",

@@ -1,26 +1,4 @@
 withr::with_output_sink("test-blocksize.Rout", {
-
-## target runner ###########################################################
-target.runner.cap <- function(experiment, scenario)
-{
-  seed          <- experiment$seed
-  configuration <- experiment$configuration
-  instance      <- experiment$instance
-  bound         <- experiment$bound
-
-  x <- configuration[["x"]]
-  y <- configuration[["y"]]
-  value <- switch(instance,
-                  ackley     = f_ackley(x, y),
-                  goldestein = f_goldestein_price(x, y),
-                  matyas     = f_matyas(x, y),
-                  himmelblau  = f_himmelblau(x, y))
-  
-  # Simulate execution bound
-  if (value > bound) value <- bound
-  list(cost = value, time=value, call = toString(experiment))
-}
-
 cap.irace <- function(...)
 {
   args <- list(...)
@@ -31,7 +9,7 @@ cap.irace <- function(...)
   parameters <- readParameters(text = parameters.table)
 
   scenario <- list(instances = c("ackley", "goldestein", "matyas", "himmelblau"),
-                   targetRunner = target.runner.cap,
+                   targetRunner = target_runner_capping_xy,
                    capping = TRUE,
                    blockSize = 4,
                    boundMax = 80,
