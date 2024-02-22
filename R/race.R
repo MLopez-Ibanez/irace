@@ -1065,10 +1065,11 @@ elitist_race <- function(maxExp = 0,
                                  vtimes, 
                                  if (is.null(final.bounds)) NA else final.bounds[which.exe]))
 
-    irace.assert(anyDuplicated(experimentLog[, c("instance", "configuration")]) == 0,
-                     eval.after = {
-                       print(mget(ls()))
-                     })
+    irace.assert(anyDuplicated(experimentLog[, c("instance", "configuration")]) == 0L,
+      eval.after = {
+        print(experimentLog)
+        print(mget(ls()))
+      })
     experimentsUsed <- experimentsUsed + length(which.exe)
     # We update the elites that have been executed.
     is.elite <- update.is.elite(is.elite, which.elite.exe)
