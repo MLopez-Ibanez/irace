@@ -15,6 +15,7 @@
 #' @export
 path_rel2abs <- function (path, cwd = getwd())
 {
+  if (path == "") return("")
   # FIXME: split this function into two, one for executable files than handles
   # finding executables in the PATH with Sys.which() and another for everything
   # else that doesn't try to be that smart.
