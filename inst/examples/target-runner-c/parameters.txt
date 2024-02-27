@@ -1,2 +1,5 @@
 p_int  "--p-int " i (1,100)
 p_real "--p-real " r (1, 2)
+## Uncomment these lines to simulate rejection
+# reject "--reject " c (0, 1)
+# reject_rate "--reject " c (0.25)
