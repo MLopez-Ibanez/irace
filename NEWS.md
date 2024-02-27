@@ -21,8 +21,7 @@
    printed in the output.
    
  * Adaptive capping is now enabled by default if `maxTime > 0` and `maxBound > 0`.
-   It can be disabled with `--capping 0` or `capping=0`. See
-   <https://iridia-ulb.github.io/references/#PerLopHooStu2017:lion> for details.
+   It can be disabled with `--capping 0` in the command-line options or `capping=0` in the scenario options. See [Pérez-Cáceres et al. (2017)](https://iridia-ulb.github.io/references/#PerLopHooStu2017:lion) for details.
                                      (Leslie Pérez Cáceres, Manuel López-Ibáñez)
 
  * The scenario option `targetRunnerLauncherArgs`, introduced in version 3.5,
