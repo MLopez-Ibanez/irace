@@ -1,0 +1,2 @@
+p_int  "--p-int " i (1,100)
+p_real "--p-real " r (1, 2)

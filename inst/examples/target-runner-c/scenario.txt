@@ -1,0 +1,2 @@
+maxExperiments=1000
+trainInstancesFile="instances.txt"
