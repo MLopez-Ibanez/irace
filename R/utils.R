@@ -715,3 +715,11 @@ seq_nrow <- function(x) seq_len(nrow(x))
 
 clamp <- function(x, lower, upper) pmax.int(lower, pmin.int(x, upper))
 
+truncate_rows <- function(x, n)
+{
+  nx <- nrow(x)
+  if (nx <= n) return(x)
+  x[-seq.int(n + 1L, nx), ]
+}
+
+

@@ -2,7 +2,6 @@
 configurations_alloc <- function(colnames, nrow, parameters)
 {
   parameter_type <- function(type) {
-    stopifnot(type %in% c("i","r","o","c"))
     switch(type,
            i = NA_integer_,
            r = NA_real_,

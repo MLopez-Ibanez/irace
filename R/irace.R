@@ -825,7 +825,7 @@ irace_run <- function(scenario, parameters)
       repeat {
         # Sample new configurations if needed
         if (nrow(allConfigurations) < nconfigurations) {
-          newConfigurations <- sampleUniform(parameters,
+          newConfigurations <- sampleSobol(parameters,
                                              nconfigurations - nrow(allConfigurations),
                                              repair = scenario$repairConfiguration)
           newConfigurations <- cbind (.ID. = max(0L, allConfigurations[[".ID."]]) + seq_nrow(newConfigurations),
@@ -1116,7 +1116,7 @@ irace_run <- function(scenario, parameters)
           catInfo("Sample ", nbNewConfigurations,
                   " configurations from uniform distribution", verbose = FALSE)
         }
-        newConfigurations <- sampleUniform(parameters, nbNewConfigurations,
+        newConfigurations <- sampleSobol(parameters, nbNewConfigurations,
                                            repair = scenario$repairConfiguration)
         newConfigurations <-
           cbind (.ID. = max(0L, allConfigurations[[".ID."]]) + seq_nrow(newConfigurations),

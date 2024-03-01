@@ -24,11 +24,22 @@ get_fixed_value <- function(parameters, param)
   parameters$domain[[param]][[1L]]
 }
 
+repairConfigurations <- function(x, parameters, repair)
+{
+  if (!is.null(repair)) {
+    # FIXME: Pass the whole newConfigurations to repair and let it handle each row.
+    j <- colnames(x)
+    for (i in seq_nrow(x))
+      set(x, i, j = j, value = repair(as.data.frame(x[i]), parameters))
+  }
+  x
+}
+
 ## Calculates the parameter bounds when parameters domain is dependent
 getDependentBound <- function(parameters, param, configuration)
 {
-  values <- parameters$domain[[param]]
-  if (is.expression(values)) {
+  domain <- parameters$domain[[param]]
+  if (is.expression(domain)) {
     # Depends contains parameters that enable param and parameters that define
     # its domain. If this is a partial configuration, we need only the latter.
     # Use names() here in case the configuration is simply a list.
@@ -36,22 +47,22 @@ getDependentBound <- function(parameters, param, configuration)
     # If it depends on a parameter that is disabled, then this is disabled.
     if (anyNA(configuration[deps])) return(NA)
 
-    values <- sapply(values, eval, configuration)
-    irace.assert(all(is.finite(values)))
+    domain <- sapply(domain, eval, configuration)
+    irace.assert(all(is.finite(domain)))
     # Value gets truncated (defined from robotics initial requirements)
-    if (parameters$types[param] == "i") values <- as.integer(values)
-    if (values[1] > values[2]) {
-      irace.error ("Invalid domain (", paste0(values, collapse=", "),
+    if (parameters$types[param] == "i") domain <- as.integer(domain)
+    if (domain[[1L]] > domain[[2L]]) {
+      irace.error ("Invalid domain (", paste0(domain, collapse=", "),
                    ") generated for parameter '", param,
                    "' that depends on parameters (",
                    paste0(parameters$depends[[param]], collapse=", "),
                    "). This is NOT a bug in irace. Check the definition of these parameters.")
     }
   }
-  values
+  domain
 }
 
-## Calculates the parameter bounds when parameters domain is dependent
+## Calculates the parameter bounds when the parameter is dependent.
 get_dependent_domain <- function(parameters, param, configuration)
 {
   # FIXME: Make this function handle a data.table and return a list of domains.
@@ -60,6 +71,7 @@ get_dependent_domain <- function(parameters, param, configuration)
   # its domain. If this is a partial configuration, we need only the latter.
   # Use names() here in case the configuration is simply a list.
   deps <- intersect(names(configuration), parameters$depends[[param]])
+  # FIXME: This function should not be called if the parent is disabled.
   # If it depends on a parameter that is disabled, then this is disabled.
   if (anyNA(configuration[deps])) return(NA)
 
@@ -80,10 +92,120 @@ get_dependent_domain <- function(parameters, param, configuration)
   domain
 }
 
+param_qunif_c <- function(x, domain, transf, digits = NULL)
+{
+  n <- length(domain)
+  z <- integer_round(as.numeric(x) * n + 1L, 1L, n)
+  domain[z]
+}
+
+param_qunif_i <- function(x, domain, transf, digits = NULL)
+{
+  upper <- domain[2L]
+  lower <- domain[1L]
+  x <- as.numeric(x)
+  if (transf == "log") {
+    # +1 for correct rounding before floor()
+    x <- transform_from_log(x, transf, lower, upper + 1L)
+  } else {
+    x <- x * (upper + 1L - lower) + lower
+  }
+  integer_round(x, lower, upper)
+}
+
+param_qunif_r <- function(x, domain, transf, digits)
+{
+  upper <- domain[2L]
+  lower <- domain[1L]
+  x <- as.numeric(x)
+  if (transf == "log")
+    return(round(transform_from_log(x, transf, lower, upper), digits))
+  
+  x <- x * (upper - lower) + lower
+  clamp(round(x, digits), lower, upper)
+}
+
+.param_qunif <- c(i = param_qunif_i, r = param_qunif_r, c = param_qunif_c,
+  o = param_qunif_c)
+
+generate_sobol <- function(parameters, n, repair = NULL)
+{
+  # Do not use .Machine$integer.max to minimize differences between machines.
+  seed <- sample.int(2147483647L, size = 1L)
+  confs <- spacefillr::generate_sobol_set(n, dim = parameters$nbVariable, seed = seed)
+  confs <- data.table(confs)
+  setnames(confs, parameters$names[!parameters$isFixed])
+  nodep_names <- parameters$names[!parameters$isDependent & !parameters$isFixed]
+  # FIXME: How to do this faster using data.table?
+  for (x in nodep_names) {
+    this_qunif <- .param_qunif[[parameters$types[x]]]
+    set(confs, j = x, value = this_qunif(confs[[x]], parameters$domain[[x]], parameters$transform[[x]],
+      digits = parameters$digits[x]))
+  }
+  for (x in parameters$names[parameters$isFixed]) {
+    set(confs, j = x, value = parameters$domain[[x]][[1L]])
+  }
+  setcolorder(confs, parameters$names)
+  
+  hierarchy <- parameters$hierarchy
+  max_level <- max(hierarchy)
+  if (max_level > 1L) {
+    .NEWVALUE <- .DOMAIN <- NULL # To silence CRAN warnings.
+    for (k in seq_len(max_level - 1L)) {
+      prev_names <- names(hierarchy)[hierarchy <= k]
+      dep_names <- names(hierarchy)[hierarchy == k+1L]
+      for (p in dep_names) {
+        idx_satisfied <- which_satisfied(confs, parameters$conditions[[p]])
+        if (parameters$isDependent[[p]] && length(idx_satisfied) > 0L) {
+          this_qunif <- .param_qunif[[parameters$types[p]]]
+          confs[idx_satisfied, let(.DOMAIN = list(get_dependent_domain(parameters, p, .SD))), by=.I, .SDcols=prev_names]
+          confs[idx_satisfied, .NEWVALUE := this_qunif(.SD, unlist(.DOMAIN), parameters$transform[[p]], digits = parameters$digits[p]), by=.I, .SDcols=p]
+          confs[, (p):=.NEWVALUE]
+          confs[, let(.NEWVALUE=NULL, .DOMAIN=NULL)]
+        } else if (length(idx_satisfied) < n) {
+          idx_not_satisfied <- if (length(idx_satisfied))
+                                 seq_len(n)[-idx_satisfied] else NULL
+          na_value <- switch(parameters$types[p],
+            i = NA_integer_,
+            r = NA_real_,
+            c = NA_character_,
+            o = NA_character_,
+            irace.internal.error("Unknown type '", parameters$types[p], "'"))
+          set(confs, i = idx_not_satisfied, j = p, value = na_value)
+        }
+      }
+    }
+  }
+  repairConfigurations(confs, parameters, repair)
+  set(confs, j = ".PARENT.", value = NA_integer_)
+  confs
+}
+
+sampleSobol <- function(parameters, n, repair = NULL)
+{
+  newConfigurations <- generate_sobol(parameters, n, repair)
+  newConfigurations <- unique(newConfigurations)
+  forbidden <- parameters$forbidden  
+  newConfigurations <- filter_forbidden(newConfigurations, forbidden)
+  have <- nrow(newConfigurations)
+  if (have < n) {
+    needed <- max(ceiling(n + (n - have) * (2 - have / n)), min(parameters$nbVariable * 5L, 100L))
+    newConfigurations <- generate_sobol(parameters, needed, repair)
+    newConfigurations <- unique(newConfigurations)
+    newConfigurations <- filter_forbidden(newConfigurations, forbidden)
+    if (nrow(newConfigurations) == 0L) {
+      irace.error("irace tried to sample a configuration not forbidden without success, perhaps your constraints are too strict?")
+    }
+    newConfigurations <- truncate_rows(newConfigurations, n)
+  }
+  setDF(newConfigurations)
+  newConfigurations
+}
+
+
 generate_uniform <- function(parameters, nbConfigurations, repair = NULL)
 {
   newConfigurations <- configurations_alloc(parameters$names, nrow = nbConfigurations, parameters = parameters)
-  
   namesParameters <- names(parameters$conditions)
   for (currentParameter in namesParameters) {
     # We must be careful because parameters$types does not have the same order
@@ -127,15 +249,11 @@ generate_uniform <- function(parameters, nbConfigurations, repair = NULL)
     }
     set(newConfigurations, i = idx, j = currentParameter, value = newVals)
   }
-  if (!is.null(repair)) {
-    # FIXME: Pass the whole newConfigurations to repair and let it handle each row.
-    j <- colnames(newConfigurations)
-    for (i in seq_len(nbConfigurations))
-      set(newConfigurations, i, j = j, value = repair(as.data.frame(newConfigurations[i]), parameters))
-  }
+  repairConfigurations(newConfigurations, parameters, repair)
   set(newConfigurations, j = ".PARENT.", value = NA_integer_)
   newConfigurations
 }
+
 
 ### Uniform sampling for the initial generation
 sampleUniform <- function(parameters, nbConfigurations, repair = NULL)
@@ -252,12 +370,7 @@ sample_from_model <- function(parameters, eliteConfigurations, model,
     # .BY is a list, so take the first argument.
     newConfigurations[idx_satisfied, c(currentParameter) := list(sample_values(.N, .BY[[1L]])), by = idx_elites[idx_satisfied]]
   }
-  if (!is.null(repair)) {
-    # FIXME: Pass the whole newConfigurations to repair and let it handle each row.
-    j <- colnames(newConfigurations)
-    for (i in seq_len(nbNewConfigurations))
-      set(newConfigurations, i, j = j, value = repair(as.data.frame(newConfigurations[i]), parameters))
-  }
+  repairConfigurations(newConfigurations, parameters, repair)
   set(newConfigurations, j = ".PARENT.", value = ids_elites[idx_elites])
   newConfigurations
 }
@@ -356,7 +469,7 @@ integer_round <- function(x, lower, upper)
   # The probability of this happening is very small, but it happens.
   x <- pmin.int(upper, x)
   irace.assert(all(x >= lower))
-  x
+  as.integer(x)
 }
 
 sample_numeric_unif <- function(n, lower, upper, transf)

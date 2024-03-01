@@ -27,6 +27,7 @@ Imports:
         data.table (>= 1.15.0),
         matrixStats,
         R6,
+        spacefillr,
         withr
 Suggests:
     Rmpi (>= 0.6.0),

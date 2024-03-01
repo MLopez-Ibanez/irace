@@ -64,9 +64,11 @@
 ## New features and improvements
 
  * `sampleUniform()` and `sampleModel()` are significantly faster thanks to using [`data.table`](https://r-datatable.com).
+
+ * Initial configurations are sampled using Sobol low-discrepancy sequences using `spacefillr::generate_sobol_set()`. This should provide a better initial distribution of parameter values.
  
  * Ablation will report configurations that produced the same results, which
-   points to parameter values that have the same effect on the target algorithm,
+   indicates parameter values that have the same effect on the target algorithm,
    possibly indicating a bug in the target algorithm.
 
  * New option `instancesFile` of `ablation()` for using either the training
