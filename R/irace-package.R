@@ -7,6 +7,7 @@
 #' @importFrom R6 R6Class
 #' @importFrom grDevices dev.off pdf
 #' @importFrom graphics abline axis boxplot par plot points strwidth bxp grid
+#' @importFrom spacefillr generate_sobol_set
 #' 
 #' @details  License: GPL (>= 2)
 #' 

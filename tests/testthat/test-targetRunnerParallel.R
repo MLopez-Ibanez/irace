@@ -49,7 +49,7 @@ x "x" r (1,2)
 ')
   expect_output(
     irace(scenario = list(targetRunnerParallel = targetRunnerParallel,
-                          instances = lapply(1:5, function(i) 10),
+                          instances = replicate(5, list(10)),
                           targetRunnerData = list(a=1, b=2),
                           maxExperiments = 42L),
           parameters = parameters),
