@@ -177,7 +177,7 @@
 <li><p>Fixed bug when reporting minimum <code>maxTime</code> required. (Reported by Luciana Salete Buriol, fixed by Manuel López-Ibáñez)</p></li>
 <li>
 <p>Fixed bug detected by assert:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">all</span>(<span class="fu">apply</span>(<span class="sc">!</span><span class="fu">is.na</span>(elite.data<span class="sc">$</span>experiments), <span class="dv">1</span>, any)) is not <span class="cn">TRUE</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">all</span>(<span class="fu">apply</span>(<span class="sc">!</span><span class="fu">is.na</span>(elite.data<span class="sc">$</span>experiments), <span class="dv">1</span>, any)) is not <span class="cn">TRUE</span></span></code></pre></div>
 <p>(Reported by Maxim Buzdalov, fixed by Manuel López-Ibáñez)</p>
 </li>
 </ul></div>
@@ -291,7 +291,7 @@
 <p>We print diversity measures after evaluating on each instance: (Leslie Pérez Cáceres)</p>
 <ul><li>
 <p>Kendall’s W (also known as Kendall’s coefficient of concordance) If 1, all candidates have ranked in the same order in all instances. If 0, the ranking of each candidate on each instance is essentially random.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>    W <span class="ot">=</span> Friedman <span class="sc">/</span> (m <span class="sc">*</span> (k<span class="dv">-1</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>    W <span class="ot">=</span> Friedman <span class="sc">/</span> (m <span class="sc">*</span> (k<span class="dv">-1</span>))</span></code></pre></div>
 </li>
 <li><p>Spearman’s rho: average (Spearman) correlation coefficient computed on the ranks of all pairs of raters. If there are no repeated data values, a perfect Spearman correlation of +1 or -1 occurs when each of the variables is a perfect monotone function of the other.</p></li>
 </ul></li>
@@ -308,11 +308,11 @@
 <span>   <span class="va">testInstanceFile</span>    <span class="op">-&gt;</span> <span class="va">testInstancesFile</span></span></code></pre></div>
 <ul><li><p>Minimal example of configuring a MATLAB program (thanks to Esteban Diaz Leiva)</p></li>
 <li><p>Paths to files or directories given in the scenario file are relative to the scenario file (except for <code>--log-file</code>, which is an output file and it is relative to <code>--exec-dir</code>). Paths given in the command-line are relative to the current working directory. Given</p></li>
-</ul><div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>      <span class="ex">$</span> cat scenario/scenario.txt</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>      <span class="ex">targetRunner</span> <span class="op">&lt;</span>- <span class="st">"./target-runner"</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>      <span class="ex">$</span> irace <span class="at">-s</span> scenario/scenario.txt</span></code></pre></div>
+</ul><div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>      <span class="ex">$</span> cat scenario/scenario.txt</span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>      <span class="ex">targetRunner</span> <span class="op">&lt;</span>- <span class="st">"./target-runner"</span></span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>      <span class="ex">$</span> irace <span class="at">-s</span> scenario/scenario.txt</span></code></pre></div>
 <p>irace will search for <code>"./scenario/target-runner"</code>, but given</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>      <span class="ex">$</span> irace <span class="at">-s</span> scenario/scenario.txt <span class="at">--target-runner</span> ./target-runner</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>      <span class="ex">$</span> irace <span class="at">-s</span> scenario/scenario.txt <span class="at">--target-runner</span> ./target-runner</span></code></pre></div>
 <p>irace will search for <code>"./target-runner"</code>. (Manuel López-Ibáñez)</p>
 <ul><li><p>New command-line wrapper for Windows installed at <code>system.file("bin/irace.bat", package="irace")</code> (thanks to Anthony Antoun)</p></li>
 <li><p>Budget can be specified as maximum time (<code>maxTime</code>, <code>--max-time</code>) consumed by the target algorithm. See the documentation for the details about how this is handled. (Leslie Pérez Cáceres, Manuel López-Ibáñez)</p></li>
