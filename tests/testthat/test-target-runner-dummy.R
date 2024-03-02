@@ -74,8 +74,8 @@ withr::with_output_sink("test-target-runner-dummy.Rout", {
   test_that("--max-time", {
     expect_warning(
     expect_warning(
-      run_cmdline(paste0('p_int  "--p_int " i (1, 10)\n',
-                         'p_real "--p_real " r (1, 10)\n',
+      run_cmdline(paste0('p_int  "--p_int " i (1, 5)\n',
+                         'p_real "--p_real " r (1, 5)\n',
                          'time   "--time "  c (1)\n'),
                   '--max-time 2500'),
         "With the current settings and estimated time per run"),
