@@ -60,13 +60,12 @@
 #'  parameters.table <- '
 #'  # name       switch           type  values               [conditions (using R syntax)]
 #'  algorithm    "--"             c     (as,mmas,eas,ras,acs)
-#'  localsearch  "--localsearch " c     (0, 1, 2, 3)
+#'  localsearch  "--localsearch " o     (0, 1, 2, 3)
 #'  alpha        "--alpha "       r     (0.00, 5.00)
 #'  beta         "--beta "        r     (0.00, 10.00)
 #'  rho          "--rho  "        r     (0.01, 1.00)
 #'  ants         "--ants "        i,log (5, 100)
 #'  q0           "--q0 "          r     (0.0, 1.0)           | algorithm == "acs"
-#'  q0dep       "--q0 "           r     (0.0, q0)            | algorithm != "acs" 
 #'  rasrank      "--rasranks "    i     (1, "min(ants, 10)") | algorithm == "ras"
 #'  elitistants  "--elitistants " i     (1, ants)            | algorithm == "eas"
 #'  nnls         "--nnls "        i     (5, 50)              | localsearch %in% c(1,2,3)
