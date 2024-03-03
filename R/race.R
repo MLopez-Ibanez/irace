@@ -1065,7 +1065,7 @@ elitist_race <- function(maxExp = 0,
                                  vtimes, 
                                  if (is.null(final.bounds)) NA else final.bounds[which.exe]))
 
-    irace.assert(anyDuplicated(experimentLog[, c("instance", "configuration")]) == 0L,
+    irace.assert(anyDuplicated(experimentLog[, c("instance", "configuration"), drop = FALSE]) == 0L,
       eval.after = {
         print(experimentLog)
         print(mget(ls()))
