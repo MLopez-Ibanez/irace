@@ -122,7 +122,7 @@ int main(int argc, char *argv[])
     }
     double cost = instance + (p_int * p_real) + rand01();
     double time = (time_is_cost) ? cost : (
-        (bound > 0) ? (bound+1) * rand01() + 0.00001 : instance + (int) (100 * rand01())
+        (bound > 0) ? (bound+1) * rand01() + 0.00001 : instance + (int) (10 * rand01())
         );
         
     if (bound > 0 && time > bound) {

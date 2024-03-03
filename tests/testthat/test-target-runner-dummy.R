@@ -73,22 +73,21 @@ withr::with_output_sink("test-target-runner-dummy.Rout", {
   })
   test_that("--max-time", {
     expect_warning(
-    expect_warning(
-      run_cmdline(paste0('p_int  "--p_int " i (1, 5)\n',
-                         'p_real "--p_real " r (1, 5)\n',
-                         'time   "--time "  c (1)\n'),
-                  '--max-time 2500'),
-        "With the current settings and estimated time per run"),
-      "No scenario file given")      
+      run_cmdline(paste0('p_int  "--p_int " c (1)\n',
+        'p_real "--p_real " r (0, 1)\n',
+        'dummy1 "--dummy1 " r (0, 1)\n',
+        'time   "--time "  c (1)\n'),
+        '--max-time 2500'),
+      "No scenario file given")
   })
   test_that("boundMax is too large", {
     expect_warning(
       expect_warning(
         run_cmdline(paste0('p_int   "--p_int "    i (1, 10)\n',
-                           'p_real  "--p_real "   r (1, 10)\n',
+                           'p_real  "--p_real "   r (0, 1)\n',
                            'time    "--time "     c (1)\n',
                            'capping "--opt-time " c (1)\n'),
-                    '--max-time 100 --bound-max 1 --capping 1'),
+                    '--max-time 1000 --bound-max 100 --capping 1'),
         "is too large"),
       "No scenario file given")      
   })

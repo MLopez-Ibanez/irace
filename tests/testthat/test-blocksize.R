@@ -37,7 +37,7 @@ time.irace <- function(...)
 {
   args <- list(...)
   parameters <- readParameters(text = '
-   tmax "" i (1, 50)
+   tmax "" i (-10, 10)
    temp "" r (0, 10)
    ')
   scenario <- list(targetRunner = target.runner.time,
