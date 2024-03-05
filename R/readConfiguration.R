@@ -55,6 +55,11 @@ readConfigurationsFile <- function(filename, parameters, debugLevel = 0L, text)
 
 fix_configurations <- function(configurations, parameters, debugLevel = 0L, filename = NULL)
 {
+  conf_error <- function(k, ...)
+    irace.error("Configuration number ", k,
+                if (is.null(filename)) "" else paste0(" from file '", filename, "'"),
+                ...)
+  
   if (debugLevel >= 2) print(configurations, digits=15)
   nbConfigurations <- nrow(configurations)
   namesParameters <- names(parameters$conditions)
@@ -112,13 +117,20 @@ fix_configurations <- function(configurations, parameters, debugLevel = 0L, file
       configurations[, currentParameter] <-
         suppressWarnings(as.numeric(configurations[, currentParameter]))
     }
+    # For integers, only accept an integer.
+    if (type == "i") {
+      # Remove NAs for this check.
+      values <- configurations[[currentParameter]]
+      values[is.na(values)] <- 0
+      if (any(as.integer(values) != values)) {
+        k <- which(as.integer(values) != values)[1L]
+        conf_error (k, " is invalid because parameter ", currentParameter,
+          " is of type integer but its value ", values[k], " is not an integer")
+        return(NULL)
+      }
+    }
   }
 
-  conf_error <- function(k, ...)
-    irace.error("Configuration number ", k,
-                if (is.null(filename)) "" else paste0(" from file '", filename, "'"),
-                ...)
-  
   # Loop over all configurations in configurations
   for (k in seq_len(nbConfigurations)) {
     # Loop over all parameters, in hierarchical order.
@@ -128,26 +140,41 @@ fix_configurations <- function(configurations, parameters, debugLevel = 0L, file
       
       # Check the status of the conditions for this parameter to know
       # whether it must be enabled.
-      if (conditionsSatisfied(parameters, configurations[k, ], 
-                              currentParameter)) {
+      if (conditionsSatisfied(parameters, configurations[k, ], currentParameter)) {
         # Check that the value is among the valid ones.
-        if (type == "i" || type == "r") {
-          currentValue <- as.numeric(currentValue)
-          lower <- paramLowerBound(currentParameter, parameters)
-          upper <- paramUpperBound(currentParameter, parameters)
+        if (parameters$isDependent[[currentParameter]]) {
+          domain <- getDependentBound(parameters, currentParameter, configurations[k, ])
+          if (is.na(domain[1L])) {
+            # Dependencies are not satisfied, so skip
+            if (is.na(currentValue)) next
+            conf_error (k, " is invalid because parameter \"", currentParameter,
+              "\" is not enabled, because its domain ",
+              sub("expression", "", deparse(parameters$domain[[currentParameter]])),
+              " depends on parameters that are not enabled, but its value is \"",
+              currentValue, "\" instead of NA")
+            return(NULL)
+          }
+          lower <- domain[1L]
+          upper <- domain[2L]
+          if (is.na(currentValue) || currentValue < lower || currentValue > upper) {
+            conf_error (k, " is invalid because the value \"",
+                        configurations[k, currentParameter],
+                        "\" for the parameter ",
+                        currentParameter, " is not within the valid range ",
+                        sub("expression", "", deparse(parameters$domain[[currentParameter]])),
+                        ", that is, [", lower,", ", upper,"]")
+            return(NULL)
+          }
+        } else if (type == "i" || type == "r") {
+          domain <- paramDomain(currentParameter, parameters)
+          lower <- domain[1L]
+          upper <- domain[2L]
           if (is.na(currentValue) || currentValue < lower || currentValue > upper) {
             conf_error (k, " is invalid because the value \"",
                         configurations[k, currentParameter],
                         "\" for the parameter ",
                         currentParameter, " is not within the valid range [",
                         lower,", ", upper,"]")
-            return(NULL)
-          }
-          # For integers, only accept an integer.
-          if (type == "i" && as.integer(currentValue) != currentValue) {
-            conf_error (k, " is invalid because parameter ", currentParameter,
-                        " is of type integer but its value ",
-                        currentValue, " is not an integer")
             return(NULL)
           }
           # type == "o" or "c"

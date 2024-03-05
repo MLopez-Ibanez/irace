@@ -73,14 +73,32 @@ p3 "" r (0, p2)
   for (i in seq_len(nrow(confs))) {
     checkConditionalAndDependency(confs[i,], parameters)
   }
+  expect_error(readConfigurationsFile(parameters = parameters, text = '
+p1  p2  p3
+0.4 0.4 0.4
+0.4 0.5 0.4
+'), "Configuration number 2 is invalid because the value")
+
+  expect_error(readConfigurationsFile(parameters = parameters, text = '
+p1  p2  p3
+0.4 0.3 0.2
+0.4 0.3 0.4
+'), "Configuration number 2 is invalid because the value")
+
+    readConfigurationsFile(parameters = parameters, text = '
+p1  p2  p3
+0.4 0.3 0.2
+0.5 NA  NA
+0.4 0.4 0.4
+')
 })
 
 test_that("checkDependencies", {
 
 target.runner <- function(experiment, scenario)
 {
-  configuration     <- experiment$configuration
-  tmax <-  configuration[["real"]]
+  configuration <- experiment$configuration
+  tmax <- configuration[["real"]]
   stopifnot(is.numeric(tmax))
   if (configuration[["mode"]] %in% c("x1", "x2"))
     temp <-  configuration[["param1"]]

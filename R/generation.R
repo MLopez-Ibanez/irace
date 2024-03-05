@@ -62,7 +62,6 @@ getDependentBound <- function(parameters, param, configuration)
                    "). This is NOT a bug in irace. Check the definition of these parameters.")
     }
   }
-
   values
 }
 

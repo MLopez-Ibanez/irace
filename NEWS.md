@@ -165,6 +165,8 @@
  
  * `ablation()` will detect if the logfile (e.g., `irace.Rdata`) is incomplete.
  
+ * `readConfigurationsFile()` now handles parameters with dependent domains.
+ 
  
 # irace 3.5
 
