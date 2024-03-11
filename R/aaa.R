@@ -17,10 +17,10 @@ update_package_version <- function()
     cat(file='./R/version.R', sep='',
 "#' A character string containing the version of `irace` including git SHA.
 #' @export
-irace.version <- '", realversion, "'\n")
+irace_version <- '", realversion, "'\n")
   }
   invisible()
 }
 update_package_version()
-# We define this tentatively to avoid: undefined exports: irace.version
-irace.version <- "unknown"
+# We define this tentatively to avoid: undefined exports: irace_version
+irace_version <- "unknown"

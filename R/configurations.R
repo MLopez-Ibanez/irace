@@ -17,7 +17,7 @@ configurations_alloc <- function(colnames, nrow, parameters)
                .WEIGHT. = NA_real_,
                parameter_type(types[x])), n)
 
-  x <- sapply(colnames, column_type, n=nrow, types = parameters$types,
+  x <- sapply(colnames, column_type, n=nrow, types = parameters[["types"]],
               simplify=FALSE, USE.NAMES=TRUE)
   setDT(x)
   x
@@ -43,7 +43,7 @@ which_satisfied <- function(configurations, condition)
 {
   # If there is no condition, do not waste time evaluating it.
   if (isTRUE(condition))
-    return(seq_len(nrow(configurations)))
+    return(seq_nrow(configurations))
   r <- eval(condition, configurations)
   # Return TRUE if TRUE, FALSE if FALSE or NA
   ## FIXME: If we byte-compile the condition, then we should incorporate the
@@ -53,3 +53,80 @@ which_satisfied <- function(configurations, condition)
   which(r)
 }
 
+#' removeConfigurationsMetaData
+#'
+#' Remove the columns with "metadata" of a data frame containing
+#' configurations. Currently, metadata corresponds to column names starting
+#' with a period.  This function should be used before printing the
+#' configurations to output only the values for the parameters of the
+#' configuration without metadata possibly useless to the user.
+#'   
+#' @template arg_configurations
+#' 
+#' @return The same data frame without "metadata".
+#'    
+#' @seealso 
+#'   [configurations_print_command()] to print the configurations as command lines.
+#'   [configurations_print()] to print the configurations as a data frame.
+#' 
+#' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
+#' @export
+removeConfigurationsMetaData <- function(configurations)
+  configurations[, !startsWith(colnames(configurations), "."), drop = FALSE]
+
+#' Print configurations as a data frame
+#' 
+#' @template arg_configurations
+#' @param metadata A Boolean specifying whether to print the metadata or
+#' not. The metadata are data for the configurations (additionally to the
+#' value of each parameter) used by \pkg{irace}.
+#' 
+#' @return None.
+#'
+#' @seealso
+#'  [configurations_print_command()] to print the configurations as command-line strings.
+#' 
+#' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
+#' @export
+configurations_print <- function(configurations, metadata = FALSE)
+{
+  if (!is.data.frame(configurations))
+    configurations <- as.data.frame(configurations, stringsAsFactors = FALSE)
+
+  rownames(configurations) <- configurations[[".ID."]]
+  if (!metadata)
+    configurations <- removeConfigurationsMetaData(configurations)
+  
+  print.data.frame(configurations, digits = 15L)
+}
+
+#' Print configurations as command-line strings.
+#' 
+#' Prints configurations after converting them into a representation for the
+#' command-line.
+#' 
+#' @template arg_configurations
+#' @template arg_parameters
+#' 
+#' @return None.
+#'
+#' @seealso
+#'  [configurations_print()] to print the configurations as a data frame.
+#' 
+#' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
+#' @export
+configurations_print_command <- function(configurations, parameters)
+{
+  if (nrow(configurations) <= 0) return(invisible())
+  ids <- as.numeric(configurations$.ID.)
+  configurations <- removeConfigurationsMetaData(configurations)
+  # Re-sort the columns
+  configurations <- configurations[, parameters$names, drop = FALSE]
+  # A better way to do this? We cannot use apply() because that coerces
+  # to a character matrix thus messing up numerical values.
+  len <- nchar(max(ids))
+  for (i in seq_nrow(configurations)) {
+    cat(sprintf("%-*d %s\n", len, ids[i],
+                buildCommandLine(configurations[i, , drop=FALSE], parameters$switches)))
+  }
+}

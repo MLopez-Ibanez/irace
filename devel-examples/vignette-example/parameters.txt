@@ -1,7 +1,5 @@
-### PARAMETER FILE FOR THE ACOTSP SOFTWARE
-
+### Parameter file for the ACOTSP software.
 # name		switch		     type	values			[conditions (using R syntax)]
-
 algorithm       "--"                 c		(as,mmas,eas,ras,acs)
 localsearch     "--localsearch "     c  	(0, 1, 2, 3)
 alpha           "--alpha "           r  	(0.00, 5.00)
@@ -13,8 +11,7 @@ q0              "--q0 "              r  	(0.0, 1.0) 		| algorithm %in% c("acs")
 dlb             "--dlb "             c  	(0, 1) 			| localsearch %in% c(1,2,3)
 rasrank         "--rasranks "        i  	(1, 100) 		| algorithm %in% c("ras")
 elitistants     "--elitistants "     i  	(1, 750) 		| algorithm %in% c("eas")
+time            "--time "            c          (5)
 
 [forbidden]
 (alpha == 0) & (beta == 0)
-
-

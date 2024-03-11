@@ -40,7 +40,7 @@ and, thus, it does not need to be tuned.}
 \item{\code{nbVariable}}{Number of variable (to be tuned) parameters.}
 \item{\code{depends}}{List of character vectors, each vector specifies
 which parameters depend on this one.}
-\item{\code{isDependent}}{Logical vector that specifies which parameter has
+\item{\code{is_dependent}}{Logical vector that specifies which parameter has
 a dependent domain.}
 \item{\code{digits}}{Integer vector that specifies the number of digits per parameter.}
 \item{\code{forbidden}}{List of expressions that define which parameter configurations are forbidden.}
@@ -90,6 +90,8 @@ produced by \code{irace}, even with the same random seed.
  
  [forbidden]
  (alpha == 0.0) & (beta == 0.0)
+ [global]
+ digits = 4
  '
  parameters <- readParameters(text=parameters.table)
  str(parameters)

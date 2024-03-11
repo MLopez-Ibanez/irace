@@ -193,7 +193,7 @@ checkIraceScenario(scenario, parameters = parameters)
 tuned_confs <- irace(scenario = scenario, parameters = parameters)
 
 ## We can print the best configurations found by irace as follows:
-configurations.print(tuned_confs)
+configurations_print(tuned_confs)
 
 ## We can evaluate the quality of the best configuration found by
 ## irace versus the default configuration of the SANN algorithm on
@@ -226,8 +226,8 @@ boxplot(list(default = default, tuned = tuned))
 }
 \seealso{
 \describe{
-\item{\code{\link[=irace.main]{irace.main()}}}{a higher-level interface to \code{\link[=irace]{irace()}}.}
-\item{\code{\link[=irace.cmdline]{irace.cmdline()}}}{a command-line interface to \code{\link[=irace]{irace()}}.}
+\item{\code{\link[=irace_main]{irace_main()}}}{a higher-level interface to \code{\link[=irace]{irace()}}.}
+\item{\code{\link[=irace_cmdline]{irace_cmdline()}}}{a command-line interface to \code{\link[=irace]{irace()}}.}
 \item{\code{\link[=readScenario]{readScenario()}}}{for reading a configuration scenario from a file.}
 \item{\code{\link[=readParameters]{readParameters()}}}{read the target algorithm parameters from a file.}
 \item{\code{\link[=defaultScenario]{defaultScenario()}}}{returns the default scenario settings of \pkg{irace}.}

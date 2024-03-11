@@ -28,14 +28,14 @@
 # $Revision$
 # =========================================================================
 
-#' irace.license
+#' irace_license
 #'
 #' A character string containing the license information of \pkg{irace}.
 #' 
 #' @export
 ## __VERSION__ below will be replaced by the version defined in R/version.R
 ## This avoids constant conflicts within this file.
-irace.license <-
+irace_license <-
 '#------------------------------------------------------------------------------
 # irace: An implementation in R of (Elitist) Iterated Racing
 # Version: __VERSION__
@@ -55,7 +55,7 @@ irace.license <-
 '
 cat_irace_license <- function()
 {
-  cat(sub("__VERSION__", irace.version, irace.license, fixed=TRUE))
+  cat(sub("__VERSION__", irace_version, irace_license, fixed=TRUE))
 }
 
 #' Higher-level interface to launch irace.
@@ -76,7 +76,7 @@ cat_irace_license <- function()
 #' @template return_irace
 #' @seealso
 #'  \describe{
-#'  \item{[irace.cmdline()]}{a command-line interface to [irace()].}
+#'  \item{[irace_cmdline()]}{a command-line interface to [irace()].}
 #'  \item{[readScenario()]}{for reading a configuration scenario from a file.}
 #'  \item{[readParameters()]}{read the target algorithm parameters from a file.}
 #'  \item{[defaultScenario()]}{returns the default scenario settings of \pkg{irace}.}
@@ -84,7 +84,7 @@ cat_irace_license <- function()
 #' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
 #' @concept running
 #' @export
-irace.main <- function(scenario, output.width = 9999L)
+irace_main <- function(scenario, output.width = 9999L)
   irace_common(scenario = scenario, simple=FALSE, output.width = output.width)
 
 #' Test configurations given in `.Rdata` file
@@ -208,7 +208,8 @@ testing_fromfile <- function(filename, scenario)
 
   irace.note("Reading parameter file '", scenario$parameterFile, "'.\n")
   parameters <- readParameters (file = scenario$parameterFile,
-                                digits = scenario$digits)
+    # AClib benchmarks use 15 digits.
+    digits = if (scenario$aclib) 15L else 4L)
   configurations <- readConfigurationsFile(filename, parameters)
   configurations <- cbind(.ID. = seq_nrow(configurations), configurations, .PARENT. = NA_integer_)
   rownames(configurations) <- configurations[[".ID."]]
@@ -220,7 +221,7 @@ testing_fromfile <- function(filename, scenario)
   }
   # To save the logs
   iraceResults <- list(scenario = scenario,
-                       irace.version = irace.version,
+                       irace_version = irace_version,
                        parameters = parameters,
                        allConfigurations = configurations)
     
@@ -231,7 +232,7 @@ testing_fromfile <- function(filename, scenario)
 testing_common <- function(configurations, scenario, parameters, iraceResults)
 {
   verbose <- !scenario$quiet
-  if (verbose) configurations.print(configurations)
+  if (verbose) configurations_print(configurations)
   iraceResults$testing <- testConfigurations(configurations, scenario, parameters)
   irace_save_logfile(iraceResults, scenario)
   irace.note ("Testing results (column number is configuration ID in no particular order):\n")
@@ -276,8 +277,8 @@ checkIraceScenario <- function(scenario, parameters)
   if (missing(parameters)) {
     irace.note("Reading parameter file '", scenario$parameterFile, "'.\n")
     parameters <- readParameters (file = scenario$parameterFile,
-                                  digits = scenario$digits,
-                                  debugLevel = 2L)
+      # AClib benchmarks use 15 digits
+      digits = if (scenario$aclib) 15L else 4L, debugLevel = 2L)
   } else if (!is.null.or.empty(scenario$parameterFile)) {
     if (!scenario$quiet) 
       cat("# checkIraceScenario(): 'parameters' provided by user. ",
@@ -313,21 +314,21 @@ init <- function()
 
 #' Launch `irace` with command-line options.
 #'
-#' Calls [irace.main()] using command-line options, maybe parsed from the
+#' Calls [irace_main()] using command-line options, maybe parsed from the
 #' command line used to invoke R.
 #' 
 #' @param argv (\code{character()}) \cr The arguments 
 #' provided on the R command line as a character vector, e.g., 
 #' \code{c("--scenario", "scenario.txt", "-p", "parameters.txt")}.
 #' Using the  default value (not providing the parameter) is the 
-#' easiest way to call \code{irace.cmdline}.
+#' easiest way to call \code{irace_cmdline}.
 #' 
 #' @details The function reads the parameters given on the command line
 #' used to invoke R, finds the name of the scenario file,
 #'  initializes the scenario from the file (with the function
 #'  \code{\link{readScenario}}) and possibly from parameters passed in
 #'  the command line. It finally starts \pkg{irace} by calling
-#'  \code{\link{irace.main}}.
+#'  \code{\link{irace_main}}.
 #'
 #' List of command-line options:
 #' ```{r echo=FALSE,comment=NA}
@@ -338,13 +339,13 @@ init <- function()
 #' @template return_irace
 #' 
 #' @seealso
-#'  [irace.main()] to start \pkg{irace} with a given scenario.
+#'  [irace_main()] to start \pkg{irace} with a given scenario.
 #' @examples
-#' irace.cmdline("--version")
+#' irace_cmdline("--version")
 #' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
 #' @concept running
 #' @export
-irace.cmdline <- function(argv = commandArgs(trailingOnly = TRUE))
+irace_cmdline <- function(argv = commandArgs(trailingOnly = TRUE))
 {
   parser <- CommandArgsParser$new(argv = argv, argsdef = .irace.params.def)
   quiet <- !is.null(parser$readArg (short = "-q", long = "--quiet")) 
@@ -396,3 +397,13 @@ irace.cmdline <- function(argv = commandArgs(trailingOnly = TRUE))
   
   irace_common(scenario = scenario, simple=FALSE)
 }
+
+#' @rdname irace_cmdline
+#' @export
+irace.cmdline <- function(argv = commandArgs(trailingOnly = TRUE))
+{
+  .Deprecated("irace.cmdline")
+  irace_cmdline(argv = argv)
+}
+
+

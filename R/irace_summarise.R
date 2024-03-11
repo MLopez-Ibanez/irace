@@ -29,7 +29,7 @@ irace_summarise <- function(iraceResults)
   }
   
   list(
-    version = iraceResults$irace.version,
+    version = iraceResults$irace_version,
     n_iterations = niterations,
     n_configurations = nrow(iraceResults$allConfigurations),
     n_initial_configurations = if (is.null(iraceResults$scenario$initConfigurations)) 0L else nrow(iraceResults$scenario$initConfigurations),

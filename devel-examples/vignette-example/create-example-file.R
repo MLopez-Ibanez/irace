@@ -131,5 +131,5 @@ save(iraceResults, file="sann.rda", version = 3L)
 
 # Create log-ablation.Rdata
 cat('**** Running ablation("irace-acotsp.Rdata")\n')
-ablation("irace-acotsp.Rdata")
+ablation("irace-acotsp.Rdata", parallel = 1)
 

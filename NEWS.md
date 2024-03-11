@@ -12,7 +12,14 @@
    and will give an error if present.  Forbidden configurations are now
    specified in the parameter space description. See the example in
    `readParameters()`.
+
+ * The scenario option `digits` has been removed and will give an error if
+   present. The number of `digits` for real-valued parameters is now specified
+   in the parameter space description. See the example in `readParameters()`.
    
+ * The default value of the scenario option `softRestartThreshold` is now
+   0.0001 and does not depend on `digits`.
+
  * The command-line executables `irace` and `ablation` (`irace.exe` and
    `ablation.exe` in Windows) will load the version of the `irace` package that
    is found in the same path where the executables are. In earlier versions,
@@ -59,6 +66,8 @@
  * Expansion of `'~'` in Windows now follows the definition of `fs::path_expand()` rather than `base::path.expand()`.
   
  * irace is now more strict in enforcing runtime bounds given with `scenario$boundMax` and will stop with an error if the `target-runner` reports a runtime larger than the given bound.
+
+ * All functions that contained a period (`'.'`) in the name have been renamed to use `'_'` instead.
  
 
 ## New features and improvements
@@ -67,6 +76,8 @@
 
  * Initial configurations are sampled using Sobol low-discrepancy sequences using `spacefillr::generate_sobol_set()`. This should provide a better initial distribution of parameter values.
  
+ * Parameter spaces can be constructed programmatically using `parametersNew()`. 
+
  * Ablation will report configurations that produced the same results, which
    indicates parameter values that have the same effect on the target algorithm,
    possibly indicating a bug in the target algorithm.
@@ -132,7 +143,6 @@
    same or different scenarios and parameters, possibly in parallel. 
                                                        (Contributed by @Saethox)
 
- 
 ## Fixes
 
  * Fix #66: when using `maxTime > 0`, irace estimates the time per run by

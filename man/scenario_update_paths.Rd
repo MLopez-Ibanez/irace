@@ -2,12 +2,9 @@
 % Please edit documentation in R/utils.R
 \name{scenario_update_paths}
 \alias{scenario_update_paths}
-\alias{scenario.update.paths}
 \title{Update filesystem paths of a scenario consistently.}
 \usage{
 scenario_update_paths(scenario, from, to, fixed = TRUE)
-
-scenario.update.paths(scenario, from, to, fixed = TRUE)
 }
 \arguments{
 \item{scenario}{(\code{list()}) \cr Data structure containing \pkg{irace}

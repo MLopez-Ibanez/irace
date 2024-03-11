@@ -33,7 +33,7 @@ cat_ablation_license <- function()
 # WARRANTY; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 #------------------------------------------------------------------------------
 '
-  cat(sub("__VERSION__", irace.version, ablation_license, fixed=TRUE))
+  cat(sub("__VERSION__", irace_version, ablation_license, fixed=TRUE))
 }
 
 #' Launch ablation with command-line options.
@@ -136,11 +136,11 @@ fixDependenciesWithReference <- function(configuration, ref_configuration, param
 {
   # Search parameters that need a value
   changed <- c()
-  for (pname in names(which(!parameters[["isFixed"]]))) {
+  for (pname in parameters$names_variable) {
     # If dependent parameter has been activated, set the value of the reference.
-    if (is.na(configuration[,pname]) && conditionsSatisfied(parameters, configuration, pname)) {
+    if (is.na(configuration[[pname]]) && conditionsSatisfied(parameters$conditions[[pname]], configuration)) {
        if (!is.null(ref_configuration)) {
-         configuration[,pname] <- ref_configuration[pname]
+         configuration[[pname]] <- ref_configuration[[pname]]
        } 
        changed <- c(changed, pname)
        # MANUEL: Why do we need to recurse here?
@@ -158,28 +158,28 @@ fixDependenciesWithReference <- function(configuration, ref_configuration, param
 generateAblation <- function(initial_configuration, final_configuration,
                              parameters, param_names = NULL)
 { 
+  # Only change variable parameters
   if (is.null(param_names))
-    param_names <- parameters[["names"]]
-
-  # Only change non-fixed
-  param_names <- param_names[!parameters[["isFixed"]][param_names]]
+    param_names <- parameters$names_variable
+  else 
+    param_names <- setdiff(param_names, parameters$names_fixed)
   
   configurations <- NULL
   changed_params <- list()
   for (pname in param_names) {
     # Check if parameter is active.
-    if (!conditionsSatisfied(parameters, initial_configuration, pname)) next
+    if (!conditionsSatisfied(parameters$conditions[[pname]], initial_configuration)) next
     # Check value is different in the initial and final configuration and if
     # so, change the value.
-    if (initial_configuration[, pname] == final_configuration[, pname]) next
+    if (initial_configuration[[pname]] == final_configuration[[pname]]) next
     new_configuration <- initial_configuration
-    new_configuration[, pname]<- final_configuration[,pname]
+    new_configuration[[pname]] <- final_configuration[[pname]]
     # Set newly activated parameters if needed.
     aux <- fixDependenciesWithReference(new_configuration, final_configuration, parameters)
     new_configuration <- aux[["configuration"]] 
     changed_params[[length(changed_params) + 1L]] <- c(pname, aux[["changed"]])
     new_configuration[[".PARENT."]] <- initial_configuration[[".ID."]]
-    configurations <- rbind.data.frame(configurations, new_configuration) 
+    configurations <- rbind.data.frame(configurations, new_configuration)
   }
   rownames(configurations) <- NULL
   list(configurations=configurations, changed_params=changed_params)
@@ -334,10 +334,10 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
   irace.note ("Starting ablation from ", src, " to ", target, "\n# Seed: ", seed, "\n")
   cat("# Source configuration (row number is ID):\n")
   src_configuration <- iraceResults$allConfigurations[src, , drop = FALSE]
-  configurations.print(src_configuration)
+  configurations_print(src_configuration)
   cat("# Target configuration (row number is ID):\n")
   target_configuration <- iraceResults$allConfigurations[target, , drop = FALSE]
-  configurations.print(target_configuration)
+  configurations_print(target_configuration)
 
   # Select the parameters used for ablation
   if (is.null(ab_params)) {
@@ -401,19 +401,19 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
     ## FIXME: These should be generated with respect to the logFile to make
     ## sure we don't have duplicate IDs.
     aconfigurations[[".ID."]] <- max(0L, all_configurations[[".ID."]]) + seq_nrow(aconfigurations)
-    configurations.print(aconfigurations, metadata = FALSE)
+    configurations_print(aconfigurations, metadata = FALSE)
     all_configurations <- rbind(all_configurations, aconfigurations)
     
     # Set variables for the racing procedure
     if (scenario$capping) {
       # For using capping we must set elite data
-      elite.data <- list(experiments = results[,best_configuration[[".ID."]], drop=FALSE])
+      elite_data <- list(experiments = results[,best_configuration[[".ID."]], drop=FALSE])
       race_conf <-  rbind(best_configuration, aconfigurations)
       .irace$next.instance <- nrow(.irace$instancesList) + 1L
     } else {
       #LESLIE: for now we apply the non-elitis irace when type=="racing"
       # we should define what is the standard
-      elite.data <- NULL
+      elite_data <- NULL
       race_conf <-  aconfigurations
       scenario$elitist <- FALSE
       .irace$next.instance <- 1L
@@ -426,12 +426,12 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
     # FIXME: what about blockSize?
     race.output <- elitist_race(maxExp = nrow(aconfigurations) * nrow(.irace$instancesList),
                                 minSurvival = 1L,
-                                elite.data = elite.data,
+                                elite.data = elite_data,
                                 configurations = race_conf,
                                 parameters = parameters,
                                 scenario = scenario,
                                 elitistNewInstances = 0L)
-    results <- merge.matrix (results, race.output$experiments)
+    results <- merge_matrix(results, race.output$experiments)
 
     # Save log
     ablog <- save_ablog(complete = FALSE)
@@ -478,7 +478,7 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
   ## ever.
   best_configuration <- all_configurations[trajectory[best_id],,drop=FALSE]
   irace.note("Final best configuration:\n")
-  configurations.print(best_configuration)
+  configurations_print(best_configuration)
 
   # Check for duplicated results:
   report_duplicated_results(results, all_configurations)

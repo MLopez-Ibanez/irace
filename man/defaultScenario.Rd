@@ -41,7 +41,7 @@ The scenario list contains the following elements:
 \describe{
 \item{\code{sampleInstances}}{Randomly sample the training instances or use them in the order given. (Default: \code{1})}
 \item{\code{softRestart}}{Enable/disable the soft restart strategy that avoids premature convergence of the probabilistic model. (Default: \code{1})}
-\item{\code{softRestartThreshold}}{Soft restart threshold value for numerical parameters. If \code{NA}, \code{NULL} or \code{""}, it is computed as \code{10^-digits}. (Default: \code{""})}
+\item{\code{softRestartThreshold}}{Soft restart threshold value for numerical parameters. (Default: \code{1e-04})}
 \item{\code{nbIterations}}{Maximum number of iterations. (Default: \code{0})}
 \item{\code{nbExperimentsPerIteration}}{Number of runs of the target algorithm per iteration. (Default: \code{0})}
 \item{\code{minNbSurvival}}{Minimum number of configurations needed to continue the execution of each race (iteration). (Default: \code{0})}
@@ -51,7 +51,6 @@ The scenario list contains the following elements:
 \item Target algorithm parameters:
 \describe{
 \item{\code{parameterFile}}{File that contains the description of the parameters of the target algorithm. (Default: \code{"./parameters.txt"})}
-\item{\code{digits}}{Maximum number of decimal places that are significant for numerical (real) parameters. (Default: \code{4})}
 }
 \item Target algorithm execution:
 \describe{

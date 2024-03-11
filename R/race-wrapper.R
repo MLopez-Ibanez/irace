@@ -45,9 +45,9 @@ buildCommandLine <- function(values, switches)
 {
   irace.assert(length(values) == length(switches))
   values <- as.list(values)
-  switches <- switches[!is.na(values)]
-  values <- values[!is.na(values)]
-  values <- format.default(values, digits=15, scientific=FALSE)
+  sel <- !is.na(values)
+  switches <- switches[sel]
+  values <- format.default(values[sel], digits=15L, scientific=FALSE)
   paste0(switches, values, collapse=" ")
 }
 
@@ -113,7 +113,7 @@ check_output_target_evaluator <- function (output, scenario, target.runner.call 
   if (is.null(err.msg)) {
     if (is.null(output$cost)) {
       err.msg <- "The output of targetEvaluator must contain 'cost'!"
-    } else if (is.na.nowarn(output$cost)) {
+    } else if (is_na_nowarn(output$cost)) {
       err.msg <- "The output of targetEvaluator is not numeric!"
     }
     if (scenario$batchmode != 0 && scenario$maxTime > 0) {
@@ -124,7 +124,7 @@ check_output_target_evaluator <- function (output, scenario, target.runner.call 
     if (is.null(output$time)) {
       output$time <- NA
     } else {
-      if (is.na.nowarn(output$time)) {
+      if (is_na_nowarn(output$time)) {
         err.msg <- "The time returned by targetEvaluator is not numeric!"
       } else if (is.infinite(output$time)) {
         err.msg <- "The time returned by targetEvaluator is not finite!"
@@ -156,9 +156,9 @@ exec.target.evaluator <- function (experiment, num.configurations, all.conf.id,
   check_output_target_evaluator(output, scenario, target.runner.call = target.runner.call, bound = experiment$bound)
 }
 
-#' target.evaluator.default
+#' target_evaluator_default
 #'
-#' `target.evaluator.default` is the default `targetEvaluator` function that is
+#' `target_evaluator_default` is the default `targetEvaluator` function that is
 #'  invoked if `targetEvaluator` is a string (by default
 #'  `targetEvaluator` is `NULL` and this function is not invoked). You can use it as
 #'  an advanced example of how to create your own `targetEvaluator` function.
@@ -201,7 +201,7 @@ exec.target.evaluator <- function (experiment, num.configurations, all.conf.id,
 #' 
 #' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
 #' @export
-target.evaluator.default <- function(experiment, num.configurations, all.conf.id,
+target_evaluator_default <- function(experiment, num.configurations, all.conf.id,
                                      scenario, target.runner.call)
 {
   configuration.id <- experiment$id.configuration
@@ -262,7 +262,7 @@ check_output_target_runner <- function(output, scenario, bound = NULL)
   err.msg <- output$error
   if (is.null(err.msg)) {
     if (!is.null (output$cost)) {
-      if (is.na.or.empty(output$cost)) {
+      if (is_na_or_empty(output$cost)) {
         err.msg <- "The cost returned by targetRunner is not numeric!"
       }
     }
@@ -488,7 +488,7 @@ run_target_runner <- function(experiment, scenario)
 #' 
 #' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
 #' @export
-target.runner.default <- function(experiment, scenario)
+target_runner_default <- function(experiment, scenario)
 {
   res <- run_target_runner(experiment, scenario)
   cmd <- res$cmd
