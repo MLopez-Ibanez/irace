@@ -300,11 +300,11 @@ the FAQ section in the <a href="https://cran.r-project.org/package=irace/vignett
 <span class="r-in"><span><span class="co">## We check that the scenario is valid. This will also try to execute</span></span></span>
 <span class="r-in"><span><span class="co">## target_runner.</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="checkIraceScenario.html">checkIraceScenario</a></span><span class="op">(</span><span class="va">scenario</span>, parameters <span class="op">=</span> <span class="va">parameters</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2024-03-05 12:49:27 UTC: Checking scenario</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2024-03-11 09:26:10 UTC: Checking scenario</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ## irace scenario:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> scenarioFile = "./scenario.txt"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> execDir = "/tmp/RtmpOnjoM9/file1cff4cb2addb/reference"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> parameterFile = "/tmp/RtmpOnjoM9/file1cff4cb2addb/reference/parameters.txt"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> execDir = "/tmp/RtmpkRbMCJ/file1cf33c1d9560/reference"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> parameterFile = "/tmp/RtmpkRbMCJ/file1cf33c1d9560/reference/parameters.txt"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> initConfigurations = NULL</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> configurationsFile = ""</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> logFile = ""</span>
@@ -366,8 +366,8 @@ the FAQ section in the <a href="https://cran.r-project.org/package=irace/vignett
 <span class="r-out co"><span class="r-pr">#&gt;</span> mu = 5L</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> confidence = 0.95</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ## end of irace scenario</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # checkIraceScenario(): 'parameters' provided by user. Parameter file '/tmp/RtmpOnjoM9/file1cff4cb2addb/reference/parameters.txt' will be ignored</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2024-03-05 12:49:27 UTC: Checking target runner.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # checkIraceScenario(): 'parameters' provided by user. Parameter file '/tmp/RtmpkRbMCJ/file1cf33c1d9560/reference/parameters.txt' will be ignored</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2024-03-11 09:26:10 UTC: Checking target runner.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # Executing targetRunner ( 2 times)...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # targetRunner returned:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [[1]]</span>
@@ -386,7 +386,7 @@ the FAQ section in the <a href="https://cran.r-project.org/package=irace/vignett
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2024-03-05 12:49:27 UTC: Check successful.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2024-03-11 09:26:10 UTC: Check successful.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># \donttest{</span></span></span>
@@ -394,7 +394,7 @@ the FAQ section in the <a href="https://cran.r-project.org/package=irace/vignett
 <span class="r-in"><span><span class="co">## function. The function will print information about its</span></span></span>
 <span class="r-in"><span><span class="co">## progress. This may require a few minutes, so it is not run by default.</span></span></span>
 <span class="r-in"><span><span class="va">tuned_confs</span> <span class="op">&lt;-</span> <span class="fu">irace</span><span class="op">(</span>scenario <span class="op">=</span> <span class="va">scenario</span>, parameters <span class="op">=</span> <span class="va">parameters</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2024-03-05 12:49:27 UTC: Initialization</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2024-03-11 09:26:10 UTC: Initialization</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # Elitist race</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # Elitist new instances: 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # Elitist limit: 2</span>
@@ -407,7 +407,7 @@ the FAQ section in the <a href="https://cran.r-project.org/package=irace/vignett
 <span class="r-out co"><span class="r-pr">#&gt;</span> # mu: 5</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # deterministic: FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2024-03-05 12:49:27 UTC: Iteration 1 of 3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2024-03-11 09:26:10 UTC: Iteration 1 of 3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # experimentsUsedSoFar: 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # remainingBudget: 500</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # currentBudget: 166</span>
@@ -435,12 +435,12 @@ the FAQ section in the <a href="https://cran.r-project.org/package=irace/vignett
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .ID. tmax   temp .PARENT.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 7    7   31 84.301       NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2024-03-05 12:49:28 UTC: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2024-03-11 09:26:11 UTC: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    tmax    temp</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 7    31 84.3010</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 14    2 58.5176</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 18    2 87.2418</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2024-03-05 12:49:28 UTC: Iteration 2 of 3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2024-03-11 09:26:11 UTC: Iteration 2 of 3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # experimentsUsedSoFar: 152</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # remainingBudget: 348</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # currentBudget: 174</span>
@@ -469,12 +469,12 @@ the FAQ section in the <a href="https://cran.r-project.org/package=irace/vignett
 <span class="r-out co"><span class="r-pr">#&gt;</span>    .ID. tmax    temp .PARENT.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 18   18    2 87.2418       NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2024-03-05 12:49:29 UTC: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2024-03-11 09:26:12 UTC: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    tmax    temp</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 18    2 87.2418</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 7    31 84.3010</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 48   28 73.9659</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2024-03-05 12:49:29 UTC: Iteration 3 of 3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2024-03-11 09:26:12 UTC: Iteration 3 of 3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # experimentsUsedSoFar: 323</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # remainingBudget: 177</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # currentBudget: 177</span>
@@ -504,12 +504,12 @@ the FAQ section in the <a href="https://cran.r-project.org/package=irace/vignett
 <span class="r-out co"><span class="r-pr">#&gt;</span>    .ID. tmax    temp .PARENT.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 18   18    2 87.2418       NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2024-03-05 12:49:30 UTC: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2024-03-11 09:26:13 UTC: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    tmax    temp</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 18    2 87.2418</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 48   28 73.9659</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 7    31 84.3010</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2024-03-05 12:49:30 UTC: Iteration 4 of 4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2024-03-11 09:26:13 UTC: Iteration 4 of 4</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # experimentsUsedSoFar: 433</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # remainingBudget: 67</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # currentBudget: 67</span>
@@ -540,12 +540,12 @@ the FAQ section in the <a href="https://cran.r-project.org/package=irace/vignett
 <span class="r-out co"><span class="r-pr">#&gt;</span>    .ID. tmax    temp .PARENT.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 73   73    2 86.2498       18</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2024-03-05 12:49:31 UTC: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2024-03-11 09:26:13 UTC: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    tmax    temp</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 73    2 86.2498</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 7    31 84.3010</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 18    2 87.2418</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # 2024-03-05 12:49:31 UTC: Stopped because there is not enough budget left to race more than the minimum (3).</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # 2024-03-11 09:26:13 UTC: Stopped because there is not enough budget left to race more than the minimum (3).</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # You may either increase the budget or set 'minNbSurvival' to a lower value.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # Iteration: 5</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # nbIterations: 5</span>
@@ -555,7 +555,7 @@ the FAQ section in the <a href="https://cran.r-project.org/package=irace/vignett
 <span class="r-out co"><span class="r-pr">#&gt;</span> # currentBudget: 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # number of elites: 3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> # nbConfigurations: 2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> # Total CPU user time: 3.486, CPU sys time: 0, Wall-clock time: 3.486</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> # Total CPU user time: 3.426, CPU sys time: 0, Wall-clock time: 3.426</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## We can print the best configurations found by irace as follows:</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="configurations.print.html">configurations.print</a></span><span class="op">(</span><span class="va">tuned_confs</span><span class="op">)</span></span></span>
