@@ -77,8 +77,8 @@ Enable/disable the sampling of the training instances. If the option \parameter{
  \defparameter{softRestart}{soft-restart}{1}%
   Enable/disable the soft-restart strategy that avoids premature convergence of the probabilistic model. When a sampled configuration is \emph{similar} to its parent configuration, the probabilistic model of these configurations is soft restarted. The soft-restart mechanism is explained in the \irace paper~\citep{LopDubPerStuBir2016irace}. The similarity of categorical and ordinal parameters is given by the hamming distance, and the option \parameter{softRestartThreshold} defines the similarity of numerical parameters.
 
- \defparameter{softRestartThreshold}{soft-restart-threshold}{}%
-Soft restart threshold value for numerical parameters. By default, it is computed as $10^{-digits}$, where \parameter{digits} corresponds to the \irace option explained in this section.
+ \defparameter{softRestartThreshold}{soft-restart-threshold}{1e-04}%
+Soft restart threshold value for numerical parameters.
 
  \defparameter{nbIterations}{iterations}{0}%
 Maximum number of iterations to be executed. Each iteration involves the generation of new configurations and the use of racing to select the best configurations. By default (with 0), \irace calculates a \emph{minimum} number of iterations as $\Niter = \lfloor 2 + \log_{2}\Nparam \rfloor$, where $\Nparam$ is the number of non-fixed parameters to be tuned. Setting this parameter may make \irace stop sooner than it should without using all the available budget. We recommend to use the default value.
@@ -103,9 +103,6 @@ We recommend to use the default value.
 \begin{description}
  \defparameter[p]{parameterFile}{parameter-file}{./parameters.txt}%
 File that contains the description of the parameters of the target algorithm. See \autoref{sec:target parameters}.
-
- \defparameter{digits}{digits}{4}%
-Maximum number of decimal places that are significant for numerical (real) parameters.
 
 \end{description}
 

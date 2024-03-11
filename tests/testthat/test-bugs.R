@@ -32,7 +32,6 @@ test_that("target.runner as string (global)", {
 
 
 test_that("ordered assert", {
-  library(irace)
   parameters <- readParameters(text='
 x "" o (a,b,c,d)
 ')
@@ -40,7 +39,7 @@ x "" o (a,b,c,d)
   confs$.ID. <- 1L
   model <- irace:::initialiseModel(parameters, confs)
   confs <- irace:::sampleModel(parameters, confs, model, 1)
-  expect_true(confs$x %in% parameters$domain$x)
+  expect_true(confs$x %in% parameters[["domains"]][["x"]])
 })
 
 test_that("non-normal", {

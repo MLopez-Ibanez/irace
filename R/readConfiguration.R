@@ -60,15 +60,15 @@ fix_configurations <- function(configurations, parameters, debugLevel = 0L, file
                 if (is.null(filename)) "" else paste0(" from file '", filename, "'"),
                 ...)
   
-  if (debugLevel >= 2) print(configurations, digits=15)
+  if (debugLevel >= 2L) print(configurations, digits=15L)
   nbConfigurations <- nrow(configurations)
-  namesParameters <- names(parameters$conditions)
+  namesParameters <- parameters[["names"]]
   # This ignores fixed parameters unless they are given with a different value.
   if (ncol(configurations) != length(namesParameters)
-      || !setequal (colnames(configurations), namesParameters)) {
+    || !setequal(colnames(configurations), namesParameters)) {
     # Column names must match a parameter, including fixed ones.
-    missing <- setdiff (colnames(configurations), namesParameters)
-    if (length(missing) > 0) {
+    missing <- setdiff(colnames(configurations), namesParameters)
+    if (length(missing) > 0L) {
       if (is.null(filename)) {
         irace.error("The parameter names (",
                     strlimit(paste(missing, collapse=", ")),
@@ -84,7 +84,7 @@ fix_configurations <- function(configurations, parameters, debugLevel = 0L, file
       return(NULL)
     }
     # All non-fixed parameters must appear in column names.
-    varParameters <- parameters$names[!parameters$isFixed]
+    varParameters <- parameters$names_variable
     missing <- setdiff (varParameters, colnames(configurations))
     if (length(missing) > 0) {
       if (is.null(filename)) {
@@ -100,25 +100,20 @@ fix_configurations <- function(configurations, parameters, debugLevel = 0L, file
     }
     # Add any missing fixed parameters.
     missing <- setdiff (namesParameters, colnames(configurations))
-    if (length(missing) > 0) {
+    if (length(missing) > 0L) {
       irace.assert (all(parameters$isFixed[missing]))
-      tmp <- lapply(missing, get_fixed_value, parameters = parameters)
-      names(tmp) <- missing
-      configurations <- cbind.data.frame(configurations, tmp,
-                                         stringsAsFactors = FALSE)
+      configurations <- cbind.data.frame(configurations, parameters$domains[missing],
+        stringsAsFactors = FALSE)
     }
   }
   # Reorder columns.
   configurations <- configurations[, namesParameters, drop = FALSE]
   # Fix up numeric columns.
-  for (currentParameter in namesParameters) {
-    type <- parameters$types[[currentParameter]]
-    if (type == "i" || type == "r") {
-      configurations[, currentParameter] <-
-        suppressWarnings(as.numeric(configurations[, currentParameter]))
-    }
+  for (currentParameter in parameters$names_numeric) {
+    configurations[[currentParameter]] <-
+      suppressWarnings(as.numeric(configurations[[currentParameter]]))
     # For integers, only accept an integer.
-    if (type == "i") {
+    if (parameters$types[[currentParameter]] == "i") {
       # Remove NAs for this check.
       values <- configurations[[currentParameter]]
       values[is.na(values)] <- 0
@@ -131,67 +126,66 @@ fix_configurations <- function(configurations, parameters, debugLevel = 0L, file
     }
   }
 
-  # Loop over all configurations in configurations
-  for (k in seq_len(nbConfigurations)) {
-    # Loop over all parameters, in hierarchical order.
-    for (currentParameter in namesParameters) {
-      currentValue <- configurations[k, currentParameter]
-      type <- parameters$types[[currentParameter]]
-      
-      # Check the status of the conditions for this parameter to know
-      # whether it must be enabled.
-      if (conditionsSatisfied(parameters, configurations[k, ], currentParameter)) {
+  # Loop over all parameters.
+  for (param in parameters$get()) {
+    pname <- param[["name"]]
+    type <- param[["type"]]
+    domain <- param[["domain"]]
+    is_dep_param <- param[["is_dependent"]]
+    condition <- param[["condition"]]
+    # Loop over all configurations in configurations.
+    # FIXME: Vectorize this loop
+    for (k in seq_len(nbConfigurations)) {
+      currentValue <- configurations[k, pname]
+      # Check the status of the conditions for this parameter to know whether
+      # it must be enabled.
+      if (conditionsSatisfied(condition, configurations[k, ])) {
         # Check that the value is among the valid ones.
-        if (parameters$isDependent[[currentParameter]]) {
-          domain <- getDependentBound(parameters, currentParameter, configurations[k, ])
-          if (is.na(domain[1L])) {
+        if (is_dep_param) {
+          dep_domain <- getDependentBound(param, configurations[k, ])
+          if (is.na(dep_domain[1L])) {
             # Dependencies are not satisfied, so skip
             if (is.na(currentValue)) next
-            conf_error (k, " is invalid because parameter \"", currentParameter,
+            conf_error (k, " is invalid because parameter \"", pname,
               "\" is not enabled, because its domain ",
-              sub("expression", "", deparse(parameters$domain[[currentParameter]])),
+              sub("expression", "", deparse(domain)),
               " depends on parameters that are not enabled, but its value is \"",
               currentValue, "\" instead of NA")
             return(NULL)
           }
-          lower <- domain[1L]
-          upper <- domain[2L]
+          lower <- dep_domain[1L]
+          upper <- dep_domain[2L]
           if (is.na(currentValue) || currentValue < lower || currentValue > upper) {
             conf_error (k, " is invalid because the value \"",
-                        configurations[k, currentParameter],
-                        "\" for the parameter ",
-                        currentParameter, " is not within the valid range ",
-                        sub("expression", "", deparse(parameters$domain[[currentParameter]])),
+                        configurations[k, pname], "\" for the parameter ",
+                        pname, " is not within the valid range ",
+                        sub("expression", "", deparse(domain)),
                         ", that is, [", lower,", ", upper,"]")
             return(NULL)
           }
         } else if (type == "i" || type == "r") {
-          domain <- paramDomain(currentParameter, parameters)
-          lower <- domain[1L]
-          upper <- domain[2L]
+          currentValue <- as.numeric(currentValue)
+          lower <- domain[[1L]]
+          upper <- domain[[2L]]
           if (is.na(currentValue) || currentValue < lower || currentValue > upper) {
             conf_error (k, " is invalid because the value \"",
-                        configurations[k, currentParameter],
-                        "\" for the parameter ",
-                        currentParameter, " is not within the valid range [",
+                        configurations[k, pname], "\" for the parameter ",
+                        pname, " is not within the valid range [",
                         lower,", ", upper,"]")
             return(NULL)
           }
           # type == "o" or "c"
-        } else if (currentValue %not_in% paramDomain(currentParameter, parameters)) {
+        } else if (currentValue %not_in% domain) {
           conf_error (k, " is invalid because the value \"",
                       currentValue, "\" for the parameter \"",
-                      currentParameter, "\" is not among the valid values: (\"",
-                      paste(paramDomain(currentParameter, parameters),
-                            collapse="\", \""),
-                      "\")")
+                      pname, "\" is not among the valid values: (\"",
+                      paste0(domain, collapse="\", \""), "\")")
           return(NULL)
         }
       } else if (!is.na(currentValue)) {
-        conf_error (k, " is invalid because parameter \"", currentParameter,
+        conf_error (k, " is invalid because parameter \"", pname,
                     "\" is not enabled because of condition \"",
-                    parameters$conditions[[currentParameter]],
-                    "\" but its value is \"",
+                    param[["condition"]], "\" but its value is \"",
                     currentValue, "\" instead of NA")
         return(NULL)
       }
@@ -229,8 +223,8 @@ compile_forbidden <- function(x)
 {
   if (is.null(x) || is.bytecode(x)) return(x)
   # If we are given an expression, it must be a single one.
-  irace.assert(is.language(x) && (!is.expression(x) || length(x) == 1))
-  if (is.expression(x)) x <- x[[1]]
+  irace.assert(is.language(x) && (!is.expression(x) || length(x) == 1L))
+  if (is.expression(x)) x <- x[[1L]]
   # When a is NA and we check a == 5, we would get NA, which is
   # always FALSE, when we actually want to be TRUE, so we test
   # is.na() first below.
@@ -243,22 +237,21 @@ compile_forbidden <- function(x)
   expr
 }
 
-buildForbiddenExp <- function(configurations, parameters)
+buildForbiddenExp <- function(configurations)
 {
-  if (nrow(configurations) < 1) return(NULL)
-
-  pnames <- parameters$names
+  if (nrow(configurations) == 0L) return(NULL)
+  pnames <- colnames(configurations)
   lines <- c()
   # We cannot use apply() because it converts numeric to character.
   for (k in seq_nrow(configurations)) {
-    values <- as.list(configurations[k, pnames])
+    values <- as.list(configurations[k, ])
     has.value <- !is.na(values)
     values <- lapply(values[has.value], function(x) deparse(substitute(x, list(x=x))))
     lines <- c(lines,
                paste0("(", pnames[has.value]," == ", values, ")", collapse = "&"))
   }
   exps <- parse(text = lines)
-  sapply(exps, compile_forbidden)
+  lapply(exps, compile_forbidden)
 }
 
 #' Reads from a file the scenario settings to be used by \pkg{irace}. 
@@ -394,7 +387,7 @@ setup_test_instances <- function(scenario)
   if (!is.null(testInstances)) {
     if (!is.null(dim(testInstances))) {
       if (length(dim(testInstances)) == 1L ||
-          (length(dim(testInstances)) == 2L && dim(testInstances)[1] == 1L)) {
+          (length(dim(testInstances)) == 2L && dim(testInstances)[1L] == 1L)) {
         # Remove useless dimensions
         testInstances <- c(testInstances)
       } else {
@@ -546,7 +539,7 @@ checkScenario <- function(scenario = defaultScenario())
     if (is.character(scenario$targetRunner)) {
       scenario$targetRunner <- path_rel2abs(scenario$targetRunner)
       .irace$target.runner <- if (scenario$aclib)
-                                target.runner.aclib else target.runner.default
+                                target.runner.aclib else target_runner_default
       if (is.null.or.empty(scenario$targetRunnerLauncher)) {
         file.check (scenario$targetRunner, executable = TRUE,
                     text = paste0("target runner ", quote.param("targetRunner")))
@@ -577,7 +570,7 @@ checkScenario <- function(scenario = defaultScenario())
     scenario$targetEvaluator <- path_rel2abs(scenario$targetEvaluator)
     file.check (scenario$targetEvaluator, executable = TRUE,
                 text = "target evaluator")
-    .irace$target.evaluator <- target.evaluator.default
+    .irace$target.evaluator <- target_evaluator_default
   } else {
     irace.error(quote.param('targetEvaluator'), " must be a function or an executable program")
   }
@@ -676,14 +669,8 @@ checkScenario <- function(scenario = defaultScenario())
                 quote.param("blockSize"), ".")
   }
   
-  scenario$elitistNewInstances <- round.to.next.multiple(scenario$elitistNewInstances, scenario$blockSize)
+  scenario$elitistNewInstances <- round_to_next_multiple(scenario$elitistNewInstances, scenario$blockSize)
     
-  # AClib benchmarks use 15 digits
-  if (scenario$aclib)
-    scenario$digits <- 15L
-  else if (scenario$digits > 15 || scenario$digits <= 0)
-    irace.error (quote.param ("digits"), " must be within [1,15].")
-  
   # Real [0, 1] control parameters
   realParams <- .irace.params.def[.irace.params.def[, "type"] == "r", "name"]
   for (param in realParams) {
@@ -721,9 +708,6 @@ checkScenario <- function(scenario = defaultScenario())
 
   if (scenario$maxTime > 0 && !scenario$elitist)
     irace.error(quote.param("maxTime"), " requires using 'elitist=1'")
-  
-  if (is.na(scenario$softRestartThreshold))
-    scenario$softRestartThreshold <- 10^(-scenario$digits)
   
   if (scenario$deterministic &&
       scenario$firstTest * scenario$blockSize > length(scenario$instances)) {
@@ -848,7 +832,7 @@ printScenario <- function(scenario)
 #'    \describe{
 #'      \item{`sampleInstances`}{Randomly sample the training instances or use them in the order given. (Default: `1`)}
 #'      \item{`softRestart`}{Enable/disable the soft restart strategy that avoids premature convergence of the probabilistic model. (Default: `1`)}
-#'      \item{`softRestartThreshold`}{Soft restart threshold value for numerical parameters. If \code{NA}, \code{NULL} or \code{""}, it is computed as \code{10^-digits}. (Default: `""`)}
+#'      \item{`softRestartThreshold`}{Soft restart threshold value for numerical parameters. (Default: `1e-04`)}
 #'      \item{`nbIterations`}{Maximum number of iterations. (Default: `0`)}
 #'      \item{`nbExperimentsPerIteration`}{Number of runs of the target algorithm per iteration. (Default: `0`)}
 #'      \item{`minNbSurvival`}{Minimum number of configurations needed to continue the execution of each race (iteration). (Default: `0`)}
@@ -858,7 +842,6 @@ printScenario <- function(scenario)
 #'  \item Target algorithm parameters:
 #'    \describe{
 #'      \item{`parameterFile`}{File that contains the description of the parameters of the target algorithm. (Default: `"./parameters.txt"`)}
-#'      \item{`digits`}{Maximum number of decimal places that are significant for numerical (real) parameters. (Default: `4`)}
 #'    }
 #'  \item Target algorithm execution:
 #'    \describe{
@@ -1064,5 +1047,3 @@ checkTargetFiles <- function(scenario, parameters)
   }
   result
 }
-
-

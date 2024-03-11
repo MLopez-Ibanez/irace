@@ -23,10 +23,6 @@ maxExperiments = 5000
 ## all initial configurations are randomly generated.
 # configurationsFile = ""
 
-## Indicates the number of decimal places to be considered for the
-## real parameters.
-digits = 2
-
 ## A value of 0 silences all debug messages. Higher values provide
 ## more verbose debug messages.
 # debugLevel = 0

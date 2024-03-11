@@ -38,7 +38,6 @@ createExperimentList <- function(configurations, parameters,
   n_configurations <- nrow(configurations)
   n_instances <- length(instances)
   pnames <- parameters$names
-  switches <- parameters$switches[pnames]
   configurations_id <- configurations[[".ID."]]
   configurations <- as.list(configurations[, pnames, drop=FALSE])
   # FIXME: How to do this faster?
@@ -54,7 +53,7 @@ createExperimentList <- function(configurations, parameters,
     irace.assert(length(bounds) == n_configurations)
     dots$bound <- rep.int(bounds, n_instances)
   }
-  dots$switches <- list(switches)
+  dots$switches <- list(parameters$switches)
   .mapply(list, dots, MoreArgs = NULL)
 }
 
@@ -71,7 +70,7 @@ race.wrapper <- function(configurations, instance.idx, bounds = NULL,
                          # which.alive nor which.exe
                          which.alive, which.exe, parameters, scenario)
 {
-  irace.assert (parameters$nbVariable > 0)
+  irace.assert (parameters$nbVariable > 0L)
   irace.assert (length(parameters$names) == parameters$nbParameters)
   # Experiment list to execute
   experiments <- createExperimentList(configurations, parameters = parameters,
@@ -257,7 +256,7 @@ no_elitrace.init.instances <- function(deterministic, max_instances)
 {
   # if next.instance == 1 then this is the first iteration.
   # If deterministic consider all (do not resample).
-  if (.irace$next.instance == 1 || deterministic) return(seq_len(max_instances))
+  if (.irace$next.instance == 1L || deterministic) return(seq_len(max_instances))
   irace.assert(.irace$next.instance < max_instances)
   .irace$next.instance : max_instances
 }
@@ -270,7 +269,7 @@ elitrace.init.instances <- function(race.env, deterministic, max_instances, samp
   new.instances <- NULL
   last.new <- next_instance - 1L + race.env$elitistNewInstances
   # Do we need to add new instances?
-  if (race.env$elitistNewInstances > 0) {
+  if (race.env$elitistNewInstances > 0L) {
     if (last.new > max_instances) {
       # This may happen if the scenario is deterministic and we would need
       # more instances than what we have.
@@ -387,7 +386,7 @@ race_print_footer <- function(bestconf, mean.best, break.msg, debug.level, cappi
       "    mean value: ",
       sprintf(.irace.format.perf, mean.best), "\n",
       "Description of the best-so-far configuration:\n")
-  configurations.print(bestconf, metadata = TRUE)
+  configurations_print(bestconf, metadata = TRUE)
   cat("\n")
 }
 
@@ -568,7 +567,7 @@ overall_ranks <- function(x, test)
 }
 
 # Remove one elite count from every configuration not executed.
-update.is.elite <- function(is.elite, which.exe)
+update_is_elite <- function(is.elite, which.exe)
 {
   which.notexecuted <- setdiff(which(is.elite > 0), which.exe) 
   is.elite[which.notexecuted] <- is.elite[which.notexecuted] - 1L
@@ -576,7 +575,7 @@ update.is.elite <- function(is.elite, which.exe)
   is.elite
 }
 
-update.elite.safe <- function(Results, is.elite)
+update_elite_safe <- function(Results, is.elite)
 {
   elites <- is.elite > 0L
   if (!any(elites)) return(0L) # All elites rejected.
@@ -788,7 +787,7 @@ elitist_race <- function(maxExp = 0L,
                            collapse = ", ") , "\n")
         alive[is.rejected] <- FALSE
         # Calculate the maximum instance that has any non-NA value.
-        # FIXME: Use update.elite.safe()
+        # FIXME: Use update_elite_safe()
         if (n.elite > 0L)
           elite.safe <- max(which(rowAnys(!is.na(Results[, which.elites, drop=FALSE]))))
         else
@@ -833,7 +832,7 @@ elitist_race <- function(maxExp = 0L,
       # Execute everything that is alive and not yet executed.
       which.exe <- which(alive & is.na(Results[current.task, ]))
       if (length(which.exe) == 0L) {
-        is.elite <- update.is.elite(is.elite, which.exe)
+        is.elite <- update_is_elite(is.elite, which.exe)
         # LESLIE: This is the case in which there are only elite configurations alive
         # and we are still in the previous instances execution, but we can still 
         # continue with the race. (This is only possible because the early termination
@@ -993,12 +992,12 @@ elitist_race <- function(maxExp = 0L,
           }
           which.alive <- which(alive)
           nbAlive     <- length(which.alive)
-          elite.safe <- update.elite.safe(Results, is.elite)
+          elite.safe <- update_elite_safe(Results, is.elite)
         }
         which.exe <- setdiff(which.exe, which.elite.exe)
         # FIXME: There is similar code above.
         if (length(which.exe) == 0L) {
-          is.elite <- update.is.elite(is.elite, which.elite.exe)
+          is.elite <- update_is_elite(is.elite, which.elite.exe)
           if (is.na(best)) {
             dump.frames(dumpto = "best_crash", to.file = TRUE,
                         include.GlobalEnv = TRUE)
@@ -1075,7 +1074,7 @@ elitist_race <- function(maxExp = 0L,
       })
     experimentsUsed <- experimentsUsed + length(which.exe)
     # We update the elites that have been executed.
-    is.elite <- update.is.elite(is.elite, which.elite.exe)
+    is.elite <- update_is_elite(is.elite, which.elite.exe)
 
     ## Drop bad configurations.
     ## Infinite values denote immediate rejection of a configuration.
@@ -1092,7 +1091,7 @@ elitist_race <- function(maxExp = 0L,
       which.alive <- which(alive)
       nbAlive     <- length(which.alive)
       # FIXME: Should we stop  if (nbAlive <= minSurvival) ???
-      elite.safe <- update.elite.safe(Results, is.elite)  
+      elite.safe <- update_elite_safe(Results, is.elite)  
     }
     irace.assert(!anyNA(Results[seq_len(current.task), alive, drop=FALSE]))
     irace.assert(!any(is.infinite(Results[, alive, drop=FALSE])))

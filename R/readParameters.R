@@ -28,7 +28,7 @@
 #'     \item{`nbVariable`}{Number of variable (to be tuned) parameters.}
 #'     \item{`depends`}{List of character vectors, each vector specifies
 #'     which parameters depend on this one.}
-#'     \item{`isDependent`}{Logical vector that specifies which parameter has
+#'     \item{`is_dependent`}{Logical vector that specifies which parameter has
 #'       a dependent domain.}
 #'     \item{`digits`}{Integer vector that specifies the number of digits per parameter.}
 #'     \item{`forbidden`}{List of expressions that define which parameter configurations are forbidden.}
@@ -73,6 +73,8 @@
 #'  
 #'  [forbidden]
 #'  (alpha == 0.0) & (beta == 0.0)
+#'  [global]
+#'  digits = 4
 #'  '
 #'  parameters <- readParameters(text=parameters.table)
 #'  str(parameters)
@@ -140,58 +142,7 @@ readParameters <- function (file, digits = 4L, debugLevel = 0L, text)
       str <- sub(",[[:space:]]*", "", result$line)
       #print(str)
     }
-    return (v)
-  }
-
-  # Determine if a parameter is fixed.
-  isFixed <- function (type, domain)
-  {
-    type <- as.character(type)
-    if (type == "i" || type == "r") {
-      return (domain[[1]] == domain[[2]])
-    } else if (type == "c" || type == "o") {
-      return (length(domain) == 1)
-    }
-  }
-  # *************************************************************************
-  # Subordinate parameter: ordering of the parameters according to
-  # conditions hierarchy
-  # *  The conditions hierarchy is an acyclic directed graph.
-  #    Function treeLevel() computes an order on vertex s.t:
-  #    level(A) > level(B)  <=>  There is an arc A ---> B
-  #    (A depends on B to be activated)
-  # *  If a cycle is detected, execution is stopped
-  # *  If a parameter depends on another one not defined, execution is stopped
-  treeLevel <- function(paramName, varsTree, rootParam = paramName)
-  {
-    # The last parameter is used to record the root parameter of the
-    # recursive call in order to detect the presence of cycles.
-    vars <- varsTree[[paramName]]
-    if (length(vars) == 0) return (1) # This parameter does not have conditions
-
-    # This parameter has some conditions
-    # Recursive call: level <- MAX( level(m) : m in children )
-    maxChildLevel <- 0
-    for (child in vars) {
-      # The following line detects cycles
-      if (child == rootParam)
-        irace.error("A cycle detected in subordinate parameters! ",
-                    "Check definition of conditions and/or dependent domains.\n",
-                    "One parameter of this cycle is '", rootParam, "'")
-      
-      # The following line detects a missing definition
-      if (child %not_in% names(varsTree))
-        irace.error("A parameter definition is missing! ",
-                    "Check definition of parameters.\n",
-                    "Parameter '", paramName,
-                    "' depends on '", child, "' which is not defined.")
-        
-      level <- treeLevel(child, varsTree, rootParam)
-      if (level > maxChildLevel)
-        maxChildLevel <- level
-    }
-    level <- maxChildLevel + 1
-    return (level)
+    v
   }
 
   errReadParameters <- function(filename, line, context, ...)
@@ -217,137 +168,77 @@ readParameters <- function (file, digits = 4L, debugLevel = 0L, text)
     str2expression(s)
   }
   
-
-  transform.domain <- function(transf, domain, type)
-  {
-    if (transf == "") return(transf)
-    
-    # We do not support transformation of dependent parameters, yet.
-    # TODO: think about dependent domain transfomation
-    if (is.expression(domain))
-      irace.error("Parameter domain transformations are not yet available for",
-                  " dependent parameter domains.")
-
-    lower <- domain[1]
-    upper <- domain[2]
-
-    if (transf == "log") {
-      # Reject log if domain contains zero or negative values
-      if (any(domain <= 0)) return(NULL)
-
-      trLower <- log(lower)
-      # +1 to adjust before floor()
-      trUpper <- if (type == "i") log(upper + 1) else log(upper)
-      
-      irace.assert(is.finite(trLower))
-      irace.assert(is.finite(trUpper))
-      attr(transf, "lower") <- trLower
-      attr(transf, "upper") <- trUpper
-      return(transf)
-    }
-    irace.internal.error("unrecognized transformation type '", transf, "'")
-  }
-
-  # Checks that variables in the expressions are within
-  # the parameters names.
-  check_parameter_dependencies <- function (parameters) {
-    for (p in names(Filter(length, parameters$depends))) {
-      vars <- parameters$depends[[p]]
-      flag <- vars %in% parameters$names
-      if (!all(flag)) {
-        irace.error ("Domain (", paste0(parameters$domain[[p]], collapse=", "),
-                     ") of parameter '", p, "' is not valid: '",
-                     paste0(vars[!flag], collapse=", "),
-                     "' cannot be found in the scenario parameters: ",
-                     paste0(parameters$names, collapse=" , ")," .")
-      }
-      flag <- parameters$types[vars] %in% c("i", "r")
-      if (!all(flag)) {
-        irace.error ("Domain of parameter '", p, "' depends on non-numerical", 
-                     " parameters: ", paste0(vars[!flag], collapse=", "), " .")
-      }
-
-      # Supported operations for dependent domains
-      allowed.fx <- c("+", "-", "*", "/", "%%", "min", "max", "round", "floor", "ceiling", "trunc")
-      fx <- setdiff(all.names(parameters$domain[[p]], unique=TRUE), 
-                       all.vars(parameters$domain[[p]], unique=TRUE))
-      flag <- fx %in% allowed.fx
-      if (!all(flag)) {
-        irace.error ("Domain of parameter '", p, "' uses function(s) ", 
-                     "not yet supported by irace: ",
-                     paste0(fx[!flag], collapse=", "), " .")
-      }
-    }
-    return(TRUE)
-  }
-  
-  parameters <- list(names = character(0),
-                     types = character(0),
-                     switches = character(0),
-                     domain = list(),
-                     conditions = list(),
-                     isFixed = logical(0),
-                     # FIXME: This has to be a list because we assign
-                     # attributes to elements.
-                     transform = list(),
-                     isDependent = logical(0))
-
-  conditions <- list()
+  params <- list()
+  pnames <- c()
   lines <- readLines(con = file)
   # Delete comments 
   lines <- trim(sub("#.*$", "", lines))
-  nbLines <- 0
-  count <- 0
+  nbLines <- 0L
   forbidden <- NULL
-  has_forbidden <- FALSE
+  within_global <- within_forbidden <- FALSE
 
   for (line in lines) {
-    nbLines <- nbLines + 1
-    if (nchar(line) == 0) next
+    nbLines <- nbLines + 1L
+    if (nchar(line) == 0L) next
     
-    if (has_forbidden) {
+    if (grepl("^[[:space:]]*\\[forbidden\\]", line)) {
+      within_forbidden <- TRUE
+      within_global <- FALSE
+      next
+    }
+    if (grepl("^[[:space:]]*\\[global\\]", line)) {
+      within_global <- TRUE
+      within_forbidden <- FALSE
+      next
+    }
+    if (within_forbidden) {
       # FIXME: Better error reporting.
       exp <- parse_condition(line, filename, nbLines, line, " for forbidden expressions")
       forbidden <- c(forbidden, exp)
       next
     }
-    if (grepl("^[[:space:]]*\\[forbidden\\]", line)) {
-      has_forbidden <- TRUE
+    if (within_global) {
+      if (grepl("^[[:space:]]*digits[[:space:]]*=[[:space:]]*[0-9]+[[:space:]]*$", line)) {
+        eval(parse(text=line))
+        if (!is.wholenumber(digits) || digits > 15 || digits < 1)
+          errReadParameters(filename, nbLines, line, "'digits' must be an integer within [1, 15]")
+        digits <- as.integer(digits)
+      } else 
+        errReadParameters(filename, nbLines, line, "Unknown global option")
       next
     }
-    ## Match param.name (unquoted alphanumeric string)
+    ## Match name (unquoted alphanumeric string)
     result <- field.match (line, "[._[:alnum:]]+")
-    param.name <- result$match
+    name <- result$match
     line <- result$line
     if (is.null(result$match)) {
       errReadParameters (filename, nbLines, line,
-                         "parameter name must be alphanumeric")
-    }
-    
-    if (param.name %in% parameters$names) {
-      errReadParameters (filename, nbLines, NULL,
-                         "duplicated parameter name '", param.name, "'")
+                         "Parameter name must be alphanumeric")
     }
 
-    ## Match param.switch (quoted string)
+    if (name %in% pnames) {
+      errReadParameters (filename, nbLines, NULL,
+                         "Duplicated parameter name '", name, "'")
+    }
+    
+    ## Match p_switch (quoted string)
     result <- field.match (line, "\"[^\"]*\"", delimited = TRUE)
-    param.switch <- result$match
+    p_label <- result$match
     line <- result$line
-    if (is.null (result$match)) {
+    if (is.null(p_label)) {
       errReadParameters (filename, nbLines, line,
-                         "parameter switch must be a double-quoted string")
+                         "Parameter label (switch) must be a double-quoted string")
     }
     
     ## Match param.type (longer matches must precede shorter ones)
-    result <- field.match (line, c("i,log", "r,log", "c","i","r","o"))
+    result <- field.match (line, c("i,log", "r,log", "c", "i", "r", "o"))
     param.type <- result$match
     line <- result$line
-    if (is.null (result$match)) {
-      errReadParameters (
-        filename, nbLines, line,
-        "parameter type must be a single character in {'c','i','r','o'}, ",
-        "with 'i', 'r' optionally followed by ',log' (no spaces in between) ",
-        "to sample using a logarithmic scale")
+    if (is.null (param.type)) {
+      errReadParameters(filename, nbLines, line,
+                        "Parameter type must be a single character in {'c','i','r','o'}, ",
+                        "with 'i', 'r' optionally followed by ',log' (no spaces in between) ",
+                        "to sample using a logarithmic scale")
     } else if (param.type == "i,log") {
       param.type <- "i"
       param.transform <- "log"
@@ -357,211 +248,78 @@ readParameters <- function (file, digits = 4L, debugLevel = 0L, text)
     } else {
       param.transform <- ""
     }
-
-    ## Match param.value (delimited by parenthesis)
+    
+    ## Match domain (delimited by parenthesis)
     # Regexp to detect dependent domains of the type ("min(p1)", 100)
     result <- field.match (line, "\\([^|]+\\)", delimited = TRUE, sep = "")
-    param.value <- result$match
+    domain_str <- result$match
     line <- result$line
-    if (is.null (param.value)) {
+    if (is.null (domain_str)) {
       errReadParameters (filename, nbLines, line,
                          "Allowed values must be a list within parenthesis")
     }
-
     # For numerical parameters domains could be dependent
     # thus, we keep the string values in a variable
     # for example (10, param1+2)
-    param.value.str <- string2vector(param.value)
     if (param.type %in% c("r","i")) {
-      # For dependent domains param.value will be NA (we will parse
-      # it later)
-      param.value <- suppressWarnings(as.numeric(param.value.str))
-      if (length(param.value) != 2) {
+      domain <- eval(parse(text=paste0("expression(", domain_str, ")"), keep.source=FALSE))
+      # Some expressions like -10 may need to be evaluated again.
+      domain <- sapply(domain, function(x) if (!is.expression(x) || length(all.vars(x, unique=FALSE))) x else eval(x), USE.NAMES=FALSE)
+      if (is.list(domain)) domain <- as.expression(domain)
+      # For dependent domains domain will be NA (we will parse it later)
+      if (length(suppressWarnings(as.numeric(sapply(domain, function(x) if(is.language(x)) NA else x)))) != 2L) {
         errReadParameters (filename, nbLines, NULL,
-                           "incorrect numeric range (", result$match,
-                           ") for parameter '", param.name, "'")
+                           "Incorrect numeric range (", result$match,
+                           ") for parameter '", name, "'")
       }
-
-      valid_real_bound <- function(x, digits) {
-        if (is.na(x) || x == 0) return(TRUE)
-        rx <- round(x, digits = digits)
-        ((abs(rx - x) <= .irace_tolerance * max(1, abs(x)))
-          && digits >= -log10(abs(x)))
-      }
-
-      if (param.type == "r") {
-        if (digits >= 15L) { # This is almost infinite-precision so we do not complain.
-          param.value <- round(param.value, digits = digits)
-        } else if (!valid_real_bound(param.value[1], digits)
-                   || !valid_real_bound(param.value[2], digits)) {
-          for (i in seq.int(digits+1L,15L)) {
-            if (valid_real_bound(param.value[1], i) &&
-                valid_real_bound(param.value[2], i))
-              break
-          }
-          errReadParameters (filename, nbLines, NULL,
-                             "for parameter '", param.name, "' of type 'r' domain bounds (",
-                             param.value[1], ", ", param.value[2],
-                             ") must be representable within the given 'digits=",
-                             digits, "'; you would need at least 'digits=", i, "' or adjust the domain")
-        }
-      } else if (param.type == "i" && any(!is.wholenumber(param.value[!is.na(param.value)]))) {
-        errReadParameters (filename, nbLines, NULL,
-                           "for parameter '", param.name, "' of type 'i' values must be integers (",
-                           result$match, ")")
-      }
-      
-      # Time to parse dependent domains or check values
-      if (any(is.na(param.value))) {
-        try(param.value[is.na(param.value)] <- parse(text=param.value.str[is.na(param.value)]))
-      } else if (param.value[1] >= param.value[2]) {
-        errReadParameters (filename, nbLines, NULL,
-                           "lower bound must be smaller than upper bound in numeric range (",
-                           result$match, ") for parameter '", param.name, "'")
-      }
-             
-      param.transform <- transform.domain(param.transform, param.value, param.type)
-      if (is.null(param.transform)) {
-        errReadParameters (filename, nbLines, NULL, "The domain of parameter '",
-                           param.name, "' of type 'log' cannot contain zero")
-      }
-    } else {
-      param.value <- param.value.str
-      if (anyDuplicated(param.value)) {
-        dups <- duplicated(param.value)
-        errReadParameters (filename, nbLines, NULL,
-                           "duplicated values (",
-                           paste0('\"', param.value[dups], "\"", collapse = ', '),
-                           ") for parameter '", param.name, "'")
-      }
+    } else { # type %in% c("c", "o")
+      domain <- string2vector(domain_str)
     }
-
-    count <- count + 1
-    parameters$names[count] <- param.name
-    parameters$switches[count] <- param.switch
-    parameters$types[count] <- param.type
-    parameters$domain[[count]] <- param.value
-    parameters$transform[[count]] <- param.transform
-    
-    parameters$isFixed[count] <- isFixed(type = param.type,
-                                         domain = parameters$domain[[count]])
-    # Reject non-categorical fixed parameters. They are often the
-    # result of a user error.
-    if (parameters$isFixed[[count]]) {
-      if (param.type == "i") {
-        errReadParameters (filename, nbLines, NULL,
-                           "lower and upper bounds are the same in numeric range (",
-                           param.value[1], ", ", param.value[2],
-                           ") for parameter '", param.name, "'")
-      } else if (param.type == "r") {
-        errReadParameters (filename, nbLines, NULL,
-                           "given digits=", digits,
-                           ", lower and upper bounds are the same in numeric range (",
-                           param.value[1], ", ", param.value[2],
-                           ") for parameter '", param.name, "'")
-      }
-    }
-
     ## Match start of conditions 
     result <- field.match (line, "\\|", sep="")
     line <- result$line
     if (!is.null(result$match) && nchar(result$match)) {
       result <- field.match (line, ".*$", sep="")
+      condition <- result$match
       if (is.null(result$match) || !nchar(result$match))
         errReadParameters (filename, nbLines, line,
-                           "expected condition after '|'")
-      # FIXME: Provide a better error for invalid conditions like "a 2 0"
-      conditions[[param.name]] <- NA
-      try(conditions[[param.name]] <- parse_condition(result$match, filename, nbLines, line, " for condition"))
-      if (!is.expression(conditions[[param.name]]))
-        errReadParameters (filename, nbLines, line, "invalid condition after '|'")
+                           "Expected condition after '|'")
       line <- result$line
     } else if (!is.null(result$line) && nchar(result$line)) {
       errReadParameters (filename, nbLines, line,
-                         "expected '|' before condition")
+                         "Expected '|' before condition")
     } else {
-      conditions[[param.name]] <- TRUE
+      condition <- TRUE
     }
     # *****************************************************************
+    p <- tryCatch(
+      Parameter(name = name, type = param.type, domain = domain, label = p_label, condition = condition,
+        transf = param.transform, digits = digits),
+      invalid_domain = function(c) structure(paste0("For parameter '", name, "' of type 'i' values must be integers (",
+                                             domain_str, ")"), class = "try-error"),
+      invalid_range = function(c) structure(paste0("Lower bound must be smaller than upper bound in numeric range (",
+                                                   domain_str, ") for parameter '", name, "'"), class="try-error"),
+      
+      error = function(c) structure(conditionMessage(c), class="try-error")
+    )
+    if (inherits(p, "try-error")) errReadParameters(filename, nbLines, NULL, p)
+    params <- c(params, list(p))
+    pnames <- c(pnames, name)
   } # end loop on lines
 
   # Check that we have read at least one parameter
-  if (count == 0) {
-    irace.error("No parameter definition found: ",
-                "check that the parameter file is not empty")
-  }
-
-  # Generate dependency flag
-  # FIXME: check if we really need this vector
-  
-  names(parameters$types) <- 
-    names(parameters$switches) <- 
-      names(parameters$domain) <- 
-        names(parameters$isFixed) <-
-            names(parameters$transform) <- parameters$names
-
-  parameters$isDependent <- sapply(parameters$domain, is.expression)
-  parameters$digits <- sapply(parameters$types[parameters$types == 'r'], function(x) digits)
-
-  check_forbidden_params <- function(x, pnames, filename = NULL)
-  {
-    if (length(NULL) || all(all.vars(x) %in% pnames)) return(invisible())
-    for (exp in x) {
-      v <- setdiff(all.vars(exp), pnames)
-      if (length(v)) {
-        v <- paste0(v, collapse=", ")
-        if (is.null(filename)) {
-          irace.error("Expression '", deparse(exp), "' after [forbidden] contains unknown parameter(s): ", v)
-        } else {
-          irace.error("Expression '", deparse(exp), "' in '", filename, "' contains unknown parameter(s): ", v)
-        }
-      }
-    }
+  if (length(params) == 0) {
+    if (is.na(filename))
+      irace.error("No parameter definition found in the input text")
+    else
+      irace.error("No parameter definition found, check that the parameter file '",  filename, "' is not empty.")
   }
 
   if (length(forbidden)) {
     irace.note(length(forbidden), " expression(s) specifying forbidden configurations read.\n")
-    check_forbidden_params(forbidden, parameters$names)
-    # FIXME: Instead of a list, we should generate a single expression that is
-    # the logical-OR of all elements of the list.
-    # First we would need to handle the "is.na(x) | !(x)" case here.
-    # Maybe: sapply(forbiddenExps, function(x) substitute(is.na(x) | !(x), list(x=x)))
-    # x <- parse(text=paste0("(", paste0(forbiddenExps,collapse=")||("), ")"))
-    parameters$forbidden <- sapply(forbidden, compile_forbidden)
+    check_forbidden_params(forbidden, pnames, filename = filename)
   }
-    
-  # Obtain the variables in each condition
-  parameters$depends <- lapply(parameters$domain, all.vars)
-  # Check that dependencies are ok
-  check_parameter_dependencies(parameters)
-  # Merge dependencies and conditions
-  parameters$depends <- Map(c, parameters$depends, lapply(conditions, all.vars))
-  parameters$depends <- lapply(parameters$depends, unique)
-  
-  # Sort parameters in 'conditions' in the proper order according to
-  # conditions
-  hierarchyLevel <- sapply(parameters$names, treeLevel,
-                           varsTree = parameters$depends)
-  parameters$hierarchy <- hierarchyLevel
-  parameters$conditions <- conditions[order(hierarchyLevel)]
-  
-  names(parameters$hierarchy) <- parameters$names
-
-  # Print the hierarchy vector:
-  if (debugLevel >= 1) {
-    cat ("# --- Parameters Hierarchy ---\n")
-    print(data.frame(Parameter = paste0(names(parameters$hierarchy)),
-                     Level = parameters$hierarchy,
-                     "Depends on" = sapply(parameters$depends, paste0, collapse=", "),
-                     row.names=NULL))
-    cat("# ------------------------\n")
-  }
-
-  irace.assert(length(parameters$conditions) == length(parameters$names))
-
-  parameters$nbParameters <- length(parameters$names)
-  parameters$nbFixed <- sum(parameters$isFixed == TRUE)
-  parameters$nbVariable <- sum(parameters$isFixed == FALSE)
+  parameters <- do.call(parametersNew, c(params, list(forbidden=forbidden, debugLevel = debugLevel)))
   if (debugLevel >= 2) {
     print(parameters, digits = 15)
     irace.note("Parameters have been read\n")
@@ -746,74 +504,10 @@ read_pcs_file <- function(file, digits = 4L, debugLevel = 0L, text)
 #' @export
 checkParameters <- function(parameters)
 {
-  if (is.null(parameters$isDependent)) {
-    parameters$isDependent <- sapply(parameters$domain, is.expression)
-    names(parameters$isDependent) <- parameters$names
-  }
+  ## if (is.null(parameters$isDependent)) {
+  ##   parameters$isDependent <- sapply(parameters$domains, is.expression)
+  ##   names(parameters$isDependent) <- parameters$names
+  ## }
   parameters
 }
 
-#' Print parameter space in the textual format accepted by irace.
-#' 
-#' @template arg_parameters
-#'
-#' @return `character()`
-#' 
-#' @seealso [readParameters()]
-#' @examples
-#' parameters.table <- '
-#'  # name       switch           type  values               [conditions (using R syntax)]
-#'  algorithm    "--"             c     (as,mmas,eas,ras,acs)
-#'  localsearch  "--localsearch " c     (0, 1, 2, 3)
-#'  alpha        "--alpha "       r     (0.00, 5.00)
-#'  beta         "--beta "        r     (0.00, 10.00)
-#'  rho          "--rho  "        r     (0.01, 1.00)
-#'  ants         "--ants "        i,log (5, 100)
-#'  q0           "--q0 "          r     (0.0, 1.0)           | algorithm == "acs"
-#'  q0dep       "--q0 "           r     (0.0, q0)            | algorithm != "acs"
-#'  rasrank      "--rasranks "    i     (1, "min(ants, 10)") | algorithm == "ras"
-#'  elitistants  "--elitistants " i     (1, ants)            | algorithm == "eas"
-#'  nnls         "--nnls "        i     (5, 50)              | localsearch %in% c(1,2,3)
-#'  dlb          "--dlb "         c     (0, 1)               | localsearch %in% c(1,2,3)
-#'  
-#'  [forbidden]
-#'  (alpha == 0.0) & (beta == 0.0)
-#' '
-#' parameters <- readParameters(text=parameters.table)
-#' printParameters(parameters)
-#' @export
-printParameters <- function(parameters)
-{
-  names_len <- max(nchar(parameters$names))
-  label_len <- max(nchar(parameters$switches)) + 2
-  for (name in parameters$names) {
-    label <- paste0('"', parameters$switches[[name]], '"')
-    type <- parameters$types[[name]]
-    transf <- parameters$transform[[name]]
-    domain <- parameters$domain[[name]]
-    if (is.expression(domain)) {
-      domain <- sapply(domain, function(x) {
-        if (is.numeric(x)) {
-          x <- as.numeric(x)
-          if (type == "r")
-            x <- formatC(x, digits = parameters$digits[[name]], format="f", drop0trailing=TRUE)
-        } else if (is.character(x)) {
-          x <- as.character(x)
-        } else {
-          x <- paste0("\"", deparse(x, width.cutoff = 500L), "\"")
-        }
-        x
-      })
-    }
-    domain <- paste0('(', paste0(domain, collapse=","), ')')
-    condition <- parameters$conditions[[name]]
-    condition <- if (isTRUE(condition)) "" else paste0(" | ", condition)
-    if (!is.null(transf) && transf != "") type <- paste0(type, ",", transf)
-    cat(sprintf('%*s %*s %s %-15s%s\n', -names_len, name, -label_len, label, type, domain, condition))
-  }
-  if (!is.null(parameters$forbidden)) {
-    cat("\n[forbidden]\n",
-        paste0(collapse="\n", sapply(parameters[["forbidden"]], attr, "source")),
-        "\n", sep="")
-  }
-}

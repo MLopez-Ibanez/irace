@@ -113,7 +113,7 @@ psRace <- function(iraceLogFile=NULL, iraceResults=NULL, conf.ids=NULL,
   irace.note("Elite configurations (first number is the configuration ID;",
                " listed from best to worst according to the ",
                test.type.order.str(scenario$testType), "):\n")
-  configurations.print(elite.configurations, metadata = scenario$debugLevel >= 1)
+  configurations_print(elite.configurations, metadata = scenario$debugLevel >= 1)
 
   psrace.log <-  list(configurations = configurations,
                       instances = instances[seq_nrow(experiments), ],

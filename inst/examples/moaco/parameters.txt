@@ -33,3 +33,9 @@ onq0            " "                     c (" ", "--q0")
 q0              " "                     r (0.25, 0.99) | onq0 == "--q0"
 beta            "--beta "               r (0, 5)
 alpha           "--alpha "              r (0, 5)
+
+[global]
+# Indicates the number of decimal places to be considered for the real parameters.
+digits = 2
+
+

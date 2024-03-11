@@ -161,27 +161,27 @@ file.check <- function (file, executable = FALSE, readable = executable,
 }
 
 # Returns the smallest multiple of d that is higher than or equal to x.
-round.to.next.multiple <- function(x, d) (x + d - 1L - (x - 1L) %% d)
+round_to_next_multiple <- function(x, d) (x + d - 1L - (x - 1L) %% d)
 
 # This returns FALSE for Inf/-Inf/NA
 is.wholenumber <- function(x, tol = .Machine$double.eps^0.5)
   is.finite(x) & (abs(x - round(x)) < tol)
 
 
-is.na.nowarn <- function(x)
+is_na_nowarn <- function(x)
   length(x) == 1 && suppressWarnings(is.na(x))
 
-is.na.or.empty <- function(x)
-  (length(x) == 0) || is.na.nowarn(x)
+is_na_or_empty <- function(x)
+  (length(x) == 0) || is_na_nowarn(x)
 
 is.null.or.na <- function(x)
-  is.null(x) || is.na.nowarn(x)
+  is.null(x) || is_na_nowarn(x)
 
 is.null.or.empty <- function(x)
   (length(x) == 0) || (length(x) == 1 && !suppressWarnings(is.na(x)) && is.character(x) && x == "")
 
 is_null_or_empty_or_na <- function(x)
-  (length(x) == 0) || is.na.nowarn(x) || (length(x) == 1 && !suppressWarnings(is.na(x)) && is.character(x) && x == "")
+  (length(x) == 0) || is_na_nowarn(x) || (length(x) == 1 && !suppressWarnings(is.na(x)) && is.character(x) && x == "")
 
 is.function.name <- function(FUN)
 {
@@ -245,15 +245,6 @@ scenario_update_paths <- function(scenario, from, to, fixed = TRUE)
   scenario
 }
 
-#' @rdname scenario_update_paths
-#' @export
-scenario.update.paths <- function(scenario, from, to, fixed = TRUE)
-{
-  .Deprecated("scenario_update_paths")
-  scenario_update_paths(scenario=scenario, from=from, to=to, fixed=fixed)
-}
-
-
 test.type.order.str <- function(test.type)
   switch(test.type,
          friedman = "sum of ranks",
@@ -294,7 +285,7 @@ inNumericDomain <- function(value, domain) (value >= domain[1] && value <= domai
 # rownames(z) <- setunion(rownames(x), rownames(y)) and
 # z[rownames(x), colnames(x)] <- x and z[rownames(y), colnames(y)] <- y, and
 # z[i, j] <- NA for all i,j not in x nor y.
-merge.matrix <- function(x, y)
+merge_matrix <- function(x, y)
 {
   new.cols <- setdiff(colnames(y), colnames(x))
   new.rows <- setdiff(rownames(y), rownames(x))
@@ -354,83 +345,6 @@ extractElites <- function(scenario, configurations, nbElites)
   elites
 }
 
-#' removeConfigurationsMetaData
-#'
-#' Remove the columns with "metadata" of a data frame containing
-#' configurations. Currently, metadata corresponds to column names starting
-#' with a period.  This function should be used before printing the
-#' configurations to output only the values for the parameters of the
-#' configuration without metadata possibly useless to the user.
-#'   
-#' @template arg_configurations
-#' 
-#' @return The same data frame without "metadata".
-#'    
-#' @seealso 
-#'   [configurations.print.command()] to print the configurations as command lines.
-#'   [configurations.print()] to print the configurations as a data frame.
-#' 
-#' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
-#' @export
-removeConfigurationsMetaData <- function(configurations)
-  configurations[, !startsWith(colnames(configurations), "."), drop = FALSE]
-
-#' Print configurations as a data frame
-#' 
-#' @template arg_configurations
-#' @param metadata A Boolean specifying whether to print the metadata or
-#' not. The metadata are data for the configurations (additionally to the
-#' value of each parameter) used by \pkg{irace}.
-#' 
-#' @return None.
-#'
-#' @seealso
-#'  [configurations.print.command()] to print the configurations as command-line strings.
-#' 
-#' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
-#' @export
-configurations.print <- function(configurations, metadata = FALSE)
-{
-  if (!is.data.frame(configurations))
-    configurations <- as.data.frame(configurations, stringsAsFactors = FALSE)
-
-  rownames(configurations) <- configurations[[".ID."]]
-  if (!metadata)
-    configurations <- removeConfigurationsMetaData(configurations)
-  
-  print.data.frame(configurations, digits = 15L)
-}
-
-#' Print configurations as command-line strings.
-#' 
-#' Prints configurations after converting them into a representation for the
-#' command-line.
-#' 
-#' @template arg_configurations
-#' @template arg_parameters
-#' 
-#' @return None.
-#'
-#' @seealso
-#'  [configurations.print()] to print the configurations as a data frame.
-#' 
-#' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
-#' @export
-configurations.print.command <- function(configurations, parameters)
-{
-  if (nrow(configurations) <= 0) return(invisible())
-  ids <- as.numeric(configurations$.ID.)
-  configurations <- removeConfigurationsMetaData(configurations)
-  # Re-sort the columns
-  configurations <- configurations[, parameters$names, drop = FALSE]
-  # A better way to do this? We cannot use apply() because that coerces
-  # to a character matrix thus messing up numerical values.
-  len <- nchar(max(ids))
-  for (i in seq_nrow(configurations)) {
-    cat(sprintf("%-*d %s\n", len, ids[i],
-                buildCommandLine(configurations[i, , drop=FALSE], parameters$switches)))
-  }
-}
 
 
 # FIXME: This may not work when working interactively. For example,
@@ -672,7 +586,7 @@ valid_iracelog <- function(x)
 #' @export
 read_logfile <- function(filename, name = "iraceResults")
 {
-  if (is.na.or.empty(filename))
+  if (is_na_or_empty(filename))
     irace.error("read_logfile: 'filename' is NULL or NA.")
   # If filename is already the iraceResults object, just return it.
   if (valid_iracelog(filename)) return(filename)

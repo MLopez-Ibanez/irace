@@ -506,7 +506,7 @@ Alternatively, you may directly invoke \irace from within the \aR
 console by executing:
 <<windows_irace_help ,eval=FALSE, prompt=FALSE>>=
 library("irace")
-irace.cmdline("--help")
+irace_cmdline("--help")
 @
 
 
@@ -717,12 +717,12 @@ library("irace")
 setwd("~/tuning")
 scenario <- readScenario(filename = "scenario.txt",
                          scenario = defaultScenario())
-irace.main(scenario = scenario)
+irace_main(scenario = scenario)
 @
 
 \end{itemize}
 
-This will perform one run of \irace. See the output of \code{irace --help} in the command-line or \code{irace.usage()} in \aR for quick information on
+This will perform one run of \irace. See the output of \code{irace --help} in the command-line or \code{irace_cmdline("--help")} in \aR for quick information on
 additional \irace parameters. For more information about \irace options, see \autoref{sec:irace options}.
 
 \end{enumerate}
@@ -793,7 +793,7 @@ $IRACE_HOME/bin/irace
 <<runexample2,prompt=FALSE,eval=FALSE>>=
 library("irace")
 setwd("~/tuning/")
-irace.cmdline()
+irace_cmdline()
 @
 
 \end{enumerate}
@@ -831,7 +831,7 @@ types supported by \irace are the following:
     bound>)}'. This interval is closed, that is, the parameter value
   may eventually be one of the bounds. The possible values are rounded
   to a number of \emph{decimal places} specified by
-  option \parameter{digits}. For example, given the default
+  the global option \code{digits} (Section~\ref{sec:globaloptions}). For example, given the default
   number of digits of $4$, the values $0.12345$ and
   $0.12341$ are both rounded to $0.1234$.
    Selected real-valued parameters can be optionally sampled on
@@ -941,7 +941,39 @@ the target algorithm may have a parameter \code{localsearch} that takes values
 set if the first parameter takes precisely the value \code{ts}. Thus, parameter
 \code{ts-length} is conditional on \code{localsearch == "ts"}.
 
-\subsubsection{Parameter file format}\label{sec:parameters file}\label{sec:forbidden}
+
+\subsubsection{Forbidden parameter configurations}\label{sec:forbidden}
+A line containing just \texttt{[forbidden]} ends the list of parameters and starts the list of forbidden expressions.
+Each line is a logical expression (in \aR syntax) containing
+parameter names as defined by the \parameter{parameterFile}
+(\autoref{sec:target parameters}), values and logical operators. For a list of \aR logical operators see:
+\begin{center}
+ \url{https://stat.ethz.ch/R-manual/R-devel/library/base/html/Syntax.html}
+\end{center}
+If \irace generates a parameter configuration that makes any of the logical
+expressions evaluate to \code{TRUE}, then the configuration is considered
+forbidden and it is never evaluated. This is useful when some combination
+of parameter values could cause the target algorithm to crash, consume
+excessive CPU time or memory, or when it is known that they do no produce
+satisfactory results.
+
+\begin{xwarningbox}
+Initial configuration (\autoref{sec:initial}) that are forbidden will be discarded with a warning.
+\end{xwarningbox}
+
+If the forbidden constraints provided are too strict, \irace may produce the following error:
+\begin{CodeInput}
+  irace tried 100 times to sample from the model a configuration not forbidden
+  without success, perhaps your constraints are too strict?
+\end{CodeInput}
+%
+In that case, it may be a good idea to reformulate  the forbidden constraints as conditional parameters (\autoref{sec:conditional}), parameter-dependent domains (\autoref{sec:paramdependant}),  repairing the configurations (\autoref{sec:repairconf}) or post-processing within the target-algorithm (\autoref{sec:complex_domains}).
+
+\subsubsection{Global options}\label{sec:globaloptions}
+
+A line containing just \texttt{[global]} starts the definition of global options. The only global option currently implemented is \code{digits}, which controls the number of decimal digits for real valued parameters. Its default value is 4.
+
+\subsubsection{Parameter file format}\label{sec:parameters file}
 
 For simplicity, the description of the parameters space is given as a
 table. Each line of the table defines a configurable parameter
@@ -992,25 +1024,6 @@ A \emph{label} for this parameter. This is a
                          contain any cycle. Otherwise, \irace will detect the cycle and
                          stop with an error. 
 \end{description}
-
-A line containing just \texttt{[forbidden]} ends the list of parameters and starts the list of forbidden expressions.
-Each line is a logical expression (in \aR syntax) containing
-parameter names as defined by the \parameter{parameterFile}
-(\autoref{sec:target parameters}), values and logical operators. For a list of \aR logical operators see:
-\begin{center}
- \url{https://stat.ethz.ch/R-manual/R-devel/library/base/html/Syntax.html}
-\end{center}
-If \irace generates a parameter configuration that makes any of the logical
-expressions evaluate to \code{TRUE}, then the configuration is considered
-forbidden and it is never evaluated. This is useful when some combination
-of parameter values could cause the target algorithm to crash, consume
-excessive CPU time or memory, or when it is known that they do no produce
-satisfactory results.
-
-\begin{xwarningbox}
-Initial configuration (\autoref{sec:initial}) that are forbidden will be discarded with a warning.
-\end{xwarningbox}
-
 \begin{xwarningbox}
 Categorical and ordinal parameters are always treated as strings. Given a parameter like:
 \begin{CodeInput}
@@ -1022,13 +1035,6 @@ before \code{"5"}. As a work-around, you can convert the string to numeric in
 the condition with \code{as.numeric(a)}.
 \end{xwarningbox}
 
-If the forbidden constraints provided are too strict, \irace may produce the following error:
-\begin{CodeInput}
-  irace tried 100 times to sample from the model a configuration not forbidden
-  without success, perhaps your constraints are too strict?
-\end{CodeInput}
-%
-In that case, it may be a good idea to reformulate  the forbidden constraints as conditional parameters (\autoref{sec:conditional}), parameter-dependent domains (\autoref{sec:paramdependant}),  repairing the configurations (\autoref{sec:repairconf}) or post-processing within the target-algorithm (\autoref{sec:complex_domains}).
 
 
 As an example, Figure~\ref{fig:acotsp_parameters} shows the parameters file
@@ -1090,7 +1096,6 @@ The structure of the parameter list that is created is as follows:
     \code{nbVariable}   & Number of variable (i.e., to be tuned) parameters.\\
     \code{isDependent}  & Logical vector that specifies which parameter defines
                           a dependent domain.\\
-    \code{digits}  & The number of digits for real valued parameters\\
     \code{forbidden}  & List of R logical expressions that cannot evaluate to \code{TRUE} for any evaluated configuration.\\
   \end{tabularx}
 \end{center}
@@ -1954,8 +1959,8 @@ The \code{iraceResults} object is a list, and the elements of a list can be
 accessed in \aR by using the \code{\$} or \code{[[]]} operators:
 
 <<show_version, prompt=TRUE, eval=TRUE, comment="">>=
-iraceResults$irace.version
-iraceResults[["irace.version"]]
+iraceResults$irace_version
+iraceResults[["irace_version"]]
 @
 
 \noindent%

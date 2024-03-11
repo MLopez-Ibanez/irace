@@ -432,17 +432,6 @@
     "description": "Specify how irace waits for jobs to finish when \\code{targetRunner} submits jobs to a batch cluster: sge, pbs, torque, slurm or htcondor. \\code{targetRunner} must submit jobs to the cluster using, for example, \\code{qsub}."
   },
   {
-    "name": "digits",
-    "type": "i",
-    "short": "",
-    "long": "--digits",
-    "default": 4,
-    "description": "Maximum number of decimal places that are significant for numerical (real) parameters.",
-    "vignettes": "Maximum number of decimal places that are significant for numerical (real) parameters.",
-    "section": "Target algorithm parameters"
-    
-  },
-  {
     "name": "quiet",
     "type": "b",
     "short": "-q",
@@ -486,10 +475,10 @@
     "type": "r",
     "short": "",
     "long": "--soft-restart-threshold",
-      "default": "",
-    "vignettes": "Soft restart threshold value for numerical parameters. By default, it is computed as $10^{-digits}$, where \\parameter{digits} corresponds to the \\irace option explained in this section.",
+    "default": 0.0001,
+    "vignettes": "Soft restart threshold value for numerical parameters.",
       "section": "Internal \\irace options",
-      "description": "Soft restart threshold value for numerical parameters. If \\code{NA}, \\code{NULL} or \\code{\"\"}, it is computed as \\code{10^-digits}."
+      "description": "Soft restart threshold value for numerical parameters."
   },
   {
     "name": "elitist",

@@ -60,7 +60,7 @@ withr::with_output_sink("test-target-runner-dummy.Rout", {
     train_instances_file <- tempfile("dummy-train-instances", fileext = ".txt")
     withr::local_file(train_instances_file)
     cat("1\n", file=train_instances_file)
-    irace.cmdline(paste0(args, ' --debug-level 3 --parameter-file=', parameters_file,
+    irace_cmdline(paste0(args, ' --debug-level 3 --parameter-file=', parameters_file,
                          ' --train-instances-dir=  --train-instances-file=', train_instances_file,
                          ' --target-runner=', target_runner_dummy))
   }

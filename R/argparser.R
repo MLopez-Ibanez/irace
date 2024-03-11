@@ -1,6 +1,4 @@
-#' R6 Class for parsing command-line arguments
-#' 
-#' @export
+# R6 Class for parsing command-line arguments
 CommandArgsParser <- R6::R6Class("CommandArgsParser", cloneable = FALSE, lock_class = TRUE, list(
   argv = NULL,
   argsdef = NULL,
@@ -83,17 +81,16 @@ CommandArgsParser <- R6::R6Class("CommandArgsParser", cloneable = FALSE, lock_cl
     }
     params
   },
-  cmdline_usage = function(){
-    irace::cmdline_usage(self$argsdef)
+  cmdline_usage = function() {
+    cmdline_usage(self$argsdef)
   })
 )
 
-#' `cmdline_usage()` prints the output of `--help`
-#'
-#' @param cmdline_args Definition of the command-line arguments.
-#' 
-#' @rdname CommandArgsParser
-#' @export
+# `cmdline_usage()` prints the output of `--help`
+#
+# @param cmdline_args Definition of the command-line arguments.
+# 
+# @export
 cmdline_usage <- function(cmdline_args)
 {
   for (i in seq_len(nrow(cmdline_args))) {
