@@ -406,4 +406,77 @@ irace.cmdline <- function(argv = commandArgs(trailingOnly = TRUE))
   irace_cmdline(argv = argv)
 }
 
+## Check targetRunner execution
+checkTargetFiles <- function(scenario, parameters)
+{
+  ## Create two random configurations
+  configurations <- sampleUniform(parameters, 2L,
+                                  repair = scenario$repairConfiguration)
+  configurations <- cbind(.ID. = seq_nrow(configurations), configurations)
+  
+  # Read initial configurations provided by the user.
+  initConfigurations <- allConfigurationsInit(scenario, parameters)
+  if (nrow(initConfigurations) > 0L) {
+    irace.assert(all(colnames(configurations) == colnames(initConfigurations)))
+    configurations <- rbind(initConfigurations, configurations)
+    configurations[[".ID."]] <- seq_nrow(configurations)
+  }
 
+  bounds <- rep(scenario$boundMax, nrow(configurations))
+  instances_ID <- if (scenario$sampleInstances)
+                    sample.int(length(scenario$instances), 1L) else 1L
+  experiments <- createExperimentList(
+    configurations, parameters, instances = scenario$instances,
+    instances.ID = instances_ID, seeds = 1234567L, bounds = bounds)
+
+  startParallel(scenario)
+  on.exit(stopParallel(), add = TRUE)
+
+  # FIXME: Create a function try.call(err.msg,warn.msg, fun, ...)
+  # Executing targetRunner
+  cat("# Executing targetRunner (", nrow(configurations), "times)...\n")
+  result <- TRUE
+  output <-  withCallingHandlers(
+    tryCatch(execute.experiments(experiments, scenario),
+             error = function(e) {
+               cat(sep = "\n",
+                   "\n# Error occurred while executing targetRunner:",
+                   paste0(conditionMessage(e), collapse="\n"))
+               result <<- FALSE
+               NULL
+             }), warning = function(w) {
+               cat(sep = "\n",
+                   "\n# Warning occurred while executing targetRunner:",
+                   paste0(conditionMessage(w), collapse="\n"))
+               invokeRestart("muffleWarning")})
+
+  if (scenario$debugLevel >= 1L) {
+    cat ("# targetRunner returned:\n")
+    print(output, digits = 15L)
+  }
+  
+  irace.assert(is.null(scenario$targetEvaluator) == is.null(.irace$target.evaluator))
+  if (!result) return(FALSE)
+  
+  if (!is.null(scenario$targetEvaluator)) {
+    cat("# Executing targetEvaluator...\n")
+    output <-  withCallingHandlers(
+      tryCatch(execute.evaluator(experiments, scenario, output, configurations[[".ID."]]),
+                 error = function(e) {
+                   cat(sep = "\n",
+                       "\n# Error ocurred while executing targetEvaluator:",
+                       paste0(conditionMessage(e), collapse="\n"))
+                   result <<- FALSE
+                   NULL
+                 }), warning = function(w) {
+                   cat(sep = "\n",
+                       "\n# Warning ocurred while executing targetEvaluator:",
+                       paste0(conditionMessage(w), collapse="\n"))
+                   invokeRestart("muffleWarning")})
+    if (scenario$debugLevel >= 1L) {
+      cat ("# targetEvaluator returned:\n")
+      print(output, digits = 15L)
+    }
+  }
+  result
+}

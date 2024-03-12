@@ -7,7 +7,8 @@
 readConfigurationsFile(filename, parameters, debugLevel = 0L, text)
 }
 \arguments{
-\item{filename}{(\code{character(1)}) \cr Filename from which the configurations should be read. The contents should be readable by \code{read.table( , header=TRUE)}.}
+\item{filename}{(\code{character(1)}) \cr Filename from which the configurations should be read.
+The contents should be readable by \code{read.table( , header=TRUE)}.}
 
 \item{parameters}{(\code{list()}) \cr Data structure containing the parameter
 space definition. The data structure has to similar to the one returned by the
