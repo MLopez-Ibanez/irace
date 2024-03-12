@@ -67,7 +67,7 @@ for (section in ordered_sections) {
 }
 man.text <- c(man.text, "#' }", marker.end)
 man.text <- paste0(man.text, collapse="\n")
-conf.filename <- "../R/readConfiguration.R"
+conf.filename <- "../R/scenario.R"
 text <- paste0(readLines(conf.filename), collapse="\n")
 text <- sub(sprintf("(?s)%s.*%s", marker.beg, marker.end),
             paste0(marker.beg, marker.end), text, perl=TRUE)
