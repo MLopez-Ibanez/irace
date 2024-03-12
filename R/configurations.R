@@ -25,6 +25,24 @@ configurations_alloc <- function(colnames, nrow, parameters)
 
 # FIXME: It may be faster to create a single expression that concatenates all
 # the elements of forbidden using '|'
+checkForbidden <- function(configurations, forbidden)
+{
+  # We have to use a variable name that will never appear in
+  # configurations, so .FORBIDDEN .
+  for (.FORBIDDEN in forbidden) {
+    #print(.FORBIDDEN)
+    configurations <- subset(configurations, eval(.FORBIDDEN))
+    #print(configurations)
+    #print(str(configurations))
+    ## FIXME: This is normally called with a single configuration. Thus, it
+    ## would be faster to break as soon as nrow(configurations) < 1
+  }
+  #print(nrow(configurations))
+  configurations
+}
+
+# FIXME: It may be faster to create a single expression that concatenates all
+# the elements of forbidden using '|'
 filter_forbidden <- function(configurations, forbidden)
 {
   # We have to use a variable name that will never appear in
