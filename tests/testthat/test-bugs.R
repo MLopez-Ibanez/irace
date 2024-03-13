@@ -89,7 +89,8 @@ test_that("non-normal", {
   ## print(all(x[,1] <= x[,3]))
   parameters <- readParameters(text='p "" c (1,2,3,4,5)')
   scenario <- list(instances = 1:16, maxExperiments = 50,
-                   testType="t-test")
+    testType="t-test",
+    parameters = parameters)
   scenario$targetRunner <- function(experiment, scenario, this_df = df) {
     if (experiment[["id.configuration"]] > 3)
       cost <- as.numeric(experiment[["id.configuration"]])
@@ -98,7 +99,7 @@ test_that("non-normal", {
                       as.numeric(experiment[["id.configuration"]]) ]
     list(cost=cost)
   }
-  confs <- irace(scenario = scenario, parameters = parameters)
+  confs <- irace(scenario = scenario)
   print(confs)
   expect_equal(confs$.ID., 1L)
 })

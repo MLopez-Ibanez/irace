@@ -31,10 +31,10 @@
 #' \dontrun{
 #'   # Execute the postselection automatically after irace
 #'   scenario <- readScenario(filename="scenario.txt")
-#'   parameters <- readParameters("parameters.txt")
+#'   scenario$parameters <- readParameters("parameters.txt")
 #'   # Use 10% of the total budget
 #'   scenario$postselection <- 0.1
-#'   irace(scenario=scenario, parameters=parameters)
+#'   irace(scenario=scenario)
 #'   # Execute the postselection after the execution of \pkg{irace}.
 #'   psRace(iraceLogFile="irace.Rdata", max.experiments=120)
 #' }
@@ -56,7 +56,6 @@ psRace <- function(iraceLogFile=NULL, iraceResults=NULL, conf.ids=NULL,
   if (!is.null(iraceLogFile)) 
     iraceResults <- read_logfile(iraceLogFile)
  
-  parameters <- iraceResults$parameters
   scenario   <- iraceResults$scenario
   
   # Get selected configurations
@@ -100,11 +99,10 @@ psRace <- function(iraceLogFile=NULL, iraceResults=NULL, conf.ids=NULL,
   cat("# minSurvival: 1\n")
   
   if (!is.null(seed)) set.seed(seed)
-  # Should we fix the paramenters for the race?
+  # Should we fix the parameters for the race?
   race.output <- race(maxExp = max.experiments,
                       minSurvival = 1,
                       configurations = configurations,
-                      parameters = parameters,
                       scenario = scenario)
   experiments <- race.output$experiments
   

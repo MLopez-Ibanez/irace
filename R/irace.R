@@ -32,7 +32,7 @@ recoverFromFile <- function(filename)
     for (name in ls(iraceResults$state$.irace))
       assign(name, get(name, envir = iraceResults$state$.irace), envir = .irace)
     # These variables are not state, but they are used directly by irace.
-    for (name in c("parameters", "allConfigurations"))
+    for (name in c("allConfigurations"))
       assign(name, iraceResults[[name]])
     # Restore part of scenario but not all.
     for (name in .irace.params.recover)
@@ -416,13 +416,13 @@ generateInstances <- function(scenario, n, instancesList = NULL)
 }
 
 ## Estimate the mean execution time
-do.experiments <- function(configurations, ninstances, scenario, parameters)
+do.experiments <- function(configurations, ninstances, scenario)
 {
   instances <- seq_len(ninstances)
   output <- lapply(instances, race.wrapper, configurations = configurations, 
                    bounds = rep(scenario$boundMax, nrow(configurations)),
                    which.alive = seq_nrow(configurations), which.exe = seq_nrow(configurations),
-                   parameters = parameters, scenario = scenario)
+                   scenario = scenario)
   # Extract results
   times <- c()
   costs <- c()
@@ -450,14 +450,14 @@ do.experiments <- function(configurations, ninstances, scenario, parameters)
 }
 
 ## Initialize allConfigurations with any initial configurations provided.
-allConfigurationsInit <- function(scenario, parameters)
+allConfigurationsInit <- function(scenario)
 {
   initConfigurations <- scenario$initConfigurations
   
   confs_from_file <- NULL
   if (!is.null.or.empty(scenario$configurationsFile)) {
     confs_from_file <- readConfigurationsFile(scenario$configurationsFile,
-                                              parameters, scenario$debugLevel)
+                                              scenario$parameters, scenario$debugLevel)
   }
   if (!is.null.or.empty(initConfigurations)) {
     if (!is.null.or.empty(scenario$configurationsFile) && !identical(initConfigurations, confs_from_file))
@@ -465,7 +465,7 @@ allConfigurationsInit <- function(scenario, parameters)
                     " thus ignoring configurations from file '",
                     scenario$configurationsFile, "'.")
     cat("# Adding", nrow(initConfigurations), "initial configuration(s)\n")
-    initConfigurations <- fix_configurations(initConfigurations, parameters, debugLevel = scenario$debugLevel)
+    initConfigurations <- fix_configurations(initConfigurations, scenario$parameters, debugLevel = scenario$debugLevel)
   } else {
     initConfigurations <- confs_from_file
   }
@@ -475,15 +475,15 @@ allConfigurationsInit <- function(scenario, parameters)
                                initConfigurations, .PARENT. = NA_integer_)
     rownames(allConfigurations) <- allConfigurations[[".ID."]]
     num <- nrow(allConfigurations)
-    allConfigurations <- checkForbidden(allConfigurations, parameters$forbidden)
+    allConfigurations <- checkForbidden(allConfigurations, scenario$parameters$forbidden)
     if (nrow(allConfigurations) < num) {
       irace.warning(num - nrow(allConfigurations), " of the ", num,
                     " initial configurations were forbidden",
                     " and, thus, discarded.")
     }
   } else {
-    allConfigurations <- configurations_alloc(c(".ID.", parameters$names, ".PARENT."),
-      nrow = 0L, parameters = parameters)
+    allConfigurations <- configurations_alloc(c(".ID.", scenario$parameters$names, ".PARENT."),
+      nrow = 0L, parameters = scenario$parameters)
     setDF(allConfigurations)
   }
   allConfigurations
@@ -504,7 +504,6 @@ allConfigurationsInit <- function(scenario, parameters)
 #' Guide](https://cran.r-project.org/package=irace/vignettes/irace-package.pdf).
 #' 
 #' @template arg_scenario
-#' @template arg_parameters
 #'
 #' @template return_irace
 #'
@@ -512,8 +511,7 @@ allConfigurationsInit <- function(scenario, parameters)
 #' \dontrun{
 #' # In general, there are three steps: 
 #' scenario <- readScenario(filename = "scenario.txt")
-#' parameters <- readParameters("parameters.txt")
-#' irace(scenario = scenario, parameters = parameters)
+#' irace(scenario = scenario)
 #' }
 #' #######################################################################
 #' # This example illustrates how to tune the parameters of the simulated
@@ -592,17 +590,18 @@ allConfigurationsInit <- function(scenario, parameters)
 #'                  instances = weights[1:10],
 #'                  maxExperiments = 500,
 #'                  # Do not create a logFile
-#'                  logFile = "")
+#'                  logFile = "",
+#'                  parameters = parameters)
 #' 
 #' ## We check that the scenario is valid. This will also try to execute
 #' ## target_runner.
-#' checkIraceScenario(scenario, parameters = parameters)
+#' checkIraceScenario(scenario)
 #' 
 #' \donttest{
 #' ## We are now ready to launch irace. We do it by means of the irace
 #' ## function. The function will print information about its
 #' ## progress. This may require a few minutes, so it is not run by default.
-#' tuned_confs <- irace(scenario = scenario, parameters = parameters)
+#' tuned_confs <- irace(scenario = scenario)
 #' 
 #' ## We can print the best configurations found by irace as follows:
 #' configurations_print(tuned_confs)
@@ -647,10 +646,10 @@ allConfigurationsInit <- function(scenario, parameters)
 #' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
 #' @concept running
 #' @export
-irace <- function(scenario, parameters)
-  irace_common(scenario, parameters, simple = TRUE)
+irace <- function(scenario)
+  irace_common(scenario, simple = TRUE)
 
-irace_common <- function(scenario, parameters, simple, output.width = 9999L)
+irace_common <- function(scenario, simple, output.width = 9999L)
 {
   if (!simple) {
     op <- options(width = output.width) # Do not wrap the output.
@@ -666,15 +665,7 @@ irace_common <- function(scenario, parameters, simple, output.width = 9999L)
     printScenario (scenario)
   }
   
-  if (missing(parameters)) {
-    parameters <- readParameters (file = scenario$parameterFile,
-      # AClib benchmarks use 15 digits
-      digits = if (scenario$aclib) 15L else 4L, debugLevel = debugLevel)
-  } else {
-    parameters <- checkParameters(parameters)
-  }
-
-  eliteConfigurations <- irace_run(scenario = scenario, parameters = parameters)
+  eliteConfigurations <- irace_run(scenario = scenario)
   if (simple) return(eliteConfigurations)
 
   if (!scenario$quiet) {
@@ -684,7 +675,7 @@ irace_common <- function(scenario, parameters, simple, output.width = 9999L)
     configurations_print(eliteConfigurations)
   
     cat("# Best configurations as commandlines (first number is the configuration ID;", " listed from best to worst according to the ", order_str, "):\n", sep = "")
-    configurations_print_command (eliteConfigurations, parameters)
+    configurations_print_command (eliteConfigurations, scenario$parameters)
   }
   
   if (scenario$postselection > 0) 
@@ -694,7 +685,7 @@ irace_common <- function(scenario, parameters, simple, output.width = 9999L)
   invisible(eliteConfigurations)
 }
 
-irace_run <- function(scenario, parameters)
+irace_run <- function(scenario)
 {
   quiet <- scenario$quiet
   catInfo <- if (quiet) do_nothing else function(..., verbose = TRUE) {
@@ -746,7 +737,7 @@ irace_run <- function(scenario, parameters)
     options(.race.debug.level = debugLevel)
     options(.irace.debug.level = debugLevel)
     # Create a data frame of all configurations ever generated.
-    allConfigurations <- allConfigurationsInit(scenario, parameters)
+    allConfigurations <- allConfigurationsInit(scenario)
     irace.assert(is.integer(allConfigurations[[".ID."]]))
     nbUserConfigurations <- nrow(allConfigurations)
   
@@ -754,7 +745,6 @@ irace_run <- function(scenario, parameters)
     iraceResults <- list(
       scenario = scenario,
       irace_version = irace_version,
-      parameters = parameters,
       iterationElites = c(),
       allElites = list(),
       experiments = matrix(nrow = 0, ncol = 0),
@@ -768,12 +758,12 @@ irace_run <- function(scenario, parameters)
     eliteConfigurations <- data.frame(stringsAsFactors=FALSE)
     
     nbIterations <- if (scenario$nbIterations == 0)
-                      computeNbIterations(parameters$nbVariable)
+                      computeNbIterations(scenario$parameters$nbVariable)
                     else scenario$nbIterations
     nbIterations <- floor(nbIterations)
     
     minSurvival <- if (scenario$minNbSurvival == 0)
-                     computeTerminationOfRace(parameters$nbVariable)
+                     computeTerminationOfRace(scenario$parameters$nbVariable)
                    else scenario$minNbSurvival
     minSurvival <- floor(minSurvival)
 
@@ -827,7 +817,7 @@ irace_run <- function(scenario, parameters)
       repeat {
         # Sample new configurations if needed
         if (nrow(allConfigurations) < nconfigurations) {
-          newConfigurations <- sampleSobol(parameters,
+          newConfigurations <- sampleSobol(scenario$parameters,
                                              nconfigurations - nrow(allConfigurations),
                                              repair = scenario$repairConfiguration)
           set(newConfigurations, j = ".ID.",
@@ -842,7 +832,7 @@ irace_run <- function(scenario, parameters)
         # Execute tests
         # FIXME: Shouldn't we pass the bounds?
         output <- do.experiments(configurations = allConfigurations[next_configuration:nconfigurations, ],
-                                 ninstances = ninstances, scenario = scenario, parameters = parameters)
+          ninstances = ninstances, scenario = scenario)
         # FIXME: Here we should check if everything timed out and increase the bound dynamically.
         iraceResults$experimentLog <- rbind(iraceResults$experimentLog,
                                             # These experiments are assigned iteration 0
@@ -853,9 +843,9 @@ irace_run <- function(scenario, parameters)
         rownames(iraceResults$experiments) <- seq_nrow(iraceResults$experiments)
         rejectedIDs <- c(rejectedIDs, output$rejectedIDs)
         iraceResults$rejectedConfigurations <- rejectedIDs
-        parameters$forbid_configurations(allConfigurations[
+        scenario$parameters$forbid_configurations(allConfigurations[
           allConfigurations[[".ID."]] %in% output$rejectedIDs, , drop = FALSE])
-                
+        
         # For the used time, we count the time reported in all configurations
         # including rejected ones. 
         timeUsed <- sum(timeUsed, output$experimentLog[, "time"], na.rm = TRUE)
@@ -947,7 +937,7 @@ irace_run <- function(scenario, parameters)
           else paste0("# Non-elitist race\n"),
           "# nbIterations: ", nbIterations, "\n",
           "# minNbSurvival: ", minSurvival, "\n",
-          "# nbParameters: ", parameters$nbVariable, "\n",
+          "# nbParameters: ", scenario$parameters$nbVariable, "\n",
           "# seed: ", scenario$seed, "\n",
           "# confidence level: ", scenario$confidence, "\n",
           "# budget: ", remainingBudget, "\n",
@@ -1119,7 +1109,7 @@ irace_run <- function(scenario, parameters)
           catInfo("Sample ", nbNewConfigurations,
                   " configurations from uniform distribution", verbose = FALSE)
         }
-        newConfigurations <- sampleSobol(parameters, nbNewConfigurations,
+        newConfigurations <- sampleSobol(scenario$parameters, nbNewConfigurations,
           repair = scenario$repairConfiguration)
         # We could get fewer than we asked for due to removing duplicates and forbidden.
         nbNewConfigurations <- nrow(newConfigurations)
@@ -1152,14 +1142,14 @@ irace_run <- function(scenario, parameters)
       nbNewConfigurations <- nbConfigurations - nrow(eliteConfigurations)
 
       # Update the model based on elites configurations
-      if (debugLevel >= 1) irace.note("Update model\n")
-      model <- updateModel(parameters, eliteConfigurations, model, indexIteration,
-                           nbIterations, nbNewConfigurations, scenario)
-      if (debugLevel >= 2) printModel (model)
-      if (debugLevel >= 1)
+      if (debugLevel >= 1L) irace.note("Update model\n")
+      model <- updateModel(scenario$parameters, eliteConfigurations, model, indexIteration,
+                           nbIterations, nbNewConfigurations, elitist = scenario$elitist)
+      if (debugLevel >= 2L) printModel (model)
+      if (debugLevel >= 1L)
         irace.note("Sample ", nbNewConfigurations, " configurations from model\n")
       irace.assert(is.integer(eliteConfigurations[[".ID."]]))
-      newConfigurations <- sampleModel(parameters, eliteConfigurations,
+      newConfigurations <- sampleModel(scenario$parameters, eliteConfigurations,
                                        model, nbNewConfigurations,
                                        repair = scenario$repairConfiguration)
 
@@ -1172,19 +1162,19 @@ irace_run <- function(scenario, parameters)
 
       if (scenario[["softRestart"]]) {
         #          Rprof("profile.out")
-        restart_ids <- similarConfigurations (raceConfigurations, parameters,
+        restart_ids <- similarConfigurations (raceConfigurations, scenario$parameters,
                                               threshold = scenario$softRestartThreshold)
         #          Rprof(NULL)
         if (!is.null(restart_ids)) {
           if (debugLevel >= 1)
             irace.note("Soft restart: ", paste(collapse = " ", restart_ids), " !\n")
           model <- restartModel(model, raceConfigurations, restart_ids,
-                                parameters, nbNewConfigurations)
+                                scenario$parameters, nbNewConfigurations)
           iraceResults$softRestart[indexIteration] <- TRUE
           if (debugLevel >= 2L) { printModel (model) }
           # Re-sample after restart like above
           #cat("# ", format(Sys.time(), usetz=TRUE), " sampleModel()\n")
-          newConfigurations <- sampleModel(parameters, eliteConfigurations,
+          newConfigurations <- sampleModel(scenario$parameters, eliteConfigurations,
                                            model, nbNewConfigurations,
                                            repair = scenario$repairConfiguration)
           #cat("# ", format(Sys.time(), usetz=TRUE), " sampleModel() DONE\n")
@@ -1227,7 +1217,6 @@ irace_run <- function(scenario, parameters)
     if (debugLevel >= 1) irace.note("Launch race\n")
     raceResults <- elitist_race (scenario = scenario,
                                  configurations = raceConfigurations,
-                                 parameters = parameters,
                                  maxExp = currentBudget,
                                  minSurvival = minSurvival,
                                  elite.data = elite.data,
@@ -1250,7 +1239,7 @@ irace_run <- function(scenario, parameters)
     if (length(raceResults$rejectedIDs) > 0L) {
       rejectedIDs <- c(rejectedIDs, raceResults$rejectedIDs)
       iraceResults$rejectedConfigurations <- rejectedIDs
-      parameters$forbid_configurations(allConfigurations[
+      scenario$parameters$forbid_configurations(allConfigurations[
         allConfigurations[[".ID."]] %in% raceResults$rejectedIDs, , drop = FALSE])
     }
 
@@ -1286,7 +1275,7 @@ irace_run <- function(scenario, parameters)
     
     if (firstRace) {
       if (debugLevel >= 1) irace.note("Initialise model\n")
-      model <- initialiseModel(parameters, eliteConfigurations)
+      model <- initialiseModel(scenario$parameters, eliteConfigurations)
       if (debugLevel >= 2) printModel (model)
       firstRace <- FALSE
     }

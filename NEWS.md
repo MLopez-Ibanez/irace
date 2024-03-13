@@ -16,7 +16,13 @@
  * The scenario option `digits` has been removed and will give an error if
    present. The number of `digits` for real-valued parameters is now specified
    in the parameter space description. See the example in `readParameters()`.
-   
+
+ * The `scenario` object now includes the `parameters` object. Thus
+   functions such as `irace()`, which previously took as arguments both
+   `scenario` and `parameters`, now only take `scenario`. This also means that
+   the log file `irace.Rdata` does not contain a separate `parameters` element
+   since this element can now be found within `scenario`.
+  
  * The default value of the scenario option `softRestartThreshold` is now
    0.0001 and does not depend on `digits`.
 
@@ -76,7 +82,7 @@
 
  * Initial configurations are sampled using Sobol low-discrepancy sequences using `spacefillr::generate_sobol_set()`. This should provide a better initial distribution of parameter values.
  
- * Parameter spaces can be constructed programmatically using `parametersNew()`. 
+ * Parameter spaces can be constructed programmatically using `parametersNew()`. See the documentation for details.
 
  * Ablation will report configurations that produced the same results, which
    indicates parameter values that have the same effect on the target algorithm,

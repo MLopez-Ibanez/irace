@@ -57,7 +57,7 @@
 #'
 #' @examples
 #'  ## Read the parameters directly from text
-#'  parameters.table <- '
+#'  parameters_table <- '
 #'  # name       switch           type  values               [conditions (using R syntax)]
 #'  algorithm    "--"             c     (as,mmas,eas,ras,acs)
 #'  localsearch  "--localsearch " o     (0, 1, 2, 3)
@@ -76,7 +76,7 @@
 #'  [global]
 #'  digits = 4
 #'  '
-#'  parameters <- readParameters(text=parameters.table)
+#'  parameters <- readParameters(text=parameters_table)
 #'  str(parameters)
 #' 
 #' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
@@ -121,7 +121,7 @@ readParameters <- function (file, digits = 4L, debugLevel = 0L, text)
     #cat("match:",match, "\n")
     line <- substr (line, pos.matched[1] + attr(pos.matched, "match.length"),
                     nchar(line))
-    line <- trim.leading (line)
+    line <- trim_leading (line)
     #cat(line)
     list(match = match, line = line)
   }
@@ -508,6 +508,9 @@ checkParameters <- function(parameters)
   ##   parameters$isDependent <- sapply(parameters$domains, is.expression)
   ##   names(parameters$isDependent) <- parameters$names
   ## }
+  if (!inherits(parameters, "ParameterSpace")) {
+    irace.error("parameters must be an object of class 'ParameterSpace'")
+  }
   parameters
 }
 

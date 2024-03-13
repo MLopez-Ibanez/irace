@@ -3,7 +3,6 @@
 #'
 #' @template arg_configurations
 #' @template arg_scenario
-#' @template arg_parameters
 #'
 #' @return A list with the following elements:
 #'   \describe{
@@ -18,7 +17,7 @@
 #' 
 #' @author Manuel López-Ibáñez
 #' @export
-testConfigurations <- function(configurations, scenario, parameters)
+testConfigurations <- function(configurations, scenario)
 {
   # We need to set up a default scenario (and repeat all checks) in case
   # we are called directly instead of being called after executing irace.
@@ -36,19 +35,14 @@ testConfigurations <- function(configurations, scenario, parameters)
   instanceSeed <- sample.int(2147483647L, size = length(testInstances), replace = TRUE)
   names(instanceSeed) <- instances_id
   
-  values <- removeConfigurationsMetaData(configurations)
-  values <- values[, parameters$names, drop = FALSE]
-  switches <- parameters$switches[parameters$names]
-
-  bounds <- rep(scenario$boundMax, nrow(configurations))
   # If there is no ID (e.g., after using readConfigurations), then add it.
   if (".ID." %not_in% colnames(configurations))
     configurations[[".ID."]] <- seq_nrow(configurations)
   
   # Create experiment list
-  experiments <- createExperimentList(configurations, parameters = parameters,
+  experiments <- createExperimentList(configurations, parameters = scenario$parameters,
                                       instances = testInstances, instances.ID = instances_id, seeds = instanceSeed,
-                                      bounds = bounds)
+                                      bounds = rep(scenario$boundMax, nrow(configurations)))
   if (scenario$debugLevel >= 3L) {
     irace.note ("Memory used before execute.experiments in testConfigurations():\n")
     irace.print.memUsed()

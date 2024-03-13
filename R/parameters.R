@@ -267,7 +267,7 @@ Parameter <- function(name, type, domain, label, condition, transf,
 parametersNew <- function(..., forbidden = NULL, debugLevel = 0L)
   ParameterSpace$new(..., forbidden = forbidden, verbose = debugLevel)
 
-ParameterSpace <- R6::R6Class("ParameterSpace", cloneable = TRUE, lock_class = TRUE, public = list(
+ParameterSpace <- R6::R6Class("ParameterSpace", cloneable = TRUE, lock_class = TRUE, lock_objects = TRUE, public = list(
   .params = NULL,
   conditions = NULL,
   depends = NULL,
@@ -657,7 +657,7 @@ param_quantile.ParamReal <- function(param, probs, domain = param[["domain"]])
 #' 
 #' @seealso [readParameters()]
 #' @examples
-#' parameters.table <- '
+#' parameters_table <- '
 #'  # name       switch           type  values               [conditions (using R syntax)]
 #'  algorithm    "--"             c     (as,mmas,eas,ras,acs)
 #'  localsearch  "--localsearch " c     (0, 1, 2, 3)
@@ -675,7 +675,7 @@ param_quantile.ParamReal <- function(param, probs, domain = param[["domain"]])
 #'  [forbidden]
 #'  (alpha == 0.0) & (beta == 0.0)
 #' '
-#' parameters <- readParameters(text=parameters.table)
+#' parameters <- readParameters(text=parameters_table)
 #' printParameters(parameters)
 #' @export
 printParameters <- function(parameters)

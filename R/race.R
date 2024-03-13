@@ -57,8 +57,6 @@ createExperimentList <- function(configurations, parameters,
   .mapply(list, dots, MoreArgs = NULL)
 }
 
-
-
 ## Executes a list of configurations in a particular instance
 ## configurations: description having the id of the configuration
 ## instance.idx: index of the instance,seed pair in .irace$instancesList
@@ -68,12 +66,10 @@ createExperimentList <- function(configurations, parameters,
 race.wrapper <- function(configurations, instance.idx, bounds = NULL,
                          # FIXME: we actually only need which.exps, not
                          # which.alive nor which.exe
-                         which.alive, which.exe, parameters, scenario)
+                         which.alive, which.exe, scenario)
 {
-  irace.assert (parameters$nbVariable > 0L)
-  irace.assert (length(parameters$names) == parameters$nbParameters)
   # Experiment list to execute
-  experiments <- createExperimentList(configurations, parameters = parameters,
+  experiments <- createExperimentList(configurations, parameters = scenario$parameters,
                                       instances = scenario$instances,
                                       instances.ID = .irace$instancesList[instance.idx, "instanceID"],
                                       seeds = .irace$instancesList[instance.idx, "seed"],
@@ -601,13 +597,11 @@ generateTimeMatrix <- function(elite_ids, experimentLog)
 race <- function(maxExp = 0L,
                  minSurvival = 1L,
                  configurations,
-                 parameters,
                  scenario)
   elitist_race(maxExp = maxExp,
                minSurvival = minSurvival,
                elite.data = NULL,
                configurations = configurations,
-               parameters = parameters,
                scenario = scenario,
                elitistNewInstances = 0L,
                full_experiment_log = NULL)
@@ -616,7 +610,6 @@ elitist_race <- function(maxExp = 0L,
                  minSurvival = 1L,
                  elite.data = NULL,
                  configurations,
-                 parameters,
                  scenario,
                  elitistNewInstances,
                  full_experiment_log)
@@ -746,7 +739,6 @@ elitist_race <- function(maxExp = 0L,
                                 bounds = rep(scenario$boundMax, n.elite),
                                 which.alive = which.elites, 
                                 which.exe = which.elites,
-                                parameters = parameters, 
                                 scenario = scenario)
         # Extract results
         # FIXME: check what would happen in case of having the target evaluator
@@ -959,7 +951,6 @@ elitist_race <- function(maxExp = 0L,
                                 # We are telling race.wrapper that only some elites are alive!
                                 which.alive = which.elite.exe, 
                                 which.exe = which.elite.exe,
-                                parameters = parameters,
                                 scenario = scenario)
         # Extract results
         vcost <- unlist(lapply(output, "[[", "cost"))
@@ -1032,7 +1023,7 @@ elitist_race <- function(maxExp = 0L,
                            # Also, do we use the final.bounds of which.alive or only the ones of which.exe?
                            bounds = final.bounds[which.alive],
                            which.alive = which.alive, which.exe = which.exe,
-                           parameters = parameters, scenario = scenario)
+                           scenario = scenario)
 
     # Extract results
     vcost <- unlist(lapply(output, "[[", "cost"))

@@ -51,6 +51,7 @@ The scenario list contains the following elements:
 \item Target algorithm parameters:
 \describe{
 \item{\code{parameterFile}}{File that contains the description of the parameters of the target algorithm. (Default: \code{"./parameters.txt"})}
+\item{\code{parameters}}{Parameters space object (usually read from a file using \code{readParameters}). (Default: \code{""})}
 }
 \item Target algorithm execution:
 \describe{
