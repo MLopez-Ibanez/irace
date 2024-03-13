@@ -4,16 +4,12 @@
 \alias{checkIraceScenario}
 \title{Test that the given irace scenario can be run.}
 \usage{
-checkIraceScenario(scenario, parameters)
+checkIraceScenario(scenario)
 }
 \arguments{
 \item{scenario}{(\code{list()}) \cr Data structure containing \pkg{irace}
 settings. The data structure has to be the one returned by the function
 \code{\link[=defaultScenario]{defaultScenario()}} or \code{\link[=readScenario]{readScenario()}}.}
-
-\item{parameters}{(\code{list()}) \cr Data structure containing the parameter
-space definition. The data structure has to similar to the one returned by the
-function \code{\link{readParameters}}.}
 }
 \value{
 returns \code{TRUE} if successful and gives an error and returns

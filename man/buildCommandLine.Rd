@@ -35,7 +35,7 @@ irace.logfile <- file.path(system.file(package="irace"),
                            "exdata", "irace-acotsp.Rdata")
 load(irace.logfile)
 allConfigurations <- iraceResults$allConfigurations
-parameters <- iraceResults$parameters
+parameters <- iraceResults$scenario$parameters
 apply(allConfigurations[1:10, unlist(parameters$names)], 1, buildCommandLine,
       unlist(parameters$switches))
 

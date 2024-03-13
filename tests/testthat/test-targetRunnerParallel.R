@@ -29,7 +29,7 @@ targetRunnerParallel = function(experiment, exec.target.runner, scenario, target
    tuner.config = list(maxExperiments = 40L, nbIterations = 1L, minNbSurvival = 1,
                        targetRunnerParallel = targetRunnerParallel,
                        instances = instances, logFile = log.file)
-   confs <- irace(scenario = tuner.config, parameters = parameters)
+   confs <- irace(scenario = tuner.config)
    expect_gt(nrow(confs), 0L)
 })
 
@@ -51,8 +51,7 @@ x "x" r (1,2)
     irace(scenario = list(targetRunnerParallel = targetRunnerParallel,
                           instances = replicate(5, list(10)),
                           targetRunnerData = list(a=1, b=2),
-                          maxExperiments = 42L),
-          parameters = parameters),
+                          maxExperiments = 42L, parameters = parameters)),
     "a = 1, b = 2")
 })
 

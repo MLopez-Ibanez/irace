@@ -213,20 +213,54 @@ checkScenario <- function(scenario = defaultScenario())
 
   # Duplicated entries will cause confusion.
   dups <- anyDuplicated(names(scenario))
-  if (dups > 0)
+  if (dups > 0L)
     irace.error("scenario contains duplicated entries: ", names(scenario)[dups])
 
   # Boolean control parameters.
   boolParams <- .irace.params.def[.irace.params.def[, "type"] == "b", "name"]
   for (p in boolParams) {
-    scenario[[p]] <- as.boolean.param (scenario[[p]], p)
+    scenario[[p]] <- as.boolean.param(scenario[[p]], p)
   }
+
+  # We have characters everywhere, set to the right types to avoid problems
+  # later.
+
+  # Integer control parameters
+  intParams <- .irace.params.def[.irace.params.def[, "type"] == "i", "name"]
+  for (param in intParams) {
+    p <- scenario[[param]]
+    if (is.null.or.empty(p))
+      scenario[[param]] <- NA
+    if (is.na(scenario[[param]]))
+      next # Allow NA default values
+    p <- suppressWarnings(as.numeric(p))
+    if (is.null(p) || is.na (p) || !is.wholenumber(p) || p < 0)
+      irace.error (quote.param (param), " must be a non-negative integer.")
+    scenario[[param]] <- as.integer(p)
+  }
+
+  check_positive <- function(scenario, what) {
+    if (any(scenario[what] <= 0L)) {
+      for (op in what) {
+        if (scenario[[op]] <= 0L)
+          irace.error(quote.param (op), " = ", scenario[[op]], " must be larger than 0.")
+      }
+    }
+  }
+  check_positive(scenario, c("firstTest", "eachTest", "blockSize"))
+
   options(.irace.quiet = scenario$quiet)
   ## Check that everything is fine with external parameters
   # Check that the files exist and are readable.
   scenario$parameterFile <- path_rel2abs(scenario$parameterFile)
-  # We don't read parameterFile here because the user may give the parameters
-  # explicitly.  And it is validated in readParameters anyway.
+  if (is.null.or.empty(scenario$parameters)) {
+    irace.note("Reading parameter file '", scenario$parameterFile, "'.\n")
+    scenario$parameters <- readParameters(file = scenario$parameterFile,
+      # AClib benchmarks use 15 digits
+      digits = if (scenario$aclib) 15L else 4L, debugLevel = scenario$debugLevel)
+  }
+  scenario$parameters <- checkParameters(scenario$parameters)
+    
   scenario$execDir <- path_rel2abs(scenario$execDir)
   file.check (scenario$execDir, isdir = TRUE,
               text = paste0("execution directory ", quote.param("execDir")))
@@ -366,32 +400,6 @@ checkScenario <- function(scenario = defaultScenario())
     irace.error("if given, 'initConfigurations' must be a matrix or data.frame.")
   }
   
-  # We have characters everywhere, set to the right types to avoid
-  # problems later.
-
-  # Integer control parameters
-  intParams <- .irace.params.def[.irace.params.def[, "type"] == "i", "name"]
-  for (param in intParams) {
-    p <- scenario[[param]]
-    if (is.null.or.empty(p))
-      scenario[[param]] <- NA
-    if (is.na(scenario[[param]]))
-      next # Allow NA default values
-    p <- suppressWarnings(as.numeric(p))
-    if (is.null(p) || is.na (p) || !is.wholenumber(p) || p < 0)
-      irace.error (quote.param (param), " must be a non-negative integer.")
-    scenario[[param]] <- as.integer(p)
-  }
-
-  check_positive <- function(scenario, what) {
-    if (any(scenario[what] <= 0L)) {
-      for (op in what) {
-        if (scenario[[op]] <= 0L)
-          irace.error(quote.param (op), " = ", scenario[[op]], " must be larger than 0.")
-      }
-    }
-  }
-  check_positive(scenario, c("firstTest", "eachTest", "blockSize"))
 
   if (length(scenario$instances) %% scenario$blockSize != 0) {
     irace.error("The number of instances (", length(scenario$instances), ") must be a multiple of ",
@@ -586,6 +594,7 @@ printScenario <- function(scenario)
 #'  \item Target algorithm parameters:
 #'    \describe{
 #'      \item{`parameterFile`}{File that contains the description of the parameters of the target algorithm. (Default: `"./parameters.txt"`)}
+#'      \item{`parameters`}{Parameters space object (usually read from a file using \code{readParameters}). (Default: `""`)}
 #'    }
 #'  \item Target algorithm execution:
 #'    \describe{

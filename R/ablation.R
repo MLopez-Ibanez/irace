@@ -289,7 +289,6 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
                   configurations = all_configurations,
                   experiments = results,
                   instances   = .irace$instancesList,
-                  parameters = parameters,
                   scenario    = scenario, 
                   trajectory  = trajectory,
                   best = best_configuration,
@@ -307,7 +306,6 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
   if (is.null(iraceResults$state$completed) || iraceResults$state$completed == "Incomplete") {
     stop("This logfile seems to belong to an incomplete run of irace.")
   }
-  parameters <- iraceResults$parameters
   scenario   <- iraceResults$scenario
   scenario_args <- list(...)
   if (length(scenario_args) > 0L) {
@@ -339,6 +337,7 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
   target_configuration <- iraceResults$allConfigurations[target, , drop = FALSE]
   configurations_print(target_configuration)
 
+  parameters <- scenario$parameters
   # Select the parameters used for ablation
   if (is.null(ab_params)) {
     ab_params <- parameters$names
@@ -389,7 +388,7 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
   while (length(param_names) > 1L) {
     # Generate ablation configurations
     cat("# Generating configurations (row number is ID):", param_names,"\n")
-    ab_aux <- generateAblation(best_configuration, target_configuration, parameters, 
+    ab_aux <- generateAblation(best_configuration, target_configuration, parameters,
                                param_names)
     aconfigurations <- ab_aux$configurations
     if (is.null(aconfigurations)) {
@@ -428,7 +427,6 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
                                 minSurvival = 1L,
                                 elite.data = elite_data,
                                 configurations = race_conf,
-                                parameters = parameters,
                                 scenario = scenario,
                                 elitistNewInstances = 0L)
     results <- merge_matrix(results, race.output$experiments)
