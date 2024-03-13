@@ -70,6 +70,7 @@ p2 "" r (0, p1) | p1 < 0.5
 p3 "" r (0, p2)
 ', digits = 2)
   confs <- irace:::sampleUniform(parameters, 50)
+  confs <- as.data.frame(confs)
   for (i in seq_len(nrow(confs))) {
     checkConditionalAndDependency(confs[i,], parameters)
   }
@@ -121,13 +122,15 @@ test.checkDependencies <- function(parameterFile, ...)
  
   nconf <- 100
   conf <- irace:::sampleUniform(parameters, nconf)
-  conf$.ID. <- seq_len(nrow(conf))
-  
+  expect_equal(nconf, nrow(conf))
+  conf$.ID. <- seq_len(nconf)
+  conf <- as.data.frame(conf)
   for (i in seq_len(nconf))
     checkConditionalAndDependency(conf[i,], parameters)
  
   model <- irace:::initialiseModel(parameters, conf)
   conf2 <- irace:::sampleModel(parameters, conf, model, nconf)
+  conf2 <- as.data.frame(conf2)
   for (i in seq_len(nconf))
     checkConditionalAndDependency(conf2[i,], parameters)
 

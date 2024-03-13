@@ -821,7 +821,7 @@ irace_run <- function(scenario)
                                              nconfigurations - nrow(allConfigurations),
                                              repair = scenario$repairConfiguration)
           set(newConfigurations, j = ".ID.",
-            value = max(0L, allConfigurations[[".ID."]]) + seq_nrow(newConfigurations))
+            value = max(0L, vlast(allConfigurations[[".ID."]])) + seq_nrow(newConfigurations))
           setcolorder(newConfigurations, ".ID.", before=1L)
           setDF(newConfigurations)
           allConfigurations <- rbind(allConfigurations, newConfigurations)
@@ -1114,7 +1114,7 @@ irace_run <- function(scenario)
         # We could get fewer than we asked for due to removing duplicates and forbidden.
         nbNewConfigurations <- nrow(newConfigurations)
         set(newConfigurations, j= ".ID.",
-          value = max(0L, allConfigurations[[".ID."]]) + seq_nrow(newConfigurations))
+          value = max(0L, vlast(allConfigurations[[".ID."]])) + seq_nrow(newConfigurations))
         setcolorder(newConfigurations, ".ID.", before=1L)
         setDF(newConfigurations)
         allConfigurations <- rbind(allConfigurations, newConfigurations)
@@ -1152,12 +1152,13 @@ irace_run <- function(scenario)
       newConfigurations <- sampleModel(scenario$parameters, eliteConfigurations,
                                        model, nbNewConfigurations,
                                        repair = scenario$repairConfiguration)
-
       # Set ID of the new configurations.
-      newConfigurations <- cbind (.ID. = max(0L, allConfigurations[[".ID."]]) +
-                                    seq_nrow(newConfigurations), newConfigurations)
+      set(newConfigurations, j = ".ID.",
+        value = vlast(allConfigurations[[".ID."]]) + seq_nrow(newConfigurations))
+      setcolorder(newConfigurations, ".ID.", before=1L)
+      setDF(newConfigurations)
       raceConfigurations <- rbind(eliteConfigurations[, colnames(newConfigurations)],
-                                  newConfigurations)
+        newConfigurations)
       rownames(raceConfigurations) <- raceConfigurations[[".ID."]]
 
       if (scenario[["softRestart"]]) {
@@ -1179,14 +1180,16 @@ irace_run <- function(scenario)
                                            repair = scenario$repairConfiguration)
           #cat("# ", format(Sys.time(), usetz=TRUE), " sampleModel() DONE\n")
           # Set ID of the new configurations.
-          newConfigurations <- cbind(.ID. = max(0L, allConfigurations[[".ID."]]) + 
-                                       seq_nrow(newConfigurations), newConfigurations)
+          # Set ID of the new configurations.
+          set(newConfigurations, j = ".ID.",
+            value = vlast(allConfigurations[[".ID."]]) + seq_nrow(newConfigurations))
+          setcolorder(newConfigurations, ".ID.", before=1L)
+          setDF(newConfigurations)
           raceConfigurations <- rbind(eliteConfigurations[, colnames(newConfigurations)],
                                       newConfigurations)
           rownames(raceConfigurations) <- raceConfigurations[[".ID."]]
         }
       }
-
       # Append these configurations to the global table.
       allConfigurations <- rbind(allConfigurations, newConfigurations)
       rownames(allConfigurations) <- allConfigurations[[".ID."]]
