@@ -393,8 +393,9 @@ checkTargetFiles <- function(scenario)
 {
   ## Create two random configurations
   configurations <- sampleUniform(scenario$parameters, 2L,
-                                  repair = scenario$repairConfiguration)
-  configurations <- cbind(.ID. = seq_nrow(configurations), configurations)
+    repair = scenario$repairConfiguration)
+  set(configurations, j = ".ID.", value = seq_nrow(configurations))
+  setDF(configurations)
   
   # Read initial configurations provided by the user.
   initConfigurations <- allConfigurationsInit(scenario)

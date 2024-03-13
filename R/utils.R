@@ -622,3 +622,12 @@ truncate_rows <- function(x, n)
 }
 
 
+vlast <- function(x)
+{
+  stopifnot(is.null(dim(x)))
+  lx <- length(x)
+  if (!lx)
+    x
+  else
+    x[[lx]]
+}

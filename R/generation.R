@@ -205,7 +205,6 @@ sampleUniform <- function(parameters, nbConfigurations, repair = NULL)
     }
   }
   set(newConfigurations, j = ".PARENT.", value = NA_integer_)
-  setDF(newConfigurations)
   newConfigurations
 }
 
@@ -268,26 +267,22 @@ sampleModel <- function(parameters, eliteConfigurations, model,
   newConfigurations <- sample_from_model(parameters, eliteConfigurations,
                                          model, nbNewConfigurations, repair)
   forbidden <- parameters$forbidden
-  if (is.null(forbidden)) {
-    setDF(newConfigurations)
-    return(newConfigurations)
-  }
-  
-  retries <- 100L
-  repeat {
-    newConfigurations <- filter_forbidden(newConfigurations, forbidden)
-    needed <- nbNewConfigurations - nrow(newConfigurations)
-    if (needed == 0) {
-      setDF(newConfigurations)
-      return(newConfigurations)
-    }
-    tmp <- sample_from_model(parameters, eliteConfigurations, model, needed, repair = repair)
-    newConfigurations <- rbindlist(list(newConfigurations, tmp))
-    retries <- retries - 1L
-    if (retries == 0L) {
-      irace.error("irace tried 100 times to sample from the model a configuration not forbidden without success, perhaps your constraints are too strict?")
+  if (!is.null(forbidden)) {
+    retries <- 100L
+    repeat {
+      newConfigurations <- filter_forbidden(newConfigurations, forbidden)
+      needed <- nbNewConfigurations - nrow(newConfigurations)
+      if (needed == 0L)
+        break
+      tmp <- sample_from_model(parameters, eliteConfigurations, model, needed, repair = repair)
+      newConfigurations <- rbindlist(list(newConfigurations, tmp))
+      retries <- retries - 1L
+      if (retries == 0L) {
+        irace.error("irace tried 100 times to sample from the model a configuration not forbidden without success, perhaps your constraints are too strict?")
+      }
     }
   }
+  newConfigurations
 }
 
 
