@@ -58,13 +58,13 @@ initialiseModel <- function (parameters, configurations)
 }
 
 updateModel <- function(parameters, eliteConfigurations, oldModel,
-                         indexIteration, nbIterations, nbNewConfigurations, scenario)
+                        indexIteration, nbIterations, nbNewConfigurations, elitist)
 {
   dec_factor <- (1 - ((indexIteration - 1) / nbIterations))
   add_factor <- ((indexIteration - 1) / nbIterations)
   num_factor <- ((1 / nbNewConfigurations)^(1 / parameters$nbVariable))
   prob_max <- 0.2^(1. / parameters$nbVariable)
-  update_prob <- if (scenario$elitist) function(p, idx) {
+  update_prob <- if (elitist) function(p, idx) {
     # Decrease first all values in the vector:
     p <- p * dec_factor
     p[idx] <- p[idx] + add_factor

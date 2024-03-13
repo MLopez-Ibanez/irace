@@ -2,22 +2,23 @@ withr::with_output_sink("test-blocksize.Rout", {
 cap.irace <- function(...)
 {
   args <- list(...)
-  parameters.table <- '
+  parameters_table <- '
    x "" r (0, 1.00)
    y "" r (0, 1.00)'
   
-  parameters <- readParameters(text = parameters.table)
+  parameters <- readParameters(text = parameters_table)
 
   scenario <- list(instances = c("ackley", "goldestein", "matyas", "himmelblau"),
                    targetRunner = target_runner_capping_xy,
                    capping = TRUE,
                    blockSize = 4,
                    boundMax = 80,
-                   testType = "t-test")
+                   testType = "t-test",
+                   parameters = parameters)
   scenario <- modifyList(scenario, args)
   scenario <- checkScenario (scenario)
 
-  confs <- irace(scenario = scenario, parameters = parameters)
+  confs <- irace(scenario = scenario)
   best.conf <- getFinalElites(scenario$logFile, n = 1L, drop.metadata = TRUE)
   expect_identical(removeConfigurationsMetaData(confs[1L, , drop = FALSE]),
                    best.conf)
@@ -42,11 +43,12 @@ time.irace <- function(...)
    ')
   scenario <- list(targetRunner = target.runner.time,
                    instances = c("ackley", "goldestein", "matyas"),
-                   blockSize=3)
+                   blockSize=3,
+                   parameters = parameters)
   scenario <- modifyList(scenario, args)
   scenario <- checkScenario (scenario)
   
-  confs <- irace(scenario = scenario, parameters = parameters)
+  confs <- irace(scenario = scenario)
   best.conf <- getFinalElites(scenario$logFile, n = 1L, drop.metadata = TRUE)
   expect_identical(removeConfigurationsMetaData(confs[1L, , drop = FALSE]),
                    best.conf)

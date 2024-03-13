@@ -74,7 +74,7 @@ produced by \code{irace}, even with the same random seed.
 }
 \examples{
  ## Read the parameters directly from text
- parameters.table <- '
+ parameters_table <- '
  # name       switch           type  values               [conditions (using R syntax)]
  algorithm    "--"             c     (as,mmas,eas,ras,acs)
  localsearch  "--localsearch " o     (0, 1, 2, 3)
@@ -93,7 +93,7 @@ produced by \code{irace}, even with the same random seed.
  [global]
  digits = 4
  '
- parameters <- readParameters(text=parameters.table)
+ parameters <- readParameters(text=parameters_table)
  str(parameters)
 
 }

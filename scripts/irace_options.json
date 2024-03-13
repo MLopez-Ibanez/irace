@@ -81,6 +81,16 @@
     "section": "Target algorithm parameters"
   },
   {
+    "name": "parameters",
+    "type": "x",
+    "short": "",
+    "long": "",
+    "default": "",
+    "description": "",
+    "man": "Parameters space object (usually read from a file using \\code{readParameters}).",
+    "section": "Target algorithm parameters"
+  },
+  {
     "name": "initConfigurations",
     "type": "x",
     "short": "",

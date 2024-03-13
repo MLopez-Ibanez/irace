@@ -132,7 +132,6 @@ testing_fromlog <- function(logFile, testNbElites, testIterationElites,
   }
   iraceResults <- read_logfile(logFile)
   scenario <- iraceResults[["scenario"]]
-  parameters <- iraceResults[["parameters"]]
   instances_changed <- FALSE
   
   if (!missing(testNbElites))
@@ -178,7 +177,7 @@ testing_fromlog <- function(logFile, testNbElites, testIterationElites,
   configurations <- iraceResults$allConfigurations[testing_id, , drop=FALSE]
 
   irace.note ("Testing configurations (in no particular order): ", paste(testing_id, collapse=" "), "\n")
-  testing_common(configurations, scenario, parameters, iraceResults)
+  testing_common(configurations, scenario, iraceResults)
   return(TRUE)
 }
 
@@ -206,15 +205,11 @@ testing_fromfile <- function(filename, scenario)
   scenario <- checkScenario(scenario)
   if (!scenario$quiet) printScenario(scenario)
 
-  irace.note("Reading parameter file '", scenario$parameterFile, "'.\n")
-  parameters <- readParameters (file = scenario$parameterFile,
-    # AClib benchmarks use 15 digits.
-    digits = if (scenario$aclib) 15L else 4L)
-  configurations <- readConfigurationsFile(filename, parameters)
+  configurations <- readConfigurationsFile(filename, scenario$parameters)
   configurations <- cbind(.ID. = seq_nrow(configurations), configurations, .PARENT. = NA_integer_)
   rownames(configurations) <- configurations[[".ID."]]
   num <- nrow(configurations)
-  configurations <- checkForbidden(configurations, parameters$forbidden)
+  configurations <- checkForbidden(configurations, scenario$parameters$forbidden)
   if (nrow(configurations) < num) {
     irace.warning("Some of the configurations in the configurations file were forbidden",
                   "and, thus, discarded.")
@@ -222,18 +217,17 @@ testing_fromfile <- function(filename, scenario)
   # To save the logs
   iraceResults <- list(scenario = scenario,
                        irace_version = irace_version,
-                       parameters = parameters,
                        allConfigurations = configurations)
     
   irace.note ("Testing configurations (in the order given as input): \n")
-  testing_common(configurations, scenario, parameters, iraceResults)
+  testing_common(configurations, scenario, iraceResults)
 }
 
-testing_common <- function(configurations, scenario, parameters, iraceResults)
+testing_common <- function(configurations, scenario, iraceResults)
 {
   verbose <- !scenario$quiet
   if (verbose) configurations_print(configurations)
-  iraceResults$testing <- testConfigurations(configurations, scenario, parameters)
+  iraceResults$testing <- testConfigurations(configurations, scenario)
   irace_save_logfile(iraceResults, scenario)
   irace.note ("Testing results (column number is configuration ID in no particular order):\n")
   if (verbose) print(cbind(seeds = iraceResults$testing$seeds,
@@ -248,7 +242,6 @@ testing_common <- function(configurations, scenario, parameters, iraceResults)
 #' settings provided and trying to run the target-algorithm.
 #' 
 #' @template arg_scenario
-#' @template arg_parameters
 #'
 #' @return returns \code{TRUE} if successful and gives an error and returns
 #' \code{FALSE} otherwise.
@@ -267,26 +260,15 @@ testing_common <- function(configurations, scenario, parameters, iraceResults)
 #' }
 #' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
 #' @export
-checkIraceScenario <- function(scenario, parameters)
+checkIraceScenario <- function(scenario)
 {
   irace.note ("Checking scenario\n")
   scenario$debugLevel <- 2L
   scenario <- checkScenario(scenario)
   if (!scenario$quiet) printScenario(scenario)
  
-  if (missing(parameters)) {
-    irace.note("Reading parameter file '", scenario$parameterFile, "'.\n")
-    parameters <- readParameters (file = scenario$parameterFile,
-      # AClib benchmarks use 15 digits
-      digits = if (scenario$aclib) 15L else 4L, debugLevel = 2L)
-  } else if (!is.null.or.empty(scenario$parameterFile)) {
-    if (!scenario$quiet) 
-      cat("# checkIraceScenario(): 'parameters' provided by user. ",
-          "Parameter file '", scenario$parameterFile, "' will be ignored\n", sep = "")
-  }
-  checkParameters(parameters)
   irace.note("Checking target runner.\n")
-  if (checkTargetFiles(scenario = scenario, parameters = parameters)) {
+  if (checkTargetFiles(scenario = scenario)) {
     irace.note("Check successful.\n")
     return(TRUE)
   }
@@ -407,15 +389,15 @@ irace.cmdline <- function(argv = commandArgs(trailingOnly = TRUE))
 }
 
 ## Check targetRunner execution
-checkTargetFiles <- function(scenario, parameters)
+checkTargetFiles <- function(scenario)
 {
   ## Create two random configurations
-  configurations <- sampleUniform(parameters, 2L,
+  configurations <- sampleUniform(scenario$parameters, 2L,
                                   repair = scenario$repairConfiguration)
   configurations <- cbind(.ID. = seq_nrow(configurations), configurations)
   
   # Read initial configurations provided by the user.
-  initConfigurations <- allConfigurationsInit(scenario, parameters)
+  initConfigurations <- allConfigurationsInit(scenario)
   if (nrow(initConfigurations) > 0L) {
     irace.assert(all(colnames(configurations) == colnames(initConfigurations)))
     configurations <- rbind(initConfigurations, configurations)
@@ -426,7 +408,7 @@ checkTargetFiles <- function(scenario, parameters)
   instances_ID <- if (scenario$sampleInstances)
                     sample.int(length(scenario$instances), 1L) else 1L
   experiments <- createExperimentList(
-    configurations, parameters, instances = scenario$instances,
+    configurations, scenario$parameters, instances = scenario$instances,
     instances.ID = instances_ID, seeds = 1234567L, bounds = bounds)
 
   startParallel(scenario)

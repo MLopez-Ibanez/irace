@@ -30,12 +30,9 @@
 #' @export
 multi_irace <- function(scenarios, parameters, n = 1L, parallel = 1, split_output = parallel > 1, global_seed = NULL)
 {
-  # Check each scenario.
-  scenarios <- lapply(scenarios, checkScenario)
-
   # Parallel execution is not available on Windows.
-  if(.Platform$OS.type == 'windows') {
-    irace.assert(parallel == 1)
+  if (.Platform$OS.type == 'windows') {
+    irace.assert(parallel == 1L)
   }
 
   # Allow either the same number of scenarios and parameters, or a single scenario or parameter space definition.
@@ -59,7 +56,16 @@ multi_irace <- function(scenarios, parameters, n = 1L, parallel = 1, split_outpu
     parameters <- rep(parameters, each = n)
   }
 
+  # Overwrite scenario seeds.
+  seeds <- gen_random_seeds(length(scenarios), global_seed = global_seed)
+
   for (i in seq_along(scenarios)) {
+    # FIXME: We should store this seed in state not in scenario. We should not modify scenario.
+    scenarios[[i]]$seed <- seeds[[i]]
+    scenarios[[i]]$parameters <- parameters[[i]]
+    # Check each scenario.
+    scenarios[[i]] <- checkScenario(scenarios[[i]])
+
     # Modify 'logFile' and 'execDir' with the index of the run.
     # Paths are guaranteed to be absolute because of 'checkScenario'.
     logFile_old <- scenarios[[i]]$logFile
@@ -89,25 +95,19 @@ multi_irace <- function(scenarios, parameters, n = 1L, parallel = 1, split_outpu
     }
   }
 
-  # Overwrite scenario seeds.
-  seeds <- gen_random_seeds(length(scenarios), global_seed = global_seed)
-  for (i in seq_along(scenarios)) {
-    # FIXME: We should store this seed in state not in scenario. We should not modify scenario.
-    scenarios[[i]]$seed <- seeds[[i]]
-  }
 
-  irace.run <- function(scenario, parameters) {
+  irace_run <- function(scenario) {
     if (scenario$quiet || !split_output) {
-      irace(scenario, parameters)
+      irace(scenario)
     } else {
       withr::with_output_sink(file.path(scenario$execDir, "irace.out"), {
-        irace(scenario, parameters)
-    })
+        irace(scenario)
+      })
     }
   }
 
-  if (parallel > 1) {
-    runs <- parallel::mcmapply(irace.run, scenarios, parameters, mc.cores = parallel, SIMPLIFY = FALSE)
+  if (parallel > 1L) {
+    runs <- parallel::mcmapply(irace_run, scenarios, mc.cores = parallel, SIMPLIFY = FALSE)
     # FIXME: if stop() is called from mcmapply, it does not
     # terminate the execution of the parent process, so it will
     # continue and give more errors later. We have to terminate
@@ -121,8 +121,7 @@ multi_irace <- function(scenarios, parameters, n = 1L, parallel = 1, split_outpu
       irace.error("A child process triggered a fatal error")
     }
   } else {
-    runs <- mapply(irace.run, scenarios, parameters, SIMPLIFY = FALSE)
+    runs <- mapply(irace_run, scenarios, SIMPLIFY = FALSE)
   }
-
   runs
 }

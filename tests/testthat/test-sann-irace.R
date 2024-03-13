@@ -50,23 +50,24 @@ sann.irace <- function(log.param=FALSE, ...)
 
   # tmax and temp must be > 0
   if (log.param)
-     parameters.table <- '
+     parameters_table <- '
        tmax "" i,log (1, 5000)
        temp "" r,log (1, 100)
        '      
   else
-     parameters.table <- '
+     parameters_table <- '
        tmax "" i (1, 5000)
        temp "" r (1, 100)
      '  
-  parameters <- readParameters(text = parameters.table)
+  parameters <- readParameters(text = parameters_table)
 
   scenario <- list(targetRunner = target.runner,
-                   maxExperiments = 1000, seed = 1234567)
+    maxExperiments = 1000, seed = 1234567,
+    parameters = parameters)
   scenario <- modifyList(scenario, args)
   scenario <- checkScenario (scenario)
 
-  confs <- irace(scenario = scenario, parameters = parameters)
+  confs <- irace(scenario = scenario)
   best.conf <- getFinalElites(scenario$logFile, n = 1, drop.metadata = TRUE)
   expect_identical(removeConfigurationsMetaData(confs[1, , drop = FALSE]),
                    best.conf)

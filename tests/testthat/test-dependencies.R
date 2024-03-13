@@ -114,7 +114,8 @@ test.checkDependencies <- function(parameterFile, ...)
   args <- list(...)
   weights <- rnorm(200, mean = 0.9, sd = 0.02)
   parameters <- readParameters(parameterFile)
-  scenario <- list(targetRunner = target.runner, instances = weights, seed = 1234567, maxExperiments=200)
+  scenario <- list(targetRunner = target.runner, instances = weights, seed = 1234567, maxExperiments=200,
+    parameters = parameters)
   scenario <- modifyList(scenario, args)
   scenario <- checkScenario (scenario)
  
@@ -130,7 +131,7 @@ test.checkDependencies <- function(parameterFile, ...)
   for (i in seq_len(nconf))
     checkConditionalAndDependency(conf2[i,], parameters)
 
-  confs <- irace(scenario = scenario, parameters = parameters)
+  confs <- irace(scenario = scenario)
   for (i in seq_len(nrow(confs))) {
     checkConditionalAndDependency(confs[i,], parameters)
   }

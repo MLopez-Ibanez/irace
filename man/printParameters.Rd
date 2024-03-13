@@ -18,7 +18,7 @@ function \code{\link{readParameters}}.}
 Print parameter space in the textual format accepted by irace.
 }
 \examples{
-parameters.table <- '
+parameters_table <- '
  # name       switch           type  values               [conditions (using R syntax)]
  algorithm    "--"             c     (as,mmas,eas,ras,acs)
  localsearch  "--localsearch " c     (0, 1, 2, 3)
@@ -36,7 +36,7 @@ parameters.table <- '
  [forbidden]
  (alpha == 0.0) & (beta == 0.0)
 '
-parameters <- readParameters(text=parameters.table)
+parameters <- readParameters(text=parameters_table)
 printParameters(parameters)
 }
 \seealso{

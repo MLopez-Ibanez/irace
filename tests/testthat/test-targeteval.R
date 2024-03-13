@@ -19,11 +19,12 @@ algorithm       "--"                 c          (as,mmas,eas,ras,acs)
 ')
 
    generate.set.seed()
-   scenario <- checkScenario (list(targetRunner = target.runner,
-                                   targetEvaluator = target.evaluator,
-                                   maxExperiments = 200, instances = runif(100)))
-   irace:::checkTargetFiles(scenario = scenario, parameters = parameters)
-   confs <- irace(scenario = scenario, parameters = parameters)
+   scenario <- checkScenario(list(
+     targetRunner = target.runner, targetEvaluator = target.evaluator,
+     maxExperiments = 200, instances = runif(100),
+     parameters = parameters))
+   irace:::checkTargetFiles(scenario = scenario)
+   confs <- irace(scenario = scenario)
    expect_gt(nrow(confs), 0L)
 })
 

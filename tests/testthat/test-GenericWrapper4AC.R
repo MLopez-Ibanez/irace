@@ -8,7 +8,7 @@ test_that("GenericWrapper4AC", {
   # FIXME: how to check that a python package is installed?
   parameters <- readParameters(text = '
    cost "cost" r (0.1, 1.00)
-   runtime "runtime" r (0.1, 1.00)')
+   runtime "runtime" r (0.1, 1.00)', digits = 15L)
 
   configurations <- data.frame(.ID. = 1L, cost = 0.5, runtime = 0.8)
 
@@ -16,7 +16,8 @@ test_that("GenericWrapper4AC", {
   names(instances) = instances
   dummy_wrapper <- test_path("dummy_wrapper.py")
   scenario <- list(targetRunner = dummy_wrapper, instances = instances,
-                   maxExperiments = 1000, aclib = TRUE)
+    maxExperiments = 1000, aclib = TRUE,
+    parameters = parameters)
 
   scenario <- checkScenario (scenario)
   experiments <- irace:::createExperimentList(configurations,

@@ -4,16 +4,12 @@
 \alias{irace}
 \title{Execute one run of the Iterated Racing algorithm.}
 \usage{
-irace(scenario, parameters)
+irace(scenario)
 }
 \arguments{
 \item{scenario}{(\code{list()}) \cr Data structure containing \pkg{irace}
 settings. The data structure has to be the one returned by the function
 \code{\link[=defaultScenario]{defaultScenario()}} or \code{\link[=readScenario]{readScenario()}}.}
-
-\item{parameters}{(\code{list()}) \cr Data structure containing the parameter
-space definition. The data structure has to similar to the one returned by the
-function \code{\link{readParameters}}.}
 }
 \value{
 (\code{data.frame})
@@ -100,8 +96,7 @@ the FAQ section in the \href{https://cran.r-project.org/package=irace/vignettes/
 \dontrun{
 # In general, there are three steps: 
 scenario <- readScenario(filename = "scenario.txt")
-parameters <- readParameters("parameters.txt")
-irace(scenario = scenario, parameters = parameters)
+irace(scenario = scenario)
 }
 #######################################################################
 # This example illustrates how to tune the parameters of the simulated
@@ -180,17 +175,18 @@ scenario <- list(targetRunner = target_runner,
                  instances = weights[1:10],
                  maxExperiments = 500,
                  # Do not create a logFile
-                 logFile = "")
+                 logFile = "",
+                 parameters = parameters)
 
 ## We check that the scenario is valid. This will also try to execute
 ## target_runner.
-checkIraceScenario(scenario, parameters = parameters)
+checkIraceScenario(scenario)
 
 \donttest{
 ## We are now ready to launch irace. We do it by means of the irace
 ## function. The function will print information about its
 ## progress. This may require a few minutes, so it is not run by default.
-tuned_confs <- irace(scenario = scenario, parameters = parameters)
+tuned_confs <- irace(scenario = scenario)
 
 ## We can print the best configurations found by irace as follows:
 configurations_print(tuned_confs)

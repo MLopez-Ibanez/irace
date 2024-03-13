@@ -24,13 +24,14 @@ time.irace <- function(...)
   scenario <- list(targetRunner = target.runner,
                    instances = weights,
                    testInstances = test_weights,
-                   seed = 1234567)
+                   seed = 1234567,
+                   parameters = parameters)
   scenario <- modifyList(scenario, args)
   scenario <- checkScenario (scenario)
 
-  irace:::checkTargetFiles(scenario = scenario, parameters = parameters)
+  irace:::checkTargetFiles(scenario = scenario)
   
-  confs <- irace(scenario = scenario, parameters = parameters)
+  confs <- irace(scenario = scenario)
   final_ids <- sort(as.character(confs$.ID.[1:scenario$testNbElites]))
   expect_gt(nrow(confs), 0L)
   testing_fromlog(scenario$logFile)

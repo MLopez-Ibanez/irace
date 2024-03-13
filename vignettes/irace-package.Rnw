@@ -220,7 +220,7 @@ library(knitr)
 %Load files needed for examples
 <<exampleload,eval=TRUE,include=FALSE>>=
 library("irace")
-load("examples.Rdata")
+load("examples.Rdata") # loads "experiment" and "output"
 iraceResults <- irace::read_logfile("irace-acotsp.Rdata")
 log_ablation_file <- file.path(system.file(package="irace"), "exdata", "log-ablation.Rdata")
 load(log_ablation_file)
@@ -580,11 +580,7 @@ define initial configurations remove this file from the directory.
   See \autoref{sec:training} for guidelines.
 
 \item Uncomment and assign in \code{scenario.txt} only the options for which you
-need a value different from the default.
-%% MANUEL: I'm not sure what this means.
-% The names of the template files match the default names of the scenario
-% options.
-Some common parameters that you might want to adjust are:
+need a value different from the default. Some common options that you might want to adjust are:
 \begin{description}
 \item[\parameter{execDir}] (\code{--exec-dir}): the directory in which \irace will execute the
 target algorithm; the default value is the current directory.
@@ -723,7 +719,7 @@ irace_main(scenario = scenario)
 \end{itemize}
 
 This will perform one run of \irace. See the output of \code{irace --help} in the command-line or \code{irace_cmdline("--help")} in \aR for quick information on
-additional \irace parameters. For more information about \irace options, see \autoref{sec:irace options}.
+additional \irace options. For more information about \irace options, see \autoref{sec:irace options}.
 
 \end{enumerate}
 
@@ -1105,7 +1101,7 @@ for the \code{algorithm}, \code{ants} and \code{q0} parameters of the \ACOTSP sc
 
 <<parametersetup,eval=TRUE,include=FALSE>>=
 # Setup example
-parameters <- irace::readParameters(text='
+parameters <- readParameters(text='
 algorithm       "--"                 c		(as,mmas,eas,ras,acs)
 ants            "--ants "            i	  	(5, 100)
 q0              "--q0 "              r  	(0.0, 1.0) 		| algorithm %in% c("acs")
@@ -2088,7 +2084,7 @@ probabilistic model of the last elite configurations can be found here by doing:
 # localsearch parameter.
 iraceResults$state$model["localsearch"]
 # The order of the probabilities corresponds to:
-iraceResults$parameters$domain$localsearch
+iraceResults$scenario$parameters$domains$localsearch
 @
 
 The example shows a list that has one element per elite configuration (ID as
@@ -2164,7 +2160,7 @@ irace:::concordance(iraceResults$testing$experiments)
 % plots the frequency of the parameters sampled during one \irace run:
 
 % <<freq, fig.pos="tbp", fig.cap="Parameters sampling frequency.", out.width="\\textwidth",prompt=TRUE, eval=TRUE, comment="">>=
-% parameterFrequency(iraceResults$allConfigurations, iraceResults$parameters)
+% parameterFrequency(iraceResults$allConfigurations, iraceResults$scenario$parameters)
 % @
 
 %% FIXME: iraceplot
@@ -2180,7 +2176,7 @@ irace:::concordance(iraceResults$testing$experiments)
 % # Get configurations in the last two iterations
 % conf <- getConfigurationByIteration(iraceResults,
 %                                     iterations = c(last - 1, last))
-% parallelCoordinatesPlot (conf, iraceResults$parameters,
+% parallelCoordinatesPlot (conf, iraceResults$scenario$parameters,
 %                          param_names = c("algorithm", "alpha", "beta", "rho",
 %                                          "q0", "rasrank"),
 %                          hierarchy = FALSE)

@@ -12,12 +12,12 @@ target.runner.reject <- function(experiment, scenario)
 cap.irace <- function(...)
 {
   args <- list(...)
-  parameters.table <- '
+  parameters_table <- '
    x "" r (0, 1.00)
    y "" r (0, 1.00)
    reject "" c (0,1)'
   
-  parameters <- readParameters(text = parameters.table)
+  parameters <- readParameters(text = parameters_table)
 
   scenario <- list(instances = c("ackley", "goldestein", "matyas", "himmelblau"),
                    targetRunner = target_runner_capping_xy,
@@ -25,13 +25,14 @@ cap.irace <- function(...)
                    boundMax = 80,
                    testType = "t-test",
                    logFile = tempfile(fileext=".Rdata"),
-                   parallel = if (system_os_is_windows()) 1L else test_irace_detectCores())
+                   parallel = if (system_os_is_windows()) 1L else test_irace_detectCores(),
+                   parameters = parameters)
   scenario <- modifyList(scenario, args)
   scenario <- checkScenario (scenario)
 
-  irace:::checkTargetFiles(scenario = scenario, parameters = parameters)
+  irace:::checkTargetFiles(scenario = scenario)
   
-  confs <- irace(scenario = scenario, parameters = parameters)
+  confs <- irace(scenario = scenario)
   best.conf <- getFinalElites(scenario$logFile, n = 1L, drop.metadata = TRUE)
   expect_identical(removeConfigurationsMetaData(confs[1L, , drop = FALSE]),
                    best.conf)

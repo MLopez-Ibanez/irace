@@ -2,7 +2,7 @@ withr::with_output_sink("test-multi_irace.Rout", {
 
 make.target.runner <- function(parameters) {
   function(experiment, scenario) {
-    cost <- max(1, abs(rnorm(1, mean=sum(unlist((experiment$configuration[parameters]))))))
+    cost <- max(1, abs(rnorm(1, mean=sum(unlist(experiment$configuration[parameters])))))
     list(cost = cost, call = toString(experiment))
   }
 }

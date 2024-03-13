@@ -255,29 +255,14 @@ test.type.order.str <- function(test.type)
                                test.type, "' of test.type"))
 
 
-trim.leading <- function(str)
-  sub('^[[:space:]]+', '', str) ## white space, POSIX-style
+trim_leading <- function(str)
+  sub('^[[:space:]]+', '', str, perl = TRUE) ## white space, POSIX-style
 
-trim.trailing <- function(str)
-  sub('[[:space:]]+$', '', str) ## white space, POSIX-style
+trim_trailing <- function(str)
+  sub('[[:space:]]+$', '', str, perl = TRUE) ## white space, POSIX-style
 
 # remove leading and trailing white space characters
-trim <- function(str) trim.trailing(trim.leading(str))
-
-isFixed <- function (paramName, parameters)
-  as.logical(parameters$isFixed[paramName])
-
-paramDomain <- function (paramName, parameters)
-  parameters$domain[[paramName]]
-
-paramLowerBound <- function (paramName, parameters)
-  as.numeric(parameters$domain[[paramName]][1])
-
-paramUpperBound <- function (paramName, parameters)
-  as.numeric(parameters$domain[[paramName]][2])
-
-
-inNumericDomain <- function(value, domain) (value >= domain[1] && value <= domain[2])
+trim <- function(str) trim_trailing(trim_leading(str))
 
 ## This function takes two matrices x and y and merges them such that the
 ## resulting matrix z has:

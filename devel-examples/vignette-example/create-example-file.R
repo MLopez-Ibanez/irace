@@ -59,41 +59,37 @@ weights <- rnorm(200, mean = 0.9, sd = 0.02)
 ## On this set of instances, we are interested in optimizing two
 ## parameters of the SANN algorithm: tmax and temp. We setup the
 ## parameter space as follows:
-parameters.table <- '
+parameters_table <- '
 tmax "" i (1, 5000)
 temp "" r (0, 100)
 '
 
 ## We use the irace function readParameters to read this table:
-parameters <- readParameters(text = parameters.table)
+parameters <- readParameters(text = parameters_table)
 
 ## Next, we define the function that will evaluate each candidate
 ## configuration on a single instance. For simplicity, we restrict to
 ## three-dimensional functions and we set the maximum number of
 ## iterations of SANN to 5000.
+
 target.runner <- function(experiment, scenario)
 {
-  # Functions to be optimized:
-  f_rosenbrock <- function (x) {
-    d <- length(x)
-    z <- x + 1
-    hz <- z[1:(d - 1)]
-    tz <- z[2:d]
-    s <- sum(100 * (hz^2 - tz)^2 + (hz - 1)^2)
-    return(s)
-  }
-  f_rastrigin <- function (x) {
-    sum(x * x - 10 * cos(2 * pi * x) + 10)
-  }
-
   instance <- experiment$instance
   configuration <- experiment$configuration
-
   D <- 3
   par <- runif(D, min=-1, max=1)
   fn <- function(x) {
-    weight <- instance
-    return(weight * f_rastrigin(x) + (1 - weight) * f_rosenbrock(x))
+    # Functions to be optimized:
+    f_rosenbrock <- function (x) {
+      z <- x + 1
+      hz <- z[-length(z)]
+      tz <- z[-1L]
+      sum(100 * (hz^2 - tz)^2 + (hz - 1)^2)
+    }
+    f_rastrigin <- function (x)
+      sum(x * x - 10 * cos(2 * pi * x) + 10)
+    
+    (instance * f_rastrigin(x) + (1 - instance) * f_rosenbrock(x))
   }
   res <- stats::optim(par,fn, method="SANN",
                control=list(maxit=5000
@@ -117,12 +113,13 @@ scenario <- list(targetRunner = target.runner,
                  instances = weights[1:100],
                  maxExperiments = 1000,
                  logFile = "./sann.rda",
-                 execDir = "./")
+                 execDir = "./",
+                 parameters = parameters)
 
 ## We are now ready to launch irace. We do it by means of the irace
 ## function. The function will print information about its
 ## progress. This may require a few minutes, so it is not run by default.
-irace(scenario = scenario, parameters = parameters)
+irace(scenario = scenario)
 
 load("sann.rda")
 iraceResults$scenario$execDir <- "./"

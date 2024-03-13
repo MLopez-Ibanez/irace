@@ -2,7 +2,7 @@
 withr::with_output_sink("test-bug-blocksize.Rout", {
 test_that("bug blocksize", {
   skip_on_cran()
-parameters.txt <- '
+parameters_txt <- '
 algorithm    "--"             c    (as,mmas,eas,ras,acs)
 localsearch  "--localsearch " c    (0, 1, 2, 3)
 alpha        "--alpha "       r    (0.00, 5.00)
@@ -18,7 +18,7 @@ dlb          "--dlb "         c    (0, 1)               | localsearch %in% c(1,2
 target.runner <- function(experiment, scenario)
   list(cost = 100 + rnorm(1, 0, 0.1), call = toString(experiment))
 
-parameters <- irace:::readParameters(text=parameters.txt)
+parameters <- irace:::readParameters(text=parameters_txt)
 
 withr::with_options(list(warning=2), {
   scenario <- list(targetRunner = target.runner,
@@ -26,9 +26,10 @@ withr::with_options(list(warning=2), {
                    sampleInstances=FALSE,
                    maxExperiments = 5000, logFile = "",
                    elitistNewInstances = 1,
-                   elitist = TRUE)
+                   elitist = TRUE,
+                   parameters = parameters)
   scenario <- checkScenario (scenario)
-  confs <- irace(scenario = scenario, parameters = parameters)
+  confs <- irace(scenario = scenario)
   expect_false(is.null(confs))
 })
 })

@@ -216,14 +216,14 @@ checkScenario <- function(scenario = defaultScenario())
   if (dups)
     irace.error("scenario contains duplicated entries: ", names(scenario)[dups])
 
+  # We have characters everywhere, set to the right types to avoid problems
+  # later.
+  
   # Boolean control parameters.
   boolParams <- .irace.params.def[.irace.params.def[, "type"] == "b", "name"]
   for (p in boolParams) {
-    scenario[[p]] <- as.boolean.param (scenario[[p]], p)
+    scenario[[p]] <- as.boolean.param(scenario[[p]], p)
   }
-  # We have characters everywhere, set to the right types to avoid
-  # problems later.
-
   # Integer control parameters
   intParams <- .irace.params.def[.irace.params.def[, "type"] == "i", "name"]
   for (param in intParams) {
@@ -248,13 +248,18 @@ checkScenario <- function(scenario = defaultScenario())
   }
   check_positive(scenario, c("firstTest", "eachTest", "blockSize"))
 
-
   options(.irace.quiet = scenario$quiet)
   ## Check that everything is fine with external parameters
   # Check that the files exist and are readable.
   scenario$parameterFile <- path_rel2abs(scenario$parameterFile)
-  # We don't read parameterFile here because the user may give the parameters
-  # explicitly.  And it is validated in readParameters anyway.
+  if (is.null.or.empty(scenario$parameters)) {
+    irace.note("Reading parameter file '", scenario$parameterFile, "'.\n")
+    scenario$parameters <- readParameters(file = scenario$parameterFile,
+      # AClib benchmarks use 15 digits
+      digits = if (scenario$aclib) 15L else 4L, debugLevel = scenario$debugLevel)
+  }
+  scenario$parameters <- checkParameters(scenario$parameters)
+    
   scenario$execDir <- path_rel2abs(scenario$execDir)
   file.check (scenario$execDir, isdir = TRUE,
               text = paste0("execution directory ", quote.param("execDir")))
@@ -587,6 +592,7 @@ printScenario <- function(scenario)
 #'  \item Target algorithm parameters:
 #'    \describe{
 #'      \item{`parameterFile`}{File that contains the description of the parameters of the target algorithm. (Default: `"./parameters.txt"`)}
+#'      \item{`parameters`}{Parameters space object (usually read from a file using \code{readParameters}). (Default: `""`)}
 #'    }
 #'  \item Target algorithm execution:
 #'    \describe{
