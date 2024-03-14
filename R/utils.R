@@ -509,25 +509,23 @@ concordance <- function(data)
 
   n <- nrow(data) #judges
   k <- ncol(data) #objects
-  if (n <= 1 || k <= 1)
+  if (n <= 1L || k <= 1L)
     return(list(kendall.w = NA, spearman.rho = NA))
 
   # Get rankings by rows (per instance)
   r <- rowRanks(data, ties.method = "average")
   R <- colSums2(r)
-  # FIXME: This is slow, can we make it faster?
-  TIES <- tapply(c(r), row(r), table)
+  TIES <- c(table(r,row(r)))
   # If everything is tied, then W=1, perfect homogeneity.
-  if (all(unlist(TIES) == ncol(data))) {
+  if (all(TIES == k)) {
     W <- 1
   } else {
     # FIXME: This formula seems slightly different from the one in
     # friedman.test. Why?
-    T <- sum(unlist(lapply(TIES, function (u) {u^3 - u})))
+    TIES <- sum(TIES^3 - TIES)
     W <- ((12 * sum((R - n * (k + 1) / 2)^2)) /
-          ((n^2 * (k^3 - k)) - (n * T)))
+            ((n^2 * (k^3 - k)) - (n * TIES)))
   }
-  
   # Spearman's rho
   rho <- (n * W - 1) / (n - 1)
 
