@@ -451,8 +451,11 @@ checkScenario <- function(scenario = defaultScenario())
 
   as.boolean.param <- function(x, name)
   {
-    x <- as.integer(x)
-    if (!is.na (x) && x != 0L && x != 1L) {
+    if (is.logical(x)) return(x)
+    if (is.na(x)) return(as.logical(NA))
+    # We handle "0" and "1" but not "TRUE" and "FALSE".
+    x <- suppressWarnings(as.integer(x)) 
+    if (is.na(x) || (x != 0L && x != 1L)) {
       irace.error (quote.param(name), " must be either 0 or 1.")
     }
     as.logical(x)
