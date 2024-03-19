@@ -106,8 +106,8 @@ psRace <- function(iraceLogFile=NULL, iraceResults=NULL, conf.ids=NULL,
                       scenario = scenario)
   experiments <- race.output$experiments
   
-  elite.configurations <- extractElites(scenario, race.output$configurations,
-                                        min(race.output$nbAlive, 1))
+  elite.configurations <- extractElites(race.output$configurations,
+    nbElites = 1L, debugLevel = scenario$debugLevel)
   irace.note("Elite configurations (first number is the configuration ID;",
                " listed from best to worst according to the ",
                test.type.order.str(scenario$testType), "):\n")
@@ -122,5 +122,5 @@ psRace <- function(iraceLogFile=NULL, iraceResults=NULL, conf.ids=NULL,
         
   if (!is.null(iraceLogFile))
     irace_save_logfile(iraceResults, scenario)
-  return(psrace.log)
+  psrace.log
 }
