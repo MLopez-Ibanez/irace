@@ -296,42 +296,6 @@ merge_matrix <- function(x, y)
   return(x)
 }
 
-## extractElites
-# Input: the configurations with the .RANK. field filled.
-#        the number of elites wished
-# Output: nbElites elites, sorted by ranks, with the weights assigned.
-extractElites <- function(scenario, configurations, nbElites)
-{
-  # Keep only alive configurations.
-  ## FIXME: Shouldn't this be done by the caller?
-  configurations <- configurations[configurations$.ALIVE., , drop = FALSE]
-  if (nbElites < 1) {
-    irace.internal.error("nbElites is lower or equal to zero.") 
-  }
-  # Remove duplicated. Duplicated configurations may be generated, however, it
-  # is too slow to check at generation time. Nevertheless, we can check now
-  # since we typically have very few elites.
-  ## FIXME: Use a variant of similarConfigurations.
-  configurations <- configurations[order(configurations$.ID.), , drop = FALSE]
-  before <- nrow(configurations)
-  configurations <- configurations[!duplicated(removeConfigurationsMetaData(configurations)),
-                                 , drop = FALSE]
-  after <- nrow(configurations)
-  if (after < before && scenario$debugLevel >= 1) {
-    irace.note("Dropped ", before - after, " duplicated elites\n")
-  }
-
-  nbElites <- min(after, nbElites)
-  # Sort by rank.
-  elites <- configurations[order(configurations[[".RANK."]]), , drop = FALSE]
-  elites <- elites[seq_len(nbElites), , drop = FALSE]
-  elites[[".WEIGHT."]] <- (((nbElites + 1) - seq_len(nbElites))
-                           / (nbElites * (nbElites + 1L) / 2))
-  elites
-}
-
-
-
 # FIXME: This may not work when working interactively. For example,
 # one cannot change the number of slaves.  A more robust function
 # would try to close any open slaves, and then re-spawn a different
@@ -448,7 +412,7 @@ dataVariance <- function(data)
   irace.assert (is.matrix(data) && is.numeric(data))
   # LESLIE: should we rank data??
   # MANUEL: We should add the option.
-  if (nrow(data) <= 1 || ncol(data) <= 1) return(NA)
+  if (nrow(data) <= 1L || ncol(data) <= 1L) return(NA)
   
   # Normalize
   #datamin <- apply(data,1,min,na.rm=TRUE)

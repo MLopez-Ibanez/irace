@@ -1235,29 +1235,24 @@ elitist_race <- function(maxExp = 0L,
                  old_best_id  = if (old_best == best || is.na(old_best)) NULL else id_best)
   }
   nbAlive <- sum(alive)
-  configurations$.ALIVE. <- as.logical(alive)
+  rejectedIDs <- configurations[is.rejected, ".ID."]
+  # Only return alive ones.
+  configurations <- configurations[as.logical(alive), , drop=FALSE]
+  irace.assert(nbAlive == nrow(configurations))
   # Assign the proper ranks in the configurations data.frame.
-  configurations$.RANK. <- Inf
-  configurations[which.alive, ".RANK."] <- race.ranks
+  configurations[[".RANK."]] <- race.ranks
   # Now we can sort the data.frame by the rank.
-  configurations <- configurations[order(as.numeric(configurations[[".RANK."]])), ]
-  # Consistency check.
-  irace.assert (all(configurations[seq_len(nbAlive), ".ALIVE."]))
-  if (nbAlive < nrow(configurations))
-    irace.assert(!any(configurations[(nbAlive + 1L):nrow(configurations), ".ALIVE."]))
-
+  configurations <- configurations[order(configurations[[".RANK."]]), , drop=FALSE]
   if (scenario$debugLevel >= 3) {
     irace.note ("Memory used in race():\n")
     irace.print.memUsed()
   }
-
   # nrow(Results) may be smaller, equal or larger than current.task.
   irace.assert(nrow(experimentLog) == experimentsUsed)
 
   list(experiments = Results,
        experimentLog = experimentLog,
        experimentsUsed = experimentsUsed,
-       nbAlive = nbAlive,
        configurations = configurations,
-       rejectedIDs = configurations[is.rejected, ".ID."])
+       rejectedIDs = rejectedIDs)
 }

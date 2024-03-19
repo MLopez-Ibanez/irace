@@ -489,6 +489,28 @@ allConfigurationsInit <- function(scenario)
   allConfigurations
 }
 
+extractElites <- function(elites, nbElites, debugLevel)
+{
+  irace.assert(nbElites > 0L)
+  # Remove duplicated. Duplicated configurations may be generated, however, it
+  # is too slow to check at generation time. Nevertheless, we can check now
+  # since we typically have very few elites.
+  ## FIXME: Use a variant of similarConfigurations.
+  before <- nrow(elites)
+  elites <- elites[!duplicated(removeConfigurationsMetaData(elites)),  , drop = FALSE]
+  after <- nrow(elites)
+  if (after < before && debugLevel >= 1L)
+    irace.note("Dropped ", before - after, " duplicated elites\n")
+
+  nbElites <- min(after, nbElites)
+  # Sort by rank.
+  elites <- elites[order(elites[[".RANK."]]), , drop = FALSE]
+  elites <- head(elites, n = nbElites)
+  elites[[".WEIGHT."]] <- (((nbElites + 1) - seq_len(nbElites))
+    / (nbElites * (nbElites + 1L) / 2))
+  elites
+}
+
 #' Execute one run of the Iterated Racing algorithm.
 #'
 #' The function `irace` implements the Iterated Racing procedure for parameter
@@ -995,7 +1017,7 @@ irace_run <- function(scenario)
     }
 
     if (indexIteration > nbIterations) {
-      if (scenario$nbIterations == 0) {
+      if (scenario$nbIterations == 0L) {
         nbIterations <- indexIteration
       } else {
         if (debugLevel >= 1) {
@@ -1006,7 +1028,7 @@ irace_run <- function(scenario)
     }
     # Compute the current budget (nb of experiments for this iteration),
     # or take the value given as parameter.
-    currentBudget <- if (scenario$nbExperimentsPerIteration == 0)
+    currentBudget <- if (scenario$nbExperimentsPerIteration == 0L)
                        computeComputationalBudget(remainingBudget, indexIteration, nbIterations)
                      else scenario$nbExperimentsPerIteration
     
@@ -1026,14 +1048,14 @@ irace_run <- function(scenario)
                                 mu = scenario$mu,
                                 eachTest = scenario$eachTest,
                                 blockSize = blockSize,
-                                nElites = 0, nOldInstances = 0,
-                                newInstances = 0)
+                                nElites = 0L, nOldInstances = 0L,
+                                newInstances = 0L)
     }
     
     # If a value was given as a parameter, then this value limits the maximum,
     # but if we have budget only for less than this, then we have run out of
     # budget.
-    if (scenario$nbConfigurations > 0) {
+    if (scenario$nbConfigurations > 0L) {
       if (scenario$nbConfigurations <= nbConfigurations) {
         nbConfigurations <- scenario$nbConfigurations
       } else if (currentBudget < remainingBudget) {
@@ -1208,10 +1230,10 @@ irace_run <- function(scenario)
 
     # FIXME: Remove this assert after a while
     irace.assert(max(nrow(iraceResults$experiments), 0L) == nrow(iraceResults$experiments))
-    .irace$next.instance <- nrow(iraceResults$experiments) + 1
+    .irace$next.instance <- nrow(iraceResults$experiments) + 1L
     # Add instances if needed
     # Calculate budget needed for old instances assuming non elitist irace
-    if ((nrow(.irace$instancesList) - (.irace$next.instance - 1))
+    if ((nrow(.irace$instancesList) - (.irace$next.instance - 1L))
         < ceiling(remainingBudget / minSurvival)) {
       .irace$instancesList <- generateInstances(scenario, n = ceiling(remainingBudget / minSurvival),
                                                 instancesList = .irace$instancesList)
@@ -1234,7 +1256,6 @@ irace_run <- function(scenario)
     iraceResults$experimentLog <- rbind(iraceResults$experimentLog,
                                         cbind(rep(indexIteration, nrow(raceResults$experimentLog)),
                                               raceResults$experimentLog))
-    
     # Merge new results.
     iraceResults$experiments <- merge_matrix (iraceResults$experiments,
                                               raceResults$experiments)
@@ -1264,11 +1285,8 @@ irace_run <- function(scenario)
     }
 
     if (debugLevel >= 1) irace.note("Extracting elites\n")
-    # FIXME: Since we only actually keep the alive ones, we don't need
-    # to carry around rejected ones in raceResults$configurations. This
-    # would reduce overhead.
-    eliteConfigurations <- extractElites(scenario, raceResults$configurations,
-                                         min(raceResults$nbAlive, minSurvival))
+    eliteConfigurations <- extractElites(raceResults$configurations,
+      nbElites = minSurvival, debugLevel = scenario$debugLevel)
     irace.note("Elite configurations (first number is the configuration ID;",
                " listed from best to worst according to the ",
                test.type.order.str(scenario$testType), "):\n")
