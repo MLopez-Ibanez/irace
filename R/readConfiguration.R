@@ -31,7 +31,6 @@
 #' 
 #' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
 #' @export
-## FIXME: What about digits?
 readConfigurationsFile <- function(filename, parameters, debugLevel = 0L, text)
 {
   if (missing(filename) && !missing(text)) {
@@ -58,8 +57,8 @@ fix_configurations <- function(configurations, parameters, debugLevel = 0L, file
 {
   conf_error <- function(k, ...)
     irace.error("Configuration number ", k,
-                if (is.null(filename)) "" else paste0(" from file '", filename, "'"),
-                ...)
+      if (is.null(filename)) "" else paste0(" from file '", filename, "'"),
+      ...)
   
   if (debugLevel >= 2L) print(configurations, digits=15L)
   nbConfigurations <- nrow(configurations)
@@ -71,16 +70,14 @@ fix_configurations <- function(configurations, parameters, debugLevel = 0L, file
     missing <- setdiff(colnames(configurations), namesParameters)
     if (length(missing) > 0L) {
       if (is.null(filename)) {
-        irace.error("The parameter names (",
-                    strlimit(paste(missing, collapse=", ")),
-                    ") do not match the parameter names: ",
-                    paste(namesParameters, collapse=", "))
+        irace.error("The parameter names (", strlimit(paste(missing, collapse=", ")),
+          ") do not match the parameter names: ", paste(namesParameters, collapse=", "))
       } else {
         irace.error("The parameter names (",
-                    strlimit(paste(missing, collapse=", ")),
-                    ") given in the first row of file ", filename,
-                    " do not match the parameter names: ",
-                    paste(namesParameters, collapse=", "))
+          strlimit(paste(missing, collapse=", ")),
+          ") given in the first row of file ", filename,
+          " do not match the parameter names: ",
+          paste(namesParameters, collapse=", "))
       }
       return(NULL)
     }
@@ -90,12 +87,12 @@ fix_configurations <- function(configurations, parameters, debugLevel = 0L, file
     if (length(missing) > 0) {
       if (is.null(filename)) {
         irace.error("The parameter names (",
-                    strlimit(paste(missing, collapse=", ")),
-                    ") are missing from the configurations provided.")
+          strlimit(paste(missing, collapse=", ")),
+          ") are missing from the configurations provided.")
       } else {
         irace.error("The parameter names (",
-                    strlimit(paste(missing, collapse=", ")),
-                    ") are missing from the first row of file ", filename)
+          strlimit(paste(missing, collapse=", ")),
+          ") are missing from the first row of file ", filename)
       }
       return(NULL)
     }
@@ -109,23 +106,6 @@ fix_configurations <- function(configurations, parameters, debugLevel = 0L, file
   }
   # Reorder columns.
   configurations <- configurations[, namesParameters, drop = FALSE]
-  # Fix up numeric columns.
-  for (currentParameter in parameters$names_numeric) {
-    configurations[[currentParameter]] <-
-      suppressWarnings(as.numeric(configurations[[currentParameter]]))
-    # For integers, only accept an integer.
-    if (parameters$types[[currentParameter]] == "i") {
-      # Remove NAs for this check.
-      values <- configurations[[currentParameter]]
-      values[is.na(values)] <- 0
-      if (any(as.integer(values) != values)) {
-        k <- which(as.integer(values) != values)[1L]
-        conf_error (k, " is invalid because parameter ", currentParameter,
-          " is of type integer but its value ", values[k], " is not an integer")
-        return(NULL)
-      }
-    }
-  }
 
   # Loop over all parameters.
   for (param in parameters$get()) {
@@ -134,10 +114,30 @@ fix_configurations <- function(configurations, parameters, debugLevel = 0L, file
     domain <- param[["domain"]]
     is_dep_param <- param[["is_dependent"]]
     condition <- param[["condition"]]
+    # Fix up numeric columns.
+    if (type == "i") {
+      # For integers, only accept an integer.
+      configurations[[pname]] <-
+        suppressWarnings(as.numeric(configurations[[pname]]))
+      # Remove NAs for this check.
+      values <- configurations[[pname]]
+      values[is.na(values)] <- 0L
+      if (any(as.integer(values) != values)) {
+        k <- which(as.integer(values) != values)[1L]
+        conf_error (k, " is invalid because parameter ", pname,
+          " is of type integer but its value ", values[k], " is not an integer")
+        return(NULL)
+      }
+    } else if (type == "r") {
+      configurations[[pname]] <- round(
+        suppressWarnings(as.numeric(configurations[[pname]])),
+        digits = parameters$get(pname)[["digits"]])
+    }
     # Loop over all configurations in configurations.
     # FIXME: Vectorize this loop
+    values <- configurations[[pname]]
     for (k in seq_len(nbConfigurations)) {
-      currentValue <- configurations[k, pname]
+      currentValue <- values[k]
       # Check the status of the conditions for this parameter to know whether
       # it must be enabled.
       if (conditionsSatisfied(condition, configurations[k, ])) {
@@ -165,7 +165,6 @@ fix_configurations <- function(configurations, parameters, debugLevel = 0L, file
             return(NULL)
           }
         } else if (type == "i" || type == "r") {
-          currentValue <- as.numeric(currentValue)
           lower <- domain[[1L]]
           upper <- domain[[2L]]
           if (is.na(currentValue) || currentValue < lower || currentValue > upper) {
