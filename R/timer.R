@@ -1,4 +1,4 @@
-Timer <- R6::R6Class("Timer", lock_class = TRUE, list(
+Timer <- R6::R6Class("Timer", cloneable = TRUE, lock_class = TRUE, lock_objects = TRUE, public = list(
   start = NULL,
   initialize = function() {
     self$start <- proc.time()
