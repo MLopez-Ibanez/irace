@@ -59,7 +59,7 @@ getConfigurationById <- function(iraceResults, ids, drop.metadata = FALSE)
     
   if (length(ids) < 1L) stop("You must provide at least one configuration id.")
 
-  get_configuration_by_id_helper (iraceResults$allConfigurations, ids, drop.metadata = drop.metadata)
+  get_configuration_by_id_helper(iraceResults$allConfigurations, ids, drop_metadata = drop.metadata)
 }
 
 #' Returns the configurations by the iteration in which they were executed.
@@ -94,17 +94,17 @@ getConfigurationByIteration <- function(iraceResults, iterations, drop.metadata 
   ids <- unique(subset(as.data.frame(iraceResults$experimentLog),
                        iteration %in% iterations,
                        select="configuration", drop=TRUE))
-  get_configuration_by_id_helper(iraceResults$allConfigurations, ids, drop.metadata = drop.metadata)
+  get_configuration_by_id_helper(iraceResults$allConfigurations, ids, drop_metadata = drop.metadata)
 }
 
 
-get_configuration_by_id_helper <- function(allConfigurations, ids, drop.metadata)
+get_configuration_by_id_helper <- function(allConfigurations, ids, drop_metadata)
 {  
   configurations <- allConfigurations[allConfigurations[[".ID."]] %in% ids, , drop=FALSE]
   if (nrow(configurations) == 0L)
     stop("No configuration found with ID:", ids, ".")
   
-  if (drop.metadata)
+  if (drop_metadata)
     configurations <- removeConfigurationsMetaData(configurations)
   configurations
 }
@@ -135,7 +135,7 @@ get_instanceID_seed_pairs <- function(iraceResults, index, instances = FALSE)
   iraceResults <- read_logfile(iraceResults)
   instancesList <- iraceResults$state$.irace$instancesList
   if (!missing(index))
-    instancesList <- instancesList[index, ]
+    instancesList <- instancesList[index, , drop = FALSE]
   if (!instances)
     return(instancesList)
 

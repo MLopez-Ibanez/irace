@@ -215,6 +215,7 @@ target.evaluator.default <- function(experiment, num.configurations, all.conf.id
     irace.error ("targetEvaluator", shQuote(targetEvaluator),
                  "cannot be found or is not executable!\n")
   }
+  all.conf.id <- paste0(all.conf.id, collapse = " ")
   args <- c(configuration.id, instance.id, seed, instance, num.configurations, all.conf.id)
   withr::with_dir(scenario$execDir, {
     output <- runcommand(targetEvaluator, args, configuration.id, debugLevel, timeout = scenario$targetRunnerTimeout)
@@ -316,20 +317,18 @@ check_output_target_runner <- function(output, scenario, bound = NULL)
 # late, thus we have to pass .irace$target.runner explicitly.
 exec.target.runner <- function(experiment, scenario, target.runner)
 {
-  doit <- function(experiment, scenario)
-  {
+  doit <- function(experiment, scenario) {
     x <- target.runner(experiment, scenario)
     check_output_target_runner(x, scenario, bound = experiment$bound)
   }
   
   retries <- scenario$targetRunnerRetries
-  while (retries > 0) {
+  while (retries > 0L) {
     output <- try (doit(experiment, scenario))
-    if (!inherits(output, "try-error") && is.null(output$error)) {
+    if (!inherits(output, "try-error") && is.null(output$error))
       return (output)
-    }
     irace.note("Retrying (", retries, " left).\n")
-    retries <- retries - 1
+    retries <- retries - 1L
   }
   doit(experiment, scenario)
 }
@@ -543,7 +542,7 @@ execute.experiments <- function(experiments, scenario)
       irace.error("Stopping because the output of targetRunnerParallel is missing elements. The output was:\n",
         paste0(capture.output(str(target.output)), collapse="\n"))
     }
-  } else if (scenario$batchmode != 0) {
+  } else if (scenario$batchmode != 0L) {
     target.output <- cluster.lapply (experiments, scenario = scenario)
   } else if (parallel > 1) {
     if (mpi) {
@@ -627,13 +626,12 @@ execute.evaluator <- function(experiments, scenario, target.output, configuratio
   ## FIXME: We do not need the configurations.id argument:
   irace.assert(isTRUE(all.equal(configurations.id,
                                 sapply(experiments, getElement, "id.configuration"))))
-  all.conf.id <- paste(configurations.id, collapse = " ")
-  
+  nconfs <- length(configurations.id)
   ## Evaluate configurations sequentially
   for (k in seq_along(experiments)) {
     output <- exec.target.evaluator(experiment = experiments[[k]],
-                                    num.configurations = length(configurations.id),
-                                    all.conf.id, scenario = scenario,
+                                    num.configurations = nconfs,
+                                    configurations.id, scenario = scenario,
                                     target_evaluator = .irace$target.evaluator,
                                     target.runner.call = target.output[[k]]$call)
     target.output[[k]]$cost <- output$cost

@@ -391,9 +391,8 @@ irace.cmdline <- function(argv = commandArgs(trailingOnly = TRUE))
     return(invisible(testing_fromfile(testFile, scenario)))
   }
 
-  if (length(parser$argv) > 0) {
+  if (length(parser$argv))
     irace.error ("Unknown command-line options: ", paste(parser$argv, collapse = " "))
-  }
-
+  
   irace_common(scenario = scenario, simple=FALSE)
 }

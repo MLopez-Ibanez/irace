@@ -1230,12 +1230,12 @@ irace_run <- function(scenario, parameters)
     }
 
     # Get data from previous elite tests 
-    elite.data <- if (scenario$elitist && nrow(eliteConfigurations) > 0)
+    elite.data <- if (scenario$elitist && nrow(eliteConfigurations) > 0L)
                     iraceResults$experiments[, as.character(eliteConfigurations[[".ID."]]), drop=FALSE]
                   else NULL
 
     # FIXME: Remove this assert after a while
-    irace.assert(max(nrow(iraceResults$experiments), 0) == nrow(iraceResults$experiments))
+    irace.assert(max(nrow(iraceResults$experiments), 0L) == nrow(iraceResults$experiments))
     .irace$next.instance <- nrow(iraceResults$experiments) + 1
     # Add instances if needed
     # Calculate budget needed for old instances assuming non elitist irace
