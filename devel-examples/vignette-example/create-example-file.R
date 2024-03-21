@@ -31,24 +31,25 @@ save(iraceResults, file = "irace-acotsp.Rdata", version = 2)
 ### Small example file
 ###############################
 # Experiment
-# FIXME: Create this just using functions from the irace package.
+res <- get_instanceID_seed_pairs(iraceResults, index = 1L, instances = TRUE)
+stopifnot(length(res[["instanceID"]]) == 1L)
+stopifnot(length(res[["instance"]]) == 1L)
 experiment <- list (
   id.configuration = 1,
-  id.instance      = iraceResults$state$.irace$instancesList[1,"instance"],
-  seed             = iraceResults$state$.irace$instancesList[1,"seed"],
-  configuration    = iraceResults$allConfigurations[1, iraceResults$parameters$names, drop=FALSE],
-  instance         = iraceResults$scenario$instance[iraceResults$state$.irace$instancesList[1,"instance"]], 
-  switches         = iraceResults$parameters$switches)
+  id.instance      = res[["instanceID"]],
+  seed             = res[["seed"]],
+  configuration    = getConfigurationById(iraceResults, 1L, drop.metadata = TRUE),
+  instance         = res[["instance"]], 
+  switches         = iraceResults$scenario$parameters$switches)
 
 # Output
 # FIXME: Create this just using functions from the irace package.
-output <- list()
-output[[1]] <- list(cost=iraceResults$experiments[1,1], time=as.numeric(iraceResults$experimentLog[1,"time"]))
-output[[2]] <- list(cost=iraceResults$experiments[1,2], time=as.numeric(iraceResults$experimentLog[2,"time"]))
+output <- list(
+  list(cost=iraceResults$experiments[1L,1L], time=as.numeric(iraceResults$experimentLog[1L,"time"])),
+  list(cost=iraceResults$experiments[1L,2L], time=as.numeric(iraceResults$experimentLog[2L,"time"])))
 
 # save in the folder
 save(experiment, output, file="examples.Rdata", version = 2)
-
 
 ## Create sann.rda
 cat('**** Creating sann.rda\n')
