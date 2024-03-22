@@ -18,13 +18,16 @@ development:
 navbar:
   structure:
     left:  [home, intro, guide, reference, articles, tutorials, news]
-    right: [search, github]
+    right: [search, cran, github]
     
   components:
     home: ~
     guide:
       text: User Guide
       href: irace-package.pdf
+    cran:
+      icon: fab fa-r-project
+      href: https://cloud.r-project.org/package=irace
 
 
 reference:
