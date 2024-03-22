@@ -294,7 +294,7 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
                   trajectory  = trajectory,
                   best = best_configuration,
                   complete = complete)
-    if (!is.null(ablationLogFile)) save(ablog, file = ablationLogFile, version = 2)
+    if (!is.null(ablationLogFile)) save(ablog, file = ablationLogFile, version = 3L)
     ablog
   }
   

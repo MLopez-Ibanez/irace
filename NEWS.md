@@ -6,6 +6,8 @@
 
  * Requires R version >= 3.6.0.
 
+ * Logfiles `*.Rdata` use format version 3, which can only be read by R version >= 3.5.
+ 
  * The scenario options `forbiddenFile` and `forbiddenExps` have been removed
    and will give an error if present.  Forbidden configurations are now
    specified in the parameter space description. See the example in

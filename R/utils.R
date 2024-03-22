@@ -645,10 +645,11 @@ is.sub.path <- function(x, dir, n = nchar(dir)) substr(x, 1L, n) == dir
 irace_save_logfile <- function(iraceResults, scenario)
 {
   if (is.null.or.empty(scenario$logFile)) return(invisible())
-  withr::local_dir(scenario$execDir) # FIXME: This is probably not needed because make sure that scenario$logFile is an absolute path.
-  # FIXME: Use saveRDS
-  # FIXME: Bump to version=3 when we bump the minimum R version to >=3.6
-  save(iraceResults, file = scenario$logFile, version = 2)
+  # Files produced by `saveRDS` (or `serialize` to a file connection) are not
+  # suitable as an interchange format between machines, for example to download
+  # from a website. The files produced by `save` have a header identifying the
+  # file type and so are better protected against erroneous use.
+  save(iraceResults, file = scenario$logFile, version = 3L)
 }
 
 valid_iracelog <- function(x)

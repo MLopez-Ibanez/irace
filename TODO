@@ -80,9 +80,6 @@ TODO General (in order of importance):
  * Various initialization modes Latin Hyper-cube, random, exhaustive,
    Hammersley point set, etc.
 
- * Use saveRDS/readRDS instead of load/save (.Rdata) to avoid overriding
-   userspace. Do the same for ablation logs.
- 
  * In elitist irace, target-evaluator is always called on elite configurations,
    while the corresponding target-runner is called only once. Hence, the
    files/data required by target-evaluator must be kept around for future
@@ -292,6 +289,13 @@ TODO General (in order of importance):
 ------------------------------------------------------------------------------
 
 DONE:
+
+ * Use saveRDS/readRDS instead of load/save (.Rdata) to avoid overriding
+   userspace. Do the same for ablation logs. [NOT DONE because "Files produced
+   by `saveRDS` (or `serialize` to a file connection) are not suitable as an
+   interchange format between machines, for example to download from a
+   website. The files produced by `save` have a header identifying the file
+   type and so are better protected against erroneous use."]
 
  * In src/irace/irace.c, use https://github.com/gpakosz/whereami to find the
    directory containing the 'irace' executable, then set
