@@ -395,19 +395,20 @@ checkTargetFiles <- function(scenario)
   configurations <- sampleUniform(scenario$parameters, 2L,
     repair = scenario$repairConfiguration)
   set(configurations, j = ".ID.", value = seq_nrow(configurations))
-  setDF(configurations)
   
   # Read initial configurations provided by the user.
   initConfigurations <- allConfigurationsInit(scenario)
+  setDT(initConfigurations)
   if (nrow(initConfigurations) > 0L) {
     irace.assert(all(colnames(configurations) == colnames(initConfigurations)))
-    configurations <- rbind(initConfigurations, configurations)
-    configurations[[".ID."]] <- seq_nrow(configurations)
+    configurations <- rbindlist(list(initConfigurations, configurations))
+    set(configurations, j = ".ID.", value = seq_nrow(configurations))
   }
 
   bounds <- rep(scenario$boundMax, nrow(configurations))
   instances_ID <- if (scenario$sampleInstances)
                     sample.int(length(scenario$instances), 1L) else 1L
+  setDF(configurations)
   experiments <- createExperimentList(
     configurations, scenario$parameters, instances = scenario$instances,
     instances.ID = instances_ID, seeds = 1234567L, bounds = bounds)
