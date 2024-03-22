@@ -524,9 +524,8 @@ execute.experiments <- function(experiments, scenario)
   mpi <- scenario$mpi
   target_runner <- .irace$target.runner
   execDir <- scenario$execDir
-  if (!isTRUE (file.info(execDir)$isdir)) {
+  if (!fs::dir_exists(execDir))
     irace.error ("Execution directory '", execDir, "' is not found or not a directory\n")
-  }
   withr::local_dir(execDir)
    
   if (!is.null(scenario$targetRunnerParallel)) {
