@@ -100,7 +100,7 @@ readScenario <- function(filename = "", scenario = list(),
     }
   }
   unknown_scenario_vars <- setdiff(ls(scenario_env), params_names)
-  if (length(unknown_scenario_vars) > 0) {
+  if (length(unknown_scenario_vars)) {
     # We only accept variables that match irace.params.names and if the user
     # wants to define their own, they should use names starting with ".", which
     # are ignored by ls()
@@ -724,3 +724,13 @@ readInstances <- function(instancesDir = NULL, instancesFile = NULL)
   instances
 }
 
+update_scenario <- function(scenario, ...)
+{
+  scenario_args <- list(...)
+  if (length(scenario_args) == 0L)
+    return(scenario)
+  unknown_scenario_args <- setdiff(names(scenario_args), names(scenario))
+  if (length(unknown_scenario_args))
+    irace.error("Unknown scenario settings given: ", paste0(unknown_scenario_args, collapse=", "))
+  modifyList(scenario, scenario_args)
+}
