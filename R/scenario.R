@@ -294,15 +294,13 @@ checkScenario <- function(scenario = defaultScenario())
   } else {
     irace.error("'targetRunnerParallel' must be a function")
   }
-  
-  if (is.null.or.empty(scenario$repairConfiguration)) {
+
+  if (is.null.or.empty(scenario$repairConfiguration))
     scenario$repairConfiguration <- NULL
-  } else if (!is.function.name(scenario$repairConfiguration)) {
-    irace.error("'repairConfiguration' must be a function")
-  } else {
-    # Byte-compile it.
+  else if (is.function.name(scenario$repairConfiguration))    # Byte-compile it.
     scenario$repairConfiguration <- bytecompile(get.function(scenario$repairConfiguration))
-  }
+  else 
+    irace.error("'repairConfiguration' must be a function")
   
   if (is.na(scenario$capping)) {
     # FIXME: when capping is enabled, we have to make sure we don't have cost AND time.
@@ -311,12 +309,10 @@ checkScenario <- function(scenario = defaultScenario())
 
   if (is.function.name(scenario$targetRunner)) {
     scenario$targetRunner <- get.function(scenario$targetRunner)
-    .irace$target.runner <- bytecompile(scenario$targetRunner)
+    irace.assert(is.function(scenario$targetRunner))
   } else if (is.null(scenario$targetRunnerParallel)) {
     if (is.character(scenario$targetRunner)) {
       scenario$targetRunner <- path_rel2abs(scenario$targetRunner)
-      .irace$target.runner <- if (scenario$aclib)
-                                target.runner.aclib else target_runner_default
       if (is.null.or.empty(scenario$targetRunnerLauncher)) {
         file.check (scenario$targetRunner, executable = TRUE,
                     text = paste0("target runner ", quote.param("targetRunner")))
@@ -339,21 +335,17 @@ checkScenario <- function(scenario = defaultScenario())
 
   if (is.null.or.empty(scenario$targetEvaluator)) {
     scenario$targetEvaluator <- NULL
-    .irace$target.evaluator <- NULL
   } else if (is.function.name(scenario$targetEvaluator)) {
     scenario$targetEvaluator <- get.function(scenario$targetEvaluator)
-    .irace$target.evaluator <- bytecompile(scenario$targetEvaluator)
+    irace.assert(is.function(scenario$targetEvaluator))
   } else if (is.character(scenario$targetEvaluator)) {
     scenario$targetEvaluator <- path_rel2abs(scenario$targetEvaluator)
     file.check (scenario$targetEvaluator, executable = TRUE,
                 text = "target evaluator")
-    .irace$target.evaluator <- target_evaluator_default
   } else {
     irace.error(quote.param('targetEvaluator'), " must be a function or an executable program")
   }
 
-  irace.assert(is.null(scenario$targetEvaluator) == is.null(.irace$target.evaluator))
-  
   # Training instances
   if (is.null.or.empty(scenario$instances)) {
     scenario$trainInstancesDir <- path_rel2abs(scenario$trainInstancesDir)

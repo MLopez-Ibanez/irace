@@ -43,19 +43,19 @@ testConfigurations <- function(configurations, scenario)
   experiments <- createExperimentList(configurations, parameters = scenario$parameters,
                                       instances = testInstances, instances.ID = instances_id, seeds = instanceSeed,
                                       bounds = rep(scenario$boundMax, nrow(configurations)))
+  race_state <- RaceState$new(scenario)
   if (scenario$debugLevel >= 3L) {
     irace.note ("Memory used before execute.experiments in testConfigurations():\n")
-    irace.print.memUsed()
+    race_state$print_mem_used()
   }
-
-  startParallel(scenario)
-  on.exit(stopParallel())
-  target.output <- execute.experiments (experiments, scenario)
-  # targetEvaluator may be NULL. If so, target.output must
-  # contain the right output already.
+  race_state$start_parallel(scenario)
+  on.exit(race_state$stop_parallel())
+  target.output <- execute.experiments(race_state, experiments, scenario)
+  # targetEvaluator may be NULL. If so, target.output must contain the right
+  # output already.
   if (!is.null(scenario$targetEvaluator))
-    target.output <- execute.evaluator(experiments, scenario, target.output,
-                                        configurations[[".ID."]])
+    target.output <- execute_evaluator(race_state$target_evaluator, experiments,
+      scenario, target.output, configurations[[".ID."]])
 
   # FIXME: It would be much faster to get convert target.output$cost to a
   # vector, then initialize the matrix with the vector.
@@ -73,7 +73,7 @@ testConfigurations <- function(configurations, scenario)
   }
   if (scenario$debugLevel >= 3L) {
     irace.note ("Memory used at the end of testConfigurations():\n")
-    irace.print.memUsed()
+    race_state$print_mem_used()
   }
 
   ## FIXME: Shouldn't we record these experiments in experimentLog ?

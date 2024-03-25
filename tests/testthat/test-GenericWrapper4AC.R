@@ -25,7 +25,8 @@ test_that("GenericWrapper4AC", {
                                               instances = scenario$instances,
                                               instances.ID = rep("cost", 2),
                                               seeds = 0:1)
-  output <- irace:::execute.experiments(experiments, scenario)
+  race_state <- irace:::RaceState$new(scenario)
+  output <- irace:::execute.experiments(race_state, experiments, scenario)
   expect_equal(output[[1]]$status, "SUCCESS")
   expect_equal(output[[1]]$cost, 0.5)
   expect_true(is.null(output[[1]]$error))
@@ -38,14 +39,14 @@ test_that("GenericWrapper4AC", {
                                               instances = scenario$instances,
                                               instances.ID = rep("cost", 2),
                                               seeds = 2)
-  expect_error(irace:::execute.experiments(experiments, scenario), "CRASHED")
+  expect_error(irace:::execute.experiments(race_state, experiments, scenario), "CRASHED")
                
   experiments <- irace:::createExperimentList(configurations,
                                               parameters = parameters,
                                               instances = scenario$instances,
                                               instances.ID = rep("cost", 2),
                                               seeds = 3)
-  expect_error(irace:::execute.experiments(experiments, scenario), "ABORT")
+  expect_error(irace:::execute.experiments(race_state, experiments, scenario), "ABORT")
   
   
   scenario <- modifyList(scenario,
@@ -58,7 +59,7 @@ test_that("GenericWrapper4AC", {
                                               instances.ID = rep("time", 2),
                                               seeds = 0:1,
                                               bounds = scenario$boundMax)
-  output <- irace:::execute.experiments(experiments, scenario)
+  output <- irace:::execute.experiments(race_state, experiments, scenario)
 
   expect_equal(output[[1]]$status, "SUCCESS")
   expect_equal(output[[1]]$cost, 0.8)
@@ -77,7 +78,7 @@ test_that("GenericWrapper4AC", {
                                               instances.ID = rep("time", 2),
                                               seeds = 2,
                                               bounds = scenario$boundMax)
-  expect_error(irace:::execute.experiments(experiments, scenario), "CRASHED")
+  expect_error(irace:::execute.experiments(race_state, experiments, scenario), "CRASHED")
                
   experiments <- irace:::createExperimentList(configurations,
                                               parameters = parameters,
@@ -85,7 +86,7 @@ test_that("GenericWrapper4AC", {
                                               instances.ID = rep("time", 2),
                                               seeds = 3,
                                               bounds = scenario$boundMax)
-  expect_error(irace:::execute.experiments(experiments, scenario), "ABORT")
+  expect_error(irace:::execute.experiments(race_state, experiments, scenario), "ABORT")
 
   experiments <- irace:::createExperimentList(configurations,
                                               parameters = parameters,
@@ -93,7 +94,7 @@ test_that("GenericWrapper4AC", {
                                               instances.ID = rep("cost+time", 2),
                                               seeds = 0:1,
                                               bounds = scenario$boundMax)
-  output <- irace:::execute.experiments(experiments, scenario)
+  output <- irace:::execute.experiments(race_state, experiments, scenario)
 
   expect_equal(output[[1]]$status, "SUCCESS")
   expect_equal(output[[1]]$cost, 0.5)
@@ -112,7 +113,7 @@ test_that("GenericWrapper4AC", {
                                               instances.ID = rep("cost+time", 2),
                                               seeds = 2,
                                               bounds = scenario$boundMax)
-  expect_error(irace:::execute.experiments(experiments, scenario), "CRASHED")
+  expect_error(irace:::execute.experiments(race_state, experiments, scenario), "CRASHED")
                
   experiments <- irace:::createExperimentList(configurations,
                                               parameters = parameters,
@@ -120,5 +121,5 @@ test_that("GenericWrapper4AC", {
                                               instances.ID = rep("cost+time", 2),
                                               seeds = 3,
                                               bounds = scenario$boundMax)
-  expect_error(irace:::execute.experiments(experiments, scenario), "ABORT")
+  expect_error(irace:::execute.experiments(race_state, experiments, scenario), "ABORT")
 })

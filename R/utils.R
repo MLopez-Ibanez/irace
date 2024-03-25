@@ -1,29 +1,3 @@
-irace.print.memUsed <- function(objects)
-{
-  object.size.kb <- function (name, envir) {
-    object.size(get(name, envir = envir)) / 1024
-  }
-
-  envir <- parent.frame()
-  if (missing(objects)) {
-    objects <- ls(envir = envir, all.names = TRUE)
-  }
-  
-  x <- sapply(objects, object.size.kb, envir = envir)
-
-  y <- sapply(ls(envir = .irace, all.names = TRUE),
-              object.size.kb, envir = .irace)
-  names(y) <- paste0(".irace$", names(y))
-  x <- c(x, y)
-
-  # Do not print anything that is smaller than 32 Kb
-  x <- x[x > 32]
-  cat(sep="", sprintf("%30s : %17.1f Kb\n", names(x), x))
-  cat(sep="", sprintf("%30s : %17.1f Mb\n", "Total", sum(x) / 1024))
-  # This does garbage collection and also prints memory used by R.
-  cat(sep="", sprintf("%30s : %17.1f Mb\n", "gc", sum(gc()[,2])))
-}
-
 # Print a user-level warning message, when the calling context
 # cannot help the user to understand why the program failed.
 irace.warning <- function(...)

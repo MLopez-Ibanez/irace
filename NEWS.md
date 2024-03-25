@@ -75,6 +75,10 @@
 
  * All functions that contained a period (`'.'`) in the name have been renamed to use `'_'` instead.
  
+ * The environment `.irace` that was available under
+   `iraceResults$state$.irace` is replaced directly by `iraceResults$state`,
+   which contains the same members.
+
 
 ## New features and improvements
 

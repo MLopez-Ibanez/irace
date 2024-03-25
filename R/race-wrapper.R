@@ -1,12 +1,3 @@
-# FIXME: This is needed because race.R is not divided in two-stages
-# run/evaluate like irace is, so there is no way to communicate data
-# from the first stage to the second.
-#
-# FIXME: In fact, we should use this trick also in irace.R to avoid
-# pass-by-copy-on-write of huge matrices and data.frames and instead
-# pass-by-reference an environment containing those.
-.irace <- new.env(parent = emptyenv())
-
 #' Generate a command-line representation of a configuration
 #'
 #' @description `buildCommandLine` receives two vectors, one containing
@@ -145,14 +136,6 @@ check_output_target_evaluator <- function (output, scenario, target.runner.call 
                   target.evaluator.call = output$call)
   }
   output
-}
-
-exec.target.evaluator <- function (experiment, num.configurations, all.conf.id,
-                                   scenario, target_evaluator, target.runner.call)
-{
-  output <- target_evaluator(experiment, num.configurations, all.conf.id,
-                             scenario, target.runner.call)
-  check_output_target_evaluator(output, scenario, target.runner.call = target.runner.call, bound = experiment$bound)
 }
 
 #' target_evaluator_default
@@ -313,7 +296,7 @@ check_output_target_runner <- function(output, scenario, bound = NULL)
 
 # This function invokes target.runner.  When used on a remote node by Rmpi,
 # environments do not seem to be shared and the default value is evaluated too
-# late, thus we have to pass .irace$target.runner explicitly.
+# late, thus we have to pass race_state$target_runner explicitly.
 exec.target.runner <- function(experiment, scenario, target.runner)
 {
   doit <- function(experiment, scenario) {
@@ -366,7 +349,7 @@ parse.aclib.output <- function(outputRaw)
   return(list(status = status, cost = cost, time = runtime, error = error))
 }
 
-target.runner.aclib <- function(experiment, scenario)
+target_runner_aclib <- function(experiment, scenario)
 {
   debugLevel   <- scenario$debugLevel
   res <- run_target_runner(experiment, scenario)
@@ -517,11 +500,11 @@ target_runner_default <- function(experiment, scenario)
        call = paste(cmd, args, collapse = " "))
 }
 
-execute.experiments <- function(experiments, scenario)
+execute.experiments <- function(race_state, experiments, scenario)
 {
   parallel <- scenario$parallel
   mpi <- scenario$mpi
-  target_runner <- .irace$target.runner
+  target_runner <- race_state$target_runner
   execDir <- scenario$execDir
   if (!fs::dir_exists(execDir))
     irace.error ("Execution directory '", execDir, "' is not found or not a directory\n")
@@ -572,15 +555,15 @@ execute.experiments <- function(experiments, scenario)
       }
     } else {
       if (.Platform$OS.type == 'windows') {
-        irace.assert(!is.null(.irace$cluster))
+        irace.assert(!is.null(race_state$cluster))
         if (scenario$loadBalancing) {
           target.output <-
-            parallel::parLapplyLB(.irace$cluster, experiments, exec.target.runner,
+            parallel::parLapplyLB(race_state$cluster, experiments, exec.target.runner,
                                   scenario = scenario,
                                   target.runner = target_runner)
         } else {
           target.output <-
-            parallel::parLapply(.irace$cluster, experiments, exec.target.runner,
+            parallel::parLapply(race_state$cluster, experiments, exec.target.runner,
                                 scenario = scenario,
                                 target.runner = target_runner)
         }
@@ -619,24 +602,25 @@ execute.experiments <- function(experiments, scenario)
   target.output
 }
 
-execute.evaluator <- function(experiments, scenario, target.output, configurations.id)
+execute_evaluator <- function(target_evaluator, experiments, scenario, target_output, configurations_id)
 {
-  ## FIXME: We do not need the configurations.id argument:
-  irace.assert(isTRUE(all.equal(configurations.id,
-                                sapply(experiments, getElement, "id.configuration"))))
-  nconfs <- length(configurations.id)
-  ## Evaluate configurations sequentially
+  ## FIXME: We do not need the configurations_id argument:
+  irace.assert(isTRUE(all.equal(configurations_id,
+    sapply(experiments, getElement, "id.configuration"))))
+  nconfs <- length(configurations_id)
+  # Evaluate configurations sequentially.
   for (k in seq_along(experiments)) {
-    output <- exec.target.evaluator(experiment = experiments[[k]],
-                                    num.configurations = nconfs,
-                                    configurations.id, scenario = scenario,
-                                    target_evaluator = .irace$target.evaluator,
-                                    target.runner.call = target.output[[k]]$call)
-    target.output[[k]]$cost <- output$cost
-    if (is.null(target.output[[k]]$call))
-      target.output[[k]]$call <- output$call
-    if (is.null(target.output[[k]]$time) || !is.null.or.na(output$time))
-      target.output[[k]]$time <- output$time
+    experiment <- experiments[[k]]
+    target.runner.call <- target_output[[k]]$call
+    output <- target_evaluator(experiment = experiment, num.configurations = nconfs,
+      all.conf.id = configurations_id, scenario = scenario,
+      target.runner.call = target.runner.call)
+    output <- check_output_target_evaluator(output, scenario, target.runner.call = target.runner.call, bound = experiment$bound)
+    target_output[[k]]$cost <- output$cost
+    if (is.null(target_output[[k]]$call))
+      target_output[[k]]$call <- output$call
+    if (is.null(target_output[[k]]$time) || !is.null.or.na(output$time))
+      target_output[[k]]$time <- output$time
   }
-  target.output
+  target_output
 }

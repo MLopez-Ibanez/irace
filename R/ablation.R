@@ -288,7 +288,7 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
     ablog <- list(changes = changes,
                   configurations = all_configurations,
                   experiments = results,
-                  instances   = .irace$instancesList,
+                  instances   = race_state$instancesList,
                   scenario    = scenario, 
                   trajectory  = trajectory,
                   best = best_configuration,
@@ -296,10 +296,6 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
     if (!is.null(ablationLogFile)) save(ablog, file = ablationLogFile, version = 3L)
     ablog
   }
-  
-  old_seed <- get_random_seed()
-  on.exit(restore_random_seed(old_seed))
-  set_random_seed(seed)
 
   # Load the data of the log file.
   iraceResults <- read_logfile(iraceResults)
@@ -307,11 +303,17 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
     stop("The 'iraceResults' logfile seems to belong to an incomplete run of irace.")
   scenario <- update_scenario(scenario = iraceResults$scenario, ...)
   scenario$logFile <- ""
+  old_seed <- get_random_seed()
+  on.exit(restore_random_seed(old_seed))
+  # FIXME: We need to overwrite the seed because RaceState takes it from the scenario and calls set_random_seed().
+  scenario$seed <- seed
   scenario <- checkScenario(scenario)
+  race_state <- RaceState$new(scenario)
+
   # Generate instances
   res <- ab_generate_instances(scenario, nrep, type, instancesFile)
-  .irace$instancesList <- res$instancesList
-  scenario$instances <- res$instances
+  race_state$instancesList <- res[["instancesList"]]
+  scenario$instances <- res[["instances"]]
 
   if (is.null(target))
     target <- iraceResults$iterationElites[length(iraceResults$iterationElites)]
@@ -322,7 +324,7 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
   if (src == target)
     stop("Source and target configuration IDs must be different!")
   
-  irace.note ("Starting ablation from ", src, " to ", target, "\n# Seed: ", seed, "\n")
+  irace.note ("Starting ablation from ", src, " to ", target, "\n# Seed: ", race_state$seed, "\n")
   cat("# Source configuration (row number is ID):\n")
   src_configuration <- iraceResults$allConfigurations[src, , drop = FALSE]
   configurations_print(src_configuration)
@@ -353,23 +355,23 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
   experiments <- createExperimentList(configurations = rbind(src_configuration, target_configuration), 
                                       parameters = parameters,
                                       instances = scenario$instances,
-                                      instances.ID = .irace$instancesList[, "instanceID"],
-                                      seeds = .irace$instancesList[, "seed"],
+                                      instances.ID = race_state$instancesList[, "instanceID"],
+                                      seeds = race_state$instancesList[, "seed"],
                                       bounds = scenario$boundMax)
-  irace.note("Executing source and target configurations on the given instances * nrep (", nrow(.irace$instancesList), ")...\n")
+  irace.note("Executing source and target configurations on the given instances * nrep (", nrow(race_state$instancesList), ")...\n")
   
-  startParallel(scenario)
-  on.exit(stopParallel(), add = TRUE)
-  target.output <- execute.experiments(experiments, scenario)
+  race_state$start_parallel(scenario)
+  on.exit(race_state$start_parallel(scenario), add = TRUE)
+  target.output <- execute.experiments(race_state, experiments, scenario)
   if (!is.null(scenario$targetEvaluator))
-    target.output <- execute.evaluator (experiments, scenario, target.output,
+    target.output <- execute_evaluator (race_state$target_evaluator, experiments, scenario, target.output,
                                         src_configuration)
   # Save results
   output <- sapply(target.output, getElement, "cost") 
-  results <- matrix(NA, ncol = 1L, nrow = nrow(.irace$instancesList), 
-                    dimnames = list(seq_nrow(.irace$instancesList), 1L))
-  results[,1L] <- output[seq_nrow(.irace$instancesList)]
-  lastres <- output[(nrow(.irace$instancesList)+1L):(2L * nrow(.irace$instancesList))]
+  results <- matrix(NA, ncol = 1L, nrow = nrow(race_state$instancesList), 
+                    dimnames = list(seq_nrow(race_state$instancesList), 1L))
+  results[,1L] <- output[seq_nrow(race_state$instancesList)]
+  lastres <- output[(nrow(race_state$instancesList)+1L):(2L * nrow(race_state$instancesList))]
   step <- 1L
   # Define variables needed
   trajectory <- 1L
@@ -400,22 +402,23 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
       # For using capping we must set elite data
       elite_data <- list(experiments = results[,best_configuration[[".ID."]], drop=FALSE])
       race_conf <-  rbind(best_configuration, aconfigurations)
-      .irace$next.instance <- nrow(.irace$instancesList) + 1L
+      race_state$next_instance <- nrow(race_state$instancesList) + 1L
     } else {
       #LESLIE: for now we apply the non-elitis irace when type=="racing"
       # we should define what is the standard
       elite_data <- NULL
       race_conf <-  aconfigurations
       scenario$elitist <- FALSE
-      .irace$next.instance <- 1L
+      race_state$next_instance <- 1L
     }
           
     irace.note("Ablation (", type, ") of ", nrow(aconfigurations),
-               " configurations on ", nrow(.irace$instancesList), " instances.\n")
+               " configurations on ", nrow(race_state$instancesList), " instances.\n")
     # Force the race to see all instances in "full" mode
-    if (type == "full") scenario$firstTest <- nrow(.irace$instancesList)
+    if (type == "full") scenario$firstTest <- nrow(race_state$instancesList)
     # FIXME: what about blockSize?
-    race.output <- elitist_race(maxExp = nrow(aconfigurations) * nrow(.irace$instancesList),
+    race.output <- elitist_race(race_state,
+      maxExp = nrow(aconfigurations) * nrow(race_state$instancesList),
                                 minSurvival = 1L,
                                 elite.data = elite_data,
                                 configurations = race_conf,
@@ -455,7 +458,7 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
   target_configuration[[".ID."]] <- max(all_configurations[[".ID."]]) + 1L
   all_configurations <- rbind(all_configurations, target_configuration)
   results <- cbind(results, matrix(lastres, ncol = 1L,
-                                   dimnames=list(seq_nrow(.irace$instancesList),
+                                   dimnames=list(seq_nrow(race_state$instancesList),
                                                  target_configuration[[".ID."]])))
   trajectory <- c(trajectory, target_configuration[[".ID."]])
   

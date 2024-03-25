@@ -133,7 +133,7 @@ get_instanceID_seed_pairs <- function(iraceResults, index, instances = FALSE)
 {
   if (missing(iraceResults)) stop("argument 'iraceResults' is missing")
   iraceResults <- read_logfile(iraceResults)
-  instancesList <- iraceResults$state$.irace$instancesList
+  instancesList <- iraceResults$state$instancesList
   if (!missing(index))
     instancesList <- instancesList[index, , drop = FALSE]
   if (!instances)

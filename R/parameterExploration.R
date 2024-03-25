@@ -74,9 +74,11 @@ psRace <- function(iraceLogFile=NULL, iraceResults=NULL, conf.ids=NULL,
 
   # LESLIE: Should we use testing instances?
   # Generate new instances
+  if (!is.null(seed)) scenario$seed <- seed
+  race_state <- RaceState$new(scenario)
   instances <- generateInstances(scenario, 1000L)
-  .irace$instancesList <- instances
-  .irace$next.instance <- 1
+  race_state$instancesList <- instances
+  race_state$next_instance <- 1L
   # MANUEL: Does this really work? It looks very strange.
   if (!is.null(scenario$boundMax))
     scenario$instances <- paste(scenario$instances, scenario$boundMax, sep=" ")
@@ -98,10 +100,9 @@ psRace <- function(iraceLogFile=NULL, iraceResults=NULL, conf.ids=NULL,
   cat("# available experiments:",max.experiments,"\n" )
   cat("# minSurvival: 1\n")
   
-  if (!is.null(seed)) set.seed(seed)
   # Should we fix the parameters for the race?
-  race.output <- race(maxExp = max.experiments,
-                      minSurvival = 1,
+  race.output <- race(race_state, maxExp = max.experiments,
+                      minSurvival = 1L,
                       configurations = configurations,
                       scenario = scenario)
   experiments <- race.output$experiments

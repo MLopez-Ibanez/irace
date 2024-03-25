@@ -413,15 +413,16 @@ checkTargetFiles <- function(scenario)
     configurations, scenario$parameters, instances = scenario$instances,
     instances.ID = instances_ID, seeds = 1234567L, bounds = bounds)
 
-  startParallel(scenario)
-  on.exit(stopParallel(), add = TRUE)
+  race_state <- RaceState$new(scenario)
+  race_state$start_parallel(scenario)
+  on.exit(race_state$stop_parallel(), add = TRUE)
 
   # FIXME: Create a function try.call(err.msg,warn.msg, fun, ...)
   # Executing targetRunner
   cat("# Executing targetRunner (", nrow(configurations), "times)...\n")
   result <- TRUE
   output <-  withCallingHandlers(
-    tryCatch(execute.experiments(experiments, scenario),
+    tryCatch(execute.experiments(race_state, experiments, scenario),
              error = function(e) {
                cat(sep = "\n",
                    "\n# Error occurred while executing targetRunner:",
@@ -439,13 +440,14 @@ checkTargetFiles <- function(scenario)
     print(output, digits = 15L)
   }
   
-  irace.assert(is.null(scenario$targetEvaluator) == is.null(.irace$target.evaluator))
+  irace.assert(is.null(scenario$targetEvaluator) == is.null(race_state$target_evaluator))
   if (!result) return(FALSE)
   
   if (!is.null(scenario$targetEvaluator)) {
     cat("# Executing targetEvaluator...\n")
     output <-  withCallingHandlers(
-      tryCatch(execute.evaluator(experiments, scenario, output, configurations[[".ID."]]),
+      tryCatch(execute_evaluator(race_state$target_evaluator,
+        experiments, scenario, output, configurations[[".ID."]]),
                  error = function(e) {
                    cat(sep = "\n",
                        "\n# Error ocurred while executing targetEvaluator:",
