@@ -306,14 +306,7 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
   if (is.null(iraceResults$state$completed) || iraceResults$state$completed == "Incomplete") {
     stop("This logfile seems to belong to an incomplete run of irace.")
   }
-  scenario   <- iraceResults$scenario
-  scenario_args <- list(...)
-  if (length(scenario_args) > 0L) {
-    unknown_scenario_args <- setdiff(names(scenario_args), names(scenario))
-    if (length(unknown_scenario_args) > 0L)
-      irace.error("Unknown scenario settings given: ", paste0(unknown_scenario_args, collapse=", "))
-    scenario <- modifyList(scenario, scenario_args)
-  }
+  scenario <- update_scenario(scenario = iraceResults$scenario, ...)
   scenario$logFile <- ""
   scenario <- checkScenario(scenario)
   # Generate instances
