@@ -63,10 +63,10 @@ configuration found corresponds to the last one of this vector.}
 instances as rows. Column names correspond to the internal identifier of
 the configuration (\code{allConfigurations$.ID.}).}
 
-\item{\code{experimentLog}}{A matrix with columns \code{iteration},
+\item{\code{experimen_log}}{A \code{data.frame} with columns \code{iteration},
 \code{instance}, \code{configuration}, \code{time}.  This matrix contains the log of all the
 experiments that \pkg{irace} performs during its execution.  The
-instance column refers to the index of the \code{scenario$instancesList}
+instance column refers to the index of the \code{race_state$instances_log}
 data frame. Time is saved ONLY when reported by the \code{targetRunner}.}
 
 \item{\code{softRestart}}{A logical vector that indicates if a soft
@@ -263,10 +263,9 @@ List of command-line options:
                          Default: 1.
    --bound-as-timeout    Replace the configuration cost of bounded executions
                          with `boundMax`. Default: 1.
-   --postselection       Percentage of the configuration budget used to perform
-                         a postselection race of the best configurations of
-                         each iteration after the execution of irace. Default:
-                         0.
+   --postselection       Perform a postselection race after the execution of
+                         irace to consume all remaining budget. Value 0
+                         disables the postselection race. Default: 1.
    --aclib               Enable/disable AClib mode. This option enables
                          compatibility with GenericWrapper4AC as targetRunner
                          script. Default: 0.

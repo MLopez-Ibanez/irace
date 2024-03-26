@@ -2,38 +2,28 @@
 % Please edit documentation in R/psRace.R
 \name{psRace}
 \alias{psRace}
-\title{psRace}
+\title{Postselection race}
 \usage{
 psRace(
-  iraceLogFile = NULL,
-  iraceResults = NULL,
-  conf.ids = NULL,
-  postselection = NULL,
-  max.experiments = NULL,
-  elites = FALSE,
-  seed = 1234567L
+  iraceResults,
+  max_experiments,
+  conf_ids = NULL,
+  iteration_elites = FALSE
 )
 }
 \arguments{
-\item{iraceLogFile}{NULL Log file created by \pkg{irace}, this file must contain the
-\code{iraceResults} object.}
+\item{iraceResults}{(\code{list()}|\code{character(1)})\cr Object created by \pkg{irace} and typically saved in the log file \code{irace.Rdata}. If a character string is given, then it is interpreted as the path to the log file from which the \code{iraceResults} object will be loaded.}
 
-\item{iraceResults}{NULL Object created by \pkg{irace} and saved in \code{scenario$logFile}.}
+\item{max_experiments}{(\code{numeric(1)}) Number of experiments for the
+post-selection race. If it is equal to or smaller than 1, then it is a
+fraction of the total budget given by
+\code{iraceResults$scenario$maxExperiments} or \code{iraceResults$scenario$maxTime / iraceResults$state$boundEstimate}.}
 
-\item{conf.ids}{NULL IDs of the configurations in iraceResults$allConfigurations to be used for ablation.
-If NULL, the elites argument will be used.}
+\item{conf_ids}{IDs of the configurations in iraceResults$allConfigurations to be used for ablation.
+If NULL, the \code{iteration_best} argument will be to decide.}
 
-\item{postselection}{NULL Percentage of the maxExperiments provided in the scenario to be used in the race.}
-
-\item{max.experiments}{NULL Number of experiments available for the race. If NULL budget for the race is set
-by the parameter scenario$postselection, which defines the percentage of the total budget of \pkg{irace}
-(iraceResults$scenario$maxExperiments or iraceResults$scenario$maxTime / iraceResults$state$boundEstimate) to use
-for the postselection.}
-
-\item{elites}{FALSE Flag for selecting configurations. If FALSE, the best configurations of each
-iteration are used for the race. If TRUE, the elite configurtions of each iteration are used for the race.}
-
-\item{seed}{1234567 Numerical value to use as seed for the random number generation.}
+\item{iteration_elites}{If TRUE, only select the best configuration of each iteration.
+If FALSE, select from all elite configurations of all iterations. \code{max_experiments}}
 }
 \value{
 If iraceLogFile is NULL, it returns a list with the following elements:
@@ -45,24 +35,18 @@ instances ids from iraceResults$scenario$instances, second column the seed assig
 \item{experiments}{A matrix with the results of the experiments (columns are configurations, rows are instances).}
 \item{elites}{Best configurations found in the experiments.}
 }
-If \code{iraceLogFile} is provided this list object will be saved in \code{iraceResults$psrace.log}.
+If \code{iraceLogFile} is provided this list object will be saved in \code{iraceResults$psrace_log}.
 }
 \description{
-\code{psRace} performs a postselection race a set of configurations.
+\code{psRace} performs a postselection race of a set of configurations.
 }
 \examples{
-\dontrun{
-  # Execute the postselection automatically after irace
-  scenario <- readScenario(filename="scenario.txt")
-  scenario$parameters <- readParameters("parameters.txt")
-  # Use 10\% of the total budget
-  scenario$postselection <- 0.1
-  irace(scenario=scenario)
-  # Execute the postselection after the execution of \pkg{irace}.
-  psRace(iraceLogFile="irace.Rdata", max.experiments=120)
+\donttest{
+  logfile <- system.file(package="irace", "exdata", "sann.rda")
+  # Execute the postselection after the execution of irace. Use 10\% of the total budget.
+  psRace(logfile, max_experiments=0.1)
 }
-
 }
 \author{
-Leslie Pérez Cáceres
+Leslie Pérez Cáceres and Manuel López-Ibáñez
 }

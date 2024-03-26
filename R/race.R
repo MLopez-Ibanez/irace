@@ -59,7 +59,7 @@ createExperimentList <- function(configurations, parameters,
 
 ## Executes a list of configurations in a particular instance
 ## configurations: description having the id of the configuration
-## instance.idx: index of the instance,seed pair in race_state$instancesList
+## instance.idx: index of the instance,seed pair in race_state$instances_log
 ## bounds: execution bounds (if needed).
 ## which.alive: index of the configurations that are still alive
 ## which.exe: index of the alive configurations that should be executed
@@ -71,8 +71,8 @@ race.wrapper <- function(race_state, configurations, instance_idx, bounds = NULL
   # Experiment list to execute
   experiments <- createExperimentList(configurations, parameters = scenario$parameters,
                                       instances = scenario$instances,
-                                      instances.ID = race_state$instancesList[instance_idx, "instanceID"],
-                                      seeds = race_state$instancesList[instance_idx, "seed"],
+                                      instances.ID = race_state$instances_log[instance_idx, "instanceID"],
+                                      seeds = race_state$instances_log[instance_idx, "seed"],
                                       bounds = bounds)
 
   target.output <- vector("list", length(experiments))
@@ -451,7 +451,7 @@ final.execution.bound <- function(experimentsTime, elites, no.configurations,
     elites <- elites[!is.na(experimentsTime[current.task,elites])]
     
   # Only apply bounds when there is previous data
-  if (length(elites) > 0 && length(which.exe) > 0) {
+  if (length(elites) > 0L && length(which.exe) > 0L) {
     # The elite membership is updated before calling this function to know 
     # the configurations used for calculating the bounds we need to do this.
     # Note that some of these configurations could be not elite anymore for the 
@@ -537,14 +537,14 @@ update_elite_safe <- function(Results, is.elite)
   max(which(rowAnys(!is.na(Results[, elites, drop=FALSE]))))
 }
 
-generateTimeMatrix <- function(elite_ids, experimentLog)
+generateTimeMatrix <- function(elite_ids, experiment_log)
 {
-  is.elite <- experimentLog[,"configuration"] %in% elite_ids
+  is_elite <- experiment_log[["configuration"]] %in% elite_ids
   # Remove everything that we don't need.
-  experimentLog <- experimentLog[is.elite, c("configuration", "instance", "time", "bound"), drop = FALSE]
-  experimentLog[, "time"] <- pmin(experimentLog[,"time"], experimentLog[, "bound"])
+  experiment_log <- experiment_log[is_elite, c("configuration", "instance", "time", "bound")]
+  experiment_log[["time"]] <- pmin(experiment_log[["time"]], experiment_log[["bound"]])
   # FIXME: It would be better to use spread() from tidyr
-  resultsTime <- reshape(as.data.frame(experimentLog), direction = "wide",
+  resultsTime <- reshape(as.data.frame(experiment_log), direction = "wide",
                          idvar = "instance", timevar = "configuration",
                          drop = "bound")
   rownames(resultsTime) <- resultsTime$instance
@@ -562,16 +562,14 @@ race <- function(race_state, maxExp = 0L,
                elite.data = NULL,
                configurations = configurations,
                scenario = scenario,
-               elitistNewInstances = 0L,
-               full_experiment_log = NULL)
+               elitistNewInstances = 0L)
 
 elitist_race <- function(race_state, maxExp = 0L,
                  minSurvival = 1L,
                  elite.data = NULL,
                  configurations,
                  scenario,
-                 elitistNewInstances,
-                 full_experiment_log)
+                 elitistNewInstances)
 {
   blockSize <- scenario$blockSize
   # FIXME: We should take this from scenario. However, this value should be
@@ -585,17 +583,14 @@ elitist_race <- function(race_state, maxExp = 0L,
   elitist <- scenario$elitist
   capping <- scenario$capping
   no.configurations <- nrow(configurations)
-  experimentLog <- matrix(nrow = 0L, ncol = 4L,
-                          dimnames = list(NULL, c("instance", "configuration", "time", "bound")))
+  experiment_log <- data.table(instance=integer(0), configuration=integer(0), time=numeric(0), bound=numeric(0))
   alive <- rep(TRUE, no.configurations)
   is.rejected <- rep(FALSE, no.configurations)
   
   ## FIXME: Remove argument checking. This must have been done by the caller.
   # Check argument: maxExp
-  if (!missing(maxExp) &&
-      (!is.numeric(maxExp) ||
-       length(maxExp)!=1 ||
-       !is.finite(maxExp)))
+  if (!missing(maxExp)
+    && (!is.numeric(maxExp) || length(maxExp)!=1L || !is.finite(maxExp)))
     stop("maxExp must be an single number")
   maxExp <- if (maxExp > 0) floor(maxExp) else 0L
   if (maxExp && no.configurations > maxExp)
@@ -650,8 +645,8 @@ elitist_race <- function(race_state, maxExp = 0L,
                  eval_after = {
                    cat("elite.data:\n")
                    print(elite.data)
-                   cat("full_experiment_log:\n")
-                   print(full_experiment_log)
+                   cat("experiment_log:\n")
+                   print(race_state$experiment_log)
                  })
     
     # elite.safe: maximum instance number for which any configuration may be
@@ -677,7 +672,7 @@ elitist_race <- function(race_state, maxExp = 0L,
 
     if (capping) {
       tmp <- generateTimeMatrix(elite_ids = colnames(elite.data), 
-                                experimentLog = full_experiment_log)
+                                experiment_log = race_state$experiment_log)
       experimentsTime[rownames(tmp), colnames(tmp)] <- tmp
       # Preliminary execution of elite configurations to calculate
       # the execution bound of initial configurations (capping only).
@@ -699,8 +694,8 @@ elitist_race <- function(race_state, maxExp = 0L,
           # Extract results
           # FIXME: check what would happen in case of having the target evaluator
           # MANUEL: Note how similar is this to what we do in do.experiments(),
-          # perhaps we can create a function that takes output and experimentLog
-          # and returns experimentLog. 
+          # perhaps we can create a function that takes output and experiment_log
+          # and returns experiment_log. 
           # LESLIE: Yes you are right, Ill do it once we figure out the rest!
           vcost <- unlist(lapply(output, "[[", "cost"))
           irace.assert(length(vcost) == n.elite)
@@ -708,14 +703,13 @@ elitist_race <- function(race_state, maxExp = 0L,
           Results[k, seq_len(n.elite)] <- vcost
           vtimes <- unlist(lapply(output, "[[", "time"))
           irace.assert(length(vtimes) == n.elite)
-          experimentsTime[k, which.elites] <- vtimes
-          experimentLog <- rbind(experimentLog,
-            cbind(race_instances[k],
-              configurations[which.elites, ".ID."],
-              vtimes,
-              scenario$boundMax))
-          experiments_used <- experiments_used + n.elite
-        
+          experimentsTime[k, which.elites] <- vtimes # capping is enabled
+          experiment_log <- update_experiment_log(experiment_log,
+            instance=race_instances[k],
+            configuration = configurations[which.elites, ".ID."],
+            time = vtimes, bound = scenario$boundMax)
+        experiments_used <- experiments_used + n.elite
+          
           # We remove elite configurations that are rejected given that
           # is not possible to calculate the bounds.
           rejected <- is.infinite(Results[k, which.elites])
@@ -763,7 +757,7 @@ elitist_race <- function(race_state, maxExp = 0L,
     }
   else
     all_elite_instances_evaluated <- function() TRUE
-    
+
   # Start main loop
   break.msg <- NULL
   best <- NA
@@ -898,7 +892,8 @@ elitist_race <- function(race_state, maxExp = 0L,
       # Pre-execute elite configurations that are not yet executed in the current instance.
       if (length(which.elite.exe)) {
         # FIXME: This should go into its own function
-        output <- race.wrapper (race_state, configurations = configurations[which.elite.exe, , drop = FALSE], 
+        output <- race.wrapper (race_state,
+          configurations = configurations[which.elite.exe, , drop = FALSE], 
                                 instance_idx = race_instances[current.task],
                                 # FIXME: What if we already have a bound for this instance?
                                 bounds = rep(scenario$boundMax, length(which.elite.exe)),
@@ -915,11 +910,10 @@ elitist_race <- function(race_state, maxExp = 0L,
         vtimes <- unlist(lapply(output, "[[", "time"))
         irace.assert(length(vtimes) == length(which.elite.exe))
         experimentsTime[current.task, which.elite.exe] <- vtimes
-        experimentLog <- rbind(experimentLog,
-                               cbind(race_instances[current.task],
-                                     configurations[which.elite.exe, ".ID."],
-                                     vtimes,
-                                     scenario$boundMax))
+        experiment_log <- update_experiment_log(experiment_log,
+          instance = race_instances[current.task],
+          configuration = configurations[which.elite.exe, ".ID."],
+          time = vtimes, bound = scenario$boundMax)
         experiments_used <- experiments_used + length(which.elite.exe)
           
         # We remove elite configurations that are rejected given that
@@ -1007,15 +1001,14 @@ elitist_race <- function(race_state, maxExp = 0L,
       # final.bounds indexes are 1:nbConfigurations, vtimes are 1:length(which.alive)
       experimentsTime[current.task, which.exps] <- pmin(vtimes, final.bounds[which.exe])
     }
-    experimentLog <- rbind(experimentLog,
-                           cbind(race_instances[current.task],
-                                 configurations[which.exe, ".ID."],
-                                 vtimes, 
-                                 if (is.null(final.bounds)) NA else final.bounds[which.exe]))
+    experiment_log <- update_experiment_log(experiment_log,
+      instance = race_instances[current.task],
+      configuration = configurations[which.exe, ".ID."],
+      time = vtimes, bound = if (is.null(final.bounds)) NA else final.bounds[which.exe])
 
-    irace.assert(anyDuplicated(experimentLog[, c("instance", "configuration"), drop = FALSE]) == 0L,
+    irace.assert(anyDuplicated(experiment_log[, c("instance", "configuration")]) == 0L,
       eval_after = {
-        print(experimentLog)
+        print(experiment_log)
         print(mget(ls()))
       })
     experiments_used <- experiments_used + length(which.exe)
@@ -1096,7 +1089,7 @@ elitist_race <- function(race_state, maxExp = 0L,
     # It may happen that the capping and the test eliminate together all
     # configurations. In that case, we only trust the capping elimination.
     if (capping && !any(alive)) {
-      if (scenario$debugLevel >= 2) {
+      if (scenario$debugLevel >= 2L) {
         irace.warning("Elimination tests have eliminated all configurations, keeping the capping results.\n")
         irace.note("Alive according to capping:", which(cap.alive), "\n")
         irace.note("Alive according to test:", which(test.alive), "\n")
@@ -1189,25 +1182,33 @@ elitist_race <- function(race_state, maxExp = 0L,
                  capping = capping,
                  old_best_id  = if (old_best == best || is.na(old_best)) NULL else id_best)
   }
-  nbAlive <- sum(alive)
-  rejectedIDs <- configurations[is.rejected, ".ID."]
+  rejected_ids <- configurations[is.rejected, ".ID."]
+  scenario$parameters$forbid_configurations(
+    race_state$update_rejected(rejected_ids, configurations)
+  )
   # Only return alive ones.
+  nbAlive <- sum(alive)
   configurations <- configurations[as.logical(alive), , drop=FALSE]
   irace.assert(nbAlive == nrow(configurations))
+  irace.assert(all(configurations[[".ID."]] %not_in% rejected_ids)) # No rejected is alive.
   # Assign the proper ranks in the configurations data.frame.
   configurations[[".RANK."]] <- race.ranks
   # Now we can sort the data.frame by the rank.
   configurations <- configurations[order(configurations[[".RANK."]]), , drop=FALSE]
-  if (scenario$debugLevel >= 3) {
+  if (scenario$debugLevel >= 3L) {
     irace.note ("Memory used in race():\n")
     race_state$print_mem_used()
   }
   # nrow(Results) may be smaller, equal or larger than current.task.
-  irace.assert(nrow(experimentLog) == experiments_used)
+  irace.assert(nrow(experiment_log) == experiments_used)
 
   list(experiments = Results,
-       experimentLog = experimentLog,
+       experiment_log = experiment_log,
        experimentsUsed = experiments_used,
-       configurations = configurations,
-       rejectedIDs = rejectedIDs)
+       configurations = configurations)
 }
+
+update_experiment_log <- function(experiment_log, instance, configuration, time, bound)
+  rbind(experiment_log,
+    data.table(instance = instance, configuration = configuration, time = time, bound = bound))
+  

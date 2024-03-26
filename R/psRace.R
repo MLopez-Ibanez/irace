@@ -1,127 +1,172 @@
-#' psRace
+#' Postselection race
 #'
-#' \code{psRace} performs a postselection race a set of configurations. 
-#' 
-#' @param iraceLogFile NULL Log file created by \pkg{irace}, this file must contain the 
-#' \code{iraceResults} object.
-#' @param iraceResults NULL Object created by \pkg{irace} and saved in \code{scenario$logFile}.
-#' @param conf.ids NULL IDs of the configurations in iraceResults$allConfigurations to be used for ablation.
-#' If NULL, the elites argument will be used.
-#' @param postselection NULL Percentage of the maxExperiments provided in the scenario to be used in the race.
-#' @param max.experiments NULL Number of experiments available for the race. If NULL budget for the race is set
-#'  by the parameter scenario$postselection, which defines the percentage of the total budget of \pkg{irace}
-#' (iraceResults$scenario$maxExperiments or iraceResults$scenario$maxTime / iraceResults$state$boundEstimate) to use
-#'  for the postselection.
-#' @param elites FALSE Flag for selecting configurations. If FALSE, the best configurations of each
-#' iteration are used for the race. If TRUE, the elite configurtions of each iteration are used for the race. 
-#' @param seed 1234567 Numerical value to use as seed for the random number generation.
-#' 
+#' \code{psRace} performs a postselection race of a set of configurations.
+#'
+#' @template arg_iraceresults
+#' @param max_experiments (`numeric(1)`) Number of experiments for the
+#'   post-selection race. If it is equal to or smaller than 1, then it is a
+#'   fraction of the total budget given by
+#'   `iraceResults$scenario$maxExperiments` or `iraceResults$scenario$maxTime /
+#'   iraceResults$state$boundEstimate`.
+#' @param conf_ids  IDs of the configurations in iraceResults$allConfigurations to be used for ablation.
+#' If NULL, the `iteration_best` argument will be to decide.
+#' @param iteration_elites  If TRUE, only select the best configuration of each iteration.
+#' If FALSE, select from all elite configurations of all iterations. `max_experiments`
+#'
 #' @return If iraceLogFile is NULL, it returns a list with the following elements:
 #'  \describe{
 #'    \item{configurations}{Configurations used in the race.}
-#'    \item{instances}{A matrix with the instances used in the experiments. First column has the 
+#'    \item{instances}{A matrix with the instances used in the experiments. First column has the
 #'    instances ids from iraceResults$scenario$instances, second column the seed assigned to the instance.}
 #'    \item{maxExperiments}{Maximum number of experiments set for the race.}
 #'    \item{experiments}{A matrix with the results of the experiments (columns are configurations, rows are instances).}
 #'    \item{elites}{Best configurations found in the experiments.}
 #'  }
-#' If \code{iraceLogFile} is provided this list object will be saved in \code{iraceResults$psrace.log}.
+#' If `iraceLogFile` is provided this list object will be saved in `iraceResults$psrace_log`.
 #'
 #' @examples
-#' \dontrun{
-#'   # Execute the postselection automatically after irace
-#'   scenario <- readScenario(filename="scenario.txt")
-#'   scenario$parameters <- readParameters("parameters.txt")
-#'   # Use 10% of the total budget
-#'   scenario$postselection <- 0.1
-#'   irace(scenario=scenario)
-#'   # Execute the postselection after the execution of \pkg{irace}.
-#'   psRace(iraceLogFile="irace.Rdata", max.experiments=120)
+#' \donttest{
+#'   logfile <- system.file(package="irace", "exdata", "sann.rda")
+#'   # Execute the postselection after the execution of irace. Use 10% of the total budget.
+#'   psRace(logfile, max_experiments=0.1)
 #' }
-#'
-#' @author Leslie Pérez Cáceres
+#' @author Leslie Pérez Cáceres and Manuel López-Ibáñez
 #' @export
-psRace <- function(iraceLogFile=NULL, iraceResults=NULL, conf.ids=NULL,
-                   postselection=NULL, max.experiments=NULL, elites=FALSE, seed=1234567L)
+psRace <- function(iraceResults, max_experiments, conf_ids = NULL, iteration_elites = FALSE)
 {
-  # Input check
-  if (is.null(iraceLogFile) && is.null(iraceResults)) 
-    irace.error("You must provide a Rdata file or an iraceResults object.")
-    
-  irace.note ("Starting post-selection:\n# Seed:", seed, "\n")
-  if (!is.null(iraceLogFile))
-    cat("# Log file:",iraceLogFile,"\n")
-  
-  # Load the data of the log file
-  if (!is.null(iraceLogFile)) 
-    iraceResults <- read_logfile(iraceLogFile)
- 
+  irace.note("Starting post-selection:\n")
+  if (missing(iraceResults)) stop("argument 'iraceResults' is missing.")
+  iraceResults <- read_logfile(iraceResults)
   scenario   <- iraceResults$scenario
-  
-  # Get selected configurations
-  if (!is.null(conf.ids)) {
-    if (!all(conf.ids %in% iraceResults$allConfigurations$.ID.)) 
-      irace.error("Configuration ids provided", conf.ids,"cannot be found in the configurations.")
-    configurations <- iraceResults$allConfigurations[iraceResults$allConfigurations$.ID.%in% conf.ids,,drop=FALSE]
-  } else {
-    which.elites <- if (elites) unlist(iraceResults$allElites) else iraceResults$iterationElites
-    which.elites <- unique(which.elites)
-    configurations <- iraceResults$allConfigurations[which.elites, ]
+  race_state <- iraceResults$state
+  race_state$initialize(scenario, new = FALSE) # Restores the random seed
+  if (max_experiments <= 0) stop("'max_experiments' must be positive.")
+  if (max_experiments <= 1) {
+    budget <- if (scenario$maxTime == 0L)
+                scenario$maxExperiments else scenario$maxTime / race_state$boundEstimate
+    max_experiments <- as.integer(ceiling(max_experiments * budget))
+    if (scenario$maxTime == 0L)
+      cat(sep="", "# scenario maxExperiments:", scenario$maxExperiments, "\n")
+    else
+      cat(sep="", "# scenario maxTime:", scenario$maxTime, "\n")
   }
-  
-  if (nrow(configurations) <= 1)
-    irace.error ("The number configurations should be > 1.")
+  # Get selected configurations.
+  if (is.null(conf_ids)) {
+    # FIXME: Handle scenario$maxTime > 0
+    irace.assert(scenario$maxTime == 0)
 
-  # LESLIE: Should we use testing instances?
-  # Generate new instances
-  if (!is.null(seed)) scenario$seed <- seed
-  race_state <- RaceState$new(scenario)
-  instances <- generateInstances(scenario, 1000L)
-  race_state$instancesList <- instances
-  race_state$next_instance <- 1L
-  # MANUEL: Does this really work? It looks very strange.
-  if (!is.null(scenario$boundMax))
-    scenario$instances <- paste(scenario$instances, scenario$boundMax, sep=" ")
-  
-  scenario$elitist <- scenario$capping <- FALSE
-  
-  if (is.null(postselection)) postselection <- scenario$postselection
-  # Calculate available budget
-  # FIXME: add numerical checks
-  if (is.null(max.experiments)) {
-    budget <- if (scenario$maxExperiments > 0)
-                scenario$maxExperiments else (scenario$maxTime/iraceResults$state$boundEstimate)
-    max.experiments <- ceiling(postselection *  budget)
+    which_max_last <- function(x) 1L + length(x) - which.max(rev(x))
+    
+    get_confs_for_psrace <- function(iraceResults, blockSize, iteration_elites, max_experiments, conf_ids, rejected_ids) {
+      allElites <- iraceResults$allElites
+      experiments <- iraceResults$experiments
+      conf_ids <- if (iteration_elites) unlist(rev(allElites)) else allElites[[length(allElites)]]
+      conf_ids <- unique(c(conf_ids, iraceResults$allConfigurations[[".ID."]]))
+      # NA may be generated if we skipped iterations.
+      if (anyNA(conf_ids))
+        conf_ids <- conf_ids[!is.na(conf_ids)]
+      # Remove rejected configurations.
+      if (length(rejected_ids))
+        conf_ids <- setdiff(conf_ids, rejected_ids)
+      experiments <- experiments[, conf_ids, drop = FALSE]
+      conf_needs <- colSums(is.na(experiments))
+      # Remove any configuration that needs more than max_experiments.
+      conf_needs <- conf_needs[conf_needs <= max_experiments]
+      # We want to evaluate in at least scenario$blockSize instances more.
+      n_confs <- floor(max_experiments / blockSize)
+      # If we have n_confs that have been evaluated in all instances, select those.
+      if (sum(conf_needs == 0L) >= n_confs) {
+        conf_needs <- conf_needs[conf_needs == 0L][1:n_confs]
+        conf_ids <- names(conf_needs)
+        irace.note("Configurations selected: ", paste0(collapse=", ", conf_ids), ".\n")
+        irace.note("Pending instances: ", paste0(collapse=", ", conf_needs), ".\n")
+        return(conf_ids)
+      }
+      # So we need a new instance, that will require blockSize for each configuration.
+      conf_ids <- names(conf_needs)
+      conf_needs <- conf_needs + scenario$blockSize
+      total_needs <- sum(conf_needs)
+      while (total_needs > max_experiments) {
+        to_remove <- which_max_last(conf_needs)
+        total_needs <- total_needs - conf_needs[to_remove]
+        conf_ids <- conf_ids[-to_remove]
+        conf_needs <- conf_needs[-to_remove]
+        irace.assert(length(conf_ids) > 1L, eval_after=save(iraceResults, file="bug-conf_ids.Rdata"))
+      }
+      irace.note("Configurations selected: ", paste0(collapse=", ", conf_ids), ".\n")
+      irace.note("Pending instances: ", paste0(collapse=", ", conf_needs), ".\n")
+      conf_ids
+    }
+    conf_ids <- get_confs_for_psrace(iraceResults, scenario$blockSize, iteration_elites,
+      max_experiments, conf_ids = conf_ids, rejected_ids = race_state$rejected_ids)
+  } else if (length(conf_ids) <= 1L) {
+    irace.error ("The number configurations provided should be larger than 1.")
+  } else if (length(race_state$rejected_ids) && any(conf_ids %in% race_state$rejected_ids)) {
+    irace.error ("Some configuration IDs provided were rejected in the previous run: ",
+      paste0(collapse=", ", intersect(conf_ids, race_state$rejected_ids)), ".")
   }
-  
-  cat("# configurations:", nrow(configurations), "\n")
-  cat("# postselection %", postselection, "\n")
-  cat("# scenario experiments:",scenario$maxExperiments,"\n" )
-  cat("# available experiments:",max.experiments,"\n" )
-  cat("# minSurvival: 1\n")
-  
-  # Should we fix the parameters for the race?
-  race.output <- race(race_state, maxExp = max.experiments,
-                      minSurvival = 1L,
-                      configurations = configurations,
-                      scenario = scenario)
-  experiments <- race.output$experiments
-  
-  elite.configurations <- extractElites(race.output$configurations,
-    nbElites = 1L, debugLevel = scenario$debugLevel)
+  if (!all(conf_ids %in% iraceResults$allConfigurations[[".ID."]])) {
+    irace.error("Some configuration IDs provided cannot be found in the configurations: ",
+      paste0(collapse=", ", setdiff(conf_ids, iraceResults$allConfigurations[[".ID."]])), ".")
+  }
+  elite_configurations <- iraceResults$allConfigurations[iraceResults$allConfigurations[[".ID."]] %in% conf_ids, , drop=FALSE]
+
+  # Generate new instances.
+  race_state$instances_log <- generateInstances(scenario, max_experiments / nrow(elite_configurations),
+    instances_log = race_state$instances_log)
+  elite_data <- if (scenario$elitist)
+                  iraceResults$experiments[, as.character(elite_configurations[[".ID."]]), drop=FALSE] else NULL
+  race_state$next_instance <- nrow(iraceResults$experiments) + 1L
+
+  cat(sep="",
+    "# Seed: ", race_state$seed,
+    "\n# Configurations: ", nrow(elite_configurations),
+    "\n# Available experiments: ", max_experiments,
+    "\n# minSurvival: 1\n")
+
+
+  raceResults <- elitist_race(race_state,
+    maxExp = max_experiments,
+    minSurvival = 1L,
+    configurations = elite_configurations,
+    scenario = scenario,
+    elite.data = elite_data,
+    elitistNewInstances = 0L)
+
+  elite_configurations <- extractElites(raceResults$configurations,
+    nbElites = race_state$recovery_info$minSurvival,
+    debugLevel = scenario$debugLevel)
   irace.note("Elite configurations (first number is the configuration ID;",
                " listed from best to worst according to the ",
                test.type.order.str(scenario$testType), "):\n")
-  configurations_print(elite.configurations, metadata = scenario$debugLevel >= 1)
+  if (!scenario$quiet)
+    configurations_print(elite_configurations, metadata = scenario$debugLevel >= 1L)
 
-  psrace.log <-  list(configurations = configurations,
-                      instances = instances[seq_nrow(experiments), ],
-                      maxExperiments = max.experiments,
-                      experiments = experiments,
-                      elites = elite.configurations$.ID.)   
-  iraceResults$psrace.log <- psrace.log        
-        
-  if (!is.null(iraceLogFile))
+  if (!is.null(scenario$logFile)) {
+    elapsed <- race_state$time_elapsed()
+    if (!scenario$quiet)
+      cat("# Total CPU user time: ", elapsed["user"], ", CPU sys time: ", elapsed["system"],
+        ", Wall-clock time: ", elapsed["wallclock"], "\n", sep="")
+    indexIteration <- 1L + max(race_state$experiment_log[["iteration"]])
+    # We add indexIteration as an additional column.
+    set(raceResults$experiment_log, j = "iteration", value = indexIteration)
+    race_state$experiment_log <- rbind(race_state$experiment_log, raceResults$experiment_log)
+    # Merge new results.
+    iraceResults$experiments <- merge_matrix(iraceResults$experiments, raceResults$experiments)
+    iraceResults$iterationElites[indexIteration] <- elite_configurations[[".ID."]][1L]
+    iraceResults$allElites[[indexIteration]] <- elite_configurations[[".ID."]]
+    race_state$elite_configurations <- elite_configurations
+    iraceResults$state <- race_state
     irace_save_logfile(iraceResults, scenario)
-  psrace.log
+  }
+
+  # FIXME: This log should contain only information of what was done in the
+  # psRace and avoid duplicating info from iraceResults.
+  psrace_log <-  list(configurations = elite_configurations,
+    instances = race_state$instances_log[seq_nrow(iraceResults$experiments), , drop = FALSE],
+    max_experiments = max_experiments,
+    experiments = iraceResults$experiments,
+    elites = elite_configurations[[".ID."]])
+  iraceResults$psrace_log <- psrace_log
+  elite_configurations
 }

@@ -46,10 +46,10 @@
 #' instances as rows. Column names correspond to the internal identifier of
 #' the configuration (`allConfigurations$.ID.`).}
 #' 
-#' \item{`experimentLog`}{A matrix with columns `iteration`,
+#' \item{`experimen_log`}{A `data.frame` with columns `iteration`,
 #' `instance`, `configuration`, `time`.  This matrix contains the log of all the
 #' experiments that \pkg{irace} performs during its execution.  The
-#' instance column refers to the index of the `scenario$instancesList`
+#' instance column refers to the index of the `race_state$instances_log`
 #' data frame. Time is saved ONLY when reported by the `targetRunner`.}
 #'
 #' \item{`softRestart`}{A logical vector that indicates if a soft

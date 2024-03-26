@@ -9,7 +9,7 @@ setClasses <- function(x, classes)
 }
 
 # test that targetRunnerParallel works with arbitrary instance objects.
-targetRunnerParallel = function(experiment, exec.target.runner, scenario, target.runner)
+targetRunnerParallel <- function(experiment, exec.target.runner, scenario, target.runner)
 {
   # get our param settings that irace should try
   cands = lapply(experiment, "[[", "configuration")
@@ -26,15 +26,15 @@ targetRunnerParallel = function(experiment, exec.target.runner, scenario, target
    instances = replicate(n.inst, setClasses(list(x=123), classes = "foo"), simplify = FALSE)
    parameters = readParameters(text='x1 "" r (0,1)')
    log.file = tempfile()
-   tuner.config = list(maxExperiments = 40L, nbIterations = 1L, minNbSurvival = 1,
+   tuner_config = list(maxExperiments = 40L, nbIterations = 1L, minNbSurvival = 1L,
                        targetRunnerParallel = targetRunnerParallel,
                        instances = instances, logFile = log.file)
-   confs <- irace(scenario = tuner.config)
+   confs <- irace(scenario = tuner_config)
    expect_gt(nrow(confs), 0L)
 })
 
 test_that("targetRunnerData", {
-  targetRunnerParallel = function(experiments, exec.target.runner, scenario, target.runner) {
+  targetRunnerParallel <- function(experiments, exec.target.runner, scenario, target.runner) {
     cat("a = ", scenario$targetRunnerData$a,
         ", b = ", scenario$targetRunnerData$b, "\n", sep = "")
     # get our param settings that irace should try

@@ -110,9 +110,9 @@ readParameters <- function (file, digits = 4L, debugLevel = 0L, text)
       #cat(line)
       return (list(match = NULL, line = line))
     }
-    position <- which(sapply(pos.matched.list, `[[`,1) != -1)
-    if (length(position) > 1) {
-      position <- position[1]
+    position <- which(sapply(pos.matched.list, `[[`,1L) != -1)
+    if (length(position) > 1L) {
+      position <- position[1L]
     }
     pos.matched <- pos.matched.list[[position]]
     delimited <- as.integer(delimited)
@@ -439,7 +439,7 @@ read_pcs_file <- function(file, digits = 4L, debugLevel = 0L, text)
     if (startsWith(line, "#") || line == "") next
     # match a parameter
     matches <- regmatches(line, regexec("^([^[:space:]]+)[[:space:]]+\\[([^,]+),[[:space:]]*([^]]+)\\][[:space:]]*\\[[^]]+\\](i?l?i?)(.*)$", line, perl=TRUE))[[1]]
-    if (length(matches) > 0) {
+    if (length(matches) > 0L) {
       param_name <- matches[[2L]]
       
       param_type <- paste0(if(grepl("i", matches[5L], fixed=TRUE)) "i" else "r",
@@ -450,7 +450,7 @@ read_pcs_file <- function(file, digits = 4L, debugLevel = 0L, text)
       next
     }
     matches <- regmatches(line, regexec("^([^[:space:]]+)[[:space:]]+\\{([^}]+)\\}[[:space:]]*\\[[^]]+\\](.*)$", line, perl=TRUE))[[1L]]
-    if (length(matches) > 0) {
+    if (length(matches) > 0L) {
       param_name <- matches[[2L]]
       param_type <- "c"
       param_types[[param_name]] <- param_type
@@ -468,7 +468,7 @@ read_pcs_file <- function(file, digits = 4L, debugLevel = 0L, text)
     }
     # match a parameter
     matches <- regmatches(line, regexec("^([^[:space:]]+)[[:space:]]+", line, perl=TRUE))[[1L]]
-    if (length(matches) > 0) {
+    if (length(matches) > 0L) {
       param_name <- matches[[2L]]
       cond <- parse_pcs_condition(conditions[[param_name]], param_types)
       output <- paste0(output,

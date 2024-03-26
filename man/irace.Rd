@@ -58,10 +58,10 @@ configuration found corresponds to the last one of this vector.}
 instances as rows. Column names correspond to the internal identifier of
 the configuration (\code{allConfigurations$.ID.}).}
 
-\item{\code{experimentLog}}{A matrix with columns \code{iteration},
+\item{\code{experimen_log}}{A \code{data.frame} with columns \code{iteration},
 \code{instance}, \code{configuration}, \code{time}.  This matrix contains the log of all the
 experiments that \pkg{irace} performs during its execution.  The
-instance column refers to the index of the \code{scenario$instancesList}
+instance column refers to the index of the \code{race_state$instances_log}
 data frame. Time is saved ONLY when reported by the \code{targetRunner}.}
 
 \item{\code{softRestart}}{A logical vector that indicates if a soft

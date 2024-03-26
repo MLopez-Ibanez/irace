@@ -79,6 +79,11 @@
    `iraceResults$state$.irace` is replaced directly by `iraceResults$state`,
    which contains the same members.
 
+ * The interface of `psRace()` has been simplified.
+  
+ * `irace` will automatically execute a post-selection race (`psRace()`) using
+   any remaining budget. To disable this behavior, set the option
+   `scenario$postselection` (`--postselection`) to `0`.
 
 ## New features and improvements
 

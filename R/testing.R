@@ -25,7 +25,7 @@ testConfigurations <- function(configurations, scenario)
   
   testInstances <- scenario[["testInstances"]]
   instances_id <- names(testInstances)
-  if (length(testInstances) == 0) irace.error("No test instances given")
+  if (length(testInstances) == 0L) irace.error("No test instances given")
   if (is.null(instances_id)) irace.error("testInstances must have names")
   
   # 2147483647 is the maximum value for a 32-bit signed integer.
@@ -76,6 +76,6 @@ testConfigurations <- function(configurations, scenario)
     race_state$print_mem_used()
   }
 
-  ## FIXME: Shouldn't we record these experiments in experimentLog ?
+  ## FIXME: Shouldn't we record these experiments in experiment_log ?
   list(experiments = testResults, seeds = instanceSeed)
 }

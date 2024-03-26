@@ -214,9 +214,9 @@
 ## Replace the configuration cost of bounded executions with `boundMax`.
 # boundAsTimeout = 1
 
-## Percentage of the configuration budget used to perform a postselection race
-## of the best configurations of each iteration after the execution of irace.
-# postselection = 0
+## Perform a postselection race after the execution of irace to consume all
+## remaining budget. Value 0 disables the postselection race.
+# postselection = 1
 
 ## Enable/disable AClib mode. This option enables compatibility with
 ## GenericWrapper4AC as targetRunner script.

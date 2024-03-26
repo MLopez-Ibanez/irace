@@ -5,21 +5,22 @@ RaceState <- R6Class("RaceState", lock_class = TRUE,
    completed = "Incomplete",
    elapsed = 0L,
    elapsed_recovered = 0L,
-   eliteConfigurations = NULL,
+   elite_configurations = NULL,
    elitist_new_instances = 0L,
-   instancesList = NULL,
+   experiment_log = NULL,
+   instances_log = NULL,
    model = NULL,
    next_instance = -1L,
    recovery_info = NULL,
-   rejectedIDs = NULL,
+   rejected_ids = NULL,
    rng = NULL,
    seed = NULL,
-   sessionInfo = NULL,
+   session_info = NULL,
    target_evaluator = NULL,
    target_runner = NULL,
    timer = NULL,
    # Methods.
-   initialize = function(scenario) {
+   initialize = function(scenario, new = TRUE) {
      self$timer <- Timer$new()
      self$target_runner <- if (is.function(scenario$targetRunner)) 
                              bytecompile(scenario$targetRunner)
@@ -33,34 +34,72 @@ RaceState <- R6Class("RaceState", lock_class = TRUE,
                                 else
                                   target_evaluator_default
      }
-     seed <- scenario$seed
-     if (is.na(seed)) {
-       seed <- trunc(runif(1, 1, .Machine$integer.max))
+     if (is.null(self$experiment_log)) {
+       self$experiment_log <- data.table(iteration=integer(0), instance=integer(0),
+         configuration=integer(0), time=numeric(0), bound=numeric(0))
      }
-     set_random_seed(seed)
-     self$seed <- seed
-     self$rng <- get_random_seed()
-     if (scenario$debugLevel > 2L) {
+
+     if (new) {
+       seed <- scenario$seed
+       if (is.na(seed))
+         seed <- trunc(runif(1, 1, .Machine$integer.max))
+       set_random_seed(seed)
+       self$seed <- seed
+       self$rng <- get_random_seed()
+     } else {
+       self$elapsed_recovered <- self$elapsed
+       restore_random_seed(self$rng)
+     }
+     if (scenario$debugLevel >= 3L) {
        irace.note("RNGkind: ", paste0(self$rng$rng_kind, collapse = " "), "\n",
                   "# .Random.seed: ", paste0(self$rng$random_seed, collapse = ", "), "\n")
      }
      # We do this here it is available even if we crash.
-     self$sessionInfo <- sessionInfo()
+     self$session_info <- sessionInfo()
      invisible(self)
    },
-   
-   save_recovery = function(rejectedIDs, eliteConfigurations, model, ...) {
+
+   update_experiment_log = function(output, instances, configurations_id, scenario, iteration) {
+     # Extract results
+     times <- c()
+     costs <- c()
+     # FIXME: Convert output to a matrix so that we can skip this loop
+     for (j in instances) {
+       vcost <- unlist(lapply(output[[j]], "[[", "cost"))
+       costs <- c(costs, vcost)
+       vtimes <- unlist(lapply(output[[j]], "[[", "time"))
+       irace.assert(!any(is.null(vtimes)))
+       times <- c(times, vtimes)
+     }
+     if (scenario$capping)
+       costs <- applyPAR(costs, boundMax = scenario$boundMax, boundPar = scenario$boundPar)
+
+     self$experiment_log <- rbind(self$experiment_log,
+       data.table(iteration = iteration, instance = rep(instances, each = length(configurations_id)),
+         configuration = rep(configurations_id, times = length(instances)),
+         time = times, bound = if (is.null(scenario$boundMax)) NA else scenario$boundMax))
+     
+     matrix(costs, nrow = length(instances), ncol = length(configurations_id),
+       byrow = TRUE,
+       dimnames = list(instances, as.character(configurations_id)))
+   },
+
+   save_recovery = function(elite_configurations, model, ...) {
      self$time_elapsed()
      self$rng <- get_random_seed()
-     self$eliteConfigurations <- eliteConfigurations
-     self$rejectedIDs <- rejectedIDs
+     self$elite_configurations <- elite_configurations
      self$model <- model
      self$recovery_info <- list(...)
    },
+
+   update_rejected = function(rejected_ids, configurations) {
+     if (length(rejected_ids) == 0L) return(NULL)
+     self$rejected_ids <- c(self$rejected_ids, rejected_ids) 
+     configurations[configurations[[".ID."]] %in% rejected_ids, , drop = FALSE]
+   },
    
    recover = function(scenario) {
-     self$elapsed_recovered <- self$elapsed
-     self$initialize(scenario)
+     self$initialize(scenario, new = FALSE)
      restore_random_seed(self$rng)
      envir <- parent.frame()
      # FIXME: This is a bit annoying, it would be better to keep these within RaceState all the time.
@@ -140,7 +179,7 @@ RaceState <- R6Class("RaceState", lock_class = TRUE,
    },
 
    no_elitrace_init_instances = function(deterministic) {
-     max_instances <- nrow(self$instancesList)
+     max_instances <- nrow(self$instances_log)
      # if next.instance == 1 then this is the first iteration.
      # If deterministic consider all (do not resample).
      if (self$next_instance == 1L || deterministic) return(seq_len(max_instances))
@@ -149,7 +188,7 @@ RaceState <- R6Class("RaceState", lock_class = TRUE,
    },
    
    elitrace_init_instances = function(deterministic, sampleInstances) {
-     max_instances <- nrow(self$instancesList)
+     max_instances <- nrow(self$instances_log)
      # if next_instance == 1 then this is the first iteration.
      next_instance <- self$next_instance
      if (next_instance == 1L) return(seq_len(max_instances)) # Consider all

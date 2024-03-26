@@ -2184,41 +2184,43 @@ irace:::concordance(iraceResults$testing$experiments)
 %%% performance estimated by irace as a confidence interval to account for
 %%% different number of instances. Or simply plot a heatmap of instances x
 %%% best-of-each iteration.
-\hide{It is also possible to plot the performance evolution of the best-so-far configuration over the number of experiments as follows:
-%%<<trainEvo, fig.pos="tbp", fig.align="center", out.width='0.75\\textwidth', fig.cap="Training set performance of the best-so-far configuration over number of experiments.", prompt=FALSE, eval=TRUE, comment="">>=
-# Get number of iterations
-iters <- unique(iraceResults$experimentLog[, "iteration"])
-# Get number of experiments (runs of target-runner) up to each iteration
-fes <- cumsum(table(iraceResults$experimentLog[,"iteration"]))
-# Get the mean value of all experiments executed up to each iteration
-# for the best configuration of that iteration.
-values <- sapply(iters, function(k) {
-  instances <- as.character(
-    unique(iraceResults$experimentLog[
-                          iraceResults$experimentLog[, "iteration"] == k,
-                          "instance"]))
-  return(mean(iraceResults$experiments[
-                             instances,
-                             as.character(iraceResults$iterationElites[k])]))})
-plot(fes, values, type="s", xlab = "Number of runs of the target algorithm",
-     ylab = "Estimated mean value over whole training set")
-points(fes, values)
-}
+% It is also possible to plot the performance evolution of the best-so-far configuration over the number of experiments as follows:
+% %%<<trainEvo, fig.pos="tbp", fig.align="center", out.width='0.75\\textwidth', fig.cap="Training set performance of the best-so-far configuration over number of experiments.", prompt=FALSE, eval=TRUE, comment="">>=
+% # Get number of iterations
+% iters <- unique(iraceResults$experimentLog[, "iteration"])
+% # Get number of experiments (runs of target-runner) up to each iteration
+% fes <- cumsum(table(iraceResults$experimentLog[,"iteration"]))
+% # Get the mean value of all experiments executed up to each iteration
+% # for the best configuration of that iteration.
+% values <- sapply(iters, function(k) {
+%   instances <- as.character(
+%     unique(iraceResults$experimentLog[
+%                           iraceResults$experimentLog[, "iteration"] == k,
+%                           "instance"]))
+%   return(mean(iraceResults$experiments[
+%                              instances,
+%                              as.character(iraceResults$iterationElites[k])]))})
+% plot(fes, values, type="s", xlab = "Number of runs of the target algorithm",
+%      ylab = "Estimated mean value over whole training set")
+% points(fes, values)
+% @
 
 % FIXME: We should normalize the ranges per instance so since the performance
 % on different instances is quite different.
 It is also possible, as shown in Fig.~\ref{fig:testEvo}, to plot the performance on the test set of the best-so-far configuration over the number of experiments as follows:
 <<testEvo, fig.pos="tb", fig.align="center", out.width='0.7\\textwidth', fig.cap="Testing set performance of the best-so-far configuration over number of experiments. Label of each point is the configuration ID.", prompt=FALSE, eval=TRUE, comment="">>=
+# Get summary data from the logfile.
+irs <- irace_summarise(iraceResults)
 # Get number of iterations
-iters <- unique(iraceResults$experimentLog[, "iteration"])
+iters <- irs$n_iterations
 # Get number of experiments (runs of target-runner) up to each iteration
-fes <- cumsum(table(iraceResults$experimentLog[,"iteration"]))
+fes <- cumsum(table(iraceResults$state$experiment_log[["iteration"]]))
 # Get the mean value of all experiments executed up to each iteration
 # for the best configuration of that iteration.
 elites <- as.character(iraceResults$iterationElites)
 values <- colMeans(iraceResults$testing$experiments[, elites])
 stderr <- function(x) sqrt(var(x)/length(x))
-err <- apply(iraceResults$testing$experiments[, elites], 2, stderr)
+err <- apply(iraceResults$testing$experiments[, elites], 2L, stderr)
 plot(fes, values, type = "s",
      xlab = "Number of runs of the target algorithm",
      ylab = "Mean value over testing set", ylim=c(23000000,23500000))
@@ -2783,11 +2785,9 @@ elite configurations of the iterations or selecting a set of configurations
 from \code{iraceResults$allConfigurations}.
 <<postsel, prompt=FALSE, eval=FALSE>>=
 # Execute all elite configurations in the iterations
-psRace(iraceLogFile="irace.Rdata", elites=TRUE)
+psRace("irace.Rdata", max_experiments = 0.5, elites=TRUE)
 # Execute a set of configurations IDs providing budget
-psRace(iraceLogFile="irace.Rdata", 
-             conf.ids=c(34, 87, 102, 172, 293), 
-             max.experiments=500)
+psRace("irace.Rdata", conf_ids = c(34, 87, 102, 172, 293), max_experiments = 500)
 @
 
 \subsection[Parameter importance analysis using PyImp]{Parameter importance analysis using \PyImp}

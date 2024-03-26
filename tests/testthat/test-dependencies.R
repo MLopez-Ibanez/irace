@@ -96,23 +96,23 @@ p1  p2  p3
 
 test_that("checkDependencies", {
 
-target.runner <- function(experiment, scenario)
-{
-  configuration <- experiment$configuration
-  tmax <- configuration[["real"]]
-  stopifnot(is.numeric(tmax))
-  if (configuration[["mode"]] %in% c("x1", "x2"))
-    temp <-  configuration[["param1"]]
-  else
-    temp <- 1
-  stopifnot(is.numeric(temp))
-  time <- max(1, abs(rnorm(1, mean=(tmax+temp)/10)))
-  list(cost = time, time = time, call = toString(experiment))
-}
-  
 test.checkDependencies <- function(parameterFile, ...)
 {
   args <- list(...)
+  
+  target.runner <- function(experiment, scenario) {
+    configuration <- experiment$configuration
+    tmax <- configuration[["real"]]
+    stopifnot(is.numeric(tmax))
+    if (configuration[["mode"]] %in% c("x1", "x2"))
+      temp <-  configuration[["param1"]]
+    else
+      temp <- 1
+    stopifnot(is.numeric(temp))
+    time <- max(1, abs(rnorm(1, mean=(tmax+temp)/10)))
+    list(cost = time, time = time, call = toString(experiment))
+  }
+  
   weights <- rnorm(200, mean = 0.9, sd = 0.02)
   parameters <- readParameters(parameterFile)
   scenario <- list(targetRunner = target.runner, instances = weights, seed = 1234567, maxExperiments=200,

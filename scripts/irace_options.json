@@ -606,12 +606,12 @@
   },
   {
     "name": "postselection",
-    "type": "r",
+    "type": "b",
     "short": "",
     "long": "--postselection",
-    "default": 0,
-      "description": "Percentage of the configuration budget used to perform a postselection race of the best configurations of each iteration after the execution of irace.",
-        "vignettes": "Percentage of the configuration budget used to perform a postselection race of the best configurations of each iteration after the execution of \\irace. See \\autoref{sec:postselection}.",
+    "default": 1,
+    "description": "Perform a postselection race after the execution of irace to consume all remaining budget. Value 0 disables the postselection race.",
+    "vignettes": "Perform a postselection race after the execution of \\irace to consume all remaining budget. Value 0 disables the postselection race. See \\autoref{sec:postselection}.",
     "section": "General options"
   },
   {

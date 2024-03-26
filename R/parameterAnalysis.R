@@ -91,7 +91,7 @@ getConfigurationByIteration <- function(iraceResults, iterations, drop.metadata 
   iterations <- ifelse(iterations >= 0L, iterations, n_iterations + 1L + iterations)
   # To silence warning.
   iteration <- NULL
-  ids <- unique(subset(as.data.frame(iraceResults$experimentLog),
+  ids <- unique(subset(as.data.frame(iraceResults$state$experiment_log),
                        iteration %in% iterations,
                        select="configuration", drop=TRUE))
   get_configuration_by_id_helper(iraceResults$allConfigurations, ids, drop_metadata = drop.metadata)
@@ -133,18 +133,18 @@ get_instanceID_seed_pairs <- function(iraceResults, index, instances = FALSE)
 {
   if (missing(iraceResults)) stop("argument 'iraceResults' is missing")
   iraceResults <- read_logfile(iraceResults)
-  instancesList <- iraceResults$state$instancesList
+  instances_log <- iraceResults$state$instances_log
   if (!missing(index))
-    instancesList <- instancesList[index, , drop = FALSE]
+    instances_log <- instances_log[index, , drop = FALSE]
   if (!instances)
-    return(instancesList)
+    return(instances_log)
 
   instances <- iraceResults$scenario$instances
   if (!is.atomic(instances)) {
     warning("instances=TRUE requested, but instances are not of atomic type")
-    return(instancesList)
+    return(instances_log)
   }
     
-  instanceID <- instancesList[, "instanceID"]
-  cbind(instancesList, instance = instances[instanceID])
+  instanceID <- instances_log[["instanceID"]]
+  cbind(instances_log, instance = instances[instanceID])
 }
