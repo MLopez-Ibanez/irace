@@ -338,7 +338,7 @@ race_print_task <- function(res.symb, Results,
                             alive,
                             id_best,
                             best,
-                            experimentsUsed,
+                            experiments_used,
                             start_time,
                             bound, capping)
 {
@@ -357,7 +357,7 @@ race_print_task <- function(res.symb, Results,
     if (is.null(bound)) cat("      NA|") else cat(sprintf("%8.2f|", bound))
   }
   cat(sprintf(paste0("%11d|%11d|", .irace.format.perf, "|%11d|%s"),
-              sum(alive), id_best, mean_best, experimentsUsed, time_str))
+              sum(alive), id_best, mean_best, experiments_used, time_str))
   
   if (current.task > 1L && sum(alive) > 1L) {
     res <- Results[seq_len(current.task), alive, drop = FALSE]
@@ -676,7 +676,7 @@ elitist_race <- function(maxExp = 0L,
   no.tasks <- length(race.instances)
 
   # Initialize some variables...
-  experimentsUsed <- 0L
+  experiments_used <- 0L
   # is.elite[i] : number of instances to be seen in this race on which i has
   # been previously evaluated.
   is.elite <- rep(0L, no.configurations)
@@ -688,10 +688,10 @@ elitist_race <- function(maxExp = 0L,
     irace.assert(.irace$next.instance - 1L == nrow(elite.data))
     # There must be a non-NA entry for each instance.
     irace.assert(all(rowAnys(!is.na(elite.data))),
-                 eval.after = { print(elite.data)})
+                 eval_after = { print(elite.data)})
     # There must be a non-NA entry for each configuration.
     irace.assert(all(colAnys(!is.na(elite.data))),
-                 eval.after = {
+                 eval_after = {
                    cat("elite.data:\n")
                    print(elite.data)
                    cat("full_experiment_log:\n")
@@ -758,7 +758,7 @@ elitist_race <- function(maxExp = 0L,
                                      configurations[which.elites, ".ID."],
                                      vtimes,
                                      scenario$boundMax))
-        experimentsUsed <- experimentsUsed + n.elite
+        experiments_used <- experiments_used + n.elite
         
         # We remove elite configurations that are rejected given that
         # is not possible to calculate the bounds.
@@ -852,7 +852,7 @@ elitist_race <- function(maxExp = 0L,
                    race.instances[current.task],
                    current.task, alive = alive,
                    id_best = id_best,
-                   best = best, experimentsUsed, start_time = Sys.time(),
+                   best = best, experiments_used, start_time = Sys.time(),
                    # FIXME: Why do we pass NA as bound? Why not pass the actual bound if any?
                    bound = NA, capping = capping)
         next
@@ -894,10 +894,10 @@ elitist_race <- function(maxExp = 0L,
       # If we just did a test, check that we have enough budget to reach the
       # next test.
       if (maxExp && ( (current.task - 1L) %% each.test) == 0L
-          && experimentsUsed + length(which.exe) * each.test > maxExp
+          && experiments_used + length(which.exe) * each.test > maxExp
           && all_elite_instances_evaluated()) {
         break.msg <- paste0("experiments for next test (",
-                            experimentsUsed + length(which.exe) * each.test,
+                            experiments_used + length(which.exe) * each.test,
                             ") > max experiments (", maxExp, ")")
         break
       }
@@ -965,7 +965,7 @@ elitist_race <- function(maxExp = 0L,
                                      configurations[which.elite.exe, ".ID."],
                                      vtimes,
                                      scenario$boundMax))
-        experimentsUsed <- experimentsUsed + length(which.elite.exe)
+        experiments_used <- experiments_used + length(which.elite.exe)
           
         # We remove elite configurations that are rejected given that
         # is not possible to calculate the bounds
@@ -999,7 +999,7 @@ elitist_race <- function(maxExp = 0L,
                      race.instances[current.task],
                      current.task, alive = alive,
                      id_best = id_best,
-                     best = best, experimentsUsed, start_time = start_time,
+                     best = best, experiments_used, start_time = start_time,
                      # FIXME: Why do we pass NA as bound? Why not pass the actual bound if any?
                      bound = if (is.null(scenario$boundMax)) NA else scenario$boundMax, capping)
           next
@@ -1059,11 +1059,11 @@ elitist_race <- function(maxExp = 0L,
                                  if (is.null(final.bounds)) NA else final.bounds[which.exe]))
 
     irace.assert(anyDuplicated(experimentLog[, c("instance", "configuration"), drop = FALSE]) == 0L,
-      eval.after = {
+      eval_after = {
         print(experimentLog)
         print(mget(ls()))
       })
-    experimentsUsed <- experimentsUsed + length(which.exe)
+    experiments_used <- experiments_used + length(which.exe)
     # We update the elites that have been executed.
     is.elite <- update_is_elite(is.elite, which.elite.exe)
 
@@ -1183,7 +1183,7 @@ elitist_race <- function(maxExp = 0L,
     print_task(res.symb, Results[seq_len(current.task), , drop = FALSE],
                race.instances[current.task],
                current.task, alive = alive,
-               id_best = id_best, best = best, experimentsUsed, start_time = start_time, 
+               id_best = id_best, best = best, experiments_used, start_time = start_time, 
                bound = elite.bound, capping)
     
     if (elitist) {
@@ -1216,7 +1216,7 @@ elitist_race <- function(maxExp = 0L,
   # All instances that are not new in this race must have been evaluated by at
   # least one configuration.
   irace.assert(all_elite_instances_evaluated(),
-               eval.after = { print(Results[,alive, drop=FALSE])})
+               eval_after = { print(Results[,alive, drop=FALSE])})
   # If we stop the loop before we see all new instances, there may be new
   # instances that have not been executed by any configuration.
   Results <- Results[rowAnys(!is.na(Results)), , drop = FALSE]
@@ -1248,11 +1248,11 @@ elitist_race <- function(maxExp = 0L,
     irace.print.memUsed()
   }
   # nrow(Results) may be smaller, equal or larger than current.task.
-  irace.assert(nrow(experimentLog) == experimentsUsed)
+  irace.assert(nrow(experimentLog) == experiments_used)
 
   list(experiments = Results,
        experimentLog = experimentLog,
-       experimentsUsed = experimentsUsed,
+       experimentsUsed = experiments_used,
        configurations = configurations,
        rejectedIDs = rejectedIDs)
 }

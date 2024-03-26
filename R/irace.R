@@ -1189,7 +1189,7 @@ irace_run <- function(scenario)
                                               threshold = scenario$softRestartThreshold)
         #          Rprof(NULL)
         if (!is.null(restart_ids)) {
-          if (debugLevel >= 1)
+          if (debugLevel >= 1L)
             irace.note("Soft restart: ", paste(collapse = " ", restart_ids), " !\n")
           model <- restartModel(model, raceConfigurations, restart_ids,
                                 scenario$parameters, nbNewConfigurations)
