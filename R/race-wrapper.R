@@ -31,9 +31,8 @@
 #' buildCommandLine (values, switches)
 #' ## Build a command-line from the results produced by a previous run of irace.
 #' # First, load the data produced by irace.
-#' irace.logfile <- file.path(system.file(package="irace"),
-#'                            "exdata", "irace-acotsp.Rdata")
-#' load(irace.logfile)
+#' logfile <- file.path(system.file(package="irace"), "exdata", "irace-acotsp.Rdata")
+#' iraceResults <- read_logfile(logfile)
 #' allConfigurations <- iraceResults$allConfigurations
 #' parameters <- iraceResults$scenario$parameters
 #' apply(allConfigurations[1:10, unlist(parameters$names)], 1, buildCommandLine,
@@ -543,7 +542,7 @@ execute.experiments <- function(experiments, scenario)
     }
   } else if (scenario$batchmode != 0L) {
     target.output <- cluster.lapply (experiments, scenario = scenario)
-  } else if (parallel > 1) {
+  } else if (parallel > 1L) {
     if (mpi) {
       if (scenario$loadBalancing) {
         target.output <- Rmpi::mpi.applyLB(experiments, exec.target.runner,

@@ -77,7 +77,7 @@ race.wrapper <- function(configurations, instance.idx, bounds = NULL,
 
   target.output <- vector("list", length(experiments))
   # Execute commands
-  if (length(which.exe) > 0) {
+  if (length(which.exe)) {
     # which.exe values are within 1:nbConfigurations, whereas experiments
     # indices are within 1:length(which.alive). The following line converts
     # from one to the other.
@@ -488,7 +488,7 @@ final.execution.bound <- function(experimentsTime, elites, no.configurations,
   total.time  <- current.task * boundMax
   elite.bound <- boundMax
   # Elite candidates can have NA values due to the rejection 
-  if (length(elites) > 0)
+  if (length(elites))
     elites <- elites[!is.na(experimentsTime[current.task,elites])]
     
   # Only apply bounds when there is previous data

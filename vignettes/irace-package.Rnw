@@ -1791,13 +1791,11 @@ please be careful not to change the order of the instances, because this would m
 \irace invalid. To change the instances path, open the \aR console and use:
 
 <<change_recover, prompt=TRUE, eval=FALSE>>=
-load ("~/tuning/irace.Rdata")
-new.path <- "~/experiments/tuning/instances/"
+iraceResults <- read_logfile("~/tuning/irace.Rdata")
+new_path <- "~/experiments/tuning/instances/"
 iraceResults$scenario$instances <-
-   paste (new.path,
-         basename(iraceResults$scenario$instances),
-         sep="")
-save (iraceResults, file="~/tuning/irace.Rdata")
+   paste0(new_path, basename(iraceResults$scenario$instances))
+save(iraceResults, file="~/tuning/irace.Rdata")
 @
 
 This example can also can be applied to the target execution files \parameter{targetRunner} and \parameter{targetEvaluator}.
@@ -1948,7 +1946,7 @@ The \aR data file created by \irace (by default as \code{irace.Rdata}, see optio
 \code{iraceResults}. You can load this file in the \aR console with:
 
 <<load_rdata, prompt=FALSE, eval=FALSE>>=
-load("irace-acotsp.Rdata")
+iraceResults <- read_logfile("irace-acotsp.Rdata")
 @
 
 The \code{iraceResults} object is a list, and the elements of a list can be
@@ -1956,7 +1954,6 @@ accessed in \aR by using the \code{\$} or \code{[[]]} operators:
 
 <<show_version, prompt=TRUE, eval=TRUE, comment="">>=
 iraceResults$irace_version
-iraceResults[["irace_version"]]
 @
 
 \noindent%
