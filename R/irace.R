@@ -825,8 +825,7 @@ irace_run <- function(scenario)
         # 2. But there is no point in executing more configurations than those
         # that we can execute in parallel.
         new_conf <- min(new_conf, max(1L, floor(scenario$parallel / ninstances)))
-
-        if (timeUsed >= estimationTime || new_conf == 0 || nconfigurations == 1024L) {
+        if (timeUsed >= estimationTime || new_conf == 0L || nconfigurations == 1024L) {
           break
         } else {
           nconfigurations <- min(1024L, nconfigurations + new_conf)
@@ -1163,16 +1162,16 @@ irace_run <- function(scenario)
       configurations_print(raceConfigurations, metadata = TRUE)
     }
 
-    # Get data from previous elite tests 
-    elite.data <- if (scenario$elitist && nrow(eliteConfigurations) > 0L)
+    # Get data from previous races.
+    elite_data <- if (scenario$elitist && nrow(eliteConfigurations) > 0L)
                     iraceResults$experiments[, as.character(eliteConfigurations[[".ID."]]), drop=FALSE]
                   else NULL
 
-    # FIXME: Remove this assert after a while
+    # FIXME: Remove this assert after a while.
     irace.assert(max(nrow(iraceResults$experiments), 0L) == nrow(iraceResults$experiments))
     race_state$next_instance <- nrow(iraceResults$experiments) + 1L
-    # Add instances if needed
-    # Calculate budget needed for old instances assuming non elitist irace
+    # Add instances if needed.
+    # Calculate budget needed for old instances assuming non elitist irace.
     if ((nrow(race_state$instancesList) - (race_state$next_instance - 1L))
         < ceiling(remainingBudget / minSurvival)) {
       race_state$instancesList <- generateInstances(scenario, n = ceiling(remainingBudget / minSurvival),
@@ -1184,7 +1183,7 @@ irace_run <- function(scenario)
                                  configurations = raceConfigurations,
                                  maxExp = currentBudget,
                                  minSurvival = minSurvival,
-                                 elite.data = elite.data,
+                                 elite.data = elite_data,
                                  elitistNewInstances = if (firstRace) 0L
                                                        else scenario$elitistNewInstances,
                                  full_experiment_log = iraceResults$experimentLog)
