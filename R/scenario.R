@@ -224,6 +224,20 @@ checkScenario <- function(scenario = defaultScenario())
   for (p in boolParams) {
     scenario[[p]] <- as.boolean.param(scenario[[p]], p)
   }
+  # Real [0, 1] control parameters.
+  realParams <- .irace.params.def[.irace.params.def[, "type"] == "r", "name"]
+  for (param in realParams) {
+    if (is.null.or.empty(scenario[[param]]))
+      scenario[[param]] <- NA
+    if (is.na(scenario[[param]]))
+      next # Allow NA default values
+    scenario[[param]] <- suppressWarnings(as.numeric(scenario[[param]]))
+    if (is.null(scenario[[param]])
+        || is.na (scenario[[param]])
+        || scenario[[param]] < 0.0 || scenario[[param]] > 1.0)
+      irace.error (quote.param(param), " must be a real value within [0, 1].")
+  }
+
   # Integer control parameters
   intParams <- .irace.params.def[.irace.params.def[, "type"] == "i", "name"]
   for (param in intParams) {
@@ -302,9 +316,21 @@ checkScenario <- function(scenario = defaultScenario())
   else 
     irace.error("'repairConfiguration' must be a function")
   
-  if (is.na(scenario$capping)) {
-    # FIXME: when capping is enabled, we have to make sure we don't have cost AND time.
-    scenario$capping <- (scenario$elitist && scenario$maxTime > 0 && scenario$boundMax > 0)
+  if (is.na(scenario$capping))
+    scenario$capping <- (scenario$elitist && scenario$maxTime > 0 &&
+                           !is.na(scenario$oundMax) && scenario$boundMax > 0)
+  if (scenario$capping) {
+    if (!scenario$elitist) 
+      irace.error("When capping == TRUE, elitist must be enabled.")
+    if (scenario$boundMax <= 0) 
+      irace.error("When capping == TRUE, boundMax (", scenario$boundMax, ") must be > 0")
+    check.valid.param("cappingType")
+    check.valid.param("boundType")
+    if (scenario$boundPar < 1)
+      irace.error("Invalid value (", scenario$boundPar, ") ",
+                  quote.param("boundPar"), " must be >= 1")
+  } else if (scenario$boundMax <= 0 || is.na(scenario$boundMax)) { # no capping
+    scenario$boundMax <- NULL
   }
 
   if (is.function.name(scenario$targetRunner)) {
@@ -412,21 +438,6 @@ checkScenario <- function(scenario = defaultScenario())
   }
   
   scenario$elitistNewInstances <- round_to_next_multiple(scenario$elitistNewInstances, scenario$blockSize)
-    
-  # Real [0, 1] control parameters
-  realParams <- .irace.params.def[.irace.params.def[, "type"] == "r", "name"]
-  for (param in realParams) {
-    if (is.null.or.empty(scenario[[param]]))
-      scenario[[param]] <- NA
-    if (is.na(scenario[[param]]))
-      next # Allow NA default values
-    scenario[[param]] <- suppressWarnings(as.numeric(scenario[[param]]))
-    if (is.null(scenario[[param]])
-        || is.na (scenario[[param]])
-        || scenario[[param]] < 0.0 || scenario[[param]] > 1.0)
-      irace.error (quote.param(param), " must be a real value within [0, 1].")
-  }
-  
   if (!is.na(scenario$minExperiments))
     scenario$maxExperiments <- max(scenario$maxExperiments, scenario$minExperiments)
   
@@ -458,11 +469,9 @@ checkScenario <- function(scenario = defaultScenario())
                 ") cannot be smaller than firstTest (", scenario$firstTest, ") * blockSize (", scenario$blockSize, ")")
   }
 
-  if (scenario$mpi && scenario$parallel < 2) {
-    irace.error (quote.param("parallel"),
-                 " must be larger than 1 when mpi is enabled.")
-  }
-
+  if (scenario$mpi && scenario$parallel < 2)
+    irace.error (quote.param("parallel"), " must be larger than 1 when mpi is enabled.")
+ 
   if (is.null.or.empty(scenario$batchmode))
     scenario$batchmode <- 0
   if (scenario$batchmode != 0) {
@@ -478,21 +487,6 @@ checkScenario <- function(scenario = defaultScenario())
   if (scenario$batchmode != 0 && scenario$mpi) {
     irace.error(quote.param("mpi"), " and ", quote.param("batchmode"),
                 " cannot be enabled at the same time.")
-  }
-
-  if (scenario$capping) {
-    if (!scenario$elitist) 
-      irace.error("When capping == TRUE, elitist must be enabled.")
-    if (scenario$boundMax <= 0) 
-      irace.error("When capping == TRUE, boundMax (", scenario$boundMax,
-                  ") must be > 0")
-    check.valid.param("cappingType")
-    check.valid.param("boundType")
-    if (scenario$boundPar < 1)
-      irace.error("Invalid value (", scenario$boundPar, ") ",
-                  quote.param("boundPar"), " must be >= 1")
-  } else if (scenario$boundMax <= 0 || is.na(scenario$boundMax)) { # no capping
-    scenario$boundMax <- NULL
   }
 
   if (is_null_or_empty_or_na(scenario$testType)) {
