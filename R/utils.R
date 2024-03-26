@@ -78,16 +78,16 @@ irace.internal.error <- function(...)
   invisible()
 }
 
-irace.assert <- function(exp, eval.after = NULL)
+irace.assert <- function(exp, eval_after = NULL)
 {
   # FIXME: It would be great if we could save into a file the state of
   # the function that called this one.
-  if (exp) return(invisible())
+  if (isTRUE(as.logical(exp))) return(invisible())
   mc <- sys.call()[[2L]]
   msg <- paste0("'", deparse(mc), "' is not TRUE")
-  if (!is.null(eval.after)) {
-    msg.after <- eval.parent(capture.output(eval.after))
-    msg <- paste0(msg, "\n", paste0(msg.after, collapse="\n"))
+  if (!is.null(eval_after)) {
+    msg_after <- eval.parent(capture.output(eval_after))
+    msg <- paste0(msg, "\n", paste0(msg_after, collapse="\n"))
   }
   irace.internal.error(msg)
   invisible()
