@@ -382,10 +382,11 @@ irace.init <- function(scenario)
 }
 
 ## Generate instances + seed.
-generateInstances <- function(scenario, n, instancesList = NULL)
+generateInstances <- function(scenario, n, instances_log = NULL)
 {
   # If we are adding and the scenario is deterministic, we have already added all instances.
-  if (!is.null(instancesList) && scenario$deterministic) return(instancesList)
+  if (scenario$deterministic && !is.null(instances_log))
+    return(instances_log)
 
   instances <- scenario$instances
   # Number of times that we need to repeat the set of instances given by the user.
@@ -407,12 +408,12 @@ generateInstances <- function(scenario, n, instancesList = NULL)
   # Sample seeds.
   # 2147483647 is the maximum value for a 32-bit signed integer.
   # We use replace = TRUE, because replace = FALSE allocates memory for each possible number.
-  instancesList <- rbind(instancesList,
-                         data.frame(instanceID = sindex,
-                                    seed = sample.int(2147483647L, size = length(sindex), replace = TRUE), stringsAsFactors=FALSE))
-  # Reset the rownames to 1:nrow(instancesList)
-  rownames(instancesList) <- NULL
-  instancesList
+  # FIXME: Use data.table() and rbindlist()
+  instances_log <- rbind.data.frame(instances_log,
+    data.frame(instanceID = sindex,
+      seed = sample.int(2147483647L, size = length(sindex), replace = TRUE), stringsAsFactors = FALSE))
+  rownames(instances_log) <- NULL
+  instances_log
 }
 
 ## Estimate the mean execution time
@@ -687,24 +688,24 @@ irace_common <- function(scenario, simple, output.width = 9999L)
     printScenario (scenario)
   }
   
-  eliteConfigurations <- irace_run(scenario = scenario)
-  if (simple) return(eliteConfigurations)
+  elite_configurations <- irace_run(scenario = scenario)
+  if (simple) return(elite_configurations)
 
   if (!scenario$quiet) {
     order_str <- test.type.order.str(scenario$testType)
     cat("# Best configurations (first number is the configuration ID;",
         " listed from best to worst according to the ", order_str, "):\n", sep = "")
-    configurations_print(eliteConfigurations)
+    configurations_print(elite_configurations)
   
     cat("# Best configurations as commandlines (first number is the configuration ID;", " listed from best to worst according to the ", order_str, "):\n", sep = "")
-    configurations_print_command (eliteConfigurations, scenario$parameters)
+    configurations_print_command (elite_configurations, scenario$parameters)
   }
   
   if (scenario$postselection > 0) 
     psRace(iraceLogFile=scenario$logFile, postselection=scenario$postselection, elites=TRUE)
   
   testing_fromlog(logFile = scenario$logFile)
-  invisible(eliteConfigurations)
+  invisible(elite_configurations)
 }
 
 irace_run <- function(scenario)
@@ -1217,7 +1218,7 @@ irace_run <- function(scenario)
       rownames(allConfigurations) <- allConfigurations[[".ID."]]
     }
 
-    if (debugLevel >= 2) {
+    if (debugLevel >= 2L) {
       irace.note("Configurations for the race n ", indexIteration,
                  " (elite configurations listed first, then new configurations):\n")
       configurations_print(raceConfigurations, metadata = TRUE)
@@ -1236,10 +1237,10 @@ irace_run <- function(scenario)
     if ((nrow(.irace$instancesList) - (.irace$next.instance - 1L))
         < ceiling(remainingBudget / minSurvival)) {
       .irace$instancesList <- generateInstances(scenario, n = ceiling(remainingBudget / minSurvival),
-                                                instancesList = .irace$instancesList)
+                                                instances_log = .irace$instancesList)
     }
 
-    if (debugLevel >= 1) irace.note("Launch race\n")
+    if (debugLevel >= 1L) irace.note("Launch race\n")
     raceResults <- elitist_race (scenario = scenario,
                                  configurations = raceConfigurations,
                                  maxExp = currentBudget,
@@ -1277,14 +1278,14 @@ irace_run <- function(scenario)
       remainingBudget <- remainingBudget - raceResults$experimentsUsed
     }
 
-    if (debugLevel >= 3) {
+    if (debugLevel >= 3L) {
       irace.note("Results for the race of iteration ", indexIteration,
                  " (from best to worst, according to the ",
                  test.type.order.str(scenario$testType), "):\n")
       configurations_print(raceResults$configurations, metadata = TRUE)
     }
 
-    if (debugLevel >= 1) irace.note("Extracting elites\n")
+    if (debugLevel >= 1L) irace.note("Extracting elites\n")
     eliteConfigurations <- extractElites(raceResults$configurations,
       nbElites = minSurvival, debugLevel = scenario$debugLevel)
     irace.note("Elite configurations (first number is the configuration ID;",
@@ -1295,15 +1296,15 @@ irace_run <- function(scenario)
     iraceResults$allElites[[indexIteration]] <- eliteConfigurations[[".ID."]]
     
     if (firstRace) {
-      if (debugLevel >= 1) irace.note("Initialise model\n")
+      if (debugLevel >= 1L) irace.note("Initialise model\n")
       model <- initialiseModel(scenario$parameters, eliteConfigurations)
-      if (debugLevel >= 2) printModel (model)
+      if (debugLevel >= 2L) printModel (model)
       firstRace <- FALSE
     }
       
-    if (debugLevel >= 1)  {
+    if (debugLevel >= 1L)  {
       irace.note("End of iteration ", indexIteration, "\n")
-      if (debugLevel >= 3) {
+      if (debugLevel >= 3L) {
         irace.note("All configurations (sampling order):\n")
         configurations_print(allConfigurations, metadata = TRUE)
         irace.note("Memory used in irace():\n")

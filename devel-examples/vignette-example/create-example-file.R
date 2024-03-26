@@ -4,17 +4,17 @@ iracebin <- system.file(package="irace", "bin/irace")
 if (0 != file.access(iracebin, mode=1))
   stop("Error: ", iracebin, " is not executable or not found!")
 
-system(paste0("nice -n 19 ", iracebin, " --parallel 2 | tee irace-acotsp-stdout.txt"))
+system(paste0("nice -n 19 ", iracebin, " --parallel 2 | tee irace-acotsp-stdout.txt 2>&1"))
 
-load("irace-acotsp.Rdata")
+iraceResults <- read_logfile("irace-acotsp.Rdata")
 
 # Change paths
 # FIXME: Use irace::scenario_update_paths()
-to.change <- c("logFile", "trainInstancesDir", "trainInstancesFile",
+to_change <- c("logFile", "trainInstancesDir", "trainInstancesFile",
                "testInstancesDir", "testInstancesFile", "parameterFile",
                "targetRunner")
-iraceResults$scenario[to.change] <-
-  lapply(iraceResults$scenario[to.change],
+iraceResults$scenario[to_change] <-
+  lapply(iraceResults$scenario[to_change],
          function(x) paste0("./", basename(x)))
 
 iraceResults$scenario$execDir <- "./"
@@ -121,7 +121,7 @@ scenario <- list(targetRunner = target.runner,
 ## progress. This may require a few minutes, so it is not run by default.
 irace(scenario = scenario)
 
-load("sann.rda")
+iraceResults <- read_logfile("sann.rda")
 iraceResults$scenario$execDir <- "./"
 iraceResults$scenario$logFile <- "./sann.rda"
 save(iraceResults, file="sann.rda", version = 3L)

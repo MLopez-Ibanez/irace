@@ -282,7 +282,7 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
   type <- match.arg(type)
 
   if (!is.null(ablationLogFile))
-    file.check(ablationLogFile, writeable = TRUE, text = 'logFile')
+    file.check(ablationLogFile, writeable = TRUE, text = 'ablationLogFile')
   
   save_ablog <- function(complete) {
     ablog <- list(changes = changes,
@@ -301,11 +301,10 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
   on.exit(restore_random_seed(old_seed))
   set_random_seed(seed)
 
-  # Load the data of the log file
+  # Load the data of the log file.
   iraceResults <- read_logfile(iraceResults)
-  if (is.null(iraceResults$state$completed) || iraceResults$state$completed == "Incomplete") {
-    stop("This logfile seems to belong to an incomplete run of irace.")
-  }
+  if (is.null(iraceResults$state$completed) || iraceResults$state$completed == "Incomplete")
+    stop("The 'iraceResults' logfile seems to belong to an incomplete run of irace.")
   scenario <- update_scenario(scenario = iraceResults$scenario, ...)
   scenario$logFile <- ""
   scenario <- checkScenario(scenario)
@@ -314,7 +313,8 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
   .irace$instancesList <- res$instancesList
   scenario$instances <- res$instances
 
-  if (is.null(target)) target <- iraceResults$iterationElites[length(iraceResults$iterationElites)]
+  if (is.null(target))
+    target <- iraceResults$iterationElites[length(iraceResults$iterationElites)]
   if (src %not_in% iraceResults$allConfigurations[[".ID."]])
     stop("Source configuration ID (", src, ") cannot be found!")
   if (target %not_in% iraceResults$allConfigurations[[".ID."]])
@@ -339,11 +339,10 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
                 ") are not defined in the parameter space.")
   }
   # Select parameters that are different in both configurations
-  neq.params <- which(src_configuration[,ab_params] != target_configuration[,ab_params])
-  
-  if (length(neq.params) < 1L) 
+  neq_params <- which(src_configuration[,ab_params] != target_configuration[,ab_params])
+  if (length(neq_params) == 0L) 
     irace.error("src and target configurations are equal considering the parameters selected.\n")
-  param_names <- colnames(src_configuration[,ab_params])[neq.params]
+  param_names <- colnames(src_configuration[,ab_params])[neq_params]
   
   # FIXME: Do we really need to override the ID?
   src_configuration$.ID. <- best_id <-  1L

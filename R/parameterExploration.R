@@ -74,7 +74,7 @@ psRace <- function(iraceLogFile=NULL, iraceResults=NULL, conf.ids=NULL,
 
   # LESLIE: Should we use testing instances?
   # Generate new instances
-  instances <- generateInstances(scenario, 1000)
+  instances <- generateInstances(scenario, 1000L)
   .irace$instancesList <- instances
   .irace$next.instance <- 1
   # MANUEL: Does this really work? It looks very strange.

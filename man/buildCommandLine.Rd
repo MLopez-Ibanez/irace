@@ -31,9 +31,8 @@ values <- list("value_1", 1L, sqrt(2))
 buildCommandLine (values, switches)
 ## Build a command-line from the results produced by a previous run of irace.
 # First, load the data produced by irace.
-irace.logfile <- file.path(system.file(package="irace"),
-                           "exdata", "irace-acotsp.Rdata")
-load(irace.logfile)
+logfile <- file.path(system.file(package="irace"), "exdata", "irace-acotsp.Rdata")
+iraceResults <- read_logfile(logfile)
 allConfigurations <- iraceResults$allConfigurations
 parameters <- iraceResults$scenario$parameters
 apply(allConfigurations[1:10, unlist(parameters$names)], 1, buildCommandLine,
