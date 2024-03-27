@@ -723,67 +723,67 @@ elitist_race <- function(maxExp = 0L,
       tmp <- generateTimeMatrix(elite_ids = colnames(elite.data), 
                                 experimentLog = full_experiment_log)
       experimentsTime[rownames(tmp), colnames(tmp)] <- tmp
-    }
-    # Preliminary execution of elite configurations to calculate
-    # the execution bound of initial configurations (capping only).
-    if (capping && race.env$elitistNewInstances > 0L) {
-      irace.assert(race.env$elitistNewInstances %% blockSize == 0L)
-      # FIXME: This should go into its own function.
-      n.elite <- ncol(elite.data)
-      which.elites <- which(rep(TRUE, n.elite))
-      irace.note("Preliminary execution of ", n.elite,
-                 " elite configuration(s) over ", race.env$elitistNewInstances, " instance(s).\n")
-      for (k in seq_len(race.env$elitistNewInstances)) {
-        output <- race.wrapper (configurations = configurations[which.elites, , drop = FALSE], 
-                                instance.idx = race.instances[k],
-                                bounds = rep(scenario$boundMax, n.elite),
-                                which.alive = which.elites, 
-                                which.exe = which.elites,
-                                scenario = scenario)
-        # Extract results
-        # FIXME: check what would happen in case of having the target evaluator
-        # MANUEL: Note how similar is this to what we do in do.experiments(),
-        # perhaps we can create a function that takes output and experimentLog
-        # and returns experimentLog. 
-        # LESLIE: Yes you are right, Ill do it once we figure out the rest!
-        vcost <- unlist(lapply(output, "[[", "cost"))
-        irace.assert(length(vcost) == n.elite)
-        vcost <- applyPAR(vcost, boundMax = scenario$boundMax, boundPar = scenario$boundPar)
-        Results[k, seq_len(n.elite)] <- vcost
-        vtimes <- unlist(lapply(output, "[[", "time"))
-        irace.assert(length(vtimes) == n.elite)
-        experimentsTime[k, which.elites] <- vtimes
-        experimentLog <- rbind(experimentLog,
-                               cbind(race.instances[k],
-                                     configurations[which.elites, ".ID."],
-                                     vtimes,
-                                     scenario$boundMax))
-        experiments_used <- experiments_used + n.elite
-        
-        # We remove elite configurations that are rejected given that
-        # is not possible to calculate the bounds.
-        rejected <- is.infinite(Results[k, which.elites])
-        is.rejected[which.elites] <- rejected
-        which.elites <- which.elites[!rejected]
-        n.elite <- length(which.elites)
-
-      	# If all elite are eliminated we stop execution of initial instances.
-      	if (n.elite == 0L) {
-      	  irace.note ("All elite configurations are rejected. Execution of non-elites will be not bounded.\n")
-          break
-      	}
-      }
-      if (any(is.rejected)) {
-        irace.note ("Immediately rejected configurations: ",
-                    paste0(configurations[is.rejected, ".ID."],
-                           collapse = ", ") , "\n")
-        alive[is.rejected] <- FALSE
-        # Calculate the maximum instance that has any non-NA value.
-        # FIXME: Use update_elite_safe()
-        if (n.elite > 0L)
-          elite.safe <- max(which(rowAnys(!is.na(Results[, which.elites, drop=FALSE]))))
-        else
-          elite.safe <- 0L
+      # Preliminary execution of elite configurations to calculate
+      # the execution bound of initial configurations (capping only).
+      if (race.env$elitistNewInstances > 0L) {
+        irace.assert(race.env$elitistNewInstances %% blockSize == 0L)
+        # FIXME: This should go into its own function.
+        n.elite <- ncol(elite.data)
+        which.elites <- which(rep(TRUE, n.elite))
+        irace.note("Preliminary execution of ", n.elite,
+          " elite configuration(s) over ", race.env$elitistNewInstances, " instance(s).\n")
+        for (k in seq_len(race.env$elitistNewInstances)) {
+          output <- race.wrapper (configurations = configurations[which.elites, , drop = FALSE], 
+            instance.idx = race.instances[k],
+            bounds = rep(scenario$boundMax, n.elite),
+            which.alive = which.elites, 
+            which.exe = which.elites,
+            scenario = scenario)
+          # Extract results
+          # FIXME: check what would happen in case of having the target evaluator
+          # MANUEL: Note how similar is this to what we do in do.experiments(),
+          # perhaps we can create a function that takes output and experimentLog
+          # and returns experimentLog. 
+          # LESLIE: Yes you are right, Ill do it once we figure out the rest!
+          vcost <- unlist(lapply(output, "[[", "cost"))
+          irace.assert(length(vcost) == n.elite)
+          vcost <- applyPAR(vcost, boundMax = scenario$boundMax, boundPar = scenario$boundPar)
+          Results[k, seq_len(n.elite)] <- vcost
+          vtimes <- unlist(lapply(output, "[[", "time"))
+          irace.assert(length(vtimes) == n.elite)
+          experimentsTime[k, which.elites] <- vtimes
+          experimentLog <- rbind(experimentLog,
+            cbind(race.instances[k],
+              configurations[which.elites, ".ID."],
+              vtimes,
+              scenario$boundMax))
+          experiments_used <- experiments_used + n.elite
+          
+          # We remove elite configurations that are rejected given that
+          # is not possible to calculate the bounds.
+          rejected <- is.infinite(Results[k, which.elites])
+          is.rejected[which.elites] <- rejected
+          which.elites <- which.elites[!rejected]
+          n.elite <- length(which.elites)
+          
+          # If all elite are eliminated we stop execution of initial instances.
+          if (n.elite == 0L) {
+            irace.note ("All elite configurations are rejected. Execution of non-elites will be not bounded.\n")
+            break
+          }
+        }
+        if (any(is.rejected)) {
+          irace.note ("Immediately rejected configurations: ",
+            paste0(configurations[is.rejected, ".ID."],
+              collapse = ", ") , "\n")
+          alive[is.rejected] <- FALSE
+          # Calculate the maximum instance that has any non-NA value.
+          # FIXME: Use update_elite_safe()
+          if (n.elite > 0L)
+            elite.safe <- max(which(rowAnys(!is.na(Results[, which.elites, drop=FALSE]))))
+          else
+            elite.safe <- 0L
+        }
       }
     }
     # Compute the elite membership.
@@ -791,11 +791,10 @@ elitist_race <- function(maxExp = 0L,
     # Remove rejected configurations.
     is.elite[is.rejected] <- 0L
   }
-
   no.elimination <- 0L # number of tasks without elimination.
   print_header()
 
-  if (elitist) {
+  if (elitist)
     all_elite_instances_evaluated <- function() {
       if (.irace$next.instance == 1L) return(TRUE)
       evaluated <- !is.na(Results[, alive, drop=FALSE])
@@ -805,10 +804,9 @@ elitist_race <- function(maxExp = 0L,
       # And the number of instances evaluated per configuration is a multiple of blockSize
       all(colSums2(evaluated) %% blockSize == 0L)
     }
-  } else {
+  else
     all_elite_instances_evaluated <- function() TRUE
-  }
-  
+    
   # Start main loop
   break.msg <- NULL
   best <- NA
