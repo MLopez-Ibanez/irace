@@ -91,6 +91,10 @@ getConfigurationByIteration <- function(iraceResults, iterations, drop.metadata 
   iterations <- ifelse(iterations >= 0L, iterations, n_iterations + 1L + iterations)
   # To silence warning.
   iteration <- NULL
+  if (is.null(iraceResults$state$experiment_log) ||
+        nrow(iraceResults$state$experiment_log) == 0L)
+    stop("'iraceResults' does not contain experiment_log, maybe the wrong file, an incomplete run or the wrong version of irace?")
+    
   ids <- unique(subset(as.data.frame(iraceResults$state$experiment_log),
                        iteration %in% iterations,
                        select="configuration", drop=TRUE))
