@@ -221,7 +221,8 @@ compile_forbidden <- function(x)
 
 buildForbiddenExp <- function(configurations)
 {
-  if (nrow(configurations) == 0L) return(NULL)
+  if (is.null(configurations) || nrow(configurations) == 0L)
+    return(NULL)
   pnames <- colnames(configurations)
   lines <- c()
   # We cannot use apply() because it converts numeric to character.
