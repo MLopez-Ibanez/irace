@@ -185,8 +185,8 @@ winbuild: releasebuild
 examples: quick-install
 	@echo "*** Makefile: Regenerating data for vignettes and examples. This will take time..."
 	cd devel-examples/vignette-example/ && R --vanilla --slave --file=create-example-file.R
+	mv -t inst/exdata/ devel-examples/vignette-example/log-ablation.Rdata devel-examples/vignette-example/irace-acotsp.Rdata devel-examples/vignette-example/sann.rda
 	mv -t vignettes/ devel-examples/vignette-example/*.Rdata devel-examples/vignette-example/irace-acotsp-stdout.txt
-	mv -t inst/exdata/ vignettes/log-ablation.Rdata
 	$(MAKE) vignettes
 	$(MAKE) check
 
