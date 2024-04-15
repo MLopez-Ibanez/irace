@@ -211,7 +211,14 @@ Parameter <- function(name, type, domain, label, condition, transf,
       dups <- duplicated(domain)
       stop("duplicated values (", paste0('\"', domain[dups], "\"", collapse = ', '), ") for parameter '", name, "'")
     }
+    if (type == "o") {
+      tmp <- suppressWarnings(as.numeric(domain))
+      if (!anyNA(tmp) && !identical(order(tmp), seq_along(tmp)))
+        stop("the domain of parameter '", name, "' appears to be a discretization of a numerical range, but the values are not in increasing order: ",
+          paste0(domain, collapse = ', '))
+    }
   }
+  
   if (transf != "")
     transf <- transform_domain(transf, domain, type)
 

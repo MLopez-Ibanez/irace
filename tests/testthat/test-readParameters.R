@@ -88,6 +88,12 @@ expect_error(readParameters(text = '
 #
 '), "No parameter definition found")
 
+test_that("ordinal out of order", {
+expect_error(readParameters(text = '
+param "" o (0, 2, 1)
+'), "the values are not in increasing order")
+})
+
 expect_error(readParameters(text = 'param1 "--param1 " r,log (0, 100)'),
              "of parameter of type 'log' contains non-positive values")
 
