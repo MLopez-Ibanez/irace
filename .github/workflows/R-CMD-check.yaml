@@ -200,32 +200,12 @@ jobs:
         if: success()
         run: |
           remotes::install_local(".", build = TRUE, upgrade = "never", force = TRUE, build_opts = c("--no-resave-data"), build_manual = TRUE, build_vignettes = TRUE)
+          dir.create("./pkgdown/assets/")
+          file.copy(system.file("doc/irace-package.pdf",package="irace", mustWork=TRUE), "./pkgdown/assets/", overwrite=TRUE)
         shell: Rscript {0}
 
       - name: Deploy package
         if: success()
         run: |
-          git config --local user.email "actions@github.com"
-          git config --local user.name "GitHub Actions"
-          # Commit version.R so that install_github works
-          # FIXME: Is there a better way to record the git sha in R?
-          #git add --force R/version.R
-          #git commit R/version.R --m "Update version.R [skip ci]"
-          # pull so that if there are new commits, we can push
-          #git pull --rebase
-          # git push origin 'HEAD:master' || exit 1
-          # pkgdown
-          Rscript -e 'pkgdown::deploy_to_branch(new_process = FALSE)' || exit 1
-          # Commit vignette PDF to webpage
-          export DEST_DIR=$(mktemp -d)
-          git remote set-branches origin gh-pages
-          git fetch origin gh-pages
-          git worktree add --track -B gh-pages $DEST_DIR origin/gh-pages
-          pushd $DEST_DIR
-          Rscript -e 'file.copy(system.file("doc/irace-package.pdf",package="irace", mustWork=TRUE), "./", overwrite=TRUE)' || exit 1
-          git add -A .
-          git commit --allow-empty -m "Regenerate user guide [skip ci]"
-          git push origin 'HEAD:gh-pages'
-          popd
-          git worktree remove $DEST_DIR
-        shell: bash {0}
+          pkgdown::deploy_to_branch(new_process = FALSE)
+        shell: Rscript {0}
