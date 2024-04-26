@@ -36,7 +36,8 @@ Suggests:
     devtools
 VignetteBuilder: knitr
 License: GPL (>= 2)
-URL: https://mlopez-ibanez.github.io/irace/, https://github.com/MLopez-Ibanez/irace
+URL: https://mlopez-ibanez.github.io/irace/,
+    https://github.com/MLopez-Ibanez/irace
 BugReports: https://github.com/MLopez-Ibanez/irace/issues
 ByteCompile: yes
 Encoding: UTF-8
