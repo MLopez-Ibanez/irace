@@ -945,7 +945,7 @@ defaultScenario <- function(scenario = list(),
   if (is.null(names(scenario))) {
     scenario <- setNames(as.list(params_def[params_names,"default"]), params_names)
   } else if (!all(names(scenario) %in% params_names)) {
-    irace.error("Unknown scenario parameters: ",
+    irace.error("Unknown scenario settings: ",
                 paste(names(scenario)[!(names(scenario) %in% params_names)],
                       collapse = ", "))
   } else {
