@@ -194,6 +194,10 @@
 %
 }
 
+% Workaround for broken knitr: https://github.com/yihui/knitr-examples/blob/master/036-latex-if.tex
+\providecommand{\hldef}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\providecommand{\hlsng}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+
 \begin{document}
 
 <<include=FALSE>>=
