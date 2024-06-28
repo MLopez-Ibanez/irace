@@ -150,25 +150,29 @@ aux_friedman <- function(results, alive, which.alive, conf.level)
   # If only 2 configurations are left, switch to Wilcoxon
   V1 <- results[, which.alive[1]]
   V2 <- results[, which.alive[2]]
-  
+  diffs <- V1 - V2
   # Avoid the test if the answer is obvious
-  if (all(V1 <= V2)) {
+  if (all(diffs <= 0)) {
     ranks <- c(1L,2L)
-  } else if (all(V2 <= V1)) {
+  } else if (all(diffs >= 0)) {
     ranks <- c(2L,1L)
   } else {
-    res <- wilcox.test(V1, V2, paired = TRUE, conf.int = TRUE)
-    PVAL <- res$p.value
+    ZEROES <- any(diffs == 0)
+    if (ZEROES)
+      diffs <- diffs[diffs != 0]
+    r <- rank(abs(diffs))
+    TIES <- length(r) != length(unique(r))
+    diffs <- outer(diffs, diffs, "+")
+    diffs <- sort(diffs[!lower.tri(diffs)])/2
+    PVAL <- wilcox.test(V1, V2, paired = TRUE, exact = if (ZEROES || TIES) FALSE else NULL)$p.value
     irace.assert(!is.nan(PVAL) & !is.na(PVAL))
     if (PVAL >= 1 - conf.level) dropped.any <- FALSE
-    # We use the pseudo median estimated by the test.
-    ranks <- if (res$estimate <= 0) c(1L,2L) else c(2L,1L)
+    # We use the pseudo median (see wilcox.test.default)
+    ranks <- if (median(diffs) <= 0) c(1L,2L) else c(2L,1L)
   }
-  best <- which.alive[ranks[1L]]
   if (dropped.any)
     alive[which.alive[ranks[2L]]] <- FALSE
   
-  irace.assert(which.alive[which.min(ranks)] == best)
   list(ranks = ranks, alive = alive, dropped.any = dropped.any, p.value = PVAL)
 }
 
@@ -231,7 +235,7 @@ aux.ttest <- function(results, alive, which.alive, conf.level,
     results_j <- results[, j]
     # t.test may fail if the data in each group is almost constant. Hence, we
     # surround the call in a try() and we initialize p with 1 if the means are
-    # equal or zero if they are different
+    # equal or 0 if they are different.
     if (min(var(results_best), var(results_j)) < 10 * .Machine$double.eps) next
     # The t.test may fail if the data are not normal despite one configuration
     # clearly dominating the other.
