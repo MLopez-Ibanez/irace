@@ -71,8 +71,8 @@ race.wrapper <- function(race_state, configurations, instance_idx, bounds = NULL
   # Experiment list to execute
   experiments <- createExperimentList(configurations, parameters = scenario$parameters,
                                       instances = scenario$instances,
-                                      instances.ID = race_state$instances_log[instance_idx, "instanceID"],
-                                      seeds = race_state$instances_log[instance_idx, "seed"],
+                                      instances.ID = race_state$instances_log[["instanceID"]][instance_idx],
+                                      seeds = race_state$instances_log[["seed"]][instance_idx],
                                       bounds = bounds)
 
   target.output <- vector("list", length(experiments))
@@ -935,9 +935,20 @@ elitist_race <- function(race_state, maxExp = 0L,
           elite.safe <- update_elite_safe(Results, is.elite)
         }
         which.exe <- setdiff(which.exe, which.elite.exe)
-        # FIXME: There is similar code above.
+        # FIXME: There is similar code above. Can we merge these code paths?
         if (length(which.exe) == 0L) {
           is.elite <- update_is_elite(is.elite, which.elite.exe)
+          if (current.task == 1L) {
+            # We may reach this point in the first iteration so we need to calculate best.
+            if (sum(alive) == 1L) {
+              best <- which.alive
+            } else  {
+              tmpResults <- Results[1, which.alive, drop = FALSE]
+              irace.assert(!any(is.na(tmpResults)))
+              # which.min returns only the first minimum.
+              best <- which.alive[which.min(get_ranks(tmpResults, test = stat.test))]
+            }
+          }
           if (is.na(best)) {
             dump.frames(dumpto = "best_crash", to.file = TRUE,
                         include.GlobalEnv = TRUE)
