@@ -21,8 +21,8 @@ target.runner <- function(experiment, scenario)
   return(list(cost = 100, call = toString(experiment)))
 
   withr::with_options(list(warning=2), {
-    parameters <- irace:::readParameters(text=parameters_txt)
-    initconfs <- irace:::readConfigurationsFile(text=confs_txt, parameters=parameters)
+    parameters <- readParameters(text=parameters_txt)
+    initconfs <- readConfigurationsFile(text=confs_txt, parameters=parameters)
     scenario <- list(targetRunner = target.runner,
                      instances=1:10,
                      nbConfigurations=8,
