@@ -1,5 +1,3 @@
-require("fs")
-
 test_path_rel2abs <- function(testcases)
 {
   for (i in 1:nrow(testcases)) {
@@ -7,9 +5,9 @@ test_path_rel2abs <- function(testcases)
     cwd <-  testcases[i,2L]
     res <- path_rel2abs(testcases[i,1L], cwd)
     if (testcases[i,3L] == "Sys.which") {
-      exp <- path_abs(Sys.which(testcases[i,1]))
+      exp <- fs::path_abs(Sys.which(testcases[i,1L]))
     } else {
-      exp <- gsub("\\", "/", path_expand(testcases[i,3L]), fixed = TRUE)
+      exp <- gsub("\\", "/", fs::path_expand(testcases[i,3L]), fixed = TRUE)
     }
     if (res == exp) {
       #cat("[OK] ", i, ": path_rel2abs(\"", orig, "\", \"", cwd, "\") -> ", res, "\n", sep="")
@@ -183,9 +181,9 @@ test_that("test path_rel2abs with symlink", {
   tryCatch({
     tmp <- withr::local_tempdir()
     setwd(tmp)
-    dir_create("a")
-    file_create("a/b")
-    link_create(path_abs("a"), "c")
+    fs::dir_create("a")
+    fs::file_create("a/b")
+    fs::link_create(fs::path_abs("a"), "c")
   }, error = function(e) { skip(e) })
   testcases <- data.frame(p = "c/b", wd = ".", res = file.path(tmp, "c/b"),
     stringsAsFactors=FALSE)
