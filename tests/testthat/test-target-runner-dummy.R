@@ -1,12 +1,12 @@
 withr::with_output_sink("test-target-runner-dummy.Rout", {
   skip_on_cran()
-  get_executable <- function(filename, src_dir) {
-    exe <- paste0(filename, if (system_os_is_windows()) ".exe" else "")
-    p <- file.path(if (.Platform$r_arch == "") "bin" else file.path("bin", .Platform$r_arch), exe)
-    res <- system.file(package="irace", mustWork = FALSE, p)
-    if (res == "") {
-      res <- test_path(file.path(src_dir, exe))
-    }
+
+  get_executable <- function(filename, src_dir = NULL) {
+    filename <- paste0(filename, if (system_os_is_windows()) ".exe" else "")
+    p <- if (.Platform$r_arch == "") file.path( "bin", filename) else file.path("bin", .Platform$r_arch, filename)
+    res <- system.file(p, package="irace", mustWork = FALSE)
+    if (res == "" && !is.null(src_dir))
+      res <- test_path(file.path(src_dir, filename))
     res
   }
   runexe <- function(exe, args) {
@@ -32,7 +32,8 @@ withr::with_output_sink("test-target-runner-dummy.Rout", {
   }
 
   test_that("irace exe works", {
-    iraceexe <- get_executable("irace", "../../src/iracebin")
+    iraceexe <- get_executable("irace")
+    skip_if_not(nzchar(iraceexe), "Not run because 'irace' is not installed")
     expect_true(file.exists(iraceexe))
     skip_on_os("windows")
     # FIXME: For some reason, this does not generate any output on Windows
@@ -41,7 +42,8 @@ withr::with_output_sink("test-target-runner-dummy.Rout", {
   })
 
   test_that("ablation exe works", {
-    ablationexe <- get_executable("ablation", "../../src/iracebin")
+    ablationexe <- get_executable("ablation")
+    skip_if_not(nzchar(ablationexe), "Not run because 'ablation' is not installed")
     expect_true(file.exists(ablationexe))
     skip_on_os("windows")
     # FIXME: For some reason, this does not generate any output on Windows
@@ -50,8 +52,7 @@ withr::with_output_sink("test-target-runner-dummy.Rout", {
   })
 
   target_runner_dummy <- get_executable("target-runner-dummy", "../../src/dummy")
-  skip_if_not(file.exists(target_runner_dummy),
-              message = sprintf("target_runner_dummy='%s' not installed", target_runner_dummy))
+  expect_true(file.exists(target_runner_dummy))
   
   run_cmdline <- function(parameters, args) {
     parameters_file <- tempfile("dummy-parameters", fileext = ".txt")
