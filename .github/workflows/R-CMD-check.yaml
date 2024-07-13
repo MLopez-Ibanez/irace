@@ -33,8 +33,9 @@ jobs:
           - {os: windows-latest, r: 'release'}
           - {os: macOS-latest,   r: 'release'}
           - {os: ubuntu-latest,  r: 'release'}
-          - {os: ubuntu-20.04,   r: '3.6'}
-          # Use latest ubuntu to make it easier to install dependencies
+          # Minimum supported version.
+          - {os: ubuntu-20.04,   r: '4.0'}
+          # Use latest ubuntu to make it easier to install dependencies.
           - {os: ubuntu-latest,  r: 'devel', http-user-agent: 'release'}
 
     env:
@@ -65,7 +66,15 @@ jobs:
 
       - name: Install additional LaTeX packages
         run: tlmgr install ${{ env.LATEX_PACKAGES }}
-      
+
+      - name: Install old version of evaluate for R 3.6
+        if: ${{ matrix.config.r }} == "3.6"
+        run: |
+          install.packages('devtools')
+          devtools::install_version("evaluate", version = "0.23", repos = "http://cran.us.r-project.org")
+          install.packages("testthat")
+        shell: Rscript {0}
+        
       - uses: r-lib/actions/setup-r-dependencies@v2
         if: runner.os != 'macOS'
         with:

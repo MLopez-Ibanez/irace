@@ -4,7 +4,7 @@
 
 ## Major breaking changes
 
- * Requires R version >= 3.6.0.
+ * Requires R version >= 4.0
 
  * Logfiles `*.Rdata` use format version 3, which can only be read by R version >= 3.5.
  
