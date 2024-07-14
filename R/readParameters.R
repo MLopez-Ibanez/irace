@@ -100,27 +100,26 @@ readParameters <- function (file, digits = 4L, debugLevel = 0L, text)
   {
     #cat ("pattern:", pattern, "\n")
     positions <- lapply(seq_along(pattern), function(x) regexpr (paste0("^", pattern[x], sep), line))
-    if (all(sapply(positions, "[[", 1) == -1)) {
+    if (all(sapply(positions, "[[", 1L) == -1L)) {
       #cat("no match: NULL\n")
       return (list(match = NULL, line = line))
     }
-    pos.matched.list <- lapply(seq_along(pattern), function(x) regexpr (paste0("^", pattern[x]), line))
+    pos_matched <- lapply(seq_along(pattern), function(x) regexpr (paste0("^", pattern[x]), line))
     #cat("pos.matched:", pos.matched, "\n")
-    if (all(sapply(pos.matched.list, "[[", 1) == -1)) {
+    if (all(sapply(pos_matched, "[[", 1L) == -1L)) {
       #cat(line)
       return (list(match = NULL, line = line))
     }
-    position <- which(sapply(pos.matched.list, `[[`,1L) != -1)
+    position <- which(sapply(pos_matched, `[[`,1L) != -1L)
     if (length(position) > 1L) {
       position <- position[1L]
     }
-    pos.matched <- pos.matched.list[[position]]
+    pos_matched <- pos_matched[[position]]
     delimited <- as.integer(delimited)
-    match <- substr(line, pos.matched[1] + delimited,
-                    attr(pos.matched, "match.length") - delimited)
+    match <- substr(line, pos_matched[1L] + delimited,
+                    attr(pos_matched, "match.length") - delimited)
     #cat("match:",match, "\n")
-    line <- substr (line, pos.matched[1] + attr(pos.matched, "match.length"),
-                    nchar(line))
+    line <- substr(line, pos_matched[1L] + attr(pos_matched, "match.length"), nchar(line))
     line <- trim_leading (line)
     #cat(line)
     list(match = match, line = line)

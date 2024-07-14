@@ -30,10 +30,7 @@ The \code{iraceResults} object is a list with the following structure:
 
 \item{\code{scenario}}{The scenario R object containing the \pkg{irace}
 options used for the execution. See \code{\link{defaultScenario}}
-for more information.}
-
-\item{\code{parameters}}{The parameters R object containing the
-description of the target algorithm parameters. See
+for more information. The element \code{scenario$parameters} contains the parameters R object that describes the target algorithm parameters. See
 \code{\link{readParameters}}.}
 
 \item{\code{allConfigurations}}{The target algorithm configurations
@@ -58,7 +55,7 @@ configuration found corresponds to the last one of this vector.}
 instances as rows. Column names correspond to the internal identifier of
 the configuration (\code{allConfigurations$.ID.}).}
 
-\item{\code{experimen_log}}{A \code{data.frame} with columns \code{iteration},
+\item{\code{experimen_log}}{A \code{data.table} with columns \code{iteration},
 \code{instance}, \code{configuration}, \code{time}.  This matrix contains the log of all the
 experiments that \pkg{irace} performs during its execution.  The
 instance column refers to the index of the \code{race_state$instances_log}
@@ -68,7 +65,7 @@ data frame. Time is saved ONLY when reported by the \code{targetRunner}.}
 restart was performed on each iteration. If \code{FALSE}, then no soft
 restart was performed.}
 
-\item{\code{state}}{A list that contains the state of \pkg{irace}, the
+\item{\code{state}}{An environment that contains the state of \pkg{irace}, the
 recovery is done using the information contained in this object.}
 
 \item{\code{testing}}{A list that contains the testing results. The

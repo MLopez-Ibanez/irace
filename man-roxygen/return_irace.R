@@ -18,10 +18,7 @@
 #'
 #' \item{`scenario`}{The scenario R object containing the \pkg{irace}
 #' options used for the execution. See [`defaultScenario`] 
-#' for more information.}
-#' 
-#' \item{`parameters`}{The parameters R object containing the
-#' description of the target algorithm parameters. See
+#' for more information. The element `scenario$parameters` contains the parameters R object that describes the target algorithm parameters. See
 #' [`readParameters`].}
 #' 
 #' \item{`allConfigurations`}{The target algorithm configurations
@@ -46,7 +43,7 @@
 #' instances as rows. Column names correspond to the internal identifier of
 #' the configuration (`allConfigurations$.ID.`).}
 #' 
-#' \item{`experimen_log`}{A `data.frame` with columns `iteration`,
+#' \item{`experimen_log`}{A `data.table` with columns `iteration`,
 #' `instance`, `configuration`, `time`.  This matrix contains the log of all the
 #' experiments that \pkg{irace} performs during its execution.  The
 #' instance column refers to the index of the `race_state$instances_log`
@@ -56,7 +53,7 @@
 #' restart was performed on each iteration. If `FALSE`, then no soft
 #' restart was performed.}
 #'
-#' \item{`state`}{A list that contains the state of \pkg{irace}, the
+#' \item{`state`}{An environment that contains the state of \pkg{irace}, the
 #' recovery is done using the information contained in this object.}
 #' 
 #' \item{`testing`}{A list that contains the testing results. The
