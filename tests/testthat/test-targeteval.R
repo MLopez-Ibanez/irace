@@ -3,16 +3,11 @@ withr::with_output_sink("test-targeteval.Rout", {
 test_that("target.evaluator", {
 
 target.runner <- function(experiment, scenario)
-{
-  return(list(call = toString(experiment)))
-}
+  list(call = toString(experiment))
 
-target.evaluator <- function(experiment, num.configurations, all.conf.id,
-                             scenario, target.runner.call)
-{
-  result <- list(cost = runif(1), call = toString(experiment))
-  return(result)
-}
+target.evaluator <- function(experiment, num_configurations, all_conf_id,
+                             scenario, target_runner_call)
+  list(cost = runif(1), call = toString(experiment))
 
 parameters <- readParameters(text = '
 algorithm       "--"                 c          (as,mmas,eas,ras,acs)

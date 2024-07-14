@@ -9,7 +9,7 @@ setClasses <- function(x, classes)
 }
 
 # test that targetRunnerParallel works with arbitrary instance objects.
-targetRunnerParallel <- function(experiment, exec.target.runner, scenario, target.runner)
+targetRunnerParallel <- function(experiment, exec_target_runner, scenario, target_runner)
 {
   # get our param settings that irace should try
   cands = lapply(experiment, "[[", "configuration")
@@ -34,7 +34,7 @@ targetRunnerParallel <- function(experiment, exec.target.runner, scenario, targe
 })
 
 test_that("targetRunnerData", {
-  targetRunnerParallel <- function(experiments, exec.target.runner, scenario, target.runner) {
+  targetRunnerParallel <- function(experiments, exec_target_runner, scenario, target_runner) {
     cat("a = ", scenario$targetRunnerData$a,
         ", b = ", scenario$targetRunnerData$b, "\n", sep = "")
     # get our param settings that irace should try

@@ -60,8 +60,7 @@
  
  * The column `"instance"` of the `instancesList` data frame stored in the
    logFile has been renamed to `"instanceID"`.  This data frame should not be
-   accessed directly. Instead use the new function
-   `get_instanceID_seed_pairs()`.
+   accessed directly. Instead use the new function `get_instanceID_seed_pairs()`.
    
  * Using `maxTime > 0` with `elitist=0` now gives a clear error rather than fail later.
                                                     (fix #65, reported by @DE0CH)
@@ -71,19 +70,27 @@
  
  * Expansion of `'~'` in Windows now follows the definition of `fs::path_expand()` rather than `base::path.expand()`.
   
- * irace is now more strict in enforcing runtime bounds given with `scenario$boundMax` and will stop with an error if the `target-runner` reports a runtime larger than the given bound.
+ * irace is now more strict in enforcing runtime bounds given with `scenario$boundMax`
+   and will stop with an error if the `target-runner` reports a runtime larger than the given bound.
 
  * All functions that contained a period (`'.'`) in the name have been renamed to use `'_'` instead.
  
- * The environment `.irace` that was available under
-   `iraceResults$state$.irace` is replaced directly by `iraceResults$state`,
-   which contains the same members.
-
+ * The periods (`'.'`) in the arguments of `scenario$targetRunnerParallel`
+   and `scenario$targetEvaluator` have also been replaced by `'_'`.
+ 
+ * The environment `.irace` that was available in the log file under
+   `iraceResults$state$.irace` is replaced directly by `iraceResults$state`.
+   It contains similar information but some entries have been renamed. For
+   example, the `experimentLog` `data.frame` is now a called `experiment_log`
+   and it is a [`data.table`](https://r-datatable.com).
+ 
  * The interface of `psRace()` has been simplified.
   
  * `irace` will automatically execute a post-selection race (`psRace()`) using
-   any remaining budget. To disable this behavior, set the option
-   `scenario$postselection` (`--postselection`) to `0`.
+   any remaining budget (currently only when `maxTime == 0`). To disable
+   this behavior, set the scenario option `postselection` (`--postselection`)
+   to `0`.
+   
 
 ## New features and improvements
 

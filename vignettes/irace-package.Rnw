@@ -1303,15 +1303,15 @@ When \parameter{targetEvaluator} is an \aR function, it is invoked
 for each candidate configuration as:%
 %
 <<targetEvaluator, prompt=FALSE, eval=FALSE>>=
-targetEvaluator(experiment, num.configurations, all.conf.id,
-                scenario, target.runner.call)
+targetEvaluator(experiment, num_configurations, all_conf_id,
+                scenario, target_runner_call)
 @
 %
 \noindent where \code{experiment} is a list that contains information about one
-experiment (see \autoref{sec:runner fx}), \code{num.configurations}
-is the number of configurations alive in the race, \code{all.conf.id} is
+experiment (see \autoref{sec:runner fx}), \code{num_configurations}
+is the number of configurations alive in the race, \code{all_conf_id} is
 the vector of IDs of the alive configurations,  \code{scenario} is
-the scenario list and \code{target.tunner.call} is the string of the
+the scenario list and \code{target_runner_call} is the string of the
 \parameter{targetRunner} execution line.
 
 The function \parameter{targetEvaluator} must return a list with one element
@@ -1576,36 +1576,35 @@ See the examples in
     Its value must be an \aR function that will be invoked by \irace as follows:
 
    <<targetRunnerParallel,prompt=FALSE, eval=FALSE>>=
-   targetRunnerParallel(experiments, exec.target.runner, scenario, target.runner)
+   targetRunnerParallel(experiments, exec_target_runner, scenario, target_runner)
    @
    %
    where \code{scenario} is the list describing the configuration scenario
    (\autoref{sec:scenario}); \code{experiments} is a list that describes the
    configurations and instances to be executed (see \autoref{sec:runner} for a
-   description); \code{target.runner} is the function that calls the target
+   description); \code{target_runner} is the function that calls the target
    algorithm and it is the same as \parameter{targetRunner}, if the latter is a
-   function, or it is a call to \code{target.runner.default}, if
+   function, or it is a call to \code{target_runner_default}, if
    \parameter{targetRunner} is the path to an executable; and
-   \code{exec.target.runner} is an internal function within \irace that takes
-   care of executing \code{target.runner}, check its output and, possibly,
+   \code{exec_target_runner} is an internal function within \irace that takes
+   care of executing \code{target_runner}, check its output and, possibly,
    retry in case of error (see \parameter{targetRunnerRetries}). The
    \parameter{targetRunnerParallel} function should call the given
-   \code{target.runner} function for each element in the \code{experiments}
-   list, possibly using \code{exec.target.runner} as a wrapper. A trivial
+   \code{target_runner} function for each element in the \code{experiments}
+   list, possibly using \code{exec_target_runner} as a wrapper. A trivial
    example would be:
    
    <<targetRunnerParallel2,prompt=FALSE, eval=FALSE>>=
-   targetRunnerParallel <- function(experiments, exec.target.runner, scenario)
+   targetRunnerParallel <- function(experiments, exec_target_runner, scenario, target_runner)
    {
-     return (lapply(experiments, exec.target.runner, scenario = scenario,
-                    target.runner = target.runner))
+     return (lapply(experiments, exec_target_runner, scenario = scenario,
+                    target_runner = target_runner))
    }
    @
    %
    However, the user is free to set up the calls in any way, perhaps
-   implementing its own replacement for \code{target.runner} and/or
-   \code{exec.target.runner}. The user may load and call other \aR packages, such as \pkg{batchtools} (\url{https://mllg.github.io/batchtools/}).
-
+   implementing its own replacement for \code{target_runner} and/or
+   \code{exec_target_runner}. The user may load and call other \aR packages, such as \pkg{batchtools} (\url{https://mllg.github.io/batchtools/}).
    
    The only requirement is that the \parameter{targetRunnerParallel} function
    must return a list of the same length as \code{experiments}, where each
@@ -3224,7 +3223,7 @@ chmod +x ~/tuning/target-runner
 Error: == irace == running command ''~/tuning/target-runner' 1 8 676651103 
 ~/tuning/Instances/1000-16.tsp --ras --localsearch 2 --alpha 4.03 --beta 1.89
 --rho  0.02 --ants 37 --nnls 48 --dlb 0 --rasranks 15 2>\&1' had status 1  
-== irace == The call to target.runner.default was:
+== irace == The call to target_runner_default was:
 ~/tuning/target-runner 1 8 676651103 ~/tuning/Instances/1000-16.tsp --ras 
 --localsearch 2 --alpha 4.03 --beta 1.89 --rho  0.02 --ants 37 --nnls 48 
 --dlb 0 --rasranks 15 

@@ -6,10 +6,10 @@
 \usage{
 target_evaluator_default(
   experiment,
-  num.configurations,
-  all.conf.id,
+  num_configurations,
+  all_conf_id,
   scenario,
-  target.runner.call
+  target_runner_call
 )
 }
 \arguments{
@@ -27,15 +27,15 @@ name;}
 of parameters used in \code{configuration}.}
 }}
 
-\item{num.configurations}{Number of  configurations alive in the race.}
+\item{num_configurations}{Number of  configurations alive in the race.}
 
-\item{all.conf.id}{Vector of configuration IDs of the alive configurations.}
+\item{all_conf_id}{Vector of configuration IDs of the alive configurations.}
 
 \item{scenario}{(\code{list()}) \cr Data structure containing \pkg{irace}
 settings. The data structure has to be the one returned by the function
 \code{\link[=defaultScenario]{defaultScenario()}} or \code{\link[=readScenario]{readScenario()}}.}
 
-\item{target.runner.call}{String describing the call to \code{targetRunner} that
+\item{target_runner_call}{String describing the call to \code{targetRunner} that
 corresponds to this call to \code{targetEvaluator}. This is used for
 providing extra information to the user, for example, in case
 \code{targetEvaluator} fails.}
