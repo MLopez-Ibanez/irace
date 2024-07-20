@@ -16,7 +16,7 @@ env:
   R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
   _R_CHECK_FORCE_SUGGESTS_: false
   _R_CHECK_CRAN_INCOMING_REMOTE_: false
-  LATEX_PACKAGES: "oberdiek grfext environ trimspaces etoolbox upquote babel-english pgf xcolor algorithms relsize tocbibind appendix tocloft enumitem listings tcolorbox collection-fontsrecommended framed inconsolata microtype"
+  LATEX_PACKAGES: "oberdiek grfext environ trimspaces etoolbox upquote babel-english pgf xcolor algorithms relsize tocbibind appendix tocloft enumitem listings tcolorbox collection-fontsrecommended framed inconsolata microtype underscore"
   R_KEEP_PKG_SOURCE: yes
 
 jobs:

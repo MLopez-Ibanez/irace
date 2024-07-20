@@ -30,12 +30,13 @@ Imports:
         spacefillr,
         withr
 Suggests:
-    Rmpi (>= 0.6.0),
-    parallel,
-    knitr,
-    testthat (>= 3.1.8),
     ParamHelpers,
-    devtools
+    Rmpi (>= 0.6.0),
+    devtools,
+    highr,
+    knitr,
+    parallel,
+    testthat (>= 3.1.8)
 VignetteBuilder: knitr
 License: GPL (>= 2)
 URL: https://mlopez-ibanez.github.io/irace/,
