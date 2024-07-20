@@ -739,7 +739,7 @@ irace_run <- function(scenario)
       ## fine. If a larger number of instances is used, it would prevent
       ## discarding these configurations.
       # Get the number of instances to be used.
-      ninstances <- scenario$firstTest
+      ninstances <- round_to_next_multiple(scenario$firstTest, scenario$blockSize)
       estimationTime <- ceiling(scenario$maxTime * scenario$budgetEstimation)
       irace.note("Estimating execution time using ", 100 * scenario$budgetEstimation,
                  "% of ", scenario$maxTime, " = ", estimationTime, "\n")
