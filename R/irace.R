@@ -236,11 +236,11 @@ computeTerminationOfRace <- function(nbParameters) (2 + log2(nbParameters))
 
 ## Compute the minimum budget required, and exit early in case the
 ## budget given by the user is insufficient.
-computeMinimumBudget <- function(scenario, minSurvival, nbIterations)
+computeMinimumBudget <- function(scenario, minSurvival, nbIterations, elitist_new_instances)
 {
   blockSize <- scenario$blockSize
   eachTest <- blockSize * scenario$eachTest
-  Tnew <- scenario$elitistNewInstances
+  Tnew <- elitist_new_instances
   mu <- scenario$mu
   
   # This is computed from the default formulas as follows:
@@ -308,9 +308,9 @@ computeMinimumBudget <- function(scenario, minSurvival, nbIterations)
 }
 
 checkMinimumBudget <- function(scenario, remainingBudget, minSurvival, nbIterations,
-                               boundEstimate, timeUsed)
+                               boundEstimate, timeUsed, elitist_new_instances)
 {
-  minimumBudget <- computeMinimumBudget (scenario, minSurvival, nbIterations)
+  minimumBudget <- computeMinimumBudget(scenario, minSurvival, nbIterations, elitist_new_instances)
 
   if (remainingBudget >= minimumBudget)
     return(TRUE)
@@ -731,7 +731,8 @@ irace_run <- function(scenario)
         remainingBudget <- scenario$maxExperiments
       } else {
         remainingBudget <- max(scenario$minExperiments,
-                               computeMinimumBudget(scenario, minSurvival, nbIterations))
+          computeMinimumBudget(scenario, minSurvival, nbIterations,
+            race_state$elitist_new_instances))
       }
     } else { ## Estimate time when maxTime is defined.
       ## IMPORTANT: This is firstTest because these configurations will be
@@ -841,7 +842,7 @@ irace_run <- function(scenario)
     # the number of iterations.
     warn_msg <- NULL
     while (!checkMinimumBudget(scenario, remainingBudget, minSurvival, nbIterations,
-                               boundEstimate, timeUsed))
+                               boundEstimate, timeUsed, race_state$elitist_new_instances))
     {
       if (is.null(warn_msg))
         warn_msg <- 
@@ -865,7 +866,7 @@ irace_run <- function(scenario)
   catInfo("Initialization\n",
           if (scenario$elitist)
             paste0("# Elitist race\n",
-                   "# Elitist new instances: ", scenario$elitistNewInstances, "\n",
+                   "# Elitist new instances: ", race_state$elitist_new_instances, "\n",
                    "# Elitist limit: ",         scenario$elitistLimit, "\n")
           else paste0("# Non-elitist race\n"),
           "# nbIterations: ", nbIterations, "\n",
@@ -947,7 +948,26 @@ irace_run <- function(scenario)
                                 blockSize = blockSize,
                                 nElites = nrow(elite_configurations),
                                 nOldInstances = nrow(iraceResults$experiments),
-                                newInstances = scenario$elitistNewInstances)
+                                newInstances = race_state$elitist_new_instances)
+      # If we don't have enough budget, do not evaluate new instances.
+      if (nbConfigurations <= minSurvival) {
+        race_state$elitist_new_instances <- 0L
+        nbConfigurations <- computeNbConfigurations(currentBudget, indexIteration,
+          mu = scenario$mu,
+          eachTest = scenario$eachTest,
+          blockSize = blockSize,
+          nElites = nrow(elite_configurations),
+          nOldInstances = nrow(iraceResults$experiments),
+          newInstances = race_state$elitist_new_instances)
+      }
+      # If still not enough budget, then try to do at least one test.
+      if (nbConfigurations <= minSurvival) {
+        nbConfigurations <- computeNbConfigurations(currentBudget, indexIteration = 1,
+          mu = 1, eachTest = scenario$eachTest, blockSize = blockSize,
+          nElites = nrow(elite_configurations),
+          nOldInstances = nrow(iraceResults$experiments),
+          newInstances = 0L)
+      }
     } else {
       nbConfigurations <-
         computeNbConfigurations(currentBudget, indexIteration,
@@ -1006,7 +1026,7 @@ irace_run <- function(scenario)
       # The non-elite have to run up to the first test. The elites consume
       # budget at most up to the new instances.
       if ((nbConfigurations - nrow(elite_configurations)) * scenario$mu
-          + nrow(elite_configurations) * min(scenario$elitistNewInstances, scenario$mu)
+          + nrow(elite_configurations) * min(race_state$elitist_new_instances, scenario$mu)
           > currentBudget) {
         catInfo("Stopped because there is not enough budget left to race all configurations up to the first test (or mu).")
         return(irace_finish(iraceResults, scenario, reason = "Not enough budget to race all configurations up to the first test (or mu)"))
@@ -1149,8 +1169,8 @@ irace_run <- function(scenario)
                                  maxExp = currentBudget,
                                  minSurvival = minSurvival,
                                  elite.data = elite_data,
-                                 elitistNewInstances = if (firstRace) 0L
-                                                       else scenario$elitistNewInstances)
+                                 elitist_new_instances = if (firstRace) 0L
+                                                       else race_state$elitist_new_instances)
     # We add indexIteration as an additional column.
     set(raceResults$experiment_log, j = "iteration", value = indexIteration)
     race_state$experiment_log <- rbind(race_state$experiment_log, raceResults$experiment_log)

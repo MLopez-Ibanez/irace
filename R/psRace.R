@@ -132,7 +132,7 @@ psRace <- function(iraceResults, max_experiments, conf_ids = NULL, iteration_eli
     configurations = elite_configurations,
     scenario = scenario,
     elite.data = elite_data,
-    elitistNewInstances = 0L)
+    elitist_new_instances = 0L)
 
   elite_configurations <- extractElites(raceResults$configurations,
     nbElites = race_state$recovery_info$minSurvival,

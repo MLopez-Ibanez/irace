@@ -423,7 +423,7 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
                                 elite.data = elite_data,
                                 configurations = race_conf,
                                 scenario = scenario,
-                                elitistNewInstances = 0L)
+                                elitist_new_instances = 0L)
     results <- merge_matrix(results, race_output$experiments)
 
     # Save log

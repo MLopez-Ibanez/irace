@@ -562,20 +562,19 @@ race <- function(race_state, maxExp = 0L,
                elite.data = NULL,
                configurations = configurations,
                scenario = scenario,
-               elitistNewInstances = 0L)
+               elitist_new_instances = 0L)
 
 elitist_race <- function(race_state, maxExp = 0L,
                  minSurvival = 1L,
                  elite.data = NULL,
                  configurations,
                  scenario,
-                 elitistNewInstances)
+                 elitist_new_instances)
 {
   blockSize <- scenario$blockSize
   # FIXME: We should take this from scenario. However, this value should be
   # zero for the first iteration.
-  ## FIXME2: Probably, instead of this, we should keep elite.safe in the race_state.
-  race_state$elitist_new_instances <- elitistNewInstances
+  ## FIXME2: Probably, instead of this, we should keep elite_safe in the race_state.
   stat.test <- scenario$testType
   conf.level <- scenario$confidence
   first.test <- blockSize * scenario$firstTest
@@ -616,11 +615,13 @@ elitist_race <- function(race_state, maxExp = 0L,
   }
   
   # Create the instance list according to the algorithm selected.
-  if (elitist)
-    race_instances <- race_state$elitrace_init_instances(deterministic = scenario$deterministic,
-      sampleInstances = scenario$sampleInstances)
-  else
-    race_instances <- race_state$no_elitrace_init_instances(deterministic = scenario$deterministic)
+  if (elitist) {
+    race_instances <- elitist_init_instances(race_state, deterministic = scenario$deterministic,
+      sampleInstances = scenario$sampleInstances, elitist_new_instances = elitist_new_instances, block_size = blockSize)
+    # It may be reduced further by elitist_init_instances()
+    elitist_new_instances <- min(elitist_new_instances, race_state$elitist_new_instances)
+  } else
+    race_instances <- no_elitist_init_instances(race_state, deterministic = scenario$deterministic)
   
   irace.assert(!anyDuplicated(race_instances))
   irace.assert(identical(sort(race_instances), seq_along(race_instances)))
@@ -652,7 +653,7 @@ elitist_race <- function(race_state, maxExp = 0L,
     # elite_safe: maximum instance number for which any configuration may be
     # considered elite. After evaluating this instance, no configuration is
     # elite.
-    elite_safe <- race_state$elitist_new_instances + nrow(elite.data)
+    elite_safe <- elitist_new_instances + nrow(elite.data)
     elite_instances_ID <- as.character(race_instances[seq_len(elite_safe)])
   }
 
@@ -676,14 +677,14 @@ elitist_race <- function(race_state, maxExp = 0L,
       experimentsTime[rownames(tmp), colnames(tmp)] <- tmp
       # Preliminary execution of elite configurations to calculate
       # the execution bound of initial configurations (capping only).
-      if (race_state$elitist_new_instances > 0L) {
-        irace.assert(race_state$elitist_new_instances %% blockSize == 0L)
+      if (elitist_new_instances > 0L) {
+        irace.assert(elitist_new_instances %% blockSize == 0L)
         # FIXME: This should go into its own function.
         n_elite <- ncol(elite.data)
         which_elites <- which(rep(TRUE, n_elite))
         irace.note("Preliminary execution of ", n_elite,
-          " elite configuration(s) over ", race_state$elitist_new_instances, " instance(s).\n")
-        for (k in seq_len(race_state$elitist_new_instances)) {
+          " elite configuration(s) over ", elitist_new_instances, " instance(s).\n")
+        for (k in seq_len(elitist_new_instances)) {
           output <- race_wrapper (race_state,
             configurations = configurations[which_elites, , drop = FALSE], 
             instance_idx = race_instances[k],

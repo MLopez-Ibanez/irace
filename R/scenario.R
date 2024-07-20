@@ -437,7 +437,6 @@ checkScenario <- function(scenario = defaultScenario())
                 quote.param("blockSize"), ".")
   }
   
-  scenario$elitistNewInstances <- round_to_next_multiple(scenario$elitistNewInstances, scenario$blockSize)
   if (!is.na(scenario$minExperiments))
     scenario$maxExperiments <- max(scenario$maxExperiments, scenario$minExperiments)
   

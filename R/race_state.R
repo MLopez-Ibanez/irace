@@ -46,6 +46,7 @@ RaceState <- R6Class("RaceState", lock_class = TRUE,
        set_random_seed(seed)
        self$seed <- seed
        self$rng <- get_random_seed()
+       self$elitist_new_instances <- round_to_next_multiple(scenario$elitistNewInstances, scenario$blockSize)
      } else {
        self$elapsed_recovered <- self$elapsed
        restore_random_seed(self$rng)
@@ -176,53 +177,56 @@ RaceState <- R6Class("RaceState", lock_class = TRUE,
        # This does garbage collection and also prints memory used by R.
        sprintf("%30s : %17.1f Mb\n", "gc", sum(gc()[,2L])))
      invisible(self)
-   },
-
-   no_elitrace_init_instances = function(deterministic) {
-     max_instances <- nrow(self$instances_log)
-     # if next.instance == 1 then this is the first iteration.
-     # If deterministic consider all (do not resample).
-     if (self$next_instance == 1L || deterministic) return(seq_len(max_instances))
-     irace.assert(self$next_instance < max_instances)
-     self$next_instance : max_instances
-   },
-   
-   elitrace_init_instances = function(deterministic, sampleInstances) {
-     max_instances <- nrow(self$instances_log)
-     # if next_instance == 1 then this is the first iteration.
-     next_instance <- self$next_instance
-     if (next_instance == 1L) return(seq_len(max_instances)) # Consider all
-     
-     new_instances <- NULL
-     last_new <- next_instance - 1L + self$elitist_new_instances
-     # Do we need to add new instances?
-     if (self$elitist_new_instances > 0L) {
-       if (last_new > max_instances) {
-         # This may happen if the scenario is deterministic and we would need
-         # more instances than what we have.
-         irace.assert(deterministic)
-         if (next_instance <= max_instances) {
-           # Add all instances that we have not seen yet as new ones.
-           last_new <- max_instances
-           new_instances <- next_instance : last_new
-         } # else new_instances remains NULL and last_new remains > number of instances.
-         # We need to update this because the value is used below and now there
-         # may be fewer than expected, even zero.
-         self$elitist_new_instances <- length(new_instances)
-       } else {
-         new_instances <- next_instance : last_new
-       }
-     }
-     # FIXME: we should sample taking into account the block-size, so we sample blocks, not instances.
-     past_instances <- if (sampleInstances) sample.int(next_instance - 1L)
-                       else seq_len(next_instance - 1L)
- 
-     # new_instances + past.instances + future_instances
-     if ((last_new + 1L) <= max_instances) {
-       future_instances <- (last_new + 1L) : max_instances
-       return(c(new_instances, past_instances, future_instances))
-     }
-     c(new_instances, past_instances)
    }
-
 ))
+
+no_elitist_init_instances <- function(self, deterministic)
+{
+  max_instances <- nrow(self$instances_log)
+  # if next.instance == 1 then this is the first iteration.
+  # If deterministic consider all (do not resample).
+  if (self$next_instance == 1L || deterministic) return(seq_len(max_instances))
+  irace.assert(self$next_instance < max_instances)
+  self$next_instance : max_instances
+}
+   
+elitist_init_instances <- function(self, deterministic, sampleInstances, elitist_new_instances, block_size)
+{
+  max_instances <- nrow(self$instances_log)
+  # if next_instance == 1 then this is the first iteration.
+  next_instance <- self$next_instance
+  if (next_instance == 1L) return(seq_len(max_instances)) # Consider all
+  
+  new_instances <- NULL
+  last_new <- next_instance - 1L + elitist_new_instances
+  # Do we need to add new instances?
+  if (elitist_new_instances > 0L) {
+    if (last_new > max_instances) {
+      # This may happen if the scenario is deterministic and we would need
+      # more instances than what we have.
+      irace.assert(deterministic)
+      if (next_instance <= max_instances) {
+        # Add all instances that we have not seen yet as new ones.
+        last_new <- max_instances
+        new_instances <- next_instance : last_new
+      } # else new_instances remains NULL and last_new remains > number of instances.
+         # We need to update this because the value is used below and now there
+      # may be fewer than expected, even zero.
+      self$elitist_new_instances <- length(new_instances)
+    } else {
+      new_instances <- next_instance : last_new
+    }
+  }
+  # FIXME: we should sample taking into account the block-size, so we sample blocks, not instances.
+  irace.assert((next_instance - 1L) %% block_size == 0,
+    eval_after={cat("next_instance:", next_instance, ", block_size:", block_size, "\n")})
+  past_instances <- if (sampleInstances)
+                      sample.int(next_instance - 1L) else seq_len(next_instance - 1L)
+  
+  # new_instances + past_instances + future_instances
+  if (last_new + 1L <= max_instances) {
+    future_instances <- (last_new + 1L) : max_instances
+    return(c(new_instances, past_instances, future_instances))
+  }
+  c(new_instances, past_instances)
+}
