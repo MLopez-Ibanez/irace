@@ -411,7 +411,7 @@ checkTargetFiles <- function(scenario)
   setDF(configurations)
   experiments <- createExperimentList(
     configurations, scenario$parameters, instances = scenario$instances,
-    instances.ID = instances_ID, seeds = 1234567L, bounds = bounds)
+    instances_ID = instances_ID, seeds = 1234567L, bounds = bounds)
 
   race_state <- RaceState$new(scenario)
   race_state$start_parallel(scenario)

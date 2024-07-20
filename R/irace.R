@@ -365,11 +365,11 @@ generateInstances <- function(scenario, n, instances_log = NULL)
 do_experiments <- function(race_state, configurations, ninstances, scenario, iteration)
 {
   instances <- seq_len(ninstances)
-  # FIXME: modify race.wrapper to take instances as an argument. 
-  output <- lapply(instances, race.wrapper, race_state = race_state,
+  # FIXME: modify race_wrapper to take instances as an argument. 
+  output <- lapply(instances, race_wrapper, race_state = race_state,
     configurations = configurations, 
     bounds = rep(scenario$boundMax, nrow(configurations)),
-    which.alive = seq_nrow(configurations), which.exe = seq_nrow(configurations),
+    which_alive = seq_nrow(configurations), which_exe = seq_nrow(configurations),
     scenario = scenario)
   
   Results <- race_state$update_experiment_log(output, instances = instances,

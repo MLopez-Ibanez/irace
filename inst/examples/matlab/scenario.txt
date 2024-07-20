@@ -22,8 +22,8 @@ targetRunner <- function(experiment, scenario)
   matlab_function_call <- "Main(INSTANCE,SEED,A,B)"
   
   debugLevel       <- scenario$debugLevel
-  configuration.id <- experiment$id.configuration
-  instance.id      <- experiment$id.instance
+  configuration_id <- experiment$id_configuration
+  instance_id      <- experiment$id_instance
   seed             <- experiment$seed
   configuration    <- experiment$configuration
   instance         <- experiment$instance

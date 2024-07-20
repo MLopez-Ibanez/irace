@@ -78,7 +78,7 @@ target_runner_qsub <- function(experiment, scenario)
   list(jobID = jobID, error = err.msg, outputRaw = outputRaw, call = paste(cmd, args))
 }
 
-cluster.lapply <- function(X, scenario, poll.time = 2)
+cluster_lapply <- function(X, scenario, poll.time = 2)
 {
   debugLevel <- scenario$debugLevel
 
@@ -95,7 +95,7 @@ cluster.lapply <- function(X, scenario, poll.time = 2)
   # limits.
   ## FIXME: It would be better to submit up to the limit, then one by one as jobs finish.
   chunksize <- scenario$parallel
-  if (chunksize < 0) {
+  if (chunksize < 0L) {
     chunksize <- length(X)
   }
   chunks <- split(X, ceiling(seq_along(X) / chunksize))
@@ -107,7 +107,7 @@ cluster.lapply <- function(X, scenario, poll.time = 2)
     jobIDs <- sapply(output, "[[", "jobID")
   
     ## Wait for cluster jobs to finish.
-    if (length(jobIDs) > 0 && debugLevel >= 1) {
+    if (length(jobIDs) > 0L && debugLevel >= 1L) {
       irace.note("Waiting for jobs ('.' == ", poll.time, " s) ")
     }
     for (jobID in jobIDs) {

@@ -355,7 +355,7 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
   experiments <- createExperimentList(configurations = rbind(src_configuration, target_configuration), 
                                       parameters = parameters,
                                       instances = scenario$instances,
-                                      instances.ID = race_state$instances_log[["instanceID"]],
+                                      instances_ID = race_state$instances_log[["instanceID"]],
                                       seeds = race_state$instances_log[["seed"]],
                                       bounds = scenario$boundMax)
   irace.note("Executing source and target configurations on the given instances * nrep (", nrow(race_state$instances_log), ")...\n")
@@ -417,20 +417,20 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
     # Force the race to see all instances in "full" mode
     if (type == "full") scenario$firstTest <- nrow(race_state$instances_log)
     # FIXME: what about blockSize?
-    race.output <- elitist_race(race_state,
+    race_output <- elitist_race(race_state,
       maxExp = nrow(aconfigurations) * nrow(race_state$instances_log),
                                 minSurvival = 1L,
                                 elite.data = elite_data,
                                 configurations = race_conf,
                                 scenario = scenario,
                                 elitistNewInstances = 0L)
-    results <- merge_matrix(results, race.output$experiments)
+    results <- merge_matrix(results, race_output$experiments)
 
     # Save log
     ablog <- save_ablog(complete = FALSE)
     
     # Get the best configuration based on the criterion of irace
-    # MANUEL: Doesn't race.output already give you all this info???
+    # MANUEL: Doesn't race_output already give you all this info???
     cranks <- overall_ranks(results[,aconfigurations[[".ID."]],drop=FALSE], test = scenario$testType)
     best_id <- which.min(cranks)[1L]
     # cand.mean <- colMeans2(results[,aconfigurations$.ID.,drop=FALSE], na.rm=TRUE)

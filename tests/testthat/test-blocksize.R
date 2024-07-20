@@ -1,5 +1,5 @@
 withr::with_output_sink("test-blocksize.Rout", {
-cap.irace <- function(...)
+cap_irace <- function(...)
 {
   args <- list(...)
   parameters_table <- '
@@ -25,7 +25,7 @@ cap.irace <- function(...)
   invisible(read_logfile(scenario$logFile))
 }
 
-target.runner.time <- function(experiment, scenario)
+target_runner_time <- function(experiment, scenario)
 {
   configuration     <- experiment$configuration
   tmax <-  configuration[["tmax"]]
@@ -34,14 +34,14 @@ target.runner.time <- function(experiment, scenario)
   list(cost = time, time = time, call = toString(experiment))
 }
 
-time.irace <- function(...)
+time_irace <- function(...)
 {
   args <- list(...)
   parameters <- readParameters(text = '
    tmax "" i (-10, 10)
    temp "" r (0, 10)
    ')
-  scenario <- list(targetRunner = target.runner.time,
+  scenario <- list(targetRunner = target_runner_time,
                    instances = c("ackley", "goldestein", "matyas"),
                    blockSize=3,
                    parameters = parameters)
@@ -63,25 +63,25 @@ check_blocksize <- function(results)
 }
 
 test_that("blockSize error", {
-  expect_error(cap.irace(maxExperiments = 1000, blockSize=3), "must be a multiple of 'blockSize")
+  expect_error(cap_irace(maxExperiments = 1000, blockSize=3), "must be a multiple of 'blockSize")
 })
 
-test_that("blockSize cap.irace maxExperiments = 1000", {
+test_that("blockSize cap_irace maxExperiments = 1000", {
   generate.set.seed()
-  expect_warning(check_blocksize(cap.irace(maxExperiments = 1000, debugLevel = 3)),
+  expect_warning(check_blocksize(cap_irace(maxExperiments = 1000, debugLevel = 3)),
                  "Assuming 'mu = firstTest * blockSize' because 'mu' cannot be smaller",
                  fixed = TRUE)
 })
 
 test_that("blockSize maxTime=1000", {
   generate.set.seed()
-  check_blocksize(time.irace(maxTime = 1000))
+  check_blocksize(time_irace(maxTime = 1000))
 })
 
 test_that("blockSize maxTime=1000 large newInstances", {
   skip_on_cran()
   generate.set.seed()
-  check_blocksize(time.irace(maxTime = 1000, instances = letters[1:9],
+  check_blocksize(time_irace(maxTime = 1000, instances = letters[1:9],
                              elitistNewInstances = 6, elitistLimit = 2))
 })
 

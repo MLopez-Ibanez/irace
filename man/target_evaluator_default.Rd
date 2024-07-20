@@ -15,8 +15,8 @@ target_evaluator_default(
 \arguments{
 \item{experiment}{A list describing the experiment. It contains at least:
 \describe{
-\item{\code{id.configuration}}{An alphanumeric string that uniquely identifies a configuration;}
-\item{\code{id.instance}}{An alphanumeric string that uniquely identifies an instance;}
+\item{\code{id_configuration}}{An alphanumeric string that uniquely identifies a configuration;}
+\item{\code{id_instance}}{An alphanumeric string that uniquely identifies an instance;}
 \item{\code{seed}}{Seed for the random number generator to be used for
 this evaluation, ignore the seed for deterministic algorithms;}
 \item{\code{instance}}{String giving the instance to be used for this evaluation;}

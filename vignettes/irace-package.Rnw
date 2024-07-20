@@ -1141,14 +1141,14 @@ When \parameter{targetRunner} is an auxiliary executable program, it
 is invoked for each candidate configuration, passing as arguments:
 %
 \begin{center}
-\small\code{<id.configuration>\ <id.instance>\ <seed>\ <instance>\ [bound]\ <configuration>}
+\small\code{<id_configuration>\ <id_instance>\ <seed>\ <instance>\ [bound]\ <configuration>}
 \end{center}
 %
 \begin{center}
 \renewcommand{\arraystretch}{1.2}
   \begin{tabularx}{1\linewidth}{@{}rX}
-    \code{id.configuration}  & an alphanumeric string that uniquely identifies a configuration;\\
-    \code{id.instance} & an alphanumeric string that uniquely identifies an instance;\\
+    \code{id_configuration}  & an alphanumeric string that uniquely identifies a configuration;\\
+    \code{id_instance} & an alphanumeric string that uniquely identifies an instance;\\
     \code{seed} & seed for the random number generator to be used for this evaluation, ignore the seed for deterministic algorithms;\\
     \code{instance} & string giving the instance to be used for this evaluation;\\
     \code{bound} & optional execution time bound. Only provided when the \parameter{boundMax} option is set in the scenario, see \autoref{sec:capping};\\
@@ -1196,8 +1196,8 @@ list. The structure of the \code{experiment} list is as follows:
 \begin{center}
 \renewcommand{\arraystretch}{1.2}
   \begin{tabularx}{1\linewidth}{@{}rX}
- \code{id.configuration}  & an alphanumeric string that uniquely identifies a configuration;\\
-   \code{id.instance} & an alphanumeric string that uniquely identifies an instance;\\
+   \code{id_configuration}  & an alphanumeric string that uniquely identifies a configuration;\\
+   \code{id_instance} & an alphanumeric string that uniquely identifies an instance;\\
    \code{seed} & seed to be used for this evaluation;\\
    \code{instance} & string giving the instance to be used for this evaluation;\\
    \code{bound} &  optional execution time bound;\\
@@ -1284,18 +1284,18 @@ When \parameter{targetEvaluator} is an auxiliary executable program, it
 is invoked for each candidate with the following arguments:
 %
 \begin{center}
-\small\code{<id.configuration>\ <id.instance>\ <seed>\ <instance>\ <num.configs>\ <all.conf.id>}
+\small\code{<id_configuration>\ <id_instance>\ <seed>\ <instance>\ <num_configurations>\ <all_conf_id>}
 \end{center}
 %
 \begin{center}
 \renewcommand{\arraystretch}{1.2}
   \begin{tabularx}{1\linewidth}{@{}rX}
- \code{id.configuration}  & an alphanumeric string that uniquely identifies a configuration;\\
-   \code{id.instance} & an alphanumeric string that uniquely identifies an instance;\\
+   \code{id_configuration}  & an alphanumeric string that uniquely identifies a configuration;\\
+   \code{id_instance} & an alphanumeric string that uniquely identifies an instance;\\
    \code{seed} & seed to be used for this evaluation;\\
    \code{instance} & string giving the instance to be used for this evaluation;\\
-   \code{num.configs} & number of alive candidate configurations;\\
-   \code{all.conf.id}    & list of IDs of the alive configurations separated by whitespace.\\
+   \code{num_configurations} & number of alive candidate configurations;\\
+   \code{all_conf_id}    & list of IDs of the alive configurations separated by whitespace.\\
   \end{tabularx}
 \end{center}
 

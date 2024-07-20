@@ -12,11 +12,11 @@ f_rosenbrock <- function (x) {
 f_rastrigin <- function (x) sum(x * x - 10 * cos(2 * pi * x) + 10)
 
 ## target runner ###########################################################
-target.runner <- function(experiment, scenario)
+target_runner <- function(experiment, scenario)
 {
   debugLevel    <- scenario$debugLevel
-  configuration.id  <- experiment$id.configuration
-  instance.id   <- experiment$id.instance
+  configuration_id  <- experiment$id_configuration
+  instance_id   <- experiment$id_instance
   seed          <- experiment$seed
   configuration <- experiment$configuration
   instance      <- experiment$instance
@@ -37,10 +37,10 @@ target.runner <- function(experiment, scenario)
 }
 
 ## target runner ###########################################################
-target.runner.reject <- function(experiment, scenario)
+target_runner_reject <- function(experiment, scenario)
 {
   if (runif(1) <= 0.05) return (list(cost = -Inf, call = toString(experiment)))
-  target.runner(experiment, scenario)
+  target_runner(experiment, scenario)
 }
 
 ## Run function ########################################################
@@ -61,7 +61,7 @@ sann.irace <- function(log.param=FALSE, ...)
      '  
   parameters <- readParameters(text = parameters_table)
 
-  scenario <- list(targetRunner = target.runner,
+  scenario <- list(targetRunner = target_runner,
     maxExperiments = 1000, seed = 1234567,
     parameters = parameters)
   scenario <- modifyList(scenario, args)
@@ -85,7 +85,7 @@ test_that("parallel reject", {
   # Reproducible results
   generate.set.seed()
   weights <- rnorm(200, mean = 0.9, sd = 0.02)
-  sann.irace(instances = weights, parallel = test_irace_detectCores(), targetRunner = target.runner.reject)
+  sann.irace(instances = weights, parallel = test_irace_detectCores(), targetRunner = target_runner_reject)
 })
 
 test_that("deterministic", {

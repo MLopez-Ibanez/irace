@@ -3,7 +3,8 @@
 #' \code{psRace} performs a postselection race of a set of configurations.
 #'
 #' @template arg_iraceresults
-#' @param max_experiments (`numeric(1)`) Number of experiments for the
+#' 
+#' @param max_experiments `numeric(1)`\cr Number of experiments for the
 #'   post-selection race. If it is equal to or smaller than 1, then it is a
 #'   fraction of the total budget given by
 #'   `iraceResults$scenario$maxExperiments` or `iraceResults$scenario$maxTime /

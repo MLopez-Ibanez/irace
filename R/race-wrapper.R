@@ -43,7 +43,7 @@ buildCommandLine <- function(values, switches)
 
 # This function tries to convert a, possibly empty, character vector into a
 # numeric vector.
-parse.output <- function(outputRaw, verbose)
+parse_output <- function(outputRaw, verbose)
 {
   if (verbose) { cat (outputRaw, sep = "\n") }
   
@@ -73,13 +73,13 @@ target_error <- function(err_msg, output, scenario, target_runner_call,
     # Message for a function call.
     # FIXME: Ideally, we should print the list as R would print it.
     output$outputRaw <- toString(output)
-    advice.txt <- paste0(
+    advice_txt <- paste0(
       "This is not a bug in irace, but means that something failed in ",
       "a call to the targetRunner or targetEvaluator functions provided by the user.",
       " Please check those functions carefully.")
   } else {
     # Message for an external script.
-    advice.txt <- paste0(
+    advice_txt <- paste0(
       "This is not a bug in irace, but means that something failed when",
       " running the command(s) above or they were terminated before completion.",
       " Try to run the command(s) above from the execution directory '",
@@ -87,7 +87,7 @@ target_error <- function(err_msg, output, scenario, target_runner_call,
   }
   irace.error(err_msg, "\n", .irace_msg_prefix,
               "The output was:\n", paste(output$outputRaw, collapse = "\n"),
-              "\n", .irace_msg_prefix, advice.txt)
+              "\n", .irace_msg_prefix, advice_txt)
 }
 
 check_output_target_evaluator <- function (output, scenario, target_runner_call = NULL, bound = NULL)
@@ -147,8 +147,8 @@ check_output_target_evaluator <- function (output, scenario, target_runner_call 
 #'   
 #' @param experiment A list describing the experiment. It contains at least:
 #'    \describe{
-#'     \item{`id.configuration`}{An alphanumeric string that uniquely identifies a configuration;}
-#'     \item{`id.instance`}{An alphanumeric string that uniquely identifies an instance;}
+#'     \item{`id_configuration`}{An alphanumeric string that uniquely identifies a configuration;}
+#'     \item{`id_instance`}{An alphanumeric string that uniquely identifies an instance;}
 #'      \item{`seed`}{Seed for the random number generator to be used for
 #'        this evaluation, ignore the seed for deterministic algorithms;}
 #'      \item{`instance`}{String giving the instance to be used for this evaluation;}
@@ -186,8 +186,8 @@ check_output_target_evaluator <- function (output, scenario, target_runner_call 
 target_evaluator_default <- function(experiment, num_configurations, all_conf_id,
                                      scenario, target_runner_call)
 {
-  configuration.id <- experiment$id.configuration
-  instance.id      <- experiment$id.instance
+  configuration_id <- experiment$id_configuration
+  instance_id      <- experiment$id_instance
   seed             <- experiment$seed
   instance         <- experiment$instance
 
@@ -198,24 +198,24 @@ target_evaluator_default <- function(experiment, num_configurations, all_conf_id
                  "cannot be found or is not executable!\n")
   }
   all_conf_id <- paste0(all_conf_id, collapse = " ")
-  args <- c(configuration.id, instance.id, seed, instance, num_configurations, all_conf_id)
+  args <- c(configuration_id, instance_id, seed, instance, num_configurations, all_conf_id)
   withr::with_dir(scenario$execDir, {
-    output <- runcommand(targetEvaluator, args, configuration.id, debugLevel, timeout = scenario$targetRunnerTimeout)
+    output <- runcommand(targetEvaluator, args, configuration_id, debugLevel, timeout = scenario$targetRunnerTimeout)
   })
 
   cost <- time <- NULL
   err_msg <- output$error
   if (is.null(err_msg)) {
-    v.output <- parse.output(output$output, verbose = (scenario$debugLevel >= 2))
-    if (length(v.output) > 2) {
-      err_msg <- paste0("The output of targetEvaluator should not be more than two numbers!")
-    } else if (length(v.output) == 0) {
+    v_output <- parse_output(output$output, verbose = (scenario$debugLevel >= 2L))
+    if (length(v_output) == 1L) {
+      cost <- v_output[1L]
+    } else if (length(v_output) == 2L) {
+      cost <- v_output[1L]
+      time <- v_output[2L]
+    } else if (length(v_output) == 0L) {
       err_msg <- paste0("The output of targetEvaluator must be at least one number 'cost'!")
-    } else if (length(v.output) == 1) {
-      cost <- v.output[1]
-    } else if (length(v.output) == 2) {
-      cost <- v.output[1]
-      time <- v.output[2]
+    } else {
+      err_msg <- paste0("The output of targetEvaluator should not be more than two numbers!")
     }
   }
   list(cost = cost, time = time,
@@ -379,8 +379,8 @@ check_target_cmdline <- function(target_cmdline, launcher, capping)
 
 expand_target_cmdline <- function(target_cmdline, experiment, targetRunner, targetRunnerArgs)
 {
-  vars <- list(configurationID = experiment$id.configuration,
-               instanceID      = experiment$id.instance,
+  vars <- list(configurationID = experiment$id_configuration,
+               instanceID      = experiment$id_instance,
                seed            = experiment$seed,
                instance        = experiment$instance,
                bound           = experiment$bound,
@@ -397,8 +397,8 @@ expand_target_cmdline <- function(target_cmdline, experiment, targetRunner, targ
   
 run_target_runner <- function(experiment, scenario)
 {
-  configuration.id <- experiment$id.configuration
-  instance.id      <- experiment$id.instance
+  configuration_id <- experiment$id_configuration
+  instance_id      <- experiment$id_instance
   seed             <- experiment$seed
   configuration    <- experiment$configuration
   instance         <- experiment$instance
@@ -426,7 +426,7 @@ run_target_runner <- function(experiment, scenario)
   if (!is.null.or.empty(targetRunnerLauncher))
     targetRunner <- targetRunnerLauncher
   
-  output <- runcommand(targetRunner, args, configuration.id, debugLevel, timeout = scenario$targetRunnerTimeout)
+  output <- runcommand(targetRunner, args, configuration_id, debugLevel, timeout = scenario$targetRunnerTimeout)
   list(cmd=targetRunner, output=output, args=args)
 }
 
@@ -436,8 +436,8 @@ run_target_runner <- function(experiment, scenario)
 #' 
 #' @param experiment A list describing the experiment. It contains at least:
 #'    \describe{
-#'     \item{`id.configuration`}{An alphanumeric string that uniquely identifies a configuration;}
-#'     \item{`id.instance`}{An alphanumeric string that uniquely identifies an instance;}
+#'     \item{`id_configuration`}{An alphanumeric string that uniquely identifies a configuration;}
+#'     \item{`id_instance`}{An alphanumeric string that uniquely identifies an instance;}
 #'      \item{`seed`}{Seed for the random number generator to be used for
 #'        this evaluation, ignore the seed for deterministic algorithms;}
 #'      \item{`instance`}{String giving the instance to be used for this evaluation;}
@@ -481,18 +481,18 @@ target_runner_default <- function(experiment, scenario)
   cost <- time <- NULL
   err_msg <- output$error
   if (is.null(err_msg)) {
-    v.output <- parse.output(output$output, verbose = (debugLevel >= 2))
-    if (length(v.output) > 2) {
-      err_msg <- "The output of targetRunner should not be more than two numbers!"
-    } else if (length(v.output) == 1) {
+    v_output <- parse_output(output$output, verbose = (debugLevel >= 2L))
+    if (length(v_output) == 1L) {
       if (!is.null(scenario$targetEvaluator)) {
-        time <- v.output[1]
+        time <- v_output[1L]
       } else {
-        cost <- v.output[1]
+        cost <- v_output[1L]
       }
-    } else if (length(v.output) == 2) {
-      cost <- v.output[1]
-      time <- v.output[2]
+    } else if (length(v_output) == 2L) {
+      cost <- v_output[1L]
+      time <- v_output[2L]
+    } else {
+      err_msg <- "The output of targetRunner should not be more than two numbers!"
     }
   }
   list(cost = cost, time = time,
@@ -524,22 +524,22 @@ execute.experiments <- function(race_state, experiments, scenario)
         paste0(capture.output(str(target_output)), collapse="\n"))
     }
   } else if (scenario$batchmode != 0L) {
-    target_output <- cluster.lapply (experiments, scenario = scenario)
+    target_output <- cluster_lapply(experiments, scenario = scenario)
   } else if (parallel > 1L) {
     if (mpi) {
       if (scenario$loadBalancing) {
         target_output <- Rmpi::mpi.applyLB(experiments, exec_target_runner,
-                                           scenario = scenario,
-                                           target_runner = target_runner)
+          scenario = scenario,
+          target_runner = target_runner)
       } else {
         # Without load-balancing, we need to split the experiments into chunks
         # of size parallel.
         target_output <- unlist(use.names = FALSE,
-                                tapply(experiments,
-                                       ceiling(seq_along(experiments) / parallel),
-                                       Rmpi::mpi.apply, exec_target_runner,
-                                       scenario = scenario,
-                                       target_runner = target_runner))
+          tapply(experiments,
+            ceiling(seq_along(experiments) / parallel),
+            Rmpi::mpi.apply, exec_target_runner,
+            scenario = scenario,
+            target_runner = target_runner))
       }
       # FIXME: if stop() is called from mpi.applyLB, it does not
       # terminate the execution of the parent process, so it will
@@ -550,7 +550,7 @@ execute.experiments <- function(race_state, experiments, scenario)
         # case, each element of the list does not keep the output of
         # each configuration and repetitions may occur.
         cat(unique(unlist(target_output[sapply(
-            target_output, inherits, "try-error")])), file = stderr(), sep = "")
+          target_output, inherits, "try-error")])), file = stderr(), sep = "")
         irace.error("A slave process terminated with a fatal error")
       }
     } else {
@@ -559,30 +559,30 @@ execute.experiments <- function(race_state, experiments, scenario)
         if (scenario$loadBalancing) {
           target_output <-
             parallel::parLapplyLB(race_state$cluster, experiments, exec_target_runner,
-                                  scenario = scenario,
-                                  target_runner = target_runner)
+              scenario = scenario,
+              target_runner = target_runner)
         } else {
           target_output <-
             parallel::parLapply(race_state$cluster, experiments, exec_target_runner,
-                                scenario = scenario,
-                                target_runner = target_runner)
+              scenario = scenario,
+              target_runner = target_runner)
         }
         # FIXME: if stop() is called from parLapply, then the parent
         # process also terminates, and we cannot give further errors.
       } else {
         target_output <-
           parallel::mclapply(experiments, exec_target_runner,
-                             # FALSE means load-balancing.
-                             mc.preschedule = !scenario$loadBalancing,
-                             mc.cores = parallel,
-                             scenario = scenario,
-                             target_runner = target_runner)
+            # FALSE means load-balancing.
+            mc.preschedule = !scenario$loadBalancing,
+            mc.cores = parallel,
+            scenario = scenario,
+            target_runner = target_runner)
         # FIXME: if stop() is called from mclapply, it does not
         # terminate the execution of the parent process, so it will
         # continue and give more errors later. We have to terminate
         # here, but is there a nicer way to detect this and terminate?
         if (any(sapply(target_output, inherits, "try-error"))
-            || any(sapply(target_output, is.null))) {
+          || any(sapply(target_output, is.null))) {
           # FIXME: mclapply has some bugs in case of error. In that
           # case, each element of the list does not keep the output of
           # each configuration and repetitions may occur.
@@ -596,8 +596,8 @@ execute.experiments <- function(race_state, experiments, scenario)
   } else {
     # One process, all sequential
     target_output <- lapply(experiments, exec_target_runner,
-                            scenario = scenario,
-                            target_runner = target_runner)
+      scenario = scenario,
+      target_runner = target_runner)
   }
   target_output
 }
@@ -606,7 +606,7 @@ execute_evaluator <- function(target_evaluator, experiments, scenario, target_ou
 {
   ## FIXME: We do not need the configurations_id argument:
   irace.assert(isTRUE(all.equal(configurations_id,
-    sapply(experiments, getElement, "id.configuration"))))
+    sapply(experiments, getElement, "id_configuration"))))
   nconfs <- length(configurations_id)
   # Evaluate configurations sequentially.
   for (k in seq_along(experiments)) {

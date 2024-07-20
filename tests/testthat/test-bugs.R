@@ -93,11 +93,11 @@ test_that("non-normal", {
     testType="t-test",
     parameters = parameters)
   scenario$targetRunner <- function(experiment, scenario, this_df = df) {
-    if (experiment[["id.configuration"]] > 3)
-      cost <- as.numeric(experiment[["id.configuration"]])
+    if (experiment[["id_configuration"]] > 3)
+      cost <- as.numeric(experiment[["id_configuration"]])
     else
-      cost <- this_df[as.numeric(experiment[["id.instance"]]),
-                      as.numeric(experiment[["id.configuration"]]) ]
+      cost <- this_df[as.numeric(experiment[["id_instance"]]),
+                      as.numeric(experiment[["id_configuration"]]) ]
     list(cost=cost)
   }
   confs <- irace(scenario = scenario)

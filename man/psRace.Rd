@@ -14,7 +14,7 @@ psRace(
 \arguments{
 \item{iraceResults}{(\code{list()}|\code{character(1)})\cr Object created by \pkg{irace} and typically saved in the log file \code{irace.Rdata}. If a character string is given, then it is interpreted as the path to the log file from which the \code{iraceResults} object will be loaded.}
 
-\item{max_experiments}{(\code{numeric(1)}) Number of experiments for the
+\item{max_experiments}{\code{numeric(1)}\cr Number of experiments for the
 post-selection race. If it is equal to or smaller than 1, then it is a
 fraction of the total budget given by
 \code{iraceResults$scenario$maxExperiments} or \code{iraceResults$scenario$maxTime / iraceResults$state$boundEstimate}.}

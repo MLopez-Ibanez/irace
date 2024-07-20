@@ -41,7 +41,7 @@ testConfigurations <- function(configurations, scenario)
   
   # Create experiment list
   experiments <- createExperimentList(configurations, parameters = scenario$parameters,
-                                      instances = testInstances, instances.ID = instances_id, seeds = instanceSeed,
+                                      instances = testInstances, instances_ID = instances_id, seeds = instanceSeed,
                                       bounds = rep(scenario$boundMax, nrow(configurations)))
   race_state <- RaceState$new(scenario)
   if (scenario$debugLevel >= 3L) {
@@ -68,8 +68,8 @@ testConfigurations <- function(configurations, scenario)
     cost <- applyPAR(cost, boundMax = scenario$boundMax, boundPar = scenario$boundPar)
   # FIXME: Vectorize this loop
   for (i in seq_along(experiments)) {
-    testResults[rownames(testResults) == experiments[[i]]$id.instance,
-                colnames(testResults) == experiments[[i]]$id.configuration] <- cost[i]
+    testResults[rownames(testResults) == experiments[[i]]$id_instance,
+                colnames(testResults) == experiments[[i]]$id_configuration] <- cost[i]
   }
   if (scenario$debugLevel >= 3L) {
     irace.note ("Memory used at the end of testConfigurations():\n")

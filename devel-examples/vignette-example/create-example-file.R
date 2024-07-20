@@ -35,8 +35,8 @@ res <- get_instanceID_seed_pairs(iraceResults, index = 1L, instances = TRUE)
 stopifnot(length(res[["instanceID"]]) == 1L)
 stopifnot(length(res[["instance"]]) == 1L)
 experiment <- list (
-  id.configuration = 1,
-  id.instance      = res[["instanceID"]],
+  id_configuration = 1,
+  id_instance      = res[["instanceID"]],
   seed             = res[["seed"]],
   configuration    = getConfigurationById(iraceResults, 1L, drop.metadata = TRUE),
   instance         = res[["instance"]], 
