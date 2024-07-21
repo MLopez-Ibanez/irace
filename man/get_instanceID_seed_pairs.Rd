@@ -15,7 +15,7 @@ get_instanceID_seed_pairs(iraceResults, index, instances = FALSE)
 \item{instances}{(\code{logical(1)})\cr Whether to add the actual instances as an additional column (only if the instances are of atomic type).}
 }
 \value{
-With default arguments, a data frame containing two columns
+\code{data.table()}\cr With default arguments, a \code{data.table} containing two columns
 \code{"instanceID"} and \code{"seed"}. With \code{instances=TRUE} and if the instances
 are of atomic type (see \code{\link[=is.atomic]{is.atomic()}}) type, another column \code{instance} is
 added that contains the actual instance.

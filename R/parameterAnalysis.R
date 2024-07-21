@@ -120,7 +120,7 @@ get_configuration_by_id_helper <- function(allConfigurations, ids, drop_metadata
 #' @param index  (`integer()`)\cr Indexes of the (instanceID,seed) pairs to be returned. The default returns everything.
 #' @param instances (`logical(1)`)\cr Whether to add the actual instances as an additional column (only if the instances are of atomic type).
 #' 
-#' @return With default arguments, a data frame containing two columns
+#' @return `data.table()`\cr With default arguments, a `data.table` containing two columns
 #'   `"instanceID"` and `"seed"`. With `instances=TRUE` and if the instances
 #'   are of atomic type (see [is.atomic()]) type, another column `instance` is
 #'   added that contains the actual instance.

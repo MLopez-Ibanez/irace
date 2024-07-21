@@ -2064,9 +2064,9 @@ pair_index <- which(apply(!is.na(all_exp), 1L, all))
 # but in this example we get the indexes of the instances executed for
 # the best configuration.
 pair_index <- which(!is.na(all_exp[, best_id]))
-instanceID <- get_instanceID_seed_pairs(iraceResults)[pair_index, "instanceID"]
+instanceID <- get_instanceID_seed_pairs(iraceResults)[["instanceID"]][pair_index]
 # or get the seeds
-get_instanceID_seed_pairs(iraceResults)[pair_index, "seed"]
+get_instanceID_seed_pairs(iraceResults)[["seed"]][pair_index]
 # or obtain the actual instances.
 iraceResults$scenario$instances[instanceID]
 # If the instances are of atomic type (integers, floating-point numbers or

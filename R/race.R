@@ -83,7 +83,7 @@ race_wrapper <- function(race_state, configurations, instance_idx, bounds = NULL
     # from one to the other.
     which_exps <- which(which_alive %in% which_exe)
     irace.assert(length(which_exps) == length(which_exe))
-    target_output[which_exps] <- execute.experiments(race_state, experiments[which_exps], scenario)
+    target_output[which_exps] <- execute_experiments(race_state, experiments[which_exps], scenario)
   }
 
   # targetEvaluator may be NULL. If so, target_output must contain the right
