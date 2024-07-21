@@ -422,7 +422,7 @@ checkTargetFiles <- function(scenario)
   cat("# Executing targetRunner (", nrow(configurations), "times)...\n")
   result <- TRUE
   output <-  withCallingHandlers(
-    tryCatch(execute.experiments(race_state, experiments, scenario),
+    tryCatch(execute_experiments(race_state, experiments, scenario),
              error = function(e) {
                cat(sep = "\n",
                    "\n# Error occurred while executing targetRunner:",

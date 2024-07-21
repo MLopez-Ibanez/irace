@@ -500,7 +500,7 @@ target_runner_default <- function(experiment, scenario)
        call = paste(cmd, args, collapse = " "))
 }
 
-execute.experiments <- function(race_state, experiments, scenario)
+execute_experiments <- function(race_state, experiments, scenario)
 {
   parallel <- scenario$parallel
   mpi <- scenario$mpi

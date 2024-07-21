@@ -203,7 +203,7 @@ report_duplicated_results <- function(experiments, configurations)
   dups
 }
 
-ab_generate_instances <- function(scenario, nrep, type, instancesFile)
+ab_generate_instances <- function(race_state, scenario, nrep, type, instancesFile)
 {
   nrep <- suppressWarnings(as.integer(nrep))
   if (is.na(nrep) || length(nrep) == 0L || nrep <= 0L)
@@ -219,7 +219,7 @@ ab_generate_instances <- function(scenario, nrep, type, instancesFile)
     scenario$instances <- readInstances(instancesFile = path_rel2abs(instancesFile))
   }
   n_inst <- length(scenario$instances)
-  instances_log <- generateInstances(scenario, n_inst * nrep)
+  generateInstances(race_state, scenario, n_inst * nrep)
 
   msg <- if (instancesFile %in% c("train", "test"))
            paste0("'", instancesFile, "' instances") else paste0("instances from '", instancesFile, "'")
@@ -230,7 +230,7 @@ ab_generate_instances <- function(scenario, nrep, type, instancesFile)
   cat(sep="", "# Using ", msg, ":\n",
       paste0(collapse="\n", scenario$instances[1L:n_inst]),
       "\n")
-  list(instances_log=instances_log, instances=scenario$instances)
+  scenario$instances
 }
 
 #' Performs ablation between two configurations (from source to target).
@@ -309,11 +309,8 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
   scenario$seed <- seed
   scenario <- checkScenario(scenario)
   race_state <- RaceState$new(scenario)
-
   # Generate instances
-  res <- ab_generate_instances(scenario, nrep, type, instancesFile)
-  race_state$instances_log <- res[["instances_log"]]
-  scenario$instances <- res[["instances"]]
+  scenario$instances <- ab_generate_instances(race_state, scenario, nrep, type, instancesFile)
 
   if (is.null(target))
     target <- iraceResults$iterationElites[length(iraceResults$iterationElites)]
@@ -362,7 +359,7 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
   
   race_state$start_parallel(scenario)
   on.exit(race_state$start_parallel(scenario), add = TRUE)
-  target.output <- execute.experiments(race_state, experiments, scenario)
+  target.output <- execute_experiments(race_state, experiments, scenario)
   if (!is.null(scenario$targetEvaluator))
     target.output <- execute_evaluator (race_state$target_evaluator, experiments, scenario, target.output,
                                         src_configuration)

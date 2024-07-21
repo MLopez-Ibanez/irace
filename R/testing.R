@@ -45,25 +45,25 @@ testConfigurations <- function(configurations, scenario)
                                       bounds = rep(scenario$boundMax, nrow(configurations)))
   race_state <- RaceState$new(scenario)
   if (scenario$debugLevel >= 3L) {
-    irace.note ("Memory used before execute.experiments in testConfigurations():\n")
+    irace.note ("Memory used before execute_experiments() in testConfigurations():\n")
     race_state$print_mem_used()
   }
   race_state$start_parallel(scenario)
   on.exit(race_state$stop_parallel())
-  target.output <- execute.experiments(race_state, experiments, scenario)
-  # targetEvaluator may be NULL. If so, target.output must contain the right
+  target_output <- execute_experiments(race_state, experiments, scenario)
+  # targetEvaluator may be NULL. If so, target_output must contain the right
   # output already.
   if (!is.null(scenario$targetEvaluator))
-    target.output <- execute_evaluator(race_state$target_evaluator, experiments,
-      scenario, target.output, configurations[[".ID."]])
+    target_output <- execute_evaluator(race_state$target_evaluator, experiments,
+      scenario, target_output, configurations[[".ID."]])
 
-  # FIXME: It would be much faster to get convert target.output$cost to a
+  # FIXME: It would be much faster to get convert target_output$cost to a
   # vector, then initialize the matrix with the vector.
   testResults <- matrix(NA, ncol = nrow(configurations), nrow = length(testInstances),
                         # dimnames = list(rownames, colnames)
                         dimnames = list(instances_id, configurations$.ID.))
 
-  cost <- sapply(target.output, getElement, "cost")
+  cost <- sapply(target_output, getElement, "cost")
   if (scenario$capping)
     cost <- applyPAR(cost, boundMax = scenario$boundMax, boundPar = scenario$boundPar)
   # FIXME: Vectorize this loop

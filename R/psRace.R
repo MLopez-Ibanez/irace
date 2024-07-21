@@ -113,8 +113,7 @@ psRace <- function(iraceResults, max_experiments, conf_ids = NULL, iteration_eli
   elite_configurations <- iraceResults$allConfigurations[iraceResults$allConfigurations[[".ID."]] %in% conf_ids, , drop=FALSE]
 
   # Generate new instances.
-  race_state$instances_log <- generateInstances(scenario, max_experiments / nrow(elite_configurations),
-    instances_log = race_state$instances_log)
+  generateInstances(race_state, scenario, max_experiments / nrow(elite_configurations), update = TRUE)
   elite_data <- if (scenario$elitist)
                   iraceResults$experiments[, as.character(elite_configurations[[".ID."]]), drop=FALSE] else NULL
   race_state$next_instance <- nrow(iraceResults$experiments) + 1L

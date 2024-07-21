@@ -328,11 +328,13 @@ checkMinimumBudget <- function(scenario, remainingBudget, minSurvival, nbIterati
 }
 
 ## Generate instances + seed.
-generateInstances <- function(scenario, n, instances_log = NULL)
+generateInstances <- function(race_state, scenario, n, update = FALSE)
 {
+  if (!update)
+    race_state$instances_log <- NULL
   # If we are adding and the scenario is deterministic, we have already added all instances.
-  if (scenario$deterministic && !is.null(instances_log))
-    return(instances_log)
+  else if (scenario$deterministic)
+    return(race_state$instances_log)
 
   instances <- scenario$instances
   # Number of times that we need to repeat the set of instances given by the user.
@@ -354,12 +356,10 @@ generateInstances <- function(scenario, n, instances_log = NULL)
   # Sample seeds.
   # 2147483647 is the maximum value for a 32-bit signed integer.
   # We use replace = TRUE, because replace = FALSE allocates memory for each possible number.
-  # FIXME: Use data.table() and rbindlist()
-  instances_log <- rbind.data.frame(instances_log,
-    data.frame(instanceID = sindex,
-      seed = sample.int(2147483647L, size = length(sindex), replace = TRUE), stringsAsFactors = FALSE))
-  rownames(instances_log) <- NULL
-  instances_log
+  race_state$instances_log <- rbind(race_state$instances_log,
+    data.table(instanceID = sindex, seed = sample.int(2147483647L,
+      size = length(sindex), replace = TRUE)))
+  race_state$instances_log
 }
 
 do_experiments <- function(race_state, configurations, ninstances, scenario, iteration)
@@ -714,11 +714,9 @@ irace_run <- function(scenario)
     minSurvival <- floor(minSurvival)
 
     # Generate initial instance + seed list
-    race_state$instances_log <- generateInstances(scenario,
-                                              n = if (scenario$maxExperiments != 0)
-                                                    ceiling(scenario$maxExperiments / minSurvival)
-                                                  else
-                                                    max(scenario$firstTest, length(scenario$instances)))
+    generateInstances(race_state, scenario,
+      n = if (scenario$maxExperiments != 0) ceiling(scenario$maxExperiments / minSurvival)
+      else max(scenario$firstTest, length(scenario$instances)))
     indexIteration <- 1L
     timeUsed <- 0
     boundEstimate <- NA 
@@ -1159,8 +1157,8 @@ irace_run <- function(scenario)
     # Calculate budget needed for old instances assuming non elitist irace.
     if ((nrow(race_state$instances_log) - (race_state$next_instance - 1L))
         < ceiling(remainingBudget / minSurvival)) {
-      race_state$instances_log <- generateInstances(scenario, n = ceiling(remainingBudget / minSurvival),
-                                                instances_log = race_state$instances_log)
+      generateInstances(race_state, scenario, n = ceiling(remainingBudget / minSurvival),
+        update = TRUE)
     }
 
     if (debugLevel >= 1L) irace.note("Launch race\n")
