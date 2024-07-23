@@ -423,25 +423,32 @@ allConfigurationsInit <- function(scenario)
   allConfigurations
 }
 
-extractElites <- function(elites, nbElites, debugLevel)
+## extractElites
+# Input: the configurations with the .RANK. field filled.
+#        the number of elites wished
+# Output: nbElites elites, sorted by ranks, with the weights assigned.
+extractElites <- function(configurations, nbElites, debugLevel)
 {
   irace.assert(nbElites > 0L)
+  # Keep only alive configurations.
+  elites <- as.data.table(configurations)
+  before <- nrow(elites)
   # Remove duplicated. Duplicated configurations may be generated, however, it
   # is too slow to check at generation time. Nevertheless, we can check now
   # since we typically have very few elites.
-  ## FIXME: Use a variant of similarConfigurations.
-  before <- nrow(elites)
-  elites <- elites[!duplicated(removeConfigurationsMetaData(elites)),  , drop = FALSE]
+  elites <- unique(elites, by=which(!startsWith(colnames(elites), ".")))
   after <- nrow(elites)
-  if (after < before && debugLevel >= 1L)
-    irace.note("Dropped ", before - after, " duplicated elites\n")
+  if (debugLevel >= 2L && after < before)
+    irace.note("Dropped ", before - after, " duplicated elites.\n")
 
-  nbElites <- min(after, nbElites)
-  # Sort by rank.
-  elites <- elites[order(elites[[".RANK."]]), , drop = FALSE]
-  elites <- head(elites, n = nbElites)
-  elites[[".WEIGHT."]] <- (((nbElites + 1) - seq_len(nbElites))
-    / (nbElites * (nbElites + 1L) / 2))
+  after <- min(after, nbElites)
+  .RANK. <- NULL
+  setorder(elites, .RANK.)
+  selected <- seq_len(after)
+  elites <- elites[selected, ]
+  set(elites, j = ".WEIGHT.", value = ((after + 1L) - selected) / (after * (after + 1L) / 2))
+  setDF(elites)
+  rownames(elites) <- elites[[".ID."]]
   elites
 }
 
