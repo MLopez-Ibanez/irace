@@ -114,11 +114,16 @@ Executable or \aR function that evaluates a configuration of the target algorith
  \defparameter{targetRunnerLauncher}{target-runner-launcher}{}%
 Executable that will be used to launch the target runner, when \parameter{targetRunner} cannot be executed directly (e.g., a Python script in Windows).
 
- \defparameter{targetCmdline}{target-cmdline}{{configurationID} {instanceID} {seed} {instance} {bound} {targetRunnerArgs}}%
+ \defparameter{targetCmdline}{target-cmdline}{\{configurationID\} \{instanceID\} \{seed\} \{instance\} \{bound\} \{targetRunnerArgs\}}%
 Command-line arguments provided to \parameter{targetRunner} (or \parameter{targetRunnerLauncher} if defined). The substrings \code{\{configurationID\}}, \code{\{instanceID\}},  \code{\{seed\}},  \code{\{instance\}}, and \code{\{bound\}} will be replaced by their corresponding values. The substring \code{\{targetRunnerArgs\}} will be replaced by the concatenation of the switch and value of all active parameters of the particular configuration being evaluated.  The substring \code{\{targetRunner\}}, if present, will be replaced by the value of \parameter{targetRunner} (useful when using \parameter{targetRunnerLauncher}).  Example:
-\code{targetRunner="./real_target_runner.py"}
-\code{targetRunnerLauncher="python"}
-\code{targetCmdLine="-m \{targetRunner\} \{configurationID\} \{instanceID\} --seed \{seed\} -i \{instance\} --cutoff \{bound\} \{targetRunnerArgs\}"}.
+
+<<targetCmdline, prompt=FALSE, eval=FALSE>>=
+targetRunner="./real_target_runner.py"
+targetRunnerLauncher="python"
+targetCmdLine="-m {targetRunner} {configurationID} {instanceID}\
+ --seed {seed} -i {instance} --cutoff {bound} {targetRunnerArgs}"
+@
+
 
  \defparameter{targetRunnerRetries}{target-runner-retries}{0}%
 Number of times to retry a call to \parameter{targetRunner} if the call failed.

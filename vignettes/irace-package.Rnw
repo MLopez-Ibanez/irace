@@ -2857,7 +2857,8 @@ specified by the user in this way.
   the scenario file. See also Table~\ref{tab:paths}.
 \end{xwarningbox}
 
-\input{section/irace-options}
+<<child-demo, child='section/irace-options.Rnw'>>=
+@
 
 %%
 %%

@@ -19,6 +19,7 @@ format.number.or.string <- function(x)
 }
 to.Rd.text <- function(x) gsub("\\\\code\\{((?:[^{}\\\\]|\\\\{|\\\\})+)\\}", "`\\1`", x, perl=TRUE)
 to.plain.text <- function(x) gsub("\\}", "}", gsub("\\{", "{", to.Rd.text(x), fixed=TRUE), fixed=TRUE)
+to_latex <- function(x) gsub("{", "\\{", gsub("}", "\\}", x, fixed=TRUE), fixed=TRUE)
 
 ordered_sections <- c("General options",
                       "Elitist \\irace",
@@ -88,7 +89,7 @@ gendefparameter <- function(x)
                  gsub("_", "\\_", x["name"], fixed=TRUE)),
           # we have to cut the --
           substring(x["long"], 3),
-          ifelse(is.na.nowarn(x["default"]), "", x["default"]),
+          ifelse(is.na.nowarn(x["default"]), "", to_latex(x["default"])),
           ifelse(x["vignettes"] != "", x["vignettes"], x["description"]))
 }
 
@@ -111,7 +112,7 @@ for (section in ordered_sections) {
 
   vin.text <- c(vin.text, sec.text, "\\end{description}")
 }
-writeLines(vin.text, con = "../vignettes/section/irace-options.tex")
+writeLines(vin.text, con = "../vignettes/section/irace-options.Rnw")
 
 # Generate template of scenario.
 out.text <-
