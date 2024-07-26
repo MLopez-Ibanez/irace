@@ -81,7 +81,7 @@
  * The environment `.irace` that was available in the log file under
    `iraceResults$state$.irace` is replaced directly by `iraceResults$state`.
    It contains similar information but some entries have been renamed. For
-   example, the `experimentLog` `data.frame` is now a called `experiment_log`
+   example, the `experimentLog` data frame is now called `experiment_log`
    and it is a [`data.table`](https://r-datatable.com).
  
  * The interface of `psRace()` has been simplified.

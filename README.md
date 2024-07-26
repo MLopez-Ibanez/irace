@@ -41,15 +41,12 @@ You may also find the [**iraceplot**](https://auto-optimization.github.io/iracep
  1. M. López-Ibáñez, J. Dubois-Lacoste, L. Pérez Cáceres, T. Stützle, and
     M. Birattari. [The irace package: Iterated Racing for Automatic Algorithm Configuration](http://dx.doi.org/10.1016/j.orp.2016.09.002).
 *Operations Research Perspectives*, 3:43–58, 2016.<br>
-    [ [bibtex](https://lopez-ibanez.eu/LopezIbanez_bib.html#LopDubPerStuBir2016irace) 
+    [ [bibtex](https://iridia-ulb.github.io/references/index_bib.html#LopDubPerStuBir2016irace)
     | doi: [10.1016/j.orp.2016.09.002](http://dx.doi.org/10.1016/j.orp.2016.09.002) ]
 
- 2. Manuel López-Ibáñez, Jérémie Dubois-Lacoste, Thomas Stützle, and Mauro
-    Birattari. [The irace package, Iterated Race for Automatic Algorithm Configuration](https://iridia.ulb.ac.be/IridiaTrSeries/link/IridiaTr2011-004.pdf).
-    Technical Report TR/IRIDIA/2011-004, IRIDIA, Université libre de Bruxelles,
-    Belgium, 2011.<br>
-    [ [bibtex](https://iridia-ulb.github.io/references/index.html#LopDubStu2011irace)
-    | [PDF](https://iridia.ulb.ac.be/IridiaTrSeries/link/IridiaTr2011-004.pdf) ]
+ 2. Leslie Perez Cáceres, Manuel López-Ibáñez, Holger Hoos, and Thomas Stützle. [An Experimental Study of Adaptive Capping in irace](https://doi.org/10.1007/978-3-319-69404-7_17). *Learning and Intelligent Optimization. LION 2017*. Lecture Notes in Computer Science, vol 10556. Springer, Cham.<br>
+    [ [bibtex](https://iridia-ulb.github.io/references/index_bib.html#PerLopHooStu2017:lion)
+    | doi: [10.1007/978-3-319-69404-7_17](https://doi.org/10.1007/978-3-319-69404-7_17) ]
 
  3. Thomas Stützle and Manuel López-Ibáñez. [Tutorial: Automated algorithm
     configuration and design](https://doi.org/10.1145/3449726.3461404). GECCO
