@@ -3450,7 +3450,7 @@ system.file(package = "irace")
 %% NEWS is latin1 but this file is utf8
 \begingroup\inputencoding{utf8}%
 % FIXME: This doesn't break long lines, find another alternative.
-\VerbatimInput{NEWS.txt}%
+\VerbatimInput{../NEWS.md}%
 \endgroup
 \end{appendices}
 
