@@ -4,11 +4,12 @@
 #' \pkg{irace} format. The configurations are checked to match the parameters
 #' description provided.
 #' 
-#' @param filename (`character(1)`) \cr Filename from which the configurations should be read.
+#' @param filename `character(1)`\cr Filename from which the configurations should be read.
 #' The contents should be readable by `read.table( , header=TRUE)`.
-#' @template arg_parameters
-#' @template arg_debuglevel
-#' @template arg_text
+#' @param text `character(1)`\cr If \code{file} is not supplied and this is,
+#'  then configurations are read from the value of \code{text} via a text connection.
+#' @inheritParams readParameters
+#' @inheritParams printParameters
 #' 
 #' @return A data frame containing the obtained configurations. 
 #'   Each row of the data frame is a candidate configuration, 

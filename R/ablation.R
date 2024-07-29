@@ -41,7 +41,7 @@ cat_ablation_license <- function()
 #' Launch [ablation()] with the same command-line options as the command-line
 #' executable (`ablation.exe` in Windows).
 #' 
-#' @param argv (`character()`) \cr The arguments 
+#' @param argv `character()`\cr The arguments 
 #' provided on the R command line as a character vector, e.g., 
 #' `c("-i", "irace.Rdata", "--src", 1)`.
 #' 
@@ -52,7 +52,16 @@ cat_ablation_license <- function()
 #' ```{r echo=FALSE,comment=NA}
 #' cmdline_usage(.ablation.params.def)
 #' ```
-#' @template ret_ablog
+#' @return A list containing the following elements:
+#'  \describe{
+#'    \item{configurations}{Configurations tested in the ablation.}
+#'    \item{instances}{A matrix with the instances used in the experiments. First column has the 
+#'     instances IDs from \code{iraceResults$scenario$instances}, second column the seed assigned to the instance.}
+#'    \item{experiments}{A matrix with the results of the experiments (columns are configurations, rows are instances).}
+#'    \item{scenario}{Scenario object with the settings used for the experiments.}
+#'    \item{trajectory}{IDs of the best configurations at each step of the ablation.}
+#'    \item{best}{Best configuration found in the experiments.}
+#'  }
 #' @seealso [plotAblation()] [ablation()]
 #' @examples
 #' ablation_cmdline("--help")
@@ -237,7 +246,7 @@ ab_generate_instances <- function(race_state, scenario, nrep, type, instancesFil
 #'
 #' @description Ablation is a method for analyzing the differences between two configurations.
 #'
-#' @template arg_iraceresults
+#' @inheritParams has_testing_data
 #' @param src,target (`integer(1)`) Source and target configuration IDs. By default, the first configuration ever evaluated (ID 1) is used as `src` and the best configuration found by irace is used as target.
 #' @param ab_params Specific parameter names to be used for the ablation. They must be in `parameters$names`. By default, use all parameters.
 #' @param type Type of ablation to perform: `"full"` will execute each configuration on all `n_instances` to determine the best-performing one; `"racing"` will apply racing to find the best configurations.
@@ -251,7 +260,7 @@ ab_generate_instances <- function(race_state, scenario, nrep, type, instancesFil
 #' C. Fawcett and H. H. Hoos. Analysing differences between algorithm
 #' configurations through ablation. Journal of Heuristics, 22(4):431–458, 2016.
 #' 
-#' @template ret_ablog
+#' @inherit ablation_cmdline return
 #' @seealso [plotAblation()] [ablation_cmdline()]
 #' @examples
 #' \donttest{

@@ -160,7 +160,7 @@ check_output_target_evaluator <- function (output, scenario, target_runner_call 
 #'    }
 #' @param num_configurations Number of  configurations alive in the race.
 #' @param all_conf_id Vector of configuration IDs of the alive configurations.
-#' @template arg_scenario
+#' @inheritParams defaultScenario
 #' @param target_runner_call String describing the call to `targetRunner` that
 #'    corresponds to this call to `targetEvaluator`. This is used for
 #'    providing extra information to the user, for example, in case
@@ -227,7 +227,7 @@ target_evaluator_default <- function(experiment, num_configurations, all_conf_id
 #' output is incorrect, this function will throw an error.
 #' 
 #' @param output The output from target runner.
-#' @template arg_scenario
+#' @inheritParams defaultScenario
 #' @param bound Optional time bound that the target runner should have respected.
 #' 
 #' @return The output with its contents repaired.
@@ -447,7 +447,7 @@ run_target_runner <- function(experiment, scenario)
 #'      \item{`switches`}{Vector of parameter switches (labels) in the order
 #'        of parameters used in `configuration`.}
 #'    }
-#' @template arg_scenario
+#' @inheritParams defaultScenario
 #' 
 #' @return If `targetEvaluator` is `NULL`, then the `targetRunner`
 #'  function must return a list with at least one element `"cost"`,

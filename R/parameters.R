@@ -245,7 +245,7 @@ Parameter <- function(name, type, domain, label, condition, transf,
 #' 
 #' @param ... one or more parameters created by `param_int()`, `param_real()`, `param_ord()`, or `param_cat()`.
 #' @param forbidden (`expression()|character(1)`)\cr String or list of expressions that define forbidden parameter configurations.
-#' @template arg_debuglevel
+#' @inheritParams readParameters
 #'
 #' @return (`ParameterSpace`)
 #' @name parameters
@@ -416,7 +416,7 @@ param_ord <- function(name, values, label = "", condition = TRUE)
 
 #' @param lower,upper  Lower and upper limits of the valid domain.
 #' @param transf (`character(1)`) \cr If `"log"`, then the parameter is sampled in a logarithmic scale.
-#' @template arg_param_digits
+#' @inheritParams readParameters
 #' @rdname parameters
 #' @export
 param_real <- function(name, lower, upper, label = "", condition = TRUE, transf = "", digits = 15L)
@@ -658,7 +658,10 @@ param_quantile.ParamReal <- function(param, probs, domain = param[["domain"]])
 
 #' Print parameter space in the textual format accepted by irace.
 #' 
-#' @template arg_parameters
+#' @param parameters (`list()`) \cr Data structure containing the parameter
+#'   space definition. The data structure has to similar to the one returned by the
+#'   function [`readParameters`].
+#'
 #'
 #' @return `character()`
 #' 

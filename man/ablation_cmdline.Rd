@@ -7,7 +7,7 @@
 ablation_cmdline(argv = commandArgs(trailingOnly = TRUE))
 }
 \arguments{
-\item{argv}{(\code{character()}) \cr The arguments
+\item{argv}{\code{character()}\cr The arguments
 provided on the R command line as a character vector, e.g.,
 \code{c("-i", "irace.Rdata", "--src", 1)}.}
 }

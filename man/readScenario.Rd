@@ -7,23 +7,25 @@
 readScenario(filename = "", scenario = list(), params_def = .irace.params.def)
 }
 \arguments{
-\item{filename}{(\code{character(1)}) \cr Filename from which the scenario will
+\item{filename}{\code{character(1)}\cr Filename from which the scenario will
 be read. If empty, the default \code{scenarioFile} is used.  An example
 scenario file is provided in \code{system.file(package="irace", "templates/scenario.txt.tmpl")}.}
 
-\item{scenario}{(\code{list()}) \cr Data structure containing \pkg{irace}
+\item{scenario}{\code{list()}\cr Data structure containing \pkg{irace}
 settings. The data structure has to be the one returned by the function
-\code{\link[=defaultScenario]{defaultScenario()}} or \code{\link[=readScenario]{readScenario()}}.
-This is an initial scenario that is overwritten}
+\code{\link[=defaultScenario]{defaultScenario()}} or \code{\link[=readScenario]{readScenario()}}.}
 
-\item{params_def}{(\code{data.frame()}) \cr Definition of the options accepted by the scenario. This should only be modified by packages that wish to extend \pkg{irace}.}
+\item{params_def}{\code{data.frame()}\cr Definition of the options accepted by
+the scenario. This should only be modified by packages that wish to extend
+\pkg{irace}.}
 }
 \value{
 The scenario list read from the file. The scenario settings not
 present in the file are not present in the list, i.e., they are \code{NULL}.
 }
 \description{
-Reads from a file the scenario settings to be used by \pkg{irace}.
+The scenario argument is an initial scenario that is overwritten for every
+setting specified in the file to be read.
 }
 \seealso{
 \describe{

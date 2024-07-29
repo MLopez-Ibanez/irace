@@ -1,8 +1,8 @@
 #' Execute the given configurations on the testing instances specified in the
 #' scenario
 #'
-#' @template arg_configurations
-#' @template arg_scenario
+#' @inheritParams removeConfigurationsMetaData
+#' @inheritParams defaultScenario
 #'
 #' @return A list with the following elements:
 #'   \describe{

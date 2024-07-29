@@ -7,17 +7,17 @@
 readConfigurationsFile(filename, parameters, debugLevel = 0L, text)
 }
 \arguments{
-\item{filename}{(\code{character(1)}) \cr Filename from which the configurations should be read.
+\item{filename}{\code{character(1)}\cr Filename from which the configurations should be read.
 The contents should be readable by \code{read.table( , header=TRUE)}.}
 
 \item{parameters}{(\code{list()}) \cr Data structure containing the parameter
 space definition. The data structure has to similar to the one returned by the
 function \code{\link{readParameters}}.}
 
-\item{debugLevel}{(\code{integer(1)}) \cr Larger values produce more verbose output.}
+\item{debugLevel}{\code{integer(1)}\cr Larger values produce more verbose output.}
 
-\item{text}{(\code{character(1)}) \cr If \code{file} is not supplied and this is,
-then parameters are read from the value of \code{text} via a text connection.}
+\item{text}{\code{character(1)}\cr If \code{file} is not supplied and this is,
+then configurations are read from the value of \code{text} via a text connection.}
 }
 \value{
 A data frame containing the obtained configurations.

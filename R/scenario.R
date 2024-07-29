@@ -1,12 +1,12 @@
-#' Reads from a file the scenario settings to be used by \pkg{irace}. 
+#' Reads from a file the scenario settings to be used by \pkg{irace}.
+#'
+#' The scenario argument is an initial scenario that is overwritten for every
+#' setting specified in the file to be read.
 #' 
-#' @param filename (`character(1)`) \cr Filename from which the scenario will
+#' @param filename `character(1)`\cr Filename from which the scenario will
 #'   be read. If empty, the default `scenarioFile` is used.  An example
 #'   scenario file is provided in `system.file(package="irace", "templates/scenario.txt.tmpl")`.
-#' @templateVar arg_appendix This is an initial scenario that is overwritten
-#'   for every setting specified in the file to be read.
-#' @template arg_scenario
-#' @template arg_params_def
+#' @inheritParams defaultScenario 
 #' 
 #' @return The scenario list read from the file. The scenario settings not
 #'   present in the file are not present in the list, i.e., they are `NULL`.
@@ -152,7 +152,7 @@ setup_test_instances <- function(scenario)
 #' Checks for errors a (possibly incomplete) scenario setup of
 #' \pkg{irace}  and transforms it into a valid scenario.
 #' 
-#' @template arg_scenario
+#' @inheritParams defaultScenario
 #' 
 #' @return The scenario received as a parameter, possibly corrected. Unset
 #' scenario settings are set to their default values.
@@ -509,7 +509,7 @@ checkScenario <- function(scenario = defaultScenario())
 
 #' Prints the given scenario
 #'
-#' @template arg_scenario
+#' @inheritParams defaultScenario
 #' 
 #' @seealso
 #'  \describe{
@@ -535,9 +535,14 @@ printScenario <- function(scenario)
 #'
 #' Return scenario object with default values.
 #' 
-#' @template arg_scenario
+#' @param scenario `list()`\cr Data structure containing \pkg{irace}
+#'   settings. The data structure has to be the one returned by the function
+#'   [defaultScenario()] or [readScenario()].
 #'
-#' @template arg_params_def
+#' @param params_def `data.frame()`\cr Definition of the options accepted by
+#'   the scenario. This should only be modified by packages that wish to extend
+#'   \pkg{irace}.
+#'
 #' 
 #' @return A list indexed by the \pkg{irace} parameter names,
 #' containing the default values for each parameter, except for those

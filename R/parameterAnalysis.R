@@ -1,9 +1,11 @@
 #' Return the elite configurations of the final iteration.
 #' 
-#' @template arg_iraceresults
+#' @inheritParams has_testing_data
 #' @param n Number of elite configurations to return, if \code{n} is larger than the 
 #' number of configurations, then only the existing ones are returned. The default (\code{n=0}) returns all of them.
-#' @template arg_drop_metadata
+#' @param drop.metadata `logical(1)`\cr Remove metadata, such as the
+#'   configuration ID and the ID of the parent, from the returned
+#'   configurations.  See [removeConfigurationsMetaData()].
 #' 
 #' @return A data frame containing the elite configurations required.
 #'
@@ -40,9 +42,8 @@ getFinalElites <- function(iraceResults, n = 0L, drop.metadata = FALSE)
 
 #' Returns the configurations selected by ID.
 #' 
-#' @template arg_iraceresults
 #' @param ids (`integer()`)\cr The id or a vector of ids of the candidates configurations to obtain.
-#' @template arg_drop_metadata
+#' @inheritParams getFinalElites
 #' 
 #' @return A data frame containing the elite configurations required.
 #' @examples
@@ -64,10 +65,9 @@ getConfigurationById <- function(iraceResults, ids, drop.metadata = FALSE)
 
 #' Returns the configurations by the iteration in which they were executed.
 #'
-#' @template arg_iraceresults
 #' @param iterations (`integer()`)\cr The iteration number or a vector of iteration numbers from where 
 #'  the configurations should be obtained. Negative values start counting from the last iteration.
-#' @template arg_drop_metadata
+#' @inheritParams getFinalElites
 #' 
 #' @return A data frame containing the elite configurations required.
 #'
@@ -116,7 +116,7 @@ get_configuration_by_id_helper <- function(allConfigurations, ids, drop_metadata
 #' Returns the pairs of instance IDs and seeds used as instances in the race
 #' (and optionally the actual instances).
 #'
-#' @template arg_iraceresults
+#' @inheritParams getFinalElites
 #' @param index  (`integer()`)\cr Indexes of the (instanceID,seed) pairs to be returned. The default returns everything.
 #' @param instances (`logical(1)`)\cr Whether to add the actual instances as an additional column (only if the instances are of atomic type).
 #' 

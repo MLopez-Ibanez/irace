@@ -60,9 +60,9 @@ cat_irace_license <- function()
 
 #' Higher-level interface to launch irace.
 #'
-#' @template arg_scenario
+#' @inheritParams defaultScenario
 #' 
-#' @param output.width (\code{integer(1)}) The width used for the screen
+#' @param output.width `integer(1)`\cr The width used for the screen
 #'   output.
 #'
 #' @details This function checks the correctness of the scenario, reads the
@@ -187,10 +187,10 @@ testing_fromlog <- function(logFile, testNbElites, testIterationElites,
 #' `filename` (same format as in [readConfigurationsFile()]). A `logFile` is
 #' created unless disabled in `scenario`. This may overwrite an existing one!
 #' 
-#' @param filename Path to a file containing configurations: one configuration
+#' @param filename `character(1)`\cr Path to a file containing configurations: one configuration
 #'   per line, one parameter per column, parameter names in header.
 #'
-#' @template arg_scenario
+#' @inheritParams defaultScenario
 #'
 #' @return iraceResults
 #'
@@ -241,10 +241,10 @@ testing_common <- function(configurations, scenario, iraceResults)
 #' Test that the given irace scenario can be run by checking the scenario
 #' settings provided and trying to run the target-algorithm.
 #' 
-#' @template arg_scenario
-#'
-#' @return returns \code{TRUE} if successful and gives an error and returns
-#' \code{FALSE} otherwise.
+#' @inheritParams defaultScenario
+#' 
+#' @return returns `TRUE` if successful and gives an error and returns `FALSE`
+#'   otherwise.
 #' 
 #' @details If the `parameters` argument is missing, then the parameters 
 #'   will be read from the file `parameterFile`  given by `scenario`. If

@@ -8,7 +8,7 @@
 get_instanceID_seed_pairs(iraceResults, index, instances = FALSE)
 }
 \arguments{
-\item{iraceResults}{(\code{list()}|\code{character(1)})\cr Object created by \pkg{irace} and typically saved in the log file \code{irace.Rdata}. If a character string is given, then it is interpreted as the path to the log file from which the \code{iraceResults} object will be loaded.}
+\item{iraceResults}{\code{list()}|\code{character(1)}\cr Object created by \pkg{irace} and typically saved in the log file \code{irace.Rdata}. If a character string is given, then it is interpreted as the path to the log file from which the \code{iraceResults} object will be loaded.}
 
 \item{index}{(\code{integer()})\cr Indexes of the (instanceID,seed) pairs to be returned. The default returns everything.}
 

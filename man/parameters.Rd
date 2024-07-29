@@ -32,7 +32,7 @@ param_int(name, lower, upper, label = "", condition = TRUE, transf = "")
 
 \item{forbidden}{(\code{expression()|character(1)})\cr String or list of expressions that define forbidden parameter configurations.}
 
-\item{debugLevel}{(\code{integer(1)}) \cr Larger values produce more verbose output.}
+\item{debugLevel}{\code{integer(1)}\cr Larger values produce more verbose output.}
 
 \item{name}{Parameter name (must be alphanumeric).}
 
@@ -46,7 +46,7 @@ param_int(name, lower, upper, label = "", condition = TRUE, transf = "")
 
 \item{transf}{(\code{character(1)}) \cr If \code{"log"}, then the parameter is sampled in a logarithmic scale.}
 
-\item{digits}{(\code{integer(1)}) \cr The number of decimal places to be considered for real-valued parameters.}
+\item{digits}{\code{integer(1)}\cr The number of decimal places to be considered for real-valued parameters.}
 }
 \value{
 (\code{ParameterSpace})

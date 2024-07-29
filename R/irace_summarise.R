@@ -1,6 +1,6 @@
 #' Summarise the results of a run of irace
 #' 
-#' @template arg_iraceresults
+#' @inheritParams has_testing_data
 #'
 #' @return `list()`
 #' 

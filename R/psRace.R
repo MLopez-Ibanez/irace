@@ -2,7 +2,7 @@
 #'
 #' \code{psRace} performs a postselection race of a set of configurations.
 #'
-#' @template arg_iraceresults
+#' @inheritParams has_testing_data
 #' 
 #' @param max_experiments `numeric(1)`\cr Number of experiments for the
 #'   post-selection race. If it is equal to or smaller than 1, then it is a

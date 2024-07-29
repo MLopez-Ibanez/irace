@@ -7,7 +7,7 @@
 configurations_print_command(configurations, parameters)
 }
 \arguments{
-\item{configurations}{(\code{data.frame}) \cr Parameter configurations of the
+\item{configurations}{\code{data.frame}\cr Parameter configurations of the
 target algorithm (one per row).}
 
 \item{parameters}{(\code{list()}) \cr Data structure containing the parameter

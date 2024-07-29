@@ -7,11 +7,13 @@
 defaultScenario(scenario = list(), params_def = .irace.params.def)
 }
 \arguments{
-\item{scenario}{(\code{list()}) \cr Data structure containing \pkg{irace}
+\item{scenario}{\code{list()}\cr Data structure containing \pkg{irace}
 settings. The data structure has to be the one returned by the function
 \code{\link[=defaultScenario]{defaultScenario()}} or \code{\link[=readScenario]{readScenario()}}.}
 
-\item{params_def}{(\code{data.frame()}) \cr Definition of the options accepted by the scenario. This should only be modified by packages that wish to extend \pkg{irace}.}
+\item{params_def}{\code{data.frame()}\cr Definition of the options accepted by
+the scenario. This should only be modified by packages that wish to extend
+\pkg{irace}.}
 }
 \value{
 A list indexed by the \pkg{irace} parameter names,

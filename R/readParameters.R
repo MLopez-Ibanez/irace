@@ -1,11 +1,12 @@
 #' Reads the parameters to be tuned by \pkg{irace} from a file or from a
 #' character string.
 #' 
-#' @param file (`character(1)`) \cr Filename containing the definitions of
+#' @param file `character(1)`\cr Filename containing the definitions of
 #'   the parameters to be tuned.
-#' @template arg_param_digits
-#' @template arg_debuglevel
-#' @template arg_text
+#' @param digits `integer(1)`\cr The number of decimal places to be considered for real-valued parameters.
+#' @param debugLevel `integer(1)`\cr Larger values produce more verbose output.
+#' @param text `character(1)`\cr If \code{file} is not supplied and this is,
+#'  then parameters are read from the value of \code{text} via a text connection.
 #'
 #' @return A list containing the definitions of the parameters read. The list is
 #'  structured as follows:
@@ -327,12 +328,8 @@ readParameters <- function (file, digits = 4L, debugLevel = 0L, text)
 }
 
 #' Read parameters in PCS (AClib) format and write them in irace format.
-#' 
-#' @param file (`character(1)`) \cr Filename containing the definitions of
-#'   the parameters to be tuned.
-#' @template arg_param_digits
-#' @template arg_debuglevel
-#' @template arg_text
+#'
+#' @inheritParams readParameters
 #' 
 #' @return A string representing the parameters in irace format.
 #'
@@ -499,7 +496,7 @@ read_pcs_file <- function(file, digits = 4L, debugLevel = 0L, text)
 #' FIXME: This is incomplete, for now we only repair inputs from previous irace
 #' versions.
 #'
-#' @template arg_parameters
+#' @inheritParams printParameters
 #' @export
 checkParameters <- function(parameters)
 {

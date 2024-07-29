@@ -466,7 +466,7 @@ extractElites <- function(configurations, nbElites, debugLevel)
 #' the FAQ section in the [User
 #' Guide](https://cran.r-project.org/package=irace/vignettes/irace-package.pdf).
 #' 
-#' @template arg_scenario
+#' @inheritParams defaultScenario
 #'
 #' @template return_irace
 #'

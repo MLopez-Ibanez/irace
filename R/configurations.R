@@ -79,7 +79,8 @@ which_satisfied <- function(configurations, condition)
 #' configurations to output only the values for the parameters of the
 #' configuration without metadata possibly useless to the user.
 #'   
-#' @template arg_configurations
+#' @param configurations `data.frame`\cr Parameter configurations of the
+#'   target algorithm (one per row).
 #' 
 #' @return The same data frame without "metadata".
 #'    
@@ -94,8 +95,9 @@ removeConfigurationsMetaData <- function(configurations)
 
 #' Print configurations as a data frame
 #' 
-#' @template arg_configurations
-#' @param metadata A Boolean specifying whether to print the metadata or
+#' @inheritParams removeConfigurationsMetaData
+#' 
+#' @param metadata `logical(1)`\cr whether to print the metadata or
 #' not. The metadata are data for the configurations (additionally to the
 #' value of each parameter) used by \pkg{irace}.
 #' 
@@ -123,8 +125,8 @@ configurations_print <- function(configurations, metadata = FALSE)
 #' Prints configurations after converting them into a representation for the
 #' command-line.
 #' 
-#' @template arg_configurations
-#' @template arg_parameters
+#' @inheritParams removeConfigurationsMetaData
+#' @inheritParams printParameters
 #' 
 #' @return None.
 #'

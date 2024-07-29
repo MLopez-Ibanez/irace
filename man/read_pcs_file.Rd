@@ -7,14 +7,14 @@
 read_pcs_file(file, digits = 4L, debugLevel = 0L, text)
 }
 \arguments{
-\item{file}{(\code{character(1)}) \cr Filename containing the definitions of
+\item{file}{\code{character(1)}\cr Filename containing the definitions of
 the parameters to be tuned.}
 
-\item{digits}{(\code{integer(1)}) \cr The number of decimal places to be considered for real-valued parameters.}
+\item{digits}{\code{integer(1)}\cr The number of decimal places to be considered for real-valued parameters.}
 
-\item{debugLevel}{(\code{integer(1)}) \cr Larger values produce more verbose output.}
+\item{debugLevel}{\code{integer(1)}\cr Larger values produce more verbose output.}
 
-\item{text}{(\code{character(1)}) \cr If \code{file} is not supplied and this is,
+\item{text}{\code{character(1)}\cr If \code{file} is not supplied and this is,
 then parameters are read from the value of \code{text} via a text connection.}
 }
 \value{

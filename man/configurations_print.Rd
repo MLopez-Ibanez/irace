@@ -7,10 +7,10 @@
 configurations_print(configurations, metadata = FALSE)
 }
 \arguments{
-\item{configurations}{(\code{data.frame}) \cr Parameter configurations of the
+\item{configurations}{\code{data.frame}\cr Parameter configurations of the
 target algorithm (one per row).}
 
-\item{metadata}{A Boolean specifying whether to print the metadata or
+\item{metadata}{\code{logical(1)}\cr whether to print the metadata or
 not. The metadata are data for the configurations (additionally to the
 value of each parameter) used by \pkg{irace}.}
 }

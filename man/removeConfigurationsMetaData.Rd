@@ -7,7 +7,7 @@
 removeConfigurationsMetaData(configurations)
 }
 \arguments{
-\item{configurations}{(\code{data.frame}) \cr Parameter configurations of the
+\item{configurations}{\code{data.frame}\cr Parameter configurations of the
 target algorithm (one per row).}
 }
 \value{

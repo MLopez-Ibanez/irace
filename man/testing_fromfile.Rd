@@ -7,10 +7,10 @@
 testing_fromfile(filename, scenario)
 }
 \arguments{
-\item{filename}{Path to a file containing configurations: one configuration
+\item{filename}{\code{character(1)}\cr Path to a file containing configurations: one configuration
 per line, one parameter per column, parameter names in header.}
 
-\item{scenario}{(\code{list()}) \cr Data structure containing \pkg{irace}
+\item{scenario}{\code{list()}\cr Data structure containing \pkg{irace}
 settings. The data structure has to be the one returned by the function
 \code{\link[=defaultScenario]{defaultScenario()}} or \code{\link[=readScenario]{readScenario()}}.}
 }
