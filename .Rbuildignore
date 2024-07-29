@@ -74,5 +74,4 @@ DEVEL-README.md
 ^vignettes/optbib
 ^web
 _snaps
-^R/aaa.R$
-^_pkgdown\.yml$
+_pkgdown\.yml$

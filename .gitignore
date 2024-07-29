@@ -63,6 +63,7 @@ docs/
 /vignettes/*.bbl
 /vignettes/*.fls
 /vignettes/*.synctex*
+/vignettes/irace-options.tex
 /vignettes/irace-package.tex
 /vignettes/irace-package.pdf
 /vignettes/irace-package.R
