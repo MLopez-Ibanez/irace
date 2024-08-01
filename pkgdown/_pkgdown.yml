@@ -28,7 +28,7 @@ navbar:
     cran:
       icon: fab fa-r-project
       href: https://cloud.r-project.org/package=irace
-
+      aria-label: "CRAN"
 
 reference:
 - title: Launching irace
