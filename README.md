@@ -159,7 +159,7 @@ There are two methods for installing the
    and test the installation with:
 ```R
         library(irace)
-        irace.cmdline("--version")
+        irace_cmdline("--version")
         q()
 ```
 
@@ -184,7 +184,7 @@ you need to force a *local installation* by typing in the Bash shell:
 Once installed, test that it is working by typing in the R console (not in the bash shell):
 ```R
     library(irace)
-    irace.cmdline("--version")
+    irace_cmdline("--version")
     cat(system.file(package="irace", "bin", mustWork=TRUE), "\n")
 ```
 The last command gives you the installation folder of `irace`, for example, `/home/user/R/irace/bin`.
@@ -227,7 +227,7 @@ You can also launch irace by opening the R console and executing:
 
 ```R
     library(irace)
-    irace.cmdline("--help")
+    irace_cmdline("--help")
 ```
 
 ### GitHub (Development version) ###
@@ -236,8 +236,8 @@ If you wish to try the development version, you can install it by executing the
 following commands within the R console:
 
 ```R
-    install.packages("devtools")
-    devtools::install_github("MLopez-Ibanez/irace")
+    install.packages("remotes")
+    remotes::install_github("MLopez-Ibanez/irace", upgrade=FALSE)
 ```
 
 ### Python ###
