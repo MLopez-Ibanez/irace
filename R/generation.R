@@ -103,7 +103,10 @@ generate_sobol <- function(parameters, n, repair = NULL)
       for (p in dep_names) {
         param <- parameters$get(p)
         idx_satisfied <- which_satisfied(confs, param[["condition"]])
-        if (length(idx_satisfied)) {
+        if (param$isFixed) {
+          # If somehow this fixed parameter was not satisfied sometimes, just set its value to NA.
+          confs[!idx_satisfied, (p):= NA ]
+        } else if (length(idx_satisfied)) {
           if (param[["is_dependent"]]) {
             confs[idx_satisfied, let(.DOMAIN = list(get_dependent_domain(param, .SD))), by=.I, .SDcols=prev_names]
             confs[idx_satisfied, .NEWVALUE := param_quantile(param, .SD, domain = unlist(.DOMAIN)), by=.I, .SDcols=p]
