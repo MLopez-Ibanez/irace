@@ -308,7 +308,12 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
 
   # Load the data of the log file.
   iraceResults <- read_logfile(iraceResults)
-  if (is.null(iraceResults$state$completed) || iraceResults$state$completed == "Incomplete")
+  log_version <- get_log_clean_version(iraceResults)
+  if (log_version < "3.9.0")
+    irace.error("The version of the logfile (", log_version, ") is too old for this version of ablation")
+  
+  if (is.null(iraceResults$state$completed) || length(iraceResults$state$completed) != 1L
+    || iraceResults$state$completed == "Incomplete")
     stop("The 'iraceResults' logfile seems to belong to an incomplete run of irace.")
   scenario <- update_scenario(scenario = iraceResults$scenario, ...)
   scenario$logFile <- ""
