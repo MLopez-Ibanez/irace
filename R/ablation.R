@@ -3,7 +3,7 @@ name            ab  type short long          default               description
 iraceResults     0  p    -l    --log-file    NA                    'Path to the (.Rdata) file created by irace from which the  \"iraceResults\" object will be loaded.'
 src              1  i    -S    --src         1                     'Source configuration ID.'
 target           1  i    -T    --target      NA                    'Target configuration ID. By default the best configuration found by irace.'
-ab.params        1  s    -P    --params      ''                    'Specific parameter names to be used for the ablation (separated with commas). By default use all'
+ab_params        1  s    -P    --params      ''                    'Specific parameter names to be used for the ablation (separated with commas). By default use all'
 type             1  s    -t    --type        'full'                'Type of ablation to perform: \"full\" will execute each configuration on all \"--n-instances\" to determine the best-performing one; \"racing\" will apply racing to find the best configurations.'
 nrep            1  i    -n    --nrep       1                     'Number of replications per instance used in \"full\" ablation.'
 seed             1  i    ''    --seed        1234567               'Integer value to use as seed for the random number generation.'
@@ -109,6 +109,8 @@ ablation_cmdline <- function(argv = commandArgs(trailingOnly = TRUE))
   scenario <- list()
   if (!is.null(params$scenarioFile)) {
     scenario <- readScenario(params$scenarioFile)
+    # We do not want this seed value to override the the command-line.
+    scenario$seed <- NULL
   }
   for (p in c("execDir", "parallel")) {
     if (!is.null(params[[p]])) scenario[[p]] <- params[[p]]
@@ -120,8 +122,8 @@ ablation_cmdline <- function(argv = commandArgs(trailingOnly = TRUE))
     params$ablationLogFile <- path_rel2abs(params$ablationLogFile)
   }
   
-  if (!is.null(params$ab.params))
-    params$ab.params <- trimws(strsplit(params$ab.params, ",", fixed=TRUE)[[1L]])
+  if (!is.null(params$ab_params))
+    params$ab_params <- trimws(strsplit(params$ab_params, ",", fixed=TRUE)[[1L]])
 
   # The shell may introduce extra quotes, remove them.
   params$plot_type <- trimws(gsub("[\"']", "", params$plot_type))
