@@ -13,6 +13,7 @@ plotAblation(
   mar = par("mar"),
   ylab = "Mean configuration cost",
   ylim = NULL,
+  rename_labels = NULL,
   ...
 )
 }
@@ -32,6 +33,8 @@ plotAblation(
 \item{ylab}{Label of y-axis.}
 
 \item{ylim}{Numeric vector of length 2 giving the y-axis range.}
+
+\item{rename_labels}{\code{c()}\cr Renaming table for nicer labels. For example, `c("No value"="NA", "LongParameterName"="LPN").}
 
 \item{...}{Further graphical parameters may also be supplied as
 arguments. See \code{\link[graphics:plot.default]{graphics::plot.default()}}.}

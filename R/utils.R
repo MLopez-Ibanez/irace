@@ -481,6 +481,9 @@ is.sub.path <- function(x, dir, n = nchar(dir)) substr(x, 1L, n) == dir
 
 irace_save_logfile <- function(iraceResults, scenario)
 {
+  # FIXME: Raul Santa Maria proposed to only save if sufficient times (>= 1
+  # minute) has passed since the last save. We would need an option to force
+  # saving the last one.
   if (is.null.or.empty(scenario$logFile)) return(invisible())
   # Files produced by `saveRDS` (or `serialize` to a file connection) are not
   # suitable as an interchange format between machines, for example to download

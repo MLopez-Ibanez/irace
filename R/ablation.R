@@ -523,7 +523,8 @@ ablation_labels <- function(trajectory, configurations)
 #' @param n (`integer(1)`) Number of parameters included in the plot. By default all parameters are included.
 #' @param mar Vector with the margins for the ablation plot.
 #' @param ylab Label of y-axis.
-#' @param ylim Numeric vector of length 2 giving the y-axis range. 
+#' @param ylim Numeric vector of length 2 giving the y-axis range.
+#' @param rename_labels `c()`\cr Renaming table for nicer labels. For example, `c("No value"="NA", "LongParameterName"="LPN").
 #' @param ... Further graphical parameters may also be supplied as
 #'   arguments. See [graphics::plot.default()].
 #'
@@ -540,6 +541,7 @@ plotAblation <- function (ablog, pdf.file = NULL, pdf.width = 20,
                           type = c("mean", "boxplot", "rank"), n = 0L,
                           mar = par("mar"),
                           ylab = "Mean configuration cost", ylim = NULL,
+                          rename_labels = NULL,
                           ...)
 {
   type <- trimws(unlist(strsplit(type, ",", fixed=TRUE)))
@@ -568,9 +570,12 @@ plotAblation <- function (ablog, pdf.file = NULL, pdf.width = 20,
 
   configurations <- ablog$configurations
   # Generate labels
-  # FIXME: allow overriding these labels.
   labels <- ablation_labels(trajectory, configurations)
-
+  if (!is.null(rename_labels))
+    # stringr::str_replace_all() would be better but it has so many dependencies!
+    for (i in seq_along(rename_labels))
+      labels <- gsub(names(rename_labels)[i], rename_labels[i], labels)
+    
   inches_to_lines <- (par("mar") / par("mai"))[1L]
   lab.width <- max(strwidth(labels, units = "inches")) * inches_to_lines
   old.par <- par(mar = c(lab.width + 2.1, 4.1, 0.1, 0.1), cex.axis = 1)
