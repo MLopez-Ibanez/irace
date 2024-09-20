@@ -584,3 +584,10 @@ vlast <- function(x)
   else
     x[[lx]]
 }
+
+# 2147483647 is the maximum value for a 32-bit signed integer.
+# We use replace = TRUE, because replace = FALSE allocates memory for each possible number.
+# Do not use .Machine$integer.max unless it is smaller, to minimize differences
+# between machines.
+runif_integer <- function(size)
+  sample.int(min(2147483647L, .Machine$integer.max), size = size, replace = TRUE)

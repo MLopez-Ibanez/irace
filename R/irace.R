@@ -354,11 +354,8 @@ generateInstances <- function(race_state, scenario, n, update = FALSE)
     sindex <- rep(seq_along(instances), ntimes)
   }
   # Sample seeds.
-  # 2147483647 is the maximum value for a 32-bit signed integer.
-  # We use replace = TRUE, because replace = FALSE allocates memory for each possible number.
   race_state$instances_log <- rbind(race_state$instances_log,
-    data.table(instanceID = sindex, seed = sample.int(2147483647L,
-      size = length(sindex), replace = TRUE)))
+    data.table(instanceID = sindex, seed = runif_integer(length(sindex))))
   race_state$instances_log
 }
 
@@ -1060,7 +1057,7 @@ irace_run <- function(scenario)
         # Sample new configurations.
         if (debugLevel >= 1L) {
           catInfo("Sample ", nbNewConfigurations,
-                  " configurations from uniform distribution", verbose = FALSE)
+                  " configurations from Sobol distribution", verbose = FALSE)
         }
         newConfigurations <- sampleSobol(scenario$parameters, nbNewConfigurations,
           repair = scenario$repairConfiguration)
