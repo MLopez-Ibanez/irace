@@ -128,6 +128,8 @@
  * `plotAblation()` has several new options:
     - `type='rank'` to plot ranks per instance instead of raw cost values.
     - `n` to limit the number of parameters shown in the plot.
+    - `width` replaces `pdf.width`.
+    - `height` sets the height of the plot in the PDF file.
 
  * The previously internal function `check.output.target.runner` is renamed to
    `check_output_target_runner` and exported to allow users who write their own
@@ -167,6 +169,8 @@
 
 ## Fixes
 
+ * `ablation_cmdline()` and `plotAblation()` no longer create an empty `Rplots.pdf` file when specifying an output PDF file.
+  
  * Fix #66: when using `maxTime > 0`, irace estimates the time per run by
    executing 2 configurations on `firstTest` instances and adjusts `boundMax`
    to not go over `budgetEstimation`. This may result in a smaller `boundMax`

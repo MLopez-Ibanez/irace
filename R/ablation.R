@@ -136,7 +136,7 @@ ablation_cmdline <- function(argv = commandArgs(trailingOnly = TRUE))
                             params[ablation_params],
                             scenario))
   if (!is.null(params[["plot"]]) || base::interactive()) {
-    plotAblation(ablog, pdf.file = params[["plot"]], type = params$plot_type) 
+    plotAblation(ablog, pdf_file = params[["plot"]], type = params$plot_type) 
   }
   invisible(ablog)
 }
@@ -517,14 +517,15 @@ ablation_labels <- function(trajectory, configurations)
 #'
 #' @param ablog (`list()`|`character(1)`) Ablation log object returned by [ablation()]. Alternatively, the path to an `.Rdata` file, e.g., `"log-ablation.Rdata"`, from which the object will be loaded.
 
-#' @param pdf.file Output filename.
-#' @param pdf.width Width provided to create the pdf file.
+#' @param pdf_file Output filename.
+#' @param width Width provided to create the PDF file.
+#' @param height Height provided to create the PDF file.
 #' @param type Type of plot. Supported values are `"mean"` and `"boxplot"`. Adding `"rank"` will plot rank per instance instead of raw cost value.
-#' @param n (`integer(1)`) Number of parameters included in the plot. By default all parameters are included.
+#' @param n `integer(1)`\cr Number of parameters included in the plot. By default all parameters are included.
 #' @param mar Vector with the margins for the ablation plot.
 #' @param ylab Label of y-axis.
 #' @param ylim Numeric vector of length 2 giving the y-axis range.
-#' @param rename_labels `c()`\cr Renaming table for nicer labels. For example, `c("No value"="NA", "LongParameterName"="LPN").
+#' @param rename_labels `character()`\cr Renaming table for nicer labels. For example, `c("No value"="NA", "LongParameterName"="LPN")`.
 #' @param ... Further graphical parameters may also be supplied as
 #'   arguments. See [graphics::plot.default()].
 #'
@@ -534,12 +535,14 @@ ablation_labels <- function(trajectory, configurations)
 #' logfile <- file.path(system.file(package="irace"), "exdata", "log-ablation.Rdata")
 #' plotAblation(ablog = logfile)
 #' plotAblation(ablog = logfile, type = "mean")
-#' plotAblation(ablog = logfile, type = c("rank","boxplot"))
+#' plotAblation(ablog = logfile, type = c("rank","boxplot"), rename_labels = c(
+#'             "localsearch"="ls", algorithm="algo", source="default"))
 #' @concept ablation
 #' @export
-plotAblation <- function (ablog, pdf.file = NULL, pdf.width = 20,
+plotAblation <- function (ablog, pdf_file = NULL, width = 20,
+                          height = 7,
                           type = c("mean", "boxplot", "rank"), n = 0L,
-                          mar = par("mar"),
+                          mar = NULL,
                           ylab = "Mean configuration cost", ylim = NULL,
                           rename_labels = NULL,
                           ...)
@@ -556,59 +559,57 @@ plotAblation <- function (ablog, pdf.file = NULL, pdf.width = 20,
     stop("The ablog shows that the ablation procedure did not complete cleanly and only contains partial information")
   
   
-  if (!is.null(pdf.file)) {
-    if (!is.file.extension(pdf.file, ".pdf"))
-      pdf.file <- paste0(pdf.file, ".pdf")
-    cat("Creating PDF file '", pdf.file, "'\n", sep="")
-    pdf(file = pdf.file, width = pdf.width,
-        title = paste0("Ablation plot: ", pdf.file))
-    on.exit(dev.off(), add = TRUE)
+  if (!is.null(pdf_file)) {
+    if (!is.file.extension(pdf_file, ".pdf"))
+      pdf_file <- paste0(pdf_file, ".pdf")
+    cat("Creating PDF file '", pdf_file, "'\n", sep="")
+    local_cairo_pdf(pdf_file, width = width, height = height, onefile= TRUE)
   }
   
-  trajectory <- ablog$trajectory
-  if (n > 0) trajectory <- trajectory[seq_len(n+1L)]
-
   configurations <- ablog$configurations
+  trajectory <- ablog$trajectory
+  if (n > 0L) trajectory <- trajectory[seq_len(n+1L)]
   # Generate labels
   labels <- ablation_labels(trajectory, configurations)
   if (!is.null(rename_labels))
     # stringr::str_replace_all() would be better but it has so many dependencies!
     for (i in seq_along(rename_labels))
       labels <- gsub(names(rename_labels)[i], rename_labels[i], labels)
-    
-  inches_to_lines <- (par("mar") / par("mai"))[1L]
-  lab.width <- max(strwidth(labels, units = "inches")) * inches_to_lines
-  old.par <- par(mar = c(lab.width + 2.1, 4.1, 0.1, 0.1), cex.axis = 1)
-  if (!is.null(pdf.file))
-    on.exit(par(old.par), add = TRUE)
 
   experiments <- ablog$experiments
   if ("rank" %in% type) {
     experiments <- rowRanks(experiments, ties.method = "average")
     if (is.null(ylim)) ylim <- c(1L, ncol(experiments))
   }
-  # FIXME: We could also show the other alternatives at each step not just the
-  # one selected. See Leonardo Bezerra's thesis.
-  if ("boxplot" %in% type) {
-    bx <- boxplot(experiments[, trajectory], plot=FALSE)
-    if (is.null(ylim)) {
-      ylim <- range(bx$stats[is.finite(bx$stats)],
-                    bx$out[is.finite(bx$out)], 
-                    bx$conf[is.finite(bx$conf)])
+  costs_avg <- colMeans2(experiments, cols = trajectory)
+
+  if (is.null(mar))
+    mar <- par("mar")
+  inches_to_lines <- (mar / par("mai"))[1L]
+  lab_width <- max(strwidth(labels, units = "inches")) * inches_to_lines
+  with_par(list(mar = c(lab_width + 2.1, 4.1, 0.1, 0.1), cex.axis = 1), {
+    # FIXME: We could also show the other alternatives at each step not just the
+    # one selected. See Leonardo Bezerra's thesis.
+    if ("boxplot" %in% type) {
+      bx <- boxplot(experiments[, trajectory], plot=FALSE)
+      if (is.null(ylim)) {
+        ylim <- range(bx$stats[is.finite(bx$stats)],
+          bx$out[is.finite(bx$out)], 
+          bx$conf[is.finite(bx$conf)])
+      }
     }
-  }
-  costs.avg <- colMeans2(experiments, cols = trajectory)
     
-  plot(costs.avg, xaxt = "n", xlab = NA, ylab = ylab, ylim = ylim,
-       type = "b", pch = 19, ...,
-       panel.first = {
-         grid(nx = NA, ny = NULL, lwd = 2);
-         abline(h = c(costs.avg[1], tail(costs.avg, n = 1)),
-                col = "lightgray", lty = "dotted", lwd = 2) })
-  axis(1, at = seq_along(costs.avg), labels = labels, las = 3)
-  if ("boxplot" %in% type) {
-    bxp(bx, show.names = FALSE, add = TRUE)
-  }
+    plot(costs_avg, xaxt = "n", xlab = NA, ylab = ylab, ylim = ylim,
+      type = "b", pch = 19, ...,
+      panel.first = {
+        grid(nx = NA, ny = NULL, lwd = 2);
+        abline(h = c(costs_avg[1], tail(costs_avg, n = 1)),
+          col = "lightgray", lty = "dotted", lwd = 2) })
+    axis(1, at = seq_along(costs_avg), labels = labels, las = 3)
+    if ("boxplot" %in% type) {
+      bxp(bx, show.names = FALSE, add = TRUE)
+    }
+  })
   invisible()
 }
 

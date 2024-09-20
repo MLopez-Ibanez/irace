@@ -6,11 +6,12 @@
 \usage{
 plotAblation(
   ablog,
-  pdf.file = NULL,
-  pdf.width = 20,
+  pdf_file = NULL,
+  width = 20,
+  height = 7,
   type = c("mean", "boxplot", "rank"),
   n = 0L,
-  mar = par("mar"),
+  mar = NULL,
   ylab = "Mean configuration cost",
   ylim = NULL,
   rename_labels = NULL,
@@ -20,13 +21,15 @@ plotAblation(
 \arguments{
 \item{ablog}{(\code{list()}|\code{character(1)}) Ablation log object returned by \code{\link[=ablation]{ablation()}}. Alternatively, the path to an \code{.Rdata} file, e.g., \code{"log-ablation.Rdata"}, from which the object will be loaded.}
 
-\item{pdf.file}{Output filename.}
+\item{pdf_file}{Output filename.}
 
-\item{pdf.width}{Width provided to create the pdf file.}
+\item{width}{Width provided to create the PDF file.}
+
+\item{height}{Height provided to create the PDF file.}
 
 \item{type}{Type of plot. Supported values are \code{"mean"} and \code{"boxplot"}. Adding \code{"rank"} will plot rank per instance instead of raw cost value.}
 
-\item{n}{(\code{integer(1)}) Number of parameters included in the plot. By default all parameters are included.}
+\item{n}{\code{integer(1)}\cr Number of parameters included in the plot. By default all parameters are included.}
 
 \item{mar}{Vector with the margins for the ablation plot.}
 
@@ -34,7 +37,7 @@ plotAblation(
 
 \item{ylim}{Numeric vector of length 2 giving the y-axis range.}
 
-\item{rename_labels}{\code{c()}\cr Renaming table for nicer labels. For example, `c("No value"="NA", "LongParameterName"="LPN").}
+\item{rename_labels}{\code{character()}\cr Renaming table for nicer labels. For example, \code{c("No value"="NA", "LongParameterName"="LPN")}.}
 
 \item{...}{Further graphical parameters may also be supplied as
 arguments. See \code{\link[graphics:plot.default]{graphics::plot.default()}}.}
@@ -46,7 +49,8 @@ Create plot from an ablation log
 logfile <- file.path(system.file(package="irace"), "exdata", "log-ablation.Rdata")
 plotAblation(ablog = logfile)
 plotAblation(ablog = logfile, type = "mean")
-plotAblation(ablog = logfile, type = c("rank","boxplot"))
+plotAblation(ablog = logfile, type = c("rank","boxplot"), rename_labels = c(
+            "localsearch"="ls", algorithm="algo", source="default"))
 }
 \seealso{
 \code{\link[=ablation]{ablation()}} \code{\link[=ablation_cmdline]{ablation_cmdline()}}
