@@ -32,7 +32,6 @@ Imports:
 Suggests:
     ParamHelpers,
     Rmpi (>= 0.6.0),
-    devtools,
     highr,
     knitr,
     parallel,

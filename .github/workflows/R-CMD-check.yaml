@@ -47,7 +47,8 @@ jobs:
 
       - name: "[macOS] Install openmpi"
         if: runner.os == 'macOS'
-        run: brew install openmpi
+        run: |
+          brew install --cask xquartz
 
       - name: "[Linux] Install openmpi"
         if: runner.os == 'Linux'
@@ -69,18 +70,25 @@ jobs:
       - uses: r-lib/actions/setup-r-dependencies@v2
         if: runner.os != 'macOS'
         with:
-          extra-packages: any::rcmdcheck, mlr=?ignore-before-r=4.0.0
+          extra-packages: |
+            any::rcmdcheck
+            mlr=?ignore-before-r=4.0.0
+            Rmpi=?ignore-unavailable
           needs: check
           cache-version: 1
           install-pandoc: true
-
+          
       - uses: r-lib/actions/setup-r-dependencies@v2
         if: runner.os == 'macOS'
         with:
-          extra-packages: any::rcmdcheck, Rmpi=?ignore, mlr=?ignore-before-r=4.0.0
+          extra-packages: |
+            any::rcmdcheck
+            mlr=?ignore-before-r=4.0.0
+            Rmpi=?ignore
           needs: check
           cache-version: 1
-         
+          install-pandoc: true
+          
       - name: Check (as CRAN)
         env:
           NOT_CRAN: false
@@ -124,7 +132,7 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::covr, mlr=?ignore 
+          extra-packages: any::covr, mlr=?ignore, local::. 
           needs: coverage
           install-pandoc: true
 

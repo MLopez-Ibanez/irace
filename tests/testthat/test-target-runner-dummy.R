@@ -1,13 +1,10 @@
 withr::with_output_sink("test-target-runner-dummy.Rout", {
   skip_on_cran()
 
-  get_executable <- function(filename, src_dir = NULL) {
+  get_executable <- function(filename) {
     filename <- paste0(filename, if (system_os_is_windows()) ".exe" else "")
     p <- if (.Platform$r_arch == "") file.path( "bin", filename) else file.path("bin", .Platform$r_arch, filename)
-    res <- system.file(p, package="irace", mustWork = FALSE)
-    if (res == "" && !is.null(src_dir))
-      res <- test_path(file.path(src_dir, filename))
-    res
+    system.file(p, package="irace", mustWork = FALSE)
   }
   runexe <- function(exe, args) {
     err <- NULL
@@ -35,9 +32,10 @@ withr::with_output_sink("test-target-runner-dummy.Rout", {
     iraceexe <- get_executable("irace")
     skip_if_not(nzchar(iraceexe), "Not run because 'irace' is not installed")
     expect_true(file.exists(iraceexe))
-    skip_on_os("windows")
     # FIXME: For some reason, this does not generate any output on Windows
-    expect_match(paste(collapse="", system2(iraceexe, "--help", stdout = TRUE, stderr = TRUE)),
+    output <- expect_silent(system2(iraceexe, "--help", stdout = TRUE, stderr = TRUE))
+    skip_on_os("windows")
+    expect_match(paste(collapse="", output),
                  "irace: An implementation in R of.*called with: --help")
   })
 
@@ -45,15 +43,13 @@ withr::with_output_sink("test-target-runner-dummy.Rout", {
     ablationexe <- get_executable("ablation")
     skip_if_not(nzchar(ablationexe), "Not run because 'ablation' is not installed")
     expect_true(file.exists(ablationexe))
-    skip_on_os("windows")
     # FIXME: For some reason, this does not generate any output on Windows
-    expect_match(paste(collapse="", system2(ablationexe, "--help", stdout = TRUE, stderr = TRUE)),
-                 "ablation: An implementation in R of Ablation Analysis.*called with: --help")
+    output <- expect_silent(system2(ablationexe, "--help", stdout = TRUE, stderr = TRUE))
+    skip_on_os("windows")
+    expect_match(paste(collapse="", output),
+      "ablation: An implementation in R of Ablation Analysis.*called with: --help")
   })
 
-  target_runner_dummy <- get_executable("target-runner-dummy", "../../src/dummy")
-  expect_true(file.exists(target_runner_dummy))
-  
   run_cmdline <- function(parameters, args) {
     parameters_file <- tempfile("dummy-parameters", fileext = ".txt")
     withr::local_file(parameters_file)
@@ -65,6 +61,11 @@ withr::with_output_sink("test-target-runner-dummy.Rout", {
                          ' --train-instances-dir=  --train-instances-file=', train_instances_file,
                          ' --target-runner=', target_runner_dummy))
   }
+
+  target_runner_dummy <- get_executable("target-runner-dummy")
+  skip_if_not(nzchar(target_runner_dummy), "Not run because 'target-runner-dummy' is not installed")
+  expect_true(file.exists(target_runner_dummy))
+  
   test_that("--check", {
     expect_warning(
       run_cmdline(paste0('p_int  "--p_int " i (1, 10)\n',

@@ -78,10 +78,8 @@ get_dependent_domain <- function(param, configuration)
 
 generate_sobol <- function(parameters, n, repair = NULL)
 {
-  seed <- runif_integer(size = 1L)
-  cat(sprintf("spacefillr::generate_sobol_set(%d, dim = %d, seed = %d)\n",
-    n, parameters$nbVariable, seed))
-  confs <- spacefillr::generate_sobol_set(n, dim = parameters$nbVariable, seed = seed)
+  confs <- spacefillr::generate_sobol_set(n, dim = parameters$nbVariable,
+    seed = runif_integer(size = 1L))
   confs <- data.table(confs)
   setnames(confs, parameters$names_variable)
   hierarchy <- parameters$hierarchy
