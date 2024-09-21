@@ -234,11 +234,10 @@ You can also launch irace by opening the R console and executing:
 ### GitHub (Development version) ###
 
 If you wish to try the development version, you can install it by executing the
-following commands within the R console:
+following command within the R console:
 
 ```R
-    install.packages("remotes")
-    remotes::install_github("MLopez-Ibanez/irace", upgrade=FALSE)
+    install.packages('irace', repos = c('https://mlopez-ibanez.r-universe.dev', 'https://cloud.r-project.org'))
 ```
 
 ### Python ###
