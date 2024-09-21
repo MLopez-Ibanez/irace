@@ -8,8 +8,9 @@
 [![R build
 status](https://github.com/MLopez-Ibanez/irace/workflows/R-CMD-check/badge.svg)](https://github.com/MLopez-Ibanez/irace/actions) 
 [![Codecov test coverage](https://codecov.io/gh/MLopez-Ibanez/irace/branch/master/graph/badge.svg)](https://app.codecov.io/gh/MLopez-Ibanez/irace?branch=master)
+[![irace status badge](https://mlopez-ibanez.r-universe.dev/badges/irace)](https://mlopez-ibanez.r-universe.dev/irace)
 <!-- badges: end -->
-  
+
 [ [**Homepage**](https://mlopez-ibanez.github.io/irace/) ] [ [**User Guide (PDF)**](https://cran.r-project.org/package=irace/vignettes/irace-package.pdf) ]
 
 **Maintainers:** [Manuel López-Ibáñez](https://lopez-ibanez.eu/), Leslie Pérez Cáceres
