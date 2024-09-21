@@ -9,8 +9,9 @@
 \RequirePackage{xparse}
 \RequirePackage[dvipsnames]{xcolor}
 \documentclass[a4paper,english]{article}
-\usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
 \usepackage[a4paper]{geometry} % It saves some pages
 \usepackage[english]{babel}
 \usepackage{ifthen}
@@ -25,8 +26,8 @@
 \usepackage{amsmath,amssymb}
 \usepackage{relsize}
 \usepackage{fancyvrb}
-\usepackage{microtype}
 \usepackage{underscore}
+\usepackage{microtype}
 % \texttt{test -- test} keeps the "--" as "--" (and does not convert it to an en dash)
 \DisableLigatures{encoding = T1, family = tt* }
 \usepackage[hyphens]{url}
