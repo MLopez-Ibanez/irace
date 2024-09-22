@@ -145,7 +145,7 @@
     "type": "p",
     "short": "",
     "long": "--train-instances-dir",
-    "default": ".\/Instances",
+    "default": "",
       "vignettes": "Directory where training instances are located; either absolute path or relative to current directory. See \\autoref{sec:training}.",
     "section": "Training instances",
     "description": "Directory where training instances are located; either absolute path or relative to current directory. If no \\code{trainInstancesFiles} is provided, all the files in \\code{trainInstancesDir} will be listed as instances."

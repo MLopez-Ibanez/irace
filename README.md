@@ -254,8 +254,8 @@ Usage
 
 1. Create a directory for storing the tuning scenario setup (Bash shell):
 ```bash
-        mkdir ~/tuning
-        cd ~/tuning
+        mkdir ./tuning
+        cd ./tuning
 ```
 
 2. Initialize your tuning directory with template config files (Bash shell):
@@ -270,11 +270,12 @@ Usage
       default. If you wish to maximize it, just multiply the value by `-1`
       within the script.
     * In `scenario.txt`, uncomment and assign only the parameters for which
-      you need a value different than the default one.
+      you need a value different than the default one. For example, you may need to set
+      `trainInstancesDir="./Instances/"`.
    
     There are examples in `$IRACE_HOME/examples/`.
 
-4. Put the instances in `~/tuning/Instances/`. In addition, you can
+4. Put the instances in `./tuning/Instances/`. In addition, you can
    create a file that specifies which instances from that directory
    should be run and which instance-specific parameters to use. See
    `scenario.txt` and `instances-list.txt` for examples. The command
@@ -284,7 +285,7 @@ Usage
 
 5. Calling the command in the Bash shell:
 ```bash
-        cd ~/tuning/ && $IRACE_HOME/bin/irace
+        cd ./tuning/ && $IRACE_HOME/bin/irace
 ```
    performs one run of Iterated Race. See the output of `irace --help` for
    additional irace parameters. Command-line parameters override the
@@ -297,7 +298,7 @@ For executing several repetitions of irace in parallel, call the
 program `parallel-irace` from the Bash shell:
 
 ```bash
-    cd ~/tuning/ && $IRACE_HOME/bin/parallel-irace N
+    cd ./tuning/ && $IRACE_HOME/bin/parallel-irace N
 ```
 
 where N is the number of repetitions. By default, the execution directory of

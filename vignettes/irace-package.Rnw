@@ -554,12 +554,12 @@ indications provided in each step and in the template files used; if you have
 doubts check the the sections that describe each option in detail.
 
 \begin{enumerate}[leftmargin=*]
-\item Create a directory (\eg~\path{~/tuning/}) for the scenario setup. This directory will contain
+\item Create a directory (\eg~\path{./tuning/}) for the scenario setup. This directory will contain
 all the files that describe the scenario. On GNU/Linux or OS X, you can do this as follows:
 %<<dir1,engine='bash',eval=FALSE>>=
 \begin{lstlisting}[style=BashInputStyle]
-mkdir ~/tuning
-cd ~/tuning
+mkdir ./tuning
+cd ./tuning
 \end{lstlisting}
 %@
 
@@ -582,7 +582,7 @@ information in \autoref{sec:initial}. If you do not need to
 define initial configurations remove this file from the directory.
 
 \item Place the instances you would like to use for the tuning of your
-  algorithm in the folder \path{~/tuning/Instances/}. In addition, you can
+  algorithm in the folder \path{./tuning/Instances/}. In addition, you can
   create a file (\eg~\code{instances-list.txt}) that specifies which instances
   from that directory should be run and which instance-specific parameters to
   use. To use such an instance file, set the appropriate option in
@@ -598,7 +598,8 @@ target algorithm; the default value is the current directory.
 \item[\parameter{maxExperiments}] (\code{--max-experiments}): the maximum number of executions
 of the target algorithm that \irace will perform.
 \item[\parameter{maxTime}] (\code{--max-time}): maximum total execution time in seconds for the executions of \code{targetRunner}. In this case, \code{targetRunner} must return two values: cost and time. Note that you must provide either \parameter{maxTime} or \parameter{maxExperiments}.
-\end{description}
+\item[\parameter{trainInstancesDir}] (\code{--train-instances-dir}): set if to \path{./Instances} if you put the training instances in that folder as instructed above.
+  \end{description}
 For setting the tuning budget see \autoref{sec:budget}. For more information on \irace options and their default values, see \autoref{sec:irace options}.
 
 \item Modify the \code{target-runner} script to run your algorithm. This script
@@ -703,7 +704,7 @@ checkIraceScenario(scenario = scenario)
 \textbf{From the command-line console}, call the command (on Windows, you should execute
   \code{irace.exe}):
 \begin{lstlisting}[style=BashInputStyle]
-cd ~/tuning/
+cd ./tuning/
 # $IRACE_HOME is the installation directory of irace
 # By default, irace reads scenario.txt, you can specify a different file
 # with --scenario.
@@ -720,7 +721,7 @@ in the command line or directly in the \code{scenario.txt} file.
 <<irace_R_exe, eval=FALSE, prompt=FALSE>>=
 library("irace")
 # Go to the directory containing the scenario files
-setwd("~/tuning")
+setwd("./tuning")
 scenario <- readScenario(filename = "scenario.txt",
                          scenario = defaultScenario())
 irace_main(scenario = scenario)
@@ -750,35 +751,35 @@ a GNU/Linux system such as Ubuntu with a working \proglang{C} compiler such as \
 To execute this scenario follow these steps:
 
 \begin{enumerate}
-\item Create a directory for the tuning (\eg~\path{~/tuning/}) and copy the example scenario files
+\item Create a directory for the tuning (\eg~\path{./tuning/}) and copy the example scenario files
 located in the \code{examples} folder to the created directory:
 %<<dir0,engine='bash',eval=FALSE>>=
 \begin{lstlisting}[style=BashInputStyle]
-mkdir ~/tuning
-cd ~/tuning
+mkdir ./tuning
+cd ./tuning
 # $IRACE_HOME is the installation directory of irace.
-cp $IRACE_HOME/examples/acotsp/* ~/tuning/
+cp $IRACE_HOME/examples/acotsp/* ./tuning/
 \end{lstlisting}
 %@
 
-\item Download the training instances from \url{https://iridia.ulb.ac.be/supp/IridiaSupp2016-003/index.html} to the \path{~/tuning/} directory.
-\item Create the instance directory (\eg~\path{~/tuning/Instances}) and decompress the instance files on it.
+\item Download the training instances from \url{https://iridia.ulb.ac.be/supp/IridiaSupp2016-003/index.html} to the \path{./tuning/} directory.
+\item Create the instance directory (\eg~\path{./tuning/Instances}) and decompress the instance files on it.
 
 %<<instance0,engine='bash',eval=FALSE>>=
 \begin{lstlisting}[style=BashInputStyle]
-mkdir ~/tuning/Instances/
-cd ~/tuning/
+mkdir ./tuning/Instances/
+cd ./tuning/
 tar -xvf tsp-instances-training.tar.bz2 Instances/
 \end{lstlisting}
 %@
 
-\item Download the \ACOTSP software from \url{http://www.aco-metaheuristic.org/aco-code/} to the \path{~/tuning/}
+\item Download the \ACOTSP software from \url{http://www.aco-metaheuristic.org/aco-code/} to the \path{./tuning/}
 directory and compile it.
 %<<acotsp0,engine='bash',eval=FALSE>>=
 \begin{lstlisting}[style=BashInputStyle]
-cd ~/tuning/
+cd ./tuning/
 tar -xvf ACOTSP-1.03.tgz
-cd ~/tuning/ACOTSP-1.03
+cd ./tuning/ACOTSP-1.03
 make
 \end{lstlisting}
 %@
@@ -787,8 +788,8 @@ make
 
 %<<runexample,engine='bash',eval=FALSE>>=
 \begin{lstlisting}[style=BashInputStyle]
-mkdir ~/tuning/acotsp-arena/
-cd ~/tuning/
+mkdir ./tuning/acotsp-arena/
+cd ./tuning/
 # $IRACE_HOME is the installation directory of irace.
 $IRACE_HOME/bin/irace
 \end{lstlisting}
@@ -798,7 +799,7 @@ $IRACE_HOME/bin/irace
 
 <<runexample2,prompt=FALSE,eval=FALSE>>=
 library("irace")
-setwd("~/tuning/")
+setwd("./tuning/")
 irace_cmdline()
 @
 
@@ -1347,10 +1348,10 @@ by \irace for reporting errors in \code{targetEvaluator}:
 The \irace options \parameter{trainInstancesDir} and \parameter{trainInstancesFile}
 specify where to find the training instances.
 %
-By default, the value of \parameter{trainInstancesFile} is empty. This means that \irace will consider all files within the directory given by \parameter{trainInstancesDir} (by default \path{./Instances}) as training instances.
+If you only set the value of \parameter{trainInstancesDir} (e.g., to  \path{./Instances}),  \irace will consider all files within that directory as training instances.
 
 Otherwise, the value of \parameter{trainInstancesFile} may specify a text
-file. The format of this file is one instance per line. Within each line, elements separated by white-space will be parsed as separate arguments to be supplied to \parameter{targetRunner}. This allows defining instance-specific parameter settings. Quoted strings will be parsed as a single argument.
+file. The format of this file is one instance per line. Within each line, elements separated by white-space will be parsed as separate arguments to be supplied to \parameter{targetRunner}. This allows defining instance-specific parameter settings. Quoted strings will be parsed as a single argument. 
 %
 The following example shows a training instance file for the \ACOTSP scenario:
 
@@ -1367,10 +1368,10 @@ The following example shows a training instance file for the \ACOTSP scenario:
 \caption{Training instances file for tuning \ACOTSP.}\label{fig:acotsp_training}
 \end{figure}
 
-The value of \parameter{trainInstancesDir} is always prefixed to the instance
+The value of \parameter{trainInstancesDir}, if set, is always prefixed to the instance
 name, that is, the instances names are treated as relative to this directory.
 %
-For example, given the above file as \parameter{trainInstancesFile} and the default value of  \parameter{trainInstancesDir} (\code{./Instances}), then a possible invocation of \parameter{targetRunner} would be:
+For example, given the above file as \parameter{trainInstancesFile} and   \parameter{trainInstancesDir}\code{="./Instances"}, then a possible invocation of \parameter{targetRunner} would be:
 %
 %<<target_runner_cmd, engine='bash', eval=FALSE>>=
 \begin{lstlisting}[style=BashInputStyle]
@@ -1800,11 +1801,11 @@ please be careful not to change the order of the instances, because this would m
 \irace invalid. To change the instances path, open the \aR console and use:
 
 <<change_recover, prompt=TRUE, eval=FALSE>>=
-iraceResults <- read_logfile("~/tuning/irace.Rdata")
-new_path <- "~/experiments/tuning/instances/"
+iraceResults <- read_logfile("./tuning/irace.Rdata")
+new_path <- "./experiments/tuning/instances/"
 iraceResults$scenario$instances <-
    paste0(new_path, basename(iraceResults$scenario$instances))
-save(iraceResults, file="~/tuning/irace.Rdata")
+save(iraceResults, file="./tuning/irace.Rdata")
 @
 
 This example can also can be applied to the target execution files \parameter{targetRunner} and \parameter{targetEvaluator}.
@@ -3201,7 +3202,7 @@ Follow this checklist to detect where the problem is:
 
 \item Make sure that your \code{targetRunner} script or program is at the specified location. If you see this error:
 \begin{CodeInput}
-Error: == irace == target runner '~/tuning/target-runner' does not exist
+Error: == irace == target runner './tuning/target-runner' does not exist
 \end{CodeInput}
 %
 it means that \irace cannot find the \code{target-runner} file. Check that the file is at
@@ -3210,12 +3211,12 @@ the path specified by the error.
 \item Make sure that your \code{targetRunner} script is an executable file and the user running \irace has permission to execute it. The following errors:
 %
 \begin{CodeInput}
-Error: == irace == target runner '~/tuning/target-runner' is a directory,
+Error: == irace == target runner './tuning/target-runner' is a directory,
 not a file
 \end{CodeInput}
 or
 \begin{CodeInput}
-Error: == irace == target runner '~/tuning/target-runner' is not executable
+Error: == irace == target runner './tuning/target-runner' is not executable
 \end{CodeInput}
 %
 mean that your \code{targetRunner} is not an executable file. In the first
@@ -3224,30 +3225,30 @@ name of the script. In the second case, you must make the file executable,
 which in GNU/Linux can be done by:
 %
 \begin{lstlisting}[style=BashInputStyle]
-chmod +x ~/tuning/target-runner
+chmod +x ./tuning/target-runner
 \end{lstlisting}
 
 \item If your \code{targetRunner} script calls another program, make sure it is at  the location described in the script
 (variable \code{EXE} in the examples and templates). A typical output for such an error is:
 %
 \begin{CodeInput}
-Error: == irace == running command ''~/tuning/target-runner' 1 8 676651103
-~/tuning/Instances/1000-16.tsp --ras --localsearch 2 --alpha 4.03 --beta 1.89
+Error: == irace == running command ''./tuning/target-runner' 1 8 676651103
+./tuning/Instances/1000-16.tsp --ras --localsearch 2 --alpha 4.03 --beta 1.89
 --rho  0.02 --ants 37 --nnls 48 --dlb 0 --rasranks 15 2>\&1' had status 1
 == irace == The call to target_runner_default was:
-~/tuning/target-runner 1 8 676651103 ~/tuning/Instances/1000-16.tsp --ras
+./tuning/target-runner 1 8 676651103 ./tuning/Instances/1000-16.tsp --ras
 --localsearch 2 --alpha 4.03 --beta 1.89 --rho  0.02 --ants 37 --nnls 48
 --dlb 0 --rasranks 15
 == irace == The output was:
-Tue May  3 19:00:37 UTC 2016: error: ~/bin/acotsp: not found or not executable
-(pwd: ~/tuning/acotsp-arena)
+Tue May  3 19:00:37 UTC 2016: error: ./bin/acotsp: not found or not executable
+(pwd: ./tuning/acotsp-arena)
 \end{CodeInput}
 %
 You may test your script by copying the command line shown in the error and
 executing \code{target-runner} directly on the execution directory (\parameter{execDir}). In this case, the command line is:
 %
 \begin{lstlisting}[style=BashInputStyle]
-~/tuning/target-runner 1 8 676651103 ~/tuning/Instances/1000-16.tsp  --ras \
+./tuning/target-runner 1 8 676651103 ./tuning/Instances/1000-16.tsp  --ras \
  --localsearch 2 --alpha 4.03 --beta 1.89 --rho  0.02 --ants 37 --nnls 48 \
  --dlb 0 --rasranks 15
 \end{lstlisting}
@@ -3270,8 +3271,8 @@ Error: == irace == error in running command
   number as output. For example:
 %
 \begin{CodeInput}
-Error: == irace == The output of '~/tuning/target-runner 1 25 365157769
- ~/tuning/Instances/1000-31.tsp --ras --localsearch 1 --alpha 0.26 --beta
+Error: == irace == The output of './tuning/target-runner 1 25 365157769
+ ./tuning/Instances/1000-31.tsp --ras --localsearch 1 --alpha 0.26 --beta
  6.95 --rho 0.69 --ants 56 --nnls 10 --dlb 0 --rasranks 7' is not numeric!
 == irace == The output was:
 Solution: 24479793
@@ -3280,7 +3281,7 @@ Solution: 24479793
 %% For testing your script, copy the command-line of \code{target-runner} and execute it directly on the execution directory (\parameter{execDir}):
 %% %
 %% \begin{lstlisting}[style=BashInputStyle]
-%% ~/tuning/target-runner 1 25 365157769 ~/tuning/Instances/1000-31.tsp  --ras \
+%% ./tuning/target-runner 1 25 365157769 ./tuning/Instances/1000-31.tsp  --ras \
 %%  --localsearch 1 --alpha 0.26 --beta 6.95 --rho  0.69 --ants 56 \
 %%  --nnls 10 --dlb 0 --rasranks 7
 %% \end{lstlisting}

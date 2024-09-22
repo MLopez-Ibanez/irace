@@ -172,7 +172,7 @@ The provided configurations must not violate the constraints described in \param
 
 \subsection[Training instances]{Training instances}
 \begin{description}
- \defparameter{trainInstancesDir}{train-instances-dir}{./Instances}%
+ \defparameter{trainInstancesDir}{train-instances-dir}{}%
 Directory where training instances are located; either absolute path or relative to current directory. See \autoref{sec:training}.
 
  \defparameter{trainInstancesFile}{train-instances-file}{}%

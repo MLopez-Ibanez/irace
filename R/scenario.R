@@ -608,7 +608,7 @@ printScenario <- function(scenario)
 #'  \item Training instances:
 #'    \describe{
 #'      \item{`instances`}{Character vector of the instances to be used in the \code{targetRunner}. (Default: `""`)}
-#'      \item{`trainInstancesDir`}{Directory where training instances are located; either absolute path or relative to current directory. If no \code{trainInstancesFiles} is provided, all the files in \code{trainInstancesDir} will be listed as instances. (Default: `"./Instances"`)}
+#'      \item{`trainInstancesDir`}{Directory where training instances are located; either absolute path or relative to current directory. If no \code{trainInstancesFiles} is provided, all the files in \code{trainInstancesDir} will be listed as instances. (Default: `""`)}
 #'      \item{`trainInstancesFile`}{File that contains a list of training instances and optionally additional parameters for them. If \code{trainInstancesDir} is provided, \code{irace} will search for the files in this folder. (Default: `""`)}
 #'      \item{`blockSize`}{Number of training instances, that make up a `block' in \code{trainInstancesFile}. Elimination of configurations will only be performed after evaluating a complete block and never in the middle of a block. Each block typically contains one instance from each instance class (type or family) and the block size is the number of classes. (Default: `1`)}
 #'    }

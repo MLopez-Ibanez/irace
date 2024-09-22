@@ -17,6 +17,10 @@
    present. The number of `digits` for real-valued parameters is now specified
    in the parameter space description. See the example in `readParameters()`.
 
+ * The default value of the scenario option `trainInstancesDir` is now `""`.
+   The previous default value of `"./Instances"` often caused confusion to
+   users not using files as training instances.
+ 
  * The `scenario` object now includes the `parameters` object. Thus
    functions such as `irace()`, which previously took as arguments both
    `scenario` and `parameters`, now only take `scenario`. This also means that

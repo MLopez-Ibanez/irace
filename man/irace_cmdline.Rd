@@ -121,7 +121,6 @@ List of command-line options:
                          either absolute path or relative to current directory.
                          If no `trainInstancesFiles` is provided, all the files
                          in `trainInstancesDir` will be listed as instances.
-                         Default: ./Instances.
    --train-instances-file  File that contains a list of training instances and
                          optionally additional parameters for them. If
                          `trainInstancesDir` is provided, `irace` will search
