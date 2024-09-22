@@ -8,7 +8,8 @@
 [![R build
 status](https://github.com/MLopez-Ibanez/irace/workflows/R-CMD-check/badge.svg)](https://github.com/MLopez-Ibanez/irace/actions) 
 [![Codecov test coverage](https://codecov.io/gh/MLopez-Ibanez/irace/branch/master/graph/badge.svg)](https://app.codecov.io/gh/MLopez-Ibanez/irace?branch=master)
-[![irace status badge](https://mlopez-ibanez.r-universe.dev/badges/irace)](https://mlopez-ibanez.r-universe.dev/irace)
+[![r-universe version](https://mlopez-ibanez.r-universe.dev/badges/irace)](https://mlopez-ibanez.r-universe.dev/irace)
+[![r-universe build status](https://github.com/r-universe/mlopez-ibanez/actions/workflows/build.yml/badge.svg)](https://github.com/r-universe/mlopez-ibanez/actions/workflows/build.yml)
 <!-- badges: end -->
 
 [ [**Homepage**](https://mlopez-ibanez.github.io/irace/) ] [ [**User Guide (PDF)**](https://cran.r-project.org/package=irace/vignettes/irace-package.pdf) ]
