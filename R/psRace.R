@@ -100,6 +100,30 @@ psRace <- function(iraceResults, max_experiments, conf_ids = NULL, iteration_eli
     }
     conf_ids <- get_confs_for_psrace(iraceResults, scenario$blockSize, iteration_elites,
       max_experiments, conf_ids = conf_ids, rejected_ids = race_state$rejected_ids)
+    irace.assert(length(conf_ids) > 1L, eval_after = {
+      # Debug what happened if the assert failed.
+      rejected_ids <- race_state$rejected_ids
+      cat("blockSize:", scenario$blockSize, "\niteration_elites: ", as.character(iteration_elites),
+        "\nrejected: ", paste0(collapse=", ", rejected_ids), "\n")
+      allElites <- iraceResults$allElites
+      experiments <- iraceResults$experiments
+      conf_ids <- if (iteration_elites) unlist(rev(allElites)) else allElites[[length(allElites)]]
+      cat("conf_ids1:", paste0(collapse=", ", conf_ids), "\n")
+      conf_ids <- unique(c(conf_ids, iraceResults$allConfigurations[[".ID."]]))
+      cat("conf_ids2:", paste0(collapse=", ", conf_ids), "\n")
+      # NA may be generated if we skipped iterations.
+      if (anyNA(conf_ids))
+        conf_ids <- conf_ids[!is.na(conf_ids)]
+      cat("conf_ids3:", paste0(collapse=", ", conf_ids), "\n")
+      # Remove rejected configurations.
+      if (length(rejected_ids))
+        conf_ids <- setdiff(conf_ids, rejected_ids)
+      cat("conf_ids4:", paste0(collapse=", ", conf_ids), "\n")
+      experiments <- 
+      conf_needs <- colSums(is.na(experiments[, conf_ids, drop = FALSE]))
+      cat("conf_needs:", paste0(collapse=", ", conf_needs), "\n")
+    })
+    
   } else if (length(conf_ids) <= 1L) {
     irace.error ("The number configurations provided should be larger than 1.")
   } else if (length(race_state$rejected_ids) && any(conf_ids %in% race_state$rejected_ids)) {
