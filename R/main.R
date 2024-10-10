@@ -396,6 +396,10 @@ checkTargetFiles <- function(scenario)
     repair = scenario$repairConfiguration)
   set(configurations, j = ".ID.", value = seq_nrow(configurations))
   
+  # Ensure .ID. is the first column
+  setcolorder(configurations, c(".ID.", setdiff(names(configurations), ".ID.")))
+
+  
   # Read initial configurations provided by the user.
   initConfigurations <- allConfigurationsInit(scenario)
   setDT(initConfigurations)
