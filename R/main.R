@@ -395,6 +395,7 @@ checkTargetFiles <- function(scenario)
   configurations <- sampleUniform(scenario$parameters, 2L,
     repair = scenario$repairConfiguration)
   set(configurations, j = ".ID.", value = seq_nrow(configurations))
+  setcolorder(configurations, ".ID.", before = 1L)
   
   # Read initial configurations provided by the user.
   initConfigurations <- allConfigurationsInit(scenario)

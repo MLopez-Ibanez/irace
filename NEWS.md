@@ -214,6 +214,8 @@
  
  * `readConfigurationsFile()` now handles parameters with dependent domains.
  
+ * Fix #71: Ensure `".ID."` is the first column in `checkTargetFiles()` (Manuel López-Ibáñez, reported by @ivan1arriola)
+ 
  
 # irace 3.5
 
