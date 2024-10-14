@@ -132,7 +132,7 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::covr, mlr=?ignore, local::. 
+          extra-packages: any::covr, mlr=?ignore, Rmpi=?ignore, local::. 
           needs: coverage
           install-pandoc: true
 
@@ -201,7 +201,7 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::pkgdown, mlr=?ignore
+          extra-packages: any::pkgdown, mlr=?ignore, Rmpi=?ignore
           needs: website
           install-pandoc: true
           
