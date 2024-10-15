@@ -201,7 +201,7 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::pkgdown, mlr=?ignore, Rmpi=?ignore
+          extra-packages: any::pkgdown, mlr=?ignore, Rmpi=?ignore, any::remotes
           needs: website
           install-pandoc: true
           
