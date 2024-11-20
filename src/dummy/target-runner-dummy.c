@@ -72,7 +72,6 @@ int main(int argc, char *argv[])
     //int id_configuration = atoi(argv[1]);
     //const char * id_instance = argv[2];
     unsigned int seed = atol(argv[3]);
-    srand(seed);
     long instance = read_long(argv[4]);
     double bound = -1;
     int idx = 5;
@@ -116,10 +115,15 @@ int main(int argc, char *argv[])
         }
     }
 
-    if (reject && rand01() < reject_rate) {
-        printf("Inf\n");
-        exit(EXIT_SUCCESS);
+    if (reject) {
+        srand((unsigned int) (seed + instance + (p_int * p_real)));
+        if (rand01() < reject_rate) {
+            printf("Inf\n");
+            exit(EXIT_SUCCESS);
+        }
     }
+    
+    srand(seed);
     double cost = instance + (p_int * p_real) + rand01();
     double time = (time_is_cost) ? cost : (
         (bound > 0) ? (bound+1) * rand01() + 0.00001 : instance + (int) (10 * rand01())
