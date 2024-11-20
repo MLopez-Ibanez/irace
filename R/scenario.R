@@ -318,7 +318,7 @@ checkScenario <- function(scenario = defaultScenario())
   
   if (is.na(scenario$capping))
     scenario$capping <- (scenario$elitist && scenario$maxTime > 0 &&
-                           !is.na(scenario$oundMax) && scenario$boundMax > 0)
+                           !is.na(scenario$boundMax) && scenario$boundMax > 0)
   if (scenario$capping) {
     if (!scenario$elitist) 
       irace.error("When capping == TRUE, elitist must be enabled.")

@@ -56,4 +56,24 @@ test_that("cap.irace targetRunner = target.runner.reject, maxTime = 1000", {
   cap.irace(targetRunner = target.runner.reject, maxTime = 1000, boundMax = 5, debugLevel = 3)
 })
 
+test_that("capping default value", {
+  parameters_table <- '
+   x "" r (0, 1.00)
+   y "" r (0, 1.00)
+   reject "" c (0,1)'
+  
+  parameters <- readParameters(text = parameters_table)
+
+  def_scenario <- list(instances = c("ackley", "goldestein", "matyas", "himmelblau"),
+                   targetRunner = target.runner.reject,
+                   maxTime = 1200,
+                   logFile = tempfile(fileext=".Rdata"),
+                   parameters = parameters)
+  scenario <- checkScenario(def_scenario)
+  expect_false(scenario$capping)
+  def_scenario$boundMax <- 80
+  scenario <- checkScenario(def_scenario)
+  expect_true(scenario$capping)
+})
+
 }) # withr::with_output_sink()
