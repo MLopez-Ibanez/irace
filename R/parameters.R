@@ -1,5 +1,4 @@
-# Checks that variables in the expressions are within
-# the parameters names.
+# Checks that variables in the expressions are within the parameters names.
 check_domain_dependencies <- function (params, depends, types)
 {
   allnames <- names(params)

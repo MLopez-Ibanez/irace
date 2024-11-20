@@ -1,6 +1,18 @@
 withr::with_output_sink("test-readParameters.Rout", {
 
-test_that("error checking", {
+  test_that("error checking", {
+expect_error(readParameters(text = '
+rest_t "--restart_temp_ratio="  r,log (0.00001, 0.9)
+[global]
+digits = 4
+'), "Domain bounds")
+
+expect_no_error(readParameters(text = '
+rest_t "--restart_temp_ratio="  r,log (0.00001, 0.9)
+[global]
+digits = 5
+'))
+
 expect_error(readParameters(text = '
 temp "" r (0, 10)
 t-max "" i (1, 50)

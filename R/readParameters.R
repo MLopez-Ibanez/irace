@@ -173,10 +173,34 @@ readParameters <- function (file, digits = 4L, debugLevel = 0L, text)
   lines <- readLines(con = file)
   # Delete comments 
   lines <- trim(sub("#.*$", "", lines))
+  within_global <- FALSE
   nbLines <- 0L
+  # Parse [global] first.
+  for (line in lines) {
+    nbLines <- nbLines + 1L
+    if (nchar(line) == 0L) next
+    if (grepl("^[[:space:]]*\\[forbidden\\]", line)) {
+      within_global <- FALSE
+      next
+    }
+    if (grepl("^[[:space:]]*\\[global\\]", line)) {
+      within_global <- TRUE
+      next
+    }
+    if (within_global) {
+      if (grepl("^[[:space:]]*digits[[:space:]]*=[[:space:]]*[0-9]+[[:space:]]*$", line)) {
+        eval(parse(text=line))
+        if (!is.wholenumber(digits) || digits > 15 || digits < 1)
+          errReadParameters(filename, nbLines, line, "'digits' must be an integer within [1, 15]")
+        digits <- as.integer(digits)
+      } else 
+        errReadParameters(filename, nbLines, line, "Unknown global option")
+      next
+    }
+  }
   forbidden <- NULL
   within_global <- within_forbidden <- FALSE
-
+  nbLines <- 0L
   for (line in lines) {
     nbLines <- nbLines + 1L
     if (nchar(line) == 0L) next
@@ -197,16 +221,8 @@ readParameters <- function (file, digits = 4L, debugLevel = 0L, text)
       forbidden <- c(forbidden, exp)
       next
     }
-    if (within_global) {
-      if (grepl("^[[:space:]]*digits[[:space:]]*=[[:space:]]*[0-9]+[[:space:]]*$", line)) {
-        eval(parse(text=line))
-        if (!is.wholenumber(digits) || digits > 15 || digits < 1)
-          errReadParameters(filename, nbLines, line, "'digits' must be an integer within [1, 15]")
-        digits <- as.integer(digits)
-      } else 
-        errReadParameters(filename, nbLines, line, "Unknown global option")
-      next
-    }
+    if (within_global) next # Already parsed above.
+    
     ## Match name (unquoted alphanumeric string)
     result <- field.match (line, "[._[:alnum:]]+")
     name <- result$match
