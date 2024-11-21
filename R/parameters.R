@@ -181,6 +181,7 @@ Parameter <- function(name, type, domain, label, condition, transf,
     domain <- sapply(exp_domain, USE.NAMES=FALSE, function(x) if (is.numeric(x)) x else NA)
     if (type == "r") {
       # digits >= 15 is almost infinite-precision so we do not complain.
+      digits <- as.integer(digits)
       if (digits < 15L &&
           (!valid_real_bound(domain[1L], digits)
             || !valid_real_bound(domain[2L], digits))) { 
@@ -199,7 +200,7 @@ Parameter <- function(name, type, domain, label, condition, transf,
         named_stop("invalid_domain", "for parameter '", name, "' of type 'integer', values must be integers")
       if (anyNA(domain)) 
         domain <- as.expression(sapply(exp_domain, USE.NAMES=FALSE, function(x) if (is.numeric(x)) as.integer(x) else x))
-      else 
+      else
         domain <- as.integer(domain)
     }
     if (!is.expression(domain) && domain[1L] >= domain[2L])

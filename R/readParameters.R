@@ -180,11 +180,8 @@ readParameters <- function (file, digits = 4L, debugLevel = 0L, text)
     nbLines <- nbLines + 1L
     if (nchar(line) == 0L) next
     if (grepl("^[[:space:]]*\\[forbidden\\]", line)) {
-      within_global <- FALSE
-      next
-    }
-    if (grepl("^[[:space:]]*\\[global\\]", line)) {
-      within_global <- TRUE
+      if (within_global)
+        break
       next
     }
     if (within_global) {
@@ -195,34 +192,32 @@ readParameters <- function (file, digits = 4L, debugLevel = 0L, text)
         digits <- as.integer(digits)
       } else 
         errReadParameters(filename, nbLines, line, "Unknown global option")
+      lines[nbLines] <- "" # Do not parse it again.
+      next
+    }
+    if (grepl("^[[:space:]]*\\[global\\]", line)) {
+      within_global <- TRUE
+      lines[nbLines] <- "" # Do not parse it again.
       next
     }
   }
   forbidden <- NULL
-  within_global <- within_forbidden <- FALSE
+  within_forbidden <- FALSE
   nbLines <- 0L
   for (line in lines) {
     nbLines <- nbLines + 1L
     if (nchar(line) == 0L) next
     
-    if (grepl("^[[:space:]]*\\[forbidden\\]", line)) {
-      within_forbidden <- TRUE
-      within_global <- FALSE
-      next
-    }
-    if (grepl("^[[:space:]]*\\[global\\]", line)) {
-      within_global <- TRUE
-      within_forbidden <- FALSE
-      next
-    }
     if (within_forbidden) {
       # FIXME: Better error reporting.
       exp <- parse_condition(line, filename, nbLines, line, " for forbidden expressions")
       forbidden <- c(forbidden, exp)
       next
     }
-    if (within_global) next # Already parsed above.
-    
+    if (grepl("^[[:space:]]*\\[forbidden\\]", line)) {
+      within_forbidden <- TRUE
+      next
+    }
     ## Match name (unquoted alphanumeric string)
     result <- field.match (line, "[._[:alnum:]]+")
     name <- result$match
@@ -337,7 +332,7 @@ readParameters <- function (file, digits = 4L, debugLevel = 0L, text)
   }
   parameters <- do.call(parametersNew, c(params, list(forbidden=forbidden, debugLevel = debugLevel)))
   if (debugLevel >= 2) {
-    print(parameters, digits = 15)
+    print(parameters, digits = 15L)
     irace.note("Parameters have been read\n")
   }
   parameters

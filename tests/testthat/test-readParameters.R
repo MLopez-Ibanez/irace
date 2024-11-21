@@ -1,6 +1,38 @@
 withr::with_output_sink("test-readParameters.Rout", {
 
   test_that("error checking", {
+
+    ref <- parametersNew(param_real(name = "tmp", lower = 0, upper=1,
+      label = "", digits = 5), forbidden = "tmp == 0")
+
+    expect_identical(ref, readParameters(text='
+tmp "" r (0, 1)
+
+[global]
+digits = 5
+[forbidden]
+tmp == 0
+'))
+
+    expect_identical(ref, readParameters(text='
+tmp "" r (0, 1)
+[forbidden]
+tmp == 0
+[global]
+digits = 5
+'))
+
+    expect_identical(ref, readParameters(text='
+tmp "" r (0, 1)
+
+[forbidden]
+tmp == 0
+
+[global]
+
+digits = 5
+'))
+
 expect_error(readParameters(text = '
 rest_t "--restart_temp_ratio="  r,log (0.00001, 0.9)
 [global]
