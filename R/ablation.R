@@ -230,6 +230,8 @@ ab_generate_instances <- function(race_state, scenario, nrep, type, instancesFil
     scenario$instances <- readInstances(instancesFile = path_rel2abs(instancesFile))
   }
   n_inst <- length(scenario$instances)
+  if (type == "full" && n_inst * nrep == 1)
+    stop("'nrep' must be larger than 1 when type == 'full' and a single instance")
   generateInstances(race_state, scenario, n_inst * nrep)
 
   msg <- if (instancesFile %in% c("train", "test"))
@@ -428,6 +430,7 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
     irace.note("Ablation (", type, ") of ", nrow(aconfigurations),
                " configurations on ", nrow(race_state$instances_log), " instances.\n")
     # Force the race to see all instances in "full" mode
+    # FIXME: Full mode should simply evaluate all instances in parallel.
     if (type == "full") scenario$firstTest <- nrow(race_state$instances_log)
     # FIXME: what about blockSize?
     race_output <- elitist_race(race_state,
