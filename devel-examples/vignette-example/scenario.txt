@@ -2,11 +2,11 @@
 ## Scenario setup for Iterated Race (irace).
 ############################################################################
 logFile = "./irace-acotsp.Rdata"
-trainInstancesDir = "./instances"
-trainInstancesFile = "instances.txt"
+trainInstancesDir = "./acotsp/instances/"
+trainInstancesFile = "./acotsp/training-2000.txt"
 maxExperiments = 1000
-testInstancesDir = "./instances"
-testInstancesFile = "instances-test.txt"
+testInstancesDir = "./acotsp/instances/"
+testInstancesFile = "./acotsp/testing-2000.txt"
 configurationsFile = "default.txt"
 testNbElites = 5
 testIterationElites = 1

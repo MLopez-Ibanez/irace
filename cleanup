@@ -2,15 +2,21 @@
 rm -f  irace-Ex.R config.* confdefs.h \
    src/*.so src/*.o src/*/*.o src/*.gcno src/*/*.gcno src/*.gcov src/config.h src/symbols.rds \
    inst/doc/*.blg inst/doc/*.bbl \
-   tests/testthat/*.log tests/testthat/*.Rout tests/testthat/Rplots.pdf tests/testthat/iracedump.rda tests/testthat/irace.Rdata
+   tests/testthat/*.log tests/testthat/*.Rout tests/testthat/Rplots.pdf tests/testthat/iracedump.rda tests/testthat/irace.Rdata \
+   examples/vignette-example/Rplots.pdf \
+   devel-examples/vignette-example/*.stderr \
+   devel-examples/vignette-example/*.stdout \
+   devel-examples/vignette-example/irace-acotsp.Rdata \
+   devel-examples/vignette-example/examples.Rdata \
+   devel-examples/vignette-example/irace-acotsp-stdout.txt \
+   devel-examples/vignette-example/mean.pdf \
+   devel-examples/vignette-example/sann.rda
 
-rm -fr  tests/testthat/run_* tests/testthat/multi_irace*
+rm -fr  tests/testthat/run_* tests/testthat/multi_irace* \
+   autom4te.cache devel-examples/vignette-example/acotsp/
 
 find . -name '*.orig' -o -name '.Rhistory' -o -name '*.rej' | xargs rm -f
 
-rm -rf autom4te.cache
 
-rm -f examples/vignette-example/Rplots.pdf
-rm -f devel-examples/vignette-example/*.stderr devel-examples/vignette-example/*.stdout
 
 

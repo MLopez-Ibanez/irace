@@ -1,10 +1,64 @@
 library(irace)
+library(fs)
+library(withr)
 
 iracebin <- system.file(package="irace", "bin/irace")
 if (0 != file.access(iracebin, mode=1))
   stop("Error: ", iracebin, " is not executable or not found!")
 
+download_uncompress <- function(url, exdir, flat = FALSE) {
+  exts <- c(".tar.bz2", ".tar.gz", ".tgz", ".tar.xz", ".zip")
+  fileext <- exts[endsWith(url, exts)]
+  tf <- local_tempfile(fileext = fileext)
+  download.file(url, destfile = tf)
+  if (fileext == ".zip") {
+    unzip(tf, exdir = exdir, junkpaths = flat)
+  } else {
+    untar(tf, exdir = exdir, restore_times = FALSE, verbose = TRUE)
+    if (flat) {
+      files <- untar(tf, list = TRUE)
+      withr::with_dir(exdir, {
+        for (p in files) {
+          if (fs::is_file(p)) {
+            fs::file_move(p, ".")
+          }
+        }
+        paths <- fs::dir_ls(".", type = "directory")
+        for (p in paths) {
+          n <- length(fs::dir_ls(p, recurse = TRUE, type = "file"))
+          if (n == 0L) fs::dir_delete(p)
+        }
+      })
+    }
+  }
+}
+
+invoke_make <- function(args) {
+  system2("make", args = args)
+}
+
+# Problem instances
+setup_tsp_rue_2000 <- function() {
+  exdir <- fs::path_abs("acotsp")
+  if (!fs::file_exists(exdir)) {
+    download_uncompress("https://iridia.ulb.ac.be/supp/IridiaSupp2016-003/scenarios/acotsp/instances.tar.gz",
+      exdir = exdir)
+  }
+}
+
+setup_acotsp <- function() {
+  download_uncompress("https://github.com/MLopez-Ibanez/ACOTSPQAP/archive/refs/heads/master.zip", exdir = "acotsp", flat= TRUE)
+  invoke_make("-C ./acotsp/ acotsp")
+}
+
+setup_tsp_rue_2000()
+setup_acotsp()
+
 system(paste0("nice -n 19 ", iracebin, " --parallel 2 | tee irace-acotsp-stdout.txt 2>&1"))
+
+# Create log-ablation.Rdata
+cat('**** Running ablation("irace-acotsp.Rdata")\n')
+ablation("irace-acotsp.Rdata", parallel = 1)
 
 iraceResults <- read_logfile("irace-acotsp.Rdata")
 
@@ -126,7 +180,4 @@ iraceResults$scenario$execDir <- "./"
 iraceResults$scenario$logFile <- "./sann.rda"
 save(iraceResults, file="sann.rda", version = 3L)
 
-# Create log-ablation.Rdata
-cat('**** Running ablation("irace-acotsp.Rdata")\n')
-ablation("irace-acotsp.Rdata", parallel = 1)
 

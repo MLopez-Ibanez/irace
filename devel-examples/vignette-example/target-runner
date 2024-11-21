@@ -28,7 +28,7 @@ CONFIG_PARAMS=$*
 # End of parsing
 
 # Path to the ACOTSP software:
-BINDIR=~/bin
+BINDIR=./acotsp
 EXE=${BINDIR}/acotsp
 EXE_PARAMS="--tries 1 --quiet -i $INSTANCE --seed $SEED ${CONFIG_PARAMS}"
 

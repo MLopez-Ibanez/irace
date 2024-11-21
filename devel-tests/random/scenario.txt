@@ -1,5 +1,7 @@
 trainInstancesFile = "instances.txt"
-maxExperiments = 1000
-nbConfigurations = 9
-logFile = ""
+maxExperiments = 100
+#maxTime = 100
+#boundMax= 10
+#nbConfigurations = 9
+#logFile = ""
 # targetRunnerTimeout = 1

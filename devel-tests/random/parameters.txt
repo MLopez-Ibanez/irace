@@ -1,2 +1,6 @@
-nants "" c (5,10,20)
+nants "" i (1,20)
 lsize "" c (5,10,20)
+rest_t "--restart_temp_ratio="  r,log (0.00001, 0.9)
+
+[global]
+digits = 5
