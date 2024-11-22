@@ -3077,6 +3077,11 @@ C:\path\to\python.exe C:\path\to\target-runner.py %instance% %seed% \
 
 This error may arise if you activate the \parameter{parallel} option of \irace and your \parameter{targetRunner} or \parameter{targetEvaluator} tries to setup a parallel cluster or execute code in parallel in a way that interacts badly with the parallel mechanism in \aR. In this case, you need to either investigate yourself if there is a way for the two parallel mechanisms to co-exist or, if that is not possible, disable parallelism in \irace or in your code. Note that packages or software used by your \parameter{targetRunner} may have a parallel mechanism enabled by default and unknown to you. This is definitely NOT a bug in \irace.
 
+\subsection[irace does not print the call to the target-runner with --debug-level 2 when using the --parallel option]{\irace does not print the call to the \parameter{targetRunner} with \parameter{debugLevel}\code{=2} when using the \parameter{parallel}}
+
+This is a limitation of  Windows or Rstudio. Running without \parameter{parallel} should work. Unfortunately, we cannot fix this limitation in \irace. If you need to understand how \irace calls \parameter{targetRunner} when running in parallel, you can implement a logging mechanism able to handle parallelism directly inside the \parameter{targetRunner}.
+
+
 %%
 %%
 %%
