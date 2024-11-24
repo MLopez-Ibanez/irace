@@ -70,7 +70,7 @@ psRace <- function(iraceResults, max_experiments, conf_ids = NULL, iteration_eli
       if (length(rejected_ids))
         conf_ids <- setdiff(conf_ids, rejected_ids)
       experiments <- experiments[, conf_ids, drop = FALSE]
-      conf_needs <- colSums(is.na(experiments))
+      conf_needs <- matrixStats::colCounts(experiments, value = NA)
       # Remove any configuration that needs more than max_experiments.
       conf_needs <- conf_needs[conf_needs <= max_experiments]
       # We want to evaluate in at least scenario$blockSize instances more.
@@ -79,24 +79,42 @@ psRace <- function(iraceResults, max_experiments, conf_ids = NULL, iteration_eli
       if (sum(conf_needs == 0L) >= n_confs) {
         conf_needs <- conf_needs[conf_needs == 0L][1:n_confs]
         conf_ids <- names(conf_needs)
-        irace.note("Configurations selected: ", paste0(collapse=", ", conf_ids), ".\n")
-        irace.note("Pending instances: ", paste0(collapse=", ", conf_needs), ".\n")
+        cat(sep="", "# Configurations selected: ", paste0(collapse=", ", conf_ids),
+          ".\n# Pending instances: ", paste0(collapse=", ", conf_needs), ".\n")
         return(conf_ids)
       }
-      # So we need a new instance, that will require blockSize for each configuration.
-      conf_ids <- names(conf_needs)
-      conf_needs <- conf_needs + scenario$blockSize
-      total_needs <- sum(conf_needs)
-      while (total_needs > max_experiments) {
-        to_remove <- which_max_last(conf_needs)
-        total_needs <- total_needs - conf_needs[to_remove]
-        conf_ids <- conf_ids[-to_remove]
-        conf_needs <- conf_needs[-to_remove]
-        irace.assert(length(conf_ids) > 1L, eval_after=save(iraceResults, file="bug-conf_ids.Rdata"))
+      if (length(conf_needs) > 21L) {
+        conf_needs <- conf_needs[1L:21L]
       }
-      irace.note("Configurations selected: ", paste0(collapse=", ", conf_ids), ".\n")
-      irace.note("Pending instances: ", paste0(collapse=", ", conf_needs), ".\n")
-      conf_ids
+      # We want to race at least two configurations.
+      combs <- lapply(seq(3L, as.integer(2^22) - 1L, 2L), function(z) as.logical(intToBits(z)))
+      n <- sapply(combs, sum, USE.NAMES=FALSE)
+      # Let's try first to evaluate on new instances.
+      conf_needs_blocksize <- conf_needs +  blockSize
+      left <- sapply(combs, function(x) max_experiments - sum(conf_needs_blocksize[x]), USE.NAMES=FALSE)
+      if (any(left >= 0L)) { # We have enough budget to evaluate on a new instance.
+        # Select the combination that will allow to evaluate the most configurations.
+        combs <- combs[left >= 0]
+        n <- n[left >= 0]
+        winner <- which.max(n)
+        conf_needs <- conf_needs[combs[[winner]]]
+        conf_ids <- names(conf_needs)
+        cat(sep="", "# Configurations selected: ", paste0(collapse=", ", conf_ids),
+          ".\n# Pending instances: ", paste0(collapse=", ", conf_needs), ".\n")
+        return(conf_ids)
+      }
+      # We do not have enough budget to see new instances.
+      left <- sapply(combs, function(x) max_experiments - sum(conf_needs[x]), USE.NAMES=FALSE)
+      irace.assert(any(left >= 0), eval_after=save(iraceResults, file="bug-conf_ids.Rdata"))
+      # Select the combination that will allow to evaluate the most configurations.
+      combs <- combs[left >= 0]
+      n <- n[left >= 0]
+      winner <- which.max(n)
+      conf_needs <- conf_needs[combs[[winner]]]
+      conf_ids <- names(conf_needs)
+        cat(sep="", "# Configurations selected: ", paste0(collapse=", ", conf_ids),
+          ".\n# Pending instances: ", paste0(collapse=", ", conf_needs), ".\n")
+      return(conf_ids)
     }
     conf_ids <- get_confs_for_psrace(iraceResults, scenario$blockSize, iteration_elites,
       max_experiments, conf_ids = conf_ids, rejected_ids = race_state$rejected_ids)
@@ -120,7 +138,7 @@ psRace <- function(iraceResults, max_experiments, conf_ids = NULL, iteration_eli
         conf_ids <- setdiff(conf_ids, rejected_ids)
       cat("conf_ids4:", paste0(collapse=", ", conf_ids), "\n")
       experiments <- 
-      conf_needs <- colSums(is.na(experiments[, conf_ids, drop = FALSE]))
+      conf_needs <- matrixStats::colCounts(experiments[, conf_ids, drop = FALSE], value = NA)
       cat("conf_needs:", paste0(collapse=", ", conf_needs), "\n")
     })
     
@@ -147,7 +165,6 @@ psRace <- function(iraceResults, max_experiments, conf_ids = NULL, iteration_eli
     "\n# Configurations: ", nrow(elite_configurations),
     "\n# Available experiments: ", max_experiments,
     "\n# minSurvival: 1\n")
-
 
   raceResults <- elitist_race(race_state,
     maxExp = max_experiments,
