@@ -183,10 +183,10 @@ bytecompile <- function(x)
 
 # This function is used to trim potentially large strings for printing, since
 # the maximum error/warning length is 8170 characters (R 3.0.2)
-strlimit <- function(s, limit = 5000)
+strlimit <- function(s, limit = 5000L)
 {
   if (nchar(s) <= limit) return(s)
-  paste0(substr(s, 1, limit - 3), "...")
+  paste0(substr(s, 1L, limit - 3L), "...")
 }
 
 #' Update filesystem paths of a scenario consistently.
@@ -535,7 +535,8 @@ get_log_clean_version <- function(iraceResults)
     log_version <- iraceResults$irace.version
   if (is.null(log_version))
     return(package_version("0"))
-  if (length(gregexpr("\\.", log_version)[[1L]]) > 3)
+  if (length(gregexpr("\\.", log_version)[[1L]]) > 3L
+    || grepl("[a-z]", log_version))
     log_version <- sub("\\.[^.]*$", "", log_version)
   package_version(log_version)
 }
