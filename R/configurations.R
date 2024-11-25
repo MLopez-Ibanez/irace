@@ -137,7 +137,7 @@ configurations_print <- function(configurations, metadata = FALSE)
 #' @export
 configurations_print_command <- function(configurations, parameters)
 {
-  if (nrow(configurations) <= 0) return(invisible())
+  if (nrow(configurations) <= 0L) return(invisible())
   ids <- as.numeric(configurations$.ID.)
   configurations <- removeConfigurationsMetaData(configurations)
   # Re-sort the columns
