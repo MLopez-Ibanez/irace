@@ -244,10 +244,10 @@ Parameter <- function(name, type, domain, label, condition, transf,
 #'  - `param_int()` creates an integer parameter.
 #' 
 #' @param ... one or more parameters created by `param_int()`, `param_real()`, `param_ord()`, or `param_cat()`.
-#' @param forbidden (`expression()|character(1)`)\cr String or list of expressions that define forbidden parameter configurations.
+#' @param forbidden `expression()|character(1)`\cr String or list of expressions that define forbidden parameter configurations.
 #' @inheritParams readParameters
 #'
-#' @return (`ParameterSpace`)
+#' @return `ParameterSpace`
 #' @name parameters
 #' @examples
 #' digits <- 4L
@@ -400,10 +400,10 @@ ParameterSpace <- R6::R6Class("ParameterSpace", cloneable = TRUE, lock_class = T
   }),
 )
 
-#' @param name  Parameter name (must be alphanumeric).
-#' @param values  (`character()`) \cr Domain as a vector of strings.
-#' @param label Label associated to the parameter. Often used to encode a command-line switch that activates the parameter.
-#' @param condition (`expression(1)|character(1)`) \cr Expression that defines when the parameter is active according to the value of other parameters.
+#' @param name  `character(1)`\cr Parameter name (must be alphanumeric).
+#' @param values  `character()`\cr Domain as a vector of strings.
+#' @param label `character(1)`\cr Label associated to the parameter. Often used to encode a command-line switch that activates the parameter.
+#' @param condition `expression(1)|character(1)`\cr Expression that defines when the parameter is active according to the value of other parameters.
 #' @rdname parameters
 #' @export
 param_cat <- function(name = name, values, label = "", condition = TRUE)
@@ -415,14 +415,13 @@ param_ord <- function(name, values, label = "", condition = TRUE)
   Parameter(name = name, type = "o", domain = values, label = label, condition = condition, transf = "")
 
 #' @param lower,upper  Lower and upper limits of the valid domain.
-#' @param transf (`character(1)`) \cr If `"log"`, then the parameter is sampled in a logarithmic scale.
+#' @param transf `character(1)`\cr If `"log"`, then the parameter is sampled in a logarithmic scale.
 #' @inheritParams readParameters
 #' @rdname parameters
 #' @export
 param_real <- function(name, lower, upper, label = "", condition = TRUE, transf = "", digits = 15L)
   Parameter(name = name, type = "r", domain = c(lower, upper), label = label, condition = condition, transf = transf, digits = digits)
 
-#' @param transf (`character(1)`) \cr If `"log"`, then the parameter is sampled in a logarithmic scale.
 #' @rdname parameters
 #' @export
 param_int <- function(name, lower, upper, label = "", condition = TRUE, transf = "")
@@ -658,7 +657,7 @@ param_quantile.ParamReal <- function(param, probs, domain = param[["domain"]])
 
 #' Print parameter space in the textual format accepted by irace.
 #' 
-#' @param parameters (`list()`) \cr Data structure containing the parameter
+#' @param parameters `ParameterSpace`\cr Data structure containing the parameter
 #'   space definition. The data structure has to similar to the one returned by the
 #'   function [`readParameters`].
 #'

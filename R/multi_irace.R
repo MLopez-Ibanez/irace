@@ -8,16 +8,16 @@
 #' }
 #' Each of the `k` runs can be repeated `n` times by supplying a value for `n`.
 #'
-#' @param scenarios (`list()`) \cr A list of scenarios.
+#' @param scenarios `list()`\cr A list of scenarios.
 #' If only a single scenario is supplied, it is used for all parameters.
-#' @param parameters (`list()`) \cr A list of parameter space definitions.
+#' @param parameters `list()`\cr A list of parameter space definitions.
 #' If only a single definition is supplied, it is used for all scenarios.
-#' @param n (`integer(1)`) \cr The number of repetitions.
-#' @param parallel (`integer(1)`) \cr The number of workers to use.
+#' @param n `integer(1)`\cr The number of repetitions.
+#' @param parallel `integer(1)`\cr The number of workers to use.
 #' A value of `1` means sequential execution. Note that `parallel > 1` is not supported on Windows.
-#' @param split_output (`logical(1)`) \cr If `TRUE`, the output of [irace()] is written to `{execDir}/run_{i}/irace.out`
+#' @param split_output `logical(1)`\cr If `TRUE`, the output of [irace()] is written to `{execDir}/run_{i}/irace.out`
 #'  instead of the standard output.
-#' @param global_seed (`integer(1)`) \cr The global seed used to seed the individual runs.
+#' @param global_seed `integer(1)`\cr The global seed used to seed the individual runs.
 #'
 #' @return A list of the outputs of [irace()].
 #'

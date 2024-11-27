@@ -7,7 +7,7 @@
 checkParameters(parameters)
 }
 \arguments{
-\item{parameters}{(\code{list()}) \cr Data structure containing the parameter
+\item{parameters}{\code{ParameterSpace}\cr Data structure containing the parameter
 space definition. The data structure has to similar to the one returned by the
 function \code{\link{readParameters}}.}
 }

@@ -10,7 +10,7 @@ readConfigurationsFile(filename, parameters, debugLevel = 0L, text)
 \item{filename}{\code{character(1)}\cr Filename from which the configurations should be read.
 The contents should be readable by \code{read.table( , header=TRUE)}.}
 
-\item{parameters}{(\code{list()}) \cr Data structure containing the parameter
+\item{parameters}{\code{ParameterSpace}\cr Data structure containing the parameter
 space definition. The data structure has to similar to the one returned by the
 function \code{\link{readParameters}}.}
 

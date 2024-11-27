@@ -30,26 +30,26 @@ param_int(name, lower, upper, label = "", condition = TRUE, transf = "")
 \arguments{
 \item{...}{one or more parameters created by \code{param_int()}, \code{param_real()}, \code{param_ord()}, or \code{param_cat()}.}
 
-\item{forbidden}{(\code{expression()|character(1)})\cr String or list of expressions that define forbidden parameter configurations.}
+\item{forbidden}{\code{expression()|character(1)}\cr String or list of expressions that define forbidden parameter configurations.}
 
 \item{debugLevel}{\code{integer(1)}\cr Larger values produce more verbose output.}
 
-\item{name}{Parameter name (must be alphanumeric).}
+\item{name}{\code{character(1)}\cr Parameter name (must be alphanumeric).}
 
-\item{values}{(\code{character()}) \cr Domain as a vector of strings.}
+\item{values}{\code{character()}\cr Domain as a vector of strings.}
 
-\item{label}{Label associated to the parameter. Often used to encode a command-line switch that activates the parameter.}
+\item{label}{\code{character(1)}\cr Label associated to the parameter. Often used to encode a command-line switch that activates the parameter.}
 
-\item{condition}{(\code{expression(1)|character(1)}) \cr Expression that defines when the parameter is active according to the value of other parameters.}
+\item{condition}{\code{expression(1)|character(1)}\cr Expression that defines when the parameter is active according to the value of other parameters.}
 
 \item{lower, upper}{Lower and upper limits of the valid domain.}
 
-\item{transf}{(\code{character(1)}) \cr If \code{"log"}, then the parameter is sampled in a logarithmic scale.}
+\item{transf}{\code{character(1)}\cr If \code{"log"}, then the parameter is sampled in a logarithmic scale.}
 
 \item{digits}{\code{integer(1)}\cr The number of decimal places to be considered for real-valued parameters.}
 }
 \value{
-(\code{ParameterSpace})
+\code{ParameterSpace}
 }
 \description{
 \itemize{

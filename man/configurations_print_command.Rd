@@ -10,7 +10,7 @@ configurations_print_command(configurations, parameters)
 \item{configurations}{\code{data.frame}\cr Parameter configurations of the
 target algorithm (one per row).}
 
-\item{parameters}{(\code{list()}) \cr Data structure containing the parameter
+\item{parameters}{\code{ParameterSpace}\cr Data structure containing the parameter
 space definition. The data structure has to similar to the one returned by the
 function \code{\link{readParameters}}.}
 }
