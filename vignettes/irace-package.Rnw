@@ -795,7 +795,7 @@ $IRACE_HOME/bin/irace
 \end{lstlisting}
 %@
 
-\item Or you can also execute \irace from the \aR console using:
+Or you can also execute \irace from the \aR console using:
 
 <<runexample2,prompt=FALSE,eval=FALSE>>=
 library("irace")
