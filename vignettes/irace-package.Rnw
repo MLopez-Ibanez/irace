@@ -1614,7 +1614,7 @@ See the examples in
    @
    %
    However, the user is free to set up the calls in any way, perhaps
-   implementing its own replacement for \code{target_runner} and/or
+   implementing their own replacement for \code{target_runner} and/or
    \code{exec_target_runner}. The user may load and call other \aR packages, such as \pkg{batchtools} (\url{https://mllg.github.io/batchtools/}).
 
    The only requirement is that the \parameter{targetRunnerParallel} function
