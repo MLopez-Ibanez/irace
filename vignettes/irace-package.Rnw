@@ -2777,7 +2777,7 @@ percentage of the \irace configuration budget. This budget is not considered in
 the total configuration budget that is, these evaluations are extra
 computation.
 
-The execution of the postselection race adds an element (\code{psrace.log}) to
+The execution of the postselection race adds an element (\code{psrace_log}) to
 the \code{iraceResults} list saved in the \irace log file. The postselection log
 consists of a list with the following elements:
 \begin{description}

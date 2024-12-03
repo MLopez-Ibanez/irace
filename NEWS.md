@@ -9,6 +9,10 @@
    to a file containing a configuration that will be read with
    `readConfigurationsFile()`.  This allows performing ablation between
    configurations not explored before.
+   
+## Fixes
+
+ * Fixed some typos in the user guide. (@sbomsdorf)
  
 
 # irace 4.0
