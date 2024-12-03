@@ -35,9 +35,11 @@ List of command-line options:
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{-l,--log-file            Path to the (.Rdata) file created by irace from which
                          the "iraceResults" object will be loaded.
--S,--src                 Source configuration ID. Default: 1.
--T,--target              Target configuration ID. By default the best
-                         configuration found by irace.
+-S,--src                 Source configuration ID or the path to a file
+                         containing the configuration. Default: 1.
+-T,--target              Target configuration ID (by default the best
+                         configuration found by irace) or the path to a file
+                         containing the configuration.
 -P,--params              Specific parameter names to be used for the ablation
                          (separated with commas). By default use all
 -t,--type                Type of ablation to perform: "full" will execute each

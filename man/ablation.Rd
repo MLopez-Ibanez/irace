@@ -20,19 +20,19 @@ ablation(
 \arguments{
 \item{iraceResults}{\code{list()}|\code{character(1)}\cr Object created by \pkg{irace} and typically saved in the log file \code{irace.Rdata}. If a character string is given, then it is interpreted as the path to the log file from which the \code{iraceResults} object will be loaded.}
 
-\item{src, target}{(\code{integer(1)}) Source and target configuration IDs. By default, the first configuration ever evaluated (ID 1) is used as \code{src} and the best configuration found by irace is used as target.}
+\item{src, target}{\code{integer(1)|character(1)}\cr Source and target configuration IDs. By default, the first configuration ever evaluated (ID 1) is used as \code{src} and the best configuration found by irace is used as target. If the argument is a string, it is interpreted as the path to a file, with the format specified by  \code{\link[=readConfigurationsFile]{readConfigurationsFile()}}, that contains the configuration.}
 
-\item{ab_params}{Specific parameter names to be used for the ablation. They must be in \code{parameters$names}. By default, use all parameters.}
+\item{ab_params}{\code{character()}\cr Specific parameter names to be used for the ablation. They must be in \code{parameters$names}. By default, use all parameters.}
 
-\item{type}{Type of ablation to perform: \code{"full"} will execute each configuration on all \code{n_instances} to determine the best-performing one; \code{"racing"} will apply racing to find the best configurations.}
+\item{type}{\code{"full"|"racing"}\cr Type of ablation to perform: \code{"full"} will execute each configuration on all \code{n_instances} to determine the best-performing one; \code{"racing"} will apply racing to find the best configurations.}
 
-\item{nrep}{(\code{integer(1)}) Number of replications per instance used in \code{"full"} ablation. When \code{nrep > 1}, each configuration will be executed \code{nrep} times on each instance with different random seeds.}
+\item{nrep}{\code{integer(1)}\cr Number of replications per instance used in \code{"full"} ablation. When \code{nrep > 1}, each configuration will be executed \code{nrep} times on each instance with different random seeds.}
 
-\item{seed}{(\code{integer(1)}) Integer value to use as seed for the random number generation.}
+\item{seed}{\code{integer(1)}\cr Integer value to use as seed for the random number generation.}
 
-\item{ablationLogFile}{(\code{character(1)}) Log file to save the ablation log. If \code{NULL}, the results are not saved to a file.}
+\item{ablationLogFile}{\code{character(1)}\cr Log file to save the ablation log. If \code{NULL}, the results are not saved to a file.}
 
-\item{instancesFile}{(\code{character(1)}) Instances file used for ablation: \code{'train'}, \code{'test'} or a filename containing the list of instances.}
+\item{instancesFile}{\code{character(1)}\cr Instances file used for ablation: \code{'train'}, \code{'test'} or a filename containing the list of instances.}
 
 \item{...}{Further arguments to override scenario settings, e.g., \code{debugLevel}, \code{parallel}, etc.}
 }

@@ -1,8 +1,8 @@
 .ablation.params.def <- read.table(header=TRUE, stringsAsFactors = FALSE, text="
 name            ab  type short long          default               description
 iraceResults     0  p    -l    --log-file    NA                    'Path to the (.Rdata) file created by irace from which the  \"iraceResults\" object will be loaded.'
-src              1  i    -S    --src         1                     'Source configuration ID.'
-target           1  i    -T    --target      NA                    'Target configuration ID. By default the best configuration found by irace.'
+src              1  i    -S    --src         1                     'Source configuration ID or the path to a file containing the configuration.'
+target           1  i    -T    --target      NA                    'Target configuration ID (by default the best configuration found by irace) or the path to a file containing the configuration.'
 ab_params        1  s    -P    --params      ''                    'Specific parameter names to be used for the ablation (separated with commas). By default use all'
 type             1  s    -t    --type        'full'                'Type of ablation to perform: \"full\" will execute each configuration on all \"--n-instances\" to determine the best-performing one; \"racing\" will apply racing to find the best configurations.'
 nrep            1  i    -n    --nrep       1                     'Number of replications per instance used in \"full\" ablation.'
@@ -251,13 +251,13 @@ ab_generate_instances <- function(race_state, scenario, nrep, type, instancesFil
 #' @description Ablation is a method for analyzing the differences between two configurations.
 #'
 #' @inheritParams has_testing_data
-#' @param src,target (`integer(1)`) Source and target configuration IDs. By default, the first configuration ever evaluated (ID 1) is used as `src` and the best configuration found by irace is used as target.
-#' @param ab_params Specific parameter names to be used for the ablation. They must be in `parameters$names`. By default, use all parameters.
-#' @param type Type of ablation to perform: `"full"` will execute each configuration on all `n_instances` to determine the best-performing one; `"racing"` will apply racing to find the best configurations.
-#' @param nrep (`integer(1)`) Number of replications per instance used in `"full"` ablation. When `nrep > 1`, each configuration will be executed `nrep` times on each instance with different random seeds.
-#' @param seed (`integer(1)`) Integer value to use as seed for the random number generation.
-#' @param ablationLogFile  (`character(1)`) Log file to save the ablation log. If `NULL`, the results are not saved to a file.
-#' @param instancesFile  (`character(1)`) Instances file used for ablation: `'train'`, `'test'` or a filename containing the list of instances.
+#' @param src,target `integer(1)|character(1)`\cr Source and target configuration IDs. By default, the first configuration ever evaluated (ID 1) is used as `src` and the best configuration found by irace is used as target. If the argument is a string, it is interpreted as the path to a file, with the format specified by  [readConfigurationsFile()], that contains the configuration.
+#' @param ab_params `character()`\cr Specific parameter names to be used for the ablation. They must be in `parameters$names`. By default, use all parameters.
+#' @param type `"full"|"racing"`\cr Type of ablation to perform: `"full"` will execute each configuration on all `n_instances` to determine the best-performing one; `"racing"` will apply racing to find the best configurations.
+#' @param nrep `integer(1)`\cr Number of replications per instance used in `"full"` ablation. When `nrep > 1`, each configuration will be executed `nrep` times on each instance with different random seeds.
+#' @param seed `integer(1)`\cr Integer value to use as seed for the random number generation.
+#' @param ablationLogFile  `character(1)`\cr Log file to save the ablation log. If `NULL`, the results are not saved to a file.
+#' @param instancesFile  `character(1)`\cr Instances file used for ablation: `'train'`, `'test'` or a filename containing the list of instances.
 #' @param ... Further arguments to override scenario settings, e.g., `debugLevel`, `parallel`, etc.
 #'
 #' @references
@@ -329,13 +329,37 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
   race_state <- RaceState$new(scenario)
   # Generate instances
   scenario$instances <- ab_generate_instances(race_state, scenario, nrep, type, instancesFile)
+  parameters <- scenario$parameters
 
+  # Process src and target.
+  if (is.character(src) && is.na(suppressWarnings(as.integer(src)))) {
+    src_configuration <- readConfigurationsFile(src, parameters)
+    if (nrow(src_configuration) != 1L) {
+      stop("Argument of src=\"", src, "\" contains more than one configuration!")
+    }
+    src <- 1L + max(iraceResults$allConfigurations$.ID.)
+    src_configuration$.ID. <- src
+    src_configuration$.PARENT. <- NA_integer_
+    iraceResults$allConfigurations <- rbind.data.frame(iraceResults$allConfigurations, src_configuration)
+    # FIXME: Check for duplicates
+  } else if (src %not_in% iraceResults$allConfigurations[[".ID."]])
+    stop("Source configuration ID (", src, ") cannot be found!")
+ 
   if (is.null(target))
     target <- iraceResults$iterationElites[length(iraceResults$iterationElites)]
-  if (src %not_in% iraceResults$allConfigurations[[".ID."]])
-    stop("Source configuration ID (", src, ") cannot be found!")
-  if (target %not_in% iraceResults$allConfigurations[[".ID."]])
+  else if (is.character(target) && is.na(suppressWarnings(as.integer(target)))) {
+    target_configuration <- readConfigurationsFile(target, parameters)
+    if (nrow(target_configuration) != 1L) {
+      stop("Argument of target=\"", target, "\" contains more than one configuration!")
+    }
+    target <- 1L + max(iraceResults$allConfigurations$.ID.)
+    target_configuration$.ID. <- target
+    target_configuration$.PARENT. <- NA_integer_
+    iraceResults$allConfigurations <- rbind.data.frame(iraceResults$allConfigurations, target_configuration)
+    # FIXME: Check for duplicates
+  } else if (target %not_in% iraceResults$allConfigurations[[".ID."]])
     stop("Target configuration ID (", target, ") cannot be found!")
+  
   if (src == target)
     stop("Source and target configuration IDs must be different!")
   
@@ -347,7 +371,6 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
   target_configuration <- iraceResults$allConfigurations[target, , drop = FALSE]
   configurations_print(target_configuration)
 
-  parameters <- scenario$parameters
   # Select the parameters used for ablation
   if (is.null(ab_params)) {
     ab_params <- parameters$names
@@ -396,7 +419,7 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
   ablog <- save_ablog(complete = FALSE)
   while (length(param_names) > 1L) {
     # Generate ablation configurations
-    cat("# Generating configurations (row number is ID):", param_names,"\n")
+    cat("# Generating configurations (row number is ID):", param_names, "\n")
     ab_aux <- generateAblation(best_configuration, target_configuration, parameters,
                                param_names)
     aconfigurations <- ab_aux$configurations

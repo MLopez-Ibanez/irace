@@ -1,5 +1,16 @@
 **If you are viewing this file on CRAN, please check [latest news on GitHub](https://github.com/MLopez-Ibanez/irace/blob/master/NEWS.md) where the formatting is also better.**
 
+# irace (development version)
+
+## New features and improvements
+
+ * The options `src` and `target` of `ablation()` (or `--src` and `--target` of
+   the command-line `ablation` tool) now accept a character string that points
+   to a file containing a configuration that will be read with
+   `readConfigurationsFile()`.  This allows performing ablation between
+   configurations not explored before.
+ 
+
 # irace 4.0
 
 ## Major breaking changes
