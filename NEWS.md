@@ -61,7 +61,7 @@
    The correct location can be verified by looking at the line `"installed at:"`
    printed in the output.
    
- * Adaptive capping is now enabled by default if `maxTime > 0` and `maxBound > 0`.
+ * Adaptive capping is now enabled by default if `maxTime > 0` and `boundMax > 0`.
    It can be disabled with `--capping 0` in the command-line options or `capping=0` in the scenario options. See [Pérez-Cáceres et al. (2017)](https://iridia-ulb.github.io/references/#PerLopHooStu2017:lion) for details.
                                      (Leslie Pérez Cáceres, Manuel López-Ibáñez)
 

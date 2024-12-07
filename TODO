@@ -52,7 +52,7 @@ TODO General (in order of importance):
  * Give priority to user-provided configurations or to default/preferred
    parameter values when choosing between similarly performing configurations.
 
- * maxBound should be a floating-point number. 
+ * boundMax should be a floating-point number. 
 
  * Write a report at the end that checks if the instances are homogeneous and
    suggests clusters and sub-configurations. One possibility is to replace
