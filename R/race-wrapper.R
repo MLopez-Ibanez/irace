@@ -155,8 +155,6 @@ check_output_target_evaluator <- function (output, scenario, target_runner_call 
 #'      \item{`bound`}{(only when `capping` is enabled) Time bound for the execution;}
 #'      \item{`configuration`}{1-row data frame with a column per parameter
 #'        name;}
-#'      \item{`switches`}{Vector of parameter switches (labels) in the order
-#'        of parameters used in `configuration`.}
 #'    }
 #' @param num_configurations Number of  configurations alive in the race.
 #' @param all_conf_id Vector of configuration IDs of the alive configurations.
@@ -402,9 +400,10 @@ run_target_runner <- function(experiment, scenario)
   seed             <- experiment$seed
   configuration    <- experiment$configuration
   instance         <- experiment$instance
-  switches         <- experiment$switches
   bound            <- experiment$bound
 
+  switches <- scenario$parameters$switches[names(configuration)]
+  
   targetRunner <- scenario[["targetRunner"]]
   debugLevel <- scenario$debugLevel
   
@@ -444,8 +443,6 @@ run_target_runner <- function(experiment, scenario)
 #'      \item{`bound`}{(only when `capping` is enabled) Time bound for the execution;}
 #'      \item{`configuration`}{1-row data frame with a column per parameter
 #'        name;}
-#'      \item{`switches`}{Vector of parameter switches (labels) in the order
-#'        of parameters used in `configuration`.}
 #'    }
 #' @inheritParams defaultScenario
 #' 

@@ -23,8 +23,6 @@ this evaluation, ignore the seed for deterministic algorithms;}
 \item{\code{bound}}{(only when \code{capping} is enabled) Time bound for the execution;}
 \item{\code{configuration}}{1-row data frame with a column per parameter
 name;}
-\item{\code{switches}}{Vector of parameter switches (labels) in the order
-of parameters used in \code{configuration}.}
 }}
 
 \item{num_configurations}{Number of  configurations alive in the race.}

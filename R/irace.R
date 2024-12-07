@@ -366,7 +366,7 @@ do_experiments <- function(race_state, configurations, ninstances, scenario, ite
   output <- lapply(instances, race_wrapper, race_state = race_state,
     configurations = configurations, 
     bounds = rep(scenario$boundMax, nrow(configurations)),
-    which_alive = seq_nrow(configurations), which_exe = seq_nrow(configurations),
+    which_exps = seq_nrow(configurations),
     scenario = scenario)
   
   Results <- race_state$update_experiment_log(output, instances = instances,

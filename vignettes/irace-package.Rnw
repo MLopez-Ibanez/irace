@@ -1204,8 +1204,6 @@ list. The structure of the \code{experiment} list is as follows:
    \code{instance} & string giving the instance to be used for this evaluation;\\
    \code{bound} &  optional execution time bound;\\
    \code{configuration}    & 1-row data frame with a column per parameter name;\\
-   \code{switches}         & vector of parameter switches (labels) in the order of parameters used in \code{configuration}.\\
-
   \end{tabularx}
 \end{center}
 
@@ -1214,6 +1212,9 @@ The following is an example of an experiment list for the \ACOTSP scenario:
 <<experimentlist,eval=TRUE,size='normalsize', prompt=TRUE,  comment="">>=
 print(experiment)
 @
+
+If you need the \code{switches} of each parameter (or any other information
+about the parameters), you can obtain it from \code{scenario$parameters}.
 
 You can find an example that calls MATLAB from \aR using this approach here: \url{https://github.com/MLopez-Ibanez/irace/blob/master/inst/examples/matlab/scenario.txt}.
 

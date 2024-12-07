@@ -2,6 +2,13 @@
 
 # irace (development version)
 
+## Major breaking changes
+
+ * The `experiment` list passed to the `targetRunner` R function (see
+  `target_runner_default()`) does not contain an element `switches`.
+  This element can be obtained from `scenario$parameters$switches`.
+  
+ 
 ## New features and improvements
 
  * The options `src` and `target` of `ablation()` (or `--src` and `--target` of
