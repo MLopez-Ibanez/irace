@@ -24,7 +24,8 @@ test_that("GenericWrapper4AC", {
                                               parameters = parameters,
                                               instances = scenario$instances,
                                               instances_ID = rep("cost", 2),
-                                              seeds = 0:1)
+                                              seeds = 0:1,
+                                              bounds = NULL)
   race_state <- irace:::RaceState$new(scenario)
   output <- irace:::execute_experiments(race_state, experiments, scenario)
   expect_equal(output[[1]]$status, "SUCCESS")
@@ -38,14 +39,14 @@ test_that("GenericWrapper4AC", {
                                               parameters = parameters,
                                               instances = scenario$instances,
                                               instances_ID = rep("cost", 2),
-                                              seeds = 2)
+                                              seeds = 2, bounds = NULL)
   expect_error(irace:::execute_experiments(race_state, experiments, scenario), "CRASHED")
                
   experiments <- irace:::createExperimentList(configurations,
                                               parameters = parameters,
                                               instances = scenario$instances,
                                               instances_ID = rep("cost", 2),
-                                              seeds = 3)
+                                              seeds = 3, bounds = NULL)
   expect_error(irace:::execute_experiments(race_state, experiments, scenario), "ABORT")
   
   

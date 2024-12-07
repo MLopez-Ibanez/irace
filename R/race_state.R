@@ -62,16 +62,8 @@ RaceState <- R6Class("RaceState", lock_class = TRUE,
 
    update_experiment_log = function(output, instances, configurations_id, scenario, iteration) {
      # Extract results
-     times <- c()
-     costs <- c()
-     # FIXME: Convert output to a matrix so that we can skip this loop
-     for (j in instances) {
-       vcost <- unlist(lapply(output[[j]], "[[", "cost"))
-       costs <- c(costs, vcost)
-       vtimes <- unlist(lapply(output[[j]], "[[", "time"))
-       irace.assert(!any(is.null(vtimes)))
-       times <- c(times, vtimes)
-     }
+     costs <- unlist(lapply(output, "[[", "cost"))
+     times <- unlist(lapply(output, "[[", "time"))
      if (scenario$capping)
        costs <- applyPAR(costs, boundMax = scenario$boundMax, boundPar = scenario$boundPar)
 

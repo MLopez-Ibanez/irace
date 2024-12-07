@@ -362,9 +362,9 @@ generateInstances <- function(race_state, scenario, n, update = FALSE)
 do_experiments <- function(race_state, configurations, ninstances, scenario, iteration)
 {
   instances <- seq_len(ninstances)
-  # FIXME: modify race_wrapper to take instances as an argument. 
-  output <- lapply(instances, race_wrapper, race_state = race_state,
-    configurations = configurations, 
+  output <- race_wrapper(race_state = race_state,
+    configurations = configurations,
+    instance_idx = instances, 
     bounds = rep(scenario$boundMax, nrow(configurations)),
     which_exps = seq_nrow(configurations),
     scenario = scenario)
