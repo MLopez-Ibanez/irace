@@ -53,6 +53,7 @@ genoptions: R/irace-options.R vignettes/section/irace-options.tex
 
 R/irace-options.R vignettes/section/irace-options.tex: scripts/irace_options.json scripts/generate-options.R
 	cd scripts && R --slave -f generate-options.R && cd ..
+	touch R/irace-options.R vignettes/section/irace-options.tex
 
 gendoc:
 	$(Reval) 'devtools::document()'
