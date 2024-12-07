@@ -429,54 +429,58 @@ applyPAR <- function(results, boundMax, boundPar)
 ## * elite_bound : value (mean execution time or per instance execution time) 
 ## used to calculate the maximum execution time (final_bounds) for each configuration.
 ## * final_bounds[i] : maximum execution time for candidate i on the current instance. 
-final_execution_bound <- function(experimentsTime, elites, n_configurations,
-                                  current_task, which_exe, scenario)
+final_execution_bound <- function(experimentsTime, elites, current_task,
+                                  which_alive, which_exe, scenario)
 {
-  minMeasurableTime <- scenario$minMeasurableTime
   boundMax <- scenario$boundMax
-  # FIXME: should we use an adjusted boundMax 
-  final_bounds <- rep(boundMax, n_configurations)
-  total_time  <- current_task * boundMax
-  elite_bound <- boundMax
-  # Elite candidates can have NA values due to the rejection 
+  final_bounds <- rep(boundMax, length(which_alive))
+
+  # Elite candidates can have NA values due to the rejection.
   if (length(elites))
     elites <- elites[!is.na(experimentsTime[current_task,elites])]
     
   # Only apply bounds when there is previous data
-  if (length(elites) > 0L && length(which_exe) > 0L) {
-    # The elite membership is updated before calling this function to know 
-    # the configurations used for calculating the bounds we need to do this.
-    # Note that some of these configurations could be not elite anymore for the 
-    # elimination phase, given that all their evaluations have been used.
-    if (scenario$boundType == "instance") {
-       elite_bound <- instanceBound(experimentsTime[current_task, elites],
-                                    type = scenario$cappingType)
-       final_bounds[which_exe] <- min(elite_bound + minMeasurableTime, boundMax)
-       final_bounds[which_exe] <- ceiling_digits(final_bounds[which_exe], scenario$boundDigits)
-     } else {
-       elite_bound <- executionBound(experimentsTime[seq_len(current_task), elites, drop = FALSE],
-                                     type = scenario$cappingType)
-       elite_bound <- min(elite_bound, boundMax)
-       total_time <- (current_task * elite_bound) + minMeasurableTime
-       time_left <- total_time - colSums2(experimentsTime, rows = seq_len(current_task), cols = which_exe, na.rm = TRUE)
-       final_bounds[which_exe] <- sapply(time_left, min, boundMax)
-       # We round up the bounds up to the specified number of digits. This may
-       # be necessary if the target-algorithm does not support higher precision.
-       final_bounds[which_exe] <- ceiling_digits(final_bounds[which_exe], scenario$boundDigits)
-       # There are cases in which a small negative budget is used. For example:
-       # assuming candidates 1 and 2 are elite maxbound=80
-       # executionTime <- matrix(c(0.010,0.0170,0.010, 24,28,27, 0.010,0.017,NA), 
-       #        byrow=TRUE, ncol=3, nrow=3, dimnames=list(c(1,2,3),c(1,2,3)))
-       # current_task <- 3; boundDigits=0
-       # elite_bound  <- irace:::executionBound(executionTime[1:current_task,1:2], "median") 
-       # total_time   <- elite_bound * current_task + 0.01
-       # time.left    <- total_time - colSums2(executionTime[1:current_task,3,drop=FALSE], na.rm=TRUE)
-       # We set the execution time to the elite_bound, this should be enough
-       # to eliminate a bad candidate for the next task.
-       final_bounds[final_bounds <= 0] <- elite_bound 
-       irace.assert(all(final_bounds > 0))
-     }
+  if (length(elites) == 0L || length(which_exe) == 0L) {
+    # FIXME: should we use an adjusted boundMax ?
+    return(list(final_bounds = final_bounds, elite_bound = boundMax))
   }
+  minMeasurableTime <- scenario$minMeasurableTime
+
+  # The elite membership is updated before calling this function to know 
+  # the configurations used for calculating the bounds we need to do this.
+  # Note that some of these configurations could be not elite anymore for the 
+  # elimination phase, given that all their evaluations have been used.
+  if (scenario$boundType == "instance") {
+    elite_bound <- instanceBound(experimentsTime[current_task, elites],
+      type = scenario$cappingType)
+    final_bounds_exe <- min(elite_bound + minMeasurableTime, boundMax)
+    final_bounds_exe <- ceiling_digits(final_bounds_exe, scenario$boundDigits)
+  } else {
+    elite_bound <- executionBound(experimentsTime[seq_len(current_task), elites, drop = FALSE],
+      type = scenario$cappingType)
+    elite_bound <- min(elite_bound, boundMax)
+    total_time <- (current_task * elite_bound) + minMeasurableTime
+    final_bounds_exe <- total_time - colSums2(experimentsTime, rows = seq_len(current_task), cols = which_exe, na.rm = TRUE)
+    # There are cases in which a small negative budget is used. For example:
+    # assuming candidates 1 and 2 are elite:
+    # maxBound <- 80
+    # executionTime <- matrix(c(0.010,0.0170,0.010, 24,28,27, 0.010,0.017,NA), 
+    #        byrow=TRUE, ncol=3, nrow=3, dimnames=list(c(1,2,3),c(1,2,3)))
+    # current_task <- 3; boundDigits = 0
+    # elite_bound  <- irace:::executionBound(executionTime[1:current_task,1:2], "median") 
+    # total_time   <- elite_bound * current_task + 0.01
+    # final_bounds_exe <- total_time - colSums2(executionTime[1:current_task,3,drop=FALSE], na.rm=TRUE)
+    #
+    # We set the execution time to the elite_bound, this should be enough
+    # to eliminate a bad candidate for the next task.
+    final_bounds_exe[final_bounds_exe <= 0] <- elite_bound 
+    # We round up the bounds up to the specified number of digits. This may
+    # be necessary if the target-algorithm does not support higher precision.
+    final_bounds_exe <- ceiling_digits(final_bounds_exe, scenario$boundDigits)
+    final_bounds_exe[final_bounds_exe > boundMax] <- boundMax
+    irace.assert(all(final_bounds_exe > 0))
+  }
+  final_bounds[which(which_alive %in% which_exe)] <- final_bounds_exe
   list(final_bounds = final_bounds, elite_bound = elite_bound)
 }
 
@@ -516,8 +520,8 @@ overall_ranks <- function(x, test)
 # Remove one elite count from every configuration not executed.
 update_is_elite <- function(is_elite, which_exe)
 {
-  which.notexecuted <- setdiff(which(is_elite > 0L), which_exe) 
-  is_elite[which.notexecuted] <- is_elite[which.notexecuted] - 1L
+  which_notexecuted <- setdiff(which(is_elite > 0L), which_exe) 
+  is_elite[which_notexecuted] <- is_elite[which_notexecuted] - 1L
   irace.assert (all(is_elite >= 0L))
   is_elite
 }
@@ -535,7 +539,7 @@ generateTimeMatrix <- function(elite_ids, experiment_log)
   # Remove everything that we don't need.
   experiment_log <- experiment_log[is_elite, c("configuration", "instance", "time", "bound")]
   experiment_log[["time"]] <- pmin(experiment_log[["time"]], experiment_log[["bound"]])
-  # FIXME: It would be better to use spread() from tidyr
+  # FIXME: It would be better to use spread() from tidyr.
   resultsTime <- reshape(as.data.frame(experiment_log), direction = "wide",
                          idvar = "instance", timevar = "configuration",
                          drop = "bound")
@@ -878,8 +882,6 @@ elitist_race <- function(race_state, maxExp = 0L,
 
     start_time <- Sys.time()
   
-    # Execution bounds calculation (capping only)
-    final_bounds <- elite_bound <- NULL
     # Calculate bounds for executing if needed.
     which_elite_exe <- intersect(which_exe, which(is_elite > 0))
     irace.assert(setequal(which_elite_exe, which(is_elite & is.na(Results[current_task,]))))
@@ -959,57 +961,60 @@ elitist_race <- function(race_state, maxExp = 0L,
           next
         }
       }
-      
-      all.bounds <- final_execution_bound(experimentsTime,
+
+      all_bounds <- final_execution_bound(experimentsTime,
                                           elites = which(is_elite > 0L),
-                                          n_configurations, current_task,
+                                          current_task, which_alive, 
                                           which_exe, scenario)
-      final_bounds <- all.bounds$final_bounds
-      elite_bound <- all.bounds$elite_bound
+      final_bounds <- all_bounds$final_bounds
+      elite_bound <- all_bounds$elite_bound
     } else {
-      final_bounds <- rep(scenario$boundMax, n_configurations)
+      final_bounds <- rep(scenario$boundMax, length(which_alive))
+      elite_bound <- NULL
     }
     
     # Execute experiments.
     output <- race_wrapper(race_state, configurations = configurations[which_alive, , drop = FALSE],
                            instance_idx = race_instances[current_task],
-                           # FIXME: Why are we keeping final_bounds values for configurations that are dead?
-                           # Also, do we use the final_bounds of which_alive or only the ones of which_exe?
-                           bounds = final_bounds[which_alive],
+                           bounds = final_bounds,
                            which_exps = which(which_alive %in% which_exe),
                            scenario = scenario)
 
     # Extract results
     vcost <- unlist(lapply(output, "[[", "cost"))
-    # If the experiment was executed or target.evaluator exists
-    # then the result is in the output.
+    # Set max execution bound to timed out executions which have execution
+    # times smaller than boundMax and implement parX if required.
+    if (capping) {
+      vcost <- applyPAR(vcost, boundMax = scenario$boundMax, boundPar = scenario$boundPar)
+      if (scenario$boundAsTimeout) {
+        timeout_bounds <- if (is.null(scenario$targetEvaluator))
+                            final_bounds[which(which_alive %in% which_exe)]
+                          else final_bounds
+        # We do not want to change Inf or -Inf because those represent rejection.
+        vcost[is.finite(vcost) & (vcost >= timeout_bounds) & (vcost < scenario$boundMax)] <- scenario$boundMax
+      }
+    }
     ## Currently, targetEvaluator always re-evaluates, which implies that the
     ## value may change without counting as an evaluation. We do this to allow online normalization.
     which_exps <- if (is.null(scenario$targetEvaluator)) which_exe else which_alive
     irace.assert(length(vcost) == length(which_exps))
-    # Set max execution bound to timed out executions which have execution
-    # times smaller than boundMax and implement parX if required
-    if (capping) {
-      vcost <- applyPAR(vcost, boundMax = scenario$boundMax, boundPar = scenario$boundPar)
-      if (scenario$boundAsTimeout)
-        vcost[(vcost >= final_bounds[which_exps]) & (vcost < scenario$boundMax)] <- scenario$boundMax
-    }
     Results[current_task, which_exps] <- vcost
 
     # Output is not indexed in the same way as configurations.
     which_exps <- which(which_alive %in% which_exe)
     irace.assert(length(which_exps) == length(which_exe))
     vtimes <- unlist(lapply(output[which_exps], "[[", "time"))
-    irace.assert(length(vtimes) == length(which_exe))
+    final_bounds <- final_bounds[which_exps]
+    irace.assert(length(vtimes) == length(which_exps))
     if (capping) {
       # Correct higher execution times.
-      # final_bounds indexes are 1:nbConfigurations, vtimes are 1:length(which_alive)
-      experimentsTime[current_task, which_exps] <- pmin(vtimes, final_bounds[which_exe])
+      experimentsTime[current_task, which_exps] <- pmin(vtimes, final_bounds)
     }
     experiment_log <- update_experiment_log(experiment_log,
       instance = race_instances[current_task],
       configuration = configurations[which_exe, ".ID."],
-      time = vtimes, bound = if (is.null(final_bounds)) NA else final_bounds[which_exe])
+      # FIXME: Do not store a column bounds if bounds are NULL.
+      time = vtimes, bound = if (is.null(final_bounds)) NA else final_bounds)
 
     irace.assert(anyDuplicated(experiment_log[, c("instance", "configuration")]) == 0L,
       eval_after = {
@@ -1102,9 +1107,9 @@ elitist_race <- function(race_state, maxExp = 0L,
       alive <- cap.alive
     }
     
-    # Output the result of the elimination test
+    # Output the result of the elimination test.
     res.symb <- if (cap.dropped && !test.dropped && prev.sum.alive != sum(alive)) {
-                  "c" # Removed just by capping
+                  "c" # Removed just by capping.
                 } else if (cap.dropped || test.dropped) {
                   if (prev.sum.alive != sum(alive)) "-" else "!"
                 } else if (cap.done || test.done) "=" else "x"
@@ -1120,7 +1125,7 @@ elitist_race <- function(race_state, maxExp = 0L,
       tmpResults <- Results[seq_len(current_task), which_alive, drop = FALSE]
       irace.assert(!any(is.na(tmpResults)))
       race_ranks <- get_ranks(tmpResults, test = stat.test) 
-      # which.min returns only the first minimum.
+      # which.min() returns only the first minimum.
       best <- which_alive[which.min(race_ranks)]
     }
     

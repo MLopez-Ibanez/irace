@@ -929,9 +929,8 @@ irace_run <- function(scenario)
       if (scenario$nbIterations == 0L) {
         nbIterations <- indexIteration
       } else {
-        if (debugLevel >= 1L) {
+        if (debugLevel >= 1L)
           catInfo("Limit of iterations reached", verbose = FALSE)
-        }
         return(irace_finish(iraceResults, scenario, reason = "Limit of iterations reached"))
       }
     }
