@@ -347,7 +347,7 @@ concordance <- function(data)
   n <- nrow(data) #judges
   k <- ncol(data) #objects
   if (n <= 1L || k <= 1L)
-    return(list(kendall.w = NA, spearman.rho = NA))
+    return(list(kendall.w = NA_real_, spearman.rho = NA_real_))
 
   # Get rankings by rows (per instance)
   r <- rowRanks(data, ties.method = "average")
@@ -386,7 +386,7 @@ dataVariance <- function(data)
   irace.assert (is.matrix(data) && is.numeric(data))
   # LESLIE: should we rank data??
   # MANUEL: We should add the option.
-  if (nrow(data) <= 1L || ncol(data) <= 1L) return(NA)
+  if (nrow(data) <= 1L || ncol(data) <= 1L) return(NA_real_)
   
   # Normalize
   #datamin <- apply(data,1,min,na.rm=TRUE)

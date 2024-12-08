@@ -400,13 +400,13 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
   
   race_state$start_parallel(scenario)
   on.exit(race_state$stop_parallel(), add = TRUE)
-  target.output <- execute_experiments(race_state, experiments, scenario)
+  target_output <- execute_experiments(race_state, experiments, scenario)
   if (!is.null(scenario$targetEvaluator))
-    target.output <- execute_evaluator (race_state$target_evaluator, experiments, scenario, target.output,
+    target_output <- execute_evaluator (race_state$target_evaluator, experiments, scenario, target_output,
                                         src_configuration)
   # Save results
-  output <- sapply(target.output, getElement, "cost") 
-  results <- matrix(NA, ncol = 1L, nrow = nrow(race_state$instances_log), 
+  output <- sapply(target_output, getElement, "cost") 
+  results <- matrix(NA_real_, ncol = 1L, nrow = nrow(race_state$instances_log), 
                     dimnames = list(seq_nrow(race_state$instances_log), 1L))
   results[,1L] <- output[seq_nrow(race_state$instances_log)]
   lastres <- output[(nrow(race_state$instances_log)+1L):(2L * nrow(race_state$instances_log))]

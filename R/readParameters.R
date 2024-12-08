@@ -85,7 +85,7 @@
 readParameters <- function (file, digits = 4L, debugLevel = 0L, text)
 {
   if (missing(file) && !missing(text)) {
-    filename <- NA
+    filename <- NA_character_
     file <- textConnection(text)
     on.exit(close(file))
   } else if (is.character(file)) {
@@ -411,11 +411,11 @@ read_pcs_file <- function(file, digits = 4L, debugLevel = 0L, text)
       matches <- regmatches(lines[k],
                             regexec(regex_cond, lines[k], perl=TRUE))[[1L]]
       stopifnot(length(matches) > 0)
-      lines[k] <- NA
+      lines[k] <- NA_character_
       conditions[[matches[[2L]]]] <- matches[[3L]]
     } else if (grepl(regex_forbidden, lines[k], perl=TRUE)) {
       forbidden <- c(forbidden, sub(regex_forbidden, "\\1", lines[k], perl=TRUE))
-      lines[k] <- NA
+      lines[k] <- NA_character_
     }
   }
   

@@ -228,7 +228,7 @@ checkScenario <- function(scenario = defaultScenario())
   realParams <- .irace.params.def[.irace.params.def[, "type"] == "r", "name"]
   for (param in realParams) {
     if (is.null.or.empty(scenario[[param]]))
-      scenario[[param]] <- NA
+      scenario[[param]] <- NA_real_
     if (is.na(scenario[[param]]))
       next # Allow NA default values
     scenario[[param]] <- suppressWarnings(as.numeric(scenario[[param]]))
@@ -243,7 +243,7 @@ checkScenario <- function(scenario = defaultScenario())
   for (param in intParams) {
     p <- scenario[[param]]
     if (is.null.or.empty(p))
-      scenario[[param]] <- NA
+      scenario[[param]] <- NA_integer_
     if (is.na(scenario[[param]]))
       next # Allow NA default values
     p <- suppressWarnings(as.numeric(p))
