@@ -1,7 +1,5 @@
-# https://github.com/MLopez-Ibanez/irace/issues/10
 withr::with_output_sink("test-bug-10.Rout", {
-test_that("bug 10", {
-  skip_on_cran()
+
 parameters_txt <- '
 algorithm    "--"             c    (as,mmas,eas,ras,acs)
 localsearch  "--localsearch " c    (0, 1, 2, 3)
@@ -15,13 +13,38 @@ elitistants  "--elitistants " i    (1, 750)             | algorithm == "eas"
 nnls         "--nnls "        i    (5, 50)              | localsearch %in% c(1,2,3)
 dlb          "--dlb "         c    (0, 1)               | localsearch %in% c(1,2,3)
 '
-target.runner <- function(experiment, scenario)
-  list(cost = 100, call = toString(experiment))
 
 parameters <- irace:::readParameters(text=parameters_txt)
 
+test_that("bug blocksize", {
+  skip_on_cran()
+
+  target_runner <- function(experiment, scenario)
+    list(cost = 100 + rnorm(1, 0, 0.1), call = toString(experiment))
+
 withr::with_options(list(warning=2), {
-  scenario <- list(targetRunner = target.runner,
+  scenario <- list(targetRunner = target_runner,
+                   instances=1:5, firstTest=5*5, eachTest=5,
+                   sampleInstances=FALSE,
+                   maxExperiments = 5000, logFile = "",
+                   elitistNewInstances = 1,
+                   elitist = TRUE,
+                   parameters = parameters)
+  scenario <- checkScenario (scenario)
+  confs <- irace(scenario = scenario)
+  expect_false(is.null(confs))
+})
+})
+
+# https://github.com/MLopez-Ibanez/irace/issues/10
+test_that("bug 10", {
+  skip_on_cran()
+  
+  target_runner <- function(experiment, scenario)
+    list(cost = 100, call = toString(experiment))
+
+withr::with_options(list(warning=2), {
+  scenario <- list(targetRunner = target_runner,
                    instances=1:10,
                    maxExperiments = 5000, logFile = "",
                    deterministic = TRUE,
@@ -34,4 +57,5 @@ withr::with_options(list(warning=2), {
   expect_false(is.null(confs))
 })
 })
-})
+
+}) # withr::with_output_sink
