@@ -399,7 +399,7 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
   irace.note("Executing source and target configurations on the given instances * nrep (", nrow(race_state$instances_log), ")...\n")
   
   race_state$start_parallel(scenario)
-  on.exit(race_state$start_parallel(scenario), add = TRUE)
+  on.exit(race_state$stop_parallel(), add = TRUE)
   target.output <- execute_experiments(race_state, experiments, scenario)
   if (!is.null(scenario$targetEvaluator))
     target.output <- execute_evaluator (race_state$target_evaluator, experiments, scenario, target.output,
