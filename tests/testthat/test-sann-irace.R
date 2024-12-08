@@ -44,7 +44,7 @@ target_runner_reject <- function(experiment, scenario)
 }
 
 ## Run function ########################################################
-sann.irace <- function(log.param=FALSE, ...)
+sann_irace <- function(log.param=FALSE, ...)
 {
   args <- list(...)
 
@@ -78,14 +78,14 @@ test_that("parallel", {
   # Reproducible results
   generate_set_seed()
   weights <- rnorm(200, mean = 0.9, sd = 0.02)
-  sann.irace(instances = weights, parallel = test_irace_detectCores())
+  sann_irace(instances = weights, parallel = test_irace_detectCores())
 })
 
 test_that("parallel reject", {
   # Reproducible results
   generate_set_seed()
   weights <- rnorm(200, mean = 0.9, sd = 0.02)
-  sann.irace(instances = weights, parallel = test_irace_detectCores(), targetRunner = target_runner_reject)
+  sann_irace(instances = weights, parallel = test_irace_detectCores(), targetRunner = target_runner_reject)
 })
 
 test_that("deterministic", {
@@ -93,7 +93,7 @@ test_that("deterministic", {
   # Reproducible results
   generate_set_seed()
   weights <- rnorm(200, mean = 0.9, sd = 0.02)
-  sann.irace(deterministic = TRUE, instances = weights[1:7])
+  sann_irace(deterministic = TRUE, instances = weights[1:7])
 })
 
 test_that("log", {
@@ -101,7 +101,7 @@ test_that("log", {
   # Reproducible results
   generate_set_seed()
   weights <- rnorm(200, mean = 0.9, sd = 0.02)
-  sann.irace(log.param=TRUE, instances = weights)
+  sann_irace(log.param=TRUE, instances = weights)
 })
 
 test_that("large newInstances", {
@@ -109,7 +109,7 @@ test_that("large newInstances", {
   # Reproducible results
   generate_set_seed()
   weights <- rnorm(200, mean = 0.9, sd = 0.02)
-  sann.irace(instances = weights, elitistNewInstances = 6, elitistLimit = 2)
+  sann_irace(instances = weights, elitistNewInstances = 6, elitistLimit = 2)
 })
 
 }) # withr::with_output_sink()

@@ -26,7 +26,6 @@ system_os_is_windows <- function() .Platform$OS.type == "windows"
 
 ## Functions ##########################################################
 f_ackley <- function (x,y, nsize = 0.01) {
-  
   # Transformation of parameter values 
   # from [0,1] to [vmin,vmax]
   vmin <- -5
@@ -49,7 +48,7 @@ f_ackley <- function (x,y, nsize = 0.01) {
 }
 
 f_goldestein_price <- function (x,y, nsize = 0.01) {
-  # Trasfomation of parameter values 
+  # Transformation of parameter values 
   # from [0,1] to [vmin,vmax]
   vmin <- -2
   vmax <- 2
