@@ -92,6 +92,14 @@ psRace <- function(iraceResults, max_experiments, conf_ids = NULL, iteration_eli
       # Let's try first to evaluate on new instances.
       conf_needs_blocksize <- conf_needs +  blockSize
       left <- sapply(combs, function(x) max_experiments - sum(conf_needs_blocksize[x]), USE.NAMES=FALSE)
+      irace.assert(!is.null(left) && length(left) > 0L && !anyNA(left),
+        eval_after= {
+          cat("n combs: ", n, "\nmax_experiments: ", max_experiments, "\n")
+          print(combs)
+          cat("conf_needs: ", paste0(conf_needs, collapse=", "), "\n")
+          save(iraceResults, file="bug-conf_ids.Rdata")
+        })
+      
       if (any(left >= 0L)) { # We have enough budget to evaluate on a new instance.
         # Select the combination that will allow to evaluate the most configurations.
         combs <- combs[left >= 0]
