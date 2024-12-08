@@ -112,7 +112,7 @@ check_output_target_evaluator <- function (output, scenario, target_runner_call 
       }
     }
     if (is.null(output$time)) {
-      output$time <- NA
+      output$time <- NA_real_
     } else {
       if (is_na_nowarn(output$time)) {
         err_msg <- "The time returned by targetEvaluator is not numeric!"
@@ -248,7 +248,7 @@ check_output_target_runner <- function(output, scenario, bound = NULL)
     }
 
     if (is.null(output$time)) {
-      output$time <- NA
+      output$time <- NA_real_
     } else {
       if (is.na(output$time)) {
         err_msg <- paste0("The time returned by targetRunner is not numeric!")
