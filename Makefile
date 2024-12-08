@@ -30,7 +30,8 @@ help:
 	@echo "install        install the package"
 	@echo "build          build the package as a tar.gz file"
 	@echo "check          build the package and run 'R CMD check'"
-	@echo "check TEST=x   run test called test-x.R"
+	@echo "test           run all tests under testthat"
+	@echo "test TEST=x    run test called test-x.R"
 	@echo "rsync          copy the package and install it on $(RNODE)"
 	@echo "cran           build the package and run 'R CMD check --as-cran'"
 	@echo "winbuild       submit the package to the WINDOWS builder service"
@@ -108,16 +109,16 @@ releasecheck: cran
 	$(MAKE) macbuild
 
 check: build
+	test -d ./GenericWrapper4AC/build || (cd GenericWrapper4AC && python3 setup.py install --user)
+	cd $(BINDIR) && (_R_CHECK_FORCE_SUGGESTS_=false NOT_CRAN=true R CMD check --run-donttest --timings --install-args="$(INSTALL_FLAGS)" $(PACKAGE)_$(PACKAGEVERSION).tar.gz; cat $(PACKAGE).Rcheck/$(PACKAGE)-Ex.timings)
+
+# Using testthat nicer output.
+test: clean
 ifdef TEST
 	_R_CHECK_FORCE_SUGGESTS_=false NOT_CRAN=true $(Reval) 'devtools::test(filter="$(TEST)", stop_on_failure = TRUE)'
 else
-	test -d ./GenericWrapper4AC/build || (cd GenericWrapper4AC && python3 setup.py install --user)
-	cd $(BINDIR) && (_R_CHECK_FORCE_SUGGESTS_=false NOT_CRAN=true R CMD check --run-donttest --timings --install-args="$(INSTALL_FLAGS)" $(PACKAGE)_$(PACKAGEVERSION).tar.gz; cat $(PACKAGE).Rcheck/$(PACKAGE)-Ex.timings)
-endif
-
-# Using testthat nicer output
-test: clean
 	_R_CHECK_FORCE_SUGGESTS_=false NOT_CRAN=true $(Reval) 'testthat::test_local(stop_on_failure = TRUE)'
+endif
 
 clean: 
 	cd $(PACKAGEDIR) && (./cleanup; make -C src -f Makevars clean)
