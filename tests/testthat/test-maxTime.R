@@ -48,13 +48,13 @@ time.irace <- function(...)
 
 
 test_that("maxTime=500 testNbElites=2 testIterationElites=FALSE", {
-  generate.set.seed()
+  generate_set_seed()
   time.irace(maxTime = 500, testNbElites=2)
 })
 
 test_that("maxTime=1111 testNbElites=3 testIterationElites=TRUE", {
   skip_on_cran()
-  generate.set.seed()
+  generate_set_seed()
   time.irace(maxTime = 1111, testNbElites=3, testIterationElites=TRUE)
 })
 

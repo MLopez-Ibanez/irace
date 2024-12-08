@@ -76,14 +76,14 @@ sann.irace <- function(log.param=FALSE, ...)
 test_that("parallel", {
   skip_on_cran()
   # Reproducible results
-  generate.set.seed()
+  generate_set_seed()
   weights <- rnorm(200, mean = 0.9, sd = 0.02)
   sann.irace(instances = weights, parallel = test_irace_detectCores())
 })
 
 test_that("parallel reject", {
   # Reproducible results
-  generate.set.seed()
+  generate_set_seed()
   weights <- rnorm(200, mean = 0.9, sd = 0.02)
   sann.irace(instances = weights, parallel = test_irace_detectCores(), targetRunner = target_runner_reject)
 })
@@ -91,7 +91,7 @@ test_that("parallel reject", {
 test_that("deterministic", {
   skip_on_cran()
   # Reproducible results
-  generate.set.seed()
+  generate_set_seed()
   weights <- rnorm(200, mean = 0.9, sd = 0.02)
   sann.irace(deterministic = TRUE, instances = weights[1:7])
 })
@@ -99,7 +99,7 @@ test_that("deterministic", {
 test_that("log", {
   skip_on_cran()
   # Reproducible results
-  generate.set.seed()
+  generate_set_seed()
   weights <- rnorm(200, mean = 0.9, sd = 0.02)
   sann.irace(log.param=TRUE, instances = weights)
 })
@@ -107,7 +107,7 @@ test_that("log", {
 test_that("large newInstances", {
   skip_on_cran()
   # Reproducible results
-  generate.set.seed()
+  generate_set_seed()
   weights <- rnorm(200, mean = 0.9, sd = 0.02)
   sann.irace(instances = weights, elitistNewInstances = 6, elitistLimit = 2)
 })

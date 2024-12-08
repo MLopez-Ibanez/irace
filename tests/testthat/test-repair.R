@@ -64,13 +64,13 @@ repair_order <- function(configuration, parameters)
 }
 
 test_that("repair: sum to one", {
-  generate.set.seed()
+  generate_set_seed()
   confs <- repair_irace(target_sum2one, repair_sum2one)
   expect_equal(unique(apply(confs[, c("p1", "p2", "p3")], 1L, sum)), 1)
 })
 
 test_that("repair: increasing order", {
-  generate.set.seed()
+  generate_set_seed()
   confs <- repair_irace(target_order, repair_order)
   expect_true(all(apply(confs[, c("p1", "p2", "p3")], 1L, diff) >= 0))
 })

@@ -13,7 +13,7 @@ parameters <- readParameters(text = '
 algorithm       "--"                 c          (as,mmas,eas,ras,acs)
 ')
 
-   generate.set.seed()
+   generate_set_seed()
    scenario <- checkScenario(list(
      targetRunner = target.runner, targetEvaluator = target.evaluator,
      maxExperiments = 200, instances = runif(100),

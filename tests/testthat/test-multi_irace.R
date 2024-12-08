@@ -34,7 +34,7 @@ check.default.logFiles <- function(n) {
 test_that("multiple scenarios, multiple parameters", {
   skip_on_cran()
   # Reproducible results
-  generate.set.seed()
+  generate_set_seed()
 
   scenarios <- lapply(list(target.runner.1, target.runner.2, target.runner.3), make.scenario)
   parameters <- list(parameters.table.1, parameters.table.2, parameters.table.3)
@@ -48,7 +48,7 @@ test_that("multiple scenarios, multiple parameters", {
 test_that("one scenario, multiple parameters", {
   skip_on_cran()
   # Reproducible results
-  generate.set.seed()
+  generate_set_seed()
 
   scenarios <- list(make.scenario(target.runner.1))
   dummy_parameters_names <- c("dummy1", "dummy2", "dummy3")
@@ -63,7 +63,7 @@ test_that("one scenario, multiple parameters", {
 test_that("multiple scenarios, one parameters", {
   skip_on_cran()
   # Reproducible results
-  generate.set.seed()
+  generate_set_seed()
 
   scenarios <- lapply(list(100, 500, 1000), function(maxExperiments) make.scenario(target.runner.1, maxExperiments) )
   parameters <- list(parameters.table.1)
@@ -76,7 +76,7 @@ test_that("multiple scenarios, one parameters", {
 test_that("one scenario, one parameters, multiple n", {
   skip_on_cran()
   # Reproducible results
-  generate.set.seed()
+  generate_set_seed()
 
   scenarios <- list(make.scenario(target.runner.1))
   parameters <- list(parameters.table.1)
@@ -88,7 +88,7 @@ test_that("one scenario, one parameters, multiple n", {
 test_that("multiple scenarios, multiple parameters, multiple n", {
   skip_on_cran()
   # Reproducible results
-  generate.set.seed()
+  generate_set_seed()
 
   scenarios <- lapply(list(target.runner.1, target.runner.2, target.runner.3), make.scenario)
   parameters <- list(parameters.table.1, parameters.table.2, parameters.table.3)
@@ -101,7 +101,7 @@ test_that("multiple scenarios, multiple parameters, multiple n", {
 test_that("logFile not in execDir", {
   skip_on_cran()
   # Reproducible results
-  generate.set.seed()
+  generate_set_seed()
 
   execDir <- path_rel2abs("./multi_irace_execDir")
   logFileDir <- path_rel2abs("./multi_irace_logFileDir")
