@@ -83,27 +83,39 @@ psRace <- function(iraceResults, max_experiments, conf_ids = NULL, iteration_eli
           ".\n# Pending instances: ", paste0(collapse=", ", conf_needs), ".\n")
         return(conf_ids)
       }
-      if (length(conf_needs) > 21L) {
-        conf_needs <- conf_needs[1L:21L]
+      max_confs <- 16L
+      if (length(conf_needs) > max_confs) {
+        conf_needs <- conf_needs[seq_len(max_confs)]
+      } else {
+        max_confs <- length(conf_needs)
       }
-      # We want to race at least two configurations.
-      combs <- lapply(seq(3L, as.integer(2^22) - 1L, 2L), function(z) as.logical(intToBits(z)))
-      n <- sapply(combs, sum, USE.NAMES=FALSE)
+      # We want to race at least two configurations, so we generate all
+      # integers between 3 and 2^max_confs - 1L that are not powers of 2, then convert
+      # it to a bit-string then to a logical vector.
+      generate_combs <- function(max_confs) {
+        max_pow <- as.integer(2^max_confs)
+        pow_2 <- as.integer(2L^(0L:(max_confs-1L)))
+        s <- c(seq.int(3L, max_pow - 1L, 2L),
+          setdiff(seq.int(6L, max_pow - 2L, 2L),
+            pow_2[-1L:-3L]))
+        lapply(s, function(z) as.logical((z %/% pow_2) %% 2L))
+      }
+      combs <- generate_combs(max_confs)
       # Let's try first to evaluate on new instances.
-      conf_needs_blocksize <- conf_needs +  blockSize
+      conf_needs_blocksize <- conf_needs + blockSize
       left <- sapply(combs, function(x) max_experiments - sum(conf_needs_blocksize[x]), USE.NAMES=FALSE)
       irace.assert(!is.null(left) && length(left) > 0L && !anyNA(left),
         eval_after= {
-          cat("n combs: ", n, "\nmax_experiments: ", max_experiments, "\n")
-          print(combs)
-          cat("conf_needs: ", paste0(conf_needs, collapse=", "), "\n")
+          cat("max_experiments: ", max_experiments, "\n")
+          cat("length(left): ", length(left), "\n")
+          cat("sum(is.na(left)): ", sum(is.na(left)), "\n")
           save(iraceResults, file="bug-conf_ids.Rdata")
         })
       
       if (any(left >= 0L)) { # We have enough budget to evaluate on a new instance.
         # Select the combination that will allow to evaluate the most configurations.
         combs <- combs[left >= 0]
-        n <- n[left >= 0]
+        n <- sapply(combs, sum, USE.NAMES=FALSE)
         winner <- which.max(n)
         conf_needs <- conf_needs[combs[[winner]]]
         conf_ids <- names(conf_needs)
@@ -116,7 +128,7 @@ psRace <- function(iraceResults, max_experiments, conf_ids = NULL, iteration_eli
       irace.assert(any(left >= 0), eval_after=save(iraceResults, file="bug-conf_ids.Rdata"))
       # Select the combination that will allow to evaluate the most configurations.
       combs <- combs[left >= 0]
-      n <- n[left >= 0]
+      n <- sapply(combs, sum, USE.NAMES=FALSE)
       winner <- which.max(n)
       conf_needs <- conf_needs[combs[[winner]]]
       conf_ids <- names(conf_needs)

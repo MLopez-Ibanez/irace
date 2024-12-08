@@ -115,8 +115,8 @@ aux2.friedman <- function(y, I, alive, conf.level = 0.95)
     t <- qt(1 - alpha / 2, df = (n - 1) * (k - 1)) *
       (2 * (n * A - sum(R^2)) / ((n - 1) * (k - 1)))^(1 / 2)
     J <- best
-    for (j in 2:k) {
-      if (abs(R[o[j]] - R[o[1]]) > t) {
+    for (j in 2L:k) {
+      if (abs(R[o[j]] - R[o[1L]]) > t) {
         break
       } else {
         J <- c(J, I[o[j]])
@@ -141,8 +141,8 @@ aux_friedman <- function(results, alive, which_alive, conf.level)
   dropped.any <- TRUE
   PVAL <- 0
   # If only 2 configurations are left, switch to Wilcoxon
-  V1 <- results[, which_alive[1]]
-  V2 <- results[, which_alive[2]]
+  V1 <- results[, which_alive[1L]]
+  V2 <- results[, which_alive[2L]]
   diffs <- V1 - V2
   # Avoid the test if the answer is obvious
   if (all(diffs <= 0)) {
