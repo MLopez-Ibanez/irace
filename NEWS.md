@@ -21,7 +21,10 @@
 
  * Fixed some typos in the user guide. (@sbomsdorf)
  
-
+ * Fixed several bugs in post-selection. 
+ 
+ * Fix bug in `ablation()` not calling `stop_parallel()`.
+ 
 # irace 4.0
 
 ## Major breaking changes
