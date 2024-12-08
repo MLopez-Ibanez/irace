@@ -19,7 +19,6 @@ cap_irace <- function(...)
                    parameters = parameters)
   scenario <- modifyList(scenario, args)
   scenario <- checkScenario (scenario)
-
   confs <- irace(scenario = scenario)
   best.conf <- getFinalElites(scenario$logFile, n = 1L, drop.metadata = TRUE)
   expect_identical(removeConfigurationsMetaData(confs[1L, , drop = FALSE]),

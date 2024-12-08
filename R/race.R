@@ -33,9 +33,7 @@
 createExperimentList <- function(configurations, parameters,
                                  instances, instances_ID, seeds, bounds)
 {
-  instances <- instances[instances_ID]
   n_configurations <- nrow(configurations)
-  n_instances <- length(instances)
   configurations_id <- configurations[[".ID."]]
   pnames <- parameters$names
   configurations <- as.list(configurations[, pnames, drop=FALSE])
@@ -51,6 +49,8 @@ createExperimentList <- function(configurations, parameters,
     dots$bound <- bounds
   }
   configurations <- .mapply(list, dots = dots, MoreArgs = NULL)
+  instances <- instances[instances_ID]
+  n_instances <- length(instances)
   instances <- .mapply(list,
     dots = list(id_instance = instances_ID, seed = seeds, instance = instances),
     MoreArgs = NULL)
@@ -65,8 +65,11 @@ createExperimentList <- function(configurations, parameters,
 ## bounds: execution bounds (NULL if not needed).
 ## which_exps: Which experiments really need to be executed.
 race_wrapper <- function(race_state, configurations, instance_idx, bounds,
-                         which_exps, scenario)
+                         which_exps,
+                         # FIXME: race_state already contains scenario but it is not update with scenario$instances
+                         scenario)
 {
+  
   # Experiment list to execute
   experiments <- createExperimentList(configurations, parameters = scenario$parameters,
                                       instances = scenario$instances,
@@ -390,7 +393,7 @@ instanceBound <- function(data, type="median")
 ##  elites: index of elite configurations
 ##  alive: bolean array of alive configurations
 ##  eps: constant added to the bound to account for the measuring precision 
-dom.elim <- function(results, elites, alive, scenario, minSurvival, eps = 1e-5)
+dom_elim <- function(results, elites, alive, scenario, minSurvival, eps = 1e-5)
 {
   irace.assert(sum(alive) >= minSurvival)
   which_alive <- which(alive)
@@ -399,7 +402,7 @@ dom.elim <- function(results, elites, alive, scenario, minSurvival, eps = 1e-5)
   
   # When there are no protected elites left, select the best configurations to
   # calculate the bounds. This is quite aggressive and another alternative
-  # would be to disable dom.elim when elites == 0.
+  # would be to disable dom_elim when elites == 0.
   if (length(elites) == 0) {
     # In the case we have only two alive configurations only one can be elite.
     if (sum(alive) <= 2L)
@@ -549,7 +552,7 @@ generateTimeMatrix <- function(elite_ids, experiment_log)
   as.matrix(resultsTime[, as.character(elite_ids), drop = FALSE])
 }
 
-race <- function(race_state, maxExp = 0L,
+race <- function(race_state, maxExp,
                  minSurvival = 1L,
                  configurations,
                  scenario)
@@ -560,7 +563,7 @@ race <- function(race_state, maxExp = 0L,
                scenario = scenario,
                elitist_new_instances = 0L)
 
-elitist_race <- function(race_state, maxExp = 0L,
+elitist_race <- function(race_state, maxExp,
                  minSurvival = 1L,
                  elite.data = NULL,
                  configurations,
@@ -583,14 +586,8 @@ elitist_race <- function(race_state, maxExp = 0L,
   is_rejected <- rep(FALSE, n_configurations)
   
   ## FIXME: Remove argument checking. This must have been done by the caller.
-  # Check argument: maxExp
-  if (!missing(maxExp)
-    && (!is.numeric(maxExp) || length(maxExp)!=1L || !is.finite(maxExp)))
-    stop("maxExp must be an single number")
-  maxExp <- if (maxExp > 0) floor(maxExp) else 0L
-  if (maxExp && n_configurations > maxExp)
-    irace.error("Max number of experiments is smaller than number of configurations")
-
+  irace.assert(maxExp > 0L)
+  
   if (n_configurations <= minSurvival) {
     irace.error("Not enough configurations (", n_configurations,
                 ") for a race (minSurvival=", minSurvival, ")")
@@ -1057,8 +1054,8 @@ elitist_race <- function(race_state, maxExp = 0L,
     # rejection.  The third condition ensures that we see the block before capping.
     if (capping && sum(alive) > minSurvival && (current_task %% blockSize) == 0L) {
       irace.assert(!any(is_elite > 0) == (current_task >= elite_safe))
-      cap.alive <- dom.elim(Results[seq_len(current_task), , drop = FALSE],
-                            # Get current elite configurations
+      cap.alive <- dom_elim(Results[seq_len(current_task), , drop = FALSE],
+                            # Get current elite configurations.
                             elites = which(is_elite > 0L),
                             alive, scenario, minSurvival)
       cap.dropped <- sum(alive) > sum(cap.alive)
