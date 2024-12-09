@@ -524,7 +524,10 @@ read_logfile <- function(filename, name = "iraceResults")
   iraceResults <- get0(name, inherits=FALSE)
   if (!valid_iracelog(iraceResults))
     irace.error("read_logfile: The file '", filename, "' does not contain the '", name, "' object.")
-  
+
+  # data.table recommends doing this after loading a data.table from a file.
+  setDT(iraceResults$state$experiment_log)
+  setDT(iraceResults$state$instances_log)
   iraceResults
 }
 
