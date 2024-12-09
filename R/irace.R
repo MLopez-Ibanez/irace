@@ -669,8 +669,8 @@ irace_run <- function(scenario)
     iraceResults$state <- race_state
     irace_save_logfile(iraceResults, scenario)
     # FIXME: Handle scenario$maxTime > 0
-    if (scenario$postselection && scenario$maxTime == 0 && floor(remainingBudget / scenario$blockSize) > 1L)
-      psRace(iraceResults, max_experiments = remainingBudget, iteration_elites=TRUE)
+    if (scenario$postselection && scenario$maxTime == 0 && floor(remainingBudget / max(scenario$blockSize, scenario$eachTest)) > 1L)
+      psRace(iraceResults, max_experiments = remainingBudget, iteration_elites = TRUE)
     else
       race_state$elite_configurations
   }
