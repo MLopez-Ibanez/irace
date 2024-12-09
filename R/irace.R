@@ -612,16 +612,16 @@ irace <- function(scenario)
 irace_common <- function(scenario, simple, output.width = 9999L)
 {
   if (!simple) {
-    op <- options(width = output.width) # Do not wrap the output.
-    on.exit(options(op), add = TRUE)
+    withr::local_options(width = output.width) # Do not wrap the output.
   }
   scenario <- checkScenario(scenario)
   debugLevel <- scenario$debugLevel
 
-  if (debugLevel >= 1) {
-    op.debug <- options(warning.length = 8170)
-    if (!base::interactive()) options(error = irace.dump.frames)
-    on.exit(options(op.debug), add = TRUE)
+  if (debugLevel >= 1L) {
+    op <- list(warning.length = 8170L)
+    if (!base::interactive())
+      op <- c(op, list(error = irace_dump_frames))
+    withr::local_options(op)
     printScenario (scenario)
   }
   

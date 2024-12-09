@@ -122,7 +122,7 @@ generate_sobol <- function(parameters, n, repair = NULL)
             r = NA_real_,
             c = NA_character_,
             o = NA_character_,
-            irace.internal.error("Unknown type '", param[["type"]], "'"))
+            irace_internal_error("Unknown type '", param[["type"]], "'"))
           set(confs, j = p, value = na_value)
         }
       }

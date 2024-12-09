@@ -7,7 +7,7 @@ configurations_alloc <- function(colnames, nrow, parameters)
            r = NA_real_,
            c = NA_character_,
            o = NA_character_,
-           irace.internal.error("Unknown type '", type, "'"))
+           irace_internal_error("Unknown type '", type, "'"))
   }
 
   column_type <- function(x, n, types)
