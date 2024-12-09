@@ -71,8 +71,7 @@ target_error <- function(err_msg, output, scenario, target_runner_call,
   }
   if (is.null(output$outputRaw)) {
     # Message for a function call.
-    # FIXME: Ideally, we should print the list as R would print it.
-    output$outputRaw <- toString(output)
+    output$outputRaw <- deparse1(output)
     advice_txt <- paste0(
       "This is not a bug in irace, but means that something failed in ",
       "a call to the targetRunner or targetEvaluator functions provided by the user.",
@@ -603,7 +602,7 @@ execute_evaluator <- function(target_evaluator, experiments, scenario, target_ou
 {
   ## FIXME: We do not need the configurations_id argument:
   irace.assert(isTRUE(all.equal(configurations_id,
-    sapply(experiments, getElement, "id_configuration"))))
+    unique(sapply(experiments, getElement, "id_configuration")))))
   nconfs <- length(configurations_id)
   # Evaluate configurations sequentially.
   for (k in seq_along(experiments)) {
