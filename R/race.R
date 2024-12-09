@@ -538,6 +538,7 @@ update_elite_safe <- function(Results, is_elite)
 
 generateTimeMatrix <- function(elite_ids, experiment_log)
 {
+  # FIXME: experiment_log is already data.table, so this could be done faster.
   is_elite <- experiment_log[["configuration"]] %in% elite_ids
   # Remove everything that we don't need.
   experiment_log <- experiment_log[is_elite, c("configuration", "instance", "time", "bound")]
@@ -571,9 +572,6 @@ elitist_race <- function(race_state, maxExp,
                  elitist_new_instances)
 {
   blockSize <- scenario$blockSize
-  # FIXME: We should take this from scenario. However, this value should be
-  # zero for the first iteration.
-  ## FIXME2: Probably, instead of this, we should keep elite_safe in the race_state.
   stat.test <- scenario$testType
   conf.level <- scenario$confidence
   first.test <- blockSize * scenario$firstTest
@@ -626,6 +624,7 @@ elitist_race <- function(race_state, maxExp,
   # been previously evaluated.
   is_elite <- rep(0L, n_configurations)
 
+  ## FIXME: Probably, instead of this, we should keep elite_safe in the race_state.
   if (is.null(elite.data)) {
     elite_safe <- 0L
     elite_instances_ID <- NULL
@@ -651,12 +650,12 @@ elitist_race <- function(race_state, maxExp,
   }
 
   configurations_ID <- as.character(configurations[[".ID."]])
-  Results <- matrix(NA,
+  Results <- matrix(NA_real_,
                     nrow = elite_safe,
                     ncol = n_configurations,
                     dimnames = list(elite_instances_ID, configurations_ID))
   if (capping)
-    experimentsTime <- matrix(NA,
+    experimentsTime <- matrix(NA_real_,
                               nrow = elite_safe,
                               ncol = n_configurations, 
                               dimnames = list(elite_instances_ID, configurations_ID))
@@ -720,7 +719,7 @@ elitist_race <- function(race_state, maxExp,
         }
         if (any(is_rejected)) {
           irace.note ("Immediately rejected configurations: ",
-            paste0(configurations[is_rejected, ".ID."],
+            paste0(configurations[[".ID."]][is_rejected],
               collapse = ", ") , "\n")
           alive[is_rejected] <- FALSE
           # Calculate the maximum instance that has any non-NA value.
@@ -756,7 +755,7 @@ elitist_race <- function(race_state, maxExp,
 
   # Start main loop
   break_msg <- NULL
-  best <- NA
+  best <- NA_integer_
   for (current_task in seq_len(no.tasks)) {
     which_alive <- which(alive)
     nbAlive     <- length(which_alive)
@@ -799,7 +798,7 @@ elitist_race <- function(race_state, maxExp,
                    id_best = id_best,
                    best = best, experiments_used, start_time = Sys.time(),
                    # FIXME: Why do we pass NA as bound? Why not pass the actual bound if any?
-                   bound = NA, capping = capping)
+                   bound = NA_real_, capping = capping)
         next
       }
     }
@@ -869,10 +868,10 @@ elitist_race <- function(race_state, maxExp,
     
                                 
     if (nrow(Results) < current_task) {
-      Results <- rbind(Results, rep(NA, ncol(Results)))
+      Results <- rbind(Results, rep(NA_real_, ncol(Results)))
       rownames(Results) <- race_instances[seq_nrow(Results)]
       if (capping) {
-        experimentsTime <- rbind(experimentsTime, rep(NA, ncol(experimentsTime)))
+        experimentsTime <- rbind(experimentsTime, rep(NA_real_, ncol(experimentsTime)))
         rownames(experimentsTime) <- race_instances[seq_nrow(experimentsTime)]
       }
     }
@@ -913,9 +912,9 @@ elitist_race <- function(race_state, maxExp,
         # is not possible to calculate the bounds
         rejected <- is.infinite(Results[current_task, which_elite_exe])
         if (any(rejected)) {
-          irace.note ("Immediately rejected configurations: ",
-                      paste0(configurations[which_elite_exe[rejected], ".ID."],
-                             collapse = ", ") , "\n")
+          irace.note("Immediately rejected configurations: ",
+            paste0(configurations[[".ID."]][which_elite_exe[rejected]],
+              collapse = ", ") , "\n")
           is_rejected[which_elite_exe] <- rejected
           is_elite[is_rejected] <- 0L
           alive[which_elite_exe] <- !rejected
@@ -954,7 +953,7 @@ elitist_race <- function(race_state, maxExp,
                      id_best = id_best,
                      best = best, experiments_used, start_time = start_time,
                      # FIXME: Why do we pass NA as bound? Why not pass the actual bound if any?
-                     bound = if (is.null(scenario$boundMax)) NA else scenario$boundMax, capping)
+                     bound = if (is.null(scenario$boundMax)) NA_real_ else scenario$boundMax, capping)
           next
         }
       }
@@ -1011,7 +1010,7 @@ elitist_race <- function(race_state, maxExp,
       instance = race_instances[current_task],
       configuration = configurations[which_exe, ".ID."],
       # FIXME: Do not store a column bounds if bounds are NULL.
-      time = vtimes, bound = if (is.null(final_bounds)) NA else final_bounds)
+      time = vtimes, bound = if (is.null(final_bounds)) NA_real_ else final_bounds)
 
     irace.assert(anyDuplicated(experiment_log[, c("instance", "configuration")]) == 0L,
       eval_after = {
