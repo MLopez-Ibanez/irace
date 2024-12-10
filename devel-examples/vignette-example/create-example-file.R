@@ -47,8 +47,9 @@ setup_tsp_rue_2000 <- function() {
 }
 
 setup_acotsp <- function() {
-  download_uncompress("https://github.com/MLopez-Ibanez/ACOTSPQAP/archive/refs/heads/master.zip", exdir = "acotsp", flat= TRUE)
-  invoke_make("-C ./acotsp/ acotsp")
+  exdir <- fs::path_abs("acotsp")
+  download_uncompress("https://github.com/MLopez-Ibanez/ACOTSPQAP/archive/refs/heads/master.zip", exdir = exdir, flat= TRUE)
+  invoke_make(c("-C", exdir, "acotsp"))
 }
 
 setup_tsp_rue_2000()
