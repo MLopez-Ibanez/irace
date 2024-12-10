@@ -49,7 +49,7 @@ recoverFromFile <- function(filename)
 # FIXME: This function is too slow and it shows up in profiles.
 numeric.configurations.equal <- function(x, configurations, parameters, threshold, param.names)
 {
-  d <- rep(0.0, nrow(configurations))
+  d <- numeric(nrow(configurations))
   isSimilar <- matrix(TRUE, nrow = nrow(configurations), ncol = length(param.names))
   selected <- seq_nrow(configurations)
   for (i in seq_along(param.names)) {
@@ -348,10 +348,10 @@ generateInstances <- function(race_state, scenario, n, update = FALSE)
     blockSize <- scenario$blockSize
     n_blocks <- length(instances) / blockSize
     # Sample instances index in groups (ntimes)
-    selected_blocks <- unlist(lapply(rep(n_blocks, ntimes), sample.int, replace = FALSE))
+    selected_blocks <- unlist(lapply(rep.int(n_blocks, ntimes), sample.int, replace = FALSE))
     sindex <- c(outer(seq_len(blockSize), (selected_blocks - 1L) * blockSize, "+"))
   } else {
-    sindex <- rep(seq_along(instances), ntimes)
+    sindex <- rep.int(seq_along(instances), ntimes)
   }
   # Sample seeds.
   race_state$instances_log <- rbind(race_state$instances_log,

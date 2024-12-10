@@ -35,8 +35,8 @@ initialiseModel <- function (parameters, configurations)
     type <- param[["type"]]
     if (type == "c") {
       nbValues <- length(param[["domain"]])
-      value <- rep(1. / nbValues, nbValues)
-      param <- rep(list(value), nbConfigurations)
+      value <- rep_len(1. / nbValues, nbValues)
+      param <- rep_len(list(value), nbConfigurations)
     } else {
       if (type == "r" || type == "i") {
         sd <- init_sd_numeric(param)

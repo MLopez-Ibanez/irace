@@ -500,7 +500,7 @@ overall_ranks <- function(x, test)
   ninstances <- colSums2(!is.na(x))
   uniq.ninstances <- sort(unique(ninstances), decreasing = TRUE)
   last.r <- 0L
-  ranks <- rep(Inf, ncol(x))
+  ranks <- rep_len(Inf, ncol(x))
   # Iterate from the largest to the lowest number of instances.
   for (k in uniq.ninstances) {
     confs <- which(ninstances == k)
@@ -580,8 +580,8 @@ elitist_race <- function(race_state, maxExp,
   capping <- scenario$capping
   n_configurations <- nrow(configurations)
   experiment_log <- data.table(instance=integer(0), configuration=integer(0), time=numeric(0), bound=numeric(0))
-  alive <- rep(TRUE, n_configurations)
-  is_rejected <- rep(FALSE, n_configurations)
+  alive <- rep_len(TRUE, n_configurations)
+  is_rejected <- logical(n_configurations)
   
   ## FIXME: Remove argument checking. This must have been done by the caller.
   irace.assert(maxExp > 0L)
@@ -622,7 +622,7 @@ elitist_race <- function(race_state, maxExp,
   experiments_used <- 0L
   # is_elite[i] : number of instances to be seen in this race on which i has
   # been previously evaluated.
-  is_elite <- rep(0L, n_configurations)
+  is_elite <- integer(n_configurations)
 
   ## FIXME: Probably, instead of this, we should keep elite_safe in the race_state.
   if (is.null(elite.data)) {
@@ -673,7 +673,7 @@ elitist_race <- function(race_state, maxExp,
         irace.assert(elitist_new_instances %% blockSize == 0L)
         # FIXME: This should go into its own function.
         n_elite <- ncol(elite.data)
-        which_elites <- which(rep(TRUE, n_elite))
+        which_elites <- which(rep_len(TRUE, n_elite))
         irace.note("Preliminary execution of ", n_elite,
           " elite configuration(s) over ", elitist_new_instances, " instance(s).\n")
         for (k in seq_len(elitist_new_instances)) {
@@ -868,10 +868,10 @@ elitist_race <- function(race_state, maxExp,
     
                                 
     if (nrow(Results) < current_task) {
-      Results <- rbind(Results, rep(NA_real_, ncol(Results)))
+      Results <- rbind(Results, rep_len(NA_real_, ncol(Results)))
       rownames(Results) <- race_instances[seq_nrow(Results)]
       if (capping) {
-        experimentsTime <- rbind(experimentsTime, rep(NA_real_, ncol(experimentsTime)))
+        experimentsTime <- rbind(experimentsTime, rep_len(NA_real_, ncol(experimentsTime)))
         rownames(experimentsTime) <- race_instances[seq_nrow(experimentsTime)]
       }
     }

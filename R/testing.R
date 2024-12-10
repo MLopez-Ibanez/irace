@@ -41,8 +41,9 @@ testConfigurations <- function(configurations, scenario)
   
   # Create experiment list
   experiments <- createExperimentList(configurations, parameters = scenario$parameters,
-                                      instances = testInstances, instances_ID = instances_id, seeds = instanceSeed,
-                                      bounds = rep.int(scenario$boundMax, nrow(configurations)))
+    instances = testInstances, instances_ID = instances_id, seeds = instanceSeed,
+    # We cannot use rep.int because scenario$boundMax may be NULL.
+    bounds = rep(scenario$boundMax, nrow(configurations)))
   race_state <- RaceState$new(scenario)
   if (scenario$debugLevel >= 3L) {
     irace.note ("Memory used before execute_experiments() in testConfigurations():\n")
