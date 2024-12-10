@@ -1,9 +1,11 @@
 **If you are viewing this file on CRAN, please check [latest news on GitHub](https://github.com/MLopez-Ibanez/irace/blob/master/NEWS.md) where the formatting is also better.**
 
-# irace (development version)
+# irace 4.1
 
 ## Major breaking changes
 
+ * Recovery (`--recover-file`) is currently broken (issue #76).
+  
  * The `experiment` list passed to the `targetRunner` R function (see
   `target_runner_default()`) does not contain an element `switches`.
   This element can be obtained from `scenario$parameters$switches`.
