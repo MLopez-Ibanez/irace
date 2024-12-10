@@ -21,7 +21,7 @@
 
  * Fixed some typos in the user guide. (@sbomsdorf)
  
- * Fixed several bugs in post-selection. 
+ * Fixed several bugs in post-selection including `Error in if (any(left >= 0L)) { : missing value where TRUE/FALSE needed`.
  
  * Fix bug in `ablation()` not calling `stop_parallel()`.
  
