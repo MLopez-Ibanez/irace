@@ -1,5 +1,22 @@
 withr::with_output_sink("test-readParameters.Rout", {
 
+  test_that("optimize conditions", {
+    p <- readParameters(text='
+ROOT		"" c ("S")
+ROOT_T		"" c ("FIC")		| ROOT %in% c("S")
+ROOT_T_FIC.sum	"" r (-50.0, 50.0)	| ROOT_T %in% c("FIC")
+ROOT_T.FFI	"" c ("true")		| ROOT_T == "FIC"
+ROOT_T.im	"" c ("FFI", "FIC")	| ROOT == "S" & ROOT_T.FFI == "true"
+ROOT_E.FFI	"" c ("false")          | ROOT_T_FIC.sum < 0
+ROOT_E.FIC	"" i (0,100)            | ROOT_E.FFI == "false"
+')
+    expect_identical(p$conditions,
+      list(ROOT=TRUE, ROOT_T=TRUE, ROOT_T_FIC.sum=TRUE,
+        ROOT_T.FFI=TRUE, ROOT_T.im=TRUE,
+        ROOT_E.FFI=expression(ROOT_T_FIC.sum < 0),
+        ROOT_E.FIC=expression(ROOT_E.FFI == "false")))
+  })
+  
   test_that("error checking", {
 
     ref <- parametersNew(param_real(name = "tmp", lower = 0, upper=1,

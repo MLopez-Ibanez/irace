@@ -337,6 +337,16 @@ ParameterSpace <- R6::R6Class("ParameterSpace", cloneable = TRUE, lock_class = T
       self$forbidden <- sapply(forbidden, compile_forbidden)
     }
 
+    # Optimize always TRUE conditions.
+    cond_names <- names(which(!unlist(lapply(self$conditions, is.logical))))
+    for (p in cond_names) {
+      deps <- self$depends[[p]]
+      # p depends on deps and they are both fixed and always active.
+      if (all(self$isFixed[deps]) && all(sapply(self$conditions[deps], isTRUE, USE.NAMES=FALSE))) {
+        self$conditions[[p]] <- eval(self$conditions[[p]], envir = self$domains[deps], enclos = NULL)
+      }
+    }
+    
     # Print the hierarchy vector:
     if (verbose >= 1L) {
       cat ("# --- Parameters Hierarchy ---\n")

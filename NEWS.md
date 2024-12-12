@@ -13,6 +13,10 @@
  
 ## New features and improvements
 
+ * Conditions that are always true because they depend on fixed parameters are
+   replaced by a `TRUE` value to speed up their evaluation. This speed-up is only
+   measurable with very large and complicated parameter space.
+ 
  * The options `src` and `target` of `ablation()` (or `--src` and `--target` of
    the command-line `ablation` tool) now accept a character string that points
    to a file containing a configuration that will be read with
