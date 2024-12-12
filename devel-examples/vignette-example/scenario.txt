@@ -3,10 +3,10 @@
 ############################################################################
 logFile = "./irace-acotsp.Rdata"
 trainInstancesDir = "./acotsp/instances/"
-trainInstancesFile = "./acotsp/training-2000.txt"
+trainInstancesFile = "./tsp-2000-50-training.txt"
 maxExperiments = 1000
 testInstancesDir = "./acotsp/instances/"
-testInstancesFile = "./acotsp/testing-2000.txt"
+testInstancesFile = "./tsp-2000-50-testing.txt"
 configurationsFile = "default.txt"
 testNbElites = 5
 testIterationElites = 1
