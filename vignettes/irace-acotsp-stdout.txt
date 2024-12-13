@@ -1,6 +1,6 @@
 #------------------------------------------------------------------------------
 # irace: An implementation in R of (Elitist) Iterated Racing
-# Version: 4.0.3037934
+# Version: 4.1.38b59f7
 # Copyright (C) 2010-2020
 # Manuel Lopez-Ibanez     <manuel.lopez-ibanez@manchester.ac.uk>
 # Jeremie Dubois-Lacoste  
@@ -16,10 +16,10 @@
 #------------------------------------------------------------------------------
 # installed at: /home/manu/R/x86_64-pc-linux-gnu-library/4.1/irace
 # called with: --parallel 2
-# 2024-11-25 19:54:46 GMT: Reading parameter file '/home/manu/work/irace/git/devel-examples/vignette-example/parameters.txt'.
-# 2024-11-25 19:54:46 GMT: 1 expression(s) specifying forbidden configurations read.
-# 2024-11-25 19:54:46 GMT: Read 1 configuration(s) from file '/home/manu/work/irace/git/devel-examples/vignette-example/default.txt'
-# 2024-11-25 19:54:46 GMT: Initialization
+# 2024-12-13 10:37:30 GMT: Reading parameter file '/home/manu/work/irace/git/devel-examples/vignette-example/parameters.txt'.
+# 2024-12-13 10:37:30 GMT: 1 expression(s) specifying forbidden configurations read.
+# 2024-12-13 10:37:30 GMT: Read 1 configuration(s) from file '/home/manu/work/irace/git/devel-examples/vignette-example/default.txt'
+# 2024-12-13 10:37:30 GMT: Initialization
 # Elitist race
 # Elitist new instances: 1
 # Elitist limit: 2
@@ -32,7 +32,7 @@
 # mu: 5
 # deterministic: FALSE
 
-# 2024-11-25 19:54:46 GMT: Iteration 1 of 5
+# 2024-12-13 10:37:30 GMT: Iteration 1 of 5
 # experimentsUsedSoFar: 0
 # remainingBudget: 1000
 # currentBudget: 200
@@ -48,26 +48,58 @@
 +-+-----------+-----------+-----------+----------------+-----------+--------+-----+----+------+
 | |   Instance|      Alive|       Best|       Mean best| Exp so far|  W time|  rho|KenW|  Qvar|
 +-+-----------+-----------+-----------+----------------+-----------+--------+-----+----+------+
-|x|          1|         33|          3|     32651716.00|         33|00:01:34|   NA|  NA|    NA|
-|x|          2|         33|          3|     32758597.50|         66|00:01:35|+0.96|0.98|0.0011|
-|x|          3|         33|          3|     32897333.67|         99|00:01:43|+0.96|0.97|0.0010|
-|x|          4|         33|          3|     32873388.50|        132|00:01:34|+0.97|0.97|0.0018|
-|-|          5|          3|          3|     32913189.20|        165|00:01:33|+0.40|0.52|0.1580|
+|x|          1|         33|         31|     33745195.00|         33|00:01:42|   NA|  NA|    NA|
+|x|          2|         33|         31|     33244474.00|         66|00:01:36|+0.96|0.98|0.0093|
+|x|          3|         33|          9|     33268783.67|         99|00:01:34|+0.98|0.98|0.0067|
+|x|          4|         33|         31|     33289312.75|        132|00:01:37|+0.97|0.98|0.0059|
+|-|          5|          1|         31|     33252153.00|        165|00:01:38|   NA|  NA|    NA|
 +-+-----------+-----------+-----------+----------------+-----------+--------+-----+----+------+
-Best-so-far configuration:           3    mean value:      32913189.20
+Best-so-far configuration:          31    mean value:      33252153.00
 Description of the best-so-far configuration:
-  .ID. algorithm localsearch  alpha   beta   rho ants nnls q0 dlb rasrank elitistants time .PARENT.
-3    3       ras           3 2.4626 3.3474 0.794    6    7 NA   0      86          NA    5       NA
+   .ID. algorithm localsearch  alpha   beta    rho ants nnls    q0 dlb rasrank elitistants time .PARENT.
+31   31       acs           3 4.2717 0.2871 0.9362    6   17 0.918   1      NA          NA    5       NA
 
-# 2024-11-25 20:02:48 GMT: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):
-   algorithm localsearch  alpha   beta    rho ants nnls     q0 dlb rasrank elitistants time
-3        ras           3 2.4626 3.3474 0.7940    6    7     NA   0      86          NA    5
-16       acs           3 0.9001 7.7224 0.2372   16   10 0.7089   0      NA          NA    5
-25       ras           3 4.8064 5.5349 0.0825   45   49     NA   1      65          NA    5
-# 2024-11-25 20:02:48 GMT: Iteration 2 of 5
+# 2024-12-13 10:45:39 GMT: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):
+   algorithm localsearch  alpha   beta    rho ants nnls    q0 dlb rasrank elitistants time
+31       acs           3 4.2717 0.2871 0.9362    6   17 0.918   1      NA          NA    5
+# 2024-12-13 10:45:39 GMT: Iteration 2 of 5
 # experimentsUsedSoFar: 165
 # remainingBudget: 835
 # currentBudget: 208
+# nbConfigurations: 30
+# Markers:
+     x No test is performed.
+     c Configurations are discarded only due to capping.
+     - The test is performed and some configurations are discarded.
+     = The test is performed but no configuration is discarded.
+     ! The test is performed and configurations could be discarded but elite configurations are preserved.
+     . All alive configurations are elite and nothing is discarded.
+
++-+-----------+-----------+-----------+----------------+-----------+--------+-----+----+------+
+| |   Instance|      Alive|       Best|       Mean best| Exp so far|  W time|  rho|KenW|  Qvar|
++-+-----------+-----------+-----------+----------------+-----------+--------+-----+----+------+
+|x|          6|         30|         31|     32959028.00|         30|00:01:23|   NA|  NA|    NA|
+|x|          2|         30|         31|     32851390.50|         59|00:01:22|+0.94|0.97|0.0032|
+|x|          1|         30|         31|     33149325.33|         88|00:01:22|+0.93|0.95|0.0046|
+|x|          5|         30|         31|     33137872.50|        117|00:01:23|+0.93|0.95|0.0038|
+|-|          4|          4|         54|     33164082.00|        146|00:01:24|-0.16|0.07|0.8796|
++-+-----------+-----------+-----------+----------------+-----------+--------+-----+----+------+
+Best configuration for the instances in this race: 54
+Best-so-far configuration:          31    mean value:      33203298.83
+Description of the best-so-far configuration:
+   .ID. algorithm localsearch  alpha   beta    rho ants nnls    q0 dlb rasrank elitistants time .PARENT.
+31   31       acs           3 4.2717 0.2871 0.9362    6   17 0.918   1      NA          NA    5       NA
+
+# 2024-12-13 10:52:36 GMT: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):
+   algorithm localsearch  alpha   beta    rho ants nnls    q0 dlb rasrank elitistants time
+31       acs           3 4.2717 0.2871 0.9362    6   17 0.918   1      NA          NA    5
+54       ras           3 4.7668 8.4060 0.9256   19   43    NA   1      65          NA    5
+60       ras           3 2.6770 1.9122 0.6916   24    7    NA   1      54          NA    5
+61      mmas           3 3.2587 1.0293 0.4843   27   39    NA   1      NA          NA    5
+# 2024-12-13 10:52:36 GMT: Iteration 3 of 5
+# experimentsUsedSoFar: 311
+# remainingBudget: 689
+# currentBudget: 229
 # nbConfigurations: 31
 # Markers:
      x No test is performed.
@@ -80,59 +112,26 @@ Description of the best-so-far configuration:
 +-+-----------+-----------+-----------+----------------+-----------+--------+-----+----+------+
 | |   Instance|      Alive|       Best|       Mean best| Exp so far|  W time|  rho|KenW|  Qvar|
 +-+-----------+-----------+-----------+----------------+-----------+--------+-----+----+------+
-|x|          6|         31|          3|     33345656.00|         31|00:01:27|   NA|  NA|    NA|
-|x|          3|         31|          3|     33260231.00|         59|00:01:17|+0.95|0.97|0.0031|
-|x|          4|         31|          3|     33107338.33|         87|00:01:17|+0.96|0.97|0.0020|
-|x|          5|         31|          3|     33098601.75|        115|00:01:17|+0.94|0.96|0.0020|
-|-|          2|          4|          3|     33051977.20|        143|00:01:17|+0.56|0.65|0.2056|
+|x|          7|         31|         68|     32960020.00|         31|00:01:28|   NA|  NA|    NA|
+|x|          6|         31|         68|     32867730.50|         58|00:01:20|+0.96|0.98|0.0064|
+|x|          1|         31|         68|     33046955.33|         85|00:01:22|+0.95|0.96|0.0053|
+|x|          4|         31|         68|     33011285.50|        112|00:01:20|+0.94|0.96|0.0049|
+|-|          2|          7|         68|     32927007.40|        139|00:01:18|+0.74|0.79|0.1985|
+|-|          3|          6|         68|     32983036.50|        145|00:00:16|+0.66|0.71|0.2753|
+|-|          5|          2|         68|     33007217.29|        147|00:00:05|+0.05|0.18|0.4762|
 +-+-----------+-----------+-----------+----------------+-----------+--------+-----+----+------+
-Best-so-far configuration:           3    mean value:      32985267.00
+Best-so-far configuration:          68    mean value:      33007217.29
 Description of the best-so-far configuration:
-  .ID. algorithm localsearch  alpha   beta   rho ants nnls q0 dlb rasrank elitistants time .PARENT.
-3    3       ras           3 2.4626 3.3474 0.794    6    7 NA   0      86          NA    5       NA
+   .ID. algorithm localsearch  alpha   beta   rho ants nnls q0 dlb rasrank elitistants time .PARENT.
+68   68        as           3 4.6367 2.6281 0.735   15   25 NA   1      NA          NA    5       31
 
-# 2024-11-25 20:09:25 GMT: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):
-   algorithm localsearch  alpha   beta    rho ants nnls     q0 dlb rasrank elitistants time
-3        ras           3 2.4626 3.3474 0.7940    6    7     NA   0      86          NA    5
-16       acs           3 0.9001 7.7224 0.2372   16   10 0.7089   0      NA          NA    5
-25       ras           3 4.8064 5.5349 0.0825   45   49     NA   1      65          NA    5
-54       ras           3 4.9498 3.8076 0.3574   55   49     NA   1      94          NA    5
-# 2024-11-25 20:09:26 GMT: Iteration 3 of 5
-# experimentsUsedSoFar: 308
-# remainingBudget: 692
-# currentBudget: 230
-# nbConfigurations: 31
-# Markers:
-     x No test is performed.
-     c Configurations are discarded only due to capping.
-     - The test is performed and some configurations are discarded.
-     = The test is performed but no configuration is discarded.
-     ! The test is performed and configurations could be discarded but elite configurations are preserved.
-     . All alive configurations are elite and nothing is discarded.
-
-+-+-----------+-----------+-----------+----------------+-----------+--------+-----+----+------+
-| |   Instance|      Alive|       Best|       Mean best| Exp so far|  W time|  rho|KenW|  Qvar|
-+-+-----------+-----------+-----------+----------------+-----------+--------+-----+----+------+
-|x|          7|         31|         68|     32571532.00|         31|00:01:26|   NA|  NA|    NA|
-|x|          3|         31|         68|     32772911.50|         58|00:01:15|+0.95|0.98|0.0013|
-|x|          5|         31|         68|     32832489.00|         85|00:01:15|+0.91|0.94|0.0019|
-|x|          4|         31|         68|     32788167.00|        112|00:01:15|+0.91|0.94|0.0024|
-|-|          1|          9|         68|     32794658.80|        140|00:01:16|+0.74|0.79|0.2719|
-|-|          2|          8|         68|     32781380.17|        145|00:00:16|+0.76|0.80|0.2452|
-|-|          6|          2|         68|     32830235.57|        149|00:00:10|+0.43|0.51|0.2857|
-+-+-----------+-----------+-----------+----------------+-----------+--------+-----+----+------+
-Best-so-far configuration:          68    mean value:      32830235.57
-Description of the best-so-far configuration:
-   .ID. algorithm localsearch  alpha   beta    rho ants nnls q0 dlb rasrank elitistants time .PARENT.
-68   68        as           3 4.4752 2.0938 0.8087    6   16 NA   0      NA          NA    5        3
-
-# 2024-11-25 20:16:23 GMT: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):
-   algorithm localsearch  alpha   beta    rho ants nnls     q0 dlb rasrank elitistants time
-68        as           3 4.4752 2.0938 0.8087    6   16     NA   0      NA          NA    5
-87       acs           3 2.0186 5.6584 0.4271   24    9 0.7578   1      NA          NA    5
-# 2024-11-25 20:16:23 GMT: Iteration 4 of 5
-# experimentsUsedSoFar: 457
-# remainingBudget: 543
+# 2024-12-13 10:59:49 GMT: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):
+   algorithm localsearch  alpha   beta    rho ants nnls q0 dlb rasrank elitistants time
+68        as           3 4.6367 2.6281 0.7350   15   25 NA   1      NA          NA    5
+88        as           3 3.9594 1.0464 0.9144   10   16 NA   1      NA          NA    5
+# 2024-12-13 10:59:49 GMT: Iteration 4 of 5
+# experimentsUsedSoFar: 458
+# remainingBudget: 542
 # currentBudget: 271
 # nbConfigurations: 31
 # Markers:
@@ -146,31 +145,33 @@ Description of the best-so-far configuration:
 +-+-----------+-----------+-----------+----------------+-----------+--------+-----+----+------+
 | |   Instance|      Alive|       Best|       Mean best| Exp so far|  W time|  rho|KenW|  Qvar|
 +-+-----------+-----------+-----------+----------------+-----------+--------+-----+----+------+
-|x|          8|         31|        117|     33016677.00|         31|00:01:26|   NA|  NA|    NA|
-|x|          2|         31|         68|     32892019.00|         60|00:01:21|+0.76|0.88|0.1885|
-|x|          5|         31|         68|     32911894.00|         89|00:01:21|+0.77|0.85|0.1793|
-|x|          3|         31|         68|     32927493.25|        118|00:01:21|+0.78|0.83|0.1633|
-|-|          1|         10|        117|     32848072.80|        147|00:01:21|-0.05|0.16|0.9827|
-|=|          7|         10|        117|     32789721.00|        155|00:00:21|+0.08|0.23|0.8746|
-|=|          4|         10|        117|     32767407.86|        163|00:00:21|+0.11|0.24|0.8319|
-|-|          6|          4|        117|     32819256.38|        171|00:00:21|+0.16|0.26|0.6176|
+|x|          8|         31|        111|     32795830.00|         31|00:01:27|   NA|  NA|    NA|
+|x|          6|         31|        112|     32789052.50|         60|00:01:21|+0.86|0.93|0.0058|
+|x|          7|         31|        105|     32828203.00|         89|00:01:21|+0.83|0.88|0.0056|
+|x|          1|         31|        111|     32944793.25|        118|00:01:21|+0.84|0.88|0.0050|
+|-|          2|          6|        111|     32871068.80|        147|00:01:21|+0.07|0.25|0.7820|
+|=|          3|          6|        111|     32922788.33|        151|00:00:10|+0.06|0.22|0.7868|
+|=|          4|          6|        111|     32921158.71|        155|00:00:10|+0.04|0.18|0.7920|
+|=|          5|          6|        111|     32931485.75|        159|00:00:10|+0.08|0.20|0.7857|
+|=|          9|          6|        111|     32935464.78|        165|00:00:16|+0.01|0.12|0.8208|
 +-+-----------+-----------+-----------+----------------+-----------+--------+-----+----+------+
-Best-so-far configuration:         117    mean value:      32819256.38
+Best-so-far configuration:         111    mean value:      32935464.78
 Description of the best-so-far configuration:
-    .ID. algorithm localsearch  alpha   beta    rho ants nnls q0 dlb rasrank elitistants time .PARENT.
-117  117        as           3 3.8799 2.5467 0.9491    5   16 NA   1      NA          NA    5       68
+    .ID. algorithm localsearch alpha   beta    rho ants nnls q0 dlb rasrank elitistants time .PARENT.
+111  111        as           3 4.237 2.4678 0.8228    7   25 NA   1      NA          NA    5       68
 
-# 2024-11-25 20:24:19 GMT: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):
+# 2024-12-13 11:07:32 GMT: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):
     algorithm localsearch  alpha   beta    rho ants nnls q0 dlb rasrank elitistants time
-117        as           3 3.8799 2.5467 0.9491    5   16 NA   1      NA          NA    5
-68         as           3 4.4752 2.0938 0.8087    6   16 NA   0      NA          NA    5
-91        ras           3 4.7331 4.1876 0.9110    9   10 NA   0      96          NA    5
-106        as           3 3.4140 1.0941 0.7369    7    7 NA   0      NA          NA    5
-# 2024-11-25 20:24:19 GMT: Iteration 5 of 5
-# experimentsUsedSoFar: 628
-# remainingBudget: 372
-# currentBudget: 372
-# nbConfigurations: 40
+111        as           3 4.2370 2.4678 0.8228    7   25 NA   1      NA          NA    5
+112        as           3 3.9909 0.2085 0.8455   11   15 NA   1      NA          NA    5
+105        as           3 4.9145 1.1523 0.8970   14   26 NA   1      NA          NA    5
+117        as           3 4.7700 3.4140 0.6394    5   15 NA   1      NA          NA    5
+68         as           3 4.6367 2.6281 0.7350   15   25 NA   1      NA          NA    5
+# 2024-12-13 11:07:32 GMT: Iteration 5 of 5
+# experimentsUsedSoFar: 623
+# remainingBudget: 377
+# currentBudget: 377
+# nbConfigurations: 42
 # Markers:
      x No test is performed.
      c Configurations are discarded only due to capping.
@@ -182,35 +183,35 @@ Description of the best-so-far configuration:
 +-+-----------+-----------+-----------+----------------+-----------+--------+-----+----+------+
 | |   Instance|      Alive|       Best|       Mean best| Exp so far|  W time|  rho|KenW|  Qvar|
 +-+-----------+-----------+-----------+----------------+-----------+--------+-----+----+------+
-|x|          9|         40|        147|     32585740.00|         40|00:01:48|   NA|  NA|    NA|
-|x|          3|         40|        119|     32748624.50|         76|00:01:38|+0.55|0.77|0.1937|
-|x|          4|         40|        131|     32758998.67|        112|00:01:38|+0.59|0.73|0.2454|
-|x|          8|         40|        117|     32802313.25|        148|00:01:38|+0.61|0.70|0.2144|
-|-|          7|         12|        117|     32741443.00|        184|00:01:37|+0.06|0.25|0.8276|
-|=|          5|         12|        117|     32773486.83|        192|00:00:21|+0.13|0.28|0.7858|
-|=|          1|         12|        117|     32741222.29|        200|00:00:21|+0.10|0.23|0.7986|
-|=|          2|         12|        117|     32751764.75|        208|00:00:21|+0.07|0.19|0.8084|
-|-|          6|          7|        119|     32793972.00|        216|00:00:21|-0.04|0.08|0.8971|
-|=|         10|          7|        119|     32768735.40|        223|00:00:21|-0.02|0.08|0.8756|
-|=|         11|          7|        147|     32799507.73|        230|00:00:21|-0.00|0.09|0.8670|
+|x|         10|         42|        112|     32966330.00|         42|00:01:55|   NA|  NA|    NA|
+|x|          3|         42|        112|     33051661.50|         79|00:01:42|+0.57|0.79|0.0713|
+|x|          4|         42|        134|     32977694.33|        116|00:01:43|+0.54|0.69|0.0935|
+|x|          9|         42|        134|     32969490.50|        153|00:01:42|+0.51|0.63|0.1170|
+|-|          8|         17|        134|     32934070.40|        190|00:01:42|+0.00|0.20|0.9172|
+|=|          6|         17|        134|     32908282.83|        202|00:00:32|+0.00|0.17|0.9259|
+|=|          1|         17|        134|     32971566.71|        214|00:00:32|+0.03|0.17|0.8950|
+|-|          7|         11|        134|     32961960.00|        226|00:00:32|-0.00|0.12|0.9007|
+|=|          5|         11|        134|     32963148.67|        232|00:00:16|+0.03|0.14|0.8575|
+|=|          2|         11|        134|     32936020.50|        238|00:00:16|+0.01|0.11|0.8914|
+|=|         11|         11|        139|     32930846.27|        249|00:00:32|-0.02|0.08|0.9086|
 +-+-----------+-----------+-----------+----------------+-----------+--------+-----+----+------+
-Best-so-far configuration:         147    mean value:      32799507.73
+Best-so-far configuration:         139    mean value:      32930846.27
 Description of the best-so-far configuration:
     .ID. algorithm localsearch  alpha   beta    rho ants nnls q0 dlb rasrank elitistants time .PARENT.
-147  147       ras           3 3.7898 2.8028 0.6867    5   16 NA   0      81          NA    5       68
+139  139        as           3 2.9692 1.2846 0.8017    7   12 NA   1      NA          NA    5      111
 
-# 2024-11-25 20:34:50 GMT: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):
+# 2024-12-13 11:19:01 GMT: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):
     algorithm localsearch  alpha   beta    rho ants nnls q0 dlb rasrank elitistants time
-147       ras           3 3.7898 2.8028 0.6867    5   16 NA   0      81          NA    5
-119       ras           3 3.2040 1.9474 0.9529    6   13 NA   1      92          NA    5
-117        as           3 3.8799 2.5467 0.9491    5   16 NA   1      NA          NA    5
-136        as           3 4.3730 2.0798 0.7698    6   15 NA   1      NA          NA    5
-135        as           3 4.3055 2.2303 0.9918    8   25 NA   1      NA          NA    5
-# 2024-11-25 20:34:50 GMT: Iteration 6 of 6
-# experimentsUsedSoFar: 858
-# remainingBudget: 142
-# currentBudget: 142
-# nbConfigurations: 16
+139        as           3 2.9692 1.2846 0.8017    7   12 NA   1      NA          NA    5
+111        as           3 4.2370 2.4678 0.8228    7   25 NA   1      NA          NA    5
+134        as           3 3.9507 2.6450 0.7168    7   22 NA   1      NA          NA    5
+112        as           3 3.9909 0.2085 0.8455   11   15 NA   1      NA          NA    5
+129        as           3 4.7369 0.8967 0.9519   12   37 NA   1      NA          NA    5
+# 2024-12-13 11:19:01 GMT: Iteration 6 of 6
+# experimentsUsedSoFar: 872
+# remainingBudget: 128
+# currentBudget: 128
+# nbConfigurations: 15
 # Markers:
      x No test is performed.
      c Configurations are discarded only due to capping.
@@ -222,33 +223,36 @@ Description of the best-so-far configuration:
 +-+-----------+-----------+-----------+----------------+-----------+--------+-----+----+------+
 | |   Instance|      Alive|       Best|       Mean best| Exp so far|  W time|  rho|KenW|  Qvar|
 +-+-----------+-----------+-----------+----------------+-----------+--------+-----+----+------+
-|x|         12|         16|        164|     32578069.00|         16|00:00:43|   NA|  NA|    NA|
-|x|         11|         16|        136|     32804120.00|         27|00:00:32|+0.56|0.78|0.1723|
-|x|          9|         16|        163|     32750180.67|         38|00:00:32|+0.47|0.65|0.1754|
-|x|          4|         16|        163|     32712367.50|         49|00:00:32|+0.53|0.65|0.1543|
-|-|          7|          9|        158|     32663765.20|         60|00:00:32|+0.04|0.23|0.8661|
-|=|          3|          9|        158|     32731779.50|         64|00:00:10|+0.02|0.18|0.9066|
-|=|          8|          9|        158|     32769338.86|         68|00:00:10|+0.04|0.18|0.8696|
-|=|          2|          9|        158|     32757442.12|         72|00:00:10|+0.06|0.18|0.8679|
-|=|          5|          9|        158|     32772018.44|         76|00:00:10|+0.09|0.19|0.8699|
-|=|         10|          9|        158|     32747585.80|         80|00:00:10|+0.09|0.18|0.8630|
-|-|          6|          8|        158|     32774930.00|         84|00:00:10|+0.13|0.21|0.8195|
-|-|          1|          3|        158|     32755603.83|         87|00:00:10|+0.18|0.25|0.5087|
+|x|         12|         15|        111|     32711817.00|         15|00:00:43|   NA|  NA|    NA|
+|x|          1|         15|        139|     33063308.00|         25|00:00:27|+0.57|0.79|0.1025|
+|x|         10|         15|        139|     33049788.33|         35|00:00:27|+0.32|0.55|0.1518|
+|x|         11|         15|        158|     32929362.25|         45|00:00:27|+0.32|0.49|0.1492|
+|-|          8|          9|        111|     32923183.20|         55|00:00:27|-0.01|0.19|0.8548|
+|=|          5|          9|        111|     32936615.17|         59|00:00:10|-0.03|0.14|0.8854|
+|=|          2|          9|        111|     32885123.14|         63|00:00:10|-0.05|0.10|0.9170|
+|=|          7|          9|        111|     32878238.00|         67|00:00:10|-0.05|0.08|0.9070|
+|=|          3|          9|        111|     32911921.11|         71|00:00:10|-0.04|0.07|0.9026|
+|=|          6|          9|        111|     32901158.60|         75|00:00:10|-0.02|0.08|0.8939|
+|=|          9|          9|        158|     32888854.27|         79|00:00:10|-0.04|0.05|0.9086|
+|=|          4|          9|        111|     32907522.00|         83|00:00:10|-0.03|0.06|0.8965|
+|=|         13|          9|        111|     32893188.77|         92|00:00:27|-0.00|0.08|0.8652|
 +-+-----------+-----------+-----------+----------------+-----------+--------+-----+----+------+
-Best-so-far configuration:         158    mean value:      32755603.83
+Best-so-far configuration:         111    mean value:      32893188.77
 Description of the best-so-far configuration:
-    .ID. algorithm localsearch  alpha   beta    rho ants nnls q0 dlb rasrank elitistants time .PARENT.
-158  158       ras           3 2.3916 1.0655 0.7257    9   10 NA   1      82          NA    5      119
+    .ID. algorithm localsearch alpha   beta    rho ants nnls q0 dlb rasrank elitistants time .PARENT.
+111  111        as           3 4.237 2.4678 0.8228    7   25 NA   1      NA          NA    5       68
 
-# 2024-11-25 20:38:58 GMT: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):
+# 2024-12-13 11:23:16 GMT: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):
     algorithm localsearch  alpha   beta    rho ants nnls q0 dlb rasrank elitistants time
-158       ras           3 2.3916 1.0655 0.7257    9   10 NA   1      82          NA    5
-163        as           3 3.0685 2.0363 0.7901    9   12 NA   1      NA          NA    5
-162        as           3 4.9169 3.9196 0.8228    5   19 NA   1      NA          NA    5
-# 2024-11-25 20:38:58 GMT: Iteration 7 of 7
-# experimentsUsedSoFar: 945
-# remainingBudget: 55
-# currentBudget: 55
+111        as           3 4.2370 2.4678 0.8228    7   25 NA   1      NA          NA    5
+158        as           3 4.0814 1.8930 0.8547    8   15 NA   1      NA          NA    5
+139        as           3 2.9692 1.2846 0.8017    7   12 NA   1      NA          NA    5
+134        as           3 3.9507 2.6450 0.7168    7   22 NA   1      NA          NA    5
+161        as           3 3.7278 2.5374 0.7533    6   21 NA   1      NA          NA    5
+# 2024-12-13 11:23:16 GMT: Iteration 7 of 7
+# experimentsUsedSoFar: 964
+# remainingBudget: 36
+# currentBudget: 36
 # nbConfigurations: 7
 # Markers:
      x No test is performed.
@@ -261,75 +265,50 @@ Description of the best-so-far configuration:
 +-+-----------+-----------+-----------+----------------+-----------+--------+-----+----+------+
 | |   Instance|      Alive|       Best|       Mean best| Exp so far|  W time|  rho|KenW|  Qvar|
 +-+-----------+-----------+-----------+----------------+-----------+--------+-----+----+------+
-|x|         13|          7|        158|     32668525.00|          7|00:00:21|   NA|  NA|    NA|
-|x|          5|          7|        165|     32770884.50|         11|00:00:10|-0.14|0.43|1.0742|
-|x|         11|          7|        158|     32832573.67|         15|00:00:10|+0.14|0.43|0.6575|
-|x|          7|          7|        158|     32741618.00|         19|00:00:10|+0.21|0.41|0.5624|
-|-|          8|          4|        158|     32792233.40|         23|00:00:10|+0.24|0.39|0.6167|
+|x|         14|          7|        158|     32594875.00|          7|00:00:21|   NA|  NA|    NA|
+|x|          2|          7|        158|     32603472.50|          9|00:00:05|-0.54|0.23|1.2621|
+|x|         13|          7|        158|     32634819.00|         11|00:00:05|-0.13|0.25|0.8751|
+|x|         11|          7|        158|     32621675.25|         13|00:00:05|+0.06|0.29|0.7722|
+|=|          5|          7|        158|     32709142.80|         15|00:00:05|-0.07|0.15|0.9028|
+|=|          9|          7|        158|     32711185.33|         17|00:00:05|+0.02|0.18|0.8269|
+|=|         12|          7|        158|     32733346.29|         19|00:00:05|+0.02|0.16|0.8338|
+|=|          3|          7|        158|     32784803.88|         21|00:00:05|-0.03|0.09|0.8922|
+|=|          6|          7|        158|     32783744.67|         23|00:00:05|-0.03|0.09|0.8717|
+|=|          8|          7|        158|     32788286.80|         25|00:00:05|-0.02|0.09|0.8551|
+|=|          1|          7|        158|     32833472.55|         27|00:00:05|-0.00|0.09|0.8441|
+|=|         10|          7|        158|     32845980.08|         29|00:00:05|+0.02|0.10|0.8367|
+|=|          7|          7|        158|     32851521.85|         31|00:00:05|-0.02|0.06|0.8597|
+|=|          4|          7|        158|     32866276.64|         33|00:00:05|-0.04|0.04|0.8760|
 +-+-----------+-----------+-----------+----------------+-----------+--------+-----+----+------+
-Best-so-far configuration:         158    mean value:      32748905.46
+Best-so-far configuration:         158    mean value:      32866276.64
 Description of the best-so-far configuration:
-    .ID. algorithm localsearch  alpha   beta    rho ants nnls q0 dlb rasrank elitistants time .PARENT.
-158  158       ras           3 2.3916 1.0655 0.7257    9   10 NA   1      82          NA    5      119
+    .ID. algorithm localsearch  alpha  beta    rho ants nnls q0 dlb rasrank elitistants time .PARENT.
+158  158        as           3 4.0814 1.893 0.8547    8   15 NA   1      NA          NA    5      111
 
-# 2024-11-25 20:40:03 GMT: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):
+# 2024-12-13 11:24:48 GMT: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):
     algorithm localsearch  alpha   beta    rho ants nnls q0 dlb rasrank elitistants time
-158       ras           3 2.3916 1.0655 0.7257    9   10 NA   1      82          NA    5
-163        as           3 3.0685 2.0363 0.7901    9   12 NA   1      NA          NA    5
-162        as           3 4.9169 3.9196 0.8228    5   19 NA   1      NA          NA    5
-165        as           3 4.9286 3.4619 0.8553    5   18 NA   1      NA          NA    5
-# 2024-11-25 20:40:03 GMT: Iteration 8 of 8
-# experimentsUsedSoFar: 968
-# remainingBudget: 32
-# currentBudget: 32
-# nbConfigurations: 6
-# Markers:
-     x No test is performed.
-     c Configurations are discarded only due to capping.
-     - The test is performed and some configurations are discarded.
-     = The test is performed but no configuration is discarded.
-     ! The test is performed and configurations could be discarded but elite configurations are preserved.
-     . All alive configurations are elite and nothing is discarded.
-
-+-+-----------+-----------+-----------+----------------+-----------+--------+-----+----+------+
-| |   Instance|      Alive|       Best|       Mean best| Exp so far|  W time|  rho|KenW|  Qvar|
-+-+-----------+-----------+-----------+----------------+-----------+--------+-----+----+------+
-|x|         14|          6|        162|     32971446.00|          6|00:00:16|   NA|  NA|    NA|
-|x|          2|          6|        163|     32848903.00|          9|00:00:10|+0.49|0.74|0.4589|
-|x|         10|          6|        158|     32757737.33|         12|00:00:10|+0.22|0.48|0.6308|
-|x|         13|          6|        158|     32735434.25|         14|00:00:05|+0.25|0.44|0.6030|
-|=|          3|          6|        158|     32802717.60|         17|00:00:10|+0.19|0.36|0.6280|
-|-|         12|          5|        158|     32781360.83|         20|00:00:10|+0.13|0.28|0.6631|
-+-+-----------+-----------+-----------+----------------+-----------+--------+-----+----+------+
-Best-so-far configuration:         158    mean value:      32771937.57
-Description of the best-so-far configuration:
-    .ID. algorithm localsearch  alpha   beta    rho ants nnls q0 dlb rasrank elitistants time .PARENT.
-158  158       ras           3 2.3916 1.0655 0.7257    9   10 NA   1      82          NA    5      119
-
-# 2024-11-25 20:41:08 GMT: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):
-    algorithm localsearch  alpha   beta    rho ants nnls q0 dlb rasrank elitistants time
-158       ras           3 2.3916 1.0655 0.7257    9   10 NA   1      82          NA    5
-163        as           3 3.0685 2.0363 0.7901    9   12 NA   1      NA          NA    5
-162        as           3 4.9169 3.9196 0.8228    5   19 NA   1      NA          NA    5
-165        as           3 4.9286 3.4619 0.8553    5   18 NA   1      NA          NA    5
-170        as           3 3.0328 2.9667 0.7722    8   14 NA   1      NA          NA    5
-# 2024-11-25 20:41:08 GMT: Stopped because there is not enough budget left to race more than the minimum (5).
+158        as           3 4.0814 1.8930 0.8547    8   15 NA   1      NA          NA    5
+111        as           3 4.2370 2.4678 0.8228    7   25 NA   1      NA          NA    5
+139        as           3 2.9692 1.2846 0.8017    7   12 NA   1      NA          NA    5
+161        as           3 3.7278 2.5374 0.7533    6   21 NA   1      NA          NA    5
+134        as           3 3.9507 2.6450 0.7168    7   22 NA   1      NA          NA    5
+# 2024-12-13 11:24:48 GMT: Stopped because there is not enough budget left to race more than the minimum (5).
 # You may either increase the budget or set 'minNbSurvival' to a lower value.
-# Iteration: 9
-# nbIterations: 9
-# experimentsUsedSoFar: 988
+# Iteration: 8
+# nbIterations: 8
+# experimentsUsedSoFar: 997
 # timeUsed: 0
-# remainingBudget: 12
-# currentBudget: 12
+# remainingBudget: 3
+# currentBudget: 3
 # number of elites: 5
 # nbConfigurations: 5
-# Total CPU user time: 5336.052, CPU sys time: 69.72, Wall-clock time: 2782.256
-# 2024-11-25 20:41:08 GMT: Starting post-selection:
-# Configurations selected: 158, 163, 162, 147, 119, 117.
-# Pending instances: 0, 0, 0, 2, 2, 2.
+# Total CPU user time: 5414.816, CPU sys time: 81.82, Wall-clock time: 2838.16
+# 2024-12-13 11:24:48 GMT: Starting post-selection:
+# Configurations selected: 158, 111, 139.
+# Pending instances: 0, 0, 0.
 # Seed: 687542627
-# Configurations: 6
-# Available experiments: 12
+# Configurations: 3
+# Available experiments: 3
 # minSurvival: 1
 # Markers:
      x No test is performed.
@@ -342,263 +321,113 @@ Description of the best-so-far configuration:
 +-+-----------+-----------+-----------+----------------+-----------+--------+-----+----+------+
 | |   Instance|      Alive|       Best|       Mean best| Exp so far|  W time|  rho|KenW|  Qvar|
 +-+-----------+-----------+-----------+----------------+-----------+--------+-----+----+------+
-|.|         11|          6|        158|     32940567.00|          0|00:00:00|   NA|  NA|    NA|
-|x|         14|          6|        147|     32970515.00|          3|00:00:10|-0.54|0.23|1.3561|
-|.|          8|          6|        147|     33039789.67|          3|00:00:00|-0.14|0.24|1.1387|
-|x|         13|          6|        158|     32918785.50|          6|00:00:10|+0.07|0.30|0.9632|
-|.|          3|          6|        158|     32949398.60|          6|00:00:00|-0.10|0.12|0.9770|
-|.|          7|          6|        158|     32869290.67|          6|00:00:00|-0.08|0.10|0.9234|
-|.|          4|          6|        158|     32828238.71|          6|00:00:00|+0.01|0.15|0.8705|
-|.|         10|          6|        158|     32790670.38|          6|00:00:00|-0.01|0.11|0.8821|
-|.|          1|          6|        158|     32763153.22|          6|00:00:00|+0.02|0.13|0.8619|
-|.|          5|          6|        158|     32775700.80|          6|00:00:00|+0.06|0.16|0.8431|
-|.|         12|          6|        158|     32766507.73|          6|00:00:00|+0.07|0.15|0.8384|
-|.|          9|          6|        158|     32757049.08|          6|00:00:00|+0.04|0.12|0.8418|
-|.|          6|          6|        158|     32779458.54|          6|00:00:00|+0.05|0.12|0.8413|
-|.|          2|          6|        158|     32771937.57|          6|00:00:00|+0.09|0.16|0.8113|
-|-|         15|          2|        158|     32784288.73|         12|00:00:16|+0.05|0.11|0.4762|
+|.|          8|          3|        111|     32795830.00|          0|00:00:00|   NA|  NA|    NA|
+|.|          5|          3|        111|     32899802.50|          0|00:00:00|-0.50|0.25|1.0017|
+|.|          7|          3|        111|     32876549.00|          0|00:00:00|+0.00|0.33|0.6475|
+|.|          9|          3|        111|     32899236.00|          0|00:00:00|+0.00|0.25|0.7697|
+|.|         12|          3|        111|     32861752.20|          0|00:00:00|+0.10|0.28|0.6746|
+|.|          3|          3|        111|     32915024.50|          0|00:00:00|+0.10|0.25|0.6681|
+|.|          2|          3|        111|     32866616.86|          0|00:00:00|+0.14|0.27|0.6090|
+|.|         11|          3|        111|     32846257.62|          0|00:00:00|+0.14|0.25|0.6298|
+|.|          6|          3|        111|     32841595.22|          0|00:00:00|+0.00|0.11|0.6984|
+|.|          1|          3|        111|     32892336.20|          0|00:00:00|-0.03|0.07|0.6978|
+|.|         13|          3|        111|     32876777.45|          0|00:00:00|+0.01|0.10|0.6670|
+|.|          4|          3|        111|     32879661.08|          0|00:00:00|-0.04|0.05|0.6854|
+|.|         14|          3|        111|     32862618.00|          0|00:00:00|-0.04|0.04|0.6967|
+|.|         10|          3|        111|     32876396.79|          0|00:00:00|-0.03|0.05|0.6903|
+|=|         15|          3|        158|     32878230.53|          3|00:00:10|-0.05|0.02|0.7018|
 +-+-----------+-----------+-----------+----------------+-----------+--------+-----+----+------+
-Best-so-far configuration:         158    mean value:      32784288.73
+Best-so-far configuration:         158    mean value:      32878230.53
 Description of the best-so-far configuration:
-    .ID. algorithm localsearch  alpha   beta    rho ants nnls q0 dlb rasrank elitistants time .PARENT.
-158  158       ras           3 2.3916 1.0655 0.7257    9   10 NA   1      82          NA    5      119
+    .ID. algorithm localsearch  alpha  beta    rho ants nnls q0 dlb rasrank elitistants time .PARENT.
+158  158        as           3 4.0814 1.893 0.8547    8   15 NA   1      NA          NA    5      111
 
-# 2024-11-25 20:41:58 GMT: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):
+# 2024-12-13 11:24:59 GMT: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):
     algorithm localsearch  alpha   beta    rho ants nnls q0 dlb rasrank elitistants time
-158       ras           3 2.3916 1.0655 0.7257    9   10 NA   1      82          NA    5
-163        as           3 3.0685 2.0363 0.7901    9   12 NA   1      NA          NA    5
-# Total CPU user time: 5406.506, CPU sys time: 71.314, Wall-clock time: 2832.477
+158        as           3 4.0814 1.8930 0.8547    8   15 NA   1      NA          NA    5
+111        as           3 4.2370 2.4678 0.8228    7   25 NA   1      NA          NA    5
+139        as           3 2.9692 1.2846 0.8017    7   12 NA   1      NA          NA    5
+# Total CPU user time: 5430.848, CPU sys time: 81.992, Wall-clock time: 2848.956
 # Best configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):
     algorithm localsearch  alpha   beta    rho ants nnls q0 dlb rasrank elitistants time
-158       ras           3 2.3916 1.0655 0.7257    9   10 NA   1      82          NA    5
-163        as           3 3.0685 2.0363 0.7901    9   12 NA   1      NA          NA    5
+158        as           3 4.0814 1.8930 0.8547    8   15 NA   1      NA          NA    5
+111        as           3 4.2370 2.4678 0.8228    7   25 NA   1      NA          NA    5
+139        as           3 2.9692 1.2846 0.8017    7   12 NA   1      NA          NA    5
 # Best configurations as commandlines (first number is the configuration ID; listed from best to worst according to the sum of ranks):
-158 --ras --localsearch 3 --alpha 2.3916 --beta 1.0655 --rho  0.7257 --ants 9 --nnls 10 --dlb 1 --rasranks 82 --time 5
-163 --as --localsearch 3 --alpha 3.0685 --beta 2.0363 --rho  0.7901 --ants 9 --nnls 12 --dlb 1 --time 5
+158 --as --localsearch 3 --alpha 4.0814 --beta 1.893 --rho  0.8547 --ants 8 --nnls 15 --dlb 1 --time 5
+111 --as --localsearch 3 --alpha 4.237 --beta 2.4678 --rho  0.8228 --ants 7 --nnls 25 --dlb 1 --time 5
+139 --as --localsearch 3 --alpha 2.9692 --beta 1.2846 --rho  0.8017 --ants 7 --nnls 12 --dlb 1 --time 5
 
 
 # Testing of elite configurations: 5 
 # Testing iteration configurations: TRUE 
-# 2024-11-25 20:41:59 GMT: Testing configurations (in no particular order): 3 16 25 54 68 87 117 91 106 147 119 136 135 158 163 162 165 170
-    algorithm localsearch  alpha   beta    rho ants nnls     q0 dlb rasrank elitistants time
-3         ras           3 2.4626 3.3474 0.7940    6    7     NA   0      86          NA    5
-16        acs           3 0.9001 7.7224 0.2372   16   10 0.7089   0      NA          NA    5
-25        ras           3 4.8064 5.5349 0.0825   45   49     NA   1      65          NA    5
-54        ras           3 4.9498 3.8076 0.3574   55   49     NA   1      94          NA    5
-68         as           3 4.4752 2.0938 0.8087    6   16     NA   0      NA          NA    5
-87        acs           3 2.0186 5.6584 0.4271   24    9 0.7578   1      NA          NA    5
-117        as           3 3.8799 2.5467 0.9491    5   16     NA   1      NA          NA    5
-91        ras           3 4.7331 4.1876 0.9110    9   10     NA   0      96          NA    5
-106        as           3 3.4140 1.0941 0.7369    7    7     NA   0      NA          NA    5
-147       ras           3 3.7898 2.8028 0.6867    5   16     NA   0      81          NA    5
-119       ras           3 3.2040 1.9474 0.9529    6   13     NA   1      92          NA    5
-136        as           3 4.3730 2.0798 0.7698    6   15     NA   1      NA          NA    5
-135        as           3 4.3055 2.2303 0.9918    8   25     NA   1      NA          NA    5
-158       ras           3 2.3916 1.0655 0.7257    9   10     NA   1      82          NA    5
-163        as           3 3.0685 2.0363 0.7901    9   12     NA   1      NA          NA    5
-162        as           3 4.9169 3.9196 0.8228    5   19     NA   1      NA          NA    5
-165        as           3 4.9286 3.4619 0.8553    5   18     NA   1      NA          NA    5
-170        as           3 3.0328 2.9667 0.7722    8   14     NA   1      NA          NA    5
-# 2024-11-25 23:25:07 GMT: Testing results (column number is configuration ID in no particular order):
-          seeds        3       16       25       54       68       87      117       91      106      147      119      136      135      158      163      162      165      170
-1t   2102888981 33038703 33210450 33197215 33123566 32910890 32833215 32790987 32924214 32909015 32882904 32821827 32828921 32857601 32825807 32823567 32992382 32882530 32846969
-2t   1373895548 32826546 32868347 32936877 32869167 32624174 32689448 32641747 32643971 32719554 32842719 32648073 32528251 32680593 32585924 32506011 32570995 32497569 32588425
-3t    737168275 33263371 33361627 33367816 33346995 33112700 33234481 33127815 33030897 33095600 33046975 33009633 33112738 33103012 32961811 33094750 32973878 33139288 33149564
-4t   1746854571 32989521 33132403 33092369 33125274 32900111 32878571 32887939 32797137 32822275 32838583 32804693 32832932 32806554 32796337 32697020 32860947 32799402 32856848
-5t    138389571 32838591 33067819 33220556 33134342 32801520 32915718 32848386 32893736 32782406 32877116 32778155 32824632 32863179 32783936 32786920 32889240 32832076 32727551
-6t    786192030 32762995 33040031 32833200 32906000 32855991 32871604 32576206 32679420 32714514 32635050 32644831 32719519 32551692 32702853 32591806 32705428 32648085 32709565
-7t   1178378408 32988662 33266114 33312415 33072790 33007492 33114622 32929590 32901202 32927288 32991040 32984877 32904976 33022101 32881336 32912696 32936862 32838966 32998861
-8t   1091144016 33233782 33173476 33263436 33111162 33133010 32931182 32791745 32971069 32851928 33028676 32870363 32950316 32948519 32841456 32836317 32889165 32926502 33004821
-9t    487896768 33105732 33189429 33276723 33233416 33009362 33048057 32936535 32928492 32914799 32955356 32863927 32938271 32895526 32829362 32814855 32916962 32969567 32858883
-10t   947627276 32896170 32964601 33066887 33037373 32776358 32892243 32822586 32754490 32806029 32862203 32786524 32826282 32921051 32700440 32746960 32748835 32751656 32677123
-11t  1244452644 32923676 32939408 32978789 32910829 32746586 32834798 32818140 32794081 32872132 32689494 32641707 32778300 32732494 32768835 32670244 32909463 32927859 32660614
-12t    16831254 32784366 33033690 33077305 33092155 32931737 32793969 32854368 32811314 32768101 32766950 32789508 32769457 32687085 32602851 32713229 32764342 32731378 32864351
-13t  1096983435 33206700 33387763 33436444 33365937 33328987 33171934 33189468 33120410 33148927 33247547 33123469 33121931 33033844 33004010 32997761 33051422 33155544 33030999
-14t   945727373 33060973 33218435 33184801 33106470 33029238 32960623 32905906 32888551 32855335 32880054 32846583 32907219 32885836 32837339 32806372 32879113 32799427 32771248
-15t   496130080 33166941 33220666 33280307 33253955 32971439 32930800 32937933 32955289 33049419 32982147 32859892 32897300 32899533 32832704 32919281 33008357 32920845 32964483
-16t   461233007 32797571 32956667 32916825 32862351 32621355 32623956 32497202 32424314 32691248 32678949 32500118 32505872 32609490 32479914 32626722 32542801 32640142 32578028
-17t   608196975 32931334 33128016 33098168 33088625 32868160 32810604 32890631 32851486 32855187 32819224 32778126 32708719 32694860 32770742 32814354 32737048 32841801 32714341
-18t  1606584204 32831688 32899725 32960081 32909228 32656821 32633442 32590724 32717882 32605197 32524007 32521751 32639273 32563701 32587039 32616497 32580742 32705777 32579802
-19t   521504677 32944271 33159671 33079853 33104326 32917181 32875636 32860227 32883040 32796984 32986070 32760283 32855854 32821698 32702435 32824596 32825610 32805092 32844194
-20t  1431690252 32966988 32977020 33140445 33098661 32793694 32917364 32724034 32819488 32798914 32847972 32626343 32850948 32770973 32794000 32713121 32736796 32691512 32748379
-21t   529426667 33168840 33076254 33094865 33122180 32935360 32908403 32847629 32818217 33019918 32889617 32727284 32895744 32847560 32807547 32763322 32824006 32839595 32921956
-22t  1789253406 32861107 33186847 33126009 33027808 32834772 32843447 32861419 32814064 32887242 32939757 32799212 32837724 32763760 32710954 32736086 32804362 32866591 32729084
-23t  1075199038 32796360 32909290 32873717 32835387 32630655 32707085 32632067 32652033 32672573 32537363 32486111 32540810 32660929 32524910 32511082 32677718 32630429 32543675
-24t   212980354 32880210 33026120 33104366 33120366 32887775 32916351 32780689 32820695 32680739 32834052 32780286 32764874 32795808 32733216 32721861 32747507 32673548 32783609
-25t  1053133819 32970467 33288737 33282554 33269982 32910512 33010224 32851243 32968286 33052463 32979485 32950498 32965038 32901310 33017929 32916575 32987635 32888635 32844112
-26t  1241062382 32992892 33146513 33222813 33192971 32922817 33122902 32830006 32998031 32915930 32986305 32989363 32895619 32928638 32904952 32895388 32927334 32954405 32892729
-27t   699613509 33264382 33357116 33337360 33313169 33118978 33109715 33004475 33124237 33110487 33088529 33011869 33176961 33004143 33073829 32937829 33030864 32993530 33021785
-28t   792559700 32901992 32906898 33119831 33023159 32784069 32879636 32705243 32835696 32716251 32774961 32641984 32826894 32670128 32739398 32748376 32688115 32641559 32741664
-29t  1968946615 32972637 33135352 33131620 33152147 32987724 32829349 32757116 32867621 32817385 32863392 32789435 32837260 32759538 32845772 32737556 32804577 32829438 32826573
-30t   153013166 33040299 33075287 33131918 33087965 32808668 32739020 32797403 32781089 32781690 32784193 32711203 32672881 32722046 32861372 32769743 32666669 32767243 32712441
-31t   275111045 32992349 33087780 33201967 33113209 32772137 32926380 32789415 32653591 32864274 32862562 32705521 32796043 32747271 32707416 32787500 32826750 32735448 32796719
-32t  2064313849 33155387 33055083 33158723 33155576 33030373 32976933 32909107 32987990 33002899 32955037 33020525 32879747 32955729 32922223 32771293 32897685 32946818 32954257
-33t  1834264287 32825563 32885651 32928450 32973675 32611243 32790726 32598400 32665346 32660427 32539935 32518891 32640941 32562508 32461524 32629409 32589760 32673309 32559411
-34t   900370477 32813990 33000143 33075408 32962461 32670285 32605058 32703468 32792472 32795626 32788121 32609227 32664142 32662125 32551600 32553967 32644957 32741005 32658954
-35t  2075000813 32830554 33006227 32993599 32916346 32670828 32742699 32615125 32673889 32718573 32683042 32629415 32680598 32679491 32782373 32611435 32661334 32653414 32575524
-36t   949056843 32973931 33077502 33008674 33029675 32859035 32829651 32729024 32820944 32830225 32780749 32918426 32779438 32641469 32764964 32668913 32693989 32824762 32723684
-37t  1293439853 33177011 33230178 33307832 33168250 32992385 33088864 32828793 32982789 32973022 32932215 32859528 32936209 32928801 32983786 32956939 32948398 32990658 32947290
-38t  1382645237 33374921 33441677 33517977 33506821 33286319 33271704 33082391 33113790 33190834 33347009 33162093 33342828 33074357 33219203 33248058 33147282 33316729 33169687
-39t  1992954192 32722390 32856025 32856881 32808252 32633047 32513872 32519392 32493604 32591315 32586550 32513276 32605877 32418616 32468004 32536482 32569199 32521530 32646972
-40t  1221484178 33166452 33241530 33240870 33344384 33000623 33107487 32925090 32927541 32973027 33107771 32940967 32993696 33003291 32973255 32992315 33105169 32960935 32979683
-41t   854308369 33334294 33385797 33370637 33325028 33081916 33073207 33105467 33119958 32983146 33101170 32952703 33153494 33020820 32965260 32950043 32994327 33078070 33113226
-42t  1131908672 32715319 33059430 33045491 33035400 32870719 32923965 32711042 32838841 32897911 32804846 32714765 32866415 32668852 32749635 32748632 32783674 32719487 32659830
-43t  1725861088 32806128 33093236 33004727 33050147 32938023 32706779 32646345 32725686 32757441 32778606 32708573 32849655 32686597 32751507 32716920 32639519 32767986 32711244
-44t   792373773 32902925 33071485 33105353 33006103 32806905 32867805 32714588 32739221 32682157 32699927 32865924 32780141 32842751 32609311 32739253 32854991 32862522 32680752
-45t  1599641910 33279920 33380374 33333662 33403257 33122175 33273456 33069725 33178116 33167457 33152273 33061724 33091598 33193665 33116107 33035037 33190223 33126125 33011192
-46t   276520080 33090806 33287365 33333530 33270710 32884761 33032582 33002168 32957661 32906569 33028097 32949773 32942687 33057334 32892567 33065212 33000238 33054963 32927513
-47t  1396259076 33010731 33291748 33317082 33329815 32960273 33121431 32889066 32978246 32985069 33041902 32803089 32992093 32889478 32993423 32862895 32958519 32979340 32924736
-48t  1341093643 32650053 32833708 32946704 32897712 32613550 32635809 32582945 32575299 32560392 32740574 32551002 32616114 32588293 32722428 32553160 32504024 32567508 32511630
-49t  1365056851 32573296 32872127 32702523 32745193 32583567 32576887 32430751 32573677 32512420 32585607 32488016 32473577 32461521 32488567 32358938 32361801 32461703 32466543
-50t   992822221 33086491 33173417 33223544 33229069 32924439 33072724 32894041 32913464 32910841 32982102 32897963 32885370 32968540 32920213 32824817 32951590 33073157 32848187
-51t   628348915 33044473 33126681 33275879 33237276 33028077 33000132 32910956 32944515 32945969 32929278 32795389 32863373 32806900 32891612 32843140 32751226 32888929 32910742
-52t   315587582 32829314 32987275 32965841 32966570 32719768 32708909 32620431 32644835 32813633 32733154 32668523 32667440 32595373 32622397 32651986 32672661 32678351 32682825
-53t  2039354376 32948989 33123576 33159203 33160675 32914623 33121419 32858773 32763452 32839382 32826646 32704397 32716608 32806427 32770934 32713850 32842819 32746325 32810802
-54t   382197123 32879637 33065249 33020062 32958108 32768367 32737964 32702370 32648990 32655267 32736523 32730851 32849751 32712938 32580391 32689965 32833609 32898396 32700715
-55t  1290426930 33138112 33133080 33140868 33113637 32930177 33003860 32931502 32946225 32782618 32847432 32833561 32837244 32775064 32844567 32816226 32859733 32791550 32894612
-56t   992839633 33026761 33120873 33152542 33061267 32784404 32842912 32808567 32854606 32843855 32833511 32845411 32610293 32793399 32928335 32760173 32750910 32732005 32737245
-57t  1422553503 32914391 33119818 33171633 33196985 32896643 32897154 32844778 32897418 32970985 32877806 32839208 32808191 32827355 32897100 32884693 32766408 32904626 32968109
-58t   555312338 33202414 33223587 33197887 33279478 33099821 33024787 33027906 32890243 32938815 33018277 32801315 33006549 32854243 32900493 32904213 32892813 33085020 33014201
-59t   972317384 32998813 33350453 33329382 33306953 33095095 33117461 33002269 33033905 33121677 32984175 32968795 33078572 33046764 32858135 32955572 33048980 33038604 32927321
-60t  1176005400 32931446 33175929 33129972 33191595 32915230 32907851 32724218 32721187 32750046 32906165 32831108 32865914 32776232 32771110 32815003 32897019 32796239 32856887
-61t   987978749 33066792 33135827 33162255 33111192 32775148 32943134 32861208 32740053 32746452 32739941 32830146 32813025 32703092 32785338 32673432 32772628 32883123 32834771
-62t   932768075 33368475 33227646 33447877 33389249 33050255 33038428 33151186 33180594 33241442 33200459 33099488 33081116 33067570 33229336 32985616 33194754 33055105 33144762
-63t  2129850937 32845603 33157916 33133823 33119567 32904939 32848892 32806365 32837626 32772868 32694593 32752156 32783985 32711667 32774802 32809394 32717873 32785659 32744469
-64t   870245330 33517097 33500309 33624037 33599192 33300840 33356357 33255860 33288083 33253009 33246875 33269478 33256828 33175632 33241427 33284362 33214951 33272777 33181590
-65t  2141031147 32877149 33046097 32981391 32969449 32792838 32707896 32658949 32689253 32731310 32737599 32663333 32699106 32748977 32504216 32583503 32653519 32576844 32569702
-66t  1512246576 33288242 33371259 33359833 33350435 32988403 32962891 33004271 33023290 33065380 33116689 32962945 33052656 33130669 32891539 32894631 33054949 33054330 33054346
-67t  1206098133 33010654 32986762 32952068 32840913 32637351 32771170 32716152 32670536 32838334 32787907 32707907 32669343 32632239 32788914 32638601 32668233 32701394 32689645
-68t  1495543539 33043204 33231466 33089910 33212922 32934373 32802236 32814023 32774600 32751633 32858059 32783592 32838937 32783082 32775650 32740284 32915974 32784130 32788055
-69t  1749774608 32966726 33196212 33215590 33141456 33040707 33031561 32915592 33060253 33073074 32874325 32873282 32981078 32925125 32941791 32833715 32913301 32853528 32947537
-70t   756951873 33241122 33332303 33288091 33311883 32983633 32930417 33034328 32885311 33191331 33007943 32956223 33008797 32924826 32970057 32945821 32941705 32931653 32956925
-71t  1990335629 32639109 32828977 33014768 32990584 32797103 32803064 32706630 32762390 32731514 32805192 32649218 32647698 32749853 32743344 32725272 32700080 32773241 32607194
-72t  1311241583 32978266 33013911 33058820 32946320 32765124 32799630 32689662 32785285 32707196 32816183 32731277 32766229 32734708 32724007 32650900 32791074 32770594 32691415
-73t   869345563 32792737 32889597 32973399 32983784 32722627 32795664 32725089 32732566 32631902 32689790 32720891 32605094 32639156 32554252 32559589 32635860 32652608 32565619
-74t   674592297 33030645 33177413 33204897 33095335 32820730 32848311 32833608 32855817 32892769 32848102 32786861 32847212 32707943 32705740 32826958 32852349 32752175 32773028
-75t   692563853 33337559 33367042 33351792 33348168 33171014 33153205 33025102 33056348 33069339 33084073 33000916 33025489 33039153 33072656 33069336 33039286 33102312 33024710
-76t  1529228658 33043380 33272295 33206835 33066524 32909105 32978007 32809090 32889866 32854826 32847118 32952492 32805298 32868276 32873170 32835400 32825849 32835730 32774505
-77t  2135517163 33097223 33139296 33154939 33148511 32853313 32839742 32873862 32848673 32751590 32789592 32755893 32885099 32754055 32926112 32786378 32827013 32881486 32797504
-78t   495789009 32719675 33032572 33064998 33007466 32714289 32968271 32691012 32742977 32682924 32729993 32730452 32754995 32766174 32611267 32549741 32801379 32694142 32699232
-79t   733248345 32377650 32655602 32737639 32792339 32518971 32530025 32435940 32498174 32582539 32515181 32355962 32422269 32392618 32344841 32269087 32493138 32479711 32392035
-80t  1097131571 32640804 32735488 32835398 32890935 32607919 32651514 32734211 32497146 32559153 32685867 32492647 32501901 32628984 32444957 32466453 32673470 32636844 32554597
-81t   783813028 32673364 32815739 32717598 32685503 32470187 32448802 32430571 32379802 32406097 32344721 32364092 32480011 32299212 32331749 32307077 32381029 32447008 32375237
-82t  1224369123 32881583 33066504 33070451 32998880 32725392 32917111 32817007 32832394 32762009 32713391 32650662 32694544 32713098 32566965 32605011 32735045 32746630 32836964
-83t  1515029220 32979339 33149979 33061518 33151660 32861296 32938218 32887838 32857902 32920251 32823823 32812310 32816338 32786118 32912115 32813337 32763509 32828185 32767801
-84t    55726933 32656106 32682589 32748761 32667712 32546906 32606089 32409978 32547266 32408558 32494835 32399702 32375351 32456290 32377925 32294049 32470430 32466241 32421935
-85t  1861855068 32660589 32725338 32829617 32831603 32435481 32578347 32332162 32370085 32401475 32437837 32461951 32541634 32443627 32357098 32421819 32454380 32436214 32346531
-86t   811669657 32914581 33020564 33096555 33107840 32875223 32810018 32819913 32844212 32787802 32778746 32749455 32807657 32728279 32793416 32825957 32901318 32853696 32720655
-87t  1755606982 32998095 33130354 33276270 33014762 32875607 32898124 32938137 32890874 32866728 32907040 32821193 32921377 32842446 32731387 32863792 32815607 32747097 32818059
-88t  2013216975 33240635 33364758 33393929 33375514 33180213 33188048 33009342 33014525 33101354 33096528 32979471 33014907 32955443 33064271 32956348 33050002 33032114 33070342
-89t  1987920792 33157922 33524016 33509024 33510589 33208448 33224163 33280988 33129782 33182197 33311788 33180605 33236500 33201496 33060760 33144092 33124159 33217436 33126280
-90t  1838008341 32950195 33029385 33100773 33030184 32867572 32937339 32749579 32722161 32835398 32823473 32702567 32726273 32659532 32854021 32721319 32719046 32832542 32788879
-91t  1523003566 33065825 33198265 33182151 33102457 32901548 33001100 32964457 32921515 32948795 32973068 32802117 32881381 32738337 32855572 32879404 32734708 32883451 33028743
-92t   536585773 33348838 33516048 33477660 33523286 33193907 33340254 33148893 33147051 33257659 33228707 33157602 33222288 33189295 33252161 33214994 33223505 33143731 33248342
-93t   488967397 32988035 33143746 33139153 33199519 32903315 32998793 32904211 32923233 32841757 32986202 32814337 32887775 32840639 32789736 32791960 32925625 32808899 32917480
-94t  1900892596 32969392 33190780 33128433 33144811 32963125 33012925 32908914 32874499 32869950 32928296 32813747 32858142 32906912 32917178 32875735 32797847 32984441 32828649
-95t  1685647815 32934066 33094589 33119384 33135110 32876757 32800639 32790952 32933889 32805435 32894463 32817851 32798014 32824217 32913238 32880222 32875564 32853823 32878715
-96t  1879534497 33153265 33353927 33316234 33370563 33107495 33229517 33095068 33104459 32964375 33142305 32909476 33043963 33040049 33081087 33016415 32993791 32971470 33028943
-97t   615239714 33038071 33277081 33229092 33222150 32906559 33102724 32899936 32910281 32963265 33002065 32885040 32826498 32960011 32867261 32908948 32882066 32988060 32851163
-98t  1485687956 32709146 32828546 32895890 32916259 32557845 32551376 32521112 32579811 32588969 32442274 32482495 32411760 32572358 32463292 32397538 32478100 32473423 32494319
-99t   301667990 32863968 32898042 32990796 32883133 32672866 32634488 32668269 32673811 32691842 32570153 32606980 32697706 32630363 32776186 32530293 32632333 32737905 32607958
-100t 1577996667 32808211 33137544 33159815 33110727 32826357 32993666 32682907 32713922 32857629 32890567 32646784 32762044 32625584 32779357 32754233 32766085 32800855 32728066
-101t  116014708 32886670 33104764 33000295 32891135 32842584 32825360 32804749 32698242 32781886 32853730 32749899 32753098 32758688 32690565 32577940 32681880 32673360 32772242
-102t 2050723150 32708971 32934760 32866062 32808126 32683548 32679706 32613437 32636210 32563336 32591805 32486342 32600523 32569473 32509184 32591110 32471218 32586052 32555318
-103t    4917828 32817994 32910705 32943640 32873556 32655571 32771822 32654815 32605839 32495383 32699498 32561099 32555260 32514928 32458052 32601796 32646806 32604377 32580964
-104t   85907529 33367932 33492783 33430770 33410862 33284970 33249374 33129912 33261030 33166514 33230529 33139009 33150063 33170669 33003634 33184435 33147234 33183708 33283994
-105t   14505414 32632079 32853085 32830541 32826516 32482029 32422439 32487784 32500850 32545633 32527679 32444688 32438309 32390304 32458050 32389272 32458951 32469800 32530660
-106t  404338521 32945815 33109700 33047757 33079102 32778968 32806104 32718928 32797472 32749477 32731495 32722169 32684041 32804392 32707684 32738682 32700166 32740320 32761791
-107t 1782177479 33222262 33209377 33107388 33097237 32907531 32899564 32799514 32859804 32927565 32862039 32811555 32845517 32804147 32710078 32814239 32864951 32771222 32848046
-108t 1110666514 32909035 33032588 33045855 32999718 32861210 32901131 32827971 32771617 32756999 32823554 32754595 32749009 32653662 32658797 32643883 32688627 32747746 32766744
-109t 1459351962 33100920 33094295 33117824 32978946 32817514 32958048 32793739 32940483 32713251 32896544 32784359 32796074 32787274 32745218 32732550 32833585 32901994 32784563
-110t 1990218731 32832632 33006678 33110667 33020814 32856948 32848775 32715253 32703028 32764323 32738865 32620397 32752701 32717149 32767088 32707263 32733008 32732493 32708609
-111t   25878560 33067801 33133541 33118571 33143746 32908853 32851856 32784727 32820461 32945030 32890402 32788783 32827005 32832694 32777721 32786543 32753718 32794712 32826583
-112t  450214056 32910256 32951914 33027311 32880226 32602262 32852930 32607999 32772259 32745727 32749279 32654309 32636224 32679487 32683339 32716653 32787894 32823050 32585056
-113t 1373087355 33280715 33554227 33446125 33385224 33229003 33183065 32994570 33053841 33104041 33056376 33049890 33193311 33166784 33072937 33053301 33056906 33111122 32993885
-114t 1924677682 33372779 33613118 33580073 33472133 33225602 33286451 33187125 33148632 33234949 33248190 33108709 33196009 33144609 33212734 33196844 33115631 33243163 33174471
-115t 1753820896 32956748 33049375 33180206 33184058 32944157 32864878 32810654 32885916 32847103 32826763 32881108 32899184 32793898 32933746 32804858 32871019 32876787 32828224
-116t 1490257498 33257508 33416215 33487975 33459103 33137831 33229032 33123347 33089982 33079130 33141002 33075142 33121848 33091303 33135188 33138457 33230300 33127511 33095009
-117t   75946130 32840343 32744544 32732976 32849247 32584549 32642050 32484718 32605408 32508564 32417342 32492597 32482079 32483627 32615745 32491161 32624104 32536452 32506470
-118t 1754309743 33100478 33370382 33314101 33274755 32882431 32965807 32939087 32982987 32892607 33120904 32893842 32956905 32952153 32991219 32896671 32936503 32897470 32912304
-119t  190939470 32979579 33269056 33176927 33294069 33013331 32891909 32935983 33032900 32968819 32844870 32907601 32898749 32991168 32880824 32851812 33006182 32957172 33052447
-120t 1660044325 32893163 33182227 33042117 33061984 32779801 32867529 32774869 32824338 32792839 32777467 32743439 32783959 32750023 32662170 32800966 32784991 32844515 32735524
-121t 1149569885 32661818 32768535 32855872 32801143 32547702 32658807 32546278 32573273 32377076 32559667 32494143 32663932 32474572 32504134 32464498 32499209 32477273 32572536
-122t 1742140820 33008219 33159658 33147563 33179819 32865271 32985154 32834192 32815325 32971985 32882804 32920512 32843736 32874982 32874567 32838733 32769627 32911895 32818783
-123t 1314955828 33229974 33349775 33395696 33412518 33221314 33131575 33127063 32999553 33049625 33140917 33016040 33050724 32968182 32929041 32998880 33044568 33050046 33004198
-124t 1365508241 32945119 33202046 33249450 33184052 33005633 32958010 32871509 33034566 32934273 32863748 32919037 32906620 32890358 32991501 32828775 32824652 32898866 32987968
-125t  780241093 33062630 33085362 33227536 33200998 32925894 33004185 32886308 32932122 32931857 33013450 32759325 32828479 32810081 32785180 32919436 32805721 33006666 32851873
-126t  246869782 32969854 33205449 33196261 33202417 32954887 32975573 32874063 32938385 32883087 32944293 32886492 32949745 32832698 32843739 32815391 32961295 32981849 32838081
-127t   46474598 33072225 33234621 33256021 33283264 32979079 33016886 32894380 32961217 32998096 33010303 32976580 33032443 32991406 32834256 32912750 33067392 32905393 32956155
-128t  476633877 33250657 33307606 33264725 33326357 33053477 32983349 32980378 33004843 32830446 33045626 32944814 32953404 32897597 32868490 32954443 32893677 33075327 32925330
-129t  598751590 33195408 33421073 33388995 33362908 33110045 33110454 33025290 33148058 33122698 33066279 32951850 33078560 33052980 33078454 33054560 33012013 32999888 33046008
-130t  319979099 32999460 33285144 33182633 33289205 33020297 32949768 32867574 32932008 32836081 33030266 32921303 33014223 33039890 32845210 32902154 32952478 32962895 32829748
-131t 1580796383 33181631 33324134 33264146 33211620 33043025 33120526 32948558 32963483 33002983 33010954 32876549 33049174 32904163 32890095 32936753 32956750 33001212 33045546
-132t  248208077 32856182 33047368 33047318 32896389 32686715 32742023 32674331 32744183 32670555 32640695 32628118 32784048 32655776 32607690 32664692 32629265 32716516 32743565
-133t 1932600244 33303301 33412585 33419575 33382373 33145784 33187694 33147338 33296155 33142586 33161601 33039689 33031463 33044520 33044191 33076157 33130259 33129716 33138108
-134t 1041134102 32704421 32745005 32770211 32730781 32618242 32791243 32434867 32420209 32537556 32543015 32457445 32499550 32453215 32519413 32483226 32487159 32497109 32516426
-135t 1434253441 32621650 32853204 32844095 32775135 32631812 32527810 32521573 32631316 32489333 32539771 32544069 32468082 32505747 32468231 32476817 32516629 32590928 32549558
-136t 1475284765 33036455 33109400 33147747 33142926 32893702 32825886 32726888 32836253 32870272 32880373 32720480 32821001 32856249 32965380 32830220 32810645 32776088 32685287
-137t 1818558707 33197362 33294283 33349873 33258334 33100593 33166070 32849203 32922778 32957722 33012933 32917183 33009381 32990920 32988459 32900963 32872338 33038926 33023329
-138t   38684667 32622428 32798628 32898344 32866698 32756313 32607034 32545088 32608160 32566800 32679628 32522185 32571630 32651337 32562285 32635129 32566770 32541950 32578474
-139t 1280701788 32819128 33042721 33003247 32936899 32734722 32685264 32786556 32694433 32623655 32813595 32646382 32612519 32683485 32730088 32658835 32784524 32803723 32625358
-140t  151090926 32692704 32729559 32765001 32772786 32525272 32620589 32467692 32567446 32557485 32588534 32423232 32567878 32554910 32493548 32521827 32547298 32568520 32467780
-141t  885745127 33038583 33008484 33138682 33200915 32934058 32937635 32873029 32956271 32804037 32851673 32837839 32862113 32860024 32917381 32684883 32863857 32753944 32930078
-142t  102783810 32822954 33090737 33072107 32996011 32594869 32819207 32593961 32704744 32878141 32740736 32666213 32763245 32713852 32725716 32685914 32689403 32647612 32770951
-143t 1697563041 32610929 32756433 32765247 32809350 32437536 32574432 32439756 32542457 32413105 32490804 32394323 32496198 32430935 32416426 32482545 32494298 32526033 32530907
-144t  598510230 32972265 33272663 33276787 33216307 32922134 33052316 33029162 32889655 32881477 32850531 32869184 32902636 32832863 32967873 32848018 33031761 32913325 32864008
-145t  157544092 33230162 33327280 33275613 33268071 33120188 33214944 33047466 33004823 33011985 33065403 32936308 33103789 33029276 32915924 32949134 33041582 33066211 33036242
-146t 1915278990 32660466 32772474 32655077 32703160 32452790 32516961 32387594 32378311 32385609 32340813 32364811 32420587 32455607 32320227 32367766 32350577 32334322 32294149
-147t 1565428700 33200222 33371496 33337618 33391088 33078038 33208230 33110577 33127091 33038229 33157206 33104439 33048991 33063126 33096052 33106881 33150527 33078750 33095214
-148t 1822827654 33152008 33422758 33411071 33328005 33034980 33057225 33160963 33027072 33085978 33087578 32991717 33062375 32987759 33113948 32994196 33010385 33099142 33064344
-149t 2109298646 33149101 33150217 33197595 33185211 33014593 32885657 32962924 33018658 32935129 32892007 32838536 32926934 32937205 32916693 32893386 32769993 32921433 32876270
-150t  628215893 33071071 33172814 33253317 33224100 32904526 33074232 32818847 32917687 32906528 32817981 32739841 32950272 32910785 32780057 32791440 32825104 32848160 32773755
-151t 1189017503 33555136 33693372 33707389 33612554 33440226 33403522 33322940 33504439 33421902 33453562 33242292 33318493 33301156 33422501 33313004 33303181 33343747 33415263
-152t 1122233252 33000379 33225077 33270575 33284530 32979879 33046265 32886167 32921913 32969305 33047057 32832627 33079834 32863737 32987979 32894100 32976021 32898754 32896219
-153t 1793546828 32623641 32844813 32887646 32807520 32561937 32712478 32612664 32517333 32596480 32506778 32568391 32637878 32510923 32541983 32483061 32587766 32517309 32503969
-154t  297070912 32842465 32917121 33003116 32979419 32723740 32916313 32708746 32638220 32656736 32583059 32603100 32701877 32683350 32577306 32617376 32636164 32711398 32529161
-155t 1833341799 33274665 33439732 33375514 33398589 33142881 33225290 33152595 33070743 33069112 33070616 33059798 33098959 33006914 33038739 33053383 33136502 33109650 33114389
-156t  877101869 32891125 32956745 32921473 32953759 32788841 32833203 32631707 32653924 32836751 32765013 32651765 32674204 32690074 32752570 32717037 32582006 32765023 32619531
-157t  227494448 33052073 33216486 33123206 33158517 32871766 33017189 32954924 32953585 32862614 32922659 32821351 32767373 32866361 32829074 32809569 32993867 32897942 32826500
-158t  851827281 32811498 32957305 33030752 32884647 32783181 32794616 32594519 32735531 32729621 32724953 32561577 32745974 32729592 32643150 32638614 32687244 32667945 32612230
-159t  997089374 33120008 33186903 33224866 33199550 32983815 32976536 32993818 32962932 33077085 32941259 32902092 32908147 32895781 32872300 32926289 32960920 33012455 32975680
-160t  907501177 33547061 33739329 33564394 33647749 33300094 33424670 33265299 33321093 33530558 33436149 33269697 33271238 33214644 33283747 33293180 33374465 33300147 33332840
-161t 1689878855 32440723 32740006 32748421 32720407 32545200 32603553 32472464 32457093 32474083 32465939 32413626 32428815 32381949 32316349 32432976 32515426 32491102 32402608
-162t  340557566 32744212 32957574 32964782 32971271 32687183 32636958 32660433 32652916 32645734 32672949 32575277 32719605 32602290 32749295 32606197 32595879 32630811 32580147
-163t 1875446491 33333804 33379692 33394507 33476752 33228317 33242077 33113879 33042791 33238990 33106546 33035078 33138865 33053317 33047270 33231431 33233841 33070079 33044045
-164t  831244715 33327490 33439049 33552236 33531273 33245176 33374448 33189962 33315681 33254261 33195241 33190893 33332144 33192447 33208732 33235697 33254819 33234844 33290563
-165t  917718233 32609445 32672470 32767928 32706039 32448947 32429082 32476826 32604704 32495515 32576894 32552433 32277493 32365147 32425186 32354383 32436162 32402542 32263648
-166t 1976068837 32639696 32870702 32780715 32781584 32606998 32588705 32611115 32462907 32457137 32499287 32513419 32546253 32447253 32478730 32466768 32518324 32629074 32503125
-167t 1567828607 32783247 32982443 33017018 32957110 32834755 32761473 32678150 32668165 32735589 32803700 32740986 32766226 32586054 32647895 32646280 32705428 32671112 32807068
-168t   89334968 32847575 32999627 32911270 32988530 32694783 32798324 32647867 32708136 32627538 32746656 32649112 32607662 32575338 32668021 32640127 32725978 32666827 32563414
-169t  544836869 33139259 33249678 33317381 33331821 33078915 33159710 32968459 33046134 33018701 33050882 32970314 32988183 33018641 33061378 33048949 33011136 32930200 33009141
-170t 1289090481 32854588 33192591 33108997 33076374 32870335 32938895 32934416 32781088 32958200 33072626 32692249 32943497 32719154 32810994 32735528 32846948 32736534 32832408
-171t    5620582 33246621 33252046 33285742 33315980 33107991 32997495 32959633 33040159 33049930 33037305 32852104 32996959 33029152 32795733 32970956 33038251 32971065 32978839
-172t  934856202 32961549 33123816 33056776 33038321 32759464 32822281 32806865 32745259 32639285 32778017 32662774 32625821 32782432 32750675 32723239 32666577 32755603 32764196
-173t  491565145 32996179 33013922 33031152 33068796 32746939 32794870 32786721 32738223 32782076 32802303 32753602 32707701 32697572 32745595 32625937 32807554 32817308 32824152
-174t  167509626 33226836 33415408 33347776 33323141 33096926 33094912 33018274 33073647 33172239 33001589 33137659 32945408 32996641 33031802 32949029 33116713 33021505 33081460
-175t  779494849 33111220 33206291 33156534 33182978 32933010 32991399 32915564 33027166 32805936 32921227 32880729 32836173 32899041 32899886 32929460 32813449 32852508 32863099
-176t 1604133301 33249636 33250036 33329737 33253722 32989223 32897345 33009985 32975589 32934455 33001515 32958183 32963760 32915866 32827757 32827915 33017291 33063027 32903071
-177t  275015508 33008891 33084590 33201920 33156212 32797028 32934242 32828626 32874689 32977760 32849596 32884044 32942630 32902629 32928383 32747505 32806537 32872467 32796907
-178t 1229007180 32878805 33020799 33093322 33084925 32795968 32752628 32740078 32820648 32703312 32785730 32617057 32719205 32684900 32863584 32665306 32738230 32711670 32599282
-179t 2137191717 32646503 32845084 32745854 32824332 32632114 32629080 32521357 32505781 32539103 32505840 32498442 32478205 32428373 32450931 32443789 32522926 32443388 32524216
-180t  582176268 32674825 32873071 32862944 32759745 32534136 32541751 32516383 32490405 32665397 32590672 32456949 32593415 32583922 32424074 32526721 32430979 32540734 32534197
-181t 1597734639 32850319 32950066 32866053 32968706 32763688 32756827 32738199 32646796 32701185 32725309 32727456 32757054 32760084 32689496 32621323 32769537 32719730 32629381
-182t  991015576 33218253 33308463 33219559 33278453 33025261 33076222 32908127 32973317 33024508 33067941 32997920 32921794 32986721 32981070 32937722 32941509 32948932 32958315
-183t  112871509 32697662 33006884 33036142 32953937 32596810 32710933 32754289 32690495 32740161 32651812 32714399 32634990 32674339 32650092 32544302 32707069 32698156 32575462
-184t  409269595 32862478 33023048 32914798 32938656 32685321 32785372 32781088 32769449 32691254 32766680 32702737 32775397 32629050 32635692 32654858 32680668 32662385 32683234
-185t 1912347056 32595761 32801929 32860092 32779297 32607240 32667733 32570536 32514658 32597414 32595217 32603976 32481790 32565845 32528324 32651996 32539142 32564446 32585327
-186t  280108552 32966334 33039338 33047835 33065588 32823377 32881674 32805092 32655616 32892452 32833308 32706015 32738881 32777400 32712625 32690809 32602380 32753344 32749287
-187t  195538207 33098549 33369202 33281551 33318871 33097823 33164848 33107920 33130737 32983070 32964461 32953968 33086109 33053737 32969755 32960693 33074978 33098062 32992022
-188t 1297690789 33280082 33275116 33166120 33176402 32988730 33071291 32864527 32978460 32858319 33097832 32999418 32955414 33015782 32915192 32935945 32855854 32904026 33004423
-189t  628268213 32668250 32818660 32799327 32808254 32532122 32684430 32559146 32628924 32579456 32590757 32526647 32611510 32427237 32417185 32628482 32556307 32493073 32505253
-190t 1327172460 32541976 32771214 32678680 32819969 32374080 32519709 32443986 32316302 32384059 32315501 32384301 32486575 32333557 32277231 32381894 32380896 32377659 32432010
-191t  432898400 32746826 32895023 32898392 32871802 32724602 32569206 32600537 32627651 32587379 32639907 32503882 32635559 32506095 32534472 32546415 32743536 32661613 32528793
-192t 1239162891 32948246 33122775 33153405 33252871 32941934 32949618 32916466 33041858 32829126 32909371 32912866 32833432 32886504 32854363 32878447 32911611 32827318 32880504
-193t 1065354274 33100179 33195435 33217470 33259674 32952051 32962538 32825110 32948783 32961098 32896445 32822553 32862416 32858768 32883479 32915702 32826546 32859399 32840517
-194t 1597708233 32717978 32934358 32894919 32849614 32680648 32624933 32575092 32649524 32721832 32551332 32517280 32595698 32484519 32517033 32508866 32660784 32641787 32605386
-195t 1918246550 32870460 33147094 33058335 33120929 32767121 32891678 32929044 32858988 32862323 32972196 32729199 32823109 32827964 32857745 32741920 32773797 32829703 32848321
-196t 2136562957 33105193 33348233 33344388 33389375 33101543 33222801 33074403 33053088 33109692 33174450 33017199 33054344 33030277 32992571 33096728 33094829 32966562 33008693
-197t 1356069411 33529421 33750244 33674918 33766472 33490986 33511014 33417700 33436446 33493198 33384892 33468010 33404456 33353053 33228914 33447525 33385435 33466437 33365536
-198t 1394989400 32751437 32947364 33033499 33047464 32569876 32749116 32691772 32624442 32558015 32776274 32532653 32610337 32543988 32562350 32623459 32577273 32640498 32597290
-199t  192068973 32615383 32761385 32897447 32856877 32666471 32523476 32505884 32682410 32640441 32624976 32488399 32510136 32540766 32390400 32494719 32452478 32508466 32544772
-200t 1171789662 33199053 33265199 33187423 33202350 33033979 33083991 32939322 32996175 33033523 32989113 32876829 32889121 32935379 32958837 32825910 32956914 32923798 32913778
-# 2024-11-25 23:25:07 GMT: Finished testing
+# 2024-12-13 11:24:59 GMT: Testing configurations (in no particular order): 31 54 60 61 68 88 111 112 105 117 139 134 129 158 161
+    algorithm localsearch  alpha   beta    rho ants nnls    q0 dlb rasrank elitistants time
+31        acs           3 4.2717 0.2871 0.9362    6   17 0.918   1      NA          NA    5
+54        ras           3 4.7668 8.4060 0.9256   19   43    NA   1      65          NA    5
+60        ras           3 2.6770 1.9122 0.6916   24    7    NA   1      54          NA    5
+61       mmas           3 3.2587 1.0293 0.4843   27   39    NA   1      NA          NA    5
+68         as           3 4.6367 2.6281 0.7350   15   25    NA   1      NA          NA    5
+88         as           3 3.9594 1.0464 0.9144   10   16    NA   1      NA          NA    5
+111        as           3 4.2370 2.4678 0.8228    7   25    NA   1      NA          NA    5
+112        as           3 3.9909 0.2085 0.8455   11   15    NA   1      NA          NA    5
+105        as           3 4.9145 1.1523 0.8970   14   26    NA   1      NA          NA    5
+117        as           3 4.7700 3.4140 0.6394    5   15    NA   1      NA          NA    5
+139        as           3 2.9692 1.2846 0.8017    7   12    NA   1      NA          NA    5
+134        as           3 3.9507 2.6450 0.7168    7   22    NA   1      NA          NA    5
+129        as           3 4.7369 0.8967 0.9519   12   37    NA   1      NA          NA    5
+158        as           3 4.0814 1.8930 0.8547    8   15    NA   1      NA          NA    5
+161        as           3 3.7278 2.5374 0.7533    6   21    NA   1      NA          NA    5
+# 2024-12-13 11:58:48 GMT: Testing results (column number is configuration ID in no particular order):
+         seeds       31       54       60       61       68       88      111      112      105      117      139      134      129      158      161
+1t   970167052 33071103 33041870 32939864 33161675 32973181 32806902 32877080 32812825 32852835 32858142 32762360 32826345 32896266 32957183 32865797
+2t   367988162 32616274 32889140 32691248 32833971 32608706 32556311 32597594 32635160 32596290 32635693 32592476 32669625 32697114 32558589 32562163
+3t   311957681 33290804 33239720 33207793 33161753 33072036 33125054 33050442 32973913 33094435 33162917 33040437 32946790 33045481 33116092 33061224
+4t  1953515952 32799631 33002457 32967213 32912353 32827325 32753879 32870057 32810992 32814579 32749728 32783404 32853703 32760008 32827014 32817593
+5t  1442559780 32929864 33053225 32838365 32906202 32733460 32745356 32769996 32763790 32840376 32815517 32790703 32788088 32797173 32738927 32722723
+6t  1672370688 32702162 32793184 32756083 32834483 32659635 32651668 32642610 32585589 32575335 32738752 32622965 32662170 32633831 32639067 32634530
+7t  1259178808 32922611 33138447 32951098 33081263 32882186 32874484 32990287 32956852 32942740 32952580 32893221 32911073 32912097 32908259 32888950
+8t   320112194 32984812 33085477 32982870 33161704 32788508 32943490 32969290 32866728 32922207 32882975 32910243 32878678 32925232 32867154 32979247
+9t   920203612 33015321 33103983 33055551 33030519 33029194 32869976 32935021 32970984 32855102 32954984 32765541 32950233 32858399 32982332 32920931
+10t 1581935708 32864785 32837325 32773621 32763205 32661004 32698094 32718217 32747306 32725925 32743524 32738034 32825266 32744458 32762339 32753868
+11t 2050856270 32930422 33008982 33125000 33131453 32983025 32810847 32831111 32792162 32828111 32944172 32789599 32759072 32787529 32885462 32898487
+12t  124128353 32569533 32768817 32633349 32676143 32604951 32709707 32608061 32593099 32629058 32671223 32690303 32678189 32708637 32607496 32601220
+13t 1475363490 32903507 32972925 32771768 32790014 32797119 32602123 32666146 32698095 32706578 32693169 32708421 32649321 32623121 32632366 32622834
+14t 1986478844 32744258 32879311 32699284 32968475 32696940 32658516 32617302 32642047 32653598 32579233 32670562 32646941 32659938 32738750 32557739
+15t  635764558 32974679 32869668 32877726 32913599 32764659 32805111 32667822 32705154 32657751 32775782 32780815 32750511 32745657 32769118 32792818
+16t 2018927617 33107224 33182908 33199005 33240310 32891093 32924256 32899590 32937178 32976707 32890337 32921434 32857227 32895127 32912446 33003789
+17t 1736421458 33277224 33400520 33243455 33255684 33216426 33329446 33089977 33110514 33067216 33231572 33089952 33187349 33149924 33169403 33126105
+18t 1828952358 32675196 32753829 32900795 32784317 32595740 32480483 32511351 32545798 32436559 32536924 32499006 32581330 32560317 32547537 32591690
+19t 1530093410 33109070 33285680 33382213 33009699 32958120 32934980 32932045 32923313 32970902 32900601 32978045 32834440 33043983 33053633 32989275
+20t 1928089170 32847656 32908001 32826505 32986096 32776457 32660094 32798423 32809488 32780290 32763176 32665602 32753904 32702251 32721427 32762089
+21t  680468367 32877126 32843378 32784111 32854317 32738922 32650890 32662324 32608352 32755867 32831914 32703490 32638743 32776809 32666262 32639275
+22t  471709667 32824084 33053565 32960195 33038995 33003462 32848561 32792518 32865379 32785949 32770555 32829871 32733854 32796165 32755568 32820485
+23t  514864949 32907466 32986888 33072024 33130071 32748752 32782759 32776495 32869906 32903022 32745611 32799771 32826269 32697122 32883020 32765440
+24t  936759198 32914271 33078853 33087050 33000911 32887467 32939593 32934574 32878098 32920182 32877710 32960389 32911122 32888047 32756717 32870650
+25t 1717288402 33062235 33169820 33050429 33188645 32997903 32922282 32944746 32833386 32937501 32993331 32949636 32917043 32917422 32987542 32917546
+26t 1943879183 33135959 33205984 32984978 33335468 33060306 32932645 32968772 32956665 32971869 33008345 32961477 33008094 32908847 32998154 33031215
+27t  275713830 32789018 33059831 32948337 32843928 32804898 32737107 32827222 32774100 32823992 32791829 32666269 32834003 32735529 32791368 32753863
+28t 1968203523 32845151 32990992 32899709 32951277 32888687 32819293 32799428 32733054 32866537 32749758 32775014 32789543 32692054 32784141 32673150
+29t  364400052 33177767 33380462 33321733 33354256 33167384 33087614 33065907 33048620 33115199 33100249 33033428 33061058 33111920 33058280 33087292
+30t 1098513466 32871816 32964433 32907620 33044937 32801858 32712816 32732921 32767750 32833861 32819325 32783978 32742135 32932055 32817475 32699391
+31t  438333542 33173505 33249294 33261918 33358409 33113600 33035938 32991265 33107769 32975772 33031915 33140173 33085307 33090775 33094795 33025861
+32t 1434441680 33012769 33043641 32994081 33082917 32851482 32726913 32866203 32929719 32890566 32973178 32833600 32861913 32845034 32867537 32850908
+33t 1852341620 32827838 33003061 32952739 33026878 32871525 32806233 32738885 32788779 32818262 32792279 32842413 32740064 32909001 32810278 32823548
+34t  889630843 32718520 32929821 32796717 32922851 32687808 32702727 32722840 32716181 32597783 32758750 32742701 32674049 32725914 32616957 32736054
+35t 1302847768 32508254 32604280 32516915 32633206 32345861 32428564 32445328 32448888 32518396 32459694 32413708 32468088 32428012 32394057 32353275
+36t 2021245493 32636581 32701503 32836244 32737017 32601928 32425787 32415482 32528426 32706191 32485822 32482233 32647110 32605722 32570110 32461190
+37t  186733722 32437613 32429112 32597589 32695213 32404420 32319102 32338248 32342703 32380350 32509182 32409668 32425922 32431490 32394560 32312874
+38t 1238461641 32787086 32898301 32821845 32852491 32736901 32822367 32761711 32760174 32813645 32828856 32676388 32744923 32695437 32797188 32836579
+39t  383944006 32913046 32961695 32880422 33042960 32785673 32863641 32830975 32793734 32831432 32871225 32706111 32904208 32826240 32688943 32793368
+40t  926235110 32476705 32597141 32464567 32594641 32440437 32312904 32388987 32337892 32277444 32434609 32376848 32409901 32353244 32349198 32388057
+41t 1369839541 33176035 33202135 33157144 33116605 33029643 32994425 32984684 32991260 33022116 33036360 32938902 32997596 33040972 32989913 33063300
+42t 1835306082 32943256 33168583 32971251 33181477 32954689 32904476 32947527 32948645 32880607 32972665 32909501 32893674 32917596 32827182 33011150
+43t  907256236 32652948 32709571 32727255 32725077 32602462 32433946 32531746 32520879 32397047 32558554 32504074 32544774 32572361 32503464 32530118
+44t 1911388112 32678227 32747483 32778717 32800611 32739138 32694322 32662340 32568847 32656759 32727653 32673231 32722016 32669989 32577051 32707662
+45t  699029447 32920391 33018412 32801707 33022133 32783479 32894494 32778554 32781661 32787098 32761522 32757448 32803960 32862086 32695095 32811660
+46t 2062883112 32944916 32903713 32688687 33068868 32699751 32667133 32689299 32651585 32673584 32732068 32646626 32802466 32768785 32696634 32696273
+47t 1982203086 32806466 32847248 32678606 32830471 32660231 32547971 32526892 32507016 32670077 32447932 32634702 32533044 32572454 32546117 32583293
+48t  159797540 32692542 32761656 32673407 32883235 32597271 32612328 32657258 32655797 32557379 32591872 32679341 32569800 32560181 32510410 32545626
+49t  823700790 33314971 33338690 33284821 33320998 33200930 33138800 33105733 33222799 33156224 33195519 33135899 33112337 33133496 33167056 33183391
+50t 1379681089 32521471 32702639 32571527 32758411 32366402 32458511 32482313 32453346 32509096 32526018 32446472 32564194 32530798 32504809 32573186
+# 2024-12-13 11:58:48 GMT: Finished testing
