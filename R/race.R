@@ -242,7 +242,7 @@ aux.ttest <- function(results, alive, which_alive, conf.level,
   }
   pvals <- p.adjust(pvals, method = adjust)
   dropj <- which_alive[pvals < 1.0 - conf.level]
-  dropped_any <- length(dropj) > 0
+  dropped_any <- length(dropj) > 0L
   irace.assert(all(alive[dropj]))
   alive[dropj] <- FALSE
   list(ranks = means, alive = alive, dropped.any = dropped_any, p.value = min(pvals))
@@ -250,17 +250,15 @@ aux.ttest <- function(results, alive, which_alive, conf.level,
 
 table_hline <- function(widths) {
   s <- "+"
-  for (w in widths) {
+  for (w in widths)
     s <- paste0(s, strrep("-", w), "+")
-  }
   paste0(s, "\n")
 }
 
 table_sprint <- function(text, widths) {
   s <- "|"
-  for (i in seq_along(text)) {
+  for (i in seq_along(text))
       s <- paste0(s, sprintf("%*s", widths[i], text[i]), "|")
-  }
   paste0(s, "\n")
 }
 .nocap_table_fields_width <- as.integer(c(1, 11, 11, 11, 16, 11, 8, 5, 4, 6))
@@ -331,7 +329,7 @@ race_print_footer <- function(bestconf, mean_best, break_msg, debug_level, cappi
 {
   cat(sep = "",
       if (capping) capping_hline else nocap_hline,
-      if (debug_level >= 1) paste0("# Stopped because ", break_msg, "\n"),
+      if (debug_level >= 1L) paste0("# Stopped because ", break_msg, "\n"),
       if (!is.null(old_best_id)) paste0("Best configuration for the instances in this race: ", old_best_id, "\n"),
       sprintf("Best-so-far configuration: %11d", bestconf[[".ID."]][1L]),
       "    mean value: ",
@@ -403,7 +401,7 @@ dom_elim <- function(results, elites, alive, scenario, minSurvival, eps = 1e-5)
   # When there are no protected elites left, select the best configurations to
   # calculate the bounds. This is quite aggressive and another alternative
   # would be to disable dom_elim when elites == 0.
-  if (length(elites) == 0) {
+  if (length(elites) == 0L) {
     # In the case we have only two alive configurations only one can be elite.
     if (sum(alive) <= 2L)
       elites <- which_alive[which.min(cmeans)]
@@ -812,58 +810,24 @@ elitist_race <- function(race_state, maxExp,
                           minSurvival, ")")
       break
     }
-    # LESLIE: FIXME: Stopping deactivated by Thomas suggestion. Remove second
-    # condition to restore.
-    # LESLIE: Should we keep the early termination disabled? The difference between keeping it or 
-    # not is that elite configurations could be eliminated later
-    # LESLIE: I think we should remove this
     ## We continue running if (1) we have not reached the first.test or (2)
     ## there are instances previously seen that have not been evaluated on any
-    ## alive configuration.
-    if (current_task > first.test) {
-      #if ((current_task > first.test && !capping) 
-        # MANUEL: This is new and I'm not sure what it does.
-        # LESLIE: When using capping, we dont finish any race until all 
-        # previous instances have been executed (this makes sure that all non-elite 
-        # configurations execute all the previous instances)
-    #    || (capping && (current_task > elite_safe))) {
-          # MANUEL: How is this even possible?
-          # LESLIE: It can be that the capping eliminate all but one configuration
-          # (which should be an elite one) after we finish the new instances to be evaluated, 
-          # we allow the race to be finished. Maybe it wold be better: sum(is_elite) == sum(alive) 
-          # instead of nbAlive == 1,
-          # LESLIE:Removing this because now is ponitless because of the elite candidates previos
-          # execution
-          # || (current_task > elitist_new_instances && nbAlive == 1)))) {
-      # If we just did a test, check that we have enough budget to reach the
-      # next test.
-      if (maxExp && ( (current_task - 1L) %% each.test) == 0L
-          && experiments_used + length(which_exe) * each.test > maxExp
-          && all_elite_instances_evaluated()) {
-        break_msg <- paste0("experiments for next test (",
-                            experiments_used + length(which_exe) * each.test,
-                            ") > max experiments (", maxExp, ")")
-        break
-      }
+    ## alive configuration.  If we just did a test, check that we have enough
+    ## budget to reach the next test.
+    if (current_task > first.test && ( (current_task - 1L) %% each.test) == 0L
+      && experiments_used + length(which_exe) * each.test > maxExp
+      && all_elite_instances_evaluated()) {
+      break_msg <- paste0("experiments for next test (",
+        experiments_used + length(which_exe) * each.test,
+        ") > max experiments (", maxExp, ")")
+      break
     }
     
-    if (elitist) {
-      if (scenario$elitistLimit != 0L && no_elimination >= scenario$elitistLimit
-          && all_elite_instances_evaluated()) {
-        break_msg <- paste0("tests without elimination (", no_elimination,
-                            ") >= elitistLimit (", scenario$elitistLimit, ")")
-        break
-      }
-##     This is not needed anymore... 
-#      else if (current_task > initial.tests && nbAlive <= minSurvival) {
-#        # We can stop the race ONLY when we pass the elite_safe
-#        # this is because how we are recovering the data from
-#        # previous runs (based on iteration).
-#        break_msg <- paste0("number of alive configurations (", nbAlive,
-#                            ") less or equal than minimum number (",
-#                            minSurvival, ")")
-#        break
-#      }
+    if (elitist && scenario$elitistLimit != 0L && no_elimination >= scenario$elitistLimit
+      && all_elite_instances_evaluated()) {
+      break_msg <- paste0("tests without elimination (", no_elimination,
+        ") >= elitistLimit (", scenario$elitistLimit, ")")
+      break
     }
     
                                 
@@ -879,7 +843,7 @@ elitist_race <- function(race_state, maxExp,
     start_time <- Sys.time()
   
     # Calculate bounds for executing if needed.
-    which_elite_exe <- intersect(which_exe, which(is_elite > 0))
+    which_elite_exe <- intersect(which_exe, which(is_elite > 0L))
     irace.assert(setequal(which_elite_exe, which(is_elite & is.na(Results[current_task,]))))
     if (capping) {
       # Pre-execute elite configurations that are not yet executed in the current instance.
