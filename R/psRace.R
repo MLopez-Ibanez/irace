@@ -225,8 +225,7 @@ psRace <- function(iraceResults, max_experiments, conf_ids = NULL, iteration_eli
     elitist_new_instances = 0L)
 
   elite_configurations <- extractElites(raceResults$configurations,
-    nbElites = race_state$recovery_info$minSurvival,
-    debugLevel = scenario$debugLevel)
+    nbElites = race_state$minSurvival, debugLevel = scenario$debugLevel)
   irace.note("Elite configurations (first number is the configuration ID;",
                " listed from best to worst according to the ",
                test.type.order.str(scenario$testType), "):\n")
@@ -246,7 +245,6 @@ psRace <- function(iraceResults, max_experiments, conf_ids = NULL, iteration_eli
     iraceResults$experiments <- merge_matrix(iraceResults$experiments, raceResults$experiments)
     iraceResults$iterationElites[indexIteration] <- elite_configurations[[".ID."]][1L]
     iraceResults$allElites[[indexIteration]] <- elite_configurations[[".ID."]]
-    race_state$elite_configurations <- elite_configurations
     iraceResults$scenario <- scenario
     iraceResults$state <- race_state
     # FIXME: This log should contain only information of what was done in the

@@ -1,6 +1,12 @@
 withr::with_output_sink("test-blocksize.Rout", {
-cap_irace <- function(...)
+cap_irace <- function(..., targetRunner = force(target_runner_capping_xy))
 {
+  # Silence Error in `save(iraceResults, file = logfile, version = 3L)`: (converted from warning) 'package:irace' may not be available when loading
+  # See https://github.com/r-lib/testthat/issues/2044
+  if (!is.null(attr(environment(targetRunner), "name", exact=TRUE))) {
+    environment(targetRunner) <- globalenv()
+  }
+
   args <- list(...)
   parameters_table <- '
    x "" r (0, 1.00)
@@ -10,7 +16,7 @@ cap_irace <- function(...)
   logFile <- withr::local_tempfile(fileext=".Rdata")
 
   scenario <- list(instances = c("ackley", "goldestein", "matyas", "himmelblau"),
-                   targetRunner = target_runner_capping_xy,
+                   targetRunner = targetRunner,
                    capping = TRUE,
                    blockSize = 4,
                    boundMax = 80,

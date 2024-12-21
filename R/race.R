@@ -59,17 +59,10 @@ createExperimentList <- function(configurations, parameters,
     rep(configurations, times = n_instances)), MoreArgs = NULL)
 }
 
-## Executes a list of configurations in a particular instance
-## configurations: description having the id of the configuration
-## instance.idx: index of the instance,seed pair in race_state$instances_log
-## bounds: execution bounds (NULL if not needed).
-## which_exps: Which experiments really need to be executed.
-race_wrapper <- function(race_state, configurations, instance_idx, bounds,
-                         which_exps,
-                         # FIXME: race_state already contains scenario but it is not update with scenario$instances
-                         scenario)
+
+race_wrapper_helper <- function(race_state, configurations, instance_idx, bounds,
+                         is_exe, scenario)
 {
-  
   # Experiment list to execute
   experiments <- createExperimentList(configurations, parameters = scenario$parameters,
                                       instances = scenario$instances,
@@ -77,17 +70,59 @@ race_wrapper <- function(race_state, configurations, instance_idx, bounds,
                                       seeds = race_state$instances_log[["seed"]][instance_idx],
                                       bounds = bounds)
 
-  target_output <- vector("list", length(experiments))
-  # Execute commands
-  if (length(which_exps))
-    target_output[which_exps] <- execute_experiments(race_state, experiments[which_exps], scenario)
+  irace.assert(length(is_exe) == length(experiments))
+  instance_idx <- rep(instance_idx, each = nrow(configurations))
+  if (race_state$recovery_mode) {
+    # With targetEvaluator or if everything is executed, we recover everything.
+    if (!is.null(scenario$targetEvaluator) || all(is_exe)) {
+      configuration_id <- unlist_element(experiments, "id_configuration")
+      target_output <- race_state$recover_output(instance_idx, configuration_id)
+    } else {
+      irace.assert(any(is_exe))
+      configuration_id <- unlist_element(experiments[is_exe], "id_configuration")
+      target_output <- race_state$recover_output(instance_idx[is_exe], configuration_id)
+    }
+  } else { # !recovery_mode
+    # We cannot let targetRunner or targetEvaluator modify our random seed, so we save it.
+    withr::local_preserve_seed()
+    target_output <- vector("list", length(experiments))
+    # Execute experiments for which is_exe is TRUE:
+    if (any(is_exe))
+      target_output[is_exe] <- execute_experiments(race_state, experiments[is_exe], scenario)
  
-  # targetEvaluator may be NULL. If so, target_output must contain the right
-  # output already.  Otherwise, targetEvaluator always re-evaluates.
-  if (!is.null(scenario$targetEvaluator))
-    target_output <- execute_evaluator(race_state$target_evaluator, experiments, scenario, target_output,
-      configurations_id = configurations[[".ID."]])
-  
+    # If targetEvaluator is NULL, then target_output must contain the right
+    # output already.  Otherwise, targetEvaluator considers all experiments.
+    if (!is.null(scenario$targetEvaluator)) {
+      target_output <- execute_evaluator(race_state$target_evaluator, experiments, scenario, target_output,
+        configurations_id = configurations[[".ID."]])
+    } else if (any(!is_exe))  {
+      experiments <- experiments[is_exe]
+      instance_idx <- instance_idx[is_exe]
+    }
+    withr::local_options(warn=2)
+    target_output <- rbindlist(target_output, fill=TRUE, use.names=TRUE)
+    set(target_output, j = setdiff(colnames(target_output), c("cost", "time")), value = NULL)
+    if ("time" %notin% colnames(target_output))
+      set(target_output, j = "time", value = NA)
+    set(target_output, j = "configuration", value = unlist_element(experiments, "id_configuration"))
+    set(target_output, j = "instance", value = instance_idx)
+    if (!is.null(bounds))
+      set(target_output, j = "bound", value = unlist_element(experiments, "bound"))
+  }
+  target_output
+}
+
+## Executes a list of configurations in a particular instance
+## configurations: description having the id of the configuration
+## instance.idx: index of the instance,seed pair in race_state$instances_log
+## bounds: execution bounds (NULL if not needed).
+## is_exe: Boolean vector that determines which experiments need to executed.
+race_wrapper <- function(race_state, configurations, instance_idx, bounds,
+                         is_exe, scenario)
+{
+  target_output <- race_wrapper_helper(race_state, configurations, instance_idx,
+    bounds, is_exe, scenario)
+  race_state$update_race_experiment_log(target_output, scenario)
   target_output
 }
 
@@ -542,8 +577,8 @@ generateTimeMatrix <- function(elite_ids, experiment_log)
   experiment_log <- experiment_log[(configuration %in% elite_ids) & !is.na(time),
     c("configuration", "instance", "time", "bound")]
   experiment_log[, time := pmin.int(time, bound)]
-  time_matrix <- dcast(experiment_log[ , -"bound"], instance ~ configuration,
-    value.var = "time")
+  experiment_log[, bound := NULL]
+  time_matrix <- dcast(experiment_log, instance ~ configuration, value.var = "time")
   setcolorder(time_matrix, neworder = as.character(elite_ids))
   as.matrix(time_matrix, rownames = "instance")
 }
@@ -574,7 +609,6 @@ elitist_race <- function(race_state, maxExp,
   elitist <- scenario$elitist
   capping <- scenario$capping
   n_configurations <- nrow(configurations)
-  experiment_log <- data.table(instance=integer(0), configuration=integer(0), time=numeric(0), bound=numeric(0))
   alive <- rep_len(TRUE, n_configurations)
   is_rejected <- logical(n_configurations)
   
@@ -679,25 +713,23 @@ elitist_race <- function(race_state, maxExp,
             # which_exe values are within 1:nbConfigurations, whereas experiments
             # indices are within 1:length(which_alive). The following line converts
             # from one to the other.
-            which_exps = seq_along(which_elites), scenario = scenario)
+            is_exe = rep_len(TRUE, n_elite), scenario = scenario)
           # Extract results:
           # FIXME: check what would happen in case of having the target evaluator
           # MANUEL: Note how similar is this to what we do in do.experiments(),
           # perhaps we can create a function that takes output and experiment_log
           # and returns experiment_log. 
           # LESLIE: Yes you are right, Ill do it once we figure out the rest!
-          vcost <- unlist(lapply(output, "[[", "cost"))
-          irace.assert(length(vcost) == n_elite)
-          vcost <- applyPAR(vcost, boundMax = scenario$boundMax, boundPar = scenario$boundPar)
-          Results[k, seq_len(n_elite)] <- vcost
-          vtimes <- unlist(lapply(output, "[[", "time"))
+          irace.assert(length(output[["cost"]]) == n_elite)
+          Results[k, seq_len(n_elite)] <- applyPAR(output[["cost"]], boundMax = scenario$boundMax, boundPar = scenario$boundPar)
+          vtimes <- output[["time"]]
           irace.assert(length(vtimes) == n_elite)
-          experimentsTime[k, which_elites] <- vtimes # capping is enabled
-          experiment_log <- update_experiment_log(experiment_log,
-            instance=race_instances[k],
-            configuration = configurations[[".ID."]][which_elites],
-            time = vtimes, bound = scenario$boundMax)
-        experiments_used <- experiments_used + n_elite
+          irace.assert(!anyNA(vtimes))
+          experimentsTime[k, which_elites] <- output[["time"]] # capping is enabled
+          irace.assert(all.equal(configurations[[".ID."]][which_elites], output[["configuration"]]))
+          irace.assert(all.equal(output[["bound"]], rep(scenario$boundMax, n_elite)))
+          irace.assert(all.equal(unique(output[["instance"]]), race_instances[k]))
+          experiments_used <- experiments_used + n_elite
           
           # We remove elite configurations that are rejected given that
           # is not possible to calculate the bounds.
@@ -853,22 +885,16 @@ elitist_race <- function(race_state, maxExp,
           instance_idx = race_instances[current_task],
           # FIXME: What if we already have a bound for this instance?
           bounds = rep(scenario$boundMax, length(which_elite_exe)),
-          # MANUEL: How does this work for target-evaluator?
-          # We are telling race_wrapper that only some elites are alive!
-          which_exps = seq_along(which_elite_exe),
-          scenario = scenario)
+          is_exe = rep_len(TRUE, length(which_elite_exe)), scenario = scenario)
         # Extract results
-        vcost <- unlist(lapply(output, "[[", "cost"))
-        irace.assert(length(vcost) == length(which_elite_exe))
-        vcost <- applyPAR(vcost, boundMax = scenario$boundMax, boundPar = scenario$boundPar)
-        Results[current_task, which_elite_exe] <- vcost
-        vtimes <- unlist(lapply(output, "[[", "time"))
+        irace.assert(length(output[["cost"]]) == length(which_elite_exe))
+        Results[current_task, which_elite_exe] <- applyPAR(output[["cost"]], boundMax = scenario$boundMax, boundPar = scenario$boundPar)
+        vtimes <- output[["time"]]
         irace.assert(length(vtimes) == length(which_elite_exe))
+        irace.assert(!anyNA(vtimes))
+        irace.assert(all.equal(configurations[which_elite_exe, ".ID."], output[["configuration"]]))
         experimentsTime[current_task, which_elite_exe] <- vtimes
-        experiment_log <- update_experiment_log(experiment_log,
-          instance = race_instances[current_task],
-          configuration = configurations[which_elite_exe, ".ID."],
-          time = vtimes, bound = scenario$boundMax)
+        irace.assert(all.equal(unique(output[["instance"]]), race_instances[current_task]))
         experiments_used <- experiments_used + length(which_elite_exe)
           
         # We remove elite configurations that are rejected given that
@@ -920,7 +946,6 @@ elitist_race <- function(race_state, maxExp,
           next
         }
       }
-
       all_bounds <- final_execution_bound(experimentsTime,
                                           elites = which(is_elite > 0L),
                                           current_task, which_alive, 
@@ -936,50 +961,44 @@ elitist_race <- function(race_state, maxExp,
     output <- race_wrapper(race_state, configurations = configurations[which_alive, , drop = FALSE],
                            instance_idx = race_instances[current_task],
                            bounds = final_bounds,
-                           which_exps = which(which_alive %in% which_exe),
+                           is_exe = which_alive %in% which_exe,
                            scenario = scenario)
-
     # Extract results
-    vcost <- unlist(lapply(output, "[[", "cost"))
     # Set max execution bound to timed out executions which have execution
     # times smaller than boundMax and implement parX if required.
+    vcost <- output[["cost"]]
+    # Output is not indexed in the same way as configurations.
+    which_has_time <- which(which_alive %in% which_exe)
     if (capping) {
       vcost <- applyPAR(vcost, boundMax = scenario$boundMax, boundPar = scenario$boundPar)
       if (scenario$boundAsTimeout) {
-        timeout_bounds <- if (is.null(scenario$targetEvaluator))
-                            final_bounds[which(which_alive %in% which_exe)]
+        timeout_bounds <- if (is.null(scenario$targetEvaluator)) final_bounds[which_has_time]
                           else final_bounds
+        irace.assert(all.equal(output[["bound"]], timeout_bounds))
         # We do not want to change Inf or -Inf because those represent rejection.
         vcost[is.finite(vcost) & (vcost >= timeout_bounds) & (vcost < scenario$boundMax)] <- scenario$boundMax
       }
+
+      # If targetEvaluator was used, we do not update the times because no
+      # evaluation actually happened, only the cost values possibly changed.
+      vtimes <- if (is.null(scenario$targetEvaluator)) output[["time"]] else output[["time"]][which_has_time]
+      irace.assert(length(which_has_time) == length(which_exe))
+      irace.assert(length(vtimes) == length(which_has_time))
+      # Correct higher execution times.
+      irace.assert(all.equal(if (is.null(scenario$targetEvaluator)) output[["bound"]] else output[["bound"]][which_has_time], final_bounds[which_has_time]))
+      experimentsTime[current_task, which_has_time] <- pmin(vtimes, final_bounds[which_has_time])
     }
     ## Currently, targetEvaluator always re-evaluates, which implies that the
     ## value may change without counting as an evaluation. We do this to allow online normalization.
-    which_exps <- if (is.null(scenario$targetEvaluator)) which_exe else which_alive
-    irace.assert(length(vcost) == length(which_exps))
-    Results[current_task, which_exps] <- vcost
+    which_has_cost <- if (is.null(scenario$targetEvaluator)) which_exe else which_alive
+    irace.assert(all.equal(configurations[[".ID."]][which_has_cost], output[["configuration"]]))
+    irace.assert(length(output[["cost"]]) == length(which_has_cost))
+    Results[current_task, which_has_cost] <- vcost
 
-    # Output is not indexed in the same way as configurations.
-    which_exps <- which(which_alive %in% which_exe)
-    irace.assert(length(which_exps) == length(which_exe))
-    vtimes <- unlist(lapply(output[which_exps], "[[", "time"))
-    final_bounds <- final_bounds[which_exps]
-    irace.assert(length(vtimes) == length(which_exps))
-    if (capping) {
-      # Correct higher execution times.
-      experimentsTime[current_task, which_exps] <- pmin(vtimes, final_bounds)
-    }
-    experiment_log <- update_experiment_log(experiment_log,
-      instance = race_instances[current_task],
-      configuration = configurations[which_exe, ".ID."],
-      # FIXME: Do not store a column bounds if bounds are NULL.
-      time = vtimes, bound = if (is.null(final_bounds)) NA_real_ else final_bounds)
-
-    irace.assert(anyDuplicated(experiment_log[, c("instance", "configuration")]) == 0L,
-      eval_after = {
-        print(experiment_log)
-        print(mget(ls()))
-      })
+    # With !is.null(scenario$targetEvaluator) we will have duplicated (instance, configuration) in output.
+    irace.assert(all.equal(output[["bound"]], if (is.null(scenario$targetEvaluator)) final_bounds[which_has_time]
+                                                else final_bounds))
+    irace.assert(all.equal(unique(output[["instance"]]), race_instances[current_task]))
     experiments_used <- experiments_used + length(which_exe)
     # We update the elites that have been executed.
     is_elite <- update_is_elite(is_elite, which_elite_exe)
@@ -1015,7 +1034,7 @@ elitist_race <- function(race_state, maxExp,
     # The second condition can be false if we eliminated via immediate
     # rejection.  The third condition ensures that we see the block before capping.
     if (capping && sum(alive) > minSurvival && (current_task %% blockSize) == 0L) {
-      irace.assert(!any(is_elite > 0) == (current_task >= elite_safe))
+      irace.assert(!any(is_elite > 0L) == (current_task >= elite_safe))
       cap.alive <- dom_elim(Results[seq_len(current_task), , drop = FALSE],
                             # Get current elite configurations.
                             elites = which(is_elite > 0L),
@@ -1105,8 +1124,8 @@ elitist_race <- function(race_state, maxExp,
     
     if (elitist) {
       # Compute number of statistical tests without eliminations.
-      irace.assert(!any(is_elite > 0) == (current_task >= elite_safe))
-      if (!any(is_elite > 0)
+      irace.assert(!any(is_elite > 0L) == (current_task >= elite_safe))
+      if (!any(is_elite > 0L)
           && current_task > first.test && (current_task %% each.test) == 0L) {
         if (length(which_alive) == length(prev_alive)) {
           no_elimination <- no_elimination + 1L
@@ -1167,16 +1186,24 @@ elitist_race <- function(race_state, maxExp,
     irace.note ("Memory used in race():\n")
     race_state$print_mem_used()
   }
-  # nrow(Results) may be smaller, equal or larger than current_task.
-  irace.assert(nrow(experiment_log) == experiments_used)
+  withr::local_options(warn=2)
+  local_experiment_log <- race_state$reset_race_experiment_log()
 
+  # nrow(Results) may be smaller, equal or larger than current_task.
+  if (is.null(scenario$targetEvaluator)) {
+    # With targetEvaluator, we may have the recorded a new cost value but not
+    # counted it as an experiment used if targetRunner was not called.
+
+    # If this assert fails, use debug-level 3 to trigger the expensive check above.
+    irace.assert(anyDuplicated(local_experiment_log[, c("instance", "configuration")]) == 0L,
+      eval_after = {
+        print(local_experiment_log)
+        print(mget(ls()))
+      })
+    irace.assert(nrow(local_experiment_log) == experiments_used)
+  }
   list(experiments = Results,
-       experiment_log = experiment_log,
+       experiment_log = local_experiment_log,
        experimentsUsed = experiments_used,
        configurations = configurations)
 }
-
-update_experiment_log <- function(experiment_log, instance, configuration, time, bound)
-  rbind(experiment_log,
-    data.table(instance = instance, configuration = configuration, time = time, bound = bound))
-  

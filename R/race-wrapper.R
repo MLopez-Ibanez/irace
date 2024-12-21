@@ -88,7 +88,8 @@ target_error <- function(err_msg, output, scenario, target_runner_call,
               "\n", .irace_msg_prefix, advice_txt)
 }
 
-check_output_target_evaluator <- function (output, scenario, target_runner_call = NULL, bound = NULL)
+check_output_target_evaluator <- function (output, scenario, target_runner_time,
+                                           target_runner_call, bound)
 {
   if (!is.list(output)) {
     output <- list()
@@ -104,15 +105,21 @@ check_output_target_evaluator <- function (output, scenario, target_runner_call 
     } else if (is_na_nowarn(output$cost)) {
       err_msg <- "The output of targetEvaluator is not numeric!"
     }
-    if (scenario$batchmode != 0 && scenario$maxTime > 0) {
-      if (is.null (output$time)) {
-        err_msg <- "When batchmode != 0 and maxTime > 0, the output of targetEvaluator must be two numbers 'cost time'!"
+    if (scenario$maxTime > 0 || scenario$capping) {
+      if (scenario$batchmode != 0) {
+        if (is.null (output$time))
+          err_msg <- "When batchmode != 0 and maxTime > 0, the output of targetEvaluator must be two numbers 'cost time'!"
+        # With scenario$capping == TRUE, we may have pre-executed targetRunner
+        # (which_elite_exe) that already have recorded the time, so when we
+        # reach this point, we may not have 'time'.
+      } else if (!scenario$capping && is.null(target_runner_time) && is.null(output$time)) {
+        err_msg <- "Either targetRunner or targetEvaluator must return 'time' !"
       }
     }
-    if (is.null(output$time)) {
-      output$time <- NA_real_
-    } else {
-      if (is_na_nowarn(output$time)) {
+    if (!is.null(output$time)) {
+      if (!is.null(target_runner_time)) {
+        err_msg <- "Both targetRunner and targetEvaluator cannot return 'time' !"
+      } else if (is_na_nowarn(output$time)) {
         err_msg <- "The time returned by targetEvaluator is not numeric!"
       } else if (is.infinite(output$time)) {
         err_msg <- "The time returned by targetEvaluator is not finite!"
@@ -125,13 +132,17 @@ check_output_target_evaluator <- function (output, scenario, target_runner_call 
           err_msg <- paste0("The time returned by targetEvaluator (", output$time, ") does not respect the given bound of ", bound, "!")
         }
       }
+    } else {
+      output$time <- target_runner_time
     }
   }
 
-  if (!is.null(err_msg)) {
+  if (is.null(err_msg)) {
+    output$error <- NULL
+  } else {
     target_error (err_msg, output, scenario,
-                  target_runner_call = target_runner_call,
-                  target_evaluator_call = output$call)
+      target_runner_call = target_runner_call,
+      target_evaluator_call = output$call)
   }
   output
 }
@@ -239,27 +250,25 @@ check_output_target_runner <- function(output, scenario, bound = NULL)
   
   err_msg <- output$error
   if (is.null(err_msg)) {
-    if (!is.null (output$cost)) {
-      if (is_na_or_empty(output$cost)) {
-        err_msg <- "The cost returned by targetRunner is not numeric!"
-      }
+    if (is.null(output$cost)) {
+      output$cost <- NULL # make sure to delete it.
+    } else if (is_na_or_empty(output$cost)) {
+      err_msg <- "The cost returned by targetRunner is not numeric!"
     }
 
     if (is.null(output$time)) {
-      output$time <- NA_real_
+      output$time <- NULL # make sure to delete it.
+    } else if (is.na(output$time)) {
+      err_msg <- paste0("The time returned by targetRunner is not numeric!")
+    } else if (is.infinite(output$time)) {
+      err_msg <- paste0("The time returned by targetRunner is not finite!")
+    } else if (output$time <= 0) {
+      err_msg <- paste0("The value of time (", output$time, ") returned by targetRunner must be strictly positive!")
     } else {
-      if (is.na(output$time)) {
-        err_msg <- paste0("The time returned by targetRunner is not numeric!")
-      } else if (is.infinite(output$time)) {
-        err_msg <- paste0("The time returned by targetRunner is not finite!")
-      } else if (output$time <= 0) {
-        err_msg <- paste0("The value of time (", output$time, ") returned by targetRunner must be strictly positive!")
-      } else {
-        # Fix time.
-        output$time <- max(output$time, scenario$minMeasurableTime)
-        if (!is.null(bound) && !is.na(bound) && bound > 0 && bound + scenario$minMeasurableTime < output$time) {
-          err_msg <- paste0("The time returned by targetRunner (", output$time, ") does not respect the given bound of ", bound, "!")
-        }
+      # Fix time.
+      output$time <- max(output$time, scenario$minMeasurableTime)
+      if (!is.null(bound) && !is.na(bound) && bound > 0 && bound + scenario$minMeasurableTime < output$time) {
+        err_msg <- paste0("The time returned by targetRunner (", output$time, ") does not respect the given bound of ", bound, "!")
       }
     }
     if (is.null(err_msg)) {
@@ -268,15 +277,15 @@ check_output_target_runner <- function(output, scenario, bound = NULL)
         # unless using batchmode, in that case targetRunner returns neither the
         # time nor the cost.
         if (scenario$batchmode != 0) {
-          if (!is.na(output$time) || !is.null(output$cost)) {
+          if (!is.null(output$time) || !is.null(output$cost)) {
             err_msg <- "When batchmode != 0, the output of targetRunner must not contain a cost nor a time!"
           }
-        } else if (scenario$maxTime > 0 && is.na(output$time)) {
+        } else if (scenario$maxTime > 0 && is.null(output$time)) {
           err_msg <- "The output of targetRunner must be one number 'time'!"
         } else if (!is.null(output$cost)) {
           err_msg <- "The output of targetRunner must be empty or just one number 'time'!"
         }
-      } else if (scenario$maxTime > 0 && (is.null(output$cost) || is.na(output$time))) {
+      } else if (scenario$maxTime > 0 && (is.null(output$cost) || is.null(output$time))) {
         err_msg <- "The output of targetRunner must be two numbers 'cost time'!"
       } else if (scenario$maxExperiments > 0 && is.null(output$cost)) {
         err_msg <- "The output of targetRunner must be one number 'cost'!"
@@ -284,7 +293,9 @@ check_output_target_runner <- function(output, scenario, bound = NULL)
     }
   }
 
-  if (!is.null(err_msg)) {
+  if (is.null(err_msg)) {
+    output$error <- NULL
+  } else {
     target_error (err_msg, output, scenario, target_runner_call = output$call)
   }
   output
@@ -602,6 +613,8 @@ execute_evaluator <- function(target_evaluator, experiments, scenario, target_ou
   ## FIXME: We do not need the configurations_id argument:
   irace.assert(isTRUE(all.equal(configurations_id,
     unique(sapply(experiments, getElement, "id_configuration")))))
+  configurations_id <- unique(unlist(lapply(experiments, getElement, "id_configuration"),
+    recursive = FALSE, use.names = FALSE))
   nconfs <- length(configurations_id)
   # Evaluate configurations sequentially.
   for (k in seq_along(experiments)) {
@@ -610,12 +623,13 @@ execute_evaluator <- function(target_evaluator, experiments, scenario, target_ou
     output <- target_evaluator(experiment = experiment, num_configurations = nconfs,
       all_conf_id = configurations_id, scenario = scenario,
       target_runner_call = target_runner_call)
-    output <- check_output_target_evaluator(output, scenario, target_runner_call = target_runner_call, bound = experiment$bound)
+    output <- check_output_target_evaluator(output, scenario, target_runner_time = target_output[[k]]$time,
+      target_runner_call = target_runner_call, bound = experiment$bound)
     target_output[[k]]$cost <- output$cost
+    # targetEvaluator may return time, for example for batchmode != 0.
+    target_output[[k]]$time <- output$time
     if (is.null(target_output[[k]]$call))
       target_output[[k]]$call <- output$call
-    if (is.null(target_output[[k]]$time) || !is.null.or.na(output$time))
-      target_output[[k]]$time <- output$time
   }
   target_output
 }

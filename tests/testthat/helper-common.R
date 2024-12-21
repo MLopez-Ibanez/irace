@@ -1,7 +1,7 @@
 # This file is loaded automatically by testthat.
 generate_set_seed <- function()
 {
-  seed <- sample(2^30, 1)
+  seed <- sample.int(min(2147483647L, .Machine$integer.max), size = 1L, replace = TRUE)
   cat("Seed: ", seed, "\n")
   set.seed(seed)
 }
@@ -117,6 +117,7 @@ target_runner_capping_xy <- function(experiment, scenario)
 
   x <- configuration[["x"]]
   y <- configuration[["y"]]
+  
   value <- switch(instance,
                   ackley     = f_ackley(x, y),
                   goldestein = f_goldestein_price(x, y),
@@ -127,8 +128,14 @@ target_runner_capping_xy <- function(experiment, scenario)
   list(cost = value, time=min(value + 0.1, bound), call = toString(experiment))
 }
 
-irace_capping_xy <- function(...)
+irace_capping_xy <- function(..., targetRunner = force(target_runner_capping_xy))
 {
+  # Silence Error in `save(iraceResults, file = logfile, version = 3L)`: (converted from warning) 'package:irace' may not be available when loading
+  # See https://github.com/r-lib/testthat/issues/2044
+  if (!is.null(attr(environment(targetRunner), "name", exact=TRUE))) {
+    environment(targetRunner) <- globalenv()
+  }
+
   args <- list(...)
   parameters_table <- '
    x "" r (0, 1.00)
@@ -138,7 +145,7 @@ irace_capping_xy <- function(...)
   parameters <- readParameters(text = parameters_table)
   logFile <- withr::local_tempfile(fileext=".Rdata")
   scenario <- list(instances = c("ackley", "goldestein", "matyas", "himmelblau"),
-                   targetRunner = target_runner_capping_xy,
+                   targetRunner = targetRunner,
                    capping = TRUE,
                    boundMax = 80,
                    testType = "t-test",
@@ -148,10 +155,25 @@ irace_capping_xy <- function(...)
   scenario <- modifyList(scenario, args)
   scenario <- checkScenario (scenario)
 
-  irace:::checkTargetFiles(scenario = scenario)
+  expect_true(irace:::checkTargetFiles(scenario = scenario))
   
   confs <- irace(scenario = scenario)
   best_conf <- getFinalElites(scenario$logFile, n = 1L, drop.metadata = TRUE)
   expect_identical(removeConfigurationsMetaData(confs[1L, , drop = FALSE]),
                    best_conf)
 }
+
+# Useful for testing recovery.
+get_target_runner_error <- function(target_runner, limit)
+{
+  counter <- force(limit)
+  targetRunner <- force(target_runner)
+  
+  function(experiment, scenario) {
+    counter <<- counter - 1L
+    if (counter <= 0L)
+      return(list(cost=NA))
+    targetRunner(experiment, scenario)
+  }
+}
+

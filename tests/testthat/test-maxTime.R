@@ -5,31 +5,27 @@ target_runner <- function(experiment, scenario)
   configuration     <- experiment$configuration
   tmax <-  configuration[["tmax"]]
   temp <-  configuration[["temp"]]
-  stopifnot(is.numeric(tmax))
-  stopifnot(is.numeric(temp))
   time <- max(1, abs(rnorm(1, mean=(tmax+temp)/10)))
-  list(cost = time, time = time, call = toString(experiment))
+  list(cost = time, time = time)
 }
 
 time_irace <- function(...)
 {
   args <- list(...)
-  weights <- rnorm(200, mean = 0.9, sd = 0.02)
-  test_weights <- rnorm(2, mean = 0.9, sd = 0.02)
   parameters <- readParameters(text = '
    tmax "" i (1, 50)
    temp "" r (0, 10)
    dummy "" c ("dummy")
    ')
   scenario <- list(targetRunner = target_runner,
-                   instances = weights,
-                   testInstances = test_weights,
+                   instances = 1:10,
+                   testInstances = 11:20,
                    seed = 1234567,
                    parameters = parameters)
   scenario <- modifyList(scenario, args)
   scenario <- checkScenario (scenario)
 
-  irace:::checkTargetFiles(scenario = scenario)
+  expect_true(irace:::checkTargetFiles(scenario = scenario))
   
   confs <- irace(scenario = scenario)
   final_ids <- sort(as.character(confs$.ID.[1:scenario$testNbElites]))

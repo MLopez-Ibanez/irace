@@ -576,8 +576,6 @@ has_testing_data <- function(iraceResults)
 
 do_nothing <- function(...) invisible()
 
-.irace_tolerance <- sqrt(.Machine$double.eps)
-
 seq_nrow <- function(x) seq_len(nrow(x))
 
 clamp <- function(x, lower, upper) pmax.int(lower, pmin.int(x, upper))
@@ -606,3 +604,7 @@ vlast <- function(x)
 # between machines.
 runif_integer <- function(size)
   sample.int(min(2147483647L, .Machine$integer.max), size = size, replace = TRUE)
+
+unlist_element <- function(x, element)
+  unlist(lapply(x, "[[", element, exact=TRUE), recursive=FALSE, use.names=FALSE)
+

@@ -37,6 +37,7 @@ irace_summarise <- function(iraceResults)
   if (is.null(version))
     version <- iraceResults$irace.version
 
+  # Here to support older versions of irace.
   time_targetrunner <- iraceResults$state$recovery_info$timeUsed
   if (is.null(time_targetrunner))
     time_targetrunner <- iraceResults$state$timeUsed

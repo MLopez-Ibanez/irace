@@ -22,3 +22,7 @@ update_package_version <- function()
 update_package_version()
 # We define this tentatively to avoid: undefined exports: irace_version
 irace_version <- "unknown"
+
+.irace_tolerance <- sqrt(.Machine$double.eps)
+.irace_minimum_saving_time <- 60 # seconds
+
