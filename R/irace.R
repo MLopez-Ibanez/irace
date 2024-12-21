@@ -354,8 +354,9 @@ generateInstances <- function(race_state, scenario, n, update = FALSE)
     sindex <- rep.int(seq_along(instances), ntimes)
   }
   # Sample seeds.
-  race_state$instances_log <- rbind(race_state$instances_log,
-    data.table(instanceID = sindex, seed = runif_integer(length(sindex))))
+  race_state$instances_log <- rbindlist(use.names = TRUE, list(
+    race_state$instances_log,
+    data.table(instanceID = sindex, seed = runif_integer(length(sindex)))))
   race_state$instances_log
 }
 
