@@ -45,17 +45,16 @@ buildCommandLine <- function(values, switches)
 # numeric vector.
 parse_output <- function(outputRaw, verbose)
 {
-  if (verbose) { cat (outputRaw, sep = "\n") }
-  
+  if (verbose) cat(outputRaw, sep = "\n")
   # Initialize output as raw. If it is empty stays like this.
   output <- outputRaw
   # strsplit crashes if outputRaw == character(0)
-  if (length(outputRaw) > 0) {
+  if (length(outputRaw)) {
     outputRaw <- paste0(outputRaw, collapse = "\n")
-    output <- strsplit(trim(outputRaw), "[[:space:]]+")[[1]]
+    output <- strsplit(trim(outputRaw), "[[:space:]]+")[[1L]]
   }
   # suppressWarnings to avoid messages about NAs introduced by coercion
-  suppressWarnings (as.numeric (output))
+  suppressWarnings(as.numeric(output))
 }
 
 target_error <- function(err_msg, output, scenario, target_runner_call,

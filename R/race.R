@@ -99,13 +99,13 @@ aux2.friedman <- function(y, I, alive, conf.level = 0.95)
   r <- rowRanks(y, cols = I, ties.method = "average")
   R <- colSums2(r)
   o <- order(R)
-  best <- I[o[1]]
+  best <- I[o[1L]]
   TIES <- tapply(c(r), row(r), table)
   STATISTIC <- ((12 * sum((R - n * (k + 1) / 2)^2)) /
                 (n * k * (k + 1)
                   - (sum(unlist(lapply(TIES, function (u) {u^3 - u}))) /
                      (k - 1))))
-  PARAMETER <- k - 1
+  PARAMETER <- k - 1L
   PVAL      <- pchisq(STATISTIC, PARAMETER, lower.tail = FALSE)
   #names(STATISTIC) <- "Friedman chi-squared"
   #names(PARAMETER) <- "df"
@@ -115,8 +115,8 @@ aux2.friedman <- function(y, I, alive, conf.level = 0.95)
     # This formula for multiple comparisons comes from Conover, "Practical
     # Nonparametric Statistics", 1999, pages 369-371.
     A <- sum(as.vector(r)^2)
-    t <- qt(1 - alpha / 2, df = (n - 1) * (k - 1)) *
-      (2 * (n * A - sum(R^2)) / ((n - 1) * (k - 1)))^(1 / 2)
+    t <- qt(1 - alpha / 2, df = (n - 1L) * (k - 1L)) *
+      (2 * (n * A - sum(R^2)) / ((n - 1L) * (k - 1L)))^(1 / 2)
     J <- best
     for (j in 2L:k) {
       if (abs(R[o[j]] - R[o[1L]]) > t) {
@@ -411,7 +411,7 @@ dom_elim <- function(results, elites, alive, scenario, minSurvival, eps = 1e-5)
   
   bound <- executionBound(results[, elites, drop = FALSE], type = scenario$cappingType)
   alive[which_alive] <- ((bound + eps) >= cmeans)
-  return (alive)
+  return(alive)
 }
 
 ## This function applies PARX (X=boundPar) to all experiments
