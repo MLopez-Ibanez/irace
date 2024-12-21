@@ -94,13 +94,11 @@ p1  p2  p3
 ')
 })
 
-test_that("checkDependencies", {
-
-test.checkDependencies <- function(parameterFile, ...)
+test_checkDependencies <- function(parameterFile, ...)
 {
   args <- list(...)
   
-  target.runner <- function(experiment, scenario) {
+  target_runner <- function(experiment, scenario) {
     configuration <- experiment$configuration
     tmax <- configuration[["real"]]
     stopifnot(is.numeric(tmax))
@@ -115,8 +113,8 @@ test.checkDependencies <- function(parameterFile, ...)
   
   weights <- rnorm(200, mean = 0.9, sd = 0.02)
   parameters <- readParameters(parameterFile)
-  scenario <- list(targetRunner = target.runner, instances = weights, seed = 1234567, maxExperiments=200,
-    parameters = parameters)
+  scenario <- list(targetRunner = target_runner, instances = weights,
+    seed = 1234567, maxExperiments = 200, parameters = parameters)
   scenario <- modifyList(scenario, args)
   scenario <- checkScenario (scenario)
  
@@ -139,8 +137,12 @@ test.checkDependencies <- function(parameterFile, ...)
     checkConditionalAndDependency(confs[i,], parameters)
   }
 }
-  test.checkDependencies(parameterFile="dependencies.txt")
-  test.checkDependencies(parameterFile="dependencies2.txt")
+
+test_that("checkDependencies", {
+  test_checkDependencies(parameterFile="dependencies.txt")
+})
+test_that("checkDependencies2", {
+  test_checkDependencies(parameterFile="dependencies2.txt")
 })
 
 }) # withr::with_output_sink()

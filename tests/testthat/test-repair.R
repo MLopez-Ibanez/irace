@@ -16,7 +16,7 @@ repair_irace <- function(targetRunner, repair)
                    seed = 1234567,
                    parameters = parameters)
   scenario <- checkScenario (scenario)
-  irace:::checkTargetFiles(scenario = scenario)
+  expect_true(irace:::checkTargetFiles(scenario = scenario))
   confs <- irace(scenario = scenario)
   expect_gt(nrow(confs), 0L)
   confs

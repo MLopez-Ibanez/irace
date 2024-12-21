@@ -1,6 +1,6 @@
 withr::with_output_sink("test-maxTime.Rout", {
 
-target.runner <- function(experiment, scenario)
+target_runner <- function(experiment, scenario)
 {
   configuration     <- experiment$configuration
   tmax <-  configuration[["tmax"]]
@@ -11,7 +11,7 @@ target.runner <- function(experiment, scenario)
   list(cost = time, time = time, call = toString(experiment))
 }
 
-time.irace <- function(...)
+time_irace <- function(...)
 {
   args <- list(...)
   weights <- rnorm(200, mean = 0.9, sd = 0.02)
@@ -21,7 +21,7 @@ time.irace <- function(...)
    temp "" r (0, 10)
    dummy "" c ("dummy")
    ')
-  scenario <- list(targetRunner = target.runner,
+  scenario <- list(targetRunner = target_runner,
                    instances = weights,
                    testInstances = test_weights,
                    seed = 1234567,
@@ -49,13 +49,13 @@ time.irace <- function(...)
 
 test_that("maxTime=500 testNbElites=2 testIterationElites=FALSE", {
   generate_set_seed()
-  time.irace(maxTime = 500, testNbElites=2)
+  time_irace(maxTime = 500, testNbElites=2)
 })
 
 test_that("maxTime=1111 testNbElites=3 testIterationElites=TRUE", {
   skip_on_cran()
   generate_set_seed()
-  time.irace(maxTime = 1111, testNbElites=3, testIterationElites=TRUE)
+  time_irace(maxTime = 1111, testNbElites=3, testIterationElites=TRUE)
 })
 
 }) # withr::with_output_sink()
