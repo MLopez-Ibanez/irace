@@ -50,7 +50,7 @@ createExperimentList <- function(configurations, parameters,
   }
   configurations <- .mapply(list, dots = dots, MoreArgs = NULL)
   instances <- instances[instances_ID]
-  n_instances <- length(instances)
+  n_instances <- length(instances_ID)
   instances <- .mapply(list,
     dots = list(id_instance = instances_ID, seed = seeds, instance = instances),
     MoreArgs = NULL)
@@ -536,19 +536,16 @@ update_elite_safe <- function(Results, is_elite)
 
 generateTimeMatrix <- function(elite_ids, experiment_log)
 {
-  # FIXME: experiment_log is already data.table, so this could be done faster.
-  is_elite <- experiment_log[["configuration"]] %in% elite_ids
+  # Silence CRAN warnings
+  configuration <- bound <- NULL
   # Remove everything that we don't need.
-  experiment_log <- experiment_log[is_elite, c("configuration", "instance", "time", "bound")]
-  experiment_log[["time"]] <- pmin(experiment_log[["time"]], experiment_log[["bound"]])
-  # FIXME: It would be better to use spread() from tidyr.
-  resultsTime <- reshape(as.data.frame(experiment_log), direction = "wide",
-                         idvar = "instance", timevar = "configuration",
-                         drop = "bound")
-  rownames(resultsTime) <- resultsTime$instance
-  resultsTime <- resultsTime[order(resultsTime$instance), , drop = FALSE]
-  colnames(resultsTime) <- substring(colnames(resultsTime), nchar("time.") + 1L)
-  as.matrix(resultsTime[, as.character(elite_ids), drop = FALSE])
+  experiment_log <- experiment_log[(configuration %in% elite_ids) & !is.na(time),
+    c("configuration", "instance", "time", "bound")]
+  experiment_log[, time := pmin.int(time, bound)]
+  time_matrix <- dcast(experiment_log[ , -"bound"], instance ~ configuration,
+    value.var = "time")
+  setcolorder(time_matrix, neworder = as.character(elite_ids))
+  as.matrix(time_matrix, rownames = "instance")
 }
 
 race <- function(race_state, maxExp,
@@ -671,7 +668,7 @@ elitist_race <- function(race_state, maxExp,
         irace.assert(elitist_new_instances %% blockSize == 0L)
         # FIXME: This should go into its own function.
         n_elite <- ncol(elite.data)
-        which_elites <- which(rep_len(TRUE, n_elite))
+        which_elites <- seq_len(n_elite)
         irace.note("Preliminary execution of ", n_elite,
           " elite configuration(s) over ", elitist_new_instances, " instance(s).\n")
         for (k in seq_len(elitist_new_instances)) {
@@ -1006,10 +1003,10 @@ elitist_race <- function(race_state, maxExp,
     irace.assert(!any(is.infinite(Results[, alive, drop=FALSE])))
     
     # Variables required to produce output of elimination test.
-    cap.done     <- FALSE #if dominance elimination was performed
-    test.done    <- FALSE #if statistical test elimination was performed
-    cap.dropped  <- FALSE #if capping has drop any configuration
-    test.dropped <- FALSE #if any candidates has been eliminated by testing
+    cap.done     <- FALSE # if dominance elimination was performed
+    test.done    <- FALSE # if statistical test elimination was performed
+    cap.dropped  <- FALSE # if capping has drop any configuration
+    test.dropped <- FALSE # if any candidates has been eliminated by testing
     cap.alive    <- test.alive <- alive
     
     ## Dominance elimination (Capping only).
