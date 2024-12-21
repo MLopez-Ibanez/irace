@@ -668,7 +668,7 @@ irace_run <- function(scenario)
     # FIXME: Do we need to clone?
     race_state$completed <- reason
     iraceResults$state <- race_state
-    irace_save_logfile(iraceResults, scenario)
+    save_irace_logfile(iraceResults, logfile = scenario$logFile)
     # FIXME: Handle scenario$maxTime > 0
     if (scenario$postselection && scenario$maxTime == 0 && floor(remainingBudget / max(scenario$blockSize, scenario$eachTest)) > 1L)
       psRace(iraceResults, max_experiments = remainingBudget, iteration_elites = TRUE)
@@ -772,6 +772,7 @@ irace_run <- function(scenario)
             value = max(0L, vlast(allConfigurations[[".ID."]])) + seq_nrow(newConfigurations))
           setcolorder(newConfigurations, ".ID.", before=1L)
           setDF(newConfigurations)
+          # FIXME: use rbindlist(use.names=TRUE)
           allConfigurations <- rbind(allConfigurations, newConfigurations)
           rownames(allConfigurations) <- allConfigurations[[".ID."]]
           # We may have generated less than the number requested if there were duplicates.
@@ -910,11 +911,11 @@ irace_run <- function(scenario)
     ## Save to the log file.
     iraceResults$allConfigurations <- allConfigurations
     iraceResults$state <- race_state
-    irace_save_logfile(iraceResults, scenario)
+    save_irace_logfile(iraceResults, logfile = scenario$logFile)
     
-    # Consistency checks
-    # With elitist=TRUE we should never re-run the same configuration on the same (instance,seed) pair
-    if (scenario$elitist)
+    # With elitist=TRUE and without targetEvaluator we should never re-run the
+    # same configuration on the same (instance,seed) pair.
+    if (scenario$elitist && is.null(scenario$targetEvaluator))
       irace.assert(sum(!is.na(iraceResults$experiments)) == nrow(race_state$experiment_log))
 
     if (remainingBudget <= 0) {

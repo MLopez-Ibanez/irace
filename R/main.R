@@ -228,7 +228,7 @@ testing_common <- function(configurations, scenario, iraceResults)
   verbose <- !scenario$quiet
   if (verbose) configurations_print(configurations)
   iraceResults$testing <- testConfigurations(configurations, scenario)
-  irace_save_logfile(iraceResults, scenario)
+  save_irace_logfile(iraceResults, logfile = scenario$logFile)
   irace.note ("Testing results (column number is configuration ID in no particular order):\n")
   if (verbose) print(cbind(seeds = iraceResults$testing$seeds,
                            as.data.frame(iraceResults$testing$experiments)))

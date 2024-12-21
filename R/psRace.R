@@ -236,7 +236,7 @@ psRace <- function(iraceResults, max_experiments, conf_ids = NULL, iteration_eli
     iraceResults$allElites[[indexIteration]] <- elite_configurations[[".ID."]]
     race_state$elite_configurations <- elite_configurations
     iraceResults$state <- race_state
-    irace_save_logfile(iraceResults, scenario)
+    save_irace_logfile(iraceResults, logfile = scenario$logFile)
   }
 
   # FIXME: This log should contain only information of what was done in the
