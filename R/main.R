@@ -87,17 +87,17 @@ cat_irace_license <- function()
 irace_main <- function(scenario, output.width = 9999L)
   irace_common(scenario = scenario, simple=FALSE, output.width = output.width)
 
-#' Test configurations given in `.Rdata` file
+#' Test configurations given in the logfile (typically `irace.Rdata`) produced by \pkg{irace}.
 #'
 #' `testing_fromlog` executes the testing of the target algorithm configurations
 #' found by an \pkg{irace} execution.
 #' 
-#' @param logFile Path to the `.Rdata` file produced by \pkg{irace}.
+#' @param logFile `character(1)`\cr Path to the logfile (typically `irace.Rdata`) produced by \pkg{irace}.
 #'
 #' @param testNbElites Number of (final) elite configurations to test. Overrides
 #'   the value found in `logFile`.
 #' 
-#' @param testIterationElites (`logical(1)`) If `FALSE`, only the final
+#' @param testIterationElites `logical(1)`\cr If `FALSE`, only the final
 #'   `testNbElites` configurations are tested; otherwise, also test the best
 #'   configurations of each iteration. Overrides the value found in `logFile`.
 #'
@@ -107,7 +107,7 @@ irace_main <- function(scenario, output.width = 9999L)
 #'
 #' @param testInstances Character vector of the instances to be used in the `targetRunner` when executing the testing.
 #'
-#' @return Boolean. `TRUE` if the testing ended successfully otherwise, `FALSE`.
+#' @return `logical(1)`\cr `TRUE` if the testing ended successfully otherwise, `FALSE`.
 #' 
 #' @details The function `testing_fromlog` loads the `logFile` and obtains the
 #'   testing setup and configurations to be tested.  Within the `logFile`, the
@@ -299,18 +299,18 @@ init <- function()
 #' Calls [irace_main()] using command-line options, maybe parsed from the
 #' command line used to invoke R.
 #' 
-#' @param argv (\code{character()}) \cr The arguments 
+#' @param argv `character()`\cr The arguments 
 #' provided on the R command line as a character vector, e.g., 
-#' \code{c("--scenario", "scenario.txt", "-p", "parameters.txt")}.
+#' `c("--scenario", "scenario.txt", "-p", "parameters.txt")`.
 #' Using the  default value (not providing the parameter) is the 
-#' easiest way to call \code{irace_cmdline}.
+#' easiest way to call [irace_cmdline()].
 #' 
 #' @details The function reads the parameters given on the command line
 #' used to invoke R, finds the name of the scenario file,
 #'  initializes the scenario from the file (with the function
-#'  \code{\link{readScenario}}) and possibly from parameters passed in
+#'  [readScenario()]) and possibly from parameters passed in
 #'  the command line. It finally starts \pkg{irace} by calling
-#'  \code{\link{irace_main}}.
+#'  [irace_main()].
 #'
 #' List of command-line options:
 #' ```{r echo=FALSE,comment=NA}

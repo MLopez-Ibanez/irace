@@ -2,7 +2,7 @@
 % Please edit documentation in R/main.R
 \name{testing_fromlog}
 \alias{testing_fromlog}
-\title{Test configurations given in \code{.Rdata} file}
+\title{Test configurations given in the logfile (typically \code{irace.Rdata}) produced by \pkg{irace}.}
 \usage{
 testing_fromlog(
   logFile,
@@ -14,12 +14,12 @@ testing_fromlog(
 )
 }
 \arguments{
-\item{logFile}{Path to the \code{.Rdata} file produced by \pkg{irace}.}
+\item{logFile}{\code{character(1)}\cr Path to the logfile (typically \code{irace.Rdata}) produced by \pkg{irace}.}
 
 \item{testNbElites}{Number of (final) elite configurations to test. Overrides
 the value found in \code{logFile}.}
 
-\item{testIterationElites}{(\code{logical(1)}) If \code{FALSE}, only the final
+\item{testIterationElites}{\code{logical(1)}\cr If \code{FALSE}, only the final
 \code{testNbElites} configurations are tested; otherwise, also test the best
 configurations of each iteration. Overrides the value found in \code{logFile}.}
 
@@ -30,7 +30,7 @@ configurations of each iteration. Overrides the value found in \code{logFile}.}
 \item{testInstances}{Character vector of the instances to be used in the \code{targetRunner} when executing the testing.}
 }
 \value{
-Boolean. \code{TRUE} if the testing ended successfully otherwise, \code{FALSE}.
+\code{logical(1)}\cr \code{TRUE} if the testing ended successfully otherwise, \code{FALSE}.
 }
 \description{
 \code{testing_fromlog} executes the testing of the target algorithm configurations

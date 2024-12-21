@@ -10,11 +10,11 @@ irace_cmdline(argv = commandArgs(trailingOnly = TRUE))
 irace.cmdline(argv = commandArgs(trailingOnly = TRUE))
 }
 \arguments{
-\item{argv}{(\code{character()}) \cr The arguments
+\item{argv}{\code{character()}\cr The arguments
 provided on the R command line as a character vector, e.g.,
 \code{c("--scenario", "scenario.txt", "-p", "parameters.txt")}.
 Using the  default value (not providing the parameter) is the
-easiest way to call \code{irace_cmdline}.}
+easiest way to call \code{\link[=irace_cmdline]{irace_cmdline()}}.}
 }
 \value{
 (\code{invisible(data.frame)})
@@ -89,9 +89,9 @@ command line used to invoke R.
 The function reads the parameters given on the command line
 used to invoke R, finds the name of the scenario file,
 initializes the scenario from the file (with the function
-\code{\link{readScenario}}) and possibly from parameters passed in
+\code{\link[=readScenario]{readScenario()}}) and possibly from parameters passed in
 the command line. It finally starts \pkg{irace} by calling
-\code{\link{irace_main}}.
+\code{\link[=irace_main]{irace_main()}}.
 
 List of command-line options:
 
