@@ -5,9 +5,16 @@
 ## Major breaking changes
 
 ## New features and improvements
-
+ 
+ * `psRace()` gains a `psrace_logFile` argument to avoid overwriting `scenario$logFile`.
+ 
 ## Fixes
 
+ * Fixed documentation of `psRace()`.
+ 
+ * Fix `psRace()` not saving `psrace_log` in `scenario$logFile`.
+ 
+ * Fix bug in `psRace()` using more budget than the maximum given.
 
 # irace 4.1
 
@@ -24,7 +31,7 @@
 
  * Conditions that are always true because they depend on fixed parameters are
    replaced by a `TRUE` value to speed up their evaluation. This speed-up is only
-   measurable with very large and complicated parameter space.
+   measurable with very large and complicated parameter spaces.
  
  * The options `src` and `target` of `ablation()` (or `--src` and `--target` of
    the command-line `ablation` tool) now accept a character string that points

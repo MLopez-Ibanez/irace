@@ -811,6 +811,8 @@ elitist_race <- function(race_state, maxExp,
     ## there are instances previously seen that have not been evaluated on any
     ## alive configuration.  If we just did a test, check that we have enough
     ## budget to reach the next test.
+    # FIXME: In post-selection racing, we want to consume all budget, so we
+    # should discard configurations until we have 2.
     if (current_task > first.test && ( (current_task - 1L) %% each.test) == 0L
       && experiments_used + length(which_exe) * each.test > maxExp
       && all_elite_instances_evaluated()) {
@@ -1142,8 +1144,7 @@ elitist_race <- function(race_state, maxExp,
     mean_best <- mean(Results[, best])
     print_footer(bestconf = configurations[best, , drop = FALSE],
                  # FIXME: This is the mean of the best, but perhaps it
-                 # should be the sum of ranks in the case of test ==
-                 # friedman?
+                 # should be the sum of ranks in the case of test == friedman?
                  mean_best = mean_best,
                  break_msg = break_msg, debug_level = scenario$debugLevel, 
                  capping = capping,
