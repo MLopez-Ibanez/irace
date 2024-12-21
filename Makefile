@@ -48,7 +48,7 @@ install: build
 	cd $(BINDIR) && R CMD INSTALL $(INSTALL_FLAGS) $(PACKAGE)_$(PACKAGEVERSION).tar.gz
 
 quick-install:
-	cd $(BINDIR) &&	R CMD build $(BUILD_FLAGS) $(NO_BUILD_VIGNETTES) $(PACKAGEDIR) && R CMD INSTALL $(INSTALL_FLAGS) $(PACKAGE)_$(PACKAGEVERSION).tar.gz
+	R CMD INSTALL $(INSTALL_FLAGS) --no-docs $(PACKAGEDIR)
 
 genoptions: R/irace-options.R vignettes/section/irace-options.tex
 
