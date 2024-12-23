@@ -1,5 +1,5 @@
 #!/bin/sh
-rm -f  irace-Ex.R config.* confdefs.h \
+rm -f  irace.Rdata irace-Ex.R config.* confdefs.h \
    src/*.so src/*.o src/*/*.o src/*.gcno src/*/*.gcno src/*.gcov src/config.h src/symbols.rds \
    inst/doc/*.blg inst/doc/*.bbl \
    tests/testthat/*.log tests/testthat/*.Rout tests/testthat/Rplots.pdf tests/testthat/iracedump.rda tests/testthat/irace.Rdata \
