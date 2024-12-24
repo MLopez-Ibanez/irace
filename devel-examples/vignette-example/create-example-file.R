@@ -2,6 +2,83 @@ library(irace)
 library(fs)
 library(withr)
 
+###### Create sann.rda
+cat('**** Creating sann.rda\n')
+## We generate 50 instances (in this case, weights):
+weights <- rnorm(50, mean = 0.9, sd = 0.02)
+
+## On this set of instances, we are interested in optimizing two
+## parameters of the SANN algorithm: tmax and temp. We setup the
+## parameter space as follows:
+parameters_table <- '
+tmax "" i (1, 5000)
+temp "" r (0, 100)
+'
+
+## We use the irace function readParameters to read this table:
+parameters <- readParameters(text = parameters_table)
+
+## Next, we define the function that will evaluate each candidate
+## configuration on a single instance. For simplicity, we restrict to
+## three-dimensional functions and we set the maximum number of
+## iterations of SANN to 5000.
+
+target_runner <- function(experiment, scenario)
+{
+  instance <- experiment$instance
+  configuration <- experiment$configuration
+  D <- 3
+  par <- runif(D, min=-1, max=1)
+  fn <- function(x) {
+    # Functions to be optimized:
+    f_rosenbrock <- function (x) {
+      z <- x + 1
+      hz <- z[-length(z)]
+      tz <- z[-1L]
+      sum(100 * (hz^2 - tz)^2 + (hz - 1)^2)
+    }
+    f_rastrigin <- function (x)
+      sum(x * x - 10 * cos(2 * pi * x) + 10)
+    
+    (instance * f_rastrigin(x) + (1 - instance) * f_rosenbrock(x))
+  }
+  res <- stats::optim(par,fn, method="SANN",
+               control=list(maxit=5000
+                 , tmax = as.numeric(configuration[["tmax"]])
+                 , temp = as.numeric(configuration[["temp"]])
+                 ))
+  ## New output interface in irace 2.0. This list may also contain:
+  ## - 'time' if irace is called with 'maxTime'
+  ## - 'error' is a string used to report an error
+  ## - 'outputRaw' is a string used to report the raw output of calls to
+  ##   an external program or function.
+  ## - 'call' is a string used to report how target.runner called the
+  ##   external program or function.
+  list(cost = res$value)
+}
+
+## We define a configuration scenario by setting targetRunner to the
+## function define above, instances to the first 50 random weights, and
+## a maximum budget of 1000 calls to targetRunner.
+scenario <- list(targetRunner = target_runner,
+                 instances = weights,
+                 maxExperiments = 1000,
+                 logFile = "./sann.rda",
+                 execDir = "./",
+                 parameters = parameters)
+
+## We are now ready to launch irace. We do it by means of the irace
+## function. The function will print information about its
+## progress. This may require a few minutes, so it is not run by default.
+irace(scenario = scenario)
+
+iraceResults <- read_logfile("sann.rda")
+iraceResults$scenario$execDir <- "./"
+iraceResults$scenario$logFile <- "./sann.rda"
+save(iraceResults, file="sann.rda", version = 3L)
+
+### ACOTSP example
+
 iracebin <- system.file(package="irace", "bin/irace")
 if (0 != file.access(iracebin, mode=1))
   stop("Error: ", iracebin, " is not executable or not found!")
@@ -106,79 +183,5 @@ output <- list(
 # save in the folder
 save(experiment, output, file="examples.Rdata", version = 3L)
 
-## Create sann.rda
-cat('**** Creating sann.rda\n')
-## We generate 200 instances (in this case, weights):
-weights <- rnorm(200, mean = 0.9, sd = 0.02)
-
-## On this set of instances, we are interested in optimizing two
-## parameters of the SANN algorithm: tmax and temp. We setup the
-## parameter space as follows:
-parameters_table <- '
-tmax "" i (1, 5000)
-temp "" r (0, 100)
-'
-
-## We use the irace function readParameters to read this table:
-parameters <- readParameters(text = parameters_table)
-
-## Next, we define the function that will evaluate each candidate
-## configuration on a single instance. For simplicity, we restrict to
-## three-dimensional functions and we set the maximum number of
-## iterations of SANN to 5000.
-
-target.runner <- function(experiment, scenario)
-{
-  instance <- experiment$instance
-  configuration <- experiment$configuration
-  D <- 3
-  par <- runif(D, min=-1, max=1)
-  fn <- function(x) {
-    # Functions to be optimized:
-    f_rosenbrock <- function (x) {
-      z <- x + 1
-      hz <- z[-length(z)]
-      tz <- z[-1L]
-      sum(100 * (hz^2 - tz)^2 + (hz - 1)^2)
-    }
-    f_rastrigin <- function (x)
-      sum(x * x - 10 * cos(2 * pi * x) + 10)
-    
-    (instance * f_rastrigin(x) + (1 - instance) * f_rosenbrock(x))
-  }
-  res <- stats::optim(par,fn, method="SANN",
-               control=list(maxit=5000
-                 , tmax = as.numeric(configuration[["tmax"]])
-                 , temp = as.numeric(configuration[["temp"]])
-                 ))
-  ## New output interface in irace 2.0. This list may also contain:
-  ## - 'time' if irace is called with 'maxTime'
-  ## - 'error' is a string used to report an error
-  ## - 'outputRaw' is a string used to report the raw output of calls to
-  ##   an external program or function.
-  ## - 'call' is a string used to report how target.runner called the
-  ##   external program or function.
-  list(cost = res$value)
-}
-
-## We define a configuration scenario by setting targetRunner to the
-## function define above, instances to the first 100 random weights, and
-## a maximum budget of 1000 calls to targetRunner.
-scenario <- list(targetRunner = target.runner,
-                 instances = weights[1:100],
-                 maxExperiments = 1000,
-                 logFile = "./sann.rda",
-                 execDir = "./",
-                 parameters = parameters)
-
-## We are now ready to launch irace. We do it by means of the irace
-## function. The function will print information about its
-## progress. This may require a few minutes, so it is not run by default.
-irace(scenario = scenario)
-
-iraceResults <- read_logfile("sann.rda")
-iraceResults$scenario$execDir <- "./"
-iraceResults$scenario$logFile <- "./sann.rda"
-save(iraceResults, file="sann.rda", version = 3L)
 
 
