@@ -715,16 +715,9 @@ elitist_race <- function(race_state, maxExp,
             # from one to the other.
             is_exe = rep_len(TRUE, n_elite), scenario = scenario)
           # Extract results:
-          # FIXME: check what would happen in case of having the target evaluator
-          # MANUEL: Note how similar is this to what we do in do.experiments(),
-          # perhaps we can create a function that takes output and experiment_log
-          # and returns experiment_log. 
-          # LESLIE: Yes you are right, Ill do it once we figure out the rest!
           irace.assert(length(output[["cost"]]) == n_elite)
           Results[k, seq_len(n_elite)] <- applyPAR(output[["cost"]], boundMax = scenario$boundMax, boundPar = scenario$boundPar)
-          vtimes <- output[["time"]]
-          irace.assert(length(vtimes) == n_elite)
-          irace.assert(!anyNA(vtimes))
+          irace.assert(!anyNA(output[["time"]]))
           experimentsTime[k, which_elites] <- output[["time"]] # capping is enabled
           irace.assert(all.equal(configurations[[".ID."]][which_elites], output[["configuration"]]))
           irace.assert(all.equal(output[["bound"]], rep(scenario$boundMax, n_elite)))
@@ -889,11 +882,9 @@ elitist_race <- function(race_state, maxExp,
         # Extract results
         irace.assert(length(output[["cost"]]) == length(which_elite_exe))
         Results[current_task, which_elite_exe] <- applyPAR(output[["cost"]], boundMax = scenario$boundMax, boundPar = scenario$boundPar)
-        vtimes <- output[["time"]]
-        irace.assert(length(vtimes) == length(which_elite_exe))
-        irace.assert(!anyNA(vtimes))
+        irace.assert(!anyNA(output[["time"]]))
         irace.assert(all.equal(configurations[which_elite_exe, ".ID."], output[["configuration"]]))
-        experimentsTime[current_task, which_elite_exe] <- vtimes
+        experimentsTime[current_task, which_elite_exe] <- output[["time"]]
         irace.assert(all.equal(unique(output[["instance"]]), race_instances[current_task]))
         experiments_used <- experiments_used + length(which_elite_exe)
           
@@ -969,6 +960,9 @@ elitist_race <- function(race_state, maxExp,
     vcost <- output[["cost"]]
     # Output is not indexed in the same way as configurations.
     which_has_time <- which(which_alive %in% which_exe)
+    # With !is.null(scenario$targetEvaluator) we will have duplicated (instance, configuration) in output.
+    irace.assert(all.equal(output[["bound"]], if (is.null(scenario$targetEvaluator)) final_bounds[which_has_time]
+                                              else final_bounds))
     if (capping) {
       vcost <- applyPAR(vcost, boundMax = scenario$boundMax, boundPar = scenario$boundPar)
       if (scenario$boundAsTimeout) {
@@ -982,8 +976,6 @@ elitist_race <- function(race_state, maxExp,
       # If targetEvaluator was used, we do not update the times because no
       # evaluation actually happened, only the cost values possibly changed.
       vtimes <- if (is.null(scenario$targetEvaluator)) output[["time"]] else output[["time"]][which_has_time]
-      irace.assert(length(which_has_time) == length(which_exe))
-      irace.assert(length(vtimes) == length(which_has_time))
       # Correct higher execution times.
       irace.assert(all.equal(if (is.null(scenario$targetEvaluator)) output[["bound"]] else output[["bound"]][which_has_time], final_bounds[which_has_time]))
       experimentsTime[current_task, which_has_time] <- pmin(vtimes, final_bounds[which_has_time])
@@ -991,15 +983,10 @@ elitist_race <- function(race_state, maxExp,
     ## Currently, targetEvaluator always re-evaluates, which implies that the
     ## value may change without counting as an evaluation. We do this to allow online normalization.
     which_has_cost <- if (is.null(scenario$targetEvaluator)) which_exe else which_alive
-    irace.assert(all.equal(configurations[[".ID."]][which_has_cost], output[["configuration"]]))
     irace.assert(length(output[["cost"]]) == length(which_has_cost))
     Results[current_task, which_has_cost] <- vcost
-
-    # With !is.null(scenario$targetEvaluator) we will have duplicated (instance, configuration) in output.
-    irace.assert(all.equal(output[["bound"]], if (is.null(scenario$targetEvaluator)) final_bounds[which_has_time]
-                                                else final_bounds))
-    irace.assert(all.equal(unique(output[["instance"]]), race_instances[current_task]))
     experiments_used <- experiments_used + length(which_exe)
+
     # We update the elites that have been executed.
     is_elite <- update_is_elite(is_elite, which_elite_exe)
 
