@@ -20,7 +20,7 @@ RaceState <- R6Class("RaceState", lock_class = TRUE,
    target_evaluator = NULL,
    target_runner = NULL,
    timeUsed = 0,
-   time_last_save = 0,
+   time_next_save = 0,
    timer = NULL,
    # Methods.
    initialize = function(scenario, new = TRUE, recover = FALSE) {
@@ -55,7 +55,7 @@ RaceState <- R6Class("RaceState", lock_class = TRUE,
          self$race_experiment_log = NULL
          self$rejected_ids = NULL
          self$timeUsed = 0
-         self$time_last_save = 0
+         self$time_next_save = 0
          # Just in case anything is still running.
          self$stop_parallel()
        } else {
@@ -86,37 +86,37 @@ RaceState <- R6Class("RaceState", lock_class = TRUE,
      invisible(self)
    },
 
-   update_experiment_log = function(output, instances, configurations_id, scenario, iteration) {
-     irace.assert(all.equal(unique(output[["configuration"]]), configurations_id))
-     irace.assert(all.equal(rep(instances, each = length(configurations_id)),
-       output$instance))
+   update_experiment_log = function(output, instances, scenario) {
      # Extract results
-     set(output, j = "iteration", value = iteration)
-     if (!is.null(scenario$boundMax))
-       set(output, j = "bound", value = scenario$boundMax)
      self$experiment_log <- rbindlist(list(self$experiment_log, output), use.names=TRUE)
 
-     cost <- output[["cost"]]
      if (scenario$capping)
-       cost <- applyPAR(cost, boundMax = scenario$boundMax, boundPar = scenario$boundPar)
-     
-     matrix(cost, nrow = length(instances), ncol = length(configurations_id),
+       output[["cost"]] <- applyPAR(output[["cost"]], boundMax = scenario$boundMax, boundPar = scenario$boundPar)
+     configurations_id <- unique(output[["configuration"]])
+     irace.assert(all.equal(rep(instances, each = length(configurations_id)),
+       output$instance))
+     # FIXME: delete old
+     old <- matrix(output[["cost"]], nrow = length(instances), ncol = length(configurations_id),
        byrow = TRUE,
        dimnames = list(instances, as.character(configurations_id)))
+     new <- as.matrix(dcast(output[, c("instance", "configuration", "cost")], instance ~ configuration, value.var = "cost"),
+       rownames = "instance")
+     irace.assert(identical(old, new))
+     new
    },
    
    update_race_experiment_log = function(experiment_log, scenario) {
      self$race_experiment_log <- c(self$race_experiment_log, list(experiment_log))
      now <- self$timer$wallclock()
      # Do not save to disk too frequently.
-     if (now > self$time_last_save) {
-       irace.note("Saving recovery info.\n")
+     if (now > self$time_next_save) {
+       # irace.note("Saving recovery info.\n")
        iraceResults <- list(
          scenario = scenario,
          irace_version = irace_version,
          state = self)
        save_irace_logfile(iraceResults, logfile = scenario$logFile)
-       self$time_last_save <- now + .irace_minimum_saving_time
+       self$time_next_save <- now + .irace_minimum_saving_time
      }
      invisible()
    },

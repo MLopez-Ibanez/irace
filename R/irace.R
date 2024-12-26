@@ -358,9 +358,9 @@ do_experiments <- function(race_state, configurations, ninstances, scenario, ite
     bounds = rep(scenario$boundMax, nrow(configurations)),
     is_exe = rep_len(TRUE, nrow(configurations) * ninstances), scenario = scenario)
   
+  set(output, j = "iteration", value = iteration)
   Results <- race_state$update_experiment_log(output, instances = instances,
-    configurations_id = configurations[[".ID."]],
-    scenario = scenario, iteration = iteration)
+    scenario = scenario)
   
   rejected_ids <- configurations[[".ID."]][colAnys(is.infinite(Results))]
   scenario$parameters$forbid_configurations(
