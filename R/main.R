@@ -417,11 +417,12 @@ checkTargetFiles <- function(scenario)
   race_state <- RaceState$new(scenario)
   race_state$start_parallel(scenario)
   on.exit(race_state$stop_parallel(), add = TRUE)
-
   # FIXME: Create a function try.call(err.msg,warn.msg, fun, ...)
   # Executing targetRunner
   cat("# Executing targetRunner (", nrow(configurations), "times)...\n")
   result <- TRUE
+  # We cannot let targetRunner or targetEvaluator modify our random seed, so we save it.
+  withr::local_preserve_seed()
   output <-  withCallingHandlers(
     tryCatch(execute_experiments(race_state, experiments, scenario),
              error = function(e) {
@@ -447,8 +448,7 @@ checkTargetFiles <- function(scenario)
   if (!is.null(scenario$targetEvaluator)) {
     cat("# Executing targetEvaluator...\n")
     output <-  withCallingHandlers(
-      tryCatch(execute_evaluator(race_state$target_evaluator,
-        experiments, scenario, output, configurations[[".ID."]]),
+      tryCatch(execute_evaluator(race_state$target_evaluator, experiments, scenario, output),
                  error = function(e) {
                    cat(sep = "\n",
                        "\n# Error ocurred while executing targetEvaluator:",

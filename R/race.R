@@ -93,13 +93,11 @@ race_wrapper_helper <- function(race_state, configurations, instance_idx, bounds
     # If targetEvaluator is NULL, then target_output must contain the right
     # output already.  Otherwise, targetEvaluator considers all experiments.
     if (!is.null(scenario$targetEvaluator)) {
-      target_output <- execute_evaluator(race_state$target_evaluator, experiments, scenario, target_output,
-        configurations_id = configurations[[".ID."]])
+      target_output <- execute_evaluator(race_state$target_evaluator, experiments, scenario, target_output)
     } else if (any(!is_exe))  {
       experiments <- experiments[is_exe]
       instance_idx <- instance_idx[is_exe]
     }
-    withr::local_options(warn=2)
     target_output <- rbindlist(target_output, fill=TRUE, use.names=TRUE)
     set(target_output, j = setdiff(colnames(target_output), c("cost", "time")), value = NULL)
     if ("time" %notin% colnames(target_output))
@@ -1173,7 +1171,6 @@ elitist_race <- function(race_state, maxExp,
     irace.note ("Memory used in race():\n")
     race_state$print_mem_used()
   }
-  withr::local_options(warn=2)
   local_experiment_log <- race_state$reset_race_experiment_log()
 
   # nrow(Results) may be smaller, equal or larger than current_task.

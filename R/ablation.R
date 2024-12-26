@@ -400,12 +400,14 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
   
   race_state$start_parallel(scenario)
   on.exit(race_state$stop_parallel(), add = TRUE)
-  target_output <- execute_experiments(race_state, experiments, scenario)
-  if (!is.null(scenario$targetEvaluator))
-    target_output <- execute_evaluator (race_state$target_evaluator, experiments, scenario, target_output,
-                                        src_configuration)
+  # We cannot let targetRunner or targetEvaluator modify our random seed, so we save it.
+  withr::with_preserve_seed({
+    target_output <- execute_experiments(race_state, experiments, scenario)
+    if (!is.null(scenario$targetEvaluator))
+      target_output <- execute_evaluator(race_state$target_evaluator, experiments, scenario, target_output)
+  })
   # Save results
-  output <- sapply(target_output, getElement, "cost") 
+  output <- unlist_element(target_output, "cost") 
   results <- matrix(NA_real_, ncol = 1L, nrow = nrow(race_state$instances_log), 
                     dimnames = list(seq_nrow(race_state$instances_log), 1L))
   results[,1L] <- output[seq_nrow(race_state$instances_log)]

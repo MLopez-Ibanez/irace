@@ -608,13 +608,9 @@ execute_experiments <- function(race_state, experiments, scenario)
   target_output
 }
 
-execute_evaluator <- function(target_evaluator, experiments, scenario, target_output, configurations_id)
+execute_evaluator <- function(target_evaluator, experiments, scenario, target_output)
 {
-  ## FIXME: We do not need the configurations_id argument:
-  irace.assert(isTRUE(all.equal(configurations_id,
-    unique(sapply(experiments, getElement, "id_configuration")))))
-  configurations_id <- unique(unlist(lapply(experiments, getElement, "id_configuration"),
-    recursive = FALSE, use.names = FALSE))
+  configurations_id <- unique(unlist_element(experiments, "id_configuration"))
   nconfs <- length(configurations_id)
   # Evaluate configurations sequentially.
   for (k in seq_along(experiments)) {

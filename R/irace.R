@@ -1160,7 +1160,6 @@ irace_run <- function(scenario)
     # race_state$experiment_log here. Doing the two steps in a different order
     # would be more robust but would need a smarter recovery routine that
     # checks for duplicates.
-    withr::local_options(warn=2)
     race_state$experiment_log <- rbindlist(list(race_state$experiment_log, raceResults$experiment_log),
       use.names=TRUE)
     # Merge new results.

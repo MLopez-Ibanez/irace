@@ -10,6 +10,10 @@
    
 ## New features and improvements
  
+ * When `targetRunner` or `targetEvaluator` are implemented in R, using random
+   numbers within those functions does not affect the sequence of random
+   numbers within irace.
+ 
  * `psRace()` gains a `psrace_logFile` argument to avoid overwriting `scenario$logFile`.
  
 ## Fixes

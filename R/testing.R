@@ -51,20 +51,22 @@ testConfigurations <- function(configurations, scenario)
   }
   race_state$start_parallel(scenario)
   on.exit(race_state$stop_parallel())
+  # We cannot let targetRunner or targetEvaluator modify our random seed, so we save it.
+  withr::local_preserve_seed()
   target_output <- execute_experiments(race_state, experiments, scenario)
   # targetEvaluator may be NULL. If so, target_output must contain the right
   # output already.
   if (!is.null(scenario$targetEvaluator))
     target_output <- execute_evaluator(race_state$target_evaluator, experiments,
-      scenario, target_output, configurations[[".ID."]])
+      scenario, target_output)
 
-  # FIXME: It would be much faster to get convert target_output$cost to a
-  # vector, then initialize the matrix with the vector.
+  # FIXME: It would be much faster to convert target_output to a data.table like we do in race_wrapper(),
+  # then dcast() to a matrix like we do elsewhere.
   testResults <- matrix(NA, ncol = nrow(configurations), nrow = length(testInstances),
                         # dimnames = list(rownames, colnames)
                         dimnames = list(instances_id, configurations$.ID.))
 
-  cost <- sapply(target_output, getElement, "cost")
+  cost <- unlist_element(target_output, "cost")
   if (scenario$capping)
     cost <- applyPAR(cost, boundMax = scenario$boundMax, boundPar = scenario$boundPar)
   # FIXME: Vectorize this loop
