@@ -3,7 +3,7 @@
 #' \packageDescription{irace}
 #'
 #' @name irace-package
-#' @import stats utils compiler matrixStats withr data.table
+#' @import stats utils matrixStats withr data.table
 #' @importFrom R6 R6Class
 #' @importFrom graphics abline axis boxplot par plot points strwidth bxp grid
 #' @importFrom spacefillr generate_sobol_set
@@ -32,6 +32,3 @@
 #' @seealso
 #'  [irace()] for examples and `vignette(package = "irace")` for the user-guide.
 "_PACKAGE"
-
-# Prefix for printing messages to the user.
-.irace_msg_prefix <- "== irace == "

@@ -25,4 +25,6 @@ irace_version <- "unknown"
 
 .irace_tolerance <- sqrt(.Machine$double.eps)
 .irace_minimum_saving_time <- 60 # seconds
+# Prefix for printing messages to the user.
+.irace_msg_prefix <- "== irace == "
 
