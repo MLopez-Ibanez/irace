@@ -45,7 +45,7 @@ irace_internal_error <- function(...)
     op <- c(op, list(error = irace_dump_frames))
   withr::local_options(op)
   # 6 to not show anything below irace.assert()
-  bt <- capture.output(traceback(5))
+  bt <- utils::capture.output(traceback(5))
   warnings()
   stop (.irace_msg_prefix, paste0(..., collapse = "\n"), "\n",
         paste0(bt, collapse= "\n"), "\n",
@@ -61,7 +61,7 @@ irace.assert <- function(exp, eval_after = NULL)
   mc <- sys.call()[[2L]]
   msg <- paste0("'", deparse(mc), "' is not TRUE")
   if (!is.null(eval_after)) {
-    msg_after <- eval.parent(capture.output(eval_after))
+    msg_after <- eval.parent(utils::capture.output(eval_after))
     msg <- paste0(msg, "\n", paste0(msg_after, collapse="\n"))
   }
   irace_internal_error(msg)
@@ -311,8 +311,8 @@ mpiInit <- function(nslaves, debugLevel = 0)
       # what mpi.finalize does, minus the annoying message: "Exiting Rmpi. Rmpi
       # cannot be used unless relaunching R", which we do not care about
       # because this finalizer should only be called when exiting R.
-      capture.output(Rmpi::mpi.finalize(),
-                     file = if (.Platform$OS.type == 'windows') 'NUL' else '/dev/null')
+      utils::capture.output(Rmpi::mpi.finalize(),
+        file = if (.Platform$OS.type == 'windows') 'NUL' else '/dev/null')
     }, onexit = TRUE)
 
     # Create slaves

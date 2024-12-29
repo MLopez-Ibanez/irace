@@ -805,7 +805,7 @@ elitist_race <- function(race_state, maxExp,
           }
         }
         if (is.na(best)) {
-          dump.frames(dumpto = "best_crash", to.file = TRUE,
+          utils::dump.frames(dumpto = "best_crash", to.file = TRUE,
                       include.GlobalEnv = TRUE)
           irace.assert(!is.na(best))
         }
@@ -920,7 +920,7 @@ elitist_race <- function(race_state, maxExp,
             }
           }
           if (is.na(best)) {
-            dump.frames(dumpto = "best_crash", to.file = TRUE,
+            utils::dump.frames(dumpto = "best_crash", to.file = TRUE,
                         include.GlobalEnv = TRUE)
             irace.assert(!is.na(best))
           }

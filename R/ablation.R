@@ -1,4 +1,4 @@
-.ablation.params.def <- read.table(header=TRUE, stringsAsFactors = FALSE, text="
+.ablation.params.def <- utils::read.table(header=TRUE, stringsAsFactors = FALSE, text="
 name            ab  type short long          default               description
 iraceResults     0  p    -l    --log-file    NA                    'Path to the (.Rdata) file created by irace from which the  \"iraceResults\" object will be loaded.'
 src              1  i    -S    --src         1                     'Source configuration ID or the path to a file containing the configuration.'
@@ -84,7 +84,7 @@ ablation_cmdline <- function(argv = commandArgs(trailingOnly = TRUE))
   }
 
   if (!is.null(parser$readArg (short = "-v", long = "--version"))) {
-    print(citation(package="irace"))
+    print(utils::citation(package="irace"))
     return(invisible(NULL))
   }
 
@@ -631,7 +631,7 @@ plotAblation <- function (ablog, pdf_file = NULL, width = 20,
       type = "b", pch = 19, ...,
       panel.first = {
         grid(nx = NA, ny = NULL, lwd = 2);
-        abline(h = c(costs_avg[1], tail(costs_avg, n = 1)),
+        abline(h = c(costs_avg[1], utils::tail(costs_avg, n = 1L)),
           col = "lightgray", lty = "dotted", lwd = 2) })
     axis(1, at = seq_along(costs_avg), labels = labels, las = 3)
     if ("boxplot" %in% type) {

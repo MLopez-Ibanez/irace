@@ -527,7 +527,7 @@ execute_experiments <- function(race_state, experiments, scenario)
                                     target_runner = target_runner)
     if (length(target_output) != length(experiments)) {
       irace.error("Stopping because the output of targetRunnerParallel is missing elements. The output was:\n",
-        paste0(capture.output(str(target_output)), collapse="\n"))
+        paste0(utils::capture.output(utils::str(target_output)), collapse="\n"))
     }
   } else if (scenario$batchmode != 0L) {
     target_output <- cluster_lapply(experiments, scenario = scenario)

@@ -82,7 +82,7 @@ RaceState <- R6Class("RaceState", lock_class = TRUE,
                   "# .Random.seed: ", paste0(self$rng$random_seed, collapse = ", "), "\n")
      }
      # We do this here, so it is available even if we crash.
-     self$session_info <- sessionInfo()
+     self$session_info <- utils::sessionInfo()
      invisible(self)
    },
 
@@ -213,7 +213,7 @@ RaceState <- R6Class("RaceState", lock_class = TRUE,
 
    print_mem_used = function(objects) {
      object_size_kb <- function (name, envir)
-       object.size(get(name, envir = envir)) / 1024
+       utils::object.size(get(name, envir = envir)) / 1024
      
      envir <- parent.frame()
      if (missing(objects))

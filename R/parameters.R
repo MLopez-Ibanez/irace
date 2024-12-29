@@ -703,7 +703,7 @@ printParameters <- function(parameters)
 #' @export
 print.ParameterSpace <- function(x, digits = 15L, ...)
 {
-  str(x$.params, digits.d = digits)
+  utils::str(x$.params, digits.d = digits)
   cat("Forbidden:\n")
   print(x$forbidden, digits = 15L)
 }

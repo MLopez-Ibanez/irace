@@ -36,13 +36,13 @@ readConfigurationsFile <- function(filename, parameters, debugLevel = 0L, text)
 {
   if (missing(filename) && !missing(text)) {
     filename <- NULL
-    configurationTable <- read.table(text = text, header = TRUE,
+    configurationTable <- utils::read.table(text = text, header = TRUE,
                                      na.strings = c("NA", "<NA>"),
                                      colClasses = "character",
                                      stringsAsFactors = FALSE)
   } else {
     # Read the file.
-    configurationTable <- read.table(filename, header = TRUE,
+    configurationTable <- utils::read.table(filename, header = TRUE,
                                      na.strings = c("NA", "<NA>"),
                                      colClasses = "character",
                                      stringsAsFactors = FALSE)
@@ -196,7 +196,7 @@ fix_configurations <- function(configurations, parameters, debugLevel = 0L, file
     irace.error("Duplicated configurations",
                 if (is.null(filename)) "" else paste0(" in file '", filename, "'"),
                 ":\n",
-                paste0(capture.output(
+                paste0(utils::capture.output(
                   configurations[duplicated(configurations), , drop=FALSE]), "\n"))
   }
   configurations

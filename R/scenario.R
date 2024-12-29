@@ -722,5 +722,5 @@ update_scenario <- function(scenario, ...)
   unknown_scenario_args <- setdiff(names(scenario_args), names(scenario))
   if (length(unknown_scenario_args))
     irace.error("Unknown scenario settings given: ", paste0(unknown_scenario_args, collapse=", "))
-  modifyList(scenario, scenario_args)
+  utils::modifyList(scenario, scenario_args)
 }

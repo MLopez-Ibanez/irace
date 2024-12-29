@@ -344,7 +344,7 @@ irace_cmdline <- function(argv = commandArgs(trailingOnly = TRUE))
     return(invisible(NULL))
   }
   if (!is.null(parser$readArg(short = "-v", long = "--version"))) {
-    print(citation(package="irace"))
+    print(utils::citation(package="irace"))
     return(invisible(NULL))
   }
   

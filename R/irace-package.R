@@ -3,7 +3,8 @@
 #' \packageDescription{irace}
 #'
 #' @name irace-package
-#' @import stats utils matrixStats withr data.table
+#' @import stats matrixStats withr data.table
+#' @importFrom utils str
 #' @importFrom R6 R6Class
 #' @importFrom graphics abline axis boxplot par plot points strwidth bxp grid
 #' @importFrom spacefillr generate_sobol_set

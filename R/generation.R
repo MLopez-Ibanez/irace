@@ -216,8 +216,8 @@ sample_from_model <- function(parameters, eliteConfigurations, model,
   # FIXME: We only need .WEIGHT. from eliteConfigurations.
   ids_elites <- names(model[[1L]])
   irace.assert(identical(as.integer(ids_elites), as.integer(eliteConfigurations[[".ID."]])), {
-    print(str(ids_elites))
-    print(str(eliteConfigurations[[".ID."]]))
+    print(utils::str(ids_elites))
+    print(utils::str(eliteConfigurations[[".ID."]]))
   })
   
   newConfigurations  <- configurations_alloc(parameters$names, nrow = nbNewConfigurations, parameters)
