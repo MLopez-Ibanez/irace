@@ -184,7 +184,6 @@ psRace <- function(iraceResults, max_experiments, conf_ids = NULL, iteration_eli
       if (length(rejected_ids))
         conf_ids <- setdiff(conf_ids, rejected_ids)
       cat("conf_ids4:", paste0(collapse=", ", conf_ids), "\n")
-      experiments <- 
       conf_needs <- matrixStats::colCounts(experiments[, conf_ids, drop = FALSE], value = NA)
       cat("conf_needs:", paste0(collapse=", ", conf_needs), "\n")
     })
