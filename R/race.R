@@ -602,7 +602,7 @@ elitist_race <- function(race_state, maxExp,
   blockSize <- scenario$blockSize
   stat.test <- scenario$testType
   conf.level <- scenario$confidence
-  first.test <- blockSize * scenario$firstTest
+  firstTest <- blockSize * scenario$firstTest
   each.test <- blockSize * scenario$eachTest
   elitist <- scenario$elitist
   capping <- scenario$capping
@@ -830,13 +830,13 @@ elitist_race <- function(race_state, maxExp,
                           minSurvival, ")")
       break
     }
-    ## We continue running if (1) we have not reached the first.test or (2)
+    ## We continue running if (1) we have not reached the firstTest or (2)
     ## there are instances previously seen that have not been evaluated on any
     ## alive configuration.  If we just did a test, check that we have enough
     ## budget to reach the next test.
     # FIXME: In post-selection racing, we want to consume all budget, so we
     # should discard configurations until we have 2.
-    if (current_task > first.test && ( (current_task - 1L) %% each.test) == 0L
+    if (current_task > firstTest && ( (current_task - 1L) %% each.test) == 0L
       && experiments_used + length(which_exe) * each.test > maxExp
       && all_elite_instances_evaluated()) {
       break_msg <- paste0("experiments for next test (",
@@ -1028,10 +1028,10 @@ elitist_race <- function(race_state, maxExp,
       cap.done    <- TRUE
     }
     
-    # We assume that first.test is a multiple of each.test.  In any
+    # We assume that firstTest is a multiple of each.test.  In any
     # case, this will only do the first test after the first multiple
-    # of each.test that is larger than first.test.
-    if (current_task >= first.test && (current_task %% each.test) == 0L
+    # of each.test that is larger than firstTest.
+    if (current_task >= firstTest && (current_task %% each.test) == 0L
         && nbAlive > 1L) {
       irace.assert(sum(alive) == nbAlive)
       test.res <-
@@ -1111,7 +1111,7 @@ elitist_race <- function(race_state, maxExp,
       # Compute number of statistical tests without eliminations.
       irace.assert(!any(is_elite > 0L) == (current_task >= elite_safe))
       if (!any(is_elite > 0L)
-          && current_task > first.test && (current_task %% each.test) == 0L) {
+          && current_task > firstTest && (current_task %% each.test) == 0L) {
         if (length(which_alive) == length(prev_alive)) {
           no_elimination <- no_elimination + 1L
         } else {
