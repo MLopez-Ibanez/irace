@@ -104,7 +104,7 @@ psRace <- function(iraceResults, max_experiments, conf_ids = NULL, iteration_eli
       if (length(rejected_ids))
         conf_ids <- setdiff(conf_ids, rejected_ids)
       experiments <- experiments[, conf_ids, drop = FALSE]
-      conf_needs <- matrixStats::colCounts(experiments, value = NA)
+      conf_needs <- matrixStats::colCounts(experiments, value = NA, useNames = TRUE)
       n_done <- nrow(experiments) - min(conf_needs)
       # Remove any configuration that needs more than max_experiments.
       conf_needs <- conf_needs[conf_needs <= max_experiments]
@@ -119,10 +119,20 @@ psRace <- function(iraceResults, max_experiments, conf_ids = NULL, iteration_eli
           conf_ids <- names(conf_needs)
           cat(sep="", "# Configurations selected: ", paste0(collapse=", ", conf_ids),
             ".\n# Pending instances: ", paste0(collapse=", ", conf_needs), ".\n")
+          irace.assert(length(conf_ids) > 1L, eval_after = {
+            cat("n_confs: ", n_confs, "\nn_new:", n_new, "\n")
+            print(conf_needs)
+            save(iraceResults, file="bug-conf_ids.Rdata")
+          })
           return(conf_ids)
         }
         # Let's try first to evaluate on new instances.
         conf_needs_new <- truncate_conf_needs(conf_needs + n_new, max_len = 16L)
+        irace.assert(length(conf_needs_new) > 1L, eval_after={
+          cat("max_experiments: ", max_experiments, "\nn_new: ", n_new, "\nconf_needs:")
+          print(conf_needs)
+          save(iraceResults, file="bug-conf_ids.Rdata")
+        })
         combs <- generate_combs_2(length(conf_needs_new))
         left <- sapply(combs, function(x) max_experiments - sum(conf_needs_new[x]), USE.NAMES=FALSE)
         irace.assert(!is.null(left) && length(left) > 0L && !anyNA(left),
@@ -161,6 +171,12 @@ psRace <- function(iraceResults, max_experiments, conf_ids = NULL, iteration_eli
       conf_ids <- names(conf_needs)
       cat(sep="", "# Configurations selected: ", paste0(collapse=", ", conf_ids),
         ".\n# Pending instances: ", paste0(collapse=", ", conf_needs), ".\n")
+      irace.assert(length(conf_ids) > 1L, eval_after = {
+        print(conf_needs)
+        cat("winner: ", winner, "\n")
+        cat("combs[[winner]]: ", paste0(collapse=",", combs[[winner]]), "\n")
+        save(iraceResults, file="bug-conf_ids.Rdata")
+      })
       return(conf_ids)
     }
     conf_ids <- get_confs_for_psrace(iraceResults, iteration_elites, max_experiments,

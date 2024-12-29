@@ -29,13 +29,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ ubuntu-22.04, windows-latest, macos-13, macos-14 ]
-        r: [ release ]
+        os: [ windows-latest, macos-13, macos-14 ]
+        r: [ release, 4.0 ]
         include:
-          # Use 4.0 to check with rtools40's older compiler
-          - { os: windows-latest, r: '4.0' }
-          # Minimum supported version.
-          - {os: ubuntu-20.04,   r: '4.0'}
+          # 4.0 is the minimum supported version.
+          - { os: ubuntu-20.04, r: '4.0'}
+          - { os: ubuntu-22.04, r: 'release' }
           # Use latest ubuntu to make it easier to install dependencies
           - { os: ubuntu-24.04, r: 'devel', http-user-agent: 'release' }
 
