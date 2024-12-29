@@ -646,7 +646,7 @@ irace_run <- function(scenario)
     if (verbose) {
       cat ("# Iteration: ", indexIteration, "\n",
            "# nbIterations: ", nbIterations, "\n",
-           "# experimentsUsedSoFar: ", nrow(race_state$experiment_log), "\n",
+           "# experimentsUsed: ", experimentsUsed, "\n",
            "# timeUsed: ", timeUsed, "\n",
            "# remainingBudget: ", remainingBudget, "\n",
            "# currentBudget: ", currentBudget, "\n",
@@ -712,6 +712,7 @@ irace_run <- function(scenario)
     n = if (scenario$maxExperiments != 0) ceiling(scenario$maxExperiments / minSurvival)
         else max(scenario$firstTest, length(scenario$instances)))
   indexIteration <- 1L
+  experimentsUsed <- 0L
   timeUsed <- 0
   boundEstimate <- NA 
   
@@ -780,8 +781,9 @@ irace_run <- function(scenario)
       # For the used time, we count the time reported in all configurations
       # including rejected ones. 
       timeUsed <- sum(race_state$experiment_log[["time"]], na.rm = TRUE)
+      experimentsUsed <- nrow(race_state$experiment_log)
       # User should return time zero for rejected_ids.
-      boundEstimate <- timeUsed / nrow(race_state$experiment_log)
+      boundEstimate <- timeUsed / experimentsUsed
       boundEstimate <- max(ceiling_digits(boundEstimate, scenario$boundDigits), scenario$minMeasurableTime)
       next_configuration <- nconfigurations + 1L
       
@@ -889,13 +891,16 @@ irace_run <- function(scenario)
     race_state$timeUsed <- timeUsed
     ## Save to the log file.
     iraceResults$allConfigurations <- allConfigurations
-    iraceResults$state <- race_state
-    save_irace_logfile(iraceResults, logfile = scenario$logFile)
+    race_state$save_recovery(iraceResults, logfile = scenario$logFile)
+
     
     # With elitist=TRUE and without targetEvaluator we should never re-run the
     # same configuration on the same (instance,seed) pair.
-    if (scenario$elitist && is.null(scenario$targetEvaluator))
-      irace.assert(sum(!is.na(iraceResults$experiments)) == nrow(race_state$experiment_log))
+    if (scenario$elitist) {
+      irace.assert(sum(!is.na(iraceResults$experiments)) == experimentsUsed)
+      if (is.null(scenario$targetEvaluator))
+        irace.assert(experimentsUsed == nrow(race_state$experiment_log))
+    }
 
     if (remainingBudget <= 0) {
       catInfo("Stopped because budget is exhausted")
@@ -1019,7 +1024,7 @@ irace_run <- function(scenario)
     }
 
     catInfo("Iteration ", indexIteration, " of ", nbIterations, "\n",
-            "# experimentsUsedSoFar: ", nrow(race_state$experiment_log), "\n",
+            "# experimentsUsed: ", experimentsUsed, "\n",
             if (scenario$maxTime == 0) ""
             else paste0("# timeUsed: ", timeUsed, "\n",
                         "# boundEstimate: ", boundEstimate, "\n"),
@@ -1166,12 +1171,13 @@ irace_run <- function(scenario)
     iraceResults$experiments <- merge_matrix(iraceResults$experiments, raceResults$experiments)
                                              
     # Update remaining budget.
+    experimentsUsed <- experimentsUsed + raceResults$experimentsUsed
     if (scenario$maxTime > 0L) { 
       timeUsed <- timeUsed + sum(raceResults$experiment_log[["time"]], na.rm = TRUE)
-      boundEstimate <- timeUsed / nrow(race_state$experiment_log)
+      boundEstimate <- timeUsed / experimentsUsed
       remainingBudget <- round((scenario$maxTime - timeUsed) / boundEstimate)
     } else {
-      remainingBudget <- remainingBudget - nrow(raceResults$experiment_log)
+      remainingBudget <- remainingBudget - raceResults$experimentsUsed
     }
 
     if (debugLevel >= 3L) {

@@ -16,7 +16,8 @@ target_runner_xy <- function(experiment, scenario)
                   himmelblau  = f_himmelblau(x, y))
   list(cost = value)
 }
-  parameters_table <- '
+
+parameters_table <- '
    x "" r (0, 1.00)
    y "" r (0, 1.00)
    '
@@ -25,19 +26,20 @@ target_runner_xy <- function(experiment, scenario)
   logFile <- withr::local_tempfile(pattern = "irace", fileext = ".Rdata")
 
   seed <- sample.int(min(2147483647L, .Machine$integer.max), size = 1, replace = TRUE)
-  
+  maxExperiments <- 500L
+  limit <- 100L
+
   scenario <- list(
     instances = c("ackley", "goldestein", "matyas", "himmelblau"),
     parameters = parameters,
     targetRunner = target_runner_xy,
     logFile = logFile,
     seed = seed,
-    maxExperiments = 500L)
+    maxExperiments = maxExperiments)
 
   confs <- irace(scenario = scenario)
 
-  scenario$targetRunner <- get_target_runner_error(target_runner_xy, 200L)
-  parent.env(environment(scenario$targetRunner)) <- globalenv()
+  scenario$targetRunner <- wrap_target_runner_error(target_runner_xy, limit)
   # Otherwise, the tests are too fast.
   with_mocked_bindings({
     expect_error(irace(scenario = scenario), "== irace == The cost returned by targetRunner is not numeric")
@@ -45,15 +47,15 @@ target_runner_xy <- function(experiment, scenario)
   .irace_minimum_saving_time = 0
   )
 
-  
   logFile_new <- withr::local_tempfile(pattern = "irace", fileext = ".Rdata")
   scenario <- modifyList(scenario, list(
-    targetRunner = target_runner_xy,
+    targetRunner = wrap_target_runner_counter(target_runner_xy),
     recoveryFile = logFile,
     seed = NA,
     logFile = logFile_new))
   recover_confs <- irace(scenario = scenario)
   expect_identical(confs, recover_confs)
+  expect_lt(environment(scenario$targetRunner)$counter, maxExperiments - 50)
 })
 
 test_that("recovery maxTime", {
@@ -77,11 +79,9 @@ test_that("recovery maxTime", {
     maxTime = 500,
     logFile = logFile,
     parameters = parameters)
-  
   confs <- irace(scenario = scenario)
 
-  scenario$targetRunner <- get_target_runner_error(target_runner, 200L)
-  parent.env(environment(scenario$targetRunner)) <- globalenv()
+  scenario$targetRunner <- wrap_target_runner_error(target_runner, 200L)
   # Otherwise, the tests are too fast.
   with_mocked_bindings({
     expect_error(irace(scenario = scenario), "== irace == The cost returned by targetRunner is not numeric")
@@ -91,12 +91,14 @@ test_that("recovery maxTime", {
   
   logFile_new <- withr::local_tempfile(pattern = "irace", fileext = ".Rdata")
   scenario <- modifyList(scenario, list(
-    targetRunner = target_runner,
+    targetRunner = wrap_target_runner_counter(target_runner),
     recoveryFile = logFile,
     seed = NA,
     logFile = logFile_new))
   recover_confs <- irace(scenario = scenario)
   expect_identical(confs, recover_confs)
+  expect_lt(environment(scenario$targetRunner)$counter,
+    nrow(read_logfile(logFile_new)$state$experiment_log) - 150L)
 })
   
 }) # withr::with_output_sink()

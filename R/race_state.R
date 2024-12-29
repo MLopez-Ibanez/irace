@@ -104,12 +104,23 @@ RaceState <- R6Class("RaceState", lock_class = TRUE,
      irace.assert(identical(old, new))
      new
    },
+
+   save_recovery = function(iraceResults, logfile) {
+     now <- self$timer$wallclock()
+     # Do not save to disk too frequently.
+     if (now >= self$time_next_save) {
+       # irace.note("Saving recovery info.\n")
+       iraceResults$state <- self
+       save_irace_logfile(iraceResults, logfile)
+       self$time_next_save <- now + .irace_minimum_saving_time
+     }
+   },
    
    update_race_experiment_log = function(experiment_log, scenario) {
      self$race_experiment_log <- c(self$race_experiment_log, list(experiment_log))
      now <- self$timer$wallclock()
      # Do not save to disk too frequently.
-     if (now > self$time_next_save) {
+     if (now >= self$time_next_save) {
        # irace.note("Saving recovery info.\n")
        iraceResults <- list(
          scenario = scenario,

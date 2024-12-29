@@ -164,16 +164,31 @@ irace_capping_xy <- function(..., targetRunner = force(target_runner_capping_xy)
 }
 
 # Useful for testing recovery.
-get_target_runner_error <- function(target_runner, limit)
+wrap_target_runner_error <- function(target_runner, limit)
 {
   counter <- force(limit)
   targetRunner <- force(target_runner)
   
-  function(experiment, scenario) {
+  fun <- function(experiment, scenario) {
     counter <<- counter - 1L
     if (counter <= 0L)
       return(list(cost=NA))
     targetRunner(experiment, scenario)
   }
+  parent.env(environment(fun)) <- globalenv()
+  fun
+}
+
+wrap_target_runner_counter <- function(target_runner)
+{
+  counter <- 0L
+  targetRunner <- force(target_runner)
+  
+  fun <- function(experiment, scenario) {
+    counter <<- counter + 1L
+    targetRunner(experiment, scenario)
+  }
+  parent.env(environment(fun)) <- globalenv()
+  fun
 }
 

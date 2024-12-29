@@ -52,7 +52,7 @@ irace_summarise <- function(iraceResults)
     n_configurations = nrow(iraceResults$allConfigurations),
     n_initial_configurations = if (is.null(iraceResults$scenario$initConfigurations)) 0L else nrow(iraceResults$scenario$initConfigurations),
     n_instances = nrow(iraceResults$experiments),
-    n_experiments = nrow(experiment_log),
+    n_experiments = if (is.null(iraceResults$scenario$targetEvaluator)) nrow(experiment_log) else sum(!is.na(iraceResults$experiments)),
     n_elites = length(iraceResults$allElites[[n_iterations]]),
     n_soft_restarts = sum(iraceResults$softRestart),
     n_rejected = length(rejected_ids),
