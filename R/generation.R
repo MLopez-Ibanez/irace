@@ -36,11 +36,11 @@ getDependentBound <- function(param, configuration)
     # If it depends on a parameter that is disabled, then this is disabled.
     if (anyNA(configuration[deps])) return(NA)
     domain <- sapply(domain, eval, configuration)
-    irace.assert(all(is.finite(domain)))
+    irace_assert(all(is.finite(domain)))
     # Value gets truncated (defined from robotics initial requirements)
     if (param[["type"]] == "i") domain <- as.integer(domain)
     if (domain[[1L]] > domain[[2L]]) {
-      irace.error ("Invalid domain (", paste0(domain, collapse=", "),
+      irace_error ("Invalid domain (", paste0(domain, collapse=", "),
                    ") generated for parameter '", param[["name"]],
                    "' that depends on parameters (", paste0(deps, collapse=", "),
                    "). This is NOT a bug in irace. Check the definition of these parameters.")
@@ -60,14 +60,14 @@ get_dependent_domain <- function(param, configuration)
   # If it depends on a parameter that is disabled, then this is disabled.
   if (anyNA(configuration[deps])) return(NA)
 
-  irace.assert(is.expression(domain))
+  irace_assert(is.expression(domain))
   domain <- sapply(domain, eval, configuration, USE.NAMES=FALSE)
-  irace.assert(all(is.finite(domain)))
+  irace_assert(all(is.finite(domain)))
   # Value gets truncated (defined from robotics initial requirements)
   if (param[["type"]] == "i") domain <- as.integer(domain)
   if (domain[[1L]] > domain[[2L]]) {
     # FIXME: Add test for this error.
-    irace.error ("Invalid domain (", paste0(domain, collapse=", "),
+    irace_error ("Invalid domain (", paste0(domain, collapse=", "),
                  ") generated for parameter '", param[["name"]],
                  "' that depends on parameters (", paste0(deps, collapse=", "),
                  "). This is NOT a bug in irace. Check the definition of these parameters.")
@@ -145,7 +145,7 @@ sampleSobol <- function(parameters, n, repair = NULL)
     newConfigurations <- unique(newConfigurations)
     newConfigurations <- filter_forbidden(newConfigurations, forbidden)
     if (nrow(newConfigurations) == 0L) {
-      irace.error("irace tried to sample a configuration not forbidden without success, perhaps your constraints are too strict?")
+      irace_error("irace tried to sample a configuration not forbidden without success, perhaps your constraints are too strict?")
     }
     newConfigurations <- truncate_rows(newConfigurations, n)
   }
@@ -202,7 +202,7 @@ sampleUniform <- function(parameters, nbConfigurations, repair = NULL)
         generate_uniform(parameters, needed, repair = repair)))
       retries <- retries - 1L
       if (retries == 0L) {
-        irace.error("irace tried 100 times to sample uniformly a configuration not forbidden without success, perhaps your constraints are too strict?")
+        irace_error("irace tried 100 times to sample uniformly a configuration not forbidden without success, perhaps your constraints are too strict?")
       }
     }
   }
@@ -215,7 +215,7 @@ sample_from_model <- function(parameters, eliteConfigurations, model,
 {
   # FIXME: We only need .WEIGHT. from eliteConfigurations.
   ids_elites <- names(model[[1L]])
-  irace.assert(identical(as.integer(ids_elites), as.integer(eliteConfigurations[[".ID."]])), {
+  irace_assert(identical(as.integer(ids_elites), as.integer(eliteConfigurations[[".ID."]])), {
     print(utils::str(ids_elites))
     print(utils::str(eliteConfigurations[[".ID."]]))
   })
@@ -265,7 +265,7 @@ sampleModel <- function(parameters, eliteConfigurations, model,
                         nbNewConfigurations, repair = NULL)
 {
   if (nbNewConfigurations <= 0)
-    irace.error ("The number of configurations to generate appears to be negative or zero.")
+    irace_error ("The number of configurations to generate appears to be negative or zero.")
   newConfigurations <- sample_from_model(parameters, eliteConfigurations,
                                          model, nbNewConfigurations, repair)
   forbidden <- parameters$forbidden
@@ -280,7 +280,7 @@ sampleModel <- function(parameters, eliteConfigurations, model,
       newConfigurations <- rbindlist(list(newConfigurations, tmp))
       retries <- retries - 1L
       if (retries == 0L) {
-        irace.error("irace tried 100 times to sample from the model a configuration not forbidden without success, perhaps your constraints are too strict?")
+        irace_error("irace tried 100 times to sample from the model a configuration not forbidden without success, perhaps your constraints are too strict?")
       }
     }
   }

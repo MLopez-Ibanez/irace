@@ -47,8 +47,8 @@ readConfigurationsFile <- function(filename, parameters, debugLevel = 0L, text)
                                      colClasses = "character",
                                      stringsAsFactors = FALSE)
   }
-  irace.assert(is.data.frame(configurationTable))
-  irace.note("Read ", nrow(configurationTable), " configuration(s)",
+  irace_assert(is.data.frame(configurationTable))
+  irace_note("Read ", nrow(configurationTable), " configuration(s)",
              if (is.null(filename)) "\n" else paste0(" from file '", filename, "'\n"))
   fix_configurations(configurationTable, parameters, debugLevel = debugLevel,
                      filename = filename)
@@ -57,7 +57,7 @@ readConfigurationsFile <- function(filename, parameters, debugLevel = 0L, text)
 fix_configurations <- function(configurations, parameters, debugLevel = 0L, filename = NULL)
 {
   conf_error <- function(k, ...)
-    irace.error("Configuration number ", k,
+    irace_error("Configuration number ", k,
       if (is.null(filename)) "" else paste0(" from file '", filename, "'"),
       ...)
   
@@ -71,10 +71,10 @@ fix_configurations <- function(configurations, parameters, debugLevel = 0L, file
     missing <- setdiff(colnames(configurations), namesParameters)
     if (length(missing) > 0L) {
       if (is.null(filename)) {
-        irace.error("The parameter names (", strlimit(paste(missing, collapse=", ")),
+        irace_error("The parameter names (", strlimit(paste(missing, collapse=", ")),
           ") do not match the parameter names: ", paste(namesParameters, collapse=", "))
       } else {
-        irace.error("The parameter names (",
+        irace_error("The parameter names (",
           strlimit(paste(missing, collapse=", ")),
           ") given in the first row of file ", filename,
           " do not match the parameter names: ",
@@ -87,11 +87,11 @@ fix_configurations <- function(configurations, parameters, debugLevel = 0L, file
     missing <- setdiff (varParameters, colnames(configurations))
     if (length(missing) > 0) {
       if (is.null(filename)) {
-        irace.error("The parameter names (",
+        irace_error("The parameter names (",
           strlimit(paste(missing, collapse=", ")),
           ") are missing from the configurations provided.")
       } else {
-        irace.error("The parameter names (",
+        irace_error("The parameter names (",
           strlimit(paste(missing, collapse=", ")),
           ") are missing from the first row of file ", filename)
       }
@@ -100,7 +100,7 @@ fix_configurations <- function(configurations, parameters, debugLevel = 0L, file
     # Add any missing fixed parameters.
     missing <- setdiff (namesParameters, colnames(configurations))
     if (length(missing) > 0L) {
-      irace.assert (all(parameters$isFixed[missing]))
+      irace_assert (all(parameters$isFixed[missing]))
       configurations <- cbind.data.frame(configurations, parameters$domains[missing],
         stringsAsFactors = FALSE)
     }
@@ -193,7 +193,7 @@ fix_configurations <- function(configurations, parameters, debugLevel = 0L, file
     }
   }
   if (anyDuplicated(configurations)) {
-    irace.error("Duplicated configurations",
+    irace_error("Duplicated configurations",
                 if (is.null(filename)) "" else paste0(" in file '", filename, "'"),
                 ":\n",
                 paste0(utils::capture.output(
@@ -206,7 +206,7 @@ compile_forbidden <- function(x)
 {
   if (is.null(x) || is.bytecode(x)) return(x)
   # If we are given an expression, it must be a single one.
-  irace.assert(is.language(x) && (!is.expression(x) || length(x) == 1L))
+  irace_assert(is.language(x) && (!is.expression(x) || length(x) == 1L))
   if (is.expression(x)) x <- x[[1L]]
   # When a is NA and we check a == 5, we would get NA, which is
   # always FALSE, when we actually want to be TRUE, so we test

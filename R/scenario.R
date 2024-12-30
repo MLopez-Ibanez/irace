@@ -28,11 +28,11 @@ readScenario <- function(filename = "", scenario = list(),
   include.scenario <- function(rfilename, topfile = filename, envir. = scenario_env)
   {
     if (!file.exists (rfilename)) {
-      irace.error ("The scenario file ", shQuote(rfilename), " included from ",
+      irace_error ("The scenario file ", shQuote(rfilename), " included from ",
                    shQuote(topfile), " does not exist.")
     }
     handle.source.error <- function(e) {
-      irace.error("Reading scenario file ", shQuote(rfilename),
+      irace_error("Reading scenario file ", shQuote(rfilename),
                   " included from ", shQuote(topfile),
                   " produced the following errors or warnings:\n",
                   paste0(conditionMessage(e), collapse="\n"))
@@ -48,10 +48,10 @@ readScenario <- function(filename = "", scenario = list(),
   if (!filename_given) {
     filename <- path_rel2abs(params_def["scenarioFile","default"])
     if (file.exists(filename)) {
-      irace.warning("A default scenario file ", shQuote(filename),
+      irace_warning("A default scenario file ", shQuote(filename),
                     " has been found and will be read.")
     } else {
-      irace.warning ("No scenario file given (use ",
+      irace_warning ("No scenario file given (use ",
                    params_def["scenarioFile", "short"], " or ",
                    params_def["scenarioFile", "long"],
                    ") and no default scenario file ", shQuote(filename),
@@ -69,7 +69,7 @@ readScenario <- function(filename = "", scenario = list(),
       cat("# Reading scenario file", shQuote(filename), ".......")
     # chdir = TRUE to allow recursive sourcing.
     handle.source.error <- function(e) {
-      irace.error("Reading scenario file ", shQuote(filename),
+      irace_error("Reading scenario file ", shQuote(filename),
                   " produced the following errors or warnings:\n",
                   paste0(conditionMessage(e), collapse="\n"))
       return(NULL)
@@ -79,7 +79,7 @@ readScenario <- function(filename = "", scenario = list(),
                error = handle.source.error, warning = handle.source.error))
     if (debug.level >= 1) cat (" done!\n")
   } else if (filename_given) {
-    irace.error ("The scenario file ", shQuote(filename), " does not exist.")
+    irace_error ("The scenario file ", shQuote(filename), " does not exist.")
   }
       
   ## Read scenario file variables.
@@ -104,7 +104,7 @@ readScenario <- function(filename = "", scenario = list(),
     # We only accept variables that match irace.params.names and if the user
     # wants to define their own, they should use names starting with ".", which
     # are ignored by ls()
-    irace.error("Scenario file ", shQuote(filename), " contains unknown variables: ",
+    irace_error("Scenario file ", shQuote(filename), " contains unknown variables: ",
                 paste0(unknown_scenario_vars, collapse=", "),
                 "\nMAKE SURE NO VARIABLE NAME IS MISSPELL (for example, 'parameterFile' is correct, while 'parametersFile' is not)",
                 "\nIf you wish to use your own variables in the scenario file, use names beginning with a dot `.'")
@@ -135,7 +135,7 @@ setup_test_instances <- function(scenario)
         # Remove useless dimensions
         testInstances <- c(testInstances)
       } else {
-        irace.error("testInstances must be a one-dimensional vector or a list. If your instances are matrices or datasets in R, you can use scenario(testInstances=list(data1, data2, data3))")
+        irace_error("testInstances must be a one-dimensional vector or a list. If your instances are matrices or datasets in R, you can use scenario(testInstances=list(data1, data2, data3))")
       }
     }
     if (is.null(names(testInstances))) {
@@ -193,7 +193,7 @@ checkScenario <- function(scenario = defaultScenario())
     # We handle "0" and "1" but not "TRUE" and "FALSE".
     x <- suppressWarnings(as.integer(x)) 
     if (is.na(x) || (x != 0L && x != 1L)) {
-      irace.error (quote.param(name), " must be either 0 or 1.")
+      irace_error (quote.param(name), " must be either 0 or 1.")
     }
     as.logical(x)
   }
@@ -202,7 +202,7 @@ checkScenario <- function(scenario = defaultScenario())
   {
     valid <- trimws(strsplit(.irace.params.def[x, "domain"],",",fixed=TRUE)[[1L]])
     if (scenario[[x]] %not_in% valid) {
-      irace.error ("Invalid value '", scenario[[x]], "' of ",
+      irace_error ("Invalid value '", scenario[[x]], "' of ",
                    quote.param(x), ", valid values are: ",
                    paste0(valid, collapse = ", "))
     }
@@ -214,7 +214,7 @@ checkScenario <- function(scenario = defaultScenario())
   # Duplicated entries will cause confusion.
   dups <- anyDuplicated(names(scenario))
   if (dups)
-    irace.error("scenario contains duplicated entries: ", names(scenario)[dups])
+    irace_error("scenario contains duplicated entries: ", names(scenario)[dups])
 
   # We have characters everywhere, set to the right types to avoid problems
   # later.
@@ -235,7 +235,7 @@ checkScenario <- function(scenario = defaultScenario())
     if (is.null(scenario[[param]])
         || is.na (scenario[[param]])
         || scenario[[param]] < 0.0 || scenario[[param]] > 1.0)
-      irace.error (quote.param(param), " must be a real value within [0, 1].")
+      irace_error (quote.param(param), " must be a real value within [0, 1].")
   }
 
   # Integer control parameters
@@ -248,7 +248,7 @@ checkScenario <- function(scenario = defaultScenario())
       next # Allow NA default values
     p <- suppressWarnings(as.numeric(p))
     if (is.null(p) || is.na (p) || !is.wholenumber(p) || p < 0)
-      irace.error (quote.param (param), " must be a non-negative integer.")
+      irace_error (quote.param (param), " must be a non-negative integer.")
     scenario[[param]] <- as.integer(p)
   }
 
@@ -256,7 +256,7 @@ checkScenario <- function(scenario = defaultScenario())
     if (any(scenario[what] <= 0L)) {
       for (op in what) {
         if (scenario[[op]] <= 0L)
-          irace.error(quote.param (op), " = ", scenario[[op]], " must be larger than 0.")
+          irace_error(quote.param (op), " = ", scenario[[op]], " must be larger than 0.")
       }
     }
   }
@@ -267,7 +267,7 @@ checkScenario <- function(scenario = defaultScenario())
   # Check that the files exist and are readable.
   scenario$parameterFile <- path_rel2abs(scenario$parameterFile)
   if (is.null.or.empty(scenario$parameters)) {
-    irace.note("Reading parameter file '", scenario$parameterFile, "'.\n")
+    irace_note("Reading parameter file '", scenario$parameterFile, "'.\n")
     scenario$parameters <- readParameters(file = scenario$parameterFile,
       # AClib benchmarks use 15 digits
       digits = if (scenario$aclib) 15L else 4L, debugLevel = scenario$debugLevel)
@@ -293,7 +293,7 @@ checkScenario <- function(scenario = defaultScenario())
     
     if (!is.null.or.empty(scenario$logFile) # Must have been set "" above.
         && scenario$recoveryFile == scenario$logFile) {
-      irace.error("log file and recovery file should be different '",
+      irace_error("log file and recovery file should be different '",
                   scenario$logFile, "'")
     }
   } else {
@@ -306,7 +306,7 @@ checkScenario <- function(scenario = defaultScenario())
   } else if (is.function.name(scenario$targetRunnerParallel)) {
     scenario$targetRunnerParallel <- get.function(scenario$targetRunnerParallel)
   } else {
-    irace.error("'targetRunnerParallel' must be a function")
+    irace_error("'targetRunnerParallel' must be a function")
   }
 
   if (is.null.or.empty(scenario$repairConfiguration))
@@ -314,20 +314,20 @@ checkScenario <- function(scenario = defaultScenario())
   else if (is.function.name(scenario$repairConfiguration))    # Byte-compile it.
     scenario$repairConfiguration <- bytecompile(get.function(scenario$repairConfiguration))
   else 
-    irace.error("'repairConfiguration' must be a function")
+    irace_error("'repairConfiguration' must be a function")
   
   if (is.na(scenario$capping))
     scenario$capping <- (scenario$elitist && scenario$maxTime > 0 &&
                            !is.na(scenario$boundMax) && scenario$boundMax > 0)
   if (scenario$capping) {
     if (!scenario$elitist) 
-      irace.error("When capping == TRUE, elitist must be enabled.")
+      irace_error("When capping == TRUE, elitist must be enabled.")
     if (scenario$boundMax <= 0) 
-      irace.error("When capping == TRUE, boundMax (", scenario$boundMax, ") must be > 0")
+      irace_error("When capping == TRUE, boundMax (", scenario$boundMax, ") must be > 0")
     check.valid.param("cappingType")
     check.valid.param("boundType")
     if (scenario$boundPar < 1)
-      irace.error("Invalid value (", scenario$boundPar, ") ",
+      irace_error("Invalid value (", scenario$boundPar, ") ",
                   quote.param("boundPar"), " must be >= 1")
   } else if (scenario$boundMax <= 0 || is.na(scenario$boundMax)) { # no capping
     scenario$boundMax <- NULL
@@ -335,7 +335,7 @@ checkScenario <- function(scenario = defaultScenario())
 
   if (is.function.name(scenario$targetRunner)) {
     scenario$targetRunner <- get.function(scenario$targetRunner)
-    irace.assert(is.function(scenario$targetRunner))
+    irace_assert(is.function(scenario$targetRunner))
   } else if (is.null(scenario$targetRunnerParallel)) {
     if (is.character(scenario$targetRunner)) {
       scenario$targetRunner <- path_rel2abs(scenario$targetRunner)
@@ -355,7 +355,7 @@ checkScenario <- function(scenario = defaultScenario())
       }
       check_target_cmdline(scenario$targetCmdline, capping = scenario$capping)
     } else {
-      irace.error(quote.param ('targetRunner'), " must be a function or an executable program")
+      irace_error(quote.param ('targetRunner'), " must be a function or an executable program")
     }
   }
 
@@ -363,13 +363,13 @@ checkScenario <- function(scenario = defaultScenario())
     scenario$targetEvaluator <- NULL
   } else if (is.function.name(scenario$targetEvaluator)) {
     scenario$targetEvaluator <- get.function(scenario$targetEvaluator)
-    irace.assert(is.function(scenario$targetEvaluator))
+    irace_assert(is.function(scenario$targetEvaluator))
   } else if (is.character(scenario$targetEvaluator)) {
     scenario$targetEvaluator <- path_rel2abs(scenario$targetEvaluator)
     file.check (scenario$targetEvaluator, executable = TRUE,
                 text = "target evaluator")
   } else {
-    irace.error(quote.param('targetEvaluator'), " must be a function or an executable program")
+    irace_error(quote.param('targetEvaluator'), " must be a function or an executable program")
   }
 
   # Training instances
@@ -380,7 +380,7 @@ checkScenario <- function(scenario = defaultScenario())
     }
     if (is.null.or.empty(scenario$trainInstancesDir)
         && is.null.or.empty(scenario$trainInstancesFile))
-      irace.error("Both ", quote.param ("trainInstancesDir"), " and ",
+      irace_error("Both ", quote.param ("trainInstancesDir"), " and ",
                   quote.param ("trainInstancesFile"),
                   " are empty: No instances provided")
     
@@ -389,14 +389,14 @@ checkScenario <- function(scenario = defaultScenario())
                     instancesFile = scenario$trainInstancesFile)
   }
   if (length(scenario$instances) == 0L) {
-    irace.error("No instances found in `scenario$instances`")
+    irace_error("No instances found in `scenario$instances`")
   } else if (!is.null(dim(scenario$instances))) {
     if (length(dim(scenario$instances)) == 1L ||
         (length(dim(scenario$instances)) == 2L && dim(scenario$instances)[1] == 1L)) {
       # Remove useless dimensions
       scenario$instances <- c(scenario$instances)
     } else {
-      irace.error("Instances must be a one-dimensional vector or a list. If your instances are matrices or datasets in R, you can use scenario(instances=list(data1, data2, data3))")
+      irace_error("Instances must be a one-dimensional vector or a list. If your instances are matrices or datasets in R, you can use scenario(instances=list(data1, data2, data3))")
     }
   }
   # Testing instances
@@ -414,26 +414,26 @@ checkScenario <- function(scenario = defaultScenario())
   if (is.null.or.empty(scenario$initConfigurations)) {
     scenario$initConfigurations <- NULL
   } else if (!is.data.frame(scenario$initConfigurations) && !is.matrix(scenario$initConfigurations)) {
-    irace.error("if given, 'initConfigurations' must be a matrix or data.frame.")
+    irace_error("if given, 'initConfigurations' must be a matrix or data.frame.")
   }
   
   if (length(scenario$instances) %% scenario$blockSize != 0) {
-    irace.error("The number of instances (", length(scenario$instances), ") must be a multiple of ",
+    irace_error("The number of instances (", length(scenario$instances), ") must be a multiple of ",
                 quote.param("blockSize"), ".")
   }
   
   if (scenario$firstTest %% scenario$eachTest != 0) {
-    irace.error(quote.param("firstTest"), " must be a multiple of ",
+    irace_error(quote.param("firstTest"), " must be a multiple of ",
                 quote.param("eachTest"), ".")
   }
   
   if (scenario$mu < scenario$firstTest * scenario$blockSize) {
     if (scenario$debugLevel >= 1) {
-      irace.warning("Assuming 'mu = firstTest * blockSize' because 'mu' cannot be smaller.\n")
+      irace_warning("Assuming 'mu = firstTest * blockSize' because 'mu' cannot be smaller.\n")
     }
     scenario$mu <- scenario$firstTest * scenario$blockSize
   } else if (scenario$mu %% scenario$blockSize != 0) {
-    irace.error(quote.param("mu"), " must be a multiple of ",
+    irace_error(quote.param("mu"), " must be a multiple of ",
                 quote.param("blockSize"), ".")
   }
   
@@ -443,33 +443,33 @@ checkScenario <- function(scenario = defaultScenario())
   ## Only maxExperiments or maxTime should be set. Negative values are not
   ## allowed.
   if (scenario$maxExperiments == 0 && scenario$maxTime == 0) {
-    irace.error("Tuning budget was not provided. Set ",
+    irace_error("Tuning budget was not provided. Set ",
                 quote.param("maxExperiments"), " or ", quote.param("maxTime"), ".")
   } else if (scenario$maxExperiments > 0 && scenario$maxTime > 0) {
-    irace.error("Two different tuning budgets provided, please set only ",
+    irace_error("Two different tuning budgets provided, please set only ",
                 quote.param("maxExperiments"), " or only ", quote.param ("maxTime"), ".")
   } else if (scenario$maxExperiments < 0 ) {
-    irace.error("Negative budget provided, ", quote.param("maxExperiments"),
+    irace_error("Negative budget provided, ", quote.param("maxExperiments"),
                 "must be >= 0." )
   } else if (scenario$maxTime < 0) {
-    irace.error("Negative budget provided, ", quote.param("maxTime"), " must be >= 0.")
+    irace_error("Negative budget provided, ", quote.param("maxTime"), " must be >= 0.")
   }
   
   if (scenario$maxTime > 0 && (scenario$budgetEstimation <= 0 || scenario$budgetEstimation >= 1)) 
-    irace.error(quote.param("budgetEstimation"), " must be within (0,1).")
+    irace_error(quote.param("budgetEstimation"), " must be within (0,1).")
 
   if (scenario$maxTime > 0 && !scenario$elitist)
-    irace.error(quote.param("maxTime"), " requires using 'elitist=1'")
+    irace_error(quote.param("maxTime"), " requires using 'elitist=1'")
   
   if (scenario$deterministic &&
       scenario$firstTest * scenario$blockSize > length(scenario$instances)) {
-    irace.error("When deterministic == TRUE, the number of instances (",
+    irace_error("When deterministic == TRUE, the number of instances (",
                 length(scenario$instances),
                 ") cannot be smaller than firstTest (", scenario$firstTest, ") * blockSize (", scenario$blockSize, ")")
   }
 
   if (scenario$mpi && scenario$parallel < 2)
-    irace.error (quote.param("parallel"), " must be larger than 1 when mpi is enabled.")
+    irace_error (quote.param("parallel"), " must be larger than 1 when mpi is enabled.")
  
   if (is.null.or.empty(scenario$batchmode))
     scenario$batchmode <- 0
@@ -479,12 +479,12 @@ checkScenario <- function(scenario = defaultScenario())
   }
   # Currently batchmode requires a targetEvaluator
   if (scenario$batchmode != 0 && is.null(scenario$targetEvaluator)) {
-    irace.error(quote.param("batchmode"), " requires using ",
+    irace_error(quote.param("batchmode"), " requires using ",
                 quote.param("targetEvaluator"), ".")
   }
 
   if (scenario$batchmode != 0 && scenario$mpi) {
-    irace.error(quote.param("mpi"), " and ", quote.param("batchmode"),
+    irace_error(quote.param("mpi"), " and ", quote.param("batchmode"),
                 " cannot be enabled at the same time.")
   }
 
@@ -669,7 +669,7 @@ defaultScenario <- function(scenario = list(),
   if (is.null(names(scenario))) {
     scenario <- setNames(as.list(params_def[params_names,"default"]), params_names)
   } else if (!all(names(scenario) %in% params_names)) {
-    irace.error("Unknown scenario settings: ",
+    irace_error("Unknown scenario settings: ",
                 paste(names(scenario)[!(names(scenario) %in% params_names)],
                       collapse = ", "))
   } else {
@@ -685,7 +685,7 @@ defaultScenario <- function(scenario = list(),
 readInstances <- function(instancesDir = NULL, instancesFile = NULL)
 {
   if (is.null.or.empty(instancesDir) && is.null.or.empty(instancesFile))
-    irace.error("Both instancesDir and instancesFile are empty: No instances provided")
+    irace_error("Both instancesDir and instancesFile are empty: No instances provided")
   
   instances <- NULL
   
@@ -697,7 +697,7 @@ readInstances <- function(instancesDir = NULL, instancesFile = NULL)
     instances <- sub("^[[:space:]]+", "", instances) # Remove leading whitespace
     instances <- instances[instances != ""] # Delete empty lines
     if (is.null.or.empty(instances))
-      irace.error("No instances found in '", instancesFile,
+      irace_error("No instances found in '", instancesFile,
                   "' (whitespace and comments starting with '#' are ignored)")
     if (!is.null.or.empty(instancesDir))
        instances <- paste0 (instancesDir, "/", instances)
@@ -709,7 +709,7 @@ readInstances <- function(instancesDir = NULL, instancesFile = NULL)
     instances <- list.files (path = instancesDir, full.names = TRUE,
                              recursive = TRUE)
     if (length (instances) == 0)
-      irace.error("No instances found in `", instancesDir, "'")
+      irace_error("No instances found in `", instancesDir, "'")
   }
   instances
 }
@@ -721,6 +721,6 @@ update_scenario <- function(scenario, ...)
     return(scenario)
   unknown_scenario_args <- setdiff(names(scenario_args), names(scenario))
   if (length(unknown_scenario_args))
-    irace.error("Unknown scenario settings given: ", paste0(unknown_scenario_args, collapse=", "))
+    irace_error("Unknown scenario settings given: ", paste0(unknown_scenario_args, collapse=", "))
   utils::modifyList(scenario, scenario_args)
 }

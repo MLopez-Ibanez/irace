@@ -10,7 +10,7 @@ check_domain_dependencies <- function (params, depends, types)
     vars <- depends[[p]]
     flag <- vars %in% allnames
     if (!all(flag)) {
-      irace.error ("Domain (", paste0(domain, collapse=", "),
+      irace_error ("Domain (", paste0(domain, collapse=", "),
                    ") of parameter '", p, "' is not valid: '",
                    paste0(vars[!flag], collapse=", "),
                    "' cannot be found in the scenario parameters: ",
@@ -18,7 +18,7 @@ check_domain_dependencies <- function (params, depends, types)
     }
     flag <- types[vars] %in% c("i", "r")
     if (!all(flag)) {
-      irace.error ("Domain of parameter '", p, "' depends on non-numerical", 
+      irace_error ("Domain of parameter '", p, "' depends on non-numerical", 
         " parameters: ", paste0(vars[!flag], collapse=", "), " .")
     }
 
@@ -26,7 +26,7 @@ check_domain_dependencies <- function (params, depends, types)
     fx <- setdiff(all.names(domain, unique=TRUE), all.vars(domain, unique=TRUE))
     flag <- fx %in% allowed_fx
     if (!all(flag)) {
-      irace.error ("Domain of parameter '", p, "' uses function(s) ", 
+      irace_error ("Domain of parameter '", p, "' uses function(s) ", 
                    "not yet supported by irace: ",
                    paste0(fx[!flag], collapse=", "), " .")
     }
@@ -40,7 +40,7 @@ check_forbidden_params <- function(x, pnames, filename = NULL)
   if (any(unique(unlist(lapply(x, all.names))) %in% c("&&", "||"))) {
     for (ex in x) {
       if (any(all.names(ex) %in% c("&&", "||")))
-        irace.error("Please use '&' and '|' instead of '&&' and '|' in: ", deparse(ex), " .\n")
+        irace_error("Please use '&' and '|' instead of '&&' and '|' in: ", deparse(ex), " .\n")
     }
   }
   if (all(all.vars(x) %in% pnames)) return(invisible())
@@ -49,11 +49,11 @@ check_forbidden_params <- function(x, pnames, filename = NULL)
     if (length(v)) {
       v <- paste0(v, collapse=", ")
       if (is.null(filename)) {
-        irace.error("Forbidden expression '", deparse(ex), "' contains unknown parameter(s): ", v)
+        irace_error("Forbidden expression '", deparse(ex), "' contains unknown parameter(s): ", v)
       } else if (is.na(filename)) {
-        irace.error("Expression '", deparse(ex), "' after [forbidden] contains unknown parameter(s): ", v)
+        irace_error("Expression '", deparse(ex), "' after [forbidden] contains unknown parameter(s): ", v)
       } else {
-        irace.error("Expression '", deparse(ex), "' after [forbidden] in '", filename, "' contains unknown parameter(s): ", v)
+        irace_error("Expression '", deparse(ex), "' after [forbidden] in '", filename, "' contains unknown parameter(s): ", v)
       }
     }
   }
@@ -81,13 +81,13 @@ param_level <- function(paramName, varsTree, rootParam = paramName)
   for (child in vars) {
     # The following line detects cycles
     if (child == rootParam)
-      irace.error("Cycle detected in subordinate parameters! ",
+      irace_error("Cycle detected in subordinate parameters! ",
                   "Check definition of conditions and/or dependent domains.\n",
                   "One parameter of this cycle is '", rootParam, "'")
       
     # The following line detects a missing definition
     if (child %not_in% names(varsTree))
-      irace.error("A parameter definition is missing! ",
+      irace_error("A parameter definition is missing! ",
                   "Check definition of parameters.\n",
                   "Parameter '", paramName,
                   "' depends on '", child, "' which is not defined.")
@@ -120,8 +120,8 @@ transform_domain <- function(transf, domain, type)
     # +1 to adjust before floor()
     trUpper <- if (type == "i") log(upper + 1) else log(upper)
     
-    irace.assert(is.finite(trLower))
-    irace.assert(is.finite(trUpper))
+    irace_assert(is.finite(trLower))
+    irace_assert(is.finite(trUpper))
     attr(transf, "lower") <- trLower
     attr(transf, "upper") <- trUpper
     return(transf)
@@ -501,7 +501,7 @@ integer_round <- function(x, lower, upper)
   x <- floor(x)
   # The probability of this happening is very small, but it happens.
   x <- pmin.int(upper, x)
-  irace.assert(all(x >= lower))
+  irace_assert(all(x >= lower))
   as.integer(x)
 }
 
@@ -632,7 +632,7 @@ sample_model.ParamReal <- function(param, n, model, domain = param[["domain"]])
   else
     x <- sample_numeric_norm(n, mean, sd = model[[1L]], lower, upper, transf)
   x <- round(x, digits = param[["digits"]])
-  irace.assert(all(x >= lower) && all(x <= upper))
+  irace_assert(all(x >= lower) && all(x <= upper))
   x
 }
 
@@ -647,7 +647,7 @@ sample_unif.ParamReal <- function(param, n, domain = param[["domain"]])
   upper <- domain[[2L]]
   x <- sample_numeric_unif(n, lower, upper, transf = param[["transform"]])
   x <- round(x, digits = param[["digits"]])
-  irace.assert(all(x >= lower) && all(x <= upper))
+  irace_assert(all(x >= lower) && all(x <= upper))
   x
 }
 

@@ -42,7 +42,7 @@
 psRace <- function(iraceResults, max_experiments, conf_ids = NULL, iteration_elites = FALSE,
                    psrace_logFile = NULL)
 {
-  irace.note("Starting post-selection:\n")
+  irace_note("Starting post-selection:\n")
   if (missing(iraceResults)) stop("argument 'iraceResults' is missing.")
   iraceResults <- read_logfile(iraceResults)
   scenario <- iraceResults$scenario
@@ -64,7 +64,7 @@ psRace <- function(iraceResults, max_experiments, conf_ids = NULL, iteration_eli
   # Get selected configurations.
   if (is.null(conf_ids)) {
     # FIXME: Handle scenario$maxTime > 0
-    irace.assert(scenario$maxTime == 0)
+    irace_assert(scenario$maxTime == 0)
 
     which_max_last <- function(x) 1L + length(x) - which.max(rev(x))
 
@@ -119,7 +119,7 @@ psRace <- function(iraceResults, max_experiments, conf_ids = NULL, iteration_eli
           conf_ids <- names(conf_needs)
           cat(sep="", "# Configurations selected: ", paste0(collapse=", ", conf_ids),
             ".\n# Pending instances: ", paste0(collapse=", ", conf_needs), ".\n")
-          irace.assert(length(conf_ids) > 1L, eval_after = {
+          irace_assert(length(conf_ids) > 1L, eval_after = {
             cat("n_confs: ", n_confs, "\nn_new:", n_new, "\n")
             print(conf_needs)
             save(iraceResults, file="bug-conf_ids.Rdata")
@@ -128,14 +128,14 @@ psRace <- function(iraceResults, max_experiments, conf_ids = NULL, iteration_eli
         }
         # Let's try first to evaluate on new instances.
         conf_needs_new <- truncate_conf_needs(conf_needs + n_new, max_len = 16L)
-        irace.assert(length(conf_needs_new) > 1L, eval_after={
+        irace_assert(length(conf_needs_new) > 1L, eval_after={
           cat("max_experiments: ", max_experiments, "\nn_new: ", n_new, "\nconf_needs:")
           print(conf_needs)
           save(iraceResults, file="bug-conf_ids.Rdata")
         })
         combs <- generate_combs_2(length(conf_needs_new))
         left <- sapply(combs, function(x) max_experiments - sum(conf_needs_new[x]), USE.NAMES=FALSE)
-        irace.assert(!is.null(left) && length(left) > 0L && !anyNA(left),
+        irace_assert(!is.null(left) && length(left) > 0L && !anyNA(left),
           eval_after= {
             cat("max_experiments: ", max_experiments, "\n")
             cat("length(left): ", length(left), "\n")
@@ -162,7 +162,7 @@ psRace <- function(iraceResults, max_experiments, conf_ids = NULL, iteration_eli
       conf_needs <- truncate_conf_needs(conf_needs[conf_needs > 0L], 16L)
       combs <- generate_combs_1(length(conf_needs))
       left <- sapply(combs, function(x) max_experiments - sum(conf_needs[x]), USE.NAMES=FALSE)
-      irace.assert(any(left >= 0), eval_after=save(iraceResults, file="bug-conf_ids.Rdata"))
+      irace_assert(any(left >= 0), eval_after=save(iraceResults, file="bug-conf_ids.Rdata"))
       # Select the combination that will allow us to evaluate the most configurations.
       combs <- combs[left >= 0]
       n <- sapply(combs, sum, USE.NAMES=FALSE)
@@ -171,7 +171,7 @@ psRace <- function(iraceResults, max_experiments, conf_ids = NULL, iteration_eli
       conf_ids <- names(conf_needs)
       cat(sep="", "# Configurations selected: ", paste0(collapse=", ", conf_ids),
         ".\n# Pending instances: ", paste0(collapse=", ", conf_needs), ".\n")
-      irace.assert(length(conf_ids) > 1L, eval_after = {
+      irace_assert(length(conf_ids) > 1L, eval_after = {
         print(conf_needs)
         cat("winner: ", winner, "\n")
         cat("combs[[winner]]: ", paste0(collapse=",", combs[[winner]]), "\n")
@@ -181,7 +181,7 @@ psRace <- function(iraceResults, max_experiments, conf_ids = NULL, iteration_eli
     }
     conf_ids <- get_confs_for_psrace(iraceResults, iteration_elites, max_experiments,
       conf_ids = conf_ids, rejected_ids = race_state$rejected_ids)
-    irace.assert(length(conf_ids) > 1L, eval_after = {
+    irace_assert(length(conf_ids) > 1L, eval_after = {
       # Debug what happened if the assert failed.
       rejected_ids <- race_state$rejected_ids
       cat("blockSize:", scenario$blockSize, "\niteration_elites: ", as.character(iteration_elites),
@@ -205,13 +205,13 @@ psRace <- function(iraceResults, max_experiments, conf_ids = NULL, iteration_eli
     })
     
   } else if (length(conf_ids) <= 1L) {
-    irace.error ("The number configurations provided should be larger than 1.")
+    irace_error ("The number configurations provided should be larger than 1.")
   } else if (length(race_state$rejected_ids) && any(conf_ids %in% race_state$rejected_ids)) {
-    irace.error ("Some configuration IDs provided were rejected in the previous run: ",
+    irace_error ("Some configuration IDs provided were rejected in the previous run: ",
       paste0(collapse=", ", intersect(conf_ids, race_state$rejected_ids)), ".")
   }
   if (!all(conf_ids %in% iraceResults$allConfigurations[[".ID."]])) {
-    irace.error("Some configuration IDs provided cannot be found in the configurations: ",
+    irace_error("Some configuration IDs provided cannot be found in the configurations: ",
       paste0(collapse=", ", setdiff(conf_ids, iraceResults$allConfigurations[[".ID."]])), ".")
   }
   elite_configurations <- iraceResults$allConfigurations[iraceResults$allConfigurations[[".ID."]] %in% conf_ids, , drop=FALSE]
@@ -241,7 +241,7 @@ psRace <- function(iraceResults, max_experiments, conf_ids = NULL, iteration_eli
 
   elite_configurations <- extractElites(raceResults$configurations,
     nbElites = race_state$minSurvival, debugLevel = scenario$debugLevel)
-  irace.note("Elite configurations (first number is the configuration ID;",
+  irace_note("Elite configurations (first number is the configuration ID;",
                " listed from best to worst according to the ",
                test.type.order.str(scenario$testType), "):\n")
   if (!scenario$quiet)

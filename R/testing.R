@@ -25,8 +25,8 @@ testConfigurations <- function(configurations, scenario)
   
   testInstances <- scenario[["testInstances"]]
   instances_id <- names(testInstances)
-  if (length(testInstances) == 0L) irace.error("No test instances given")
-  if (is.null(instances_id)) irace.error("testInstances must have names")
+  if (length(testInstances) == 0L) irace_error("No test instances given")
+  if (is.null(instances_id)) irace_error("testInstances must have names")
   
   # 2147483647 is the maximum value for a 32-bit signed integer.
   # We use replace = TRUE, because replace = FALSE allocates memory for each possible number.
@@ -46,7 +46,7 @@ testConfigurations <- function(configurations, scenario)
     bounds = rep(scenario$boundMax, nrow(configurations)))
   race_state <- RaceState$new(scenario)
   if (scenario$debugLevel >= 3L) {
-    irace.note ("Memory used before execute_experiments() in testConfigurations():\n")
+    irace_note ("Memory used before execute_experiments() in testConfigurations():\n")
     race_state$print_mem_used()
   }
   race_state$start_parallel(scenario)
@@ -75,7 +75,7 @@ testConfigurations <- function(configurations, scenario)
                 colnames(testResults) == experiments[[i]]$id_configuration] <- cost[i]
   }
   if (scenario$debugLevel >= 3L) {
-    irace.note ("Memory used at the end of testConfigurations():\n")
+    irace_note ("Memory used at the end of testConfigurations():\n")
     race_state$print_mem_used()
   }
 

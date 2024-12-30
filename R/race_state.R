@@ -37,7 +37,7 @@ RaceState <- R6Class("RaceState", lock_class = TRUE,
                                 else
                                   target_evaluator_default
      }
-     irace.assert(new || !recover)
+     irace_assert(new || !recover)
      if (new) {
        self$elitist_new_instances <- round_to_next_multiple(scenario$elitistNewInstances, scenario$blockSize)
        # We cannot recover if we did not get to initialize self$rng.
@@ -78,7 +78,7 @@ RaceState <- R6Class("RaceState", lock_class = TRUE,
      }
 
      if (scenario$debugLevel >= 3L) {
-       irace.note("RNGkind: ", paste0(self$rng$rng_kind, collapse = " "), "\n",
+       irace_note("RNGkind: ", paste0(self$rng$rng_kind, collapse = " "), "\n",
                   "# .Random.seed: ", paste0(self$rng$random_seed, collapse = ", "), "\n")
      }
      # We do this here, so it is available even if we crash.
@@ -93,7 +93,7 @@ RaceState <- R6Class("RaceState", lock_class = TRUE,
      if (scenario$capping)
        output[["cost"]] <- applyPAR(output[["cost"]], boundMax = scenario$boundMax, boundPar = scenario$boundPar)
      configurations_id <- unique(output[["configuration"]])
-     irace.assert(all.equal(rep(instances, each = length(configurations_id)),
+     irace_assert(all.equal(rep(instances, each = length(configurations_id)),
        output$instance))
      # FIXME: delete old
      old <- matrix(output[["cost"]], nrow = length(instances), ncol = length(configurations_id),
@@ -101,7 +101,7 @@ RaceState <- R6Class("RaceState", lock_class = TRUE,
        dimnames = list(instances, as.character(configurations_id)))
      new <- as.matrix(dcast(output[, c("instance", "configuration", "cost")], instance ~ configuration, value.var = "cost"),
        rownames = "instance")
-     irace.assert(identical(old, new))
+     irace_assert(identical(old, new))
      new
    },
 
@@ -109,7 +109,7 @@ RaceState <- R6Class("RaceState", lock_class = TRUE,
      now <- self$timer$wallclock()
      # Do not save to disk too frequently.
      if (now >= self$time_next_save) {
-       # irace.note("Saving recovery info.\n")
+       # irace_note("Saving recovery info.\n")
        iraceResults$state <- self
        save_irace_logfile(iraceResults, logfile)
        self$time_next_save <- now + .irace_minimum_saving_time
@@ -121,7 +121,7 @@ RaceState <- R6Class("RaceState", lock_class = TRUE,
      now <- self$timer$wallclock()
      # Do not save to disk too frequently.
      if (now >= self$time_next_save) {
-       # irace.note("Saving recovery info.\n")
+       # irace_note("Saving recovery info.\n")
        iraceResults <- list(
          scenario = scenario,
          irace_version = irace_version,
@@ -141,18 +141,18 @@ RaceState <- R6Class("RaceState", lock_class = TRUE,
    recover_output = function(instance_idx, configuration_id) {
      search <- data.table(instance = instance_idx, configuration = configuration_id)
      res <- self$recovery_info[search, on = .(instance,configuration), mult="first", nomatch=NULL, which=TRUE]
-     irace.assert(length(res) == 0L || length(res) == nrow(search))
+     irace_assert(length(res) == 0L || length(res) == nrow(search))
      if (length(res) == 0L) {
-       irace.note("Cannot find the following in recovery info:")
+       irace_note("Cannot find the following in recovery info:")
        print(search[!self$recovery_info, on = .(instance,configuration)])
-       irace.error("Recovery terminated.")
+       irace_error("Recovery terminated.")
      }
      # Get the rows.
      output <- self$recovery_info[res]
      # Delete those rows.
      self$recovery_info <- self$recovery_info[-res]
      if (nrow(self$recovery_info) == 0L) {
-       irace.note("Recovery completed.\n")
+       irace_note("Recovery completed.\n")
        self$recovery_mode <- FALSE
        self$recovery_info <- NULL
      }
@@ -188,7 +188,7 @@ RaceState <- R6Class("RaceState", lock_class = TRUE,
          # on Windows. We need to use the future package for that:
          # https://stackoverflow.com/questions/56501937/how-to-print-from-clusterapply
          self$cluster <- parallel::makeCluster(parallel)
-         if (scenario$debugLevel >= 1L) irace.note("makeCluster initialized for ", parallel, " jobs.")
+         if (scenario$debugLevel >= 1L) irace_note("makeCluster initialized for ", parallel, " jobs.")
          # We export the global environment because the user may have defined
          # stuff there. There must be a better way to do this, but I cannot
          # figure it out. R sucks sometimes.
@@ -239,7 +239,7 @@ no_elitist_init_instances <- function(self, deterministic)
   # if next.instance == 1 then this is the first iteration.
   # If deterministic consider all (do not resample).
   if (self$next_instance == 1L || deterministic) return(seq_len(max_instances))
-  irace.assert(self$next_instance < max_instances)
+  irace_assert(self$next_instance < max_instances)
   self$next_instance : max_instances
 }
    
@@ -257,7 +257,7 @@ elitist_init_instances <- function(self, deterministic, sampleInstances, elitist
     if (last_new > max_instances) {
       # This may happen if the scenario is deterministic and we would need
       # more instances than what we have.
-      irace.assert(deterministic)
+      irace_assert(deterministic)
       if (next_instance <= max_instances) {
         # Add all instances that we have not seen yet as new ones.
         last_new <- max_instances
@@ -271,7 +271,7 @@ elitist_init_instances <- function(self, deterministic, sampleInstances, elitist
     }
   }
   # FIXME: we should sample taking into account the block-size, so we sample blocks, not instances.
-  irace.assert((next_instance - 1L) %% block_size == 0,
+  irace_assert((next_instance - 1L) %% block_size == 0,
     eval_after={cat("next_instance:", next_instance, ", block_size:", block_size, "\n")})
   past_instances <- if (sampleInstances)
                       sample.int(next_instance - 1L) else seq_len(next_instance - 1L)

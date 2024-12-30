@@ -92,7 +92,7 @@ readParameters <- function (file, digits = 4L, debugLevel = 0L, text)
     filename <- file
     file.check (file, readable = TRUE, text = "readParameter: parameter file")
   } else {
-    irace.error("'file' must be a character string")
+    irace_error("'file' must be a character string")
   }
 
   digits <- as.integer(digits)
@@ -149,14 +149,14 @@ readParameters <- function (file, digits = 4L, debugLevel = 0L, text)
   {
     context <- if (is.null (context)) "" else paste0(" when reading: \"", context, "\"")
     fileloc <- if (is.na(filename)) "" else paste0("'", filename, "'," ) 
-    irace.error(paste0(..., collapse = ""), " at ", fileloc, "line ", line, context)
+    irace_error(paste0(..., collapse = ""), " at ", fileloc, "line ", line, context)
   }
   
   warnReadParameters <- function(filename, line, context, ...)
   {
     context <- if (is.null (context)) "" else paste0(" when reading: \"", context, "\"")
     fileloc <- if (is.na(filename)) "" else paste0("'", filename, "'," ) 
-    irace.warning(paste0(..., collapse = ""), " at ", fileloc, "line ", line, context)
+    irace_warning(paste0(..., collapse = ""), " at ", fileloc, "line ", line, context)
   }
 
   parse_condition <- function(s, filename, nbLines, line, context) {
@@ -321,19 +321,19 @@ readParameters <- function (file, digits = 4L, debugLevel = 0L, text)
   # Check that we have read at least one parameter
   if (length(params) == 0) {
     if (is.na(filename))
-      irace.error("No parameter definition found in the input text")
+      irace_error("No parameter definition found in the input text")
     else
-      irace.error("No parameter definition found, check that the parameter file '",  filename, "' is not empty.")
+      irace_error("No parameter definition found, check that the parameter file '",  filename, "' is not empty.")
   }
 
   if (length(forbidden)) {
-    irace.note(length(forbidden), " expression(s) specifying forbidden configurations read.\n")
+    irace_note(length(forbidden), " expression(s) specifying forbidden configurations read.\n")
     check_forbidden_params(forbidden, pnames, filename = filename)
   }
   parameters <- do.call(parametersNew, c(params, list(forbidden=forbidden, debugLevel = debugLevel)))
   if (debugLevel >= 2) {
     print(parameters, digits = 15L)
-    irace.note("Parameters have been read\n")
+    irace_note("Parameters have been read\n")
   }
   parameters
 }
@@ -397,7 +397,7 @@ read_pcs_file <- function(file, digits = 4L, debugLevel = 0L, text)
     filename <- file
     file.check (file, readable = TRUE, text = "read_pcs_file: parameter file")
   } else {
-    irace.error("'file' must be a character string")
+    irace_error("'file' must be a character string")
   }
   lines <- readLines(con = file)
   lines <- trim(lines) # Remove leading and trailing whitespace
@@ -422,10 +422,10 @@ read_pcs_file <- function(file, digits = 4L, debugLevel = 0L, text)
   parse_pcs_condition <- function(x, types) {
     if (is.null(x)) return ("")
     matches <- regmatches(x, regexec("([^[:space:]]+)[[:space:]]+in[[:space:]]+\\{([^}]+)\\}$", x, perl=TRUE))[[1L]]
-    if (length(matches) == 0L) irace.error("unknown condition ", x)
+    if (length(matches) == 0L) irace_error("unknown condition ", x)
     param <- matches[[2L]]
     type <- types[[param]]
-    if (is.null(type)) irace.error("unknown type for ", param, " in condition: ", x)
+    if (is.null(type)) irace_error("unknown type for ", param, " in condition: ", x)
     cond <- matches[[3L]]
     if (type == "c" || type == "o") {
       cond <- strsplit(cond, ",[[:space:]]*")[[1L]]
@@ -483,7 +483,7 @@ read_pcs_file <- function(file, digits = 4L, debugLevel = 0L, text)
                                param_name, param_name, param_types[[param_name]], param_domains[[param_name]], cond, param_comments[[param_name]]))
       next
     }
-    irace.error("unrecognized line: ", line)
+    irace_error("unrecognized line: ", line)
   }
   if (length(forbidden) > 0L) {
     exp <- sapply(forbidden, function(x) {
@@ -516,7 +516,7 @@ checkParameters <- function(parameters)
   ##   names(parameters$isDependent) <- parameters$names
   ## }
   if (!inherits(parameters, "ParameterSpace")) {
-    irace.error("parameters must be an object of class 'ParameterSpace'")
+    irace_error("parameters must be an object of class 'ParameterSpace'")
   }
   parameters
 }

@@ -127,7 +127,7 @@ testing_fromlog <- function(logFile, testNbElites, testIterationElites,
                             testInstancesDir, testInstancesFile, testInstances)
 {
   if (is.null.or.empty(logFile)) {
-    irace.note("No logFile provided to perform the testing of configurations. Skipping testing.\n")
+    irace_note("No logFile provided to perform the testing of configurations. Skipping testing.\n")
     return(FALSE)
   }
   iraceResults <- read_logfile(logFile)
@@ -160,7 +160,7 @@ testing_fromlog <- function(logFile, testNbElites, testIterationElites,
   if (instances_changed || is.null.or.empty(scenario[["testInstances"]])) {
     scenario <- setup_test_instances(scenario)
     if (is.null.or.empty(scenario[["testInstances"]])) {
-      irace.note("No test instances, skip testing\n")
+      irace_note("No test instances, skip testing\n")
       return(FALSE)
     }
   }
@@ -176,7 +176,7 @@ testing_fromlog <- function(logFile, testNbElites, testIterationElites,
   testing_id <- unique.default(unlist(testing_id))
   configurations <- iraceResults$allConfigurations[testing_id, , drop=FALSE]
 
-  irace.note ("Testing configurations (in no particular order): ", paste(testing_id, collapse=" "), "\n")
+  irace_note ("Testing configurations (in no particular order): ", paste(testing_id, collapse=" "), "\n")
   testing_common(configurations, scenario, iraceResults)
   return(TRUE)
 }
@@ -201,7 +201,7 @@ testing_fromlog <- function(logFile, testNbElites, testIterationElites,
 #' @export
 testing_fromfile <- function(filename, scenario)
 {
-  irace.note ("Checking scenario.\n")
+  irace_note ("Checking scenario.\n")
   scenario <- checkScenario(scenario)
   if (!scenario$quiet) printScenario(scenario)
 
@@ -211,7 +211,7 @@ testing_fromfile <- function(filename, scenario)
   num <- nrow(configurations)
   configurations <- checkForbidden(configurations, scenario$parameters$forbidden)
   if (nrow(configurations) < num) {
-    irace.warning("Some of the configurations in the configurations file were forbidden",
+    irace_warning("Some of the configurations in the configurations file were forbidden",
                   "and, thus, discarded.")
   }
   # To save the logs
@@ -219,7 +219,7 @@ testing_fromfile <- function(filename, scenario)
                        irace_version = irace_version,
                        allConfigurations = configurations)
     
-  irace.note ("Testing configurations (in the order given as input): \n")
+  irace_note ("Testing configurations (in the order given as input): \n")
   testing_common(configurations, scenario, iraceResults)
 }
 
@@ -229,10 +229,10 @@ testing_common <- function(configurations, scenario, iraceResults)
   if (verbose) configurations_print(configurations)
   iraceResults$testing <- testConfigurations(configurations, scenario)
   save_irace_logfile(iraceResults, logfile = scenario$logFile)
-  irace.note ("Testing results (column number is configuration ID in no particular order):\n")
+  irace_note ("Testing results (column number is configuration ID in no particular order):\n")
   if (verbose) print(cbind(seeds = iraceResults$testing$seeds,
                            as.data.frame(iraceResults$testing$experiments)))
-  irace.note ("Finished testing\n")
+  irace_note ("Finished testing\n")
   iraceResults
 }
 
@@ -262,23 +262,23 @@ testing_common <- function(configurations, scenario, iraceResults)
 #' @export
 checkIraceScenario <- function(scenario)
 {
-  irace.note ("Checking scenario\n")
+  irace_note ("Checking scenario\n")
   scenario$debugLevel <- 2L
   scenario <- checkScenario(scenario)
   if (!scenario$quiet) printScenario(scenario)
  
-  irace.note("Checking target runner.\n")
+  irace_note("Checking target runner.\n")
   if (checkTargetFiles(scenario = scenario)) {
-    irace.note("Check successful.\n")
+    irace_note("Check successful.\n")
     return(TRUE)
   }
-  irace.error("Check unsuccessful.\n")
+  irace_error("Check unsuccessful.\n")
   return(FALSE)
 }
 
 init <- function() 
 {
-  irace.note("Initializing working directory...\n")
+  irace_note("Initializing working directory...\n")
   libPath <- system.file(package = "irace")
   tmplFiles <- list.files(file.path(libPath, "templates"))
   for (file in tmplFiles) {
@@ -375,7 +375,7 @@ irace_cmdline <- function(argv = commandArgs(trailingOnly = TRUE))
   }
 
   if (length(parser$argv))
-    irace.error ("Unknown command-line options: ", paste(parser$argv, collapse = " "))
+    irace_error ("Unknown command-line options: ", paste(parser$argv, collapse = " "))
   
   irace_common(scenario = scenario, simple=FALSE)
 }
@@ -401,7 +401,7 @@ checkTargetFiles <- function(scenario)
   initConfigurations <- allConfigurationsInit(scenario)
   setDT(initConfigurations)
   if (nrow(initConfigurations) > 0L) {
-    irace.assert(all(colnames(configurations) == colnames(initConfigurations)))
+    irace_assert(all(colnames(configurations) == colnames(initConfigurations)))
     configurations <- rbindlist(list(initConfigurations, configurations))
     set(configurations, j = ".ID.", value = seq_nrow(configurations))
   }
@@ -442,7 +442,7 @@ checkTargetFiles <- function(scenario)
     print(output, digits = 15L)
   }
   
-  irace.assert(is.null(scenario$targetEvaluator) == is.null(race_state$target_evaluator))
+  irace_assert(is.null(scenario$targetEvaluator) == is.null(race_state$target_evaluator))
   if (!result) return(FALSE)
   
   if (!is.null(scenario$targetEvaluator)) {

@@ -33,7 +33,7 @@
 #' @export
 buildCommandLine <- function(values, switches)
 {
-  irace.assert(length(values) == length(switches))
+  irace_assert(length(values) == length(switches))
   values <- as.list(values)
   sel <- !is.na(values)
   switches <- switches[sel]
@@ -83,7 +83,7 @@ target_error <- function(err_msg, output, scenario, target_runner_call,
       " Try to run the command(s) above from the execution directory '",
       scenario$execDir, "' to investigate the issue. See also Appendix B (targetRunner troubleshooting checklist) of the User Guide (https://cran.r-project.org/package=irace/vignettes/irace-package.pdf).")
   }
-  irace.error(err_msg, "\n", .irace_msg_prefix,
+  irace_error(err_msg, "\n", .irace_msg_prefix,
               "The output was:\n", paste(output$outputRaw, collapse = "\n"),
               "\n", .irace_msg_prefix, advice_txt)
 }
@@ -201,7 +201,7 @@ target_evaluator_default <- function(experiment, num_configurations, all_conf_id
   debugLevel <- scenario$debugLevel
   targetEvaluator <- scenario$targetEvaluator
   if (as.logical(file.access(targetEvaluator, mode = 1))) {
-    irace.error ("targetEvaluator", shQuote(targetEvaluator),
+    irace_error ("targetEvaluator", shQuote(targetEvaluator),
                  "cannot be found or is not executable!\n")
   }
   all_conf_id <- paste0(all_conf_id, collapse = " ")
@@ -316,7 +316,7 @@ exec_target_runner <- function(experiment, scenario, target_runner)
     output <- try (doit(experiment, scenario))
     if (!inherits(output, "try-error") && is.null(output$error))
       return (output)
-    irace.note("Retrying (", retries, " left).\n")
+    irace_note("Retrying (", retries, " left).\n")
     retries <- retries - 1L
   }
   doit(experiment, scenario)
@@ -380,7 +380,7 @@ check_target_cmdline <- function(target_cmdline, launcher, capping)
   if (capping) required <- c(required, "bound")
   for (x in required) {
     if (!grepl(paste0("{", x, "}"), target_cmdline, fixed=TRUE))
-      irace.error("targetCmdline '", target_cmdline, "' must contain '{", x, "}'")
+      irace_error("targetCmdline '", target_cmdline, "' must contain '{", x, "}'")
   }
 }
 
@@ -513,7 +513,7 @@ execute_experiments <- function(race_state, experiments, scenario)
   target_runner <- race_state$target_runner
   execDir <- scenario$execDir
   if (!fs::dir_exists(execDir))
-    irace.error ("Execution directory '", execDir, "' is not found or not a directory\n")
+    irace_error ("Execution directory '", execDir, "' is not found or not a directory\n")
   withr::local_dir(execDir)
    
   if (!is.null(scenario$targetRunnerParallel)) {
@@ -526,7 +526,7 @@ execute_experiments <- function(race_state, experiments, scenario)
                                     scenario = scenario,
                                     target_runner = target_runner)
     if (length(target_output) != length(experiments)) {
-      irace.error("Stopping because the output of targetRunnerParallel is missing elements. The output was:\n",
+      irace_error("Stopping because the output of targetRunnerParallel is missing elements. The output was:\n",
         paste0(utils::capture.output(utils::str(target_output)), collapse="\n"))
     }
   } else if (scenario$batchmode != 0L) {
@@ -557,11 +557,11 @@ execute_experiments <- function(race_state, experiments, scenario)
         # each configuration and repetitions may occur.
         cat(unique(unlist(target_output[sapply(
           target_output, inherits, "try-error")])), file = stderr(), sep = "")
-        irace.error("A slave process terminated with a fatal error")
+        irace_error("A slave process terminated with a fatal error")
       }
     } else {
       if (.Platform$OS.type == 'windows') {
-        irace.assert(!is.null(race_state$cluster))
+        irace_assert(!is.null(race_state$cluster))
         if (scenario$loadBalancing) {
           target_output <-
             parallel::parLapplyLB(race_state$cluster, experiments, exec_target_runner,
@@ -595,7 +595,7 @@ execute_experiments <- function(race_state, experiments, scenario)
           cat(unique(unlist(
             target_output[sapply(
               target_output, inherits, "try-error")])), file = stderr())
-          irace.error("A child process triggered a fatal error")
+          irace_error("A child process triggered a fatal error")
         }
       }
     }
