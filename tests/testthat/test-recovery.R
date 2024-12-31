@@ -35,9 +35,10 @@ parameters_table <- '
     targetRunner = target_runner_xy,
     logFile = logFile,
     seed = seed,
+    quiet = TRUE,
     maxExperiments = maxExperiments)
 
-  confs <- irace(scenario = scenario)
+  expect_silent(confs <- irace(scenario = scenario))
 
   scenario$targetRunner <- wrap_target_runner_error(target_runner_xy, limit)
   # Otherwise, the tests are too fast.
@@ -52,6 +53,7 @@ parameters_table <- '
     targetRunner = wrap_target_runner_counter(target_runner_xy),
     recoveryFile = logFile,
     seed = NA,
+    quiet = FALSE,
     logFile = logFile_new))
   recover_confs <- irace(scenario = scenario)
   expect_identical(confs, recover_confs)
@@ -78,8 +80,9 @@ test_that("recovery maxTime", {
     seed = seed,
     maxTime = 500,
     logFile = logFile,
+    quiet = TRUE,
     parameters = parameters)
-  confs <- irace(scenario = scenario)
+  expect_silent(confs <- irace(scenario = scenario))
 
   scenario$targetRunner <- wrap_target_runner_error(target_runner, 200L)
   # Otherwise, the tests are too fast.
@@ -94,6 +97,7 @@ test_that("recovery maxTime", {
     targetRunner = wrap_target_runner_counter(target_runner),
     recoveryFile = logFile,
     seed = NA,
+    quiet = FALSE,
     logFile = logFile_new))
   recover_confs <- irace(scenario = scenario)
   expect_identical(confs, recover_confs)

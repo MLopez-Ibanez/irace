@@ -419,7 +419,7 @@ checkTargetFiles <- function(scenario)
   on.exit(race_state$stop_parallel(), add = TRUE)
   # FIXME: Create a function try.call(err.msg,warn.msg, fun, ...)
   # Executing targetRunner
-  cat("# Executing targetRunner (", nrow(configurations), "times)...\n")
+  irace_note("# Executing targetRunner (", nrow(configurations), "times)...\n")
   result <- TRUE
   # We cannot let targetRunner or targetEvaluator modify our random seed, so we save it.
   withr::local_preserve_seed()
@@ -438,7 +438,7 @@ checkTargetFiles <- function(scenario)
                invokeRestart("muffleWarning")})
 
   if (scenario$debugLevel >= 1L) {
-    cat ("# targetRunner returned:\n")
+    cat("# targetRunner returned:\n")
     print(output, digits = 15L)
   }
   
@@ -446,7 +446,7 @@ checkTargetFiles <- function(scenario)
   if (!result) return(FALSE)
   
   if (!is.null(scenario$targetEvaluator)) {
-    cat("# Executing targetEvaluator...\n")
+    irace_note("# Executing targetEvaluator...\n")
     output <-  withCallingHandlers(
       tryCatch(execute_evaluator(race_state$target_evaluator, experiments, scenario, output),
                  error = function(e) {
@@ -461,7 +461,7 @@ checkTargetFiles <- function(scenario)
                        paste0(conditionMessage(w), collapse="\n"))
                    invokeRestart("muffleWarning")})
     if (scenario$debugLevel >= 1L) {
-      cat ("# targetEvaluator returned:\n")
+      cat("# targetEvaluator returned:\n")
       print(output, digits = 15L)
     }
   }

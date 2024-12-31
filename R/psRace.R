@@ -91,8 +91,15 @@ psRace <- function(iraceResults, max_experiments, conf_ids = NULL, iteration_eli
       if (length(x) <= max_len) return(x)
       x[seq_len(max_len)]
     }
-    
+
     get_confs_for_psrace <- function(iraceResults, iteration_elites, max_experiments, conf_ids, rejected_ids) {
+      scenario <- iraceResults$scenario
+      report_selected <-
+        if (scenario$quiet) do_nothing
+        else function(conf_ids, conf_needs)
+          cat(sep="", "# Configurations selected: ", paste0(collapse=", ", conf_ids),
+            ".\n# Pending instances: ", paste0(collapse=", ", conf_needs), ".\n")
+
       allElites <- iraceResults$allElites
       experiments <- iraceResults$experiments
       conf_ids <- if (iteration_elites) unlist(rev(allElites)) else allElites[[length(allElites)]]
@@ -108,7 +115,6 @@ psRace <- function(iraceResults, max_experiments, conf_ids = NULL, iteration_eli
       n_done <- nrow(experiments) - min(conf_needs)
       # Remove any configuration that needs more than max_experiments.
       conf_needs <- conf_needs[conf_needs <= max_experiments]
-      scenario <- iraceResults$scenario
       if (!scenario$deterministic || n_done < length(scenario$instances)) {
         # We want to evaluate in at least n_new instances more.
         n_new <- max(scenario$blockSize, scenario$eachTest)
@@ -117,8 +123,7 @@ psRace <- function(iraceResults, max_experiments, conf_ids = NULL, iteration_eli
         if (n_confs > 1L && sum(conf_needs == 0L) >= n_confs) {
           conf_needs <- conf_needs[conf_needs == 0L][1:n_confs]
           conf_ids <- names(conf_needs)
-          cat(sep="", "# Configurations selected: ", paste0(collapse=", ", conf_ids),
-            ".\n# Pending instances: ", paste0(collapse=", ", conf_needs), ".\n")
+          report_selected(conf_ids, conf_needs)
           irace_assert(length(conf_ids) > 1L, eval_after = {
             cat("n_confs: ", n_confs, "\nn_new:", n_new, "\n")
             print(conf_needs)
@@ -150,8 +155,7 @@ psRace <- function(iraceResults, max_experiments, conf_ids = NULL, iteration_eli
           winner <- which.max(n)
           conf_needs_new <- conf_needs_new[combs[[winner]]]
           conf_ids <- names(conf_needs_new)
-          cat(sep="", "# Configurations selected: ", paste0(collapse=", ", conf_ids),
-            ".\n# Pending instances: ", paste0(collapse=", ", conf_needs_new), ".\n")
+          report_selected(conf_ids, conf_needs_new)
           return(conf_ids)
         }
       }
@@ -169,8 +173,7 @@ psRace <- function(iraceResults, max_experiments, conf_ids = NULL, iteration_eli
       winner <- which.max(n)
       conf_needs <- c(conf_needs_zero, conf_needs[combs[[winner]]])
       conf_ids <- names(conf_needs)
-      cat(sep="", "# Configurations selected: ", paste0(collapse=", ", conf_ids),
-        ".\n# Pending instances: ", paste0(collapse=", ", conf_needs), ".\n")
+      report_selected(conf_ids, conf_needs)
       irace_assert(length(conf_ids) > 1L, eval_after = {
         print(conf_needs)
         cat("winner: ", winner, "\n")
@@ -221,8 +224,7 @@ psRace <- function(iraceResults, max_experiments, conf_ids = NULL, iteration_eli
   elite_data <- iraceResults$experiments[, as.character(elite_configurations[[".ID."]]), drop=FALSE]
   race_state$next_instance <- nrow(iraceResults$experiments) + 1L
 
-  cat(sep="",
-    "# Seed: ", race_state$seed,
+  irace_note("seed: ", race_state$seed,
     "\n# Configurations: ", nrow(elite_configurations),
     "\n# Available experiments: ", max_experiments,
     "\n# minSurvival: 1\n")
