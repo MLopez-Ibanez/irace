@@ -258,6 +258,7 @@ psRace <- function(iraceResults, max_experiments, conf_ids = NULL, iteration_eli
     scenario = scenario,
     elite_data = elite_data,
     elitist_new_instances = 0L,
+    # FIXME: This should be nrow(elite_data) + 1L if we have budget to evaluate on new instances.
     firstTest = nrow(elite_data) / scenario$blockSize)
 
   elite_configurations <- extractElites(raceResults$configurations,

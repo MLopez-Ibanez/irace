@@ -33,3 +33,11 @@
 #' @seealso
 #'  [irace()] for examples and `vignette(package = "irace")` for the user-guide.
 "_PACKAGE"
+
+
+# This silences CRAN NOTE:
+#   Namespace in Imports field not imported from: 'codetools'
+#     All declared Imports should be used.
+.ignore_unused_imports <- function() {
+  codetools::findGlobals
+}

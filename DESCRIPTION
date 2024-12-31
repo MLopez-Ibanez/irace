@@ -20,6 +20,7 @@ Authors@R: c(person("Manuel", "López-Ibáñez", role = c("aut", "cre"),
              person("Nguyen", "Dang", role = "ctb", email = "nttd@st-andrews.ac.uk"))
 Depends: R (>= 4.0.0)
 Imports:
+        codetools,
         stats,
         utils,
         compiler,

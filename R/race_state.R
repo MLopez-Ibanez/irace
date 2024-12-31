@@ -188,16 +188,24 @@ RaceState <- R6Class("RaceState", lock_class = TRUE,
          # on Windows. We need to use the future package for that:
          # https://stackoverflow.com/questions/56501937/how-to-print-from-clusterapply
          self$cluster <- parallel::makeCluster(parallel)
-         if (scenario$debugLevel >= 1L) irace_note("makeCluster initialized for ", parallel, " jobs.")
+         if (scenario$debugLevel >= 1L)
+           irace_note("makeCluster initialized for ", parallel, " jobs.\n")
          # We export the global environment because the user may have defined
          # stuff there. There must be a better way to do this, but I cannot
          # figure it out. R sucks sometimes.
          parallel::clusterExport(self$cluster, ls(envir=.GlobalEnv))
          # In Windows, this needs to be exported, or we get:
          ## Error in checkForRemoteErrors(val) : 
-         ##  2 nodes produced errors; first error: could not find function "target.runner"
+         ##  2 nodes produced errors; first error: could not find function "target_runner"
          parallel::clusterExport(self$cluster, list("target_runner"), envir=self)
-         # parallel::clusterExport(self$cluster, ls(environment(startParallel)), envir=environment(startParallel))
+         if (is.function(scenario$targetRunner)
+           && !identical(environment(scenario$targetRunner), globalenv())) {
+           env_target_runner <- environment(scenario$targetRunner)
+           funglobs <- codetools::findGlobals(self$target_runner, merge=TRUE)
+           common <- intersect(funglobs, ls(envir=env_target_runner))
+           if (length(common))
+             parallel::clusterExport(self$cluster, common, envir=env_target_runner)
+         }
        }
      }
      invisible(self)

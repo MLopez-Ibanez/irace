@@ -5,7 +5,7 @@ withr::with_output_sink("test-capping.Rout", {
 target_runner_reject <- function(experiment, scenario)
 {
   if (experiment$configuration[["reject"]] == "1" && runif(1) <= 0.01)
-    list(cost = -Inf, time = experiment$bound, call = toString(experiment))
+    return(list(cost = -Inf, time = experiment$bound))
   target_runner_capping_xy(experiment, scenario)
 }
 
@@ -25,7 +25,9 @@ test_that("irace_capping_xy targetRunner = target_runner_reject, maxTime = 1000"
   skip_on_cran() 
   skip_on_coverage() # This test sometimes fails randomly
   generate_set_seed()
-  irace_capping_xy(targetRunner = target_runner_reject, maxTime = 1000, boundMax = 5, debugLevel = 3)
+  irace_capping_xy(targetRunner = target_runner_reject, maxTime = 1000, boundMax = 5, debugLevel = 3,
+    # FIXME: target_runner_reject does not work in parallel on Windows.
+    parallel = if (system_os_is_windows()) 1L else test_irace_detectCores())
 })
 
 test_that("capping default value", {

@@ -8,8 +8,8 @@ multi_irace(
   scenarios,
   parameters,
   n = 1L,
-  parallel = 1,
-  split_output = parallel > 1,
+  parallel = 1L,
+  split_output = parallel > 1L,
   global_seed = NULL
 )
 }

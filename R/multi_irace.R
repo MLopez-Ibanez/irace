@@ -28,11 +28,11 @@
 #'
 #' @concept running
 #' @export
-multi_irace <- function(scenarios, parameters, n = 1L, parallel = 1, split_output = parallel > 1, global_seed = NULL)
+multi_irace <- function(scenarios, parameters, n = 1L, parallel = 1L, split_output = parallel > 1L, global_seed = NULL)
 {
   # Parallel execution is not available on Windows.
-  if (.Platform$OS.type == 'windows') {
-    irace_assert(parallel == 1L)
+  if (.Platform$OS.type == 'windows' && parallel > 1L) {
+    irace_error("multi_irace() does not yet support parallel > 1 on Windows")
   }
 
   # Allow either the same number of scenarios and parameters, or a single scenario or parameter space definition.

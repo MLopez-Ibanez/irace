@@ -9,6 +9,7 @@ generate_set_seed <- function()
 test_irace_detectCores <- function()
 {
   if (!identical(Sys.getenv("NOT_CRAN"), "true")) return(1L)
+  # FIXME: covr fails in github actions otherwise.
   if (identical(Sys.getenv("COVR_COVERAGE"), "true")) return(1L)
   x <- Sys.getenv("_R_CHECK_LIMIT_CORES_", "")
   if (nzchar(x) && x == "TRUE") return(2L)
@@ -125,10 +126,11 @@ target_runner_capping_xy <- function(experiment, scenario)
                   himmelblau  = f_himmelblau(x, y))
   
   # Simulate execution bound
-  list(cost = value, time=min(value + 0.1, bound), call = toString(experiment))
+  list(cost = value, time=min(value + 0.1, bound))
 }
 
-irace_capping_xy <- function(..., targetRunner = force(target_runner_capping_xy))
+irace_capping_xy <- function(..., targetRunner = force(target_runner_capping_xy),
+                             parallel = test_irace_detectCores())
 {
   # Silence Error in `save(iraceResults, file = logfile, version = 3L)`: (converted from warning) 'package:irace' may not be available when loading
   # See https://github.com/r-lib/testthat/issues/2044
@@ -150,7 +152,7 @@ irace_capping_xy <- function(..., targetRunner = force(target_runner_capping_xy)
                    boundMax = 80,
                    testType = "t-test",
                    logFile = logFile,
-                   parallel = if (system_os_is_windows()) 1L else test_irace_detectCores(),
+                   parallel = parallel,
                    parameters = parameters)
   scenario <- modifyList(scenario, args)
   scenario <- checkScenario (scenario)
@@ -167,13 +169,13 @@ irace_capping_xy <- function(..., targetRunner = force(target_runner_capping_xy)
 wrap_target_runner_error <- function(target_runner, limit)
 {
   counter <- force(limit)
-  targetRunner <- force(target_runner)
+  target_runner <- force(target_runner)
   
   fun <- function(experiment, scenario) {
     counter <<- counter - 1L
     if (counter <= 0L)
       return(list(cost=NA))
-    targetRunner(experiment, scenario)
+    target_runner(experiment, scenario)
   }
   parent.env(environment(fun)) <- globalenv()
   fun
@@ -182,11 +184,11 @@ wrap_target_runner_error <- function(target_runner, limit)
 wrap_target_runner_counter <- function(target_runner)
 {
   counter <- 0L
-  targetRunner <- force(target_runner)
+  target_runner <- force(target_runner)
   
   fun <- function(experiment, scenario) {
     counter <<- counter + 1L
-    targetRunner(experiment, scenario)
+    target_runner(experiment, scenario)
   }
   parent.env(environment(fun)) <- globalenv()
   fun
