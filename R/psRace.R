@@ -115,6 +115,11 @@ psRace <- function(iraceResults, max_experiments, conf_ids = NULL, iteration_eli
       n_done <- nrow(experiments) - min(conf_needs)
       # Remove any configuration that needs more than max_experiments.
       conf_needs <- conf_needs[conf_needs <= max_experiments]
+      if (length(conf_needs) == 1L) {
+        if (!scenario$quiet)
+          cat("# Insufficient budget to race more than one configuration!\n")
+        return(names(conf_needs))
+      }
       if (!scenario$deterministic || n_done < length(scenario$instances)) {
         # We want to evaluate in at least n_new instances more.
         n_new <- max(scenario$blockSize, scenario$eachTest)
@@ -156,6 +161,14 @@ psRace <- function(iraceResults, max_experiments, conf_ids = NULL, iteration_eli
           conf_needs_new <- conf_needs_new[combs[[winner]]]
           conf_ids <- names(conf_needs_new)
           report_selected(conf_ids, conf_needs_new)
+          irace_assert(length(conf_ids) > 1L, eval_after = {
+            cat("max_experiments: ", max_experiments, "\n")
+            cat("length(left): ", length(left), "\n")
+            cat("sum(is.na(left)): ", sum(is.na(left)), "\n")
+            cat("winner: ", winner, "\n")
+            cat("combs[[winner]]: ", paste0(collapse=",", combs[[winner]]), "\n")
+            save(iraceResults, file="bug-conf_ids.Rdata")
+          })
           return(conf_ids)
         }
       }
@@ -184,7 +197,7 @@ psRace <- function(iraceResults, max_experiments, conf_ids = NULL, iteration_eli
     }
     conf_ids <- get_confs_for_psrace(iraceResults, iteration_elites, max_experiments,
       conf_ids = conf_ids, rejected_ids = race_state$rejected_ids)
-    irace_assert(length(conf_ids) > 1L, eval_after = {
+    irace_assert(length(conf_ids) >= 1L, eval_after = {
       # Debug what happened if the assert failed.
       rejected_ids <- race_state$rejected_ids
       cat("blockSize:", scenario$blockSize, "\niteration_elites: ", as.character(iteration_elites),
@@ -206,7 +219,12 @@ psRace <- function(iraceResults, max_experiments, conf_ids = NULL, iteration_eli
       conf_needs <- matrixStats::colCounts(experiments[, conf_ids, drop = FALSE], value = NA)
       cat("conf_needs:", paste0(collapse=", ", conf_needs), "\n")
     })
-    
+    if (length(conf_ids) == 1L) {
+      # If we cannot run post-selection, we just return the elite configurations.
+      allElites <- iraceResults$allElites
+      return(allElites[[length(allElites)]])
+    }
+      
   } else if (length(conf_ids) <= 1L) {
     irace_error ("The number configurations provided should be larger than 1.")
   } else if (length(race_state$rejected_ids) && any(conf_ids %in% race_state$rejected_ids)) {
