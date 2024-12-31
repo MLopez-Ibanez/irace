@@ -6,7 +6,7 @@ test_that("bug-55", {
 foo "--foo " i (0, 1)
 foo2 "--foo2 " c (true, false) | foo == 0
 '
-  params <- irace::readParameters(text=parameters_txt)
+  params <- readParameters(text=parameters_txt)
   configurations_txt <- '
   foo  foo2
 1   0 false

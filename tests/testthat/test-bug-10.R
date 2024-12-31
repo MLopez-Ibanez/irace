@@ -14,13 +14,13 @@ nnls         "--nnls "        i    (5, 50)              | localsearch %in% c(1,2
 dlb          "--dlb "         c    (0, 1)               | localsearch %in% c(1,2,3)
 '
 
-parameters <- irace:::readParameters(text=parameters_txt)
+parameters <- readParameters(text=parameters_txt)
 
 test_that("bug blocksize", {
   skip_on_cran()
 
   target_runner <- function(experiment, scenario)
-    list(cost = 100 + rnorm(1, 0, 0.1), call = toString(experiment))
+    list(cost = 100 + rnorm(1, 0, 0.1))
 
 withr::with_options(list(warning=2), {
   scenario <- list(targetRunner = target_runner,

@@ -1,6 +1,6 @@
 test_that("similarConfigurations", {
 
-  parameters <- irace:::readParameters(text = '
+  parameters <- readParameters(text = '
 n1 "" r (0,1)
 n2 "" r (0,1)
 n3 "" r (0,1)

@@ -1,6 +1,6 @@
 withr::with_output_sink("test-readconfs.Rout", {
 
-params <- irace::readParameters("parameters.txt")
+params <- readParameters("parameters.txt")
 
 expect_error_readconfs <- function(table, exp)
   expect_error(irace::readConfigurationsFile(text=table, parameters = params), exp)
