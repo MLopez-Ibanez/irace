@@ -16,6 +16,8 @@
  
  * `psRace()` gains a `psrace_logFile` argument to avoid overwriting `scenario$logFile`.
  
+ * `psRace()` makes better use of the budget remaining.
+ 
 ## Fixes
 
  * Fix #76: Recovery (`--recover-file`) is working again with a completely new implementation.
@@ -25,7 +27,7 @@
  * Fix `psRace()` not saving `psrace_log` in `scenario$logFile`.
  
  * Fix bug in `psRace()` using more budget than the maximum given.
-
+ 
 # irace 4.1
 
 ## Major breaking changes

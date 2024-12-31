@@ -222,7 +222,7 @@ psRace <- function(iraceResults, max_experiments, conf_ids = NULL, iteration_eli
   # Generate new instances.
   generateInstances(race_state, scenario, max_experiments / nrow(elite_configurations), update = TRUE)
   elite_data <- iraceResults$experiments[, as.character(elite_configurations[[".ID."]]), drop=FALSE]
-  race_state$next_instance <- nrow(iraceResults$experiments) + 1L
+  race_state$next_instance <- nrow(elite_data) + 1L
 
   irace_note("seed: ", race_state$seed,
     "\n# Configurations: ", nrow(elite_configurations),
@@ -238,8 +238,9 @@ psRace <- function(iraceResults, max_experiments, conf_ids = NULL, iteration_eli
     minSurvival = 1L,
     configurations = elite_configurations,
     scenario = scenario,
-    elite.data = elite_data,
-    elitist_new_instances = 0L)
+    elite_data = elite_data,
+    elitist_new_instances = 0L,
+    firstTest = nrow(elite_data) / scenario$blockSize)
 
   elite_configurations <- extractElites(raceResults$configurations,
     nbElites = race_state$minSurvival, debugLevel = scenario$debugLevel)

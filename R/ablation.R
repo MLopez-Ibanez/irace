@@ -461,7 +461,7 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
     race_output <- elitist_race(race_state,
       maxExp = nrow(aconfigurations) * nrow(race_state$instances_log),
                                 minSurvival = 1L,
-                                elite.data = elite_data,
+                                elite_data = elite_data,
                                 configurations = race_conf,
                                 scenario = scenario,
                                 elitist_new_instances = 0L)

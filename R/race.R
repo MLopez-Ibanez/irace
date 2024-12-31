@@ -585,25 +585,26 @@ race <- function(race_state, maxExp,
                  minSurvival = 1L,
                  configurations,
                  scenario)
-  elitist_race(race_state, maxExp = maxExp,
+  elitist_race(race_state = race_state, maxExp = maxExp,
                minSurvival = minSurvival,
-               elite.data = NULL,
+               elite_data = NULL,
                configurations = configurations,
                scenario = scenario,
                elitist_new_instances = 0L)
 
 elitist_race <- function(race_state, maxExp,
                  minSurvival = 1L,
-                 elite.data = NULL,
+                 elite_data = NULL,
                  configurations,
                  scenario,
-                 elitist_new_instances)
+                 elitist_new_instances,
+                 firstTest = scenario$firstTest)
 {
   blockSize <- scenario$blockSize
   stat.test <- scenario$testType
   conf.level <- scenario$confidence
-  firstTest <- blockSize * scenario$firstTest
-  each.test <- blockSize * scenario$eachTest
+  firstTest <- blockSize * firstTest
+  eachTest <- blockSize * scenario$eachTest
   elitist <- scenario$elitist
   capping <- scenario$capping
   n_configurations <- nrow(configurations)
@@ -652,19 +653,19 @@ elitist_race <- function(race_state, maxExp,
   is_elite <- integer(n_configurations)
 
   ## FIXME: Probably, instead of this, we should keep elite_safe in the race_state.
-  if (is.null(elite.data)) {
+  if (is.null(elite_data)) {
     elite_safe <- 0L
     elite_instances_ID <- NULL
   } else {
-    irace_assert(race_state$next_instance - 1L == nrow(elite.data))
+    irace_assert(race_state$next_instance - 1L == nrow(elite_data))
     # There must be a non-NA entry for each instance.
-    irace_assert(all(rowAnys(!is.na(elite.data))),
-                 eval_after = { print(elite.data)})
+    irace_assert(all(rowAnys(!is.na(elite_data))),
+                 eval_after = { print(elite_data)})
     # There must be a non-NA entry for each configuration.
-    irace_assert(all(colAnys(!is.na(elite.data))),
+    irace_assert(all(colAnys(!is.na(elite_data))),
                  eval_after = {
-                   cat("elite.data:\n")
-                   print(elite.data)
+                   cat("elite_data:\n")
+                   print(elite_data)
                    cat("experiment_log:\n")
                    print(race_state$experiment_log)
                  })
@@ -672,7 +673,7 @@ elitist_race <- function(race_state, maxExp,
     # elite_safe: maximum instance number for which any configuration may be
     # considered elite. After evaluating this instance, no configuration is
     # elite.
-    elite_safe <- elitist_new_instances + nrow(elite.data)
+    elite_safe <- elitist_new_instances + nrow(elite_data)
     elite_instances_ID <- as.character(race_instances[seq_len(elite_safe)])
   }
 
@@ -687,11 +688,11 @@ elitist_race <- function(race_state, maxExp,
                               ncol = n_configurations, 
                               dimnames = list(elite_instances_ID, configurations_ID))
 
-  if (! is.null(elite.data)) {
-    Results[rownames(elite.data), colnames(elite.data)] <- elite.data
+  if (! is.null(elite_data)) {
+    Results[rownames(elite_data), colnames(elite_data)] <- elite_data
 
     if (capping) {
-      tmp <- generateTimeMatrix(elite_ids = colnames(elite.data), 
+      tmp <- generateTimeMatrix(elite_ids = colnames(elite_data), 
                                 experiment_log = race_state$experiment_log)
       experimentsTime[rownames(tmp), colnames(tmp)] <- tmp
       # Preliminary execution of elite configurations to calculate
@@ -699,7 +700,7 @@ elitist_race <- function(race_state, maxExp,
       if (elitist_new_instances > 0L) {
         irace_assert(elitist_new_instances %% blockSize == 0L)
         # FIXME: This should go into its own function.
-        n_elite <- ncol(elite.data)
+        n_elite <- ncol(elite_data)
         which_elites <- seq_len(n_elite)
         irace_note("Preliminary execution of ", n_elite,
           " elite configuration(s) over ", elitist_new_instances, " instance(s).\n")
@@ -765,8 +766,8 @@ elitist_race <- function(race_state, maxExp,
       # least one configuration
       all(rowAnys(evaluated)) && 
       # and the number of instances evaluated per configuration is a multiple
-      # of blockSize.
-        all(colSums2(evaluated) %% blockSize == 0L)
+      # of eachTest (which is scenario$blockSize * scenario$eachTest).
+        all(colSums2(evaluated) %% eachTest == 0L)
     }
   else
     all_elite_instances_evaluated <- function() TRUE
@@ -836,11 +837,11 @@ elitist_race <- function(race_state, maxExp,
     ## budget to reach the next test.
     # FIXME: In post-selection racing, we want to consume all budget, so we
     # should discard configurations until we have 2.
-    if (current_task > firstTest && ( (current_task - 1L) %% each.test) == 0L
-      && experiments_used + length(which_exe) * each.test > maxExp
+    if (current_task > firstTest && ( (current_task - 1L) %% eachTest) == 0L
+      && experiments_used + length(which_exe) * eachTest > maxExp
       && all_elite_instances_evaluated()) {
       break_msg <- paste0("experiments for next test (",
-        experiments_used + length(which_exe) * each.test,
+        experiments_used + length(which_exe) * eachTest,
         ") > max experiments (", maxExp, ")")
       break
     }
@@ -851,8 +852,7 @@ elitist_race <- function(race_state, maxExp,
         ") >= elitistLimit (", scenario$elitistLimit, ")")
       break
     }
-    
-                                
+                                    
     if (nrow(Results) < current_task) {
       Results <- rbind(Results, rep_len(NA_real_, ncol(Results)))
       rownames(Results) <- race_instances[seq_nrow(Results)]
@@ -1028,10 +1028,10 @@ elitist_race <- function(race_state, maxExp,
       cap.done    <- TRUE
     }
     
-    # We assume that firstTest is a multiple of each.test.  In any
+    # We assume that firstTest is a multiple of eachTest.  In any
     # case, this will only do the first test after the first multiple
-    # of each.test that is larger than firstTest.
-    if (current_task >= firstTest && (current_task %% each.test) == 0L
+    # of eachTest that is larger than firstTest.
+    if (current_task >= firstTest && (current_task %% eachTest) == 0L
         && nbAlive > 1L) {
       irace_assert(sum(alive) == nbAlive)
       test.res <-
@@ -1054,7 +1054,7 @@ elitist_race <- function(race_state, maxExp,
     # Handle elites when elimination is performed.  The elite configurations
     # can be removed only when they have no more previously-executed instances.
     irace_assert(!any(is_elite > 0L) == (current_task >= elite_safe))
-    if (!is.null(elite.data) && any(is_elite > 0L)) {
+    if (!is.null(elite_data) && any(is_elite > 0L)) {
       irace_assert (length(alive) == length(is_elite))
       alive <- alive | (is_elite > 0L)
     }
@@ -1111,7 +1111,7 @@ elitist_race <- function(race_state, maxExp,
       # Compute number of statistical tests without eliminations.
       irace_assert(!any(is_elite > 0L) == (current_task >= elite_safe))
       if (!any(is_elite > 0L)
-          && current_task > firstTest && (current_task %% each.test) == 0L) {
+          && current_task > firstTest && (current_task %% eachTest) == 0L) {
         if (length(which_alive) == length(prev_alive)) {
           no_elimination <- no_elimination + 1L
         } else {
@@ -1177,8 +1177,6 @@ elitist_race <- function(race_state, maxExp,
   if (is.null(scenario$targetEvaluator)) {
     # With targetEvaluator, we may have the recorded a new cost value but not
     # counted it as an experiment used if targetRunner was not called.
-
-    # If this assert fails, use debug-level 3 to trigger the expensive check above.
     irace_assert(anyDuplicated(local_experiment_log[, c("instance", "configuration")]) == 0L,
       eval_after = {
         print(local_experiment_log)

@@ -1155,7 +1155,7 @@ irace_run <- function(scenario)
                                  configurations = raceConfigurations,
                                  maxExp = currentBudget,
                                  minSurvival = minSurvival,
-                                 elite.data = elite_data,
+                                 elite_data = elite_data,
                                  elitist_new_instances = if (firstRace) 0L
                                                          else race_state$elitist_new_instances)
     # We add indexIteration as an additional column.
