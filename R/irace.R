@@ -428,8 +428,7 @@ extractElites <- function(configurations, nbElites, debugLevel)
     irace_note("Dropped ", before - after, " duplicated elites.\n")
 
   after <- min(after, nbElites)
-  .RANK. <- NULL
-  setorder(elites, .RANK.)
+  setorderv(elites, cols=".RANK.")
   selected <- seq_len(after)
   elites <- elites[selected, ]
   set(elites, j = ".WEIGHT.", value = ((after + 1L) - selected) / (after * (after + 1L) / 2))
