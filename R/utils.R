@@ -247,28 +247,35 @@ trim <- function(str) trim_trailing(trim_leading(str))
 # z[i, j] <- NA for all i,j not in x nor y.
 merge_matrix <- function(x, y)
 {
-  new.cols <- setdiff(colnames(y), colnames(x))
-  new.rows <- setdiff(rownames(y), rownames(x))
-
-  if (is.null(rownames(x)) || is.null(colnames(x)))
+  rownames_x <- rownames(x)
+  colnames_x <- colnames(x)
+  rownames_y <- rownames(y)
+  colnames_y <- colnames(y)
+  
+  if (is.null(rownames_x) || is.null(colnames_x))
     return(y)
 
-  if (is.null(rownames(y)) || is.null(colnames(y)))
+  if (is.null(rownames_y) || is.null(colnames_y))
     return(x)
 
-  # Add columns
-  x <- cbind(x,
-             matrix(NA, ncol = length(new.cols), nrow = nrow(x),
-                    dimnames = list(rownames(x), new.cols)))
-  # Add rows
-  x <- rbind(x,
-             matrix(NA, ncol = ncol(x), nrow = length(new.rows),
-                    dimnames = list(new.rows, colnames(x))))
-  # Update
-  x[rownames(y), colnames(y)] <- y
+  row_union <- union(rownames_x, rownames_y)
+  col_union <- union(colnames_x, colnames_y)
+  
+  z <- matrix(NA_real_, nrow = length(row_union), ncol = length(col_union),
+              dimnames = list(row_union, col_union))
+  
+  # Map row and column names to indices for efficient assignment.
+  row_idx_x <- chmatch(rownames_x, row_union)
+  col_idx_x <- chmatch(colnames_x, col_union)
+  row_idx_y <- chmatch(rownames_y, row_union)
+  col_idx_y <- chmatch(colnames_y, col_union)
+  
+  z[row_idx_x, col_idx_x] <- x
+  z[row_idx_y, col_idx_y] <- y
+
   # There must be a non-NA entry for each instance.
-  irace_assert(all(rowAnys(!is.na(x))))
-  return(x)
+  irace_assert(all(rowAnys(!is.na(z))))
+  return(z)
 }
 
 # FIXME: This may not work when working interactively. For example,
