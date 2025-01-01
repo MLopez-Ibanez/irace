@@ -26,14 +26,15 @@ DEVEL-README.md
 ^TUNE.*
 ^\.git$
 ^\.github$
+^\.pre-commit-config\.yaml$
 ^check-reverse
 ^codecov\.yml$
 ^cran-comments.md$
+^devel-examples
 ^devel-tests
 ^dist\.sh$
 ^doc$
 ^docs$
-^devel-examples
 ^git_version$
 ^hooks/hook-evaluate
 ^hooks/hook-run
@@ -48,10 +49,10 @@ DEVEL-README.md
 ^revdep$
 ^scenario\.txt$
 ^scripts
-^src/iracebin/irace$
-^src/iracebin/irace.exe$
 ^src/iracebin/ablation$
 ^src/iracebin/ablation.exe$
+^src/iracebin/irace$
+^src/iracebin/irace.exe$
 ^src/iracebin/irace2pyimp$
 ^src/iracebin/irace2pyimp.exe$
 ^svn_version$
@@ -74,5 +75,5 @@ DEVEL-README.md
 ^vignettes/figure
 ^vignettes/optbib
 ^web
-_snaps
 _pkgdown\.yml$
+_snaps
