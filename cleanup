@@ -13,10 +13,6 @@ rm -f  irace.Rdata irace-Ex.R config.* confdefs.h \
    devel-examples/vignette-example/sann.rda
 
 rm -fr  tests/testthat/run_* tests/testthat/multi_irace* \
-   autom4te.cache devel-examples/vignette-example/acotsp/
+   autom4te.cache
 
 find . -name '*.orig' -o -name '.Rhistory' -o -name '*.rej' | xargs rm -f
-
-
-
-
