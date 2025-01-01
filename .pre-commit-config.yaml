@@ -1,0 +1,22 @@
+repos:
+  - repo: https://github.com/lorenzwalthert/precommit
+    rev: v0.4.3.9003
+    hooks:
+      - id: parsable-R
+      - id: no-browser-statement
+      - id: no-debug-statement
+#      - id: deps-in-desc
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+#      - id: trailing-whitespace
+      - id: check-yaml
+      - id: check-merge-conflict
+        args: [ --assume-in-merge ]
+      - id: check-added-large-files
+        args: ['--maxkb=200']
+      - id: file-contents-sorter
+        files: '\.Rbuildignore|\.Rinstignore$'
+#      - id: end-of-file-fixer
+#        exclude: '(\.Rd|python/doc/source/reference/.*|test-doctest-.*)'
