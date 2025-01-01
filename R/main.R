@@ -419,7 +419,7 @@ checkTargetFiles <- function(scenario)
   on.exit(race_state$stop_parallel(), add = TRUE)
   # FIXME: Create a function try.call(err.msg,warn.msg, fun, ...)
   # Executing targetRunner
-  irace_note("# Executing targetRunner (", nrow(configurations), "times)...\n")
+  irace_note("# Executing targetRunner (", nrow(configurations), " times)...\n")
   result <- TRUE
   # We cannot let targetRunner or targetEvaluator modify our random seed, so we save it.
   withr::local_preserve_seed()
