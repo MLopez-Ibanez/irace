@@ -11,7 +11,7 @@ name: R-CMD-check
 concurrency:
   group: ${{ github.event.pull_request.number || github.run_id }}
   cancel-in-progress: true
-  
+
 env:
   R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
   _R_CHECK_FORCE_SUGGESTS_: false
@@ -52,7 +52,7 @@ jobs:
       - name: "[Linux] Install openmpi"
         if: runner.os == 'Linux'
         run: sudo apt-get update -y && sudo apt install -y libopenmpi-dev
-      
+
       - uses: r-lib/actions/setup-r@v2
         with:
           r-version: ${{ matrix.r }}
@@ -76,7 +76,7 @@ jobs:
           needs: check
           cache-version: 1
           install-pandoc: true
-          
+
       - uses: r-lib/actions/setup-r-dependencies@v2
         if: runner.os == 'macOS'
         with:
@@ -87,7 +87,7 @@ jobs:
           needs: check
           cache-version: 1
           install-pandoc: true
-          
+
       - name: Check (as CRAN)
         env:
           NOT_CRAN: false
@@ -95,14 +95,14 @@ jobs:
         with:
           args: 'c("--no-manual", "--as-cran")'
           build_args: 'c("--compact-vignettes=gs+qpdf")'
-      
+
       - name: Check
         env:
           NOT_CRAN: true
         uses: r-lib/actions/check-r-package@v2
         with:
           args: 'c("--no-manual", "--run-donttest", "--timings")'
-          
+
       - name: Show testthat output
         if: failure()
         run: find check -name 'testthat.Rout*' -exec cat '{}' \; || true
@@ -126,13 +126,13 @@ jobs:
           use-public-rspm: true
 
       - uses: r-lib/actions/setup-tinytex@v2-branch
-        
+
       - name: Install additional LaTeX packages
         run: tlmgr install ${{ env.LATEX_PACKAGES }}
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::covr, mlr=?ignore, Rmpi=?ignore, local::. 
+          extra-packages: any::covr, any::xml2, mlr=?ignore, Rmpi=?ignore, local::.
           needs: coverage
           install-pandoc: true
 
@@ -143,21 +143,29 @@ jobs:
         run: |
           options(covr.fix_parallel_mcexit = TRUE)
           coverage <- covr::package_coverage(type = "all",
-                                             quiet = FALSE, clean = FALSE,
-                                             install_path = file.path(Sys.getenv("RUNNER_TEMP"), "package"),
-                                             commentDonttest = FALSE)
+                 quiet = FALSE, clean = FALSE,
+                 install_path = file.path(normalizePath(Sys.getenv("RUNNER_TEMP"), winslash = "/"), "package"),
+                 commentDonttest = FALSE)
           print(coverage)
-          covr::codecov(coverage = coverage)
+          covr::to_cobertura(coverage)
+          #covr::codecov(coverage = coverage)
         shell: Rscript {0}
 
-        
+      - uses: codecov/codecov-action@v4
+        with:
+          fail_ci_if_error: ${{ github.event_name != 'pull_request' && true || false }}
+          file: ./cobertura.xml
+          plugin: noop
+          disable_search: true
+          token: ${{ secrets.CODECOV_TOKEN }}
+
       - name: Show testthat output
         if: always()
         run: |
           ## --------------------------------------------------------------------
           find ${{ runner.temp }}/package -name 'testthat.Rout*' -exec cat '{}' \; || true
         shell: bash
-        
+
       - name: Show failures
         if: failure()
         run: |
@@ -167,7 +175,7 @@ jobs:
 
       - name: Upload test results
         if: failure()
-        uses: actions/upload-artifact@main
+        uses: actions/upload-artifact@v4
         with:
           name: coverage-test-failures
           path: ${{ runner.temp }}/package
@@ -193,7 +201,7 @@ jobs:
       - uses: r-lib/actions/setup-r@v2
         with:
           use-public-rspm: true
-          
+
       - uses: r-lib/actions/setup-tinytex@v2-branch
 
       - name: Install additional LaTeX packages
@@ -204,7 +212,7 @@ jobs:
           extra-packages: any::pkgdown, mlr=?ignore, Rmpi=?ignore, any::remotes
           needs: website
           install-pandoc: true
-          
+
       - name: Install package with vignettes
         run: |
           remotes::install_local(".", build = TRUE, upgrade = "never", force = TRUE, build_opts = c("--no-resave-data"), build_manual = TRUE, build_vignettes = TRUE)
