@@ -92,7 +92,7 @@ file.check <- function (file, executable = FALSE, readable = executable,
   ## The above should remove the trailing separator if present for windows OS
   ## compatibility, except when we have just C:/, where the trailing separator
   ## must remain.
-  
+
   if (!file.exists(file)) {
     if (writeable) {
       if (tryCatch({ suppressWarnings(file.create(file) && file.remove(file)) },
@@ -109,7 +109,7 @@ file.check <- function (file, executable = FALSE, readable = executable,
     irace_error(text, " '", file, "' cannot be written into")
     return(FALSE)
   }
-  
+
   if (readable && (file.access(file, mode = READ) != 0)) {
     irace_error(text, " '", file, "' is not readable")
     return (FALSE)
@@ -241,7 +241,7 @@ trim <- function(str) trim_trailing(trim_leading(str))
 
 ## This function takes two matrices x and y and merges them such that the
 ## resulting matrix z has:
-# rownames(z) <- setunion(rownames(x), rownames(y)) and 
+# rownames(z) <- setunion(rownames(x), rownames(y)) and
 # rownames(z) <- setunion(rownames(x), rownames(y)) and
 # z[rownames(x), colnames(x)] <- x and z[rownames(y), colnames(y)] <- y, and
 # z[i, j] <- NA for all i,j not in x nor y.
@@ -251,7 +251,7 @@ merge_matrix <- function(x, y)
   colnames_x <- colnames(x)
   rownames_y <- rownames(y)
   colnames_y <- colnames(y)
-  
+
   if (is.null(rownames_x) || is.null(colnames_x))
     return(y)
 
@@ -260,21 +260,21 @@ merge_matrix <- function(x, y)
 
   row_union <- union(rownames_x, rownames_y)
   col_union <- union(colnames_x, colnames_y)
-  
+
   z <- matrix(NA_real_, nrow = length(row_union), ncol = length(col_union),
               dimnames = list(row_union, col_union))
-  
+
   # Map row and column names to indices for efficient assignment.
   row_idx_x <- chmatch(rownames_x, row_union)
   col_idx_x <- chmatch(colnames_x, col_union)
   row_idx_y <- chmatch(rownames_y, row_union)
   col_idx_y <- chmatch(colnames_y, col_union)
-  
+
   z[row_idx_x, col_idx_x] <- x
   z[row_idx_y, col_idx_y] <- y
 
   # There must be a non-NA entry for each instance.
-  irace_assert(all(rowAnys(!is.na(z))))
+  irace_assert(all(rowAnyNotNAs(z)))
   return(z)
 }
 
@@ -289,7 +289,7 @@ merge_matrix <- function(x, y)
 ## print(loadedNamespaces())
 ## try(print(as.list(get(".__NAMESPACE__.", envir = asNamespace("irace", base.OK = FALSE),
 ##                       inherits = FALSE))$path))
-## try(print(path.package("irace")))     
+## try(print(path.package("irace")))
 #
 # That is, neither R_LIBS, .libPaths or whether library was called with lib.loc
 # will affect the slaves. It also happens before we can set those variables on
@@ -303,7 +303,7 @@ mpiInit <- function(nslaves, debugLevel = 0)
     if (! suppressPackageStartupMessages
         (requireNamespace("Rmpi", quietly = TRUE)))
       irace_error("The 'Rmpi' package is required for using MPI")
-    
+
     # When R exits, finalize MPI.
     reg.finalizer(environment(Rmpi::mpi.exit), function(e) {
       # Rmpi already prints a message, so we don't need this.
@@ -379,14 +379,14 @@ concordance <- function(data)
   #PARAMETER <- k - 1
   #pvalue <- pchisq(PARAMETER, df = PARAMETER, lower.tail = FALSE)
   list(kendall.w = W, spearman.rho = rho)
-} 
+}
 
 ## FIXME: Move this to the manual page.
 ## FIXME: Reference! Explain a bit what is computed!
-# Calculates Performance similarity of instances  
+# Calculates Performance similarity of instances
 #       data: matrix with the data, instances in rows (judges), configurations
 #             in columns.
-# Returns: variance value [0,1], where 0 is a homogeneous set of instances and 
+# Returns: variance value [0,1], where 0 is a homogeneous set of instances and
 #          1 is a heterogeneous set.
 # FIXME: How to handle missing values?
 dataVariance <- function(data)
@@ -395,20 +395,20 @@ dataVariance <- function(data)
   # LESLIE: should we rank data??
   # MANUEL: We should add the option.
   if (nrow(data) <= 1L || ncol(data) <= 1L) return(NA_real_)
-  
+
   # Normalize
   #datamin <- apply(data,1,min,na.rm=TRUE)
   #datamax <- apply(data,1,max,na.rm=TRUE)
-  #normdata <- (data - datamin) / (datamax-datamin) 
-  
+  #normdata <- (data - datamin) / (datamax-datamin)
+
   #standardize
   meandata <- rowMeans2(data, useNames=FALSE)
   stddata  <- rowSds(data, useNames=FALSE)
   # If stddata == 0, then data is constant and it doesn't matter as long as it
   # is non-zero.
   stddata[stddata == 0] <- 1
-  zscoredata <- (data - meandata) / stddata 
-  
+  zscoredata <- (data - meandata) / stddata
+
   # FIXME: We could log-tranform if needed
   # Variance of configurations
   mean(colVars(zscoredata))
@@ -454,7 +454,7 @@ runcommand <- function(command, args, id, debugLevel, timeout = 0)
   list(output = output, error = NULL)
 }
 
-# Safe sampling of vector: 
+# Safe sampling of vector:
 resample <- function(x, ...) x[sample.int(length(x), ...)]
 
 # Rounds up the number x to the specified number of decimal places 'digits'.
@@ -466,7 +466,7 @@ ceiling_digits <- function(x, digits)
    int_div * multiple + ceiling(div - int_div) * multiple
 }
 
-# ceil.decimal <- function(x, d) { 
+# ceil.decimal <- function(x, d) {
   # # get the significant digits in the integer part.
   # ssd <- x * 10^(d)
   # # get the non significant digits
@@ -492,9 +492,9 @@ is.sub.path <- function(x, dir, n = nchar(dir)) substr(x, 1L, n) == dir
 #' This function may be useful if you are manually editing the log data generated by a run of \pkg{irace}.
 #'
 #' @param iraceResults `list()`\cr Object created by \pkg{irace} and typically saved in the log file `irace.Rdata`.
-#' 
+#'
 #' @param logfile `character(1)`\cr Filename to save `iraceResults`. Usually, this is given by `scenario$logFile`. If `NULL` or `""`, no data is saved.
-#' 
+#'
 #' @seealso [read_logfile()]
 #' @concept analysis
 save_irace_logfile <- function(iraceResults, logfile)
@@ -520,7 +520,7 @@ valid_iracelog <- function(x)
 #' @param filename Filename that contains the log file saved by irace. Example: `irace.Rdata`.
 #'
 #' @param name Optional argument that allows overriding the default name of the object in the file.
-#' 
+#'
 #' @return (`list()`)
 #' @examples
 #' irace_results <- read_logfile(system.file("exdata/irace-acotsp.Rdata", package="irace",
@@ -537,7 +537,7 @@ read_logfile <- function(filename, name = "iraceResults")
 
   if (file.access(filename, mode = 4) != 0)
     irace_error("read_logfile: Cannot read file '", filename, "'.")
-  
+
   load(filename)
   iraceResults <- get0(name, inherits=FALSE)
   if (!valid_iracelog(iraceResults))
@@ -615,3 +615,9 @@ runif_integer <- function(size)
 unlist_element <- function(x, element)
   unlist(lapply(x, "[[", element, exact=TRUE), recursive=FALSE, use.names=FALSE)
 
+# Extensions of matrixStats
+rowAnyNotNAs <- function(x, rows = NULL, cols = NULL, ..., useNames = FALSE)
+  !rowAlls(x, rows = rows, cols = cols, value = NA, ..., useNames = useNames)
+
+colAnyNotNAs <- function(x, rows = NULL, cols = NULL, ..., useNames = FALSE)
+  !colAlls(x, rows = rows, cols = cols, value = NA, ..., useNames = useNames)
