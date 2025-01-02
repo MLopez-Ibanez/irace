@@ -11,7 +11,7 @@ cap_irace <- function(..., targetRunner = force(target_runner_capping_xy))
   parameters_table <- '
    x "" r (0, 1.00)
    y "" r (0, 1.00)'
-  
+
   parameters <- readParameters(text = parameters_table)
   logFile <- withr::local_tempfile(fileext=".Rdata")
 
@@ -26,9 +26,9 @@ cap_irace <- function(..., targetRunner = force(target_runner_capping_xy))
   scenario <- modifyList(scenario, args)
   scenario <- checkScenario (scenario)
   confs <- irace(scenario = scenario)
-  best.conf <- getFinalElites(scenario$logFile, n = 1L, drop.metadata = TRUE)
+  best_conf <- getFinalElites(scenario$logFile, n = 1L, drop.metadata = TRUE)
   expect_identical(removeConfigurationsMetaData(confs[1L, , drop = FALSE]),
-                   best.conf)
+                   best_conf)
   invisible(read_logfile(scenario$logFile))
 }
 
@@ -54,7 +54,7 @@ time_irace <- function(...)
                    parameters = parameters)
   scenario <- modifyList(scenario, args)
   scenario <- checkScenario (scenario)
-  
+
   confs <- irace(scenario = scenario)
   best.conf <- getFinalElites(scenario$logFile, n = 1L, drop.metadata = TRUE)
   expect_identical(removeConfigurationsMetaData(confs[1L, , drop = FALSE]),

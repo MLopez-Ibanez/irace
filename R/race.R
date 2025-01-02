@@ -635,8 +635,11 @@ elitist_race <- function(race_state, maxExp,
 
   # Create the instance list according to the algorithm selected.
   if (elitist) {
+    # FIXME: we should sample taking into account the block-size, so we sample blocks, not instances.
+    irace_assert((race_state$next_instance - 1L) %% blockSize == 0,
+      eval_after={cat("next_instance:", race_state$next_instance, ", block_size:", blockSize, "\n")})
     race_instances <- elitist_init_instances(race_state, deterministic = scenario$deterministic,
-      sampleInstances = scenario$sampleInstances, elitist_new_instances = elitist_new_instances, block_size = blockSize)
+      sampleInstances = scenario$sampleInstances, elitist_new_instances = elitist_new_instances)
     # It may be reduced further by elitist_init_instances()
     elitist_new_instances <- min(elitist_new_instances, race_state$elitist_new_instances)
     all_elite_instances_evaluated <- function() {
