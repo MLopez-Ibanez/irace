@@ -208,7 +208,7 @@
     "default": 1,
     "description": "Number of elite configurations returned by irace that will be tested if test instances are provided.",
     "vignettes": "  Number of elite configurations returned by irace that will be tested if test instances are provided. For more information about the testing, see \\autoref{sec:testing}.",
-    "section": "Testing"   
+    "section": "Testing"
   },
   {
     "name": "testIterationElites",
@@ -247,7 +247,7 @@
     "short": "",
     "long": "--block-size",
     "default": 1,
-    "description": "Number of training instances, that make up a `block' in \\code{trainInstancesFile}. Elimination of configurations will only be performed after evaluating a complete block and never in the middle of a block. Each block typically contains one instance from each instance class (type or family) and the block size is the number of classes.",
+    "description": "Number of training instances, that make up a `block' in \\code{trainInstancesFile}. Elimination of configurations will only be performed after evaluating a complete block and never in the middle of a block. Each block typically contains one instance from each instance class (type or family) and the block size is the number of classes. The value of \\code{blockSize} will multiply \\code{firstTest}, \\code{eachTest} and \\code{elitistNewInstances}.",
     "section": "Training instances"
   },
   {

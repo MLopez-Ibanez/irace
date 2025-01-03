@@ -40,7 +40,7 @@ RaceState <- R6Class("RaceState", lock_class = TRUE,
      irace_assert(new || !recover)
      if (new) {
        # elitist_new_instances must be a multiple of blockSize.
-       self$elitist_new_instances <- round_to_next_multiple(scenario$elitistNewInstances, scenario$blockSize)
+       self$elitist_new_instances <- scenario$elitistNewInstances * scenario$blockSize
        # We cannot recover if we did not get to initialize self$rng.
        if (recover && !is.null(self$rng)) {
          restore_random_seed(self$rng)

@@ -214,8 +214,9 @@ computeNbConfigurations <- function(currentBudget, indexIteration,
   # been executed on all nOldInstances. Thus, we need to pass explicitly the
   # budget that we save (that is, number of entries that are not NA).
   savedBudget <- nElites *  nOldInstances
-  n <- max (mu + blockSize * eachTest * min(5L, indexIteration),
-            round_to_next_multiple(nOldInstances + newInstances, blockSize * eachTest))
+  eachTest <- eachTest * blockSize
+  n <- max (mu + eachTest  * min(5L, indexIteration),
+            round_to_next_multiple(nOldInstances + newInstances, eachTest))
   min (floor ((currentBudget + savedBudget) / n), maxConfigurations)
 }
 
@@ -229,7 +230,7 @@ computeMinimumBudget <- function(scenario, minSurvival, nbIterations, elitist_ne
 {
   blockSize <- scenario$blockSize
   eachTest <- blockSize * scenario$eachTest
-  Tnew <- elitist_new_instances
+  Tnew <- elitist_new_instances # This is already multiplied by blockSize.
   mu <- scenario$mu
 
   # This is computed from the default formulas as follows:
@@ -948,8 +949,8 @@ irace_run <- function(scenario)
       }
       # If still not enough budget, then try to do at least one test.
       if (nbConfigurations <= minSurvival) {
-        nbConfigurations <- computeNbConfigurations(currentBudget, indexIteration = 1,
-          mu = 1, eachTest = scenario$eachTest, blockSize = blockSize,
+        nbConfigurations <- computeNbConfigurations(currentBudget, indexIteration = 1L,
+          mu = 1L, eachTest = scenario$eachTest, blockSize = blockSize,
           nElites = nrow(elite_configurations),
           nOldInstances = nrow(iraceResults$experiments),
           newInstances = 0L)

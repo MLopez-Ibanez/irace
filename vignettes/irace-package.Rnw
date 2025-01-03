@@ -1353,7 +1353,7 @@ specify where to find the training instances.
 If you only set the value of \parameter{trainInstancesDir} (e.g., to  \path{./Instances}),  \irace will consider all files within that directory as training instances.
 
 Otherwise, the value of \parameter{trainInstancesFile} may specify a text
-file. The format of this file is one instance per line. Within each line, elements separated by white-space will be parsed as separate arguments to be supplied to \parameter{targetRunner}. This allows defining instance-specific parameter settings. Quoted strings will be parsed as a single argument. 
+file. The format of this file is one instance per line. Within each line, elements separated by white-space will be parsed as separate arguments to be supplied to \parameter{targetRunner}. This allows defining instance-specific parameter settings. Quoted strings will be parsed as a single argument.
 %
 The following example shows a training instance file for the \ACOTSP scenario:
 
@@ -2529,12 +2529,13 @@ instances, while they perform poorly for a different subset.
 
 When facing a heterogeneous scenario, the first question should be whether the
 objective of tuning is to find configurations that perform reasonably well over
-all instances, even if that configuration is not the best ones in any particular instance (a generalist). If this is
-not the goal, then it would be better to partition instances into more similar
-subsets and execute \irace separately on each subset. This will lead to a
-portfolio of algorithm configurations, one for each subset, and algorithm
-selection techniques can be used to select the best configuration from the
-portfolio when facing a new instance.
+all instances, even if that configuration is not the best ones in any
+particular instance (a generalist). If this is not the goal, then it would be
+better to partition instances into more similar subsets and execute \irace
+separately on each subset. This will lead to a portfolio of algorithm
+configurations, one for each subset, and algorithm selection techniques can be
+used to select the best configuration from the portfolio when facing a new
+instance.
 
 To make sure \irace is not misled by results on few instances, it may be useful
 to increase the number of instances executed before doing a statistical test
@@ -2555,10 +2556,11 @@ create ``blocks'' of instances in \parameter{trainInstancesFile}, where each
 block should contain one instance from each class.  Then set the option
 \parameter{blockSize} to the number of classes within each block, so that
 \irace will always see a complete block of instances before eliminating
-configurations. The value of \parameter{blockSize} will multiply the effective
-values of \parameter{firstTest} and \parameter{eachTest}. Randomly sampling
-instances (\parameter{sampleInstances}\code{=1}) will randomly sample the
-blocks but not break the blocks.
+configurations. The value of \parameter{blockSize} will multiply the values of
+\parameter{firstTest}, \parameter{eachTest} and
+\parameter{elitistNewInstances}. Randomly sampling instances
+(\parameter{sampleInstances}\code{=1}) will randomly sample the blocks but not
+break the blocks.
 
 While executing \irace, the homogeneity of the scenario can be observed by
 examining the values of Spearman's rank correlation coefficient and Kendall's
@@ -2782,7 +2784,7 @@ post-selection is not supported when the budget is measured in runtime
 (\parameter{maxTime}. The automatic post-selection can be disabled using the
 option \parameter{postselection}.
 
-It is also possible to manually run a post-selection race after completing a run of \irace using the R function \iracefun{psRace}. 
+It is also possible to manually run a post-selection race after completing a run of \irace using the R function \iracefun{psRace}.
 
 <<postsel, prompt=FALSE, eval=FALSE>>=
 # Execute all elite configurations in the iterations

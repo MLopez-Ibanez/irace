@@ -91,7 +91,7 @@ the FAQ section in the \href{https://cran.r-project.org/package=irace/vignettes/
 }
 \examples{
 \dontrun{
-# In general, there are three steps: 
+# In general, there are three steps:
 scenario <- readScenario(filename = "scenario.txt")
 irace(scenario = scenario)
 }
@@ -121,7 +121,7 @@ f_rastrigin <- function (x) {
 
 ## We generate 20 instances (in this case, weights):
 weights <- rnorm(20, mean = 0.9, sd = 0.02)
-  
+
 ## On this set of instances, we are interested in optimizing two
 ## parameters of the SANN algorithm: tmax and temp. We setup the
 ## parameter space as follows:
@@ -140,7 +140,7 @@ target_runner <- function(experiment, scenario)
 {
     instance <- experiment$instance
     configuration <- experiment$configuration
-  
+
     D <- 3
     par <- runif(D, min=-1, max=1)
     fn <- function(x) {

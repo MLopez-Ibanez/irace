@@ -3,7 +3,7 @@
 #' \code{psRace} performs a post-selection race of a set of configurations.
 #'
 #' @inheritParams has_testing_data
-#' 
+#'
 #' @param max_experiments `numeric(1)`\cr Number of experiments for the
 #'   post-selection race. If it is equal to or smaller than 1, then it is a
 #'   fraction of the total budget given by
@@ -48,7 +48,7 @@ psRace <- function(iraceResults, max_experiments, conf_ids = NULL, iteration_eli
   scenario <- iraceResults$scenario
   if (!is.null(psrace_logFile))
     scenario$logFile <- psrace_logFile
-  
+
   race_state <- iraceResults$state
   race_state$initialize(scenario, new = FALSE) # Restores the random seed
   if (max_experiments <= 0) stop("'max_experiments' must be positive.")
@@ -122,7 +122,7 @@ psRace <- function(iraceResults, max_experiments, conf_ids = NULL, iteration_eli
       }
       if (!scenario$deterministic || n_done < length(scenario$instances)) {
         # We want to evaluate in at least n_new instances more.
-        n_new <- max(scenario$blockSize, scenario$eachTest)
+        n_new <- scenario$eachTest * scenario$blockSize
         n_confs <- floor(max_experiments / n_new)
         # If we have n_confs that have been evaluated in all instances, select those.
         if (n_confs > 1L && sum(conf_needs == 0L) >= n_confs) {
@@ -152,7 +152,7 @@ psRace <- function(iraceResults, max_experiments, conf_ids = NULL, iteration_eli
             cat("sum(is.na(left)): ", sum(is.na(left)), "\n")
             save(iraceResults, file="bug-conf_ids.Rdata")
           })
-        
+
         if (any(left >= 0L)) { # We have enough budget to evaluate on a new instance.
           # Select the combination that will allow to evaluate the most configurations.
           combs <- combs[left >= 0]
@@ -224,7 +224,7 @@ psRace <- function(iraceResults, max_experiments, conf_ids = NULL, iteration_eli
       allElites <- iraceResults$allElites
       return(allElites[[length(allElites)]])
     }
-      
+
   } else if (length(conf_ids) <= 1L) {
     irace_error ("The number configurations provided should be larger than 1.")
   } else if (length(race_state$rejected_ids) && any(conf_ids %in% race_state$rejected_ids)) {

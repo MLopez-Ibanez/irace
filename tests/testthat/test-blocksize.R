@@ -38,7 +38,7 @@ target_runner_time <- function(experiment, scenario)
   tmax <-  configuration[["tmax"]]
   temp <-  configuration[["temp"]]
   time <- max(1, abs(rnorm(1, mean=(tmax+temp)/10)))
-  list(cost = time, time = time, call = toString(experiment))
+  list(cost = time, time = time)
 }
 
 time_irace <- function(...)
@@ -56,9 +56,9 @@ time_irace <- function(...)
   scenario <- checkScenario (scenario)
 
   confs <- irace(scenario = scenario)
-  best.conf <- getFinalElites(scenario$logFile, n = 1L, drop.metadata = TRUE)
+  best_conf <- getFinalElites(scenario$logFile, n = 1L, drop.metadata = TRUE)
   expect_identical(removeConfigurationsMetaData(confs[1L, , drop = FALSE]),
-                   best.conf)
+                   best_conf)
   invisible(read_logfile(scenario$logFile))
 }
 
@@ -85,11 +85,11 @@ test_that("blockSize maxTime=1000", {
   check_blocksize(time_irace(maxTime = 1000))
 })
 
-test_that("blockSize maxTime=1000 large newInstances", {
+test_that("blockSize maxTime=1000 elitistNewInstances", {
   skip_on_cran()
   generate_set_seed()
   check_blocksize(time_irace(maxTime = 1000, instances = letters[1:9],
-                             elitistNewInstances = 6, elitistLimit = 2))
+                             elitistNewInstances = 2, elitistLimit = 2))
 })
 
 }) # withr::with_output_sink()

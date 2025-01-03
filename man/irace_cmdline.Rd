@@ -153,7 +153,9 @@ List of command-line options:
                          block and never in the middle of a block. Each block
                          typically contains one instance from each instance
                          class (type or family) and the block size is the
-                         number of classes. Default: 1.
+                         number of classes. The value of `blockSize` will
+                         multiply `firstTest`, `eachTest` and
+                         `elitistNewInstances`. Default: 1.
    --each-test           Number of instances evaluated between elimination
                          tests. Default: 1.
    --target-runner       Executable called for each configuration that executes

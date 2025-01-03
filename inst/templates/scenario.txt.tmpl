@@ -65,7 +65,9 @@
 ## `trainInstancesFile`. Elimination of configurations will only be performed
 ## after evaluating a complete block and never in the middle of a block. Each
 ## block typically contains one instance from each instance class (type or
-## family) and the block size is the number of classes.
+## family) and the block size is the number of classes. The value of
+## `blockSize` will multiply `firstTest`, `eachTest` and
+## `elitistNewInstances`.
 # blockSize = 1
 
 ## Number of instances evaluated between elimination tests.
@@ -244,4 +246,3 @@
 
 ## END of scenario file
 ############################################################################
-
