@@ -147,7 +147,7 @@ List of command-line options:
    --first-test          Number of instances evaluated before the first
                          elimination test. It must be a multiple of `eachTest`.
                          Default: 5.
-   --block-size          Number of training instances, that make up a `block'
+   --block-size          Number of training instances, that make up a 'block'
                          in `trainInstancesFile`. Elimination of configurations
                          will only be performed after evaluating a complete
                          block and never in the middle of a block. Each block

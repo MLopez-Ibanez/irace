@@ -117,7 +117,7 @@
     "long": "--log-file",
     "default": ".\/irace.Rdata",
     "description": "File to save tuning results as an R dataset, either absolute path or relative to execDir.",
-    "vignettes": "  File to save tuning results as an \\aR dataset. The provided path must be either an absolute path or relative to \\parameter{execDir}. See \\autoref{sec:output r} for details on the format of the \\aR dataset.",
+    "vignettes": "File to save tuning results as an \\aR dataset. The provided path must be either an absolute path or relative to \\parameter{execDir}. See \\autoref{sec:output r} for details on the format of the \\aR dataset.",
     "section": "General options"
   },
   {
@@ -177,7 +177,6 @@
     "long": "--test-instances-dir",
     "default": "",
     "description": "Directory where testing instances are located, either absolute or relative to current directory.",
-    "vignettes": "Directory where testing instances are located, either absolute or relative to the current directory.",
     "section": "Testing"
   },
   {
@@ -187,7 +186,6 @@
     "long": "--test-instances-file",
     "default": "",
     "description": "File containing a list of test instances and optionally additional parameters for them.",
-    "vignettes": "File containing a list of test instances and, optionally, additional parameters for them.",
     "section": "Testing"
   },
   {
@@ -207,7 +205,7 @@
     "long": "--test-num-elites",
     "default": 1,
     "description": "Number of elite configurations returned by irace that will be tested if test instances are provided.",
-    "vignettes": "  Number of elite configurations returned by irace that will be tested if test instances are provided. For more information about the testing, see \\autoref{sec:testing}.",
+    "vignettes": "Number of elite configurations returned by irace that will be tested if test instances are provided. For more information about the testing, see \\autoref{sec:testing}.",
     "section": "Testing"
   },
   {
@@ -217,7 +215,6 @@
     "long": "--test-iteration-elites",
     "default": 0,
     "description": "Enable\/disable testing the elite configurations found at each iteration.",
-    "vignettes": "Enable\/disable testing the elite configurations found at each iteration.",
     "section": "Testing"
   },
   {
@@ -225,8 +222,8 @@
     "type": "s",
     "short": "",
     "long": "--test-type",
-      "default": "",
-      "domain": "F-test,t-test,t-test-holm,t-test-bonferroni",
+    "default": "",
+    "domain": "F-test,t-test,t-test-holm,t-test-bonferroni",
     "description": "Statistical test used for elimination. The default value selects \\code{t-test} if \\code{capping} is enabled or \\code{F-test}, otherwise. Valid values are: F-test (Friedman test), t-test (pairwise t-tests with no correction), t-test-bonferroni (t-test with Bonferroni's correction for multiple comparisons), t-test-holm (t-test with Holm's correction for multiple comparisons).",
     "vignettes": "Specifies the statistical test used for elimination:\n\\begin{itemize}\n\\item[] \\code{F-test} (Friedman test)\n\\item[] \\code{t-test} (pairwise t-tests with no correction)\n\\item[] \\code{t-test-bonferroni} (t-test with Bonferroni's correction for multiple comparisons)\n\\item[] \\code{t-test-holm} (t-test with Holm's correction for multiple comparisons).\n\\end{itemize}\n We recommend to not use corrections for multiple comparisons because the test typically becomes too strict and the search stagnates. \nSee \\autoref{sec:stat test} for details about choosing the statistical test most appropriate for your scenario.\n\\begin{xwarningbox}\n The default setting of \\parameter{testType} is \\code{F-test} unless the \\parameter{capping} option is enabled in which case, the default setting is \\code{t-test}.\n\\end{xwarningbox}",
       "section": "Statistical test"
@@ -238,7 +235,7 @@
     "long": "--first-test",
     "default": 5,
     "description": "Number of instances evaluated before the first elimination test. It must be a multiple of \\code{eachTest}.",
-    "vignettes": " Specifies how many instances are evaluated before the first elimination test.\n\\begin{xwarningbox}\nThe value of \\parameter{firstTest} must be a multiple of \\parameter{eachTest}.\n\\end{xwarningbox}",
+    "vignettes": "Specifies how many instances are evaluated before the first elimination test.\n\\begin{xwarningbox}\nThe value of \\parameter{firstTest} must be a multiple of \\parameter{eachTest}.\n\\end{xwarningbox}",
     "section": "Statistical test"
   },
   {
@@ -247,7 +244,7 @@
     "short": "",
     "long": "--block-size",
     "default": 1,
-    "description": "Number of training instances, that make up a `block' in \\code{trainInstancesFile}. Elimination of configurations will only be performed after evaluating a complete block and never in the middle of a block. Each block typically contains one instance from each instance class (type or family) and the block size is the number of classes. The value of \\code{blockSize} will multiply \\code{firstTest}, \\code{eachTest} and \\code{elitistNewInstances}.",
+    "description": "Number of training instances, that make up a 'block' in \\parameter{trainInstancesFile}. Elimination of configurations will only be performed after evaluating a complete block and never in the middle of a block. Each block typically contains one instance from each instance class (type or family) and the block size is the number of classes. The value of \\parameter{blockSize} will multiply \\parameter{firstTest}, \\parameter{eachTest} and \\parameter{elitistNewInstances}.",
     "section": "Training instances"
   },
   {
@@ -276,9 +273,8 @@
     "short": "",
     "long": "--target-runner-launcher",
     "default": "",
-    "vignettes": "Executable that will be used to launch the target runner, when \\parameter{targetRunner} cannot be executed directly (e.g., a Python script in Windows).",
-    "section": "Target algorithm execution",
-    "description": "Executable that will be used to launch the target runner, when \\code{targetRunner} cannot be executed directly (e.g., a Python script in Windows)."
+    "description": "Executable that will be used to launch the target runner, when \\parameter{targetRunner} cannot be executed directly (e.g., a Python script in Windows).",
+    "section": "Target algorithm execution"
   },
   {
     "name": "targetCmdline",
@@ -296,9 +292,8 @@
     "short": "",
     "long": "--target-runner-retries",
     "default": 0,
-   "vignettes": "Number of times to retry a call to \\parameter{targetRunner} if the call failed.",
-    "section": "Target algorithm execution",
-    "description": "Number of times to retry a call to \\code{targetRunner} if the call failed."
+    "description": "Number of times to retry a call to \\parameter{targetRunner} if the call failed.",
+    "section": "Target algorithm execution"
   },
   {
     "name": "targetRunnerTimeout",
@@ -307,8 +302,7 @@
     "long": "--target-runner-timeout",
     "default": 0,
     "section": "Target algorithm execution",
-    "vignettes": "Timeout in seconds of any \\parameter{targetRunner} call (only applies to \\code{target-runner} executables not to R functions), ignored if 0.",
-    "description": "Timeout in seconds of any \\code{targetRunner} call (only applies to \\code{target-runner} executables not to R functions), ignored if 0."
+    "description": "Timeout in seconds of any \\parameter{targetRunner} call (only applies to \\code{target-runner} executables not to R functions), ignored if 0."
   },
   {
     "name": "targetRunnerData",
@@ -316,9 +310,8 @@
     "short": "",
     "long": "",
     "default": "",
-    "vignettes": "Optional data passed to \\parameter{targetRunner}. This is ignored by the default \\parameter{targetRunner} function, but it may be used by custom \\parameter{targetRunner} functions to pass persistent data around.",
-    "section": "Target algorithm execution",
-    "description": "Optional data passed to \\code{targetRunner}. This is ignored by the default \\code{targetRunner} function, but it may be used by custom \\code{targetRunner} functions to pass persistent data around."
+    "description": "Optional data passed to \\parameter{targetRunner}. This is ignored by the default \\parameter{targetRunner} function, but it may be used by custom \\parameter{targetRunner} functions to pass persistent data around.",
+    "section": "Target algorithm execution"
   },
   {
     "name": "targetRunnerParallel",
@@ -326,7 +319,7 @@
     "short": "",
     "long": "",
     "default": "",
-    "vignettes": " Optional \\aR function to provide custom parallelization of \\parameter{targetRunner}. See \\autoref{sec:parallel} for more information.",
+    "vignettes": "Optional \\aR function to provide custom parallelization of \\parameter{targetRunner}. See \\autoref{sec:parallel} for more information.",
     "section": "Target algorithm execution",
     "description": "Optional R function to provide custom parallelization of \\code{targetRunner}."
   },
@@ -347,7 +340,7 @@
     "long": "--deterministic",
     "default": 0,
     "description": "If the target algorithm is deterministic, configurations will be evaluated only once per instance.",
-    "vignettes": "  Enable\/disable deterministic target algorithm mode. If the target algorithm is deterministic, configurations will be evaluated only once per instance. See \\autoref{sec:training} for more information.\n\\begin{xwarningbox}\n If the number of instances provided is less than the value specified for the option \\parameter{firstTest}, no statistical test will be performed.\n\\end{xwarningbox}",
+    "vignettes": "Enable\/disable deterministic target algorithm mode. If the target algorithm is deterministic, configurations will be evaluated only once per instance. See \\autoref{sec:training} for more information.\n\\begin{xwarningbox}\n If the number of instances provided is less than the value specified for the option \\parameter{firstTest}, no statistical test will be performed.\n\\end{xwarningbox}",
     "section": "Target algorithm execution"
   },
   {
@@ -397,7 +390,6 @@
     "long": "--min-measurable-time",
     "default": 0.01,
     "description": "Minimum time unit that is still (significantly) measureable.",
-    "vignettes": "Minimum time unit that is still (significantly) measureable.",
     "section": "Tuning budget"
   },
   {
@@ -417,7 +409,7 @@
     "long": "--load-balancing",
     "default": 1,
     "description": "Enable\/disable load-balancing when executing experiments in parallel. Load-balancing makes better use of computing resources, but increases communication overhead. If this overhead is large, disabling load-balancing may be faster.",
-    "vignettes": "  Enable\/disable load-balancing when executing experiments in parallel. Load-balancing makes better use of computing resources, but increases communication overhead. If this overhead is large, disabling load-balancing may be faster. See \\autoref{sec:parallel}.",
+    "vignettes": "Enable\/disable load-balancing when executing experiments in parallel. Load-balancing makes better use of computing resources, but increases communication overhead. If this overhead is large, disabling load-balancing may be faster. See \\autoref{sec:parallel}.",
     "section": "Target algorithm execution"
   },
   {
@@ -427,7 +419,7 @@
     "long": "--mpi",
     "default": 0,
     "description": "Enable\/disable MPI. Use \\code{Rmpi} to execute \\code{targetRunner} in parallel (parameter \\code{parallel} is the number of slaves).",
-    "vignettes": "  Enable\/disable use of \\pkg{Rmpi} to execute the \\parameter{targetRunner} in parallel using MPI protocol. When \\parameter{mpi} is enabled, the option \\parameter{parallel} is the number of slave nodes. See \\autoref{sec:parallel}.",
+    "vignettes": "Enable\/disable use of \\pkg{Rmpi} to execute the \\parameter{targetRunner} in parallel using MPI protocol. When \\parameter{mpi} is enabled, the option \\parameter{parallel} is the number of slave nodes. See \\autoref{sec:parallel}.",
     "section": "Target algorithm execution"
   },
   {
@@ -437,7 +429,7 @@
     "long": "--batchmode",
     "default": 0,
     "domain": "sge,pbs,torque,slurm,htcondor",
-    "vignettes": "  Specify how irace waits for jobs to finish when \\parameter{targetRunner} submits jobs to a batch cluster: \\code{sge}, \\code{pbs}, \\code{torque}, \\code{slurm} or \\code{htcondor} (\\parameter{targetRunner} must submit jobs to the cluster using. for example, \\code{qsub}). See \\autoref{sec:parallel}.",
+    "vignettes": "Specify how irace waits for jobs to finish when \\parameter{targetRunner} submits jobs to a batch cluster: \\code{sge}, \\code{pbs}, \\code{torque}, \\code{slurm} or \\code{htcondor} (\\parameter{targetRunner} must submit jobs to the cluster using. for example, \\code{qsub}). See \\autoref{sec:parallel}.",
     "section": "Target algorithm execution",
     "description": "Specify how irace waits for jobs to finish when \\code{targetRunner} submits jobs to a batch cluster: sge, pbs, torque, slurm or htcondor. \\code{targetRunner} must submit jobs to the cluster using, for example, \\code{qsub}."
   },
@@ -477,7 +469,7 @@
     "long": "--soft-restart",
     "default": 1,
     "description": "Enable\/disable the soft restart strategy that avoids premature convergence of the probabilistic model.",
-    "vignettes": "  Enable\/disable the soft-restart strategy that avoids premature convergence of the probabilistic model. When a sampled configuration is \\emph{similar} to its parent configuration, the probabilistic model of these configurations is soft restarted. The soft-restart mechanism is explained in the \\irace paper~\\citep{LopDubPerStuBir2016irace}. The similarity of categorical and ordinal parameters is given by the hamming distance, and the option \\parameter{softRestartThreshold} defines the similarity of numerical parameters.",
+    "vignettes": "Enable\/disable the soft-restart strategy that avoids premature convergence of the probabilistic model. When a sampled configuration is \\emph{similar} to its parent configuration, the probabilistic model of these configurations is soft restarted. The soft-restart mechanism is explained in the \\irace paper~\\citep{LopDubPerStuBir2016irace}. The similarity of categorical and ordinal parameters is given by the hamming distance, and the option \\parameter{softRestartThreshold} defines the similarity of numerical parameters.",
     "section": "Internal \\irace options"
   },
   {
@@ -486,9 +478,8 @@
     "short": "",
     "long": "--soft-restart-threshold",
     "default": 0.0001,
-    "vignettes": "Soft restart threshold value for numerical parameters.",
-      "section": "Internal \\irace options",
-      "description": "Soft restart threshold value for numerical parameters."
+    "description": "Soft restart threshold value for numerical parameters.",
+    "section": "Internal \\irace options"
   },
   {
     "name": "elitist",
@@ -507,7 +498,7 @@
     "long": "--elitist-new-instances",
     "default": 1,
     "description": "Number of instances added to the execution list before previous instances in elitist irace.",
-    "vignettes": " Number of new instances added to each race before evaluating instances from previous races (only for elitist \\irace).\n \\begin{xwarningbox}\n \n If \\parameter{deterministic} is \\code{TRUE} then the number of \\parameter{elitistNewInstances} will be reduced or set to \\code{0} once all instances have been evaluated.\n\\end{xwarningbox}",
+    "vignettes": "Number of new instances added to each race before evaluating instances from previous races (only for elitist \\irace).\n \\begin{xwarningbox}\n \n If \\parameter{deterministic} is \\code{TRUE} then the number of \\parameter{elitistNewInstances} will be reduced or set to \\code{0} once all instances have been evaluated.\n\\end{xwarningbox}",
     "section": "Elitist \\irace"
   },
   {
@@ -517,7 +508,7 @@
     "long": "--elitist-limit",
     "default": 2,
     "description": "In elitist irace, maximum number per race of elimination tests that do not eliminate a configuration. Use 0 for no limit.",
-    "vignettes": "  Maximum number of statistical tests performed without successful elimination after all instances from the previous race have been evaluated. If the limit is reached, the current race is stopped. Only valid for elitist \\irace. Use \\code{0} to disable the limit.",
+    "vignettes": "Maximum number of statistical tests performed without successful elimination after all instances from the previous race have been evaluated. If the limit is reached, the current race is stopped. Only valid for elitist \\irace. Use \\code{0} to disable the limit.",
     "section": "Elitist \\irace"
   },
   {
@@ -548,7 +539,7 @@
     "default": "median",
     "domain": "median,mean,worst,best",
     "description": "Measure used to obtain the execution bound from the performance of the elite configurations: median, mean, worst, best.",
-    "vignettes": " Specifies the measure used to define the execution bound:\n\\begin{itemize}\n\\item[] \\code{median} (the median of the performance of the elite configurations)\n\\item[] \\code{mean} (the mean of the performance of the elite configurations)\n\\item[] \\code{best} (the best performance of the elite configurations)\n\\item[] \\code{worst} (the worst performance of the elite configurations).\n\\end{itemize}",
+    "vignettes": "Specifies the measure used to define the execution bound:\n\\begin{itemize}\n\\item[] \\code{median} (the median of the performance of the elite configurations)\n\\item[] \\code{mean} (the mean of the performance of the elite configurations)\n\\item[] \\code{best} (the best performance of the elite configurations)\n\\item[] \\code{worst} (the worst performance of the elite configurations).\n\\end{itemize}",
     "section": "Adaptive capping",
     "man": "Measure used to obtain the execution bound from the performance of the elite configurations.\\itemize{\\item median: Median performance of the elite configurations.\\item mean: Mean performance of the elite configurations.\\item best: Best performance of the elite configurations.\\item worst: Worst performance of the elite configurations.}"
   },
@@ -570,8 +561,7 @@
     "short": "",
     "long": "--bound-max",
     "default": 0,
-    "description": "Maximum execution bound for \\code{targetRunner}. It must be specified when capping is enabled.",
-      "vignettes": "Maximum execution bound for \\code{targetRunner}. It must be specified when capping is enabled.",
+    "description": "Maximum execution bound for \\parameter{targetRunner}. It must be specified when capping is enabled.",
     "section": "Adaptive capping"
   },
   {
@@ -581,8 +571,7 @@
     "long": "--bound-digits",
     "default": 0,
     "description": "Precision used for calculating the execution time. It must be specified when capping is enabled.",
-    "vignettes": "Precision used for calculating the execution time. It must be specified when capping is enabled.",
-      "section": "Adaptive capping"
+    "section": "Adaptive capping"
   },
   {
     "name": "boundPar",
@@ -600,8 +589,8 @@
     "short": "",
     "long": "--bound-as-timeout",
     "default": 1,
-      "description": "Replace the configuration cost of bounded executions with \\code{boundMax}.",
-        "vignettes": "Replace the configuration cost of bounded executions with \\parameter{boundMax}. See \\autoref{sec:capping}.",
+    "description": "Replace the configuration cost of bounded executions with \\code{boundMax}.",
+    "vignettes": "Replace the configuration cost of bounded executions with \\parameter{boundMax}. See \\autoref{sec:capping}.",
     "section": "Adaptive capping"
   },
   {
@@ -660,7 +649,7 @@
     "short": "",
     "long": "--num-configurations",
     "default": 0,
-    "vignettes": "  The number of configurations that will be raced at each iteration. By default (when equal to 0), this value changes for each iteration and depends on \\parameter{nbExperimentsPerIteration}, the iteration index and \\parameter{mu}. The precise details are given in the \\irace paper~\\citep{LopDubPerStuBir2016irace}.\nWe recommend to use the default value.",
+    "vignettes": "The number of configurations that will be raced at each iteration. By default (when equal to 0), this value changes for each iteration and depends on \\parameter{nbExperimentsPerIteration}, the iteration index and \\parameter{mu}. The precise details are given in the \\irace paper~\\citep{LopDubPerStuBir2016irace}.\nWe recommend to use the default value.",
     "section": "Internal \\irace options",
     "description": "Number of configurations to be sampled and evaluated at each iteration."
   },
@@ -670,7 +659,7 @@
     "short": "",
     "long": "--mu",
     "default": 5,
-      "vignettes": "  Parameter used to define the number of configurations to be sampled and evaluated at each iteration. The number of configurations will be calculated such that there is enough budget in each race to evaluate all configurations on at least $\\mu + \\min(5,j)$ training instances, where $j$ is the index of the current iteration. The value of $\\mu$ will be adjusted to never be lower than the value of \\parameter{firstTest}. We recommend to use the default value and, if needed, adjust \\parameter{firstTest}and \\parameter{eachTest}, instead.",
+    "vignettes": "Parameter used to define the number of configurations to be sampled and evaluated at each iteration. The number of configurations will be calculated such that there is enough budget in each race to evaluate all configurations on at least $\\mu + \\min(5,j)$ training instances, where $j$ is the index of the current iteration. The value of $\\mu$ will be adjusted to never be lower than the value of \\parameter{firstTest}. We recommend to use the default value and, if needed, adjust \\parameter{firstTest}and \\parameter{eachTest}, instead.",
     "section": "Internal \\irace options",
     "description": "Parameter used to define the number of configurations sampled and evaluated at each iteration."
   },
@@ -681,7 +670,6 @@
     "long": "--confidence",
     "default": 0.95,
     "description": "Confidence level for the elimination test.",
-    "vignettes": "Confidence level for the elimination test.",
     "section": "Statistical test"
   }
 ]
