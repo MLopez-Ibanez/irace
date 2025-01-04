@@ -244,6 +244,9 @@ The value of \parameter{firstTest} must be a multiple of \parameter{eachTest}.
  \defparameter{capping}{capping}{}%
  Enable the use of adaptive capping. Capping is enabled by default if \parameter{elitist} is active, $\parameter{maxTime} > 0$ and  $\parameter{boundMax} > 0$. When using this option, \irace provides an execution bound to each target algorithm execution (See \autoref{sec:runner}). For more details about this option See \autoref{sec:capping}.
 
+ \defparameter{cappingAfterFirstTest}{capping-after-first-test}{0}%
+ If set to 1, elimination due to capping only happens after \parameter{firstTest} instances are seen.
+
  \defparameter{cappingType}{capping-type}{median}%
  Specifies the measure used to define the execution bound:
 \begin{itemize}

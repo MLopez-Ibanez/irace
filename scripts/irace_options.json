@@ -532,6 +532,15 @@
     "section": "Adaptive capping"
   },
   {
+    "name": "cappingAfterFirstTest",
+    "type": "b",
+    "short": "",
+    "long": "--capping-after-first-test",
+    "default": 0,
+    "description": "If set to 1, elimination due to capping only happens after \\parameter{firstTest} instances are seen.",
+    "section": "Adaptive capping"
+  },
+  {
     "name": "cappingType",
     "type": "s",
     "short": "",

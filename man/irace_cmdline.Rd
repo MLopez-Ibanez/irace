@@ -246,6 +246,9 @@ List of command-line options:
                          designed for minimizing the computation time of
                          configurations. Capping is enabled by default if
                          `elitist` is active, `maxTime > 0` and `boundMax > 0`.
+   --capping-after-first-test  If set to 1, elimination due to capping only
+                         happens after `firstTest` instances are seen. Default:
+                         0.
    --capping-type        Measure used to obtain the execution bound from the
                          performance of the elite configurations: median, mean,
                          worst, best. Default: median.

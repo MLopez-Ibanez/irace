@@ -101,6 +101,7 @@ The scenario list contains the following elements:
 \item Adaptive capping:
 \describe{
 \item{\code{capping}}{Enable the use of adaptive capping, a technique designed for minimizing the computation time of configurations. Capping is enabled by default if \code{elitist} is active, \code{maxTime > 0} and  \code{boundMax > 0}. (Default: \code{NA})}
+\item{\code{cappingAfterFirstTest}}{If set to 1, elimination due to capping only happens after \code{firstTest} instances are seen. (Default: \code{0})}
 \item{\code{cappingType}}{Measure used to obtain the execution bound from the performance of the elite configurations.\itemize{\item median: Median performance of the elite configurations.\item mean: Mean performance of the elite configurations.\item best: Best performance of the elite configurations.\item worst: Worst performance of the elite configurations.} (Default: \code{"median"})}
 \item{\code{boundType}}{Method to calculate the mean performance of elite configurations.\itemize{\item candidate: Mean execution times across the executed instances and the current one.\item instance: Execution time of the current instance.} (Default: \code{"candidate"})}
 \item{\code{boundMax}}{Maximum execution bound for \code{targetRunner}. It must be specified when capping is enabled. (Default: \code{0})}

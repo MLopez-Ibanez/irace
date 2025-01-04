@@ -1045,7 +1045,8 @@ elitist_race <- function(race_state, maxExp,
     ## Dominance elimination (Capping only).
     # The second condition can be false if we eliminated via immediate
     # rejection.  The third condition ensures that we see the block before capping.
-    if (capping && nb_alive > minSurvival && (current_task %% blockSize) == 0L) {
+    if (capping && nb_alive > minSurvival && (current_task %% blockSize) == 0L
+      && (!scenario$cappingAfterFirstTest || current_task >= firstTest)) {
       irace_assert(!any(is_elite > 0L) == (current_task >= elite_safe))
       cap_alive <- dom_elim(Results[seq_len(current_task), , drop = FALSE],
                             # Get current elite configurations.

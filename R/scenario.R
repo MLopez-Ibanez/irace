@@ -630,6 +630,7 @@ printScenario <- function(scenario)
 #'  \item Adaptive capping:
 #'    \describe{
 #'      \item{`capping`}{Enable the use of adaptive capping, a technique designed for minimizing the computation time of configurations. Capping is enabled by default if `elitist` is active, `maxTime > 0` and  `boundMax > 0`. (Default: `NA`)}
+#'      \item{`cappingAfterFirstTest`}{If set to 1, elimination due to capping only happens after `firstTest` instances are seen. (Default: `0`)}
 #'      \item{`cappingType`}{Measure used to obtain the execution bound from the performance of the elite configurations.\itemize{\item median: Median performance of the elite configurations.\item mean: Mean performance of the elite configurations.\item best: Best performance of the elite configurations.\item worst: Worst performance of the elite configurations.} (Default: `"median"`)}
 #'      \item{`boundType`}{Method to calculate the mean performance of elite configurations.\itemize{\item candidate: Mean execution times across the executed instances and the current one.\item instance: Execution time of the current instance.} (Default: `"candidate"`)}
 #'      \item{`boundMax`}{Maximum execution bound for `targetRunner`. It must be specified when capping is enabled. (Default: `0`)}

@@ -21,6 +21,10 @@
 
  * `psRace()` makes better use of the budget remaining.
 
+ * New scenario option `cappingAfterFirstTest`
+   (`--capping-after-first-test`). If set to 1, elimination due to capping only
+   happens after `firstTest` instances are seen (issue #78, suggested by Nguyen Dang).
+
 ## Fixes
 
  * Fix #76: Recovery (`--recover-file`) is working again with a completely new implementation.
