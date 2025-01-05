@@ -127,7 +127,7 @@
     "long": "--recovery-file",
     "default": "",
      "description": "Previously saved log file to recover the execution of \\code{irace}, either absolute path or relative to the current directory.  If empty or \\code{NULL}, recovery is not performed.",
-     "vignettes": "Previously saved \\irace log file that should be used to recover the execution of \\irace; either absolute path or relative to the current directory. If empty or \\code{NULL}, recovery is not performed. \nFor more details about recovery, see \\autoref{sec:recovery}.",
+     "vignettes": "Previously saved \\irace log file that should be used to recover the execution of \\irace; either absolute path or relative to the current directory. If empty or \\code{NULL}, recovery is not performed.\nFor more details about recovery, see \\autoref{sec:recovery}.",
     "section": "Recovery"
   },
   {
@@ -225,7 +225,7 @@
     "default": "",
     "domain": "F-test,t-test,t-test-holm,t-test-bonferroni",
     "description": "Statistical test used for elimination. The default value selects \\code{t-test} if \\code{capping} is enabled or \\code{F-test}, otherwise. Valid values are: F-test (Friedman test), t-test (pairwise t-tests with no correction), t-test-bonferroni (t-test with Bonferroni's correction for multiple comparisons), t-test-holm (t-test with Holm's correction for multiple comparisons).",
-    "vignettes": "Specifies the statistical test used for elimination:\n\\begin{itemize}\n\\item[] \\code{F-test} (Friedman test)\n\\item[] \\code{t-test} (pairwise t-tests with no correction)\n\\item[] \\code{t-test-bonferroni} (t-test with Bonferroni's correction for multiple comparisons)\n\\item[] \\code{t-test-holm} (t-test with Holm's correction for multiple comparisons).\n\\end{itemize}\n We recommend to not use corrections for multiple comparisons because the test typically becomes too strict and the search stagnates. \nSee \\autoref{sec:stat test} for details about choosing the statistical test most appropriate for your scenario.\n\\begin{xwarningbox}\n The default setting of \\parameter{testType} is \\code{F-test} unless the \\parameter{capping} option is enabled in which case, the default setting is \\code{t-test}.\n\\end{xwarningbox}",
+    "vignettes": "Specifies the statistical test used for elimination:\n\\begin{itemize}\n\\item[] \\code{F-test} (Friedman test)\n\\item[] \\code{t-test} (pairwise t-tests with no correction)\n\\item[] \\code{t-test-bonferroni} (t-test with Bonferroni's correction for multiple comparisons)\n\\item[] \\code{t-test-holm} (t-test with Holm's correction for multiple comparisons).\n\\end{itemize}\n We recommend to not use corrections for multiple comparisons because the test typically becomes too strict and the search stagnates.\nSee \\autoref{sec:stat test} for details about choosing the statistical test most appropriate for your scenario.\n\\begin{xwarningbox}\n The default setting of \\parameter{testType} is \\code{F-test} unless the \\parameter{capping} option is enabled in which case, the default setting is \\code{t-test}.\n\\end{xwarningbox}",
       "section": "Statistical test"
   },
   {
@@ -488,7 +488,7 @@
     "long": "--elitist",
     "default": 1,
     "description": "Enable\/disable elitist irace.",
-    "vignettes": "Enable\/disable elitist \\irace.\n\n In the \\textbf{elitist} version of \\code{irace}~\\citep{LopDubPerStuBir2016irace}, elite configurations are not discarded from the race until non-elite configurations have been executed on the same instances as the elite configurations.\n\n Each race begins by evaluating all configurations on a number of new instances. This number is defined by the option \\parameter{elitistNewInstances}. After the new instances have been evaluated, configurations are evaluated on instances seen in the previous race.  Elite configurations already have results for most of these previous instances and, therefore, do not need to be re-evaluated. Finally, after configurations have been evaluated on all these instances, the race continues by evaluating additional new instances. \n\n The statistical tests can be performed at any moment during the race according to the setting of the options \\parameter{firstTest} and \\parameter{eachTest}. The elitist rule forbids discarding elite configurations, even if the show poor performance, until the last of the previous instances is seen in the race. \n\n The \\textbf{non-elitist} version of \\irace can discard elite configurations at any point of the race, instances are not re-used from one race to the next, and new instances are sampled for each race.",
+    "vignettes": "Enable\/disable elitist \\irace.\n\n In the \\textbf{elitist} version of \\code{irace}~\\citep{LopDubPerStuBir2016irace}, elite configurations are not discarded from the race until non-elite configurations have been executed on the same instances as the elite configurations.\n\n Each race begins by evaluating all configurations on a number of new instances. This number is defined by the option \\parameter{elitistNewInstances}. After the new instances have been evaluated, configurations are evaluated on instances seen in the previous race.  Elite configurations already have results for most of these previous instances and, therefore, do not need to be re-evaluated. Finally, after configurations have been evaluated on all these instances, the race continues by evaluating additional new instances.\n\n The statistical tests can be performed at any moment during the race according to the setting of the options \\parameter{firstTest} and \\parameter{eachTest}. The elitist rule forbids discarding elite configurations, even if the show poor performance, until the last of the previous instances is seen in the race.\n\n The \\textbf{non-elitist} version of \\irace can discard elite configurations at any point of the race, instances are not re-used from one race to the next, and new instances are sampled for each race.",
     "section": "Elitist \\irace"
   },
   {
@@ -498,7 +498,7 @@
     "long": "--elitist-new-instances",
     "default": 1,
     "description": "Number of instances added to the execution list before previous instances in elitist irace.",
-    "vignettes": "Number of new instances added to each race before evaluating instances from previous races (only for elitist \\irace).\n \\begin{xwarningbox}\n \n If \\parameter{deterministic} is \\code{TRUE} then the number of \\parameter{elitistNewInstances} will be reduced or set to \\code{0} once all instances have been evaluated.\n\\end{xwarningbox}",
+    "vignettes": "Number of new instances added to each race before evaluating instances from previous races (only for elitist \\irace).\n \\begin{xwarningbox}\n\n If \\parameter{deterministic} is \\code{TRUE} then the number of \\parameter{elitistNewInstances} will be reduced or set to \\code{0} once all instances have been evaluated.\n\\end{xwarningbox}",
     "section": "Elitist \\irace"
   },
   {
