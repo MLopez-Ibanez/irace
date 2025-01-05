@@ -76,7 +76,7 @@ multi_irace <- function(scenarios, parameters, n = 1L, parallel = 1L, split_outp
     scenarios[[i]]$execDir <- execDir
     fs::dir_create(execDir)
 
-    if (nzchar(logFile_old)) {
+    if (logFile_old != "") {
       logFile <- if (is.sub.path(logFile_old, execDir_old)) {
         # 'logFile' is located in the old 'execDir', so move it into the new 'execDir'.
         # 'path/to/execDir/logFile.rdata' -> 'path/to/execDir/run_{i}/logFile.rdata'.

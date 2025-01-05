@@ -380,18 +380,22 @@ allConfigurationsInit <- function(scenario)
     confs_from_file <- readConfigurationsFile(scenario$configurationsFile,
                                               scenario$parameters, scenario$debugLevel)
   }
-  if (!is.null.or.empty(initConfigurations)) {
+  if (is.null.or.empty(initConfigurations)) {
+    initConfigurations <- confs_from_file
+  } else {
     if (!is.null.or.empty(scenario$configurationsFile) && !identical(initConfigurations, confs_from_file))
       irace_warning("'initConfigurations' provided in 'scenario',",
                     " thus ignoring configurations from file '",
                     scenario$configurationsFile, "'.")
     cat("# Adding", nrow(initConfigurations), "initial configuration(s)\n")
     initConfigurations <- fix_configurations(initConfigurations, scenario$parameters, debugLevel = scenario$debugLevel)
-  } else {
-    initConfigurations <- confs_from_file
   }
 
-  if (!is.null.or.empty(initConfigurations)) {
+  if (is.null.or.empty(initConfigurations)) {
+    allConfigurations <- configurations_alloc(c(".ID.", scenario$parameters$names, ".PARENT."),
+      nrow = 0L, parameters = scenario$parameters)
+    setDF(allConfigurations)
+  } else {
     allConfigurations <- cbind(.ID. = seq_nrow(initConfigurations),
                                initConfigurations, .PARENT. = NA_integer_)
     rownames(allConfigurations) <- allConfigurations[[".ID."]]
@@ -402,10 +406,6 @@ allConfigurationsInit <- function(scenario)
                     " initial configurations were forbidden",
                     " and, thus, discarded.")
     }
-  } else {
-    allConfigurations <- configurations_alloc(c(".ID.", scenario$parameters$names, ".PARENT."),
-      nrow = 0L, parameters = scenario$parameters)
-    setDF(allConfigurations)
   }
   allConfigurations
 }
@@ -850,12 +850,12 @@ irace_run <- function(scenario)
           " however, if the estimation was correct or too low,",
           " results might not be better than random sampling.\n")
     nbIterations <- nbIterations - 1L
-    scenario$nbConfigurations <-
-      if (scenario$nbConfigurations > 0L)
-        min(minSurvival * 2L, scenario$nbConfigurations)
-    else minSurvival * 2L
+    scenario$nbConfigurations <- if (scenario$nbConfigurations > 0L)
+                                   min(minSurvival * 2L, scenario$nbConfigurations)
+                                 else minSurvival * 2L
   }
-  if (!is.null(warn_msg)) irace_warning(warn_msg)
+  if (!is.null(warn_msg))
+    irace_warning(warn_msg)
 
   catInfo("Initialization\n",
           if (scenario$elitist)

@@ -278,15 +278,18 @@ checkScenario <- function(scenario = defaultScenario())
   file.check (scenario$execDir, isdir = TRUE,
               text = paste0("execution directory ", quote.param("execDir")))
   options(.irace.execdir = scenario$execDir)
-  if (!is.null.or.empty(scenario$logFile)) {
-    scenario$logFile <- path_rel2abs(scenario$logFile, cwd = scenario$execDir)
-    file.check(scenario$logFile, writeable = TRUE, text = quote.param('logFile'))
-  } else {
+  if (is.null.or.empty(scenario$logFile)) {
     # We cannot use NULL because defaultScenario() would override it.
     scenario$logFile <- ""
+  } else {
+    scenario$logFile <- path_rel2abs(scenario$logFile, cwd = scenario$execDir)
+    file.check(scenario$logFile, writeable = TRUE, text = quote.param('logFile'))
   }
 
-  if (!is.null.or.empty(scenario$recoveryFile)) {
+  if (is.null.or.empty(scenario$recoveryFile)) {
+    # We cannot use NULL because defaultScenario() would override it.
+    scenario$recoveryFile <- ""
+  } else {
     scenario$recoveryFile <- path_rel2abs(scenario$recoveryFile)
     file.check(scenario$recoveryFile, readable = TRUE,
                text = paste0("recovery file ", quote.param("recoveryFile")))
@@ -296,9 +299,6 @@ checkScenario <- function(scenario = defaultScenario())
       irace_error("log file and recovery file should be different '",
                   scenario$logFile, "'")
     }
-  } else {
-    # We cannot use NULL because defaultScenario() would override it.
-    scenario$recoveryFile <- ""
   }
 
   if (is.null.or.empty(scenario$targetRunnerParallel)) {
@@ -690,7 +690,16 @@ readInstances <- function(instancesDir = NULL, instancesFile = NULL)
 
   instances <- NULL
 
-  if (!is.null.or.empty(instancesFile)) {
+  if (is.null.or.empty(instancesFile)) {
+    file.check (instancesDir, isdir = TRUE, notempty = TRUE,
+                text = "instances directory")
+    # The files are sorted in alphabetical order, on the full path if
+    # 'full.names = TRUE'.
+    instances <- list.files (path = instancesDir, full.names = TRUE,
+                             recursive = TRUE)
+    if (length (instances) == 0)
+      irace_error("No instances found in `", instancesDir, "'")
+  } else {
     file.check (instancesFile, readable = TRUE, text = "instance file")
     # We do not warn if the last line does not finish with a newline.
     instances <- readLines (instancesFile, warn = FALSE)
@@ -702,15 +711,6 @@ readInstances <- function(instancesDir = NULL, instancesFile = NULL)
                   "' (whitespace and comments starting with '#' are ignored)")
     if (!is.null.or.empty(instancesDir))
        instances <- paste0 (instancesDir, "/", instances)
-  } else {
-    file.check (instancesDir, isdir = TRUE, notempty = TRUE,
-                text = "instances directory")
-    # The files are sorted in alphabetical order, on the full path if
-    # 'full.names = TRUE'.
-    instances <- list.files (path = instancesDir, full.names = TRUE,
-                             recursive = TRUE)
-    if (length (instances) == 0)
-      irace_error("No instances found in `", instancesDir, "'")
   }
   instances
 }

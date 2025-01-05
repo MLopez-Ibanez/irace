@@ -300,15 +300,14 @@ mpiInit <- function(nslaves, debugLevel = 0)
 {
   # Load the Rmpi package if it is not already loaded.
   if ("Rmpi" %not_in% loadedNamespaces()) {
-    if (! suppressPackageStartupMessages
-        (requireNamespace("Rmpi", quietly = TRUE)))
+    if (!suppressPackageStartupMessages(requireNamespace("Rmpi", quietly = TRUE)))
       irace_error("The 'Rmpi' package is required for using MPI")
 
     # When R exits, finalize MPI.
     reg.finalizer(environment(Rmpi::mpi.exit), function(e) {
       # Rmpi already prints a message, so we don't need this.
       # cat("# Finalize MPI...\n")
-      if (Rmpi::mpi.comm.size(1) > 0)
+      if (Rmpi::mpi.comm.size(1) > 0L)
         # FIXME: dellog == TRUE tries to delete log files, but it does
         # not take into account that we may have changed directory and
         # it does not fail gracefully but produces an annoying:
@@ -533,7 +532,8 @@ read_logfile <- function(filename, name = "iraceResults")
   if (is_na_or_empty(filename))
     irace_error("read_logfile: 'filename' is NULL or NA.")
   # If filename is already the iraceResults object, just return it.
-  if (valid_iracelog(filename)) return(filename)
+  if (valid_iracelog(filename))
+    return(filename)
 
   if (file.access(filename, mode = 4) != 0)
     irace_error("read_logfile: Cannot read file '", filename, "'.")
@@ -576,9 +576,9 @@ has_testing_data <- function(iraceResults)
 {
   ins <- iraceResults$scenario$testInstances
   exp <- iraceResults$testing$experiments
-  !(length(ins) == 0L ||
-    (length(ins) == 1L && (is.na(ins) || nchar(ins) == 0L)) ||
-    length(exp) == 0L || !(is.matrix(exp) || is.data.frame(exp)))
+  !(length(ins) == 0L
+    || (length(ins) == 1L && (is.na(ins) || ins == ""))
+    || length(exp) == 0L || !(is.matrix(exp) || is.data.frame(exp)))
 }
 
 do_nothing <- function(...) invisible()

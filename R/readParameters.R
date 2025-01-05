@@ -1,6 +1,6 @@
 #' Reads the parameters to be tuned by \pkg{irace} from a file or from a
 #' character string.
-#' 
+#'
 #' @param file `character(1)`\cr Filename containing the definitions of
 #'   the parameters to be tuned.
 #' @param digits `integer(1)`\cr The number of decimal places to be considered for real-valued parameters.
@@ -71,7 +71,7 @@
 #'  elitistants  "--elitistants " i     (1, ants)            | algorithm == "eas"
 #'  nnls         "--nnls "        i     (5, 50)              | localsearch %in% c(1,2,3)
 #'  dlb          "--dlb "         c     (0, 1)               | localsearch %in% c(1,2,3)
-#'  
+#'
 #'  [forbidden]
 #'  (alpha == 0.0) & (beta == 0.0)
 #'  [global]
@@ -79,7 +79,7 @@
 #'  '
 #'  parameters <- readParameters(text=parameters_table)
 #'  str(parameters)
-#' 
+#'
 #' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
 #' @export
 readParameters <- function (file, digits = 4L, debugLevel = 0L, text)
@@ -96,7 +96,7 @@ readParameters <- function (file, digits = 4L, debugLevel = 0L, text)
   }
 
   digits <- as.integer(digits)
-  
+
   field.match <- function (line, pattern, delimited = FALSE, sep = "[[:space:]]")
   {
     #cat ("pattern:", pattern, "\n")
@@ -130,10 +130,10 @@ readParameters <- function (file, digits = 4L, debugLevel = 0L, text)
     v <- c()
     str <- trim(str)
     #cat("string2vector:", str, "\n")
-    while (nchar (str)) {
+    while (str != "") {
       result <- field.match (str, "\"[^\"]*\"", delimited = TRUE, sep="")
       #cat("result.match: ", result$match,"\n")
-      if (is.null (result$match)) {
+      if (is.null(result$match)) {
         result <- field.match (str, "[^,]+", sep="")
         #cat("result.match: ", result$match,"\n")
       }
@@ -148,14 +148,14 @@ readParameters <- function (file, digits = 4L, debugLevel = 0L, text)
   errReadParameters <- function(filename, line, context, ...)
   {
     context <- if (is.null (context)) "" else paste0(" when reading: \"", context, "\"")
-    fileloc <- if (is.na(filename)) "" else paste0("'", filename, "'," ) 
+    fileloc <- if (is.na(filename)) "" else paste0("'", filename, "'," )
     irace_error(paste0(..., collapse = ""), " at ", fileloc, "line ", line, context)
   }
-  
+
   warnReadParameters <- function(filename, line, context, ...)
   {
     context <- if (is.null (context)) "" else paste0(" when reading: \"", context, "\"")
-    fileloc <- if (is.na(filename)) "" else paste0("'", filename, "'," ) 
+    fileloc <- if (is.na(filename)) "" else paste0("'", filename, "'," )
     irace_warning(paste0(..., collapse = ""), " at ", fileloc, "line ", line, context)
   }
 
@@ -167,18 +167,18 @@ readParameters <- function (file, digits = 4L, debugLevel = 0L, text)
     }
     str2expression(s)
   }
-  
+
   params <- list()
   pnames <- c()
   lines <- readLines(con = file)
-  # Delete comments 
+  # Delete comments
   lines <- trim(sub("#.*$", "", lines))
   within_global <- FALSE
   nbLines <- 0L
   # Parse [global] first.
   for (line in lines) {
     nbLines <- nbLines + 1L
-    if (nchar(line) == 0L) next
+    if (line == "") next
     if (grepl("^[[:space:]]*\\[forbidden\\]", line)) {
       if (within_global)
         break
@@ -190,7 +190,7 @@ readParameters <- function (file, digits = 4L, debugLevel = 0L, text)
         if (!is.wholenumber(digits) || digits > 15 || digits < 1)
           errReadParameters(filename, nbLines, line, "'digits' must be an integer within [1, 15]")
         digits <- as.integer(digits)
-      } else 
+      } else
         errReadParameters(filename, nbLines, line, "Unknown global option")
       lines[nbLines] <- "" # Do not parse it again.
       next
@@ -206,8 +206,8 @@ readParameters <- function (file, digits = 4L, debugLevel = 0L, text)
   nbLines <- 0L
   for (line in lines) {
     nbLines <- nbLines + 1L
-    if (nchar(line) == 0L) next
-    
+    if (line == "") next
+
     if (within_forbidden) {
       # FIXME: Better error reporting.
       exp <- parse_condition(line, filename, nbLines, line, " for forbidden expressions")
@@ -231,7 +231,7 @@ readParameters <- function (file, digits = 4L, debugLevel = 0L, text)
       errReadParameters (filename, nbLines, NULL,
                          "Duplicated parameter name '", name, "'")
     }
-    
+
     ## Match p_switch (quoted string)
     result <- field.match (line, "\"[^\"]*\"", delimited = TRUE)
     p_label <- result$match
@@ -240,7 +240,7 @@ readParameters <- function (file, digits = 4L, debugLevel = 0L, text)
       errReadParameters (filename, nbLines, line,
                          "Parameter label (switch) must be a double-quoted string")
     }
-    
+
     ## Match param.type (longer matches must precede shorter ones)
     result <- field.match (line, c("i,log", "r,log", "c", "i", "r", "o"))
     param.type <- result$match
@@ -259,7 +259,7 @@ readParameters <- function (file, digits = 4L, debugLevel = 0L, text)
     } else {
       param.transform <- ""
     }
-    
+
     ## Match domain (delimited by parenthesis)
     # Regexp to detect dependent domains of the type ("min(p1)", 100)
     result <- field.match (line, "\\([^|]+\\)", delimited = TRUE, sep = "")
@@ -286,17 +286,17 @@ readParameters <- function (file, digits = 4L, debugLevel = 0L, text)
     } else { # type %in% c("c", "o")
       domain <- string2vector(domain_str)
     }
-    ## Match start of conditions 
+    ## Match start of conditions
     result <- field.match (line, "\\|", sep="")
     line <- result$line
-    if (!is.null(result$match) && nchar(result$match)) {
+    if (!is.null(result$match) && result$match != "") {
       result <- field.match (line, ".*$", sep="")
       condition <- result$match
-      if (is.null(result$match) || !nchar(result$match))
+      if (is.null(result$match) || result$match == "")
         errReadParameters (filename, nbLines, line,
                            "Expected condition after '|'")
       line <- result$line
-    } else if (!is.null(result$line) && nchar(result$line)) {
+    } else if (!is.null(result$line) && result$line != "") {
       errReadParameters (filename, nbLines, line,
                          "Expected '|' before condition")
     } else {
@@ -310,7 +310,7 @@ readParameters <- function (file, digits = 4L, debugLevel = 0L, text)
                                              domain_str, ")"), class = "try-error"),
       invalid_range = function(c) structure(paste0("Lower bound must be smaller than upper bound in numeric range (",
                                                    domain_str, ") for parameter '", name, "'"), class="try-error"),
-      
+
       error = function(c) structure(conditionMessage(c), class="try-error")
     )
     if (inherits(p, "try-error")) errReadParameters(filename, nbLines, NULL, p)
@@ -341,7 +341,7 @@ readParameters <- function (file, digits = 4L, debugLevel = 0L, text)
 #' Read parameters in PCS (AClib) format and write them in irace format.
 #'
 #' @inheritParams readParameters
-#' 
+#'
 #' @return A string representing the parameters in irace format.
 #'
 #' @details Either `file` or `text` must be given. If `file` is given, the
@@ -356,7 +356,7 @@ readParameters <- function (file, digits = 4L, debugLevel = 0L, text)
 #'
 #' @references
 #' Frank Hutter, Manuel López-Ibáñez, Chris Fawcett, Marius Thomas Lindauer, Holger H. Hoos, Kevin Leyton-Brown, and Thomas Stützle. **AClib: A Benchmark Library for Algorithm Configuration**. In P. M. Pardalos, M. G. C. Resende, C. Vogiatzis, and J. L. Walteros, editors, _Learning and Intelligent Optimization, 8th International Conference, LION 8_, volume 8426 of Lecture Notes in Computer Science, pages 36–40. Springer, Heidelberg, 2014.
-#' 
+#'
 #' @seealso [readParameters()]
 #' @examples
 #'  ## Read the parameters directly from text
@@ -372,19 +372,19 @@ readParameters <- function (file, digits = 4L, debugLevel = 0L, text)
 #'  rasrank      [1, 100][1]i
 #'  elitistants  [1, 750][1]i
 #'  nnls         [5, 50][5]i
-#'  dlb          {0, 1}[1] 
+#'  dlb          {0, 1}[1]
 #'  Conditionals:
 #'  q0 | algorithm in {acs}
 #'  rasrank | algorithm in {ras}
 #'  elitistants | algorithm in {eas}
 #'  nnls | localsearch in {1,2,3}
-#'  dlb | localsearch in {1,2,3} 
+#'  dlb | localsearch in {1,2,3}
 #'  {alpha=0, beta=0}'
 #'  parameters_table <- read_pcs_file(text=pcs_table)
 #'  cat(parameters_table)
 #'  parameters <- readParameters(text=parameters_table)
 #'  str(parameters)
-#' 
+#'
 #' @author Manuel López-Ibáñez
 #' @export
 read_pcs_file <- function(file, digits = 4L, debugLevel = 0L, text)
@@ -418,7 +418,7 @@ read_pcs_file <- function(file, digits = 4L, debugLevel = 0L, text)
       lines[k] <- NA_character_
     }
   }
-  
+
   parse_pcs_condition <- function(x, types) {
     if (is.null(x)) return ("")
     matches <- regmatches(x, regexec("([^[:space:]]+)[[:space:]]+in[[:space:]]+\\{([^}]+)\\}$", x, perl=TRUE))[[1L]]
@@ -431,7 +431,7 @@ read_pcs_file <- function(file, digits = 4L, debugLevel = 0L, text)
       cond <- strsplit(cond, ",[[:space:]]*")[[1L]]
       equal <- (length(cond) == 1L)
       cond <- paste0('"', cond, '"', collapse=',')
-    } else { 
+    } else {
       equal <- grepl(",", cond, fixed=TRUE)
     }
     if (equal)
@@ -448,7 +448,7 @@ read_pcs_file <- function(file, digits = 4L, debugLevel = 0L, text)
     matches <- regmatches(line, regexec("^([^[:space:]]+)[[:space:]]+\\[([^,]+),[[:space:]]*([^]]+)\\][[:space:]]*\\[[^]]+\\](i?l?i?)(.*)$", line, perl=TRUE))[[1]]
     if (length(matches) > 0L) {
       param_name <- matches[[2L]]
-      
+
       param_type <- paste0(if(grepl("i", matches[5L], fixed=TRUE)) "i" else "r",
                            if(grepl("l", matches[5L], fixed=TRUE)) ",log" else "")
       param_types[[param_name]] <- param_type
@@ -520,4 +520,3 @@ checkParameters <- function(parameters)
   }
   parameters
 }
-

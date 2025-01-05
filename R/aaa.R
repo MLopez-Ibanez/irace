@@ -8,7 +8,7 @@ update_package_version <- function()
   if (is.na(git_rev))
     git_rev <- "unknown"
   git <- Sys.which("git")
-  if (nchar(git) > 0L && fs::file_exists(".git")
+  if (git != "" && fs::file_exists(".git")
     && grepl("[0-9a-z]+$", system2(git, "describe --first-parent --always", stdout = TRUE), perl=TRUE)) {
     git_rev <- system2(git, "describe --dirty --first-parent --always --exclude '*'", stdout = TRUE)
   }
@@ -27,4 +27,3 @@ irace_version <- "unknown"
 .irace_minimum_saving_time <- 60 # seconds
 # Prefix for printing messages to the user.
 .irace_msg_prefix <- "== irace == "
-
