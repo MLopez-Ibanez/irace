@@ -48,13 +48,13 @@ will stop with an error.
  rasrank      [1, 100][1]i
  elitistants  [1, 750][1]i
  nnls         [5, 50][5]i
- dlb          {0, 1}[1] 
+ dlb          {0, 1}[1]
  Conditionals:
  q0 | algorithm in {acs}
  rasrank | algorithm in {ras}
  elitistants | algorithm in {eas}
  nnls | localsearch in {1,2,3}
- dlb | localsearch in {1,2,3} 
+ dlb | localsearch in {1,2,3}
  {alpha=0, beta=0}'
  parameters_table <- read_pcs_file(text=pcs_table)
  cat(parameters_table)
