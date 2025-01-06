@@ -600,7 +600,6 @@ elitist_race <- function(race_state, maxExp,
                  firstTest = scenario$firstTest)
 {
   blockSize <- scenario$blockSize
-  stat.test <- scenario$testType
   conf.level <- scenario$confidence
   firstTest <- blockSize * firstTest
   eachTest <- blockSize * scenario$eachTest
@@ -631,6 +630,18 @@ elitist_race <- function(race_state, maxExp,
     print_task <- race_print_task
     print_footer <- race_print_footer
   }
+
+  stat_test <- scenario$testType
+  do_test <- switch(stat_test,
+    friedman = function(results, alive, which_alive, conf.level = scenario$confidence)
+      aux_friedman(results, alive, which_alive, conf.level = conf.level),
+    t.none = function(results, alive, which_alive, conf.level = scenario$confidence)
+      aux.ttest(results, alive, which_alive, conf.level = conf.level, adjust = "none"),
+    t.holm = function(results, alive, which_alive, conf.level = scenario$confidence)
+      aux.ttest(results, alive, which_alive, conf.level = conf.level, adjust = "holm"),
+    t.bonferroni = function(results, alive, which_alive, conf.level = scenario$confidence)
+      aux.ttest(results, alive, which_alive, conf.level = conf.level, adjust = "bonferroni"))
+  do_test <- bytecompile(do_test)
 
   # Create the instance list according to the algorithm selected.
   if (elitist) {
@@ -821,7 +832,7 @@ elitist_race <- function(race_state, maxExp,
             tmpResults <- Results[1L, which_alive, drop = FALSE]
             irace_assert(!anyNA(tmpResults))
             # which.min returns only the first minimum.
-            best <- which_alive[which.min(get_ranks(tmpResults, test = stat.test))]
+            best <- which_alive[which.min(get_ranks(tmpResults, test = stat_test))]
           }
         }
         if (is.na(best)) {
@@ -937,7 +948,7 @@ elitist_race <- function(race_state, maxExp,
               tmpResults <- Results[1L, which_alive, drop = FALSE]
               irace_assert(!anyNA(tmpResults))
               # which.min returns only the first minimum.
-              best <- which_alive[which.min(get_ranks(tmpResults, test = stat.test))]
+              best <- which_alive[which.min(get_ranks(tmpResults, test = stat_test))]
             }
           }
           if (is.na(best)) {
@@ -1062,15 +1073,10 @@ elitist_race <- function(race_state, maxExp,
     if (current_task >= firstTest && (current_task %% eachTest) == 0L
         && nb_alive > 1L) {
       irace_assert(sum(alive) == nb_alive)
-      test.res <-
-        switch(stat.test,
-               friedman = aux_friedman(Results[seq_len(current_task), ], alive, which_alive, conf.level),
-               t.none = aux.ttest(Results[seq_len(current_task), ], alive, which_alive, conf.level, adjust = "none"),
-               t.holm = aux.ttest(Results[seq_len(current_task), ], alive, which_alive, conf.level, adjust = "holm"),
-               t.bonferroni = aux.ttest(Results[seq_len(current_task), ], alive, which_alive, conf.level, adjust = "bonferroni"))
-
-      race_ranks <- test.res$ranks
-      test.alive <- test.res$alive
+      test_res <- do_test(Results[seq_len(current_task), ], alive, which_alive)
+      # FIXME: This race_ranks is unused. We should check if it matches the one computed below.
+      race_ranks <- test_res$ranks
+      test.alive <- test_res$alive
       test.dropped <- nb_alive > sum(test.alive)
       test.done   <- TRUE
     }
@@ -1117,7 +1123,7 @@ elitist_race <- function(race_state, maxExp,
     } else  {
       tmpResults <- Results[seq_len(current_task), prev_which_alive, drop = FALSE]
       irace_assert(!anyNA(tmpResults))
-      race_ranks <- get_ranks(tmpResults, test = stat.test)
+      race_ranks <- get_ranks(tmpResults, test = stat_test)
       # which.min() returns only the first minimum.
       best <- prev_which_alive[which.min(race_ranks)]
     }
@@ -1179,7 +1185,7 @@ elitist_race <- function(race_state, maxExp,
     }
   }
 
-  race_ranks <- overall_ranks(Results[, alive, drop = FALSE], test = stat.test)
+  race_ranks <- overall_ranks(Results[, alive, drop = FALSE], test = stat_test)
   if (!scenario$quiet) {
     old_best <- best # old_best could be NA.
     best <- which_alive[which.min(race_ranks)]
