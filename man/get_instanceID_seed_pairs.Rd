@@ -10,9 +10,9 @@ get_instanceID_seed_pairs(iraceResults, index, instances = FALSE)
 \arguments{
 \item{iraceResults}{\code{list()}|\code{character(1)}\cr Object created by \pkg{irace} and typically saved in the log file \code{irace.Rdata}. If a character string is given, then it is interpreted as the path to the log file from which the \code{iraceResults} object will be loaded.}
 
-\item{index}{(\code{integer()})\cr Indexes of the (instanceID,seed) pairs to be returned. The default returns everything.}
+\item{index}{\code{integer()}\cr Indexes of the (instanceID,seed) pairs to be returned. The default returns everything.}
 
-\item{instances}{(\code{logical(1)})\cr Whether to add the actual instances as an additional column (only if the instances are of atomic type).}
+\item{instances}{\code{logical(1)}\cr Whether to add the actual instances as an additional column (only if the instances are of atomic type).}
 }
 \value{
 \code{data.table()}\cr With default arguments, a \code{data.table} containing two columns

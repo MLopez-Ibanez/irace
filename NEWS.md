@@ -25,6 +25,9 @@
    (`--capping-after-first-test`). If set to 1, elimination due to capping only
    happens after `firstTest` instances are seen (issue #78, suggested by Nguyen Dang).
 
+ * `getConfigurationById()` now returns configurations in the same order
+   (including repeated values) of the IDs passed as argument.
+
 ## Fixes
 
  * Fix #76: Recovery (`--recover-file`) is working again with a completely new implementation.

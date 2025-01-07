@@ -88,22 +88,11 @@ RaceState <- R6Class("RaceState", lock_class = TRUE,
    },
 
    update_experiment_log = function(output, instances, scenario) {
+     # FIXME: The instances parameter is not needed.
+     irace_assert(all.equal(rep(instances, each = length(unique(output[["configuration"]]))), output$instance))
      # Extract results
      self$experiment_log <- rbindlist(list(self$experiment_log, output), use.names=TRUE)
-
-     if (scenario$capping)
-       output[["cost"]] <- applyPAR(output[["cost"]], boundMax = scenario$boundMax, boundPar = scenario$boundPar)
-     configurations_id <- unique(output[["configuration"]])
-     irace_assert(all.equal(rep(instances, each = length(configurations_id)),
-       output$instance))
-     # FIXME: delete old
-     old <- matrix(output[["cost"]], nrow = length(instances), ncol = length(configurations_id),
-       byrow = TRUE,
-       dimnames = list(instances, as.character(configurations_id)))
-     new <- as.matrix(dcast(output[, c("instance", "configuration", "cost")], instance ~ configuration, value.var = "cost"),
-       rownames = "instance")
-     irace_assert(identical(old, new))
-     new
+     experiments_output_to_matrix(output, scenario)
    },
 
    save_recovery = function(iraceResults, logfile) {

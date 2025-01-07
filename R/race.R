@@ -124,6 +124,14 @@ race_wrapper <- function(race_state, configurations, instance_idx, bounds,
   target_output
 }
 
+experiments_output_to_matrix <- function(output, scenario)
+{
+  if (scenario$capping)
+    output[["cost"]] <- applyPAR(output[["cost"]], boundMax = scenario$boundMax, boundPar = scenario$boundPar)
+  as.matrix(dcast(output[, c("instance", "configuration", "cost")], instance ~ configuration, value.var = "cost"),
+    rownames = "instance")
+}
+
 aux2.friedman <- function(y, I, alive, conf.level = 0.95)
 {
   dropped.any <- FALSE

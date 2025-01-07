@@ -231,7 +231,7 @@ ab_generate_instances <- function(race_state, scenario, nrep, type, instancesFil
     scenario$instances <- readInstances(instancesFile = path_rel2abs(instancesFile))
   }
   n_inst <- length(scenario$instances)
-  if (type == "full" && n_inst * nrep == 1)
+  if (type == "full" && n_inst * nrep == 1L)
     stop("'nrep' must be larger than 1 when type == 'full' and a single instance")
   generateInstances(race_state, scenario, n_inst * nrep)
 
@@ -295,20 +295,22 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
 
   type <- match.arg(type)
 
-  if (!is.null(ablationLogFile))
+  if (!is.null(ablationLogFile)) {
     file.check(ablationLogFile, writeable = TRUE, text = 'ablationLogFile')
+  }
 
   save_ablog <- function(complete) {
     ablog <- list(changes = changes,
                   configurations = all_configurations,
                   experiments = results,
+                  state = race_state,
                   instances   = race_state$instances_log,
                   scenario    = scenario,
                   trajectory  = trajectory,
                   best = best_configuration,
                   complete = complete)
     if (!is.null(ablationLogFile)) save(ablog, file = ablationLogFile, version = 3L)
-    ablog
+    invisible(ablog)
   }
 
   # Load the data of the log file.
@@ -473,14 +475,13 @@ ablation <- function(iraceResults, src = 1L, target = NULL,
 
     # Get the best configuration based on the criterion of irace
     # MANUEL: Doesn't race_output already give you all this info???
-    cranks <- overall_ranks(results[,aconfigurations[[".ID."]],drop=FALSE], test = scenario$testType)
+    cranks <- overall_ranks(results[,aconfigurations[[".ID."]], drop=FALSE], test = scenario$testType)
     best_id <- which.min(cranks)[1L]
-    # cand.mean <- colMeans2(results[,aconfigurations$.ID.,drop=FALSE], na.rm=TRUE)
     changes[[step]] <- ab_aux$changed_params
     best_change <- changes[[step]][[best_id]]
     trajectory <- c(trajectory, aconfigurations[[".ID."]][best_id])
 
-    # Report best
+    # Report best.
     # FIXME: This ID does not actually match the configuration ID
     # The race already reports the best.
     cat("# Best changed parameters:\n")
