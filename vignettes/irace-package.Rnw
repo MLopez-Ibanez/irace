@@ -609,7 +609,7 @@ For setting the tuning budget, see \autoref{sec:budget}. For more information on
   time (\code{cost [time]}). When the \parameter{maxTime} option is used, returning \code{time} is mandatory.
   The \code{target-runner} template is written in \proglang{GNU Bash}
   scripting language, which can be executed easily in GNU/Linux and OS X
-  systems. However, you may use any other programming language. We provide examples written in \proglang{Python},  \proglang{MATLAB} and other languages in \IRACEHOME{/examples/}. %
+  systems. However, you may use any other programming language. We provide examples written in \proglang{Python},  \proglang{MATLAB} and other languages in \IRACEHOME{/examples/}. An example using Julia is available at \url{https://github.com/sbomsdorf/An-example-of-irace-using-Julia-code}. %
   Follow these instructions to adjust the given \code{target-runner} template
   to your algorithm:
   \begin{enumerate}
