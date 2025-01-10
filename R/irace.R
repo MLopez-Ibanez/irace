@@ -746,7 +746,7 @@ irace_run <- function(scenario)
     if (estimationTime < boundEstimate * nruns) {
       boundEstimate <- max(ceiling_digits(estimationTime / nruns, scenario$boundDigits), scenario$minMeasurableTime)
       if (!is.null(scenario$boundMax)) {
-          irace_warning("boundMax = ", scenario$boundMax, " is too large, using ", boundEstimate, " instead.\n")
+          irace_warning("boundMax=", scenario$boundMax, " is too large, using ", boundEstimate, " instead.\n")
           # FIXME: We should not modify the scenario
           scenario$boundMax <- boundEstimate
       }

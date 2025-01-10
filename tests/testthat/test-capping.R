@@ -23,7 +23,7 @@ test_that("irace_capping_xy maxExperiments = 1000 cappingAfterFirstTest", {
 test_that("irace_capping_xy maxTime = 1000", {
   generate_set_seed()
   expect_warning(irace_capping_xy(maxTime = 1000),
-                 "boundMax = 80 is too large, using 5 instead")
+                 "boundMax=80 is too large, using 5 instead")
 })
 
 test_that("irace_capping_xy targetRunner = target_runner_reject, maxTime = 1000", {
