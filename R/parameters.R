@@ -223,14 +223,11 @@ Parameter <- function(name, type, domain, label, condition, transf,
     transf <- transform_domain(transf, domain, type)
 
   isFixed <- (type == "c" || type == "o") && (length(domain) == 1L)
+  param <- list(name = name, type = type, domain = domain, label = label, is_dependent = is.expression(domain),
+    isFixed = isFixed, transform = transf, condition = condition)
+  if (type == "r")
+    param$digits <- digits
 
-  if (type == "r") {
-    param <- list(name = name, type = type, domain = domain, label = label, is_dependent = is.expression(domain),
-      isFixed = isFixed, transform = transf, condition = condition, digits = digits)
-  } else {
-    param <- list(name = name, type = type, domain = domain, label = label, is_dependent = is.expression(domain),
-      isFixed = isFixed, transform = transf, condition = condition)
-  }
   class(param) <- c(cls, "Parameter", class(param))
   param
 }
