@@ -27,6 +27,15 @@ repairConfigurations <- function(x, parameters, repair)
   x
 }
 
+is_within_dependent_bound <- function(param, configuration, value)
+{
+  domain <- unlist(lapply(param[["domain"]], eval, configuration))
+  # Value gets truncated (defined from robotics initial requirements)
+  if (param[["type"]] == "i")
+    domain <- as.integer(domain)
+  domain[[1L]] <= value && value <= domain[[2L]]
+}
+
 ## Calculates the parameter bounds when parameters domain is dependent
 getDependentBound <- function(param, configuration)
 {
@@ -87,12 +96,12 @@ generate_sobol <- function(parameters, n, repair = NULL)
   # FIXME: How to do this faster using data.table?
   for (x in nodep_names)
     set(confs, j = x, value = param_quantile(parameters$get(x), confs[[x]]))
-  
+
   for (x in parameters$names_fixed)
     set(confs, j = x, value = parameters$domains[[x]])
-  
+
   setcolorder(confs, parameters$names)
-  
+
   max_level <- max(hierarchy)
   if (max_level > 1L) {
     .NEWVALUE <- .DOMAIN <- NULL # To silence CRAN warnings.
@@ -136,7 +145,7 @@ sampleSobol <- function(parameters, n, repair = NULL)
 {
   newConfigurations <- generate_sobol(parameters, n, repair)
   newConfigurations <- unique(newConfigurations)
-  forbidden <- parameters$forbidden  
+  forbidden <- parameters$forbidden
   newConfigurations <- filter_forbidden(newConfigurations, forbidden)
   have <- nrow(newConfigurations)
   if (have < n) {
@@ -190,7 +199,7 @@ generate_uniform <- function(parameters, nbConfigurations, repair = NULL)
 sampleUniform <- function(parameters, nbConfigurations, repair = NULL)
 {
   newConfigurations <- generate_uniform(parameters, nbConfigurations, repair)
-  forbidden <- parameters$forbidden  
+  forbidden <- parameters$forbidden
   if (!is.null(forbidden)) {
     retries <- 100L
     repeat {
@@ -219,7 +228,7 @@ sample_from_model <- function(parameters, eliteConfigurations, model,
     print(utils::str(ids_elites))
     print(utils::str(eliteConfigurations[[".ID."]]))
   })
-  
+
   newConfigurations  <- configurations_alloc(parameters$names, nrow = nbNewConfigurations, parameters)
   idx_elites <- sample.int(n = length(ids_elites), size = nbNewConfigurations,
                            prob = eliteConfigurations[[".WEIGHT."]], replace = TRUE)
@@ -286,11 +295,3 @@ sampleModel <- function(parameters, eliteConfigurations, model,
   }
   newConfigurations
 }
-
-
-
-
-
-
-
-

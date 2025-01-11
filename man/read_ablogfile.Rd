@@ -7,10 +7,10 @@
 read_ablogfile(filename)
 }
 \arguments{
-\item{filename}{Filename that contains the log file saved by \code{\link[=ablation]{ablation()}}. Example: \code{log-ablation.Rdata}.}
+\item{filename}{\code{character(1)}\cr Filename that contains the log file saved by \code{\link[=ablation]{ablation()}}. Example: \code{log-ablation.Rdata}.}
 }
 \value{
-(\code{list()})
+\code{list()}
 }
 \description{
 Read the log file (\code{log-ablation.Rdata}) produced by \code{\link[=ablation]{ablation()}}.

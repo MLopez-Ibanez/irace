@@ -22,12 +22,11 @@ parameters <- readParameters(text = parameters_table)
 ## configuration on a single instance. For simplicity, we restrict to
 ## three-dimensional functions and we set the maximum number of
 ## iterations of SANN to 5000.
-
 target_runner <- function(experiment, scenario)
 {
   instance <- experiment$instance
   configuration <- experiment$configuration
-  D <- 3
+  D <- 3L
   par <- runif(D, min=-1, max=1)
   fn <- function(x) {
     # Functions to be optimized:
@@ -39,7 +38,7 @@ target_runner <- function(experiment, scenario)
     }
     f_rastrigin <- function (x)
       sum(x * x - 10 * cos(2 * pi * x) + 10)
-    
+
     (instance * f_rastrigin(x) + (1 - instance) * f_rosenbrock(x))
   }
   res <- stats::optim(par,fn, method="SANN",
@@ -78,10 +77,6 @@ iraceResults$scenario$logFile <- "./sann.rda"
 save(iraceResults, file="sann.rda", version = 3L)
 
 ### ACOTSP example
-
-iracebin <- system.file(package="irace", "bin/irace")
-if (0 != file.access(iracebin, mode=1))
-  stop("Error: ", iracebin, " is not executable or not found!")
 
 download_uncompress <- function(url, exdir, flat = FALSE) {
   exts <- c(".tar.bz2", ".tar.gz", ".tgz", ".tar.xz", ".zip")
@@ -132,11 +127,14 @@ setup_acotsp <- function() {
 setup_tsp_rue_2000()
 setup_acotsp()
 
+iracebin <- system.file(package="irace", "bin/irace")
+if (0 != file.access(iracebin, mode=1))
+  stop("Error: ", iracebin, " is not executable or not found!")
 system(paste0("nice -n 19 ", iracebin, " --parallel 2 | tee irace-acotsp-stdout.txt 2>&1"))
 
 # Create log-ablation.Rdata
 cat('**** Running ablation("irace-acotsp.Rdata")\n')
-ablation("irace-acotsp.Rdata", parallel = 1)
+ablation("irace-acotsp.Rdata", parallel = 2L)
 
 iraceResults <- read_logfile("irace-acotsp.Rdata")
 
@@ -171,7 +169,7 @@ experiment <- list (
   id_instance      = res[["instanceID"]],
   seed             = res[["seed"]],
   configuration    = getConfigurationById(iraceResults, 1L, drop.metadata = TRUE),
-  instance         = res[["instance"]], 
+  instance         = res[["instance"]],
   switches         = iraceResults$scenario$parameters$switches)
 
 # Output
@@ -182,6 +180,3 @@ output <- list(
 
 # save in the folder
 save(experiment, output, file="examples.Rdata", version = 3L)
-
-
-
