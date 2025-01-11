@@ -78,61 +78,61 @@ which_satisfied <- function(configurations, condition)
 #' with a period.  This function should be used before printing the
 #' configurations to output only the values for the parameters of the
 #' configuration without metadata possibly useless to the user.
-#'   
+#'
 #' @param configurations `data.frame`\cr Parameter configurations of the
 #'   target algorithm (one per row).
-#' 
+#'
 #' @return The same data frame without "metadata".
-#'    
-#' @seealso 
+#'
+#' @seealso
 #'   [configurations_print_command()] to print the configurations as command lines.
 #'   [configurations_print()] to print the configurations as a data frame.
-#' 
+#'
 #' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
 #' @export
 removeConfigurationsMetaData <- function(configurations)
   configurations[, !startsWith(colnames(configurations), "."), drop = FALSE]
 
 #' Print configurations as a data frame
-#' 
+#'
 #' @inheritParams removeConfigurationsMetaData
-#' 
+#'
 #' @param metadata `logical(1)`\cr whether to print the metadata or
 #' not. The metadata are data for the configurations (additionally to the
 #' value of each parameter) used by \pkg{irace}.
-#' 
+#'
 #' @return None.
 #'
 #' @seealso
 #'  [configurations_print_command()] to print the configurations as command-line strings.
-#' 
+#'
 #' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
 #' @export
 configurations_print <- function(configurations, metadata = FALSE)
 {
-  if (!is.data.frame(configurations))
+  if (is.data.table(configurations) || !is.data.frame(configurations))
     configurations <- as.data.frame(configurations, stringsAsFactors = FALSE)
 
   rownames(configurations) <- configurations[[".ID."]]
   if (!metadata)
     configurations <- removeConfigurationsMetaData(configurations)
-  
+
   print.data.frame(configurations, digits = 15L)
 }
 
 #' Print configurations as command-line strings.
-#' 
+#'
 #' Prints configurations after converting them into a representation for the
 #' command-line.
-#' 
+#'
 #' @inheritParams removeConfigurationsMetaData
 #' @inheritParams printParameters
-#' 
+#'
 #' @return None.
 #'
 #' @seealso
 #'  [configurations_print()] to print the configurations as a data frame.
-#' 
+#'
 #' @author Manuel López-Ibáñez and Jérémie Dubois-Lacoste
 #' @export
 configurations_print_command <- function(configurations, parameters)
