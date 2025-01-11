@@ -555,7 +555,9 @@ get_log_clean_version <- function(iraceResults)
   if (is.null(log_version))
     log_version <- iraceResults$irace.version
   if (is.null(log_version))
-    return(package_version("0"))
+    return(package_version("0.0.0"))
+  if (log_version == "unknown") # This may happen during development.
+    return(package_version("1000.0.0"))
   if (length(gregexpr("\\.", log_version)[[1L]]) > 3L
     || grepl("[a-z]", log_version))
     log_version <- sub("\\.[^.]*$", "", log_version)
