@@ -31,6 +31,7 @@ mmas      1     1    6    NA  NA      NA    0   NA   1
     check_generate_ablation <- function(src, target, configurations_table, changed) {
       aux <- irace:::generate_ablation(confs[src, , drop=FALSE], confs[target, , drop=FALSE],
         parameters, param_names = parameters$names_variable)
+      expect_valid_configurations(aux$configurations, parameters)
       configurations <- read.table(header=TRUE, colClasses=colClasses, text=configurations_table)
       configurations[["fixed"]] <- "0"
       configurations[[".ID."]] <- src

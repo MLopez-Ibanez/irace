@@ -54,6 +54,8 @@
  * Handle the case when all elites are rejected before starting the race and
    `sum(alive) <= minSurvival`.
 
+ * Fix bug in `sampleSobol()` with parameters whose domain depends on a conditional parameter.
+
 
 # irace 4.1
 

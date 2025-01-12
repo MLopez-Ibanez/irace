@@ -415,12 +415,12 @@ ParameterSpace <- R6::R6Class("ParameterSpace", cloneable = TRUE, lock_class = T
 #' @rdname parameters
 #' @export
 param_cat <- function(name = name, values, label = "", condition = TRUE)
-  Parameter(name = name, type = "c", domain = values, label = label, condition = condition, transf = "")
+  Parameter(name = name, type = "c", domain = as.character(values), label = label, condition = condition, transf = "")
 
 #' @rdname parameters
 #' @export
 param_ord <- function(name, values, label = "", condition = TRUE)
-  Parameter(name = name, type = "o", domain = values, label = label, condition = condition, transf = "")
+  Parameter(name = name, type = "o", domain = as.character(values), label = label, condition = condition, transf = "")
 
 #' @param lower,upper  Lower and upper limits of the valid domain.
 #' @param transf `character(1)`\cr If `"log"`, then the parameter is sampled in a logarithmic scale.
@@ -602,6 +602,11 @@ sample_unif.ParamInt <- function(param, n, domain = param[["domain"]])
 #' @exportS3Method
 param_quantile.ParamInt <- function(param, probs, domain = param[["domain"]])
 {
+  # Dependent domains could be not available because of inactivity of parameters
+  # on which they are depedent. In this case, the dependent parameter becomes
+  # not active and we return NA.
+  if (anyNA(domain))
+    return(NA_integer_)
   lower <- domain[1L]
   upper <- domain[2L]
   probs <- as.numeric(probs)
@@ -620,7 +625,8 @@ sample_model.ParamReal <- function(param, n, model, domain = param[["domain"]])
   # Dependent domains could be not available because of inactivity of parameters
   # on which they are depedent. In this case, the dependent parameter becomes
   # not active and we return NA.
-  if (anyNA(domain)) return(NA)
+  if (anyNA(domain))
+    return(NA_real_)
   lower <- domain[[1L]]
   upper <- domain[[2L]]
   transf <- param[["transform"]]
@@ -640,7 +646,8 @@ sample_unif.ParamReal <- function(param, n, domain = param[["domain"]])
   # Dependent domains could be not available because of inactivity of parameters
   # on which they are depedent. In this case, the dependent parameter becomes
   # not active and we return NA.
-  if (anyNA(domain)) return(NA)
+  if (anyNA(domain))
+    return(NA_real_)
   lower <- domain[[1L]]
   upper <- domain[[2L]]
   x <- sample_numeric_unif(n, lower, upper, transf = param[["transform"]])
@@ -652,6 +659,11 @@ sample_unif.ParamReal <- function(param, n, domain = param[["domain"]])
 #' @exportS3Method
 param_quantile.ParamReal <- function(param, probs, domain = param[["domain"]])
 {
+  # Dependent domains could be not available because of inactivity of parameters
+  # on which they are depedent. In this case, the dependent parameter becomes
+  # not active and we return NA.
+  if (anyNA(domain))
+    return(NA_real_)
   lower <- domain[1L]
   upper <- domain[2L]
   probs <- as.numeric(probs)

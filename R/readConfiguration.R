@@ -61,7 +61,8 @@ fix_configurations <- function(configurations, parameters, debugLevel = 0L, file
       if (is.null(filename)) "" else paste0(" from file '", filename, "'"),
       ...)
 
-  if (debugLevel >= 2L) print(configurations, digits=15L)
+  if (debugLevel >= 2L)
+    print(configurations, digits=15L)
   nbConfigurations <- nrow(configurations)
   namesParameters <- parameters[["names"]]
   # This ignores fixed parameters unless they are given with a different value.

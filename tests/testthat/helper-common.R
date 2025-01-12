@@ -25,6 +25,15 @@ skip_on_coverage <- function() {
 
 system_os_is_windows <- function() .Platform$OS.type == "windows"
 
+expect_valid_configurations <- function(configurations, parameters)
+{
+  configurations <- irace:::removeConfigurationsMetaData(as.data.frame(configurations))
+  output <- capture.output(print(configurations, width=5000L, row.names = FALSE))
+  output <- paste0(output, "\n", collapse="")
+  confs2 <- readConfigurationsFile(text=output, parameters=parameters)
+  expect_equal(configurations, confs2)
+}
+
 ## Functions ##########################################################
 f_ackley <- function (x,y, nsize = 0.01) {
   # Transformation of parameter values
