@@ -1,22 +1,16 @@
+.param_na_value_type <- list(i = NA_integer_, r = NA_real_, c = NA_character_, o = NA_character_)
+
 # Returns a data.table
 configurations_alloc <- function(colnames, nrow, parameters)
 {
-  parameter_type <- function(type) {
-    switch(type,
-           i = NA_integer_,
-           r = NA_real_,
-           c = NA_character_,
-           o = NA_character_,
-           irace_internal_error("Unknown type '", type, "'"))
+  column_type <- function(x, n, types) {
+    what <- switch(x,
+      .ID. = NA_integer_,
+      .PARENT. = NA_integer_,
+      .WEIGHT. = NA_real_,
+      .param_na_value_type[[ types[x] ]])
+    rep_len(what, n)
   }
-
-  column_type <- function(x, n, types)
-    rep(switch(x,
-               .ID. = NA_integer_,
-               .PARENT. = NA_integer_,
-               .WEIGHT. = NA_real_,
-               parameter_type(types[x])), n)
-
   x <- sapply(colnames, column_type, n=nrow, types = parameters[["types"]],
               simplify=FALSE, USE.NAMES=TRUE)
   setDT(x)

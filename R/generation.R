@@ -101,7 +101,6 @@ generate_sobol <- function(parameters, n, repair = NULL)
     set(confs, j = x, value = parameters$domains[[x]])
 
   setcolorder(confs, parameters$names)
-
   max_level <- max(hierarchy)
   if (max_level > 1L) {
     .NEWVALUE <- .DOMAIN <- NULL # To silence CRAN warnings.
@@ -110,29 +109,24 @@ generate_sobol <- function(parameters, n, repair = NULL)
       dep_names <- names(hierarchy)[hierarchy == k+1L]
       for (p in dep_names) {
         param <- parameters$get(p)
-        idx_satisfied <- which_satisfied(confs, param[["condition"]])
         if (param$isFixed) {
-          # If somehow this fixed parameter was not satisfied sometimes, just set its value to NA.
-          confs[!idx_satisfied, (p):= NA ]
-        } else if (length(idx_satisfied)) {
+          if (!isTRUE(param[["condition"]]))
+            # If somehow this fixed parameter was not satisfied sometimes, just set its value to NA.
+            set(confs, which(!eval(param[["condition"]], confs)), j = p, value = NA_character_)
+          next
+        }
+        idx_satisfied <- which_satisfied(confs, param[["condition"]])
+        if (length(idx_satisfied)) {
           if (param[["is_dependent"]]) {
             confs[idx_satisfied, let(.DOMAIN = list(get_dependent_domain(param, .SD))), by=.I, .SDcols=prev_names]
             confs[idx_satisfied, .NEWVALUE := param_quantile(param, .SD, domain = unlist(.DOMAIN)), by=.I, .SDcols=p]
-            confs[, (p):=.NEWVALUE]
-            confs[, let(.NEWVALUE=NULL, .DOMAIN=NULL)]
+            set(confs, j = ".DOMAIN", value = NULL)
           } else {
             confs[idx_satisfied, .NEWVALUE := param_quantile(param, unlist(.SD)), .SDcols=p]
-            confs[, (p):=.NEWVALUE]
-            confs[, let(.NEWVALUE=NULL)]
           }
+          set(confs, j = c(p, ".NEWVALUE"), value = list(confs[[".NEWVALUE"]], NULL))
         } else {
-          na_value <- switch(param[["type"]],
-            i = NA_integer_,
-            r = NA_real_,
-            c = NA_character_,
-            o = NA_character_,
-            irace_internal_error("Unknown type '", param[["type"]], "'"))
-          set(confs, j = p, value = na_value)
+          set(confs, j = p, value = .param_na_value_type[[ param[["type"]] ]])
         }
       }
     }
