@@ -67,13 +67,15 @@ get_dependent_domain <- function(param, configuration)
   deps <- all.vars(domain)
   # FIXME: This function should not be called if the parent is disabled.
   # If it depends on a parameter that is disabled, then this is disabled.
-  if (anyNA(configuration[deps])) return(NA)
+  if (anyNA(configuration[deps]))
+    return(NA)
 
   irace_assert(is.expression(domain))
   domain <- sapply(domain, eval, configuration, USE.NAMES=FALSE)
   irace_assert(all(is.finite(domain)))
   # Value gets truncated (defined from robotics initial requirements)
-  if (param[["type"]] == "i") domain <- as.integer(domain)
+  if (param[["type"]] == "i")
+    domain <- as.integer(domain)
   if (domain[[1L]] > domain[[2L]]) {
     # FIXME: Add test for this error.
     irace_error ("Invalid domain (", paste0(domain, collapse=", "),
@@ -259,7 +261,7 @@ sample_from_model <- function(parameters, eliteConfigurations, model,
       c(pname) := list(sample_model(param, .N, this_model[[ .BY[[1L]] ]])),
       by = .PARENT.]
   }
-  newConfigurations[, .PARENT. := as.integer(.PARENT.)]
+  set(newConfigurations, j = ".PARENT.", value = as.integer(newConfigurations[[".PARENT."]]))
   repairConfigurations(newConfigurations, parameters, repair)
   newConfigurations
 }
