@@ -43,6 +43,8 @@
 
 ## Fixes
 
+ * Fix #79: irace.exe did not encode the `libPath` correctly in R >= 4.0 on Windows, producing 'unrecognized escape in character string'. Fixed by replacing backslashes with forward slashes and quoting the arguments that may contain spaces.
+
  * Fix #76: Recovery (`--recover-file`) is working again with a completely new implementation.
 
  * Fixed documentation of `psRace()`.

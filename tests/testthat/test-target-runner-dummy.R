@@ -33,10 +33,12 @@ withr::with_output_sink("test-target-runner-dummy.Rout", {
     skip_if_not(nzchar(iraceexe), "Not run because 'irace' is not installed")
     expect_true(file.exists(iraceexe))
     # FIXME: For some reason, this does not generate any output on Windows
-    output <- expect_silent(system2(iraceexe, "--help", stdout = TRUE, stderr = TRUE))
-    skip_on_os("windows")
-    expect_match(paste(collapse="", output),
-                 "irace: An implementation in R of.*called with: --help")
+    output <- expect_silent(runexe(iraceexe, "--help"))
+    ## cat("irace --help\n")
+    ## print(output)
+    expected_output <- if (system_os_is_windows()) "^$"
+                       else "irace: An implementation in R.*called with: --help"
+    expect_match(paste(collapse="", output), expected_output)
   })
 
   test_that("ablation exe works", {
@@ -44,10 +46,12 @@ withr::with_output_sink("test-target-runner-dummy.Rout", {
     skip_if_not(nzchar(ablationexe), "Not run because 'ablation' is not installed")
     expect_true(file.exists(ablationexe))
     # FIXME: For some reason, this does not generate any output on Windows
-    output <- expect_silent(system2(ablationexe, "--help", stdout = TRUE, stderr = TRUE))
-    skip_on_os("windows")
-    expect_match(paste(collapse="", output),
-      "ablation: An implementation in R of Ablation Analysis.*called with: --help")
+    output <- expect_silent(runexe(ablationexe, "--help"))
+    ## cat("ablation --help\n")
+    ## print(output)
+    expected_output <- if (system_os_is_windows()) "^$"
+                       else "ablation: An implementation in R of Ablation Analysis.*called with: --help"
+    expect_match(paste(collapse="", output), expected_output)
   })
 
   run_cmdline <- function(parameters, args) {
@@ -65,7 +69,7 @@ withr::with_output_sink("test-target-runner-dummy.Rout", {
   target_runner_dummy <- get_executable("target-runner-dummy")
   skip_if_not(nzchar(target_runner_dummy), "Not run because 'target-runner-dummy' is not installed")
   expect_true(file.exists(target_runner_dummy))
-  
+
   test_that("--check", {
     expect_warning(
       run_cmdline(paste0('p_int  "--p_int " i (1, 10)\n',
@@ -91,7 +95,7 @@ withr::with_output_sink("test-target-runner-dummy.Rout", {
                            'capping "--opt-time " c (1)\n'),
                     '--max-time 1000 --bound-max 100 --capping 1'),
         "is too large"),
-      "No scenario file given")      
+      "No scenario file given")
   })
   test_that("--capping", {
     expect_warning(
@@ -120,7 +124,7 @@ withr::with_output_sink("test-target-runner-dummy.Rout", {
                            'capping "--opt-time " c (1)\n'),
                     '--max-time 500 --bound-max 1 --capping 1 '),
         "With the current settings and estimated time per run"),
-      "No scenario file given")      
+      "No scenario file given")
   })
   test_that("Error cost time", {
     expect_error(
@@ -151,5 +155,5 @@ withr::with_output_sink("test-target-runner-dummy.Rout", {
                   '--min-experiments 50'),
       "No scenario file given"))
   })
-  
+
 }) # withr::with_output_sink()
