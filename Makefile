@@ -63,7 +63,7 @@ pkgdown: gendoc
 	$(Reval) 'pkgdown::build_site()'
 	@$(MAKE) clean
 
-build: 
+build:
 	@$(MAKE) genoptions
 	$(MAKE) releasevignette
 	@if grep -q @ $(PACKAGEDIR)/vignettes/$(PACKAGE)-package.bib; then true; \
@@ -120,7 +120,7 @@ else
 	_R_CHECK_FORCE_SUGGESTS_=false NOT_CRAN=true $(Reval) 'testthat::test_local(stop_on_failure = TRUE)'
 endif
 
-clean: 
+clean:
 	cd $(PACKAGEDIR) && (./cleanup; make -C src -f Makevars clean)
 
 ## FIXME: building the vignettes is a bit complicated and sometimes fails.
@@ -180,8 +180,8 @@ macbuild: releasebuild
 	$(Reval) "rhub::check(platform='macos-highsierra-release-cran', $(RHUB_COMMON_ARGS))"
 
 winbuild: releasebuild
-	$(Reval) "devtools::check_win_release()"
-	$(Reval) "devtools::check_win_devel()"
+	$(Reval) "devtools::check_win_release(args = '--compact-vignettes=both')"
+	$(Reval) "devtools::check_win_devel(args = '--compact-vignettes=both')"
 	$(Reval) "rhub::check_on_windows($(RHUB_COMMON_ARGS))"
 
 examples: quick-install
