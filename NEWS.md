@@ -41,6 +41,8 @@
    complicated conditions.  Ablation will not generate intermediate
    configurations that are forbidden.
 
+ * The ACOTSP example in the user-guide now uses the ACOTSPQAP code and provides more guidance in case of errors.
+
 ## Fixes
 
  * Fix #79: irace.exe did not encode the `libPath` correctly in R >= 4.0 on Windows, producing 'unrecognized escape in character string'. Fixed by replacing backslashes with forward slashes and quoting the arguments that may contain spaces.

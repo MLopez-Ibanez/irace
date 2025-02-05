@@ -13,7 +13,7 @@ execDir = "./acotsp-arena"
 
 ## Directory where tuning instances are located, either absolute path or
 ## relative to current directory.
-trainInstancesDir = "./Instances"
+trainInstancesDir = "./instances"
 
 ## The maximum number of runs (invocations of targetRunner) that will performed. It
 ## determines the (maximum) budget of experiments for the tuning.
@@ -21,7 +21,7 @@ maxExperiments = 5000
 
 ## File that contains a set of initial configurations. If empty or NULL,
 ## all initial configurations are randomly generated.
-# configurationsFile = ""
+# configurationsFile = "default.txt"
 
 ## A value of 0 silences all debug messages. Higher values provide
 ## more verbose debug messages.
@@ -29,4 +29,3 @@ maxExperiments = 5000
 
 ## END of scenario file
 ############################################################################
-

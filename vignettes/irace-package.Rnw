@@ -759,38 +759,41 @@ located in the \code{examples} folder to the created directory:
 mkdir ./tuning
 cd ./tuning
 # $IRACE_HOME is the installation directory of irace.
-cp $IRACE_HOME/examples/acotsp/* ./tuning/
+cp $IRACE_HOME/examples/acotsp/* ./
+ls ./
+# Make sure that target-runner is executable
+chmod u+x target-runner
 \end{lstlisting}
 %@
 
-\item Download the training instances from \url{https://iridia.ulb.ac.be/supp/IridiaSupp2016-003/index.html} to the \path{./tuning/} directory.
-\item Create the instance directory (\eg~\path{./tuning/Instances}) and decompress the instance files on it.
+\item Download the training instances from \url{https://iridia.ulb.ac.be/supp/IridiaSupp2016-003/scenarios/acotsp/instances.tar.gz} to the \path{./tuning/} directory and decompress it, which creates create a folder \path{instances}:
 
 %<<instance0,engine='bash',eval=FALSE>>=
 \begin{lstlisting}[style=BashInputStyle]
-mkdir ./tuning/Instances/
-cd ./tuning/
-tar -xvf tsp-instances-training.tar.bz2 Instances/
+tar -xvf instances.tar.gz
+ls instances/
 \end{lstlisting}
 %@
 
-\item Download the \ACOTSP software from \url{http://www.aco-metaheuristic.org/aco-code/} to the \path{./tuning/}
-directory and compile it.
+If the above gives an error or does not show any files, then the files were not extract correctly. Maybe the \path{instances.tar.gz} file did not download correctly or maybe it is not in the correct place. It should be within the folder \path{tuning}.correctly.
+
+\item Download the \ACOTSP software from \url{https://github.com/MLopez-Ibanez/ACOTSPQAP/archive/refs/heads/master.zip} to the \path{./tuning/}
+directory and compile the \path{acotsp} executable using \code{make}.
 %<<acotsp0,engine='bash',eval=FALSE>>=
 \begin{lstlisting}[style=BashInputStyle]
-cd ./tuning/
-tar -xvf ACOTSP-1.03.tgz
-cd ./tuning/ACOTSP-1.03
-make
+unzip master.zip
+make -C ACOTSPQAP-master acotsp
+./ACOTSPQAP-master/acotsp --version
 \end{lstlisting}
 %@
+
+If the above gives an error, then the \path{acotsp} executable failed to compile for some reason. Maybe you are missing the C compiler or some files did not extract correctly.
 
 \item Create a directory for executing the experiments and execute \irace:
 
 %<<runexample,engine='bash',eval=FALSE>>=
 \begin{lstlisting}[style=BashInputStyle]
-mkdir ./tuning/acotsp-arena/
-cd ./tuning/
+mkdir ./acotsp-arena/
 # $IRACE_HOME is the installation directory of irace.
 $IRACE_HOME/bin/irace
 \end{lstlisting}
@@ -806,6 +809,17 @@ irace_cmdline()
 
 \end{enumerate}
 
+The most usual sources of error when running the above commands are:
+\begin{itemize}
+\item The \irace package is not correctly installed. Please make sure that installing \irace did not give any errors.
+\item The location of the files is not correct. Please make sure that you have:
+  \begin{itemize}
+  \item The folder  \path{tuning} and that it contains the files \path{scenario.txt}, \path{parameters-acotsp.txt}, \path{target-runner}, and the folders \path{instances}, \path{ACOTSPQAP-master} and \path{acotsp-arena}.
+  \item The folder \path{instances} should contain the TSP instance files (\path{*.tsp}).
+  \item The folder \path{ACOTSPQAP-master} should contain the executable \path{acotsp}. You should be able to invoke \code{./ACOTSPQAP-master/acotsp --version} without an error.
+  \item The folder \path{acotsp-arena} should be empty.
+  \end{itemize}
+\end{itemize}
 %%
 %%
 %%
