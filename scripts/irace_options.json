@@ -448,9 +448,9 @@
     "short": "",
     "long": "--debug-level",
     "default": 0,
-    "vignettes": "Level of information to display in the text output of \\irace. A value of 0 silences all debug messages. Higher values provide more verbose debug messages. Details about the text output of \\irace are given in \\autoref{sec:output text}.",
+    "vignettes": "Level of information to display in the text output of \\irace. A value of 0 silences all debug messages. Higher values (1, 2 or 3) provide more verbose debug messages. Details about the text output of \\irace are given in \\autoref{sec:output text}.",
     "section": "General options",
-    "description": "Debug level of the output of \\code{irace}. Set this to 0 to silence all debug messages. Higher values provide more verbose debug messages."
+    "description": "Debug level of the output of \\code{irace}. Set this to 0 to silence all debug messages. Higher values (1, 2 or 3) provide more verbose debug messages."
   },
   {
     "name": "seed",
