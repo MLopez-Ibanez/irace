@@ -783,7 +783,7 @@ directory and compile the \path{acotsp} executable using \code{make}.
 \begin{lstlisting}[style=BashInputStyle]
 unzip master.zip
 make -C ACOTSPQAP-master acotsp
-./ACOTSPQAP-master/acotsp --version
+./ACOTSPQAP-master/acotsp --help
 \end{lstlisting}
 %@
 
@@ -816,7 +816,7 @@ The most usual sources of error when running the above commands are:
   \begin{itemize}
   \item The folder  \path{tuning} and that it contains the files \path{scenario.txt}, \path{parameters-acotsp.txt}, \path{target-runner}, and the folders \path{instances}, \path{ACOTSPQAP-master} and \path{acotsp-arena}.
   \item The folder \path{instances} should contain the TSP instance files (\path{*.tsp}).
-  \item The folder \path{ACOTSPQAP-master} should contain the executable \path{acotsp}. You should be able to invoke \code{./ACOTSPQAP-master/acotsp --version} without an error.
+  \item The folder \path{ACOTSPQAP-master} should contain the executable \path{acotsp}. You should be able to invoke \code{./ACOTSPQAP-master/acotsp --help} without an error.
   \item The folder \path{acotsp-arena} should be empty.
   \end{itemize}
 \end{itemize}
