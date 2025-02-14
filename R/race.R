@@ -93,15 +93,19 @@ race_wrapper_helper <- function(race_state, configurations, instance_idx, bounds
     # If targetEvaluator is NULL, then target_output must contain the right
     # output already.  Otherwise, targetEvaluator considers all experiments.
     if (!is.null(scenario$targetEvaluator)) {
+      target_output_before_evaluator <- target_output
       target_output <- execute_evaluator(race_state$target_evaluator, experiments, scenario, target_output)
     } else if (any(!is_exe))  {
       experiments <- experiments[is_exe]
       instance_idx <- instance_idx[is_exe]
     }
+    target_output_before_rbindlist <- target_output
     target_output <- rbindlist(target_output, fill=TRUE, use.names=TRUE)
+    target_output_before_null <- target_output
     set(target_output, j = setdiff(colnames(target_output), c("cost", "time")), value = NULL)
     if ("time" %notin% colnames(target_output))
-      set(target_output, j = "time", value = NA)
+      set(target_output, j = "time", value = NA_real_)
+    target_output_before_configuration <- target_output
     set(target_output, j = "configuration", value = unlist_element(experiments, "id_configuration"))
     set(target_output, j = "instance", value = instance_idx)
     if (!is.null(bounds))
