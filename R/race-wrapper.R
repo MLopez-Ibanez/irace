@@ -45,7 +45,8 @@ buildCommandLine <- function(values, switches)
 # numeric vector.
 parse_output <- function(outputRaw, verbose)
 {
-  if (verbose) cat(outputRaw, sep = "\n")
+  if (verbose)
+    cat(paste0(outputRaw, collapse = "\n"))
   # Initialize output as raw. If it is empty stays like this.
   output <- outputRaw
   # strsplit crashes if outputRaw == character(0)
@@ -624,8 +625,6 @@ execute_evaluator <- function(target_evaluator, experiments, scenario, target_ou
     target_output[[k]]$cost <- output$cost
     # targetEvaluator may return time, for example for batchmode != 0.
     target_output[[k]]$time <- output$time
-    if (is.null(target_output[[k]]$call))
-      target_output[[k]]$call <- output$call
   }
   target_output
 }
