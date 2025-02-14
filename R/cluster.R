@@ -105,21 +105,21 @@ cluster_lapply <- function(X, scenario, poll.time = 2)
     }
     output <- lapply(chunk, exec_target_runner, scenario = scenario, target_runner = target_runner_qsub)
     jobIDs <- sapply(output, "[[", "jobID")
-  
+
     ## Wait for cluster jobs to finish.
     if (length(jobIDs) > 0L && debugLevel >= 1L) {
-      irace_note("Waiting for jobs ('.' == ", poll.time, " s) ")
+      irace_note("Waiting for jobs ('.' == ", poll.time, " s): ")
     }
     for (jobID in jobIDs) {
       while (!cluster.job.finished(jobID)) {
         if (debugLevel >= 1) { cat(".") }
         Sys.sleep(poll.time)
       }
-      if (debugLevel >= 1) {
-        cat("\n")
-        irace_note ("DONE (", jobID, ")\n")
-      }
+      if (debugLevel >= 1)
+        cat(" DONE(", jobID, ") ")
     }
+    if (debugLevel >= 1)
+      cat("\n")
   }
   output
 }
