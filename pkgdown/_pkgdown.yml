@@ -4,22 +4,23 @@ url: https://mlopez-ibanez.github.io/irace/
 template:
   bootstrap: 5
   bootswatch: sandstone
+  light-switch: true
   bslib:
-    link-color: "#447099" 
+    link-color: "#447099"
     font-scale: 0.9
     link-decoration: none
     link-hover-decoration: underline
     border-radius: 0
     btn-border-radius: 3px
-  
+
 development:
   mode: unreleased
 
 navbar:
   structure:
     left:  [home, intro, guide, reference, articles, tutorials, news]
-    right: [search, cran, github]
-    
+    right: [search, cran, github, lightswitch]
+
   components:
     home: ~
     guide:
@@ -39,4 +40,3 @@ reference:
   contents: has_concept("ablation")
 - title: Other functions
   contents: lacks_concepts(c("analysis", "running", "ablation"))
-  
