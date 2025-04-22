@@ -29,12 +29,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ windows-latest, macos-13, macos-14 ]
+        os: [ windows-latest, macos-13, macos-14, ubuntu-22.04 ]
+        # 4.0 is the minimum supported version.
         r: [ release, 4.0 ]
         include:
-          # 4.0 is the minimum supported version.
-          - { os: ubuntu-20.04, r: '4.0'}
-          - { os: ubuntu-22.04, r: 'release' }
           # Use latest ubuntu to make it easier to install dependencies
           - { os: ubuntu-24.04, r: 'devel', http-user-agent: 'release' }
 
