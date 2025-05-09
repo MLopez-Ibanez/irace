@@ -65,23 +65,11 @@ jobs:
         run: tlmgr install ${{ env.LATEX_PACKAGES }}
 
       - uses: r-lib/actions/setup-r-dependencies@v2
-        if: runner.os != 'macOS'
         with:
           extra-packages: |
             any::rcmdcheck
             mlr=?ignore-before-r=4.0.0
             Rmpi=?ignore-unavailable
-          needs: check
-          cache-version: 1
-          install-pandoc: true
-
-      - uses: r-lib/actions/setup-r-dependencies@v2
-        if: runner.os == 'macOS'
-        with:
-          extra-packages: |
-            any::rcmdcheck
-            mlr=?ignore-before-r=4.0.0
-            Rmpi=?ignore
           needs: check
           cache-version: 1
           install-pandoc: true
