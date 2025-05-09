@@ -69,7 +69,7 @@ jobs:
           extra-packages: |
             any::rcmdcheck
             mlr=?ignore-before-r=4.0.0
-            Rmpi=?ignore-unavailable
+            Rmpi=?ignore-build-errors&ignore-unavailable
           needs: check
           cache-version: 1
           install-pandoc: true
