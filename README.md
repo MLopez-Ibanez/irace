@@ -6,18 +6,18 @@
 [![CRAN Downloads](https://cranlogs.r-pkg.org/badges/grand-total/irace)](https://CRAN.R-project.org/package=irace)
 [![CRAN status](https://badges.cranchecks.info/worst/irace.svg)](https://cran.r-project.org/web/checks/check_results_irace.html)
 [![R build
-status](https://github.com/MLopez-Ibanez/irace/workflows/R-CMD-check/badge.svg)](https://github.com/MLopez-Ibanez/irace/actions) 
+status](https://github.com/MLopez-Ibanez/irace/workflows/R-CMD-check/badge.svg)](https://github.com/MLopez-Ibanez/irace/actions)
 [![Codecov test coverage](https://codecov.io/gh/MLopez-Ibanez/irace/branch/master/graph/badge.svg)](https://app.codecov.io/gh/MLopez-Ibanez/irace?branch=master)
 [![r-universe version](https://mlopez-ibanez.r-universe.dev/badges/irace)](https://mlopez-ibanez.r-universe.dev/irace)
 [![r-universe build status](https://github.com/r-universe/mlopez-ibanez/actions/workflows/build.yml/badge.svg)](https://github.com/r-universe/mlopez-ibanez/actions/workflows/build.yml)
 <!-- badges: end -->
 
-[ [**Homepage**](https://mlopez-ibanez.github.io/irace/) ] [ [**User Guide (PDF)**](https://cran.r-project.org/package=irace/vignettes/irace-package.pdf) ]
+[ [**Homepage**](https://mlopez-ibanez.github.io/irace/) ] [ [**User Guide (PDF)**](https://cran.r-project.org/package=irace/vignettes/irace-package.pdf) ] [ [**Tutorial**](https://lopez-ibanez.eu/2024-redheur/) ]
 
 **Maintainers:** [Manuel López-Ibáñez](https://lopez-ibanez.eu/), Leslie Pérez Cáceres
 
 **Creators:** [Manuel López-Ibáñez](https://lopez-ibanez.eu/), Jérémie Dubois-Lacoste
-  
+
 **Contributors:** Jérémie Dubois-Lacoste, Thomas Stützle, Mauro Birattari, Eric
   Yuan and Prasanna Balaprakash.
 
@@ -89,7 +89,7 @@ Quick Start
 ```bash
     export PATH="$(Rscript -e "cat(paste0(system.file(package='irace', 'bin', mustWork=TRUE), ':'))" 2> /dev/null)${PATH}"
 ```
-Consider adding this line to your `~/.bashrc`, `~/.zshrc`, or `~/.profile` for it to persist between sessions. 
+Consider adding this line to your `~/.bashrc`, `~/.zshrc`, or `~/.profile` for it to persist between sessions.
 
 4. You can open the user guide with the following command. This command works on Bash shell (Linux and MacOS) and and Powershell (Windows) with R added to PATH (see detailed instructions below).
 ```bash
@@ -123,7 +123,7 @@ Alternatively, if you use homebrew, you can just run from the Terminal (Bash she
     brew install --cask r
 ```
 
-(Using `brew install r` is not recommended because that will build R from source and you will not be able to use any CRAN binary, possibly resulting in annoying build failures). 
+(Using `brew install r` is not recommended because that will build R from source and you will not be able to use any CRAN binary, possibly resulting in annoying build failures).
 
 Once R is installed, you can launch R from the Terminal (or from your
 Applications), and from the R prompt install the irace package. See
@@ -143,7 +143,7 @@ You should add the following line [to PATH](https://www.architectryan.com/2018/0
 C:\Program Files\R\R-4.1.3\bin\x64
 ```
 
-Or, if you are on a 32-bit version 
+Or, if you are on a 32-bit version
 ```
 C:\Program Files\R\R-4.1.3\bin\i386
 ```
@@ -218,10 +218,10 @@ You can find out where the irace binary is installed by running the following in
     C:\> Rscript -e "cat(gsub('/', '\\\\', system.file(package='irace', 'bin', 'x64', mustWork=TRUE)))"
 ```
 
-It will output a path, such as `C:\Program Files\R\R-4.1.3\library\irace\bin\x64` (replace `x64` with `i386` if you are on a 32-bit system), which can you [add to PATH](https://www.architectryan.com/2018/03/17/add-to-the-path-on-windows-10/). 
+It will output a path, such as `C:\Program Files\R\R-4.1.3\library\irace\bin\x64` (replace `x64` with `i386` if you are on a 32-bit system), which can you [add to PATH](https://www.architectryan.com/2018/03/17/add-to-the-path-on-windows-10/).
 
 Then running the following should work:
-```Powershell 
+```Powershell
     C:\> irace --help
 ```
 
@@ -272,7 +272,7 @@ Usage
     * In `scenario.txt`, uncomment and assign only the parameters for which
       you need a value different than the default one. For example, you may need to set
       `trainInstancesDir="./Instances/"`.
-   
+
     There are examples in `$IRACE_HOME/examples/`.
 
 4. Put the instances in `./tuning/Instances/`. In addition, you can
@@ -362,11 +362,11 @@ by the R expression `system.file(package="irace")`. After installing
 SingularityCE, the container may be build using:
 
     sudo singularity build irace.sindef irace.sif
-    
+
 and run with:
 
     singularity run irace.sif <arguments>
-    
+
 
 
 Frequently Asked Questions
