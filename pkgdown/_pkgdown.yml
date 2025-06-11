@@ -18,7 +18,7 @@ development:
 
 navbar:
   structure:
-    left:  [home, intro, guide, reference, articles, tutorials, news]
+    left:  [home, intro, guide, tutorial, reference, articles, tutorials, news]
     right: [search, cran, github, lightswitch]
 
   components:
@@ -26,6 +26,9 @@ navbar:
     guide:
       text: User Guide
       href: irace-package.pdf
+    tutorial:
+      text: Tutorial
+      href: https://lopez-ibanez.eu/2024-redheur/
     cran:
       icon: fab fa-r-project
       href: https://cloud.r-project.org/package=irace
