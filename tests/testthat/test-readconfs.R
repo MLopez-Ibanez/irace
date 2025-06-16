@@ -103,7 +103,7 @@ param1 param3
 fixed  off
 ', parameters=params)
 
-  expect_equal(x[["param2"]], NA)
+  expect_equal(x[["param2"]], NA_character_)
 
   x <- irace::readConfigurationsFile(text='
 param1 param2 param3
