@@ -63,7 +63,6 @@ fix_configurations <- function(configurations, parameters, debugLevel = 0L, file
 
   if (debugLevel >= 2L)
     print(configurations, digits=15L)
-  nbConfigurations <- nrow(configurations)
   namesParameters <- parameters[["names"]]
   # This ignores fixed parameters unless they are given with a different value.
   if (ncol(configurations) != length(namesParameters)
@@ -85,7 +84,7 @@ fix_configurations <- function(configurations, parameters, debugLevel = 0L, file
     }
     # All non-fixed parameters must appear in column names.
     varParameters <- parameters$names_variable
-    missing <- setdiff (varParameters, colnames(configurations))
+    missing <- setdiff(varParameters, colnames(configurations))
     if (length(missing) > 0) {
       if (is.null(filename)) {
         irace_error("The parameter names (",
@@ -99,11 +98,22 @@ fix_configurations <- function(configurations, parameters, debugLevel = 0L, file
       return(NULL)
     }
     # Add any missing fixed parameters.
-    missing <- setdiff (namesParameters, colnames(configurations))
+    missing <- setdiff(namesParameters, colnames(configurations))
     if (length(missing) > 0L) {
-      irace_assert (all(parameters$isFixed[missing]))
+      irace_assert(all(parameters$isFixed[missing]))
       configurations <- cbind.data.frame(configurations, parameters$domains[missing],
         stringsAsFactors = FALSE)
+      # We can have fixed parameters that are conditional and disabled,
+      # thus their value should be NA.
+      for (pname in missing) {
+        param <- parameters$get(pname)
+        condition <- param[["condition"]]
+        for (k in seq_nrow(configurations)) {
+          if (!conditionsSatisfied(condition, configurations[k, ])) {
+            configurations[k, pname] <- NA
+          }
+        }
+      }
     }
   }
   # Reorder columns.
@@ -138,7 +148,7 @@ fix_configurations <- function(configurations, parameters, debugLevel = 0L, file
     # Loop over all configurations.
     # FIXME: Vectorize this loop
     values <- configurations[[pname]]
-    for (k in seq_len(nbConfigurations)) {
+    for (k in seq_nrow(configurations)) {
       currentValue <- values[k]
       # Check the status of the conditions for this parameter to know whether
       # it must be enabled.

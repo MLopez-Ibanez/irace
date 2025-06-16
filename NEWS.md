@@ -3,8 +3,13 @@
 # irace (development version)
 
 ## Major breaking changes
+
 ## New features and improvements
+
 ## Fixes
+
+ * Fix bug in `readConfigurationsFile()` when a fixed parameter that is both
+   conditional and disabled does not appear in the input file.
 
 # irace 4.2
 
