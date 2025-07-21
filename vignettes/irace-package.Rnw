@@ -2932,19 +2932,19 @@ Long answer: According to the terminology described by \citet{LopBraPaq2021telo}
 Definitely. There are three main ways to achieve this:
 \begin{enumerate}
 \item Edit the \parameter{targetRunner} script to call \MATLAB in a non-interactive
-    way. See the \MATLAB documentation, or the following links.\footnote{\url{http://stackoverflow.com/questions/1518072/suppress-start-message-of-matlab}}\footnote{\url{http://stackoverflow.com/questions/4611195/how-to-call-matlab-from-command-line-and-print-to-stdout-before-exiting}} %
-    You would need to pass the parameter received by \parameter{targetRunner} to your \MATLAB script.\footnote{\url{https://www.mathworks.com/matlabcentral/answers/97204-how-can-i-pass-input-parameters-when-running-matlab-in-batch-mode-in-windows}}\footnote{\url{https://stackoverflow.com/questions/3335505/how-can-i-pass-command-line-arguments-to-a-standalone-matlab-executable-running}}
+    way. See the \MATLAB documentation, or the following links.\footnote{See \href{http://stackoverflow.com/questions/1518072/suppress-start-message-of-matlab}{suppress-start-message-of-matlab (stackoverflow.com)} and \href{http://stackoverflow.com/questions/4611195/how-to-call-matlab-from-command-line-and-print-to-stdout-before-exiting}{how-to-call-matlab-from-command-line-and-print-to-stdout-before-exiting (stackoverflow.com)}} %
+    You would need to pass the parameter received by \parameter{targetRunner} to your \MATLAB script.\footnote{See \href{https://www.mathworks.com/matlabcentral/answers/97204-how-can-i-pass-input-parameters-when-running-matlab-in-batch-mode-in-windows}{how-can-i-pass-input-parameters-when-running-matlab-in-batch-mode-in-windows (mathworks.com)} and \href{https://stackoverflow.com/questions/3335505/how-can-i-pass-command-line-arguments-to-a-standalone-matlab-executable-running}{how-can-i-pass-command-line-arguments-to-a-standalone-matlab-executable-running (mathworks.com)}}
     %
-    There is a minimal example in \IRACEHOME{/examples/matlab/}.
+    There is a minimal example in \IRACEHOME{/examples/matlab/}, where you can find an example \path{target-runner} script calling the \path{matlab} executable.
 
 \item Call \MATLAB code directly from \aR using the
     \pkg{matlabr} package (\url{https://cran.r-project.org/package=matlabr}). This
     is a better option if you are experienced in \aR. Define \parameter{targetRunner} as
     an \aR function instead of a path to a script. The function should
-    call your \MATLAB code with appropriate parameters.
+    call your \MATLAB code with appropriate parameters. There is a minimal example in \IRACEHOME{/examples/matlabr/}, where you can find the \parameter{targetRunner} function in \path{scenario.txt} and the \MATLAB code in \path{Main.m}.
 
-  \item Another possibility is calling \MATLAB directly from a different programming language and write \parameter{targetRunner} in that programming language,  for example, in \proglang{Python} (see examples in \IRACEHOME{/examples/target-runner-python/}).\footnote{\url{https://www.mathworks.com/help/matlab/matlab_external/call-matlab-functions-from-python.html}\\
-    \url{https://www.mathworks.com/help/matlab/matlab_external/call-user-script-and-function-from-python.html}}
+
+  \item Another possibility is calling \MATLAB directly from a different programming language and write \parameter{targetRunner} in that programming language,  for example, in \proglang{Python} (see examples in \IRACEHOME{/examples/target-runner-python/}).\footnote{See \href{https://www.mathworks.com/help/matlab/matlab_external/call-matlab-functions-from-python.html}{call-matlab-functions-from-python (mathworks.com)} and \href{https://www.mathworks.com/help/matlab/matlab_external/call-user-script-and-function-from-python.html}{call-user-script-and-function-from-python (mathworks.com)}}
 \end{enumerate}
 
 \subsection{My program works perfectly on its own, but not when running under \irace. Is irace broken?}\label{faq:valgrind}

@@ -1,0 +1,74 @@
+#!/bin/bash
+###############################################################################
+# This script is the command that is executed every run.
+# Check the examples in examples/
+#
+# This target-runner is run in the execution directory (execDir, --exec-dir).
+#
+#
+# PARAMETERS:
+# $1 is the candidate number
+# $2 is the instance ID
+# $3 is the seed
+# $4 is the instance name
+# The rest ($* after `shift 4') are parameters to the run
+#
+# RETURN VALUE:
+# This script should print one numerical value: the cost that must be minimized.
+# Exit with 0 if no error, with 1 in case of error
+###############################################################################
+
+# EDIT THIS: Path to your executable
+EXE=matlab
+# EDIT THIS: Specify how parameters are given to your executable.
+EXE_PARAMS="-nosplash -nodesktop -nodisplay"
+
+error() {
+    echo "`TZ=UTC date`: $0: error: $@"
+    exit 1
+}
+
+# This parses the arguments given by irace. Do not touch it!
+CONFIG_ID=$1
+INSTANCE_ID=$2
+SEED=$3
+INSTANCE=$4
+shift 4 || error "Not enough parameters"
+CONFIG_PARAMS=$*
+# End of parsing
+
+if [ ! -x "$(command -v ${EXE})" ]; then
+    error "${EXE}: not found or not executable (pwd: $(pwd))"
+fi
+
+# # If the program just prints a number, we can use 'exec' to avoid creating
+# # another process, but there can be no other commands after exec, only exit.
+# exec $EXE ${EXE_PARAMS}
+# exit 1
+
+# These files are saved in execDir. Saving them in /tmp may be faster.
+STDOUT=c${CONFIG_ID}-${INSTANCE_ID}-${SEED}.stdout
+STDERR=c${CONFIG_ID}-${INSTANCE_ID}-${SEED}.stderr
+
+## Otherwise, save the output to a file, and parse the result from it.
+## (If you wish to ignore segmentation faults you can use '{}' around
+## the command.)
+## This example assumes that CONFIG_PARAMS contains something like "A=10 B=5"
+$EXE ${EXE_PARAMS} -r "INSTANCE=${INSTANCE_ID};${CONFIG_PARAMS// /;};RUN(INSTANCE,A,B);exit" < RUN.m 1> ${STDOUT} 2> ${STDERR}
+
+## This may be used to introduce a delay if there are filesystem
+## issues.
+# SLEEPTIME=1
+# while [ ! -s "${STDOUT}" ]; do
+#     sleep $SLEEPTIME
+#     let "SLEEPTIME += 1"
+# done
+
+if [ ! -s "${STDOUT}" ]; then
+    error "${STDOUT}: No such file or directory"
+fi
+COST=$(cat ${STDOUT} | grep 'Result for irace=' | cut -f2 -d '=')
+echo "$COST"
+# Comment the following line if you wish to preserve temporary files (e.g., for debugging)
+rm -f "${STDOUT}" "${STDERR}"
+exit 0

@@ -20,7 +20,7 @@ if (have_matlab()) {
 targetRunner <- function(experiment, scenario)
 {
   matlab_function_call <- "Main(INSTANCE,SEED,A,B)"
-  
+
   debugLevel       <- scenario$debugLevel
   configuration_id <- experiment$id_configuration
   instance_id      <- experiment$id_instance
@@ -36,15 +36,15 @@ targetRunner <- function(experiment, scenario)
                            args, matlab_function_call),
                          paths_to_add=.matlab_script_path,
                          verbose= (debugLevel >= 2))
-  
+
   ## Parse the output (just a single number!)
   # FIXME: Create a uniquely named temporary file instead of Result.txt to
   # allow parallel execution
-  output <- scan(file="Result.txt", quiet=TRUE)  
+  output <- scan(file="Result.txt", quiet=TRUE)
   cost <- as.numeric(output)
 
   if (exitcode != 0) {
-    cat("=== irace === targetRunner: matlab returned exit code ", exitcode, "\n")  
+    cat("=== irace === targetRunner: matlab returned exit code ", exitcode, "\n")
   }
   if (is.na(cost)) {
     cat("=== irace === targetRunner: error parsing numeric result from matlab output\n")
@@ -77,4 +77,3 @@ trainInstancesDir = ""
 trainInstancesFile = "instances.txt"
 
 # Add other scenario options for irace. See the user guide.
-
