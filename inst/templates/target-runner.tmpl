@@ -16,6 +16,14 @@
 # This script should print one numerical value: the cost that must be minimized.
 # Exit with 0 if no error, with 1 in case of error
 ###############################################################################
+## Find our own location.
+# BINDIR=$(dirname "$(readlink -f "$(type -P $0 || echo $0)")")
+
+# EDIT THIS: Path to your executable
+EXE=~/bin/program
+# EDIT THIS: Specify how parameters are given to your executable
+EXE_PARAMS="--time 5 -i $INSTANCE --seed ${SEED} ${CONFIG_PARAMS}"
+
 error() {
     echo "`TZ=UTC date`: $0: error: $@"
     exit 1
@@ -30,14 +38,6 @@ shift 4 || error "Not enough parameters"
 CONFIG_PARAMS=$*
 # End of parsing
 
-## Find our own location.
-# BINDIR=$(dirname "$(readlink -f "$(type -P $0 || echo $0)")")
-
-# EDIT THIS: Path to your executable
-EXE=~/bin/program 
-# EDIT THIS: Specify how parameters are given to your executable
-EXE_PARAMS="--time 5 -i $INSTANCE --seed ${SEED} ${CONFIG_PARAMS}"
-
 if [ ! -x "$(command -v ${EXE})" ]; then
     error "${EXE}: not found or not executable (pwd: $(pwd))"
 fi
@@ -47,7 +47,7 @@ fi
 # exec $EXE ${EXE_PARAMS}
 # exit 1
 
-# These files are saved in execDir. Saving them in /tmp may be faster. 
+# These files are saved in execDir. Saving them in /tmp may be faster.
 STDOUT=c${CONFIG_ID}-${INSTANCE_ID}-${SEED}.stdout
 STDERR=c${CONFIG_ID}-${INSTANCE_ID}-${SEED}.stderr
 
@@ -74,7 +74,6 @@ fi
 # the output.
 COST=$(tail -n 1 ${STDOUT} | grep -e '^[[:space:]]*[+-]\?[0-9]' | cut -f1)
 echo "$COST"
-# Comment the following line if you wish to preserve temporary files
+# Comment the following line if you wish to preserve temporary files (e.g., for debugging)
 rm -f "${STDOUT}" "${STDERR}"
 exit 0
-
