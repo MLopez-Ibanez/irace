@@ -6,6 +6,8 @@
 
 ## New features and improvements
 
+ * Updated MATLAB examples and instructions in the User Guide.
+
 ## Fixes
 
  * Fix bug in `readConfigurationsFile()` when a fixed parameter that is both
