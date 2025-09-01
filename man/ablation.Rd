@@ -61,7 +61,7 @@ plotAblation(ablog)
 # subset of parameters, directly reading the setup from the irace log file.
 ablog <- ablation(logfile, src = 1, target = 10,
                   ab_params = c("temp"), ablationLogFile = NULL)
-plotAblation(ablog)
+plotAblation(ablog, type = "mean")
 }
 
 }

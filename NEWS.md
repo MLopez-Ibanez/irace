@@ -10,6 +10,8 @@
 
 ## Fixes
 
+ * Add extra whitespace before the first and after the last boxplots in `plotAblation()` so that boxes will not overlap with plot margins.
+
  * Fix bug in `readConfigurationsFile()` when a fixed parameter that is both
    conditional and disabled does not appear in the input file.
 
