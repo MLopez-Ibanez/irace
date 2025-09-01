@@ -635,7 +635,7 @@ printScenario <- function(scenario)
 #'      \item{`boundType`}{Method to calculate the mean performance of elite configurations.\itemize{\item candidate: Mean execution times across the executed instances and the current one.\item instance: Execution time of the current instance.} (Default: `"candidate"`)}
 #'      \item{`boundMax`}{Maximum execution bound for `targetRunner`. It must be specified when capping is enabled. (Default: `0`)}
 #'      \item{`boundDigits`}{Precision used for calculating the execution time. It must be specified when capping is enabled. (Default: `0`)}
-#'      \item{`boundPar`}{Penalization constant for timed out executions (executions that reach `boundMax` execution time). (Default: `1`)}
+#'      \item{`boundPar`}{Penalization multiplication constant (PARX) for timed out executions (executions that reach `boundMax` execution time). (Default: `1`)}
 #'      \item{`boundAsTimeout`}{Replace the configuration cost of bounded executions with `boundMax`. (Default: `1`)}
 #'    }
 #'  \item Recovery:

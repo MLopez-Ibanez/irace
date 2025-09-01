@@ -259,9 +259,9 @@ List of command-line options:
                          specified when capping is enabled. Default: 0.
    --bound-digits        Precision used for calculating the execution time. It
                          must be specified when capping is enabled. Default: 0.
-   --bound-par           Penalization constant for timed out executions
-                         (executions that reach `boundMax` execution time).
-                         Default: 1.
+   --bound-par           Penalization multiplication constant (PARX) for timed
+                         out executions (executions that reach `boundMax`
+                         execution time). Default: 1.
    --bound-as-timeout    Replace the configuration cost of bounded executions
                          with `boundMax`. Default: 1.
    --postselection       Perform a postselection race after the execution of

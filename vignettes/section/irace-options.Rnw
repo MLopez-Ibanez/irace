@@ -270,7 +270,7 @@ The value of \parameter{firstTest} must be a multiple of \parameter{eachTest}.
  Precision used for calculating the execution time. It must be specified when capping is enabled.
 
  \defparameter{boundPar}{bound-par}{1}%
- Penalty used for PARX. This value is used to penalize timed out executions, see \autoref{sec:capping}.
+ Penalty used for PARX. This value is used to penalize timed out executions by multiplying \parameter{boundMax}, see \autoref{sec:capping}.
 
  \defparameter{boundAsTimeout}{bound-as-timeout}{1}%
  Replace the configuration cost of bounded executions with \parameter{boundMax}. See \autoref{sec:capping}.

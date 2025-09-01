@@ -109,7 +109,7 @@ NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA), description = c("Show this help
 "Method to calculate the mean performance of elite configurations: candidate or instance.",
 "Maximum execution bound for `targetRunner`. It must be specified when capping is enabled.",
 "Precision used for calculating the execution time. It must be specified when capping is enabled.",
-"Penalization constant for timed out executions (executions that reach `boundMax` execution time).",
+"Penalization multiplication constant (PARX) for timed out executions (executions that reach `boundMax` execution time).",
 "Replace the configuration cost of bounded executions with `boundMax`.",
 "Perform a postselection race after the execution of irace to consume all remaining budget. Value 0 disables the postselection race.",
 "Enable/disable AClib mode. This option enables compatibility with GenericWrapper4AC as targetRunner script.",

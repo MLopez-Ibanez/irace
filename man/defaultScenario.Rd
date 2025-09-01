@@ -106,7 +106,7 @@ The scenario list contains the following elements:
 \item{\code{boundType}}{Method to calculate the mean performance of elite configurations.\itemize{\item candidate: Mean execution times across the executed instances and the current one.\item instance: Execution time of the current instance.} (Default: \code{"candidate"})}
 \item{\code{boundMax}}{Maximum execution bound for \code{targetRunner}. It must be specified when capping is enabled. (Default: \code{0})}
 \item{\code{boundDigits}}{Precision used for calculating the execution time. It must be specified when capping is enabled. (Default: \code{0})}
-\item{\code{boundPar}}{Penalization constant for timed out executions (executions that reach \code{boundMax} execution time). (Default: \code{1})}
+\item{\code{boundPar}}{Penalization multiplication constant (PARX) for timed out executions (executions that reach \code{boundMax} execution time). (Default: \code{1})}
 \item{\code{boundAsTimeout}}{Replace the configuration cost of bounded executions with \code{boundMax}. (Default: \code{1})}
 }
 \item Recovery:
