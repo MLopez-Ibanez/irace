@@ -242,8 +242,9 @@ sample_from_model <- function(parameters, eliteConfigurations, model,
     }
     pname <- param[["name"]]
     this_model <- model[[pname]]
+    # Avoid the cost of method lookup at every call of dep_rmodel()
+    this_sample_model <- getS3method("sample_model", class(param)[1L])
     if (param[["is_dependent"]]) {
-      sample_model <- if (param[["type"]] == "i") sample_model.ParamInt else sample_model.ParamReal
       dep_rmodel <- function(x, sd_mean) {
         domain <- get_dependent_domain(param, x)
         if (is.na(domain[[1L]])) return(NA)
@@ -251,14 +252,14 @@ sample_from_model <- function(parameters, eliteConfigurations, model,
         # based on the current domain
         sd <- (domain[[2L]] - domain[[1L]]) * sd_mean[[1L]]
         if (sd < .Machine$double.eps) return(domain[[1L]])
-        sample_model(param, n = 1L, model = c(sd, sd_mean[[2L]]), domain = domain)
+        this_sample_model(param, n = 1L, model = c(sd, sd_mean[[2L]]), domain = domain)
       }
       newConfigurations[idx_satisfied, c(pname) := dep_rmodel(.SD, this_model[[.PARENT.]]), by=.I, .SDcols=parameters$depends[[pname]]]
       next # We are done with this parameter.
     }
     # .BY is a list, so take the first argument.
     newConfigurations[idx_satisfied,
-      c(pname) := list(sample_model(param, .N, this_model[[ .BY[[1L]] ]])),
+      c(pname) := list(this_sample_model(param, .N, this_model[[ .BY[[1L]] ]])),
       by = .PARENT.]
   }
   set(newConfigurations, j = ".PARENT.", value = as.integer(newConfigurations[[".PARENT."]]))

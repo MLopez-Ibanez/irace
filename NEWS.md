@@ -10,10 +10,15 @@
 
 ## Fixes
 
- * Add extra whitespace before the first and after the last boxplots in `plotAblation()` so that boxes will not overlap with plot margins.
+ * Add extra whitespace before the first and after the last boxplots in
+   `plotAblation()` so that boxes will not overlap with plot margins.
 
  * Fix bug in `readConfigurationsFile()` when a fixed parameter that is both
    conditional and disabled does not appear in the input file.
+
+ * Fix #87: Using a dependent parameter may produce an error when sampling a
+   different parameter.
+
 
 # irace 4.2
 

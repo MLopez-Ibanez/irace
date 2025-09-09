@@ -574,11 +574,12 @@ sample_model.ParamInt <- function(param, n, model, domain = param[["domain"]])
   if (is.na(mean))
     # +1 for correct rounding before floor()
     value <- sample_numeric_unif(n, lower, 1L + upper, transf)
-  else
+  else {
     # + 0.5 because negative domains are log-transformed to positive domains.
     value <- sample_numeric_norm(n, mean + 0.5, sd = model[[1L]], lower = lower,
       # +1 for correct rounding before floor()
       upper = 1L + upper, transf = transf)
+  }
   # We use original upper, not the +1L for 'i'.
   integer_round(value, lower, upper)
 }
