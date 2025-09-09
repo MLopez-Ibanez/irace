@@ -242,8 +242,8 @@ sample_from_model <- function(parameters, eliteConfigurations, model,
     }
     pname <- param[["name"]]
     this_model <- model[[pname]]
-    # Avoid the cost of method lookup at every call of dep_rmodel()
-    this_sample_model <- getS3method("sample_model", class(param)[1L])
+    # Avoid the cost of method lookup at every call of dep_rmodel().
+    this_sample_model <- utils::getS3method("sample_model", class(param)[1L])
     if (param[["is_dependent"]]) {
       dep_rmodel <- function(x, sd_mean) {
         domain <- get_dependent_domain(param, x)
