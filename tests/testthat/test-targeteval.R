@@ -20,7 +20,7 @@ test_that("target_evaluator", {
   limit <- 58L
   maxExperiments <- 200
   logFile <- withr::local_tempfile(pattern = "irace", fileext = ".Rdata")
-  
+
   scenario <- checkScenario(list(
     targetRunner = target_runner, targetEvaluator = target_evaluator,
     maxExperiments = maxExperiments, instances = instances,
@@ -38,7 +38,7 @@ test_that("target_evaluator", {
     seed = seed,
     quiet = TRUE,
     parameters = parameters))
-  
+
   expect_silent(confs <- irace(scenario = scenario))
   expect_gt(nrow(confs), 0L)
   scenario$targetRunner <- wrap_target_runner_error(target_runner, limit)
@@ -46,7 +46,7 @@ test_that("target_evaluator", {
   with_mocked_bindings({
     expect_error(irace(scenario = scenario), "== irace == The cost returned by targetRunner is not numeric")
   },
-  .irace_minimum_saving_time = 0
+  .get_time_next_save = function(now) now
   )
 
   logFile_new <- withr::local_tempfile(pattern = "irace", fileext = ".Rdata")
@@ -67,7 +67,7 @@ test_that("target_evaluator maxTime", {
     withr::local_seed(experiment$seed)
     list(time = min(experiment$bound, as.integer(1 + 10*runif(1))))
   }
-  
+
   seed <- sample.int(min(2147483647L, .Machine$integer.max), size = 1L, replace = TRUE)
   instances <- 1:10
   limit <- 100L
@@ -87,7 +87,7 @@ test_that("target_evaluator maxTime", {
   with_mocked_bindings({
     expect_error(irace(scenario = scenario), "== irace == The cost returned by targetRunner is not numeric")
   },
-  .irace_minimum_saving_time = 0
+  .get_time_next_save = function(now) now
   )
 
   logFile_new <- withr::local_tempfile(pattern = "irace", fileext = ".Rdata")

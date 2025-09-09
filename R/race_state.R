@@ -102,7 +102,7 @@ RaceState <- R6Class("RaceState", lock_class = TRUE,
        # irace_note("Saving recovery info.\n")
        iraceResults$state <- self
        save_irace_logfile(iraceResults, logfile)
-       self$time_next_save <- now + .irace_minimum_saving_time
+       self$time_next_save <- .get_time_next_save(now)
      }
    },
 
@@ -117,7 +117,7 @@ RaceState <- R6Class("RaceState", lock_class = TRUE,
          irace_version = irace_version,
          state = self)
        save_irace_logfile(iraceResults, logfile = scenario$logFile)
-       self$time_next_save <- now + .irace_minimum_saving_time
+       self$time_next_save <- .get_time_next_save(now)
      }
      invisible()
    },

@@ -45,7 +45,7 @@ parameters_table <- '
   with_mocked_bindings({
     expect_error(irace(scenario = scenario), "== irace == The cost returned by targetRunner is not numeric")
   },
-  .irace_minimum_saving_time = 0
+  .get_time_next_save = function(now) now
   )
 
   logFile_new <- withr::local_tempfile(pattern = "irace", fileext = ".Rdata")
@@ -89,9 +89,9 @@ test_that("recovery maxTime", {
   with_mocked_bindings({
     expect_error(irace(scenario = scenario), "== irace == The cost returned by targetRunner is not numeric")
   },
-  .irace_minimum_saving_time = 0
+  .get_time_next_save = function(now) now
   )
-  
+
   logFile_new <- withr::local_tempfile(pattern = "irace", fileext = ".Rdata")
   scenario <- modifyList(scenario, list(
     targetRunner = wrap_target_runner_counter(target_runner),
@@ -104,5 +104,5 @@ test_that("recovery maxTime", {
   expect_lt(environment(scenario$targetRunner)$counter,
     nrow(read_logfile(logFile_new)$state$experiment_log) - 150L)
 })
-  
+
 }) # withr::with_output_sink()
