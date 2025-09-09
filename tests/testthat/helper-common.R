@@ -16,6 +16,17 @@ test_irace_detectCores <- function()
   parallel::detectCores()
 }
 
+skip_if_local_test <- function() {
+  # testthat puts us in tests/testthat
+  test_dir <- testthat::test_path()
+  pkg_root <- normalizePath(file.path(test_dir, "..", ".."))
+  # dev mode: DESCRIPTION file lives here
+  if (file.exists(file.path(pkg_root, "DESCRIPTION")))
+    skip("Not run when testing in local mode.")
+  else
+    invisible()
+}
+
 skip_on_coverage <- function() {
   if (identical(Sys.getenv("COVR_COVERAGE"), "true"))
     skip("Not run during coverage.")

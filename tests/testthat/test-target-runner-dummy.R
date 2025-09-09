@@ -4,7 +4,7 @@ withr::with_output_sink("test-target-runner-dummy.Rout", {
   get_executable <- function(filename) {
     filename <- paste0(filename, if (system_os_is_windows()) ".exe" else "")
     p <- if (.Platform$r_arch == "") file.path( "bin", filename) else file.path("bin", .Platform$r_arch, filename)
-    system.file(p, package="irace", mustWork = FALSE)
+    system.file(p, package="irace", mustWork = TRUE)
   }
   runexe <- function(exe, args) {
     err <- NULL
@@ -29,8 +29,8 @@ withr::with_output_sink("test-target-runner-dummy.Rout", {
   }
 
   test_that("irace exe works", {
+    skip_if_local_test()
     iraceexe <- get_executable("irace")
-    skip_if_not(nzchar(iraceexe), "Not run because 'irace' is not installed")
     expect_true(file.exists(iraceexe))
     # FIXME: For some reason, this does not generate any output on Windows
     output <- expect_silent(runexe(iraceexe, "--help"))
@@ -42,8 +42,8 @@ withr::with_output_sink("test-target-runner-dummy.Rout", {
   })
 
   test_that("ablation exe works", {
+    skip_if_local_test()
     ablationexe <- get_executable("ablation")
-    skip_if_not(nzchar(ablationexe), "Not run because 'ablation' is not installed")
     expect_true(file.exists(ablationexe))
     # FIXME: For some reason, this does not generate any output on Windows
     output <- expect_silent(runexe(ablationexe, "--help"))
@@ -66,8 +66,8 @@ withr::with_output_sink("test-target-runner-dummy.Rout", {
                          ' --target-runner=', target_runner_dummy))
   }
 
+  skip_if_local_test()
   target_runner_dummy <- get_executable("target-runner-dummy")
-  skip_if_not(nzchar(target_runner_dummy), "Not run because 'target-runner-dummy' is not installed")
   expect_true(file.exists(target_runner_dummy))
 
   test_that("--check", {
