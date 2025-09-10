@@ -97,18 +97,14 @@ readParameters <- function (file, digits = 4L, debugLevel = 0L, text)
 
   digits <- as.integer(digits)
 
-  field.match <- function (line, pattern, delimited = FALSE, sep = "[[:space:]]")
+  field_match <- function (line, pattern, delimited = FALSE, sep = "[[:space:]]")
   {
-    #cat ("pattern:", pattern, "\n")
     positions <- lapply(seq_along(pattern), function(x) regexpr (paste0("^", pattern[x], sep), line))
     if (all(sapply(positions, "[[", 1L) == -1L)) {
-      #cat("no match: NULL\n")
       return (list(match = NULL, line = line))
     }
     pos_matched <- lapply(seq_along(pattern), function(x) regexpr (paste0("^", pattern[x]), line))
-    #cat("pos.matched:", pos.matched, "\n")
     if (all(sapply(pos_matched, "[[", 1L) == -1L)) {
-      #cat(line)
       return (list(match = NULL, line = line))
     }
     position <- which(sapply(pos_matched, `[[`,1L) != -1L)
@@ -119,28 +115,21 @@ readParameters <- function (file, digits = 4L, debugLevel = 0L, text)
     delimited <- as.integer(delimited)
     match <- substr(line, pos_matched[1L] + delimited,
                     attr(pos_matched, "match.length") - delimited)
-    #cat("match:",match, "\n")
     line <- substr(line, pos_matched[1L] + attr(pos_matched, "match.length"), nchar(line))
     line <- trim_leading (line)
-    #cat(line)
     list(match = match, line = line)
   }
 
   string2vector <- function(str) {
     v <- c()
     str <- trim(str)
-    #cat("string2vector:", str, "\n")
     while (str != "") {
-      result <- field.match (str, "\"[^\"]*\"", delimited = TRUE, sep="")
-      #cat("result.match: ", result$match,"\n")
+      result <- field_match (str, "\"[^\"]*\"", delimited = TRUE, sep="")
       if (is.null(result$match)) {
-        result <- field.match (str, "[^,]+", sep="")
-        #cat("result.match: ", result$match,"\n")
+        result <- field_match (str, "[^,]+", sep="")
       }
       v <- c(v, result$match)
-      #print(v)
       str <- sub(",[[:space:]]*", "", result$line)
-      #print(str)
     }
     v
   }
@@ -219,7 +208,7 @@ readParameters <- function (file, digits = 4L, debugLevel = 0L, text)
       next
     }
     ## Match name (unquoted alphanumeric string)
-    result <- field.match (line, "[._[:alnum:]]+")
+    result <- field_match (line, "[._[:alnum:]]+")
     name <- result$match
     line <- result$line
     if (is.null(result$match)) {
@@ -233,7 +222,7 @@ readParameters <- function (file, digits = 4L, debugLevel = 0L, text)
     }
 
     ## Match p_switch (quoted string)
-    result <- field.match (line, "\"[^\"]*\"", delimited = TRUE)
+    result <- field_match (line, "\"[^\"]*\"", delimited = TRUE)
     p_label <- result$match
     line <- result$line
     if (is.null(p_label)) {
@@ -242,7 +231,7 @@ readParameters <- function (file, digits = 4L, debugLevel = 0L, text)
     }
 
     ## Match param.type (longer matches must precede shorter ones)
-    result <- field.match (line, c("i,log", "r,log", "c", "i", "r", "o"))
+    result <- field_match (line, c("i,log", "r,log", "c", "i", "r", "o"))
     param.type <- result$match
     line <- result$line
     if (is.null (param.type)) {
@@ -262,7 +251,7 @@ readParameters <- function (file, digits = 4L, debugLevel = 0L, text)
 
     ## Match domain (delimited by parenthesis)
     # Regexp to detect dependent domains of the type ("min(p1)", 100)
-    result <- field.match (line, "\\([^|]+\\)", delimited = TRUE, sep = "")
+    result <- field_match (line, "\\([^|]+\\)", delimited = TRUE, sep = "")
     domain_str <- result$match
     line <- result$line
     if (is.null (domain_str)) {
@@ -287,10 +276,10 @@ readParameters <- function (file, digits = 4L, debugLevel = 0L, text)
       domain <- string2vector(domain_str)
     }
     ## Match start of conditions
-    result <- field.match (line, "\\|", sep="")
+    result <- field_match (line, "\\|", sep="")
     line <- result$line
     if (!is.null(result$match) && result$match != "") {
-      result <- field.match (line, ".*$", sep="")
+      result <- field_match (line, ".*$", sep="")
       condition <- result$match
       if (is.null(result$match) || result$match == "")
         errReadParameters (filename, nbLines, line,
