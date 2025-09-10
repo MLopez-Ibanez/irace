@@ -30,7 +30,7 @@ Developing irace
 * make install
 
   Build and install the package
-  
+
 * make cran
 
   Check that the build is acceptable by CRAN
@@ -44,17 +44,17 @@ Developing irace
   Do a minimal build and install that has as few requirements as
   possible. Designed for installing on machines that are not used for
   development, like IRIDIA's cluster.
-  
-  
+
+
 
 CHECKING:
 ---------
 
-* --as-cran messages of the type: 
+* --as-cran messages of the type:
 
   Undefined global functions or variables:
      median p.adjust pchisq qt read.table recover rexp rnorm runif t.test
-     wilcox.test 
+     wilcox.test
 
   can be fixed by running:
 ```R
@@ -75,11 +75,11 @@ function(txt, lst, selective = TRUE)
     } else {
         sprintf("import(\"%s\")", names(imp))
     }
-} 
+}
 ```
 ```
 R> txt <- "median p.adjust pchisq qt read.table recover rexp rnorm runif t.test
-     wilcox.test" 
+     wilcox.test"
 R> writeLines(imports_for_undefined_globals(txt, selective = FALSE))
 ```
 And adding the result to NAMESPACE. Namespaces newly imported from also need to
@@ -93,30 +93,30 @@ TODO: See useful release steps here: https://github.com/tidyverse/ggplot2/issues
 
 1. git status # make sure you are up to date and clean
 
-2. make check # passes
+1. make check # passes
 
-3. make releasecheck 
+1. make releasecheck
 
-4. make examples # Takes a few hours. Inspect the examples in the vignette.
+1. Update `cran-comments.md`
 
-5. make revdepcheck # Takes a few hours
+1. git ci -a -m "Prepare to release version X.Y"
 
-6. make releasebuild # Inspect the output for strange files!
+1. make examples # Takes a few hours. Inspect the examples in the vignette.
 
-7. make closeversion
+1. make revdepcheck # Takes a few hours
 
-8. Update `cran-comments.md`
+1. make releasebuild # Inspect the output for strange files!
 
-9. make submit
+1. make submit
 
-11.a IF the package requires further changes:
+9.a IF the package requires further changes:
 
   * Make the changes.
 
   * Repeat the whole RELEASE process above without bumping the version number.
 
 
-11.b IF the package is released in CRAN:
+9.b IF the package is released in CRAN:
 
   * Bump the version number in DESCRIPTION and NEWS.md.
 
@@ -124,7 +124,9 @@ TODO: See useful release steps here: https://github.com/tidyverse/ggplot2/issues
 
   * git ci -a -m " * Bump development version to $NEW_VERSION"
 
-12. Announce the release in the Google group:
+10. make closeversion
+
+11. Announce the release in the Google group:
 
     https://groups.google.com/d/forum/irace-package
 
@@ -145,5 +147,3 @@ NEWS entry
 Best wishes,
 
     Manuel López-Ibáñez.
-     
-
