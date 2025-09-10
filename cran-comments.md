@@ -1,6 +1,6 @@
 Dear CRAN maintainers,
 
-I would like to submit version 4.0 of the irace package to CRAN.
+I would like to submit version 4.3 of the irace package to CRAN.
 
 The NEWS section corresponding to this version is available from:
 
