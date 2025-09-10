@@ -172,7 +172,7 @@ else
 endif
 
 submit:
-	@echo 'Edit cran-comments.md and run devtools::release() in R'
+	r --interactive -e 'devtools::release()'
 
 remotecran: releasebuild
 	$(Reval) "rhub::check_for_cran($(RHUB_COMMON_ARGS), show_status = TRUE)"
