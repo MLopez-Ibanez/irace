@@ -172,7 +172,7 @@ else
 endif
 
 submit:
-	r --interactive -e 'devtools::release()'
+	r --interactive -e 'devtools::release(args = "--compact-vignettes=both")'
 
 remotecran: releasebuild
 	$(Reval) "rhub::check_for_cran($(RHUB_COMMON_ARGS), show_status = TRUE)"
