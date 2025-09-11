@@ -1,5 +1,14 @@
 **If you are viewing this file on CRAN, please check [latest news on the irace website](https://mlopez-ibanez.github.io/irace/news/index.html) where the formatting is also better.**
 
+# irace (development version)
+
+## Major breaking changes
+
+## New features and improvements
+
+## Fixes
+
+
 # irace 4.3
 
 ## New features and improvements

@@ -7,7 +7,7 @@ Description: Iterated race is an extension of the Iterated F-race method for
              settings given a set of instances of an optimization problem.
              M. López-Ibáñez, J. Dubois-Lacoste, L. Pérez Cáceres, T. Stützle,
              and M. Birattari (2016) <doi:10.1016/j.orp.2016.09.002>.
-Version: 4.3
+Version: 4.3.0.9000
 Authors@R: c(person("Manuel", "López-Ibáñez", role = c("aut", "cre"),
                               email = "manuel.lopez-ibanez@manchester.ac.uk",
                               comment = c(ORCID = "0000-0001-9974-1295")),
