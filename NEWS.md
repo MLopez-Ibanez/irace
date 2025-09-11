@@ -197,7 +197,7 @@
    `iraceResults$state$.irace` is replaced directly by `iraceResults$state`.
    It contains similar information but some entries have been renamed. For
    example, the `experimentLog` data frame is now called `experiment_log`
-   and it is a [`data.table`](https://r-datatable.com).
+   and it is a [`data.table`](https://cran.r-project.org/package=data.table).
 
  * The interface of `psRace()` has been simplified.
 
@@ -209,7 +209,7 @@
 
 ## New features and improvements
 
- * `sampleUniform()` and `sampleModel()` are significantly faster thanks to using [`data.table`](https://r-datatable.com).
+ * `sampleUniform()` and `sampleModel()` are significantly faster thanks to using [`data.table`](https://cran.r-project.org/package=data.table).
 
  * Initial configurations are sampled using Sobol low-discrepancy sequences using `spacefillr::generate_sobol_set()`. This should provide a better initial distribution of parameter values.
 
