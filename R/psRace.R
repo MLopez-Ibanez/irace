@@ -117,7 +117,7 @@ psRace <- function(iraceResults, max_experiments, conf_ids = NULL, iteration_eli
       conf_needs <- conf_needs[conf_needs <= max_experiments]
       if (length(conf_needs) == 1L) {
         if (!scenario$quiet)
-          cat("# Insufficient budget to race more than one configuration!\n")
+          cat("# Insufficient budget to race more than one configuration:", names(conf_needs), "!\n")
         return(names(conf_needs))
       }
       if (!scenario$deterministic || n_done < length(scenario$instances)) {
