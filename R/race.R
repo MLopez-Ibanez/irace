@@ -309,7 +309,7 @@ table_sprintf <- function(text, widths)
      - The test is performed and some configurations are discarded.
      = The test is performed but no configuration is discarded.
      ! The test is performed and configurations could be discarded but elite configurations are preserved.
-     . All alive configurations are elite and nothing is discarded.\n\n"
+     . All alive configurations are elite so nothing is evaluated or discarded.\n\n"
 
 .nocap_header <- paste0(.race_common_header, .nocap_hline,
   table_sprintf(.nocap_colum_names, .nocap_table_fields_width), .nocap_hline)
@@ -329,29 +329,22 @@ elapsed_wctime_str <- function(now, start) {
   format(.POSIXct(elapsed, tz="GMT"), "%H:%M:%S")
 }
 
-race_print_task <- function(res.symb, Results,
-                            instance,
-                            current_task,
-                            which_alive,
-                            id_best,
-                            best,
-                            experiments_used,
-                            start_time,
-                            bound, capping)
+race_print_task_common <- function(res_symb, Results,
+                                   instance,
+                                   current_task,
+                                   which_alive,
+                                   id_best,
+                                   best,
+                                   experiments_used,
+                                   start_time)
 {
-  cat(sprintf("|%s|%11d|", res.symb, instance))
-  if (capping) {
-    if (is.null(bound))
-      cat("      NA|")
-    else
-      cat(sprintf("%8.2f|", bound))
-  }
+  s <- sprintf("|%s|%11d|", res_symb, instance)
   # FIXME: This is the mean of the best, but perhaps it should
   # be the sum of ranks in the case of test == friedman?
   mean_best <- mean(Results[, best])
   time_str <- elapsed_wctime_str(Sys.time(), start_time)
-  cat(sprintf(paste0("%11d|%11d|", .irace.format.perf, "|%11d|%s"),
-              length(which_alive), id_best, mean_best, experiments_used, time_str))
+  s <- c(s, sprintf(paste0("%11d|%11d|", .irace.format.perf, "|%11d|%s"),
+    length(which_alive), id_best, mean_best, experiments_used, time_str))
 
   if (current_task > 1L && length(which_alive) > 1L) {
     res <- Results[, which_alive, drop = FALSE]
@@ -359,10 +352,40 @@ race_print_task <- function(res.symb, Results,
     qvar <- dataVariance(res)
     # FIXME: We would like to use %+#4.2f but this causes problems with
     # https://github.com/oracle/fastr/issues/191
-    cat(sprintf("|%+4.2f|%.2f|%.4f|\n", conc$spearman.rho, conc$kendall.w, qvar))
+    s <- c(s,
+      sprintf("|%+4.2f|%.2f|%.4f|\n", conc$spearman.rho, conc$kendall.w, qvar))
   } else {
-    cat("|   NA|  NA|    NA|\n")
+    s <- c(s, "|   NA|  NA|    NA|\n")
   }
+  s
+}
+
+race_print_task_cap <- function(res_symb, Results,
+                                instance,
+                                current_task,
+                                which_alive,
+                                id_best,
+                                best,
+                                experiments_used,
+                                start_time, bound)
+{
+  s <- race_print_task_common(res_symb, Results, instance, current_task,
+    which_alive, id_best, best, experiments_used, start_time)
+  c(s[1L], if (is.null(bound)) "      NA|" else sprintf("%8.2f|", bound), s[-1L])
+}
+
+race_print_task_nocap <- function(res_symb, Results,
+                                  instance,
+                                  current_task,
+                                  which_alive,
+                                  id_best,
+                                  best,
+                                  experiments_used,
+                                  start_time,
+                                  bound)
+{
+  cat(sep="", race_print_task_common(res_symb, Results, instance, current_task,
+    which_alive, id_best, best, experiments_used, start_time))
 }
 
 race_print_footer <- function(bestconf, mean_best, break_msg, debug_level, capping = FALSE,
@@ -635,7 +658,7 @@ elitist_race <- function(race_state, maxExp,
     print_header <- print_task <- print_footer <- do_nothing
   } else {
     print_header <- if (capping) race_print_header_cap else race_print_header_nocap
-    print_task <- race_print_task
+    print_task <- if (capping) race_print_task_cap else race_print_task_nocap
     print_footer <- race_print_footer
   }
 
@@ -854,8 +877,8 @@ elitist_race <- function(race_state, maxExp,
                    current_task, which_alive = which_alive,
                    id_best = id_best,
                    best = best, experiments_used, start_time = Sys.time(),
-                   # FIXME: Why do we pass NA as bound? Why not pass the actual bound if any?
-                   bound = NA_real_, capping = capping)
+                   # We pass NA because nothing was evaluated.
+                   bound = NA_real_)
         next
       }
     }
@@ -970,8 +993,8 @@ elitist_race <- function(race_state, maxExp,
                      current_task, which_alive = which_alive,
                      id_best = id_best,
                      best = best, experiments_used, start_time = start_time,
-                     # FIXME: Why do we pass NA as bound? Why not pass the actual bound if any?
-                     bound = if (is.null(scenario$boundMax)) NA_real_ else scenario$boundMax, capping)
+                     # We pass NA because nothing was evaluated.
+                     bound = NA_real_)
           next
         }
       }
@@ -1056,9 +1079,9 @@ elitist_race <- function(race_state, maxExp,
 
     # Variables required to produce output of elimination test.
     cap_done     <- FALSE # if dominance elimination was performed
-    test.done    <- FALSE # if statistical test elimination was performed
+    test_done    <- FALSE # if statistical test elimination was performed
     cap_dropped  <- FALSE # if capping has drop any configuration
-    test.dropped <- FALSE # if any candidates has been eliminated by testing
+    test_dropped <- FALSE # if any candidates has been eliminated by testing
     cap_alive    <- test.alive <- alive
 
     ## Dominance elimination (Capping only).
@@ -1085,8 +1108,8 @@ elitist_race <- function(race_state, maxExp,
       # FIXME: This race_ranks is unused. We should check if it matches the one computed below.
       race_ranks <- test_res$ranks
       test.alive <- test_res$alive
-      test.dropped <- nb_alive > sum(test.alive)
-      test.done   <- TRUE
+      test_dropped <- nb_alive > sum(test.alive)
+      test_done   <- TRUE
     }
 
     # Merge the result of both eliminations.
@@ -1115,11 +1138,11 @@ elitist_race <- function(race_state, maxExp,
     which_alive <- which(alive)
     nb_alive <- length(which_alive)
     # Output the result of the elimination test.
-    res.symb <- if (cap_dropped && !test.dropped && prev_nb_alive != nb_alive) {
+    res_symb <- if (cap_dropped && !test_dropped && prev_nb_alive != nb_alive) {
                   "c" # Removed just by capping.
-                } else if (cap_dropped || test.dropped) {
+                } else if (cap_dropped || test_dropped) {
                   if (prev_nb_alive != nb_alive) "-" else "!"
-                } else if (cap_done || test.done) "=" else "x"
+                } else if (cap_done || test_done) "=" else "x"
 
     # Rank alive configurations: order all configurations (eliminated or not)
     # LESLIE: we have to make the ranking outside: we can have configurations eliminated by capping
@@ -1143,11 +1166,11 @@ elitist_race <- function(race_state, maxExp,
     race_ranks <- race_ranks[which_alive]
     irace_assert(length(race_ranks) == nb_alive)
     id_best <- configurations[[".ID."]][best]
-    print_task(res.symb, Results[seq_len(current_task), , drop = FALSE],
+    print_task(res_symb, Results[seq_len(current_task), , drop = FALSE],
                race_instances[current_task],
                current_task, which_alive = which_alive,
                id_best = id_best, best = best, experiments_used, start_time = start_time,
-               bound = elite_bound, capping)
+               bound = elite_bound)
 
     if (elitist) {
       # Compute number of statistical tests without eliminations.

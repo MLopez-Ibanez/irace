@@ -3112,6 +3112,9 @@ This error may arise if you activate the \parameter{parallel} option of \irace a
 
 This is a limitation of  Windows or Rstudio. Running without \parameter{parallel} should work. Unfortunately, we cannot fix this limitation in \irace. If you need to understand how \irace calls \parameter{targetRunner} when running in parallel, you can implement a logging mechanism able to handle parallelism directly inside the \parameter{targetRunner}.
 
+\subsection{Why does the column \texttt{Bound} in the output sometimes shows \texttt{NA}?}
+
+This should only happen when the symbol in the first column is `\texttt{.}', which means that all alive configurations are elite and have already been evaluated on this instance, so nothing is evaluated nor discarded.
 
 %%
 %%
@@ -3128,7 +3131,7 @@ This is a limitation of  Windows or Rstudio. Running without \parameter{parallel
 \section{Resources and contact information} \label{sec:contact}
 
 More information about the package can be found on the \irace webpage:
-\begin{center} \url{https://iridia.ulb.ac.be/supp/IridiaSupp2016-003/index.html} \end{center}
+\begin{center} \url{https://mlopez-ibanez.github.io/irace/} \end{center}
 
 For questions and suggestions please contact the development team through
 the \irace package Google group:
