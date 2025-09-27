@@ -309,7 +309,8 @@ table_sprintf <- function(text, widths)
      - The test is performed and some configurations are discarded.
      = The test is performed but no configuration is discarded.
      ! The test is performed and configurations could be discarded but elite configurations are preserved.
-     . All alive configurations are elite so nothing is evaluated or discarded.\n\n"
+     . Alive configurations were already evaluated on this instance and nothing is discarded.
+     : All alive configurations are elite, but some need to be evaluated on this instance.\n\n"
 
 .nocap_header <- paste0(.race_common_header, .nocap_hline,
   table_sprintf(.nocap_colum_names, .nocap_table_fields_width), .nocap_hline)
@@ -988,13 +989,13 @@ elitist_race <- function(race_state, maxExp,
             irace_assert(!is.na(best))
           }
           id_best <- configurations[[".ID."]][best]
-          print_task(".", Results[seq_len(current_task), , drop = FALSE],
+          print_task(":", Results[seq_len(current_task), , drop = FALSE],
                      race_instances[current_task],
                      current_task, which_alive = which_alive,
                      id_best = id_best,
                      best = best, experiments_used, start_time = start_time,
-                     # We pass NA because nothing was evaluated.
-                     bound = NA_real_)
+                     # FIXME: Why not use the bound for this instance, if any?
+                     bound = if (is.null(scenario$boundMax)) NA_real_ else scenario$boundMax)
           next
         }
       }
