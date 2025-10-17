@@ -1,26 +1,24 @@
 
 
-@preamble{{\providecommand{\MaxMinAntSystem}{{$\cal MAX$--$\cal MIN$} {Ant} {System}} } # {\providecommand{\rpackage}[1]{{#1}} } # {\providecommand{\softwarepackage}[1]{{#1}} } # {\providecommand{\proglang}[1]{{#1}} }}
+@preamble{{\providecommand{\MaxMinAntSystem}{{$\cal MAX$--$\cal MIN$} {Ant} {System}} } # {\providecommand{\rpackage}[1]{{#1}} } # {\providecommand{\softwarepackage}[1]{{#1}} } # {\providecommand{\proglang}[1]{{#1}} } # {\providecommand{\BIBdepartment}[1]{{#1}, } }}
 
 @string{and = { and }}
 
 @string{lncs = {Lecture Notes in Computer Science}}
 
-@string{add-berlin = { Berlin, Germany }}
+@string{add-berlin-heidelberg = {Berlin\slash Heidelberg}}
 
-@string{add-cham = { Cham, Switzerland }}
+@string{add-cham = { Cham, Switzerland}}
 
-@string{add-heidelberg = { Heidelberg }}
+@string{add-heidelberg = { Heidelberg, Germany}}
 
-@string{add-ny = { New York, NY }}
+@string{add-ny = { New York, NY}}
 
 @string{aaaip-pub = {{AAAI} Press}}
 
 @string{acm-pub = {ACM Press}}
 
-@string{ieeep = {IEEE Press}}
-
-@string{ieeep-ad = {Piscataway, NJ}}
+@string{pmlr-pub = {{PMLR}}}
 
 @string{springer = {Springer}}
 
@@ -32,10 +30,6 @@
 
 @string{aaai = proc_of_the # {{AAAI} Conference on Artificial Intelligence}}
 
-@string{cec = { Congress on Evolutionary Computation (CEC}}
-
-@string{cec2006 = proc_of_the # {2006} # cec # { 2006)}}
-
 @string{gecco = proc_of_the # {Genetic and Evolutionary Computation Conference, GECCO }}
 
 @string{gecco2013 = gecco # {2013}}
@@ -44,15 +38,27 @@
 
 @string{icml2014 = proc_of_the # {31st} # icml # {2014}}
 
+@string{lion_prefix = {Learning and Intelligent Optimization, }}
+
+@string{lion2012 = lion_prefix # {6th International Conference, LION 6}}
+
+@string{lion2013 = lion_prefix # {7th International Conference, LION 7}}
+
+@string{lion2017 = lion_prefix # {11th International Conference, LION 11}}
+
 @string{acm-cs = {{ACM} Computing Surveys}}
 
 @string{cor = {Computers \& Operations Research}}
+
+@string{ejor = {European Journal of Operational Research}}
 
 @string{jair = {Journal of Artificial Intelligence Research}}
 
 @string{joh = {Journal of Heuristics}}
 
 @string{orp = {Operations Research Perspectives}}
+
+@string{tec = {IEEE Transactions on Evolutionary Computation}}
 
 @string{telo = {ACM Transactions on Evolutionary Learning and Optimization}}
 
@@ -76,11 +82,15 @@
 
 @string{desouza = { Marcelo {De Souza} }}
 
+@string{doerr_c = { Carola Doerr }}
+
+@string{dreo_j = { Johann Dreo }}
+
 @string{dubois-lacoste = { J{\'e}r{\'e}mie Dubois-Lacoste }}
 
-@string{fawcett = { Chris Fawcett }}
+@string{eggensperger_k = { Katharina Eggensperger }}
 
-@string{fonseca = { Carlos M. Fonseca }}
+@string{fawcett = { Chris Fawcett }}
 
 @string{hamadi = { Youssef Hamadi }}
 
@@ -104,7 +114,7 @@
 
 @string{pardalos = { Panos M. Pardalos }}
 
-@string{perez_l = {  P{\'e}rez C{\'a}ceres, Leslie}}
+@string{perez_l = {  P{\'e}rez C{\'a}ceres, Leslie }}
 
 @string{preuss_m = { Mike Preuss }}
 
@@ -115,6 +125,8 @@
 @string{schoenauer = { Marc Schoenauer }}
 
 @string{stuetzle = { Thomas St{\"u}tzle }}
+
+@string{vermetten_d = { Diederick Vermetten }}
 
 @string{yuan_z = { Zhi Yuan }}
 
@@ -153,7 +165,8 @@
 
 @article{HutHooLeyStu2009jair,
   author = hutter # and # hoos # and # leyton-brown # and # stuetzle,
-  title = {{\softwarepackage{ParamILS}:} An Automatic Algorithm Configuration Framework},
+  title = {{\softwarepackage{ParamILS}:} An Automatic Algorithm
+                  Configuration Framework},
   journal = jair,
   year = 2009,
   volume = 36,
@@ -200,6 +213,75 @@
   doi = {10.1016/j.orp.2016.09.002},
   volume = 3,
   pages = {43--58}
+}
+
+@article{LopStu2013ejor,
+  author = lopez-ibanez # and # stuetzle,
+  title = {Automatically Improving the Anytime Behaviour of Optimisation
+                  Algorithms},
+  journal = ejor,
+  year = 2014,
+  volume = 235,
+  number = 3,
+  pages = {569--582},
+  doi = {10.1016/j.ejor.2013.10.043},
+  pdf = {LopStu2014ejor.pdf},
+  supplement = {http://iridia.ulb.ac.be/supp/IridiaSupp2012-011/},
+  abstract = {Optimisation algorithms with good anytime behaviour try to
+                  return as high-quality solutions as possible independently of
+                  the computation time allowed. Designing algorithms with good
+                  anytime behaviour is a difficult task, because performance is
+                  often evaluated subjectively, by plotting the trade-off curve
+                  between computation time and solution quality. Yet, the
+                  trade-off curve may be modelled also as a set of mutually
+                  nondominated, bi-objective points. Using this model, we
+                  propose to combine an automatic configuration tool and the
+                  hypervolume measure, which assigns a single quality measure
+                  to a nondominated set. This allows us to improve the anytime
+                  behaviour of optimisation algorithms by means of
+                  automatically finding algorithmic configurations that produce
+                  the best nondominated sets. Moreover, the recently proposed
+                  weighted hypervolume measure is used here to incorporate the
+                  decision-maker's preferences into the automatic tuning
+                  procedure. We report on the improvements reached when
+                  applying the proposed method to two relevant scenarios: (i)
+                  the design of parameter variation strategies for MAX-MIN Ant
+                  System and (ii) the tuning of the anytime behaviour of SCIP,
+                  an open-source mixed integer programming solver with more
+                  than 200 parameters.}
+}
+
+@article{LopVerDreDoe2025,
+  author = lopez-ibanez # and # vermetten_d # and # dreo_j # and # doerr_c,
+  title = {Using the Empirical Attainment Function for Analyzing
+                  Single-objective Black-box Optimization Algorithms},
+  journal = tec,
+  year = 2025,
+  volume = 29,
+  number = 5,
+  pages = {1774--1782},
+  annote = {Pre-print: \url{https://doi.org/10.48550/arXiv.2404.02031}},
+  doi = {10.1109/TEVC.2024.3462758},
+  abstract = {A widely accepted way to assess the performance of iterative
+                  black-box optimizers is to analyze their empirical cumulative
+                  distribution function (ECDF) of pre-defined quality targets
+                  achieved not later than a given runtime. In this work, we
+                  consider an alternative approach, based on the empirical
+                  attainment function (EAF) and we show that the target-based
+                  ECDF is an approximation of the EAF. We argue that the EAF
+                  has several advantages over the target-based ECDF. In
+                  particular, it does not require defining a priori quality
+                  targets per function, captures performance differences more
+                  precisely, and enables the use of additional summary
+                  statistics that enrich the analysis. We also show that the
+                  average area over the convergence curves is a
+                  simpler-to-calculate, but equivalent, measure of anytime
+                  performance. To facilitate the accessibility of the EAF, we
+                  integrate a module to compute it into the IOHanalyzer
+                  platform. Finally, we illustrate the use of the EAF via
+                  synthetic examples and via the data available for the BBOB
+                  suite.},
+  keywords = {EAF-based ECDF}
 }
 
 @article{McG1992vrt,
@@ -274,9 +356,8 @@
                   limit.}
 }
 
-@inproceedings{BieLinEggFraFawHoo2017,
-  author = biedenkapp # and # lindauer_m # and # {Eggensperger,
-                  Katharina} # and # hutter # and # fawcett # and # hoos,
+@incollection{BieLinEggFraFawHoo2017,
+  author = biedenkapp # and # lindauer_m # and # eggensperger_k # and # hutter # and # fawcett # and # hoos,
   title = {Efficient Parameter Importance Analysis via Ablation with
                   Surrogates},
   crossref = {AAAI2017},
@@ -292,37 +373,38 @@
   doi = {10.1007/978-3-642-02538-9_13}
 }
 
-@incollection{FonPaqLop06:hypervolume,
-  author = fonseca # and # paquete # and # lopez-ibanez,
-  title = {An improved dimension-\hspace{0pt}sweep
-                  algorithm for the hypervolume indicator},
-  crossref = {CEC2006},
-  pages = {1157--1163},
-  doi = {10.1109/CEC.2006.1688440},
-  pdf = {FonPaqLop06-hypervolume.pdf},
-  abstract = {This paper presents a recursive, dimension-sweep
-                  algorithm for computing the hypervolume indicator of
-                  the quality of a set of $n$ non-dominated points in
-                  $d>2$ dimensions. It improves upon the existing HSO
-                  (Hypervolume by Slicing Objectives) algorithm by
-                  pruning the recursion tree to avoid repeated
-                  dominance checks and the recalculation of partial
-                  hypervolumes. Additionally, it incorporates a recent
-                  result for the three-dimensional special case.  The
-                  proposed algorithm achieves $O(n^{d-2} \log n)$ time
-                  and linear space complexity in the worst-case, but
-                  experimental results show that the pruning
-                  techniques used may reduce the time complexity
-                  exponent even further.}
-}
-
 @incollection{HutHooLey2013lion,
   author = hutter # and # hoos # and # leyton-brown,
   title = {Identifying Key Algorithm Parameters and Instance Features
                   using Forward Selection},
-  crossref = {LION2013},
   pages = {364--381},
+  crossref = {LION2013},
   doi = {10.1007/978-3-642-44973-4_40},
+  abstract = {Most state-of-the-art algorithms for large-scale optimization
+                  problems expose free parameters, giving rise to combinatorial
+                  spaces of possible configurations. Typically, these spaces
+                  are hard for humans to understand. In this work, we study a
+                  model-based approach for identifying a small set of both
+                  algorithm parameters and instance features that suffices for
+                  predicting empirical algorithm performance well. Our
+                  empirical analyses on a wide variety of hard combinatorial
+                  problem benchmarks spanning SAT, MIP, and TSP show that--for
+                  parameter configurations sampled uniformly at random--very
+                  good performance predictions can typically be obtained based
+                  on just two key parameters, and that similarly, few instance
+                  features and algorithm parameters suffice to predict the most
+                  salient algorithm performance characteristics in the combined
+                  configuration/feature space. We also use these models to
+                  identify settings of these key parameters that are predicted
+                  to achieve the best overall performance, both on average
+                  across instances and in an instance-specific way. This serves
+                  as a further way of evaluating model quality and also
+                  provides a tool for further understanding the parameter
+                  space. We provide software for carrying out this analysis on
+                  arbitrary problem domains and hope that it will help
+                  algorithm developers gain insights into the key parameters of
+                  their algorithms, the key features of their instances, and
+                  their interactions.},
   keywords = {parameter importance}
 }
 
@@ -366,13 +448,13 @@
 }
 
 @incollection{SchHoo2012quanti,
-  title = {Quantifying Homogeneity of Instance Sets for
-                  Algorithm Configuration},
-  crossref = {LION2012},
-  keywords = {Quantifying Homogeneity; Empirical Analysis;
-                  Parameter Optimization; Algorithm Configuration},
   author = schneider_m # and # hoos,
+  title = {Quantifying Homogeneity of Instance Sets for Algorithm
+                  Configuration},
   pages = {190--204},
+  crossref = {LION2012},
+  keywords = {Quantifying Homogeneity; Empirical Analysis; Parameter
+                  Optimization; Algorithm Configuration},
   doi = {10.1007/978-3-642-34413-8_14}
 }
 
@@ -400,20 +482,9 @@
   booktitle = {Experimental Methods for the Analysis of
                   Optimization Algorithms},
   publisher = springer,
-  address = add-berlin,
+  address = add-berlin-heidelberg,
   year = 2010,
   editor = bartz-beielstein # and # chiarandini # and # paquete # and # preuss_m
-}
-
-@proceedings{CEC2006,
-  key = {IEEE CEC},
-  title = {Proceedings of the 2006 Congress on Evolutionary
-                  Computation (CEC 2006)},
-  booktitle = cec2006,
-  year = 2006,
-  month = jul,
-  publisher = ieeep,
-  address = ieeep-ad
 }
 
 @book{GECCO2013,
@@ -428,50 +499,48 @@
 }
 
 @proceedings{ICML2014,
-  editor = {Xing, Eric P. and Jebara, Tony},
   title = {Proceedings of the 31st International Conference on Machine
                   Learning, {ICML} 2014, Beijing, China, 21-26 June 2014},
-  booktitle = icml2014,
-  volume = 32,
   year = 2014,
-  url = {http://jmlr.org/proceedings/papers/v32/}
+  booktitle = icml2014,
+  editor = {Xing, Eric P. and Jebara, Tony},
+  volume = 32,
+  publisher = pmlr-pub,
+  key = {ICML}
 }
 
 @book{LION2012,
-  title = {6th International Conference, LION 6, Paris, France,
-                  January 16-20, 2012. Selected Papers},
-  booktitle = {Learning and Intelligent Optimization, 6th
-                  International Conference, LION 6},
-  year = 2012,
-  series = lncs,
-  publisher = springer,
-  address = add-heidelberg,
   editor = hamadi # and # schoenauer,
-  volume = 7219
+  title = {6th International Conference, LION 6, Paris, France, January
+                  16-20, 2012. Selected Papers},
+  year = 2012,
+  publisher = springer,
+  booktitle = lion2012,
+  volume = 7219,
+  series = lncs,
+  address = add-heidelberg
 }
 
 @book{LION2013,
-  title = {7th International Conference, LION 7, Catania,
-                  Italy, January 7-11, 2013. Selected Papers},
-  booktitle = {Learning and Intelligent Optimization, 7th
-                  International Conference, LION 7},
-  year = 2013,
-  series = lncs,
   editor = pardalos # and # {G. Nicosia},
-  volume = 7997,
+  title = {7th International Conference, LION 7, Catania, Italy, January
+                  7-11, 2013. Selected Papers},
+  year = 2013,
   publisher = springer,
+  booktitle = lion2013,
+  volume = 7997,
+  series = lncs,
   address = add-heidelberg
 }
 
 @book{LION2017,
+  editor = battiti # and # {Dmitri E. Kvasov} # and # {Yaroslav D. Sergeyev},
   title = {11th International Conference, LION 11, Nizhny Novgorod,
                   Russia, June 19-21, 2017, Revised Selected Papers},
-  booktitle = {Learning and Intelligent Optimization, 11th International
-                  Conference, LION 11},
   year = 2017,
-  editor = battiti # and # {Dmitri E. Kvasov} # and # {Yaroslav D. Sergeyev},
+  publisher = springer,
+  booktitle = lion2017,
   volume = 10556,
   series = lncs,
-  publisher = springer,
   address = add-cham
 }

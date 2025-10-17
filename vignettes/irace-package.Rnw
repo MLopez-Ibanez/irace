@@ -2323,10 +2323,12 @@ solution cost, computation time or any other objective that is returned to
 multi-objective, it will typically return not a single cost value, but a set of
 objective vectors (typically, a Pareto front). For tuning such a target
 algorithm with \irace, there are two alternatives. If the algorithm returns a
-single vector of objective values, they can be aggregated into one single number
-by using, for example, a weighted sum. Otherwise, if the target algorithm
-returns a set of objective vectors, a unary quality metric (\eg~the
-hypervolume) may be used to evaluate the quality of the set.\footnote{An implementation is publicly available at \url{http://lopez-ibanez.eu/hypervolume}~\cite{FonPaqLop06:hypervolume}}
+single vector of objective values, they can be aggregated into one single
+number by using, for example, a weighted sum. Otherwise, if the target
+algorithm returns a set of objective vectors, a unary quality metric (\eg~the
+hypervolume) may be used to evaluate the quality of the set.\footnote{Multiple
+  metrics are implemented in C, R and Python in the \texttt{moocore} package
+  (\url{https://github.com/multi-objective/moocore}).}
 
 % The first option is simple, it requires to devise a formula that can aggregate
 % the objectives in a way that balances the importance of all of them. This might
@@ -2360,6 +2362,37 @@ For more information about defining a \parameter{targetEvaluator}, see
 \autoref{sec:evaluator}. Examples of tuning a multi-objective target algorithm
 using the hypervolume can be found in the examples at
 \IRACEHOME{/examples/hypervolume} and \IRACEHOME{/examples/moaco}.
+
+\subsection{Improving anytime behavior}\label{sec:anytime}
+
+In some scenarios, we may be unsure when the end-user may terminate the
+target-algorithm, and we would like to tune the parameters of the algorithm so
+that it finds a solution as good as possible for any given termination
+criterion. That is, we would like to obtain a parameter configurations with
+good \emph{anytime performance}.
+
+Following the approach proposed by \citet{LopStu2013ejor}, \irace can tune an
+algorithm to improve its anytime performance. For that purpose, the algorithm
+must output a (time, solution cost) pair every time that the best-so-far
+solution within a run is improved.  Such pairs form a matrix with two columns
+and as many rows as improvements were made. We can define a \emph{reference
+  point}, where the first component is value slightly higher than the maximum
+runtime of a single run and the second component is a maximum cost value such
+that differences above that maximum are irrelevant for evaluating
+performance. Using this reference point and the matrix as an input, one can
+calculate the hypervolume of the matrix, as described above in
+Section~\ref{sec:multi objective}.  The negative of this hypervolume value
+becomes the cost returned by the \parameter{targetRunner} to \irace.
+
+It is also possible to specify preferences over the trade-off between runtime
+and solution cost by using the weighted hypervolume.  Further details and examples
+can be found in \citet{LopStu2013ejor}.
+
+Although there are other ways to measure anytime performance, most of them are
+equivalent or an approximation of the measure described
+above~\citep{LopVerDreDoe2025}.
+
+
 
 \subsection{Tuning for minimizing computation time}
 \label{sec:capping}

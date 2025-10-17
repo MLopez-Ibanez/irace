@@ -6,6 +6,8 @@
 
 ## New features and improvements
 
+ * The [User Guide](https://mlopez-ibanez.github.io/irace/irace-package.pdf) now contains a section on tuning for anytime performance.
+
 ## Fixes
 
 
