@@ -12,7 +12,7 @@ status](https://github.com/MLopez-Ibanez/irace/workflows/R-CMD-check/badge.svg)]
 [![r-universe build status](https://github.com/r-universe/mlopez-ibanez/actions/workflows/build.yml/badge.svg)](https://github.com/r-universe/mlopez-ibanez/actions/workflows/build.yml)
 <!-- badges: end -->
 
-[ [**Homepage**](https://mlopez-ibanez.github.io/irace/) ] [ [**User Guide (PDF)**](https://cran.r-project.org/package=irace/vignettes/irace-package.pdf) ] [ [**Tutorial**](https://lopez-ibanez.eu/2024-redheur/) ]
+[ [**Homepage**][irace-homepage] ] [ [**User Guide (PDF)**][user-guide] ] [ [**Tutorial**](https://lopez-ibanez.eu/2024-redheur/) ]
 
 **Maintainers:** [Manuel López-Ibáñez](https://lopez-ibanez.eu/), Leslie Pérez Cáceres
 
@@ -65,7 +65,7 @@ You may also find the [**iraceplot**](https://auto-optimization.github.io/iracep
 
 ### User guide ###
 
-A complete [user guide](https://cran.r-project.org/package=irace/vignettes/irace-package.pdf)
+A complete [user guide][user-guide]
 comes with the package. You can access it online or, after installing the irace
 package, invoking from the R console the following command:
 
@@ -152,7 +152,7 @@ Installing the irace package
 ----------------------------
 
 There are two methods for installing the
-[irace](https://mlopez-ibanez.github.io/irace/) R package on your computer:
+[irace][irace-homepage] R package on your computer:
 
 1. Install within R (automatic download). Run the following from the R console:
 ```R
@@ -315,7 +315,7 @@ Check the help of `parallel-irace` by running it without parameters.
 
 A single run of irace can be done much faster by executing the calls
 to `targetRunner` (the runs of the algorithm being tuned) in
-parallel. See the [user guide](https://cran.r-project.org/package=irace/vignettes/irace-package.pdf) for the details.
+parallel. See the [user guide][user-guide] for the details.
 
 License
 -------
@@ -372,9 +372,11 @@ and run with:
 Frequently Asked Questions
 --------------------------
 
-The
-[user guide](https://cran.r-project.org/package=irace/vignettes/irace-package.pdf)
-contains a list of frequently asked questions.
+The [user guide][user-guide] contains a list of frequently asked questions.
+
+
+[user-guide]: https://mlopez-ibanez.github.io/irace/irace-package.pdf
+[irace-homepage]: https://mlopez-ibanez.github.io/irace/
 
 <!--
 Local Variables:
