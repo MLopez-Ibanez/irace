@@ -29,7 +29,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ windows-latest, macos-13, macos-14, ubuntu-22.04 ]
+        os: [ windows-latest, macos-15-intel, macos-14, ubuntu-22.04 ]
         # 4.0 is the minimum supported version.
         r: [ release, 4.0 ]
         include:
