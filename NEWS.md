@@ -182,7 +182,7 @@
    will reject those uses as errors.
 
  * The internal function `irace.reload.debug()` has been removed.
-   Use `devtools::reload()` instead.
+   Use [`devtools::reload()`](https://devtools.r-lib.org/reference/reload.html) instead.
 
  * The column `"instance"` of the `instancesList` data frame stored in the
    logFile has been renamed to `"instanceID"`.  This data frame should not be
