@@ -34,12 +34,16 @@ TODO R package:
 TODO General (in order of importance):
 
  * Fix bugs in https://github.com/MLopez-Ibanez/irace/issues
-    
+
  * Fix all FIXMEs.
 
  * Consume all budget by using post-selection
- 
+
  * Federico's implementation of DAG / Complexity metric.
+
+ * Try other post-hoc tests: The R package titled PMCMRplus contains numerous
+   non-parametric methods for post-hoc analysis after Friedman including
+   support for the Nemenyi test.
 
  * Use both cost and time to calculate wins, then use a prop.test
    prop.test(x=c(sum(x <0.5),sum(y<0.5)), n=c(length(x), length(y)))
@@ -52,7 +56,7 @@ TODO General (in order of importance):
  * Give priority to user-provided configurations or to default/preferred
    parameter values when choosing between similarly performing configurations.
 
- * boundMax should be a floating-point number. 
+ * boundMax should be a floating-point number.
 
  * Write a report at the end that checks if the instances are homogeneous and
    suggests clusters and sub-configurations. One possibility is to replace
@@ -78,7 +82,7 @@ TODO General (in order of importance):
 
  * crayon: Colored Terminal Output
    https://cran.r-project.org/package=crayon
-    
+
  * The truncated normal distribution actually gives more probability to the
    side further away from the mean (that is, the integral of the PDF is larger
    on the side where the distance is larger from the mean). This is not really
@@ -111,8 +115,10 @@ TODO General (in order of importance):
    transformation (Egozcue, J.J., et al., 2003. Isometric logratio
    transformations for compositional data. Mathematical Geology) or mixture
    models (Calibrating continuous multi-objective heuristics using mixture
-   experiments, José Antonio Vázquez-Rodríguez and Sanja Petrovic)
-   
+   experiments, José Antonio Vázquez-Rodríguez and Sanja Petrovic).
+   Juergen Branke says that you can sort the values and look at the differences.
+   https://cs.stackexchange.com/questions/3227/uniform-sampling-from-a-simplex
+
  * Detect the case where all possible parameter configurations can be sampled
    and there is still enough budget to do at least one test. In that case, it
    is not worth it to sample configurations and do several iterations. It is
@@ -213,10 +219,10 @@ TODO General (in order of importance):
    up the output slightly)
    debug-level 3 -> internal information such as memory use
    debug-level 4 -> extra verbose internal information
-   
+
  * It may be possible to byte-compile the conditions as they are read.
    This may speed up conditionsSatisfied(). However, compiled TRUE conditions
-   are slower than byte-compiled, so it doesn't seem a big gain to compile those. 
+   are slower than byte-compiled, so it doesn't seem a big gain to compile those.
 
  * JEREMIE: I would like to try a version of I-Race with a kind of
    bounding in the probability vectors, something equivalent somehow
@@ -263,7 +269,7 @@ TODO General (in order of importance):
  * Add a hook that after sampling post-processes the candidates.
 
  * Enable saving the logfile within a race. Add a parameter that controls the saving frequency.
- 
+
  * Many of our "objects" could be defined as S4 classes. For example:
    setClass("Parameters", slots=c(names="character", types="character",
                                   switches = "character", domain = "list",
@@ -277,7 +283,7 @@ TODO General (in order of importance):
 DONE:
 
  * Avoid duplicated elites. [DONE by Manuel]
- 
+
  * Use 'x <- eval(parse(text=paste0("expression","(1,min(ants,10))")))' to parse domains.
    [DONE by Manuel]
 
@@ -301,18 +307,18 @@ DONE:
  * In src/irace/irace.c, use https://github.com/gpakosz/whereami to find the
    directory containing the 'irace' executable, then set
    ".libPaths(c(.libPaths(), EXEC_DIR))" so that we load the package from the
-   directory holding the executable.    [DONE by Manuel] 
+   directory holding the executable.    [DONE by Manuel]
 
  * use devtools::release() to release
    http://r-pkgs.had.co.nz/release.html#release-submission
-   [DONE by Manuel] 
+   [DONE by Manuel]
 
  * system2 now has a timeout parameter (R 3.5). Add a scenario parameter
    that specifies the maximum time to wait for any run of target-runner to
    avoid infinite loops. [DONE by Manuel]
 
  * Error/Warn about unknown irace parameters. [DONE by Manuel]
- 
+
  * irace.Rdata should keep a list with the all the eliteCandidates after each
    race. Right now we only keep the best one. [DONE in iterationElites]
 
@@ -322,7 +328,7 @@ DONE:
     platforms via Github Actions. [DONE by Manuel]
 
  * https://github.com/ndangtt/irace-to-pimp [DONE by Nguyen Dang]
-   
+
  * https://builder.r-hub.io/ [DONE by Manuel]
 
  * How to run individual tests from the make. Check testthat documentation.
@@ -330,7 +336,7 @@ DONE:
 
  * Use testthat package for testing: http://r-pkgs.had.co.nz/tests.html
    [DONE by Manuel]
- 
+
  * Add --par integer >= 1 (PAR=), default 1: penalise timeouts or execution
    failures with PAR * value. [DONE by Leslie as boundPar]
 
@@ -371,7 +377,7 @@ DONE:
    all jobs for the first-test instances in parallel; 2) target-runner can
    use the index to assign a unique seed to each instance.
    [DONE by Manuel, Leslie]
-   
+
  * Do not print anything about timeEstimate/timeUsedSoFar if it is
    never used (is it ever used?)
    [DONE by Leslie]
@@ -384,7 +390,7 @@ DONE:
    of iterations\candidates that would be used, calling target-runner
    once...).
    [DONE by Leslie]
-   
+
  * Improve R documentation. [DONE by Leslie]
 
    - Properly document all input/output of exported R functions.
@@ -444,7 +450,7 @@ DONE:
    [DONE by implementing forbidden configurations as conditions (Manuel)]
 
  * Add '--version'.
-   [DONE by Manuel] 
+   [DONE by Manuel]
 
  * Forbidden parameter combinations (following ParamILS/SMAC).
    [DONE by Manuel]
@@ -456,9 +462,9 @@ DONE:
    them would be by sampling and rejection but perhaps more effective
    methods could be implemented.
    [DONE by Manuel]
-   
+
  * A way to continue a previous irace run.
-   [DONE by Leslie] 
+   [DONE by Leslie]
 
  * [DONE] Add errors for stupid parameter files. For example:
 
