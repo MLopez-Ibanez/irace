@@ -24,7 +24,9 @@ test_that("test path_rel2abs", {
   skip_if(is.null(old.cwd))
   withr::defer(setwd(old.cwd))
   tryCatch(setwd("/tmp"), error = function(e) { skip(e) })
-  
+  if (getwd() != "/tmp")
+    skip("/tmp is a symlink")
+
   testcases <- read.table(text='
 "."                         "/tmp"  "/tmp"
 ".."                        "/tmp"  "/"
@@ -181,6 +183,7 @@ test_that("test path_rel2abs with symlink", {
   tryCatch({
     tmp <- withr::local_tempdir()
     setwd(tmp)
+    tmp <- getwd() # tmp may have been expanded by R.
     fs::dir_create("a")
     fs::file_create("a/b")
     fs::link_create(fs::path_abs("a"), "c")
