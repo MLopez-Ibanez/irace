@@ -546,6 +546,10 @@ read_logfile <- function(filename, name = "iraceResults")
   # data.table recommends doing this after loading a data.table from a file.
   setDT(iraceResults$state$experiment_log)
   setDT(iraceResults$state$instances_log)
+  if (!is.null(iraceResults$state$recovery_info))
+    setDT(iraceResults$state$recovery_info)
+  if (!is.null(iraceResults$state$race_experiment_log))
+    lapply(iraceResults$state$race_experiment_log, setDT)
   iraceResults
 }
 
