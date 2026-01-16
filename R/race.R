@@ -83,7 +83,7 @@ race_wrapper_helper <- function(race_state, configurations, instance_idx, bounds
       target_output <- race_state$recover_output(instance_idx[is_exe], configuration_id)
     }
   } else { # !recovery_mode
-    # We cannot let targetRunner or targetEvaluator modify our random seed, so we save it.
+    ## We cannot let targetRunner or targetEvaluator modify our random seed, so we save it.
     withr::local_preserve_seed()
     target_output <- vector("list", length(experiments))
     # Execute experiments for which is_exe is TRUE:
@@ -132,9 +132,9 @@ experiments_output_to_matrix <- function(output, scenario)
     rownames = "instance")
 }
 
-aux2.friedman <- function(y, I, alive, conf.level = 0.95)
+aux2_friedman <- function(y, I, alive, conf.level = 0.95)
 {
-  dropped.any <- FALSE
+  dropped_any <- FALSE
   n <- nrow(y)
   k <- length(I)
   r <- rowRanks(y, cols = I, ties.method = "average", useNames = FALSE)
@@ -167,22 +167,24 @@ aux2.friedman <- function(y, I, alive, conf.level = 0.95)
       }
     }
     alive[-J] <- FALSE
-    dropped.any <- TRUE
+    dropped_any <- TRUE
   }
   irace_assert(I[which.min(R)] == best)
-  list(ranks = R, alive = alive, dropped.any = dropped.any, p.value = PVAL)
+  list(ranks = R, alive = alive, dropped_any = dropped_any, p.value = PVAL)
 }
 
+# This function performs the Friedman-test if there are more than two alive.
+# Otherwise, it performs a wilcox.test.
 aux_friedman <- function(results, alive, which_alive, conf.level)
 {
   no.alive <- length(which_alive)
   if (no.alive > 2L) {
     # If more then 2 configurations are left, use Friedman
-    return(aux2.friedman(results, which_alive, alive, conf.level = conf.level))
+    return(aux2_friedman(results, which_alive, alive, conf.level = conf.level))
   }
 
   ranks <- NULL
-  dropped.any <- TRUE
+  dropped_any <- TRUE
   PVAL <- 0
   # If only 2 configurations are left, switch to Wilcoxon
   V1 <- results[, which_alive[1L]]
@@ -203,17 +205,17 @@ aux_friedman <- function(results, alive, which_alive, conf.level)
     diffs <- sort(diffs[!lower.tri(diffs)])/2
     PVAL <- wilcox.test(V1, V2, paired = TRUE, exact = if (ZEROES || TIES) FALSE else NULL)$p.value
     irace_assert(!is.nan(PVAL) & !is.na(PVAL))
-    if (PVAL >= 1 - conf.level) dropped.any <- FALSE
+    if (PVAL >= 1 - conf.level) dropped_any <- FALSE
     # We use the pseudo median (see wilcox.test.default)
     ranks <- if (median(diffs) <= 0) c(1L,2L) else c(2L,1L)
   }
-  if (dropped.any)
+  if (dropped_any)
     alive[which_alive[ranks[2L]]] <- FALSE
 
-  list(ranks = ranks, alive = alive, dropped.any = dropped.any, p.value = PVAL)
+  list(ranks = ranks, alive = alive, dropped_any = dropped_any, p.value = PVAL)
 }
 
-aux.one_ttest <- function(results, alive, which_alive, conf.level,
+aux_one_ttest <- function(results, alive, which_alive, conf.level,
                           adjust = c("none","bonferroni","holm"))
 {
   adjust <- match.arg(adjust)
@@ -247,10 +249,10 @@ aux.one_ttest <- function(results, alive, which_alive, conf.level,
   dropped_any <- length(dropj) > 0
   irace_assert(all(alive[dropj]))
   alive[dropj] <- FALSE
-  list(ranks = means, alive = alive, dropped.any = dropped_any, p.value = min(pvals))
+  list(ranks = means, alive = alive, dropped_any = dropped_any, p.value = min(pvals))
 }
 
-aux.ttest <- function(results, alive, which_alive, conf.level,
+aux_ttest <- function(results, alive, which_alive, conf.level,
                       adjust = c("none","bonferroni","holm"))
 {
   adjust <- match.arg(adjust)
@@ -286,7 +288,7 @@ aux.ttest <- function(results, alive, which_alive, conf.level,
   dropped_any <- length(dropj) > 0L
   irace_assert(all(alive[dropj]))
   alive[dropj] <- FALSE
-  list(ranks = means, alive = alive, dropped.any = dropped_any, p.value = min(pvals))
+  list(ranks = means, alive = alive, dropped_any = dropped_any, p.value = min(pvals))
 }
 
 table_hline <- function(widths)
@@ -668,11 +670,11 @@ elitist_race <- function(race_state, maxExp,
     friedman = function(results, alive, which_alive, conf.level = scenario$confidence)
       aux_friedman(results, alive, which_alive, conf.level = conf.level),
     t.none = function(results, alive, which_alive, conf.level = scenario$confidence)
-      aux.ttest(results, alive, which_alive, conf.level = conf.level, adjust = "none"),
+      aux_ttest(results, alive, which_alive, conf.level = conf.level, adjust = "none"),
     t.holm = function(results, alive, which_alive, conf.level = scenario$confidence)
-      aux.ttest(results, alive, which_alive, conf.level = conf.level, adjust = "holm"),
+      aux_ttest(results, alive, which_alive, conf.level = conf.level, adjust = "holm"),
     t.bonferroni = function(results, alive, which_alive, conf.level = scenario$confidence)
-      aux.ttest(results, alive, which_alive, conf.level = conf.level, adjust = "bonferroni"))
+      aux_ttest(results, alive, which_alive, conf.level = conf.level, adjust = "bonferroni"))
   do_test <- bytecompile(do_test)
 
   # Create the instance list according to the algorithm selected.
