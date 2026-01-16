@@ -10,6 +10,13 @@
 
 ## Fixes
 
+ * irace will now call the RNG of R before evaluating a new instance.  This
+   change should make no difference to well-behaved `targetRunners` that use
+   the seed provided by irace to reseed the RNG, as recommended. However,
+   `targetRunners` written in R that fail to follow this recommendation could
+   end up with the same sequence of random numbers in different instances. Now,
+   different instances should get different random numbers.
+
 
 # irace 4.3
 

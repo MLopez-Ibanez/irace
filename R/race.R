@@ -72,6 +72,9 @@ race_wrapper_helper <- function(race_state, configurations, instance_idx, bounds
 
   irace_assert(length(is_exe) == length(experiments))
   instance_idx <- rep(instance_idx, each = nrow(configurations))
+  # Move the seed forward. If the user mistakenly relies on the R seed, we
+  # don't want to have the same seed for every instance.
+  runif(1)
   if (race_state$recovery_mode) {
     # With targetEvaluator or if everything is executed, we recover everything.
     if (!is.null(scenario$targetEvaluator) || all(is_exe)) {
@@ -83,9 +86,10 @@ race_wrapper_helper <- function(race_state, configurations, instance_idx, bounds
       target_output <- race_state$recover_output(instance_idx[is_exe], configuration_id)
     }
   } else { # !recovery_mode
-    ## We cannot let targetRunner or targetEvaluator modify our random seed, so we save it.
-    withr::local_preserve_seed()
     target_output <- vector("list", length(experiments))
+    # We cannot let targetRunner or targetEvaluator modify our random seed, so
+    # we save it.
+    withr::local_preserve_seed()
     # Execute experiments for which is_exe is TRUE:
     if (any(is_exe))
       target_output[is_exe] <- execute_experiments(race_state, experiments[is_exe], scenario)
