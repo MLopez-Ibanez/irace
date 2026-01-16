@@ -86,7 +86,7 @@ The scenario list contains the following elements:
 \item Tuning budget:
 \describe{
 \item{\code{maxExperiments}}{Maximum number of runs (invocations of \code{targetRunner}) that will be performed. It determines the maximum budget of experiments for the tuning. (Default: \code{0})}
-\item{\code{minExperiments}}{Minimum number of runs (invocations of \code{targetRunner}) that will be performed. It determines the minimum budget of experiments for the tuning. The actual budget depends on the number of parameters and \code{minSurvival}. (Default: \code{NA})}
+\item{\code{minExperiments}}{Minimum number of runs (invocations of \code{targetRunner}) that will be performed. It determines the minimum budget of experiments for the tuning. The actual budget depends on the number of parameters and \code{minNbSurvival}. (Default: \code{NA})}
 \item{\code{maxTime}}{Maximum total execution time for the executions of \code{targetRunner}. \code{targetRunner} must return two values: cost and time. This value and the one returned by \code{targetRunner} must use the same units (seconds, minutes, iterations, evaluations, ...). (Default: \code{0})}
 \item{\code{budgetEstimation}}{Fraction (smaller than 1) of the budget used to estimate the mean computation time of a configuration. Only used when \code{maxTime} > 0 (Default: \code{0.05})}
 \item{\code{minMeasurableTime}}{Minimum time unit that is still (significantly) measureable. (Default: \code{0.01})}

@@ -615,7 +615,7 @@ printScenario <- function(scenario)
 #'  \item Tuning budget:
 #'    \describe{
 #'      \item{`maxExperiments`}{Maximum number of runs (invocations of `targetRunner`) that will be performed. It determines the maximum budget of experiments for the tuning. (Default: `0`)}
-#'      \item{`minExperiments`}{Minimum number of runs (invocations of `targetRunner`) that will be performed. It determines the minimum budget of experiments for the tuning. The actual budget depends on the number of parameters and `minSurvival`. (Default: `NA`)}
+#'      \item{`minExperiments`}{Minimum number of runs (invocations of `targetRunner`) that will be performed. It determines the minimum budget of experiments for the tuning. The actual budget depends on the number of parameters and `minNbSurvival`. (Default: `NA`)}
 #'      \item{`maxTime`}{Maximum total execution time for the executions of `targetRunner`. `targetRunner` must return two values: cost and time. This value and the one returned by `targetRunner` must use the same units (seconds, minutes, iterations, evaluations, ...). (Default: `0`)}
 #'      \item{`budgetEstimation`}{Fraction (smaller than 1) of the budget used to estimate the mean computation time of a configuration. Only used when `maxTime` > 0 (Default: `0.05`)}
 #'      \item{`minMeasurableTime`}{Minimum time unit that is still (significantly) measureable. (Default: `0.01`)}

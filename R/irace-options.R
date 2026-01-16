@@ -88,7 +88,7 @@ NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA), description = c("Show this help
 "Optional script or R function that provides a numeric value for each configuration. See templates/target-evaluator.tmpl",
 "If the target algorithm is deterministic, configurations will be evaluated only once per instance.",
 "Maximum number of runs (invocations of `targetRunner`) that will be performed. It determines the maximum budget of experiments for the tuning.",
-"Minimum number of runs (invocations of `targetRunner`) that will be performed. It determines the minimum budget of experiments for the tuning. The actual budget depends on the number of parameters and `minSurvival`.",
+"Minimum number of runs (invocations of `targetRunner`) that will be performed. It determines the minimum budget of experiments for the tuning. The actual budget depends on the number of parameters and `minNbSurvival`.",
 "Maximum total execution time for the executions of `targetRunner`. `targetRunner` must return two values: cost and time. This value and the one returned by `targetRunner` must use the same units (seconds, minutes, iterations, evaluations, ...).",
 "Fraction (smaller than 1) of the budget used to estimate the mean computation time of a configuration. Only used when `maxTime` > 0",
 "Minimum time unit that is still (significantly) measureable.",

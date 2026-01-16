@@ -359,9 +359,9 @@
     "short": "",
     "long": "--min-experiments",
     "default": null,
-    "vignettes": "The minimum number of runs (invocations of \\parameter{targetRunner}) that will be performed. If this option is set, then \\parameter{maxExperiments} is ignored and the actual budget will depend on the number of parameters and \\parameter{minSurvival}, but it will not be smaller than this value. See \\autoref{sec:budget}.",
+    "vignettes": "The minimum number of runs (invocations of \\parameter{targetRunner}) that will be performed. If this option is set, then \\parameter{maxExperiments} is ignored and the actual budget will depend on the number of parameters and \\parameter{minNbSurvival}, but it will not be smaller than this value. See \\autoref{sec:budget}.",
     "section": "Tuning budget",
-    "description": "Minimum number of runs (invocations of \\code{targetRunner}) that will be performed. It determines the minimum budget of experiments for the tuning. The actual budget depends on the number of parameters and \\code{minSurvival}."
+    "description": "Minimum number of runs (invocations of \\code{targetRunner}) that will be performed. It determines the minimum budget of experiments for the tuning. The actual budget depends on the number of parameters and \\code{minNbSurvival}."
   },
   {
     "name": "maxTime",

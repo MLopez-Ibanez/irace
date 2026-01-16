@@ -196,7 +196,7 @@ List of command-line options:
                          that will be performed. It determines the minimum
                          budget of experiments for the tuning. The actual
                          budget depends on the number of parameters and
-                         `minSurvival`.
+                         `minNbSurvival`.
    --max-time            Maximum total execution time for the executions of
                          `targetRunner`. `targetRunner` must return two values:
                          cost and time. This value and the one returned by
