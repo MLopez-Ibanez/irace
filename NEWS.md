@@ -10,6 +10,9 @@
 
 ## Fixes
 
+ * If `targetRunner` returns the expected output in separate lines, `irace`
+   could crash with: `Error in set(target_output, j = "configuration", value = unlist_element(experiments, "id_configuration"))`.
+
  * irace will now call the RNG of R before evaluating a new instance.  This
    change should make no difference to well-behaved `targetRunners` that use
    the seed provided by irace to reseed the RNG, as recommended. However,

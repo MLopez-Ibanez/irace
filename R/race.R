@@ -102,8 +102,9 @@ race_wrapper_helper <- function(race_state, configurations, instance_idx, bounds
       experiments <- experiments[is_exe]
       instance_idx <- instance_idx[is_exe]
     }
+    # FIXME: Is there a faster way to keep only cost and time?
+    target_output <- lapply(target_output, function(x) x[names(x) %in% c("cost","time")])
     target_output <- rbindlist(target_output, fill=TRUE, use.names=TRUE)
-    set(target_output, j = setdiff(colnames(target_output), c("cost", "time")), value = NULL)
     if ("time" %notin% colnames(target_output))
       set(target_output, j = "time", value = NA)
     set(target_output, j = "configuration", value = unlist_element(experiments, "id_configuration"))
