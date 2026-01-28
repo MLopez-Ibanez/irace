@@ -10,8 +10,12 @@
 
 ## Fixes
 
+ * `irace` could error when tuning a single parameter and initial
+   configurations are given for this single parameter in an input file.
+   (Reported by Xiaolu Liu)
+
  * If `targetRunner` returns the expected output in separate lines, `irace`
-   could crash with: `Error in set(target_output, j = "configuration", value = unlist_element(experiments, "id_configuration"))`.
+   could error with: `Error in set(target_output, j = "configuration", value = unlist_element(experiments, "id_configuration"))`.
 
  * irace will now call the RNG of R before evaluating a new instance.  This
    change should make no difference to well-behaved `targetRunners` that use
