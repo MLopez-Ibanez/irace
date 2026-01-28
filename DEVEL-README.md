@@ -95,9 +95,11 @@ TODO: See useful release steps here: https://github.com/tidyverse/ggplot2/issues
 
 1. make check # passes
 
-1. make releasecheck
+1. Update Version field in DESCRIPTION and NEWS.md file.
 
 1. Update `cran-comments.md`
+
+1. make releasecheck
 
 1. git ci -a -m "Prepare to release version X.Y"
 
