@@ -3029,7 +3029,9 @@ We are not aware of any way to achieve this using \aR. However, in
 GNU/Linux, it is easy to implement by using the \code{timeout} command\footnote{\url{http://man7.org/linux/man-pages/man1/timeout.1.html}} in
 \code{targetRunner} when invoking your program.
 
-\subsection{When using the mpi option, \irace is aborted with an error message indicating that a
+\subsection[When using the mpi option, irace stops with an error message indicating that a
+function is not defined. How to fix this?]%
+{When using the \parameter{mpi} option, \irace stops with an error message indicating that a
   function is not defined. How to fix this?}\label{sec:mpi-error}
 
 \pkg{Rmpi} does not work the same way when called from within a package and when called from a script or
