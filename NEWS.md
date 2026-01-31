@@ -595,7 +595,7 @@
 
  * New option `aclib=` (`--aclib 1`) enables compatibility with the
    GenericWrapper4AC (https://github.com/automl/GenericWrapper4AC/) used by
-   AClib (http://aclib.net/). This is EXPERIMENTAL. `--aclib 1` also sets
+   AClib (https://aclib.net/). This is EXPERIMENTAL. `--aclib 1` also sets
    digits to 15 for compatibility with AClib defaults.
                                                          (Manuel López-Ibáñez)
 

@@ -268,7 +268,7 @@ package is available from CRAN:
 \end{center}
 %
 More information about \irace is available at
-\url{https://mlopez-ibanez.github.io/irace}.
+\url{https://mlopez-ibanez.github.io/irace/}.
 
 \subsection{Version}
 The current version of the \irace package is \iraceversion. Previous
@@ -744,7 +744,7 @@ Command-line options override the same options specified in the \code{scenario.t
 The \ACOTSP tuning example can be found in the package installation in the folder \IRACEHOME{/examples/acotsp}.
  %
 Other example scenarios can be found in the same folder. More
-examples of tuning scenarios can be found in the Algorithm Configuration Library (AClib, \url{http://www.aclib.net/}).
+examples of tuning scenarios can be found in the Algorithm Configuration Library (AClib, \url{https://www.aclib.net/}).
 
 In this section, we describe how to execute the \ACOTSP scenario. If you wish to start setting up
 your own scenario, continue to the next section. For this example, we assume
@@ -1231,7 +1231,7 @@ print(experiment)
 If you need the \code{switches} of each parameter (or any other information
 about the parameters), you can obtain it from \code{scenario$parameters}.
 
-You can find an example that calls MATLAB from \aR using this approach here: \url{https://github.com/MLopez-Ibanez/irace/blob/master/inst/examples/matlab/scenario.txt}.
+You can find an example that calls MATLAB from \aR using this approach here: \url{https://github.com/MLopez-Ibanez/irace/blob/master/inst/examples/matlabr/scenario.txt}.
 
 If \parameter{targetEvaluator} is \code{NULL}, then
 the \parameter{targetRunner} function must return a list with at least one
@@ -1631,7 +1631,7 @@ See the examples in
    %
    However, the user is free to set up the calls in any way, perhaps
    implementing their own replacement for \code{target_runner} and/or
-   \code{exec_target_runner}. The user may load and call other \aR packages, such as \pkg{batchtools} (\url{https://mllg.github.io/batchtools/}).
+   \code{exec_target_runner}. The user may load and call other \aR packages, such as \pkg{batchtools} (\url{https://cran.r-project.org/package=batchtools}).
 
    The only requirement is that the \parameter{targetRunnerParallel} function
    must return a list of the same length as \code{experiments}, where each
@@ -2965,7 +2965,7 @@ Long answer: According to the terminology described by \citet{LopBraPaq2021telo}
 Definitely. There are three main ways to achieve this:
 \begin{enumerate}
 \item Edit the \parameter{targetRunner} script to call \MATLAB in a non-interactive
-    way. See the \MATLAB documentation, or the following links.\footnote{See \href{http://stackoverflow.com/questions/1518072/suppress-start-message-of-matlab}{suppress-start-message-of-matlab (stackoverflow.com)} and \href{http://stackoverflow.com/questions/4611195/how-to-call-matlab-from-command-line-and-print-to-stdout-before-exiting}{how-to-call-matlab-from-command-line-and-print-to-stdout-before-exiting (stackoverflow.com)}} %
+    way. See the \MATLAB documentation, or the following links.\footnote{See \href{https://stackoverflow.com/questions/1518072/suppress-start-message-of-matlab}{suppress-start-message-of-matlab (stackoverflow.com)} and \href{https://stackoverflow.com/questions/4611195/how-to-call-matlab-from-command-line-and-print-to-stdout-before-exiting}{how-to-call-matlab-from-command-line-and-print-to-stdout-before-exiting (stackoverflow.com)}} %
     You would need to pass the parameter received by \parameter{targetRunner} to your \MATLAB script.\footnote{See \href{https://www.mathworks.com/matlabcentral/answers/97204-how-can-i-pass-input-parameters-when-running-matlab-in-batch-mode-in-windows}{how-can-i-pass-input-parameters-when-running-matlab-in-batch-mode-in-windows (mathworks.com)} and \href{https://stackoverflow.com/questions/3335505/how-can-i-pass-command-line-arguments-to-a-standalone-matlab-executable-running}{how-can-i-pass-command-line-arguments-to-a-standalone-matlab-executable-running (mathworks.com)}}
     %
     There is a minimal example in \IRACEHOME{/examples/matlab/}, where you can find an example \path{target-runner} script calling the \path{matlab} executable.
@@ -2987,7 +2987,7 @@ the program (target algorithm), not in \irace.
 %
 To detect such bugs, we recommend that you use, within
 \parameter{targetRunner}, a memory debugger (e.g.,
-\href{http://valgrind.org/}{\code{valgrind}}) to run your program. For example,
+\href{https://valgrind.org/}{\code{valgrind}}) to run your program. For example,
 if your program is executed by \parameter{targetRunner} as:
   %
 \begin{lstlisting}[style=BashInputStyle]
@@ -3026,7 +3026,7 @@ not in \irace. Some ideas for debugging this problem:
 \subsection{My program may be buggy and run into an infinite loop. Is it possible to set a maximum timeout?}\label{faq:timeout}
 
 We are not aware of any way to achieve this using \aR. However, in
-GNU/Linux, it is easy to implement by using the \code{timeout} command\footnote{\url{http://man7.org/linux/man-pages/man1/timeout.1.html}} in
+GNU/Linux, it is easy to implement by using the \code{timeout} command\footnote{\url{https://man7.org/linux/man-pages/man1/timeout.1.html}} in
 \code{targetRunner} when invoking your program.
 
 \subsection[When using the mpi option, irace stops with an error message indicating that a
