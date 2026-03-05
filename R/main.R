@@ -70,8 +70,7 @@ cat_irace_license <- function()
 #'   instances (if provided). If you want a lower-level interface that just
 #'   runs irace, please see function [irace()].
 #'
-#' @templateVar return_invisible TRUE
-#' @template return_irace
+#' @return `r .roxygen_irace_return(invisible=TRUE)`
 #' @seealso
 #'  \describe{
 #'  \item{[irace_cmdline()]}{a command-line interface to [irace()].}
@@ -315,9 +314,7 @@ init <- function()
 #' cmdline_usage(.irace.params.def)
 #' ```
 #'
-#' @templateVar return_invisible TRUE
-#' @template return_irace
-#'
+#' @return `r .roxygen_irace_return(invisible=TRUE)`
 #' @seealso
 #'  [irace_main()] to start \pkg{irace} with a given scenario.
 #' @examples

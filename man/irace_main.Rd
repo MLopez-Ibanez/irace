@@ -33,7 +33,8 @@ The \code{iraceResults} object is a list with the following structure:
 
 \item{\code{scenario}}{The scenario R object containing the \pkg{irace}
 options used for the execution. See \code{\link{defaultScenario}}
-for more information. The element \code{scenario$parameters} contains the parameters R object that describes the target algorithm parameters. See
+for more information. The element \code{scenario$parameters} contains the
+parameters R object that describes the target algorithm parameters. See
 \code{\link{readParameters}}.}
 
 \item{\code{allConfigurations}}{The target algorithm configurations
@@ -76,7 +77,6 @@ elements of this list are: \code{experiments} a matrix with the testing
 experiments of the selected configurations in the same format as the
 explained above and \code{seeds} a vector with the seeds used to execute
 each experiment.}
-
 }
 }
 \description{

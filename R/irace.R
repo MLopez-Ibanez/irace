@@ -454,7 +454,7 @@ extractElites <- function(configurations, nbElites, debugLevel)
 #'
 #' @inheritParams defaultScenario
 #'
-#' @template return_irace
+#' @return `r .roxygen_irace_return()`
 #'
 #' @examples
 #' \dontrun{
