@@ -93,32 +93,32 @@ TODO: See useful release steps here: https://github.com/tidyverse/ggplot2/issues
 
 1. git status # make sure you are up to date and clean
 
-1. make check # passes
+2. make check # passes
 
-1. Update Version field in DESCRIPTION and NEWS.md file.
+3. Update Version field in DESCRIPTION and NEWS.md file.
 
-1. Update `cran-comments.md`
+4. make releasecheck
 
-1. make releasecheck
+5. git ci -a -m "Prepare to release version X.Y"
 
-1. git ci -a -m "Prepare to release version X.Y"
+6. make examples # Takes a few hours. Inspect the examples in the vignette.
 
-1. make examples # Takes a few hours. Inspect the examples in the vignette.
+7. make revdepcheck # Takes a few hours
 
-1. make revdepcheck # Takes a few hours
+8. make releasebuild # Inspect the output for strange files!
 
-1. make releasebuild # Inspect the output for strange files!
+9. Update `cran-comments.md`
 
-1. make submit
+10. make submit
 
-9.a IF the package requires further changes:
+11. (a) IF the package requires further changes:
 
   * Make the changes.
 
   * Repeat the whole RELEASE process above without bumping the version number.
 
 
-9.b IF the package is released in CRAN:
+11. (b) IF the package is released in CRAN:
 
   * Bump the version number in DESCRIPTION and NEWS.md.
 
@@ -126,9 +126,9 @@ TODO: See useful release steps here: https://github.com/tidyverse/ggplot2/issues
 
   * git ci -a -m " * Bump development version to $NEW_VERSION"
 
-10. make closeversion
+12. make closeversion
 
-11. Announce the release in the Google group:
+13. Announce the release in the Google group:
 
     https://groups.google.com/d/forum/irace-package
 
