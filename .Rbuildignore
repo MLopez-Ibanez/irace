@@ -30,6 +30,7 @@ DEVEL-README.md
 ^\.pre-commit-config\.yaml$
 ^check-reverse
 ^codecov\.yml$
+^cran-comments-template.md$
 ^cran-comments.md$
 ^devel-examples
 ^devel-tests

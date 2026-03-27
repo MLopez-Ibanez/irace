@@ -12,19 +12,20 @@
 *.toc
 *~
 .Rhistory
-TAGS
-docs/
+/*.bak
+/*.synctex*
+/TAGS
 /VERSION
 /git_version
 /irace-Ex.R
-/TAGS
-/*.synctex*
-/*.bak
-docs/
 /parameters.txt
 /revdep
 /svn_version
 /tune-conf
+TAGS
+cran-comments.md
+docs/
+
 
 # /GenericWrapper4AC/
 /GenericWrapper4AC/.git

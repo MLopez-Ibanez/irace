@@ -107,7 +107,7 @@ TODO: See useful release steps here: https://github.com/tidyverse/ggplot2/issues
 
 8. make releasebuild # Inspect the output for strange files!
 
-9. Update `cran-comments.md`
+9. `cp cran-comments-template.md cran-comments.md` and update `cran-comments.md`
 
 10. make submit
 
