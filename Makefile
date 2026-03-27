@@ -171,7 +171,8 @@ else
 	ssh $(RNODE) '. ~/.profile && cd $(RDIR)/$(PACKAGE) && make quick-install'
 endif
 
-submit:
+submit: releasebuild
+	@echo "SUBMITTING: `grep irace_version R/version.R`"
 	r --interactive -e 'devtools::release(args = "--compact-vignettes=both")'
 
 remotecran: releasebuild
