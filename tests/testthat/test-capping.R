@@ -11,6 +11,8 @@ target_runner_reject <- function(experiment, scenario)
 
 
 test_that("irace_capping_xy maxExperiments = 1000", {
+  skip_on_cran() # Fails in CRAN with OpenBLAS, works otherwise.
+  # Error in `confs[1L, , drop = FALSE]`: incorrect number of dimensions
   generate_set_seed()
   irace_capping_xy(maxExperiments = 1000)
 })
