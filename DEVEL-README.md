@@ -120,15 +120,15 @@ TODO: See useful release steps here: https://github.com/tidyverse/ggplot2/issues
 
 11. (b) IF the package is released in CRAN:
 
+  * `make closeversion`
+
   * Bump the version number in DESCRIPTION and NEWS.md.
 
   * make build # To update other files with the new version."
 
   * git ci -a -m " * Bump development version to $NEW_VERSION"
 
-12. make closeversion
-
-13. Announce the release in the Google group:
+12. Announce the release in the Google group:
 
     https://groups.google.com/d/forum/irace-package
 
