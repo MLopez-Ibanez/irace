@@ -1,0 +1,21 @@
+# NA
+
+Dear CRAN maintainers,
+
+I would like to submit version 4.4 of the irace package to CRAN.
+
+The NEWS section corresponding to this version is available from:
+
+<https://mlopez-ibanez.github.io/irace/news/index.html>
+
+More information about irace may be found at:
+
+``` R
+https://mlopez-ibanez.github.io/irace/
+```
+
+Thanks in advance,
+
+``` R
+Manuel López-Ibáñez.
+```
