@@ -701,19 +701,20 @@ elitist_race <- function(race_state, maxExp,
         # of eachTest (which is scenario$blockSize * scenario$eachTest).
         all(colSums2(evaluated) %% eachTest == 0L)
     }
+    # In elitist racing, we see again the same instances but in different order.
+    irace_assert(identical(sort(race_instances), seq_along(race_instances)))
   } else {
     race_instances <- no_elitist_init_instances(race_state, deterministic = scenario$deterministic)
     all_elite_instances_evaluated <- function() TRUE
   }
 
   irace_assert(!anyDuplicated(race_instances))
-  irace_assert(identical(sort(race_instances), seq_along(race_instances)))
   nb_tasks <- length(race_instances)
 
   # Initialize some variables...
   experiments_used <- 0L
 
-  ## FIXME: Probably, instead of this, we should keep elite_safe in the race_state.
+  # FIXME: Probably, instead of this, we should keep elite_safe in the race_state.
   if (is.null(elite_data)) {
     elite_safe <- 0L
     elite_instances_ID <- NULL
