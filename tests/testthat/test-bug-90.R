@@ -14,6 +14,7 @@ f  "" i    (1,10)
       parameters = parameters,
       instances = 1:20,
       elitist = FALSE,
+      postselection = FALSE,
       maxExperiments = 200,
       logFile = logFile,
       targetRunner = function(experiment, scenario)

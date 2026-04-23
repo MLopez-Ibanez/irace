@@ -332,6 +332,12 @@ checkScenario <- function(scenario = defaultScenario())
   } else if (scenario$boundMax <= 0 || is.na(scenario$boundMax)) { # no capping
     scenario$boundMax <- NULL
   }
+  if (!scenario$elitist && scenario$postselection) {
+    # FIXME: It should be possible to make it work by completing any
+    # missing runs for the elitist configurations before calling elitist_race().
+    irace_warning("The postselection race requires elitist racing, so it will be disabled.\n")
+    scenario$postselection <- FALSE
+  }
 
   if (is.function.name(scenario$targetRunner)) {
     scenario$targetRunner <- get.function(scenario$targetRunner)

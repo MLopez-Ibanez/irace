@@ -39,7 +39,7 @@ withr::with_options(list(warning=2), {
 # https://github.com/MLopez-Ibanez/irace/issues/10
 test_that("bug 10", {
   skip_on_cran()
-  
+
   target_runner <- function(experiment, scenario)
     list(cost = 100, call = toString(experiment))
 
@@ -51,6 +51,7 @@ withr::with_options(list(warning=2), {
                    elitistNewInstances = 0,
                    elitistLimit = 0,
                    elitist = 0,
+                   postselection = FALSE,
                    parameters = parameters)
   scenario <- checkScenario (scenario)
   confs <- irace(scenario = scenario)

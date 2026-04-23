@@ -1,5 +1,9 @@
 **If you are viewing this file on CRAN, please check [latest news on the irace website](https://mlopez-ibanez.github.io/irace/news/index.html) where the formatting is also better.**
 
+# irace 4.4.3
+
+ * Do not run postselection race unless elitist racing is enabled.
+
 # irace 4.4.2
 
  * Fix failing assert with `elitist=FALSE` (issue #90).
