@@ -111,7 +111,7 @@ NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA), description = c("Show this help
 "Precision used for calculating the execution time. It must be specified when capping is enabled.",
 "Penalization multiplication constant (PARX) for timed out executions (executions that reach `boundMax` execution time).",
 "Replace the configuration cost of bounded executions with `boundMax`.",
-"Perform a postselection race after the execution of irace to consume all remaining budget. Value 0 disables the postselection race.",
+"Perform a postselection race after the execution of irace to consume all remaining budget (requires elitist racing). Value 0 disables the postselection race.",
 "Enable/disable AClib mode. This option enables compatibility with GenericWrapper4AC as targetRunner script.",
 "Maximum number of iterations.", "Number of runs of the target algorithm per iteration.",
 "Minimum number of configurations needed to continue the execution of each race (iteration).",

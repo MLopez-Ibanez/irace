@@ -265,8 +265,9 @@ List of command-line options:
    --bound-as-timeout    Replace the configuration cost of bounded executions
                          with `boundMax`. Default: 1.
    --postselection       Perform a postselection race after the execution of
-                         irace to consume all remaining budget. Value 0
-                         disables the postselection race. Default: 1.
+                         irace to consume all remaining budget (requires
+                         elitist racing). Value 0 disables the postselection
+                         race. Default: 1.
    --aclib               Enable/disable AClib mode. This option enables
                          compatibility with GenericWrapper4AC as targetRunner
                          script. Default: 0.
