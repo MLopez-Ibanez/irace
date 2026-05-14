@@ -29,6 +29,9 @@ INSTANCE="$4"
 shift 4 || error "Not enough parameters"
 CONFIG_PARAMS=$*
 
+STDOUT=c${CONFIG_ID}-${INSTANCE_ID}-${SEED}.stdout
+STDERR=c${CONFIG_ID}-${INSTANCE_ID}-${SEED}.stderr
+
 # Fixed parameters that should be always passed to ACOTSP.
 # The time to be used is always 10 seconds, and we want only one run:
 EXE_PARAMS=" --tries 1 --time 10 --quiet  -i $INSTANCE --seed $SEED ${CONFIG_PARAMS}"
