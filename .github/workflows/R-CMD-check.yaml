@@ -134,7 +134,6 @@ jobs:
                  commentDonttest = FALSE)
           print(coverage)
           covr::to_cobertura(coverage)
-          #covr::codecov(coverage = coverage)
         shell: Rscript {0}
 
       - name: Upload coverage to Codecov
@@ -142,7 +141,7 @@ jobs:
         with:
           fail_ci_if_error: ${{ github.event_name != 'pull_request' && true || false }}
           file: ./cobertura.xml
-          plugin: noop
+          plugins: noop
           disable_search: true
           token: ${{ secrets.CODECOV_TOKEN }}
 
