@@ -4,6 +4,10 @@
 
  * Do not run postselection race unless elitist racing is enabled.
 
+ * Fix #94: `sample_model.ParamOrd()` now samples uniformly when the model
+   mean is `NA`, avoiding `NA` values for active ordinal parameters.
+   Reported by @Saethox.
+
 # irace 4.4.2
 
  * Fix failing assert with `elitist=FALSE` (issue #90).

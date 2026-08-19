@@ -549,8 +549,13 @@ param_quantile.ParamCat <- function(param, probs, domain = param[["domain"]])
 
 #' @exportS3Method
 sample_model.ParamOrd <- function(param, n, model, domain = param[["domain"]])
-  domain[floor(sample_numeric_norm(n, mean = model[[2L]], sd = model[[1L]],
+{
+  model_mean <- model[[2L]]
+  if (is.na(model_mean))
+    return(sample(domain, n, replace = TRUE))
+  domain[floor(sample_numeric_norm(n, mean = model_mean, sd = model[[1L]],
     lower = 1L, upper = length(domain), transf = ""))]
+}
 
 #' @exportS3Method
 sample_unif.ParamOrd <- function(param, n, domain = param[["domain"]])
