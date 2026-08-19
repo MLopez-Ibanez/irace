@@ -5,6 +5,9 @@
  * Fix #94: `sample_model.ParamOrd()` now samples uniformly when the model
    mean is `NA`, avoiding `NA` values for active ordinal parameters.
    Reported by @Saethox.
+   
+ * Fix #97: `psRace()` errors when the post-selection race has nothing left to
+   run. Fixed by @ivchicano.
 
 # irace 4.4.3
 
