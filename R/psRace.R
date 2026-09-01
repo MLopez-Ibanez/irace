@@ -177,6 +177,16 @@ psRace <- function(iraceResults, max_experiments, conf_ids = NULL, iteration_eli
       # configurations that have been evaluated on all instances.
       conf_needs_zero <- conf_needs[conf_needs == 0L]
       conf_needs <- truncate_conf_needs(conf_needs[conf_needs > 0L], 16L)
+      if (length(conf_needs) == 0L) {
+        # Every configuration still within budget has already been evaluated on
+        # every instance, so there is no configuration with NA values to add and
+        # nothing to choose between: race the fully evaluated ones. Otherwise the
+        # call below is generate_combs_1(0), which evaluates
+        # seq.int(1L, 2^0 - 1L, 1L) and errors.
+        conf_ids <- names(conf_needs_zero)
+        report_selected(conf_ids, conf_needs_zero)
+        return(conf_ids)
+      }
       combs <- generate_combs_1(length(conf_needs))
       left <- sapply(combs, function(x) max_experiments - sum(conf_needs[x]), USE.NAMES=FALSE)
       irace_assert(any(left >= 0), eval_after=save(iraceResults, file="bug-conf_ids.Rdata"))

@@ -1259,7 +1259,13 @@ elitist_race <- function(race_state, maxExp,
   if (is.null(scenario$targetEvaluator)) {
     # With targetEvaluator, we may have the recorded a new cost value but not
     # counted it as an experiment used if targetRunner was not called.
-    irace_assert(anyDuplicated(local_experiment_log[, c("instance", "configuration")]) == 0L,
+    # A race that executes nothing, as happens in a post-selection race where every
+    # configuration is already evaluated on every instance, leaves
+    # reset_race_experiment_log() equal to rbindlist(NULL): a data.table with no rows
+    # and no columns, which the column selection below cannot be applied to. An empty
+    # log trivially has no duplicates.
+    irace_assert(nrow(local_experiment_log) == 0L ||
+      anyDuplicated(local_experiment_log[, c("instance", "configuration")]) == 0L,
       eval_after = {
         print(local_experiment_log)
         print(mget(ls()))
