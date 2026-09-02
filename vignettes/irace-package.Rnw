@@ -766,7 +766,7 @@ chmod u+x target-runner
 \end{lstlisting}
 %@
 
-\item Download the training instances from \url{https://iridia.ulb.ac.be/supp/IridiaSupp2016-003/scenarios/acotsp/instances.tar.gz} to the \path{./tuning/} directory and decompress it, which creates create a folder \path{instances}:
+\item Download the training instances from \href{https://permalink.ulb.be/t/rbPtQzntQj/download}{\path{instances.tar.gz}} to the \path{./tuning/} directory and decompress it, which creates create a folder \path{instances}:
 
 %<<instance0,engine='bash',eval=FALSE>>=
 \begin{lstlisting}[style=BashInputStyle]
