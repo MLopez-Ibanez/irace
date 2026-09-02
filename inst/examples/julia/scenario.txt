@@ -1,0 +1,21 @@
+# Where irace runs the target algorithm.
+execDir = "."
+
+# Parameters to tune.
+parameterFile = "parameters.txt"
+
+# Training instances.
+trainInstancesDir = "instances"
+
+# Launch Julia directly; no shell wrapper.
+targetRunner = "target-runner.jl"
+targetRunnerLauncher = "julia"
+# Arguments passed to Julia.
+targetCmdline = "--project=. {targetRunner} {configurationID} {instanceID} {seed} {instance} {bound} {targetRunnerArgs}"
+
+# Tuning budget.
+maxExperiments = 500
+
+# Set this to TRUE if the algorithm is deterministic
+# given the supplied seed.
+deterministic = FALSE
