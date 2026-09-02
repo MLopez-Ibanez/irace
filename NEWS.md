@@ -1,16 +1,24 @@
 **If you are viewing this file on CRAN, please check [latest news on the irace website](https://mlopez-ibanez.github.io/irace/news/index.html) where the formatting is also better.**
 
+
 # irace 4.4.9000
 
+## New features and improvements
+
+ * Fix #93: Add an optional `iterationCallback` scenario function that is
+   invoked after each completed irace iteration.  This allows irace users to
+   monitor tuning progress or collect intermediate results without modifying
+   irace internals. Check the [User Guide](https://mlopez-ibanez.github.io/irace/irace-package.pdf) for more details and an example
+   implementation.
 
 # irace 4.4.4
 
  * The package contains an example of using `irace` to tune algorithms
    implemented in Julia language.
 
- * Fix #94: `sample_model.ParamOrd()` now samples uniformly when the model
-   mean is `NA`, avoiding `NA` values for active ordinal parameters.
-   Reported by @Saethox.
+ * Fix #94: `sample_model.ParamOrd()` now samples uniformly when the model mean
+   is `NA`, avoiding `NA` values for active ordinal parameters.  Reported by
+   @Saethox.
 
  * Fix #97: `psRace()` errors when the post-selection race has nothing left to
    run. Fixed by @ivchicano.
