@@ -522,6 +522,16 @@
     "section": "General options"
   },
   {
+    "name": "iterationCallback",
+    "type": "x",
+    "short": "",
+    "long": "",
+    "default": "",
+    "description": "Optional R function called after each irace iteration with the iteration number, ordered elite configurations, and progress information.",
+    "vignettes": "Optional \\aR function called after each \\irace iteration with the iteration number, ordered elite configurations, and progress information. See \\autoref{sec:iteration callback} for details.",
+    "section": "General options"
+  },
+  {
     "name": "capping",
     "type": "b",
     "short": "",

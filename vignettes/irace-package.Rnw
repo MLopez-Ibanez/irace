@@ -2283,6 +2283,57 @@ the ACVIZ software package~\cite{DesRitLopPer2021acviz}, which is available at \
 
 \section{Advanced topics}
 
+\subsection{Monitoring iterations with a callback}
+\label{sec:iteration callback}
+
+The scenario option \parameter{iterationCallback} may be set to an \aR
+function that is called after every completed \irace iteration. For example,
+the following callback reports the consumed budget and the identifier of the
+best configuration found in each iteration:
+
+<<iterationCallback,prompt=FALSE,eval=FALSE>>=
+report_progress <- function(iteration, elites, progress, ...)
+{
+  if (progress$maxTime > 0) {
+    used <- progress$timeUsed
+    total <- progress$maxTime
+    budget_type <- "time"
+  } else {
+    used <- progress$experimentsUsed
+    total <- progress$maxExperiments
+    budget_type <- "experiments"
+  }
+  message("Iteration ", iteration, "/", progress$nbIterations,
+          ": ", used, "/", total, " ", budget_type,
+          " used; best configuration: ", elites[[".ID."]][1L])
+}
+scenario$iterationCallback <- report_progress
+irace(scenario)
+@
+
+The callback is called with the named arguments \code{iteration},
+\code{elites}, and \code{progress}. User-defined callbacks should use these
+exact argument names and take \code{...} as their last argument so they remain
+compatible if future versions of \irace provide more information. The
+\code{elites} data frame is ordered from best to worst and is copied before it
+is passed to the callback.
+
+The \code{progress} list contains \code{nbIterations},
+\code{maxExperiments}, \code{experimentsUsed}, \code{remainingBudget},
+\code{remainingBudgetEstimated}, \code{currentBudget},
+\code{currentBudgetUsed}, \code{maxTime}, \code{timeUsed},
+\code{remainingTime}, and \code{boundEstimate}. The budgets
+\code{remainingBudget}, \code{currentBudget}, and \code{currentBudgetUsed}
+are numbers of target-algorithm executions. When \parameter{maxTime} is used,
+\code{remainingBudget} is estimated from \code{boundEstimate}, and
+\code{remainingBudgetEstimated} is \code{TRUE}. In that mode,
+\code{remainingTime} uses the same unit as \parameter{maxTime}; otherwise,
+\code{remainingTime} and \code{boundEstimate} are \code{NA}.
+
+The callback return value is ignored. Errors raised by the callback stop
+\irace. Random-number generation within the callback does not affect the
+random-number sequence of the tuning run.
+
 \subsection{Tuning budget}\label{sec:budget}
 
 Before setting the budget for a run of \irace, please consider the number of

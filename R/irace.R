@@ -1213,6 +1213,27 @@ irace_run <- function(scenario)
         race_state$print_mem_used()
       }
     }
+    if (!is.null(scenario$iterationCallback)) {
+      progress <- list(
+        nbIterations = nbIterations,
+        maxExperiments = scenario$maxExperiments,
+        experimentsUsed = experimentsUsed,
+        remainingBudget = remainingBudget,
+        remainingBudgetEstimated = scenario$maxTime > 0L,
+        currentBudget = currentBudget,
+        currentBudgetUsed = raceResults$experimentsUsed,
+        maxTime = scenario$maxTime,
+        timeUsed = timeUsed,
+        remainingTime = if (scenario$maxTime > 0L)
+                          scenario$maxTime - timeUsed
+                        else NA_real_,
+        boundEstimate = boundEstimate)
+      withr::with_preserve_seed(
+        scenario$iterationCallback(
+          iteration = indexIteration,
+          elites = data.table::copy(elite_configurations),
+          progress = progress))
+    }
     indexIteration <- indexIteration + 1L
   } # end of repeat
 }
