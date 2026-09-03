@@ -1902,12 +1902,12 @@ about the selected \irace options is printed:
 
 At each iteration, information about the progress of the execution is printed as follows:
 \begin{itemize}
-  \item \code{experimentsUsedSoFar} is the number of experiments from the total budget
+  \item \code{experimentsUsed} is the number of experiments from the total budget
         that have been used up to the current iteration.
   \item \code{timeUsed} is the execution time used so far in the experiments. Only available when reported
         in the \parameter{targetRunner} (activate it with the \parameter{maxTime} option).
   \item \code{remainingBudget} is the number of experiments that have not been used yet.
-  \item \code{timeEstimate} estimation of the mean execution time. This is used to calculate
+  \item \code{boundEstimate} estimation of the mean execution time. This is used to calculate
         the remaining budget when \parameter{maxTime} is used.
   \item \code{currentBudget} is the number of evaluations \irace has allocated to the
         current iteration.
