@@ -42,7 +42,7 @@ if __name__=='__main__':
     a = None
     b = None
     # Parse parameters
-    
+
     while cand_params:
         # Get and remove first and second elements.
         param = cand_params.pop(0)
@@ -55,20 +55,20 @@ if __name__=='__main__':
             ptype = value
         else:
             target_runner_error("unknown parameter %s" % (param))
-    
+
     # Sanity checks
     if a == None and b == None:
         target_runner_error("either a or b must be set, something is wrong!")
-    
+
     if ptype == "a" and a == None:
         target_runner_error("ptype is 'a' but no value assigned to a, something is wrong!")
-    
+
     if ptype == "b" and b == None:
         target_runner_error("ptype is 'b' but no value assigned to b, something is wrong!")
 
     a = a or 1
     b = b or 1
-    
+
     print(str(a * b) + '\n')
     sys.exit(0)
 
@@ -77,4 +77,3 @@ def target_runner_error(msg):
     now = datetime.datetime.now()
     print(str(now) + " error: " + msg)
     sys.exit(1)
-

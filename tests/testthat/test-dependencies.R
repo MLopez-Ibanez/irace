@@ -8,12 +8,12 @@ test_that("param depend error checking", {
 p1 "" r (0, 1)
 p2 "" r (p3, 1)
 ', "parameter 'p2' is not valid: 'p3' cannot be found")
-  
+
   expect_error_readParameters('
 p1 "" c (0, 1)
 p2 "" r (1, p1)
 ', "parameter 'p2' depends on non-numerical parameters")
-  
+
   expect_error_readParameters('
 p1 "" r (0, 1)
 p2 "" r (1, foobar(p1))
@@ -39,22 +39,22 @@ checkConditionalAndDependency <- function(configuration, parameters)
     p <- param[["name"]]
     if (!irace:::conditionsSatisfied(param[["condition"]], configuration)) {
       expect(is.na(configuration[[p]]),
-             paste0("Conditional parameter '", p, 
+             paste0("Conditional parameter '", p,
                     "' is not active but it has a value '", configuration[[p]], "' assigned."))
     } else if (param[["is_dependent"]]) {
       bounds <- irace:::getDependentBound(param, configuration)
       if (anyNA(bounds)) {
         expect(is.na(configuration[[p]]),
-               paste0("Dependent parameter '", p, 
+               paste0("Dependent parameter '", p,
                       "' has a value '", configuration[[p]], "' but it should be inactive."))
         expect_true(anyNA(configuration[parameters$depends[[p]]]))
       } else {
         expect (configuration[[p]] >= bounds[1],
-                paste0("Parameter '", p, "=", configuration[[p]], 
+                paste0("Parameter '", p, "=", configuration[[p]],
                        "' does not comply with dependency: ", parameters$depends[[p]],
                        " and lower bound: ", bounds[1]))
         expect (configuration[[p]] <= bounds[2],
-                paste0("Parameter '", p, " = ", configuration[[p]], 
+                paste0("Parameter '", p, " = ", configuration[[p]],
                        "' does not comply with dependency: ", parameters$depends[[p]],
                        " and upper bound: ", bounds[2]))
       }
@@ -97,7 +97,7 @@ p1  p2  p3
 test_checkDependencies <- function(parameterFile, ...)
 {
   args <- list(...)
-  
+
   target_runner <- function(experiment, scenario) {
     configuration <- experiment$configuration
     tmax <- configuration[["real"]]
@@ -110,14 +110,14 @@ test_checkDependencies <- function(parameterFile, ...)
     time <- max(1, abs(rnorm(1, mean=(tmax+temp)/10)))
     list(cost = time, time = time, call = toString(experiment))
   }
-  
+
   weights <- rnorm(200, mean = 0.9, sd = 0.02)
   parameters <- readParameters(parameterFile)
   scenario <- list(targetRunner = target_runner, instances = weights,
     seed = 1234567, maxExperiments = 200, parameters = parameters)
   scenario <- modifyList(scenario, args)
   scenario <- checkScenario (scenario)
- 
+
   nconf <- 100
   conf <- irace:::sampleUniform(parameters, nconf)
   expect_equal(nconf, nrow(conf))
@@ -125,7 +125,7 @@ test_checkDependencies <- function(parameterFile, ...)
   conf <- as.data.frame(conf)
   for (i in seq_len(nconf))
     checkConditionalAndDependency(conf[i,], parameters)
- 
+
   model <- irace:::initialiseModel(parameters, conf)
   conf2 <- irace:::sampleModel(parameters, conf, model, nconf)
   conf2 <- as.data.frame(conf2)

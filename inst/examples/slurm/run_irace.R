@@ -29,7 +29,7 @@ my_target_runner <- function(experiment, scenario)
 
 # Some function that loads or defines the instances. You could also use
 # trainInstancesFile or trainInstancesDir in the scenario.
-instances <- load_instances() 
+instances <- load_instances()
 scenario <- list(targetRunner = my_target_runner,
                  instances = instances,
                  maxExperiments = 200,

@@ -38,7 +38,7 @@ SyscallNames.cc SyscallNames.hh: CreateSyscallsNames.cc $(SYSCALLINCFILE)
 	grep '#define[[:space:]]*__NR' $(SYSCALLINCFILE) | grep -v '^/' | awk '{print $$2}' | sed -e 's/^__NR_//' | awk '{printf "list[__NR_%s]=\"%s\";\n",$$1,$$1}' > tmpSyscallList.cc
 	g++ -o CreateSyscallsNames CreateSyscallsNames.cc
 	./CreateSyscallsNames
-	rm tmpSyscallList.cc CreateSyscallsNames 
+	rm tmpSyscallList.cc CreateSyscallsNames
 
 .PHONY: clean realclean archive
 
@@ -65,5 +65,3 @@ realclean: clean
 %.d: %.cc
 	$(SHELL) -ec '$(CC) -MM $(CFLAGS) $< \
 	| sed -e '\''s/$*\.o[ :]*/$@ &/g'\'' > $@'
-
-

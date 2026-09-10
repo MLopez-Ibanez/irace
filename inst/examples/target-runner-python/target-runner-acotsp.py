@@ -54,7 +54,7 @@ conf_params = sys.argv[5:]
 
 # Build the command, run it and save the output to a file,
 # to parse the result from it.
-# 
+#
 # Stdout and stderr files have to be opened before the call().
 #
 # Exit with error if something went wrong in the execution.

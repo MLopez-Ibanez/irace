@@ -37,4 +37,3 @@ c3 "" c ("a","b")
     sort(irace:::similarConfigurations(confs, parameters, threshold = 0.001)),
     as.integer(c(1,2,6,10,11,12)))
 })
-

@@ -23,26 +23,26 @@ class SatWrapper(AbstractWrapper):
     '''
         General wrapper for a SAT solver
     '''
-    
+
     def __init__(self):
         '''
             Constructor
         '''
         logging.basicConfig()
         AbstractWrapper.__init__(self)
-        
+
         self.parser.add_argument("--sol-file", dest="solubility_file", default=None, help="File with \"<instance> {SATISFIABLE|UNSATISFIABLE|UNKNOWN}\" ")
         self.parser.add_argument("--sat-checker", dest="sat_checker", default=None, help="binary of SAT checker")
 
         self._instance = ""
         self._instance = ""
-        
+
         self.inst_specific = None
-        
+
     def process_results(self, filepointer, exit_code):
         '''
         Parse a results file to extract the run's status (SUCCESS/CRASHED/etc) and other optional results.
-    
+
         Args:
             filepointer: a pointer to the file containing the solver execution standard out.
             exit_code : exit code of target algorithm
@@ -54,37 +54,37 @@ class SatWrapper(AbstractWrapper):
                 "quality" : <a domain specific measure of the quality of the solution [optional]>,
                 "misc" : <a (comma-less) string that will be associated with the run [optional]>
             }
-            ATTENTION: The return values will overwrite the measured results of the runsolver (if runsolver was used). 
+            ATTENTION: The return values will overwrite the measured results of the runsolver (if runsolver was used).
         '''
         self.logger.debug("reading solver results from %s" % (filepointer.name))
         data = filepointer.read()
         try:
             data = str(data.decode("utf8"))
         except AttributeError:
-            pass    
-        
+            pass
+
         resultMap = {}
-        
+
         resultMap['misc'] = ""
-        
+
         if re.search('UNSATISFIABLE', data):
             resultMap['status'] = 'UNSAT'
-            
+
             # verify UNSAT via external knowledge
             if self.data.specifics in ["SAT", "10", "SATISFIABLE"]:
                 resultMap['status'] = 'CRASHED'
                 resultMap['misc'] = "according to instance specific, instance is SAT but UNSAT was reported"
             elif not self.args.solubility_file:
-                resultMap['misc'] += "; solubility file was not given; could not verify UNSAT" 
+                resultMap['misc'] += "; solubility file was not given; could not verify UNSAT"
             elif not os.path.isfile(self.args.solubility_file):
                 resultMap['misc'] += "; have not found %s; could not verify UNSAT" % (self.args.solubility_file)
             elif not self._verify_via_solubility_file(sol="UNSAT"): # use solubility file
                 resultMap['status'] = 'CRASHED'
                 resultMap['misc'] += "; according to solubility file, instance is SAT but UNSAT was reported"
-                
+
         elif re.search('SATISFIABLE', data):
             resultMap['status'] = 'SAT'
-               
+
             # look for model
             model = None
             for line in data.split("\n"):
@@ -97,14 +97,14 @@ class SatWrapper(AbstractWrapper):
                 resultMap['status'] = 'CRASHED'
                 resultMap['misc'] = "; according to instance specific, instance is UNSAT but SAT was reported"
             elif not self.args.solubility_file:
-                resultMap['misc'] += "; solubility file was not given; could not verify SAT" 
+                resultMap['misc'] += "; solubility file was not given; could not verify SAT"
             elif not os.path.isfile(self.args.solubility_file):
                 resultMap['misc'] += "; have not found %s; could not verify SAT" % (self.args.solubility_file)
             elif not self._verify_via_solubility_file(sol="SAT"): # use solubility file
                 resultMap['status'] = 'CRASHED'
                 resultMap['misc'] += "; according to solubility file, instance is UNSAT but SAT was reported"
-                
-                
+
+
             if not self.args.sat_checker:
                 resultMap['misc'] += "; SAT checker was not given; could not verify SAT"
             elif not os.path.isfile(self.args.sat_checker):
@@ -121,19 +121,19 @@ class SatWrapper(AbstractWrapper):
                     resultMap['status'] = 'CRASHED'
                     resultMap['misc'] = "SOLVER BUG: solver returned a wrong model"
                     # save command line call
-         
+
         elif re.search('s UNKNOWN', data):
             resultMap['status'] = 'TIMEOUT'
             resultMap['misc'] = "Found s UNKNOWN line - interpreting as TIMEOUT"
         elif re.search('INDETERMINATE', data):
             resultMap['status'] = 'TIMEOUT'
             resultMap['misc'] = "Found INDETERMINATE line - interpreting as TIMEOUT"
-        
+
         return resultMap
-    
+
     def _verify_SAT(self, model, solver_output):
         '''
-            verifies the model for self._instance 
+            verifies the model for self._instance
             Args:
                 model : list with literals
                 solver_output: filepointer to solver output
@@ -155,16 +155,16 @@ class SatWrapper(AbstractWrapper):
     def _verify_via_solubility_file(self, sol):
         '''
             looks in <self.args.solubility_file> whether it is already known that the instance is UNSAT
-            
+
             Args:
                 sol: ["SAT", "UNSAT"]
                 claimed status
-            
+
             Returns:
                 False if the instance is known as SAT
                 True otherwise
         '''
-        
+
         with open(self.args.solubility_file) as fp:
             for line in fp:
                 if line.startswith(self.data.instance):
@@ -177,10 +177,10 @@ class SatWrapper(AbstractWrapper):
                     else:
                         self.logger.debug("Verified by solubility file")
                         return True
-        self.logger.debug("Could not find instance in solubility file")      
+        self.logger.debug("Could not find instance in solubility file")
         return True
-        
+
 
 if __name__ == "__main__":
     wrapper = SatCSSCWrapper()
-    wrapper.main()    
+    wrapper.main()

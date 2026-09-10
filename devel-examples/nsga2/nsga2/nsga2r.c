@@ -65,20 +65,20 @@ int main (int argc, char **argv)
     //fprintf(fpt3,"# This file contains the data of final feasible population (if found)\n");
 
     problem = argv[2];
-    if (!strcmp(problem, "DTLZ1")) { test_problem = &dtlz1; } 
+    if (!strcmp(problem, "DTLZ1")) { test_problem = &dtlz1; }
     else if (!strcmp(problem, "DTLZ2")) { test_problem = &dtlz2; }
     else if (!strcmp(problem, "DTLZ3")) { test_problem = &dtlz3; }
     else if (!strcmp(problem, "DTLZ4")) { test_problem = &dtlz4; }
     else if (!strcmp(problem, "DTLZ5")) { test_problem = &dtlz5; }
     else if (!strcmp(problem, "DTLZ6")) { test_problem = &dtlz6; }
     else if (!strcmp(problem, "DTLZ7")) { test_problem = &dtlz7; }
-	 
-    else if (!strcmp(problem, "ZDT1")) { test_problem = &zdt1; } 
-    else if (!strcmp(problem, "ZDT2")) { test_problem = &zdt2; } 
-    else if (!strcmp(problem, "ZDT3")) { test_problem = &zdt3; } 
-    else if (!strcmp(problem, "ZDT4")) { test_problem = &zdt4; } 
-    else if (!strcmp(problem, "ZDT6")) { test_problem = &zdt6; } 
-    
+
+    else if (!strcmp(problem, "ZDT1")) { test_problem = &zdt1; }
+    else if (!strcmp(problem, "ZDT2")) { test_problem = &zdt2; }
+    else if (!strcmp(problem, "ZDT3")) { test_problem = &zdt3; }
+    else if (!strcmp(problem, "ZDT4")) { test_problem = &zdt4; }
+    else if (!strcmp(problem, "ZDT6")) { test_problem = &zdt6; }
+
     else { fprintf(stderr, "Invalid problem to be optimized!\n"); abort(); }
     nreal = atoi(argv[3]);
     nobj = atoi(argv[4]);
@@ -123,7 +123,7 @@ int main (int argc, char **argv)
           min_realvar[0] = 0.0; max_realvar[0] = 1.0;
           for (i=1; i<nreal; i++) { min_realvar[i] = -5.0; max_realvar[i] = 5.0; }
         } else {
-            fprintf(stderr, "Forgot to update min/max for this problem!\n"); abort(); 
+            fprintf(stderr, "Forgot to update min/max for this problem!\n"); abort();
         }
 
         pcross_real = atof(argv[7]);
@@ -224,7 +224,7 @@ int main (int argc, char **argv)
             exit(1);
         }
         if (nobj==2)
-        { 
+        {
             obj1 = 1;
             //printf("\n Enter the objective for X axis display : ");
             //scanf("%d",&obj1);
@@ -352,7 +352,7 @@ int main (int argc, char **argv)
         //report_pop(parent_pop,fpt4);
         if (choice!=0)    onthefly_display (parent_pop,gp,ngen);
         //usleep(3000);
-        //printf("\n gen = %d",i); 
+        //printf("\n gen = %d",i);
         ngen++;
     }
     //printf("\n Generations finished, now reporting solutions");

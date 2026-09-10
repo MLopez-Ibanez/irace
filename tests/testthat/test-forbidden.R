@@ -1,7 +1,7 @@
 withr::with_output_sink("test-forbidden.Rout", {
 
 test_that("checkForbidden", {
-  
+
 test.checkForbidden <- function(param.file)
 {
   params <- readParameters(param.file)

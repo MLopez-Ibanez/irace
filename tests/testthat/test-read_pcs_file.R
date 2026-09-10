@@ -19,10 +19,10 @@ rasrank | algorithm in {ras}
 elitistants | algorithm in {eas}
 nnls | localsearch in {1,2,3}
 dlb | localsearch in {1,2,3}
- {alpha=0, beta= 0.0} 
+ {alpha=0, beta= 0.0}
 {ants=1,algorithm=eas}
  {ants=1,algorithm="ras"}'
-  
+
   parameters_table <- '
 # name       domain
 algorithm "algorithm" c (as,mmas,eas,ras,acs)
@@ -45,4 +45,3 @@ dlb "dlb" c (0, 1) | localsearch %in% c("1","2","3")
   expect_equal(parameters_table, read_pcs_file(text=pcs_table))
 })
 })
-

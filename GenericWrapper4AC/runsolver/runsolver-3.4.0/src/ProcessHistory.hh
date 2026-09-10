@@ -77,7 +77,7 @@ public:
 
 	history[2*cell+nbitem[cell]++]=elem;
 	elem=tmp;
-	
+
 	move=true;
 	++cell;
       }

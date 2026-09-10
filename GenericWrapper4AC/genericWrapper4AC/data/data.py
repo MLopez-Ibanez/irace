@@ -1,5 +1,5 @@
 '''
-@author:     Marius Lindauer  
+@author:     Marius Lindauer
 @copyright:  2018 ML4AAD. All rights reserved.
 @license:    BSD
 '''

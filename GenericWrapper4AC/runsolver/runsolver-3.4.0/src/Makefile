@@ -5,7 +5,7 @@ DEBUG=-g
 #DEBUG=-O3 -g
 
 STATIC=
-#STATIC=-static 
+#STATIC=-static
 
 WSIZE:=$(shell if [ `uname -m` = 'x86_64' ] ; then echo 64; else echo 32; fi )
 
@@ -65,5 +65,3 @@ realclean: clean
 %.d: %.cc
 	$(SHELL) -ec '$(CC) -MM $(CFLAGS) $< \
 	| sed -e '\''s/$*\.o[ :]*/$@ &/g'\'' > $@'
-
-

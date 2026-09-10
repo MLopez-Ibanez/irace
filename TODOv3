@@ -30,7 +30,7 @@ main.R:
 * irace.params.def:  For integer (i) and real (r) parameters add their range. Align columns.
 * .irace.params.recover: Add this parameters to iraceResults$state
 * testing.main: Print the seeds when printing the results. As an additional column?
-  
+
 irace.R:
 
 * recoverFromFile: Restoring occurs after reading the command-line/scenario file. At
@@ -41,12 +41,12 @@ irace.R:
   2) if set, then recover irace scenario
   3) then read other settings from command-line/scenario file being
   careful to not override whatever the recovery has set.
- 
+
   A work-around is to modify the recovery file (you can load it in R,
   modify scenario then save it again).
-  > I think we should define which parameters can be override from the recovery, 
+  > I think we should define which parameters can be override from the recovery,
     the ones that deal with execution they can be modified (parallel, target runner, etc.)
-* similarConfigurations: Print minimum similarity 
+* similarConfigurations: Print minimum similarity
 * computeNbConfigurations: The function is slightly incorrect, because we may have elites that have not been executed on all nOldInstances. Thus, we need to pass explicitly the budget that we save (that is, number of entries that are not NA).
 * oneIterationRace: Remove comment (LESLIE) change already done.
 * irace.init: Generate instances at the start of each race if we need them at all.
@@ -79,7 +79,7 @@ parameterAnalysis.R
 * Add function described in the file.
 * parallelCoordinatesPlot: Add color scheme.
 
-irace-wrapper.R: 
+irace-wrapper.R:
 * This is needed because race.R is not divided in two-stages run/evaluate like irace is, so there is no way to communicate data from the first stage to the second. Leslie: Maybe this comment is not relevant anymore?
 * buildCommandLine: This probably can be implemented faster with apply() and paste(collapse=" "). But how to get the index i in that case? Leslie: mapply?
 * check.output: This should be called in race-wrapper for cases where target.runner.default is overriden
@@ -136,7 +136,7 @@ DONE
 
 * [LESLIE] Rename all "candidate" to "configuration".\
   including inst/templates/candidates.tmpl -> inst/templates/configurations.tmpl
-  
+
 * [LESLIE] Rename hook-run to target-runner and hook-evaluate to target-evaluator.
 
 * instanceFile -> instancesFile
@@ -144,7 +144,7 @@ DONE
   testInstanceDir -> testInstancesDir
   testInstanceFile -> testInstancesFile
   tunerResults -> iraceResults
-  
+
 * [LESLIE] Added version to license
 
 * [LESLIE] Moving fix me to TODO LIST

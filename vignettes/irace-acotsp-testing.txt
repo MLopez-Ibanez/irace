@@ -1,5 +1,5 @@
-# Testing of elite configurations: 5 
-# Testing iteration configurations: TRUE 
+# Testing of elite configurations: 5
+# Testing iteration configurations: TRUE
 # 2023-10-01 13:35:17 BST: Testing configurations (in no particular order): 2 29 3 20 50 34 47 86 74 111 106 92 123 134 130 119
     algorithm localsearch  alpha   beta    rho ants nnls     q0 dlb rasrank elitistants
 2         acs           3 1.1275 3.3469 0.6471   36   43 0.9053   0      NA          NA

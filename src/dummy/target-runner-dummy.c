@@ -80,14 +80,14 @@ int main(int argc, char *argv[])
         bound = atof(argv[idx]);
         idx++;
     }
-    
+
     double reject_rate = 0.1;
     bool reject = false,
         print_time = false,
         time_is_cost = false;
     int p_int = -1;
     double p_real = -1;
-    
+
     for (; idx < argc; idx++) {
         const char *param = argv[idx++];
         if (idx >= argc) {
@@ -122,17 +122,17 @@ int main(int argc, char *argv[])
             exit(EXIT_SUCCESS);
         }
     }
-    
+
     srand(seed);
     double cost = instance + (p_int * p_real) + rand01();
     double time = (time_is_cost) ? cost : (
         (bound > 0) ? (bound+1) * rand01() + 0.00001 : instance + (int) (10 * rand01())
         );
-        
+
     if (bound > 0 && time > bound) {
         time = bound;
     }
-    
+
     if (print_time) {
         printf("%g %g\n", cost, time);
     } else {

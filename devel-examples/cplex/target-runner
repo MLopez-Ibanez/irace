@@ -74,7 +74,7 @@ for ELEMENT in $CAND_PARAMS; do
         if [ "$ELEMENT" -eq "0" ]; then
             ELEMENT=1000
         fi
-# FIXME: Leslie: the other thing is to assemble the parameters  "simplex perturbation switch" and "perturbation constant" they need to go together, so down in the code i must be putting them in the parameters file (STDPAR). 
+# FIXME: Leslie: the other thing is to assemble the parameters  "simplex perturbation switch" and "perturbation constant" they need to go together, so down in the code i must be putting them in the parameters file (STDPAR).
 # Manuel: we can say:
 # simple_perturbation_switch "simplex perturbation " c (no, yes)
 # simple_perturbation_constant_yes " " c (...) | simple_perturbation_switch == "yes"
@@ -107,9 +107,9 @@ error() {
     exit 1
 }
 
-# The output of the candidate $CANDIDATE should be written in the file 
+# The output of the candidate $CANDIDATE should be written in the file
 if [ ! -s "${STDOUT}" ]; then
-    # In this case, the file does not exist. Let's exit with a value 
+    # In this case, the file does not exist. Let's exit with a value
     # different from 0. In this case irace will stop with an error.
     error "${STDOUT}: No such file or directory"
 fi

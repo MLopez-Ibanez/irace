@@ -33,7 +33,7 @@
 
 // if we use the TimeStamper in a threaded program, we may have to use
 // mutexes
-#include <pthread.h> 
+#include <pthread.h>
 
 #include "CircularBufferFilter.hh"
 
@@ -97,7 +97,7 @@ public:
    *
    * @parm inputfd: file descriptor of the file that must be timestamped
    * @parm letter: one letter name of the timestamped stream (0 if unused)
-   * @parm outputfilter: filter to use to output the timestamped stream 
+   * @parm outputfilter: filter to use to output the timestamped stream
    */
   void watch(int inputfd, AbstractFilter *outputfilter, char letter=0)
   {
@@ -108,7 +108,7 @@ public:
     watched.push_back(info(inputfd,outputfilter,letter,true));
   }
 
-  /** 
+  /**
    * reset the time stamp
    */
   void resetTimeStamp()
@@ -197,7 +197,7 @@ public:
 	else
 	  ++i;
       }
-    } 
+    }
 
 
     if(addEOFLine)
@@ -214,7 +214,7 @@ public:
   }
 
   /**
-   * communicate the current CPU time to the time stamper 
+   * communicate the current CPU time to the time stamper
    *
    * must only be called from another thread than the one running
    * timeStampLines() !!
@@ -293,7 +293,7 @@ public:
   /**
    * read data available on watched file with index id (in the watched
    * vector) and output the timestamp stream
-   * 
+   *
    * @return false on EOF
    */
   bool readFrom(int id)
@@ -332,7 +332,7 @@ public:
       watched[id].write(s,eol-s+1);
       size-=eol-s+1;
       s=eol+1;
-    
+
       if(size>0)
 	watched[id].write(tstampbuffer,tstampsize);
       else
@@ -366,7 +366,7 @@ private:
   char tstampbuffer[64]; // a buffer to output the time stamps
   int tstampsize; // size of the timestamp
 
-  bool incompleteLineSent; // true iff the last line we sent didn't have an EOL 
+  bool incompleteLineSent; // true iff the last line we sent didn't have an EOL
 
   bool addEOFLine; // true if we must add an 'EOF' line at the end of output
 

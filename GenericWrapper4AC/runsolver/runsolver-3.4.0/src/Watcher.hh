@@ -32,10 +32,10 @@ class Watcher
 {
 private:
   bool hasChildReaper=false; // did we set prctl(PR_SET_CHILD_SUBREAPER)?
-  
+
   thread watcherThread;
   mutex cout_mutex;
-  
+
   // when set, save the most relevant information in an easy to parse
   // format consisting of VAR=VALUE lines
   char *varOutputFilename;
@@ -68,7 +68,7 @@ private:
   float lastDisplayedElapsedTime; // last elapsed time at which a
 				   // process tree was displayed
 
-  bool stopSolverRequested=false; 
+  bool stopSolverRequested=false;
   const char *stopReason=nullptr; // reason for stopping the solver
   int stopSolverState=0; // steps during the solver stop
 
@@ -86,7 +86,7 @@ private:
   long maxVSize,maxMemory;
 
   // current CPU time of the watched process
-  float currentCPUTime,currentSystemTime,currentUserTime; 
+  float currentCPUTime,currentSystemTime,currentUserTime;
 
   // the time of children whose termination was reported directly to
   // runsolver (because their parent died and they were adopted by
@@ -94,7 +94,7 @@ private:
   float completedCPUTime,completedUserTime,completedSystemTime;
   // pid of the processes whose termination was reported to runsolver
   vector<pid_t> completedChildrenList;
-  
+
   long currentVSize; // current VSize of the watched process
   long lastVSize; // last VSize of the watched process
 
@@ -169,7 +169,7 @@ public:
   {
     hasChildReaper=cr;
   }
-  
+
   /**
    * delete IPC queues that the solver may have created
    */
@@ -232,7 +232,7 @@ public:
   {
     binVarOutputFilename=filename;
   }
- 
+
   /**
    * set the time we should wait between sending a SIGTERM and a
    * SIGKILL to a solver we want to stop
@@ -272,7 +272,7 @@ public:
 
       if(wait4result<0 && errno==ECHILD) // nothing to wait for
         break;
-      
+
       if(wait4result<0)
       {
         perror("FATAL: waitpid() failed");
@@ -280,18 +280,18 @@ public:
       }
 
       float user,syst;
-	
+
       getrusage(RUSAGE_CHILDREN,&childrusage);
-      
+
       user=childrusage.ru_utime.tv_sec+childrusage.ru_utime.tv_usec*1E-6;
       syst=childrusage.ru_stime.tv_sec+childrusage.ru_stime.tv_usec*1E-6;
-	
+
       completedCPUTime=user+syst;
       completedUserTime=user;
       completedSystemTime=syst;
 
       completedChildrenList.push_back(wait4result);
-      
+
 #warning print the last history?
       struct timeval tv;
 
@@ -307,7 +307,7 @@ public:
 	cout << "# this solver process was not waited by its parent and was adopted by runsolver\n";
       cout_mutex.unlock();
     }
-    
+
     solverIsRunning=false;
     gettimeofday(&stoptv,NULL);
 
@@ -315,7 +315,7 @@ public:
 
     watcherThread.join();
 
-    cout << "Dumping a history of the last processes samples" 
+    cout << "Dumping a history of the last processes samples"
 	 << endl;
 
     procHistory.dumpHistory(cout,lastDisplayedElapsedTime);
@@ -327,13 +327,13 @@ public:
       if (WIFSIGNALED(childstatus))
       {
 	int sig=WTERMSIG(childstatus);
-	
-	cout << "Child ended because it received signal " 
+
+	cout << "Child ended because it received signal "
 	     << sig  << " (" << getSignalName(sig) << ")" << endl;
-	
+
 #ifdef WCOREDUMP
 	if (WCOREDUMP(childstatus))
-	  cout << "Child dumped core" << endl; 
+	  cout << "Child dumped core" << endl;
 #endif
 
       }
@@ -376,9 +376,9 @@ public:
     cout << "CPU system time (s): " << solverSystemTime << endl;
     cout << "CPU usage (%): " << ((wcTime!=0)?100*solverCPUTime/wcTime:100)
 	 << endl;
-    cout << "Max. virtual memory (cumulated for all children) (KiB): " 
+    cout << "Max. virtual memory (cumulated for all children) (KiB): "
 	 << maxVSize << endl;
-    cout << "Max. memory (cumulated for all children) (KiB): " 
+    cout << "Max. memory (cumulated for all children) (KiB): "
 	 << maxMemory << endl;
 
     if (cleanupAllIPCQueues || cleanupSolverOwnIPCQueues)
@@ -389,26 +389,26 @@ public:
 
     cout << endl;
     cout << "getrusage(RUSAGE_CHILDREN,...) data:" << endl;
-    cout << "user time used= " 
+    cout << "user time used= "
     << r.ru_utime.tv_sec+r.ru_utime.tv_usec*1E-6 << endl;
-    cout << "system time used= " 
-	 << r.ru_stime.tv_sec+r.ru_stime.tv_usec*1E-6 << endl;	
+    cout << "system time used= "
+	 << r.ru_stime.tv_sec+r.ru_stime.tv_usec*1E-6 << endl;
     cout << "maximum resident set size= " << r.ru_maxrss << endl;
     cout << "integral shared memory size= " << r.ru_ixrss << endl;
-    cout << "integral unshared data size= " << r.ru_idrss << endl;         
+    cout << "integral unshared data size= " << r.ru_idrss << endl;
     cout << "integral unshared stack size= " << r.ru_isrss << endl;
-    cout << "page reclaims= " << r.ru_minflt << endl;        
-    cout << "page faults= " << r.ru_majflt << endl;        
-    cout << "swaps= " << r.ru_nswap << endl;         
-    cout << "block input operations= " << r.ru_inblock << endl;       
-    cout << "block output operations= " << r.ru_oublock << endl;       
-    cout << "messages sent= " << r.ru_msgsnd << endl;        
-    cout << "messages received= " << r.ru_msgrcv << endl;        
-    cout << "signals received= " << r.ru_nsignals << endl;      
-    cout << "voluntary context switches= " << r.ru_nvcsw << endl;         
+    cout << "page reclaims= " << r.ru_minflt << endl;
+    cout << "page faults= " << r.ru_majflt << endl;
+    cout << "swaps= " << r.ru_nswap << endl;
+    cout << "block input operations= " << r.ru_inblock << endl;
+    cout << "block output operations= " << r.ru_oublock << endl;
+    cout << "messages sent= " << r.ru_msgsnd << endl;
+    cout << "messages received= " << r.ru_msgrcv << endl;
+    cout << "signals received= " << r.ru_nsignals << endl;
+    cout << "voluntary context switches= " << r.ru_nvcsw << endl;
     cout << "involuntary context switches= " << r.ru_nivcsw << endl;
     cout << endl;
-  
+
     if(completedCPUTime!=0)
     {
 	cout << endl;
@@ -424,7 +424,7 @@ public:
 	cout << "#   total CPU user time (s): " << completedUserTime << endl;
 	cout << "#   total CPU system time (s): " << completedSystemTime << endl
 	     << endl;
-    }    
+    }
 
     ExecutionSummary execSummary;
 
@@ -439,46 +439,46 @@ public:
       (limitWallClockTime && (wcTime>limitWallClockTime));
     execSummary.memOut=limitVSize && maxVSize>limitVSize;
     execSummary.maxMem=maxMemory;
- 
+
     if(varOutputFilename)
     {
       ofstream var(varOutputFilename);
- 
+
       if(!var.good())
         cout << "Unable to open file " << varOutputFilename
              << " to save the main statistics in text format"
              << " (option --var): " << strerror(errno) << "\n" <<endl;
       else
-      {          
+      {
         var << "# WCTIME: wall clock time in seconds\n"
             << "WCTIME=" <<  execSummary.wcTime << endl;
-        
+
         var << "# CPUTIME: CPU time in seconds (USERTIME+SYSTEMTIME)\n"
             << "CPUTIME=" << execSummary.cpuTime << endl;
-        
+
         var << "# USERTIME: CPU time spent in user mode in seconds\n"
             << "USERTIME=" << execSummary.userTime << endl;
- 
+
         var << "# SYSTEMTIME: CPU time spent in system mode in seconds\n"
             << "SYSTEMTIME=" << execSummary.systemTime << endl;
- 
+
         var << "# CPUUSAGE: CPUTIME/WCTIME in percent\n"
             << "CPUUSAGE=" << execSummary.cpuUsage << endl;
- 
-        var << "# MAXVM: maximum virtual memory used in KiB\n" 
+
+        var << "# MAXVM: maximum virtual memory used in KiB\n"
             << "MAXVM=" << execSummary.maxVM << endl;
- 
+
         var << "# TIMEOUT: did the solver exceed the time limit?\n"
             << "TIMEOUT=" << boolalpha << execSummary.timeOut << endl;
-      
+
         var << "# MEMOUT: did the solver exceed the memory limit?\n"
             << "MEMOUT=" << boolalpha << execSummary.memOut << endl;
-      
+
         if(!var.good())
           cout << "failed to save the main statistics in text format\n";
       }
     }
- 
+
     if(binVarOutputFilename)
     {
       int fd=open(binVarOutputFilename,O_RDWR|O_CREAT|O_TRUNC,0644);
@@ -490,11 +490,11 @@ public:
       {
         if(ftruncate(fd,sizeof(ExecutionSummary))<0)
           perror("resizing the binary statistics file failed: ");
-      
+
         void *p=mmap(NULL,sizeof(ExecutionSummary),
                      PROT_READ|PROT_WRITE,MAP_SHARED,
                      fd,0);
-      
+
         if(p==MAP_FAILED)
           perror("failed to map binary statistics file: ");
         else
@@ -506,7 +506,7 @@ public:
         }
       }
     } // if(binVarOutputFilename)
- 
+
   }
 
   /**
@@ -563,7 +563,7 @@ public:
 	  solverIsRunning=false;
 	  break;
 	}
-	
+
 	if(subcount==10)
 	{
 	  subcount=1;
@@ -573,7 +573,7 @@ public:
 	  ++subcount;
       }
       else
-      { 
+      {
 	// simple update
 	if (readProcessData(false))
 	{
@@ -645,9 +645,9 @@ public:
     getrusage(RUSAGE_THREAD,&r);
     cout << "the watcher thread used "
 	 << r.ru_utime.tv_sec+r.ru_utime.tv_usec*1E-6
-	 << " second user time and " 
-	 << r.ru_stime.tv_sec+r.ru_stime.tv_usec*1E-6 
-	 << " second system time\n" 
+	 << " second user time and "
+	 << r.ru_stime.tv_sec+r.ru_stime.tv_usec*1E-6
+	 << " second system time\n"
 	 << endl;
 #endif
   }
@@ -747,7 +747,7 @@ protected:
       procTree->dumpHeavyProcesses(cout,heavyProcessThreshold);
     }
 
-    cout_mutex.unlock();	
+    cout_mutex.unlock();
   }
 
   void sendSIGTERM()
@@ -779,10 +779,10 @@ protected:
     cout << "\n";
 
     maxid=msgctl(0,MSG_INFO,reinterpret_cast<struct msqid_ds *>(&msginfo));
-    if (maxid<0) 
+    if (maxid<0)
       return;
 
-    for (int id=0;id<=maxid;++id) 
+    for (int id=0;id<=maxid;++id)
     {
       msqid=msgctl(id,MSG_STAT,&msgqueue);
 
@@ -790,7 +790,7 @@ protected:
 	continue;
 
       if (msgqueue.msg_perm.cuid==myUid &&
-	  (cleanupAllIPCQueues || 
+	  (cleanupAllIPCQueues ||
 	   listAllProcesses.find(msgqueue.msg_lspid)!=listAllProcesses.end() ||
 	   listAllProcesses.find(msgqueue.msg_lrpid)!=listAllProcesses.end()))
       {

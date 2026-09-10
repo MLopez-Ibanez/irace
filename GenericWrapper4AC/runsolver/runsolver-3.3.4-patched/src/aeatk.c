@@ -153,5 +153,3 @@ void updateCores() {
 
 	return;
 }
-
-

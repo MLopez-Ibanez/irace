@@ -14,7 +14,7 @@
 # or a numerical value + the execution time when using maxBudgetTime
 ###############################################################################
 
-EXE=/opt/ibm/ILOG/CPLEX_Studio124/cplex/bin/x86-64_sles10_4.1/cplex 
+EXE=/opt/ibm/ILOG/CPLEX_Studio124/cplex/bin/x86-64_sles10_4.1/cplex
 
 #check units for this
 MEMORY_LIMIT=900
@@ -99,9 +99,9 @@ error() {
     exit 1
 }
 
-# The output of the candidate $CANDIDATE should be written in the file 
+# The output of the candidate $CANDIDATE should be written in the file
 if [ ! -s "${STDOUT}" ]; then
-    # In this case, the file does not exist. Let's exit with a value 
+    # In this case, the file does not exist. Let's exit with a value
     # different from 0. In this case irace will stop with an error.
     error "${STDOUT}: No such file or directory"
 fi

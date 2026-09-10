@@ -16,7 +16,7 @@ irace_main() {
     # support it.
     THISPID=$(exec sh -c 'echo $PPID')
     # It may be faster to use /tmp.
-    exec 1> $EXECDIR/irace-$THISPID.stdout 
+    exec 1> $EXECDIR/irace-$THISPID.stdout
     exec 2> $EXECDIR/irace-$THISPID.stderr
     exec $IRACE --exec-dir=$EXECDIR --seed $RUNSEED $PARAMS
 }
@@ -75,7 +75,7 @@ for i in $(seq $START $REPETITIONS); do
     echo "execution directory: $EXECDIR"
     rm -rf $EXECDIR
     mkdir -p $EXECDIR
-    let RUNSEED=SEED+i-1 
+    let RUNSEED=SEED+i-1
     irace_main $(printf '%002d' $i) &
     sleep 1
 done

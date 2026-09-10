@@ -71,7 +71,7 @@ using namespace std;
 
 
 /**
- * a callback 
+ * a callback
  */
 class SyscallCallback
 {
@@ -101,7 +101,7 @@ public:
     return NULL;
   }
 
-  virtual void action(int syscall, bool entering, 
+  virtual void action(int syscall, bool entering,
 		      pid_t pid, Registers &regs)=0;
 
   /**
@@ -169,7 +169,7 @@ public:
 };
 
 
-class SyscallActionList 
+class SyscallActionList
 {
 private:
   // list of actions registered
@@ -226,14 +226,14 @@ public:
 	{
 	  // expect 2spurious calls, ignore them
 	  // ??? is this always the case ?
-	  
+
 	  if ((++execveData[pid].n)==2)
 	    execveData.erase(pid);
 
 	  return;
 	}
       }
-	
+
     }
 
     if (entering)
@@ -331,8 +331,8 @@ public:
 
     if (WIFEXITED(status))
     {
-      cout << "\n\nChild to trace (pid=" << childpid << ") exited with status: " 
-	   << WEXITSTATUS(status) 
+      cout << "\n\nChild to trace (pid=" << childpid << ") exited with status: "
+	   << WEXITSTATUS(status)
 	   << " before we could trace it" << endl;
       exit(2);
     }
@@ -341,9 +341,9 @@ public:
       {
 	int sig=WTERMSIG(status);
 
-	cout << "\n\nChild to trace (pid=" << childpid 
-	     << ") ended because it received signal " 
-	     << sig  << " (" << getSignalName(sig) << ")" 
+	cout << "\n\nChild to trace (pid=" << childpid
+	     << ") ended because it received signal "
+	     << sig  << " (" << getSignalName(sig) << ")"
 	     << " before we could trace it" << endl;
 	exit(2);
       }
@@ -352,7 +352,7 @@ public:
       throw runtime_error("traced child is not stopped");
 
 #ifdef debug
-    cout << "traced child is first stopped by signal " 
+    cout << "traced child is first stopped by signal "
 	 << getSignalName(WSTOPSIG(status)) << endl;
 #endif
 
@@ -399,7 +399,7 @@ public:
 	       << "retrying. Better use sigaction() with "
 	       << "SA_NOCLDSTOP|SA_RESTART flags;" << endl;
 #endif
-      } while(pid==-1 && errno==EINTR 
+      } while(pid==-1 && errno==EINTR
 	      && ++retry<=3); // accept up to 3 interrupts
 
       if (pid==-1)
@@ -432,11 +432,11 @@ public:
 	  }
 
 	  nbsyscalls++; //???
-	    
+
 #ifdef debug
-	  cout << "[pid=" << pid << "] syscall " 
+	  cout << "[pid=" << pid << "] syscall "
 	       << getSyscallName(regs.orig_eax)
-	       << " (orig_eax=" <<regs.orig_eax 
+	       << " (orig_eax=" <<regs.orig_eax
 	       << hex << showbase
 	       << ",eip=" << regs.eip
 	       << noshowbase << dec
@@ -448,9 +448,9 @@ public:
 	    if (regs.orig_eax!=-1)
 	    {
 	      cout << "Ooops ! Got an invalid system call number !"
-		   << " (orig_eax=" << regs.orig_eax 
+		   << " (orig_eax=" << regs.orig_eax
 		   << " eax=" << regs.eax << ")" << endl
-		   << "Trying to continue..."  << endl; 
+		   << "Trying to continue..."  << endl;
 	    }
 	    /*
 	      else ...
@@ -485,7 +485,7 @@ public:
 	  // system call
 #ifdef debug
 	  cout << "Traced child got signal "
-	       << getSignalName(WSTOPSIG(childstatus)) 
+	       << getSignalName(WSTOPSIG(childstatus))
 	       << " just continuing"
 	       << endl;
 #endif
@@ -498,15 +498,15 @@ public:
       else
       {
 	if (WIFEXITED(childstatus))
-	  cout << "One traced child (pid=" << pid << ") exited with status: " 
+	  cout << "One traced child (pid=" << pid << ") exited with status: "
 	       << WEXITSTATUS(childstatus) << endl;
 	else
 	  if (WIFSIGNALED(childstatus))
 	  {
 	    int sig=WTERMSIG(childstatus);
 
-	    cout << "One traced child (pid=" << pid 
-		 << ") ended because it received signal " 
+	    cout << "One traced child (pid=" << pid
+		 << ") ended because it received signal "
 		 << sig  << " (" << getSignalName(sig) << ")" << endl;
 	  }
       }
@@ -521,7 +521,7 @@ private:
   // system calls that we should register to
   static const int listOfSyscalls[];
 
-  struct ProcInfo 
+  struct ProcInfo
   {
     pid_t process; // pid of the process which owns the thread (0 for
 		   // a plain process)
@@ -546,7 +546,7 @@ private:
   map<pid_t,ProcInfo> data;
 
   // estimated memory increment (bytes) of all the processes
-  long long globalMemIncr; 
+  long long globalMemIncr;
 
   // cumulated size of all processes currentBrkSize (in Kb)
   int cumulatedSize;
@@ -598,7 +598,7 @@ private:
 	return; // we're clearly below our limit
 
 #ifdef debug
-      cout << "HeapSizeWatcher::checkOverQuota() is updating processes vsize" 
+      cout << "HeapSizeWatcher::checkOverQuota() is updating processes vsize"
 	   << endl;
 #endif
 
@@ -684,11 +684,11 @@ public:
     else
       cout << "exiting ";
 
-    cout << getSyscallName(syscall) 
+    cout << getSyscallName(syscall)
 	 << " syscall" << endl;
 #endif
 
-    pid_t processid=pid; 
+    pid_t processid=pid;
 
     // is this a thread ?
     if (data[processid].process)
@@ -707,7 +707,7 @@ public:
 	{
 	  // we have a process pid and we don't know its initial brk address
 #ifdef debug
-	  cout << "brk(0)=" 
+	  cout << "brk(0)="
 	       << hex << showbase << returnValue<int>(regs)
 	       << noshowbase << dec
 	       << endl;
@@ -723,10 +723,10 @@ public:
 	    info.lastBrk-info.baseBrk;
 
 #ifdef debug
-	  cout << "brk()=" 
+	  cout << "brk()="
 	       << hex << showbase << returnValue<int>(regs)
 	       << noshowbase << dec
-	       <<" -> brkSize=" 
+	       <<" -> brkSize="
 	       << ((returnValue<int>(regs)-info.baseBrk)>>10)
 	       << endl;
 #endif
@@ -741,7 +741,7 @@ public:
 	  // if we have a thread, store the pid of the process which
 	  // owns this thread
 	  pid_t newpid=returnValue<int>(regs);
-	  
+
 	  if (data[pid].process)
 	    data[newpid].process=data[pid].process;
 	  else
@@ -756,7 +756,7 @@ public:
 	  cumulatedSize-=info.vsize;
 	  globalMemIncr-=info.memIncr;
 	}
-	
+
 	data.erase(pid);
 	break;
 
@@ -765,12 +765,12 @@ public:
 	  long p=parm1<long>(regs);
 	  long len;
 	  long flags;
-	  
+
 	  len=ptrace(PTRACE_PEEKDATA,pid,p+4,NULL);
 	  flags=ptrace(PTRACE_PEEKDATA,pid,p+12,NULL);
 
 #ifdef debug
-	  cout << "old_mmap(len=" << len 
+	  cout << "old_mmap(len=" << len
 	       << endl;
 #endif
 	  info.memIncr+=len;
@@ -778,13 +778,13 @@ public:
 	}
 	checkOverQuota();
 	break;
-	  
+
       case SYS_mmap2:
 	{
 	  size_t len=parm2<size_t>(regs);
 
 #ifdef debug
-	  cout << "mmap2(len=" << len 
+	  cout << "mmap2(len=" << len
 	       << endl;
 #endif
 
@@ -799,8 +799,8 @@ public:
 	  size_t oldlen=parm2<size_t>(regs);
 	  size_t newlen=parm3<size_t>(regs);
 #ifdef debug
-	  cout << "mremap(oldlen=" << oldlen 
-	       << ",newlen=" << newlen 
+	  cout << "mremap(oldlen=" << oldlen
+	       << ",newlen=" << newlen
 	       << endl;
 #endif
 
@@ -816,7 +816,7 @@ public:
 	{
 	  size_t len=parm2<size_t>(regs);
 #ifdef debug
-	  cout << "munmap(len=" << len 
+	  cout << "munmap(len=" << len
 	       << endl;
 #endif
 
@@ -832,7 +832,7 @@ public:
       }
     }
 #ifdef debug
-    cout << "pid=" << processid 
+    cout << "pid=" << processid
 	 << " estimated vsize=" << info.vsize+(info.memIncr>>10)
 	 << " /proc/stat vsize=" << readProcessVSIZE(processid)
 	 << endl;
@@ -853,7 +853,7 @@ private:
 
     if ((file=fopen(statFileName,"r"))!=NULL)
     {
-	  
+
       fscanf(file,
 	     "%*d "
 	     "%*s "
@@ -867,7 +867,7 @@ private:
 	     "%*Lu "  /* start_time */
 	     "%lu ",&vsize
 	     );
-      
+
       fclose(file);
 
       vsize >>=10;
@@ -887,7 +887,7 @@ const int HeapSizeWatcher::listOfSyscalls[]=
 /**
  * a class to keep a list of processes created by the traced child
  *
- * 
+ *
  *
  */
 class ProcessWatcher : public SyscallAction
@@ -956,13 +956,13 @@ public:
 	if (!WIFSTOPPED(status))
 	  throw runtime_error("trace child after a clone() is not stopped");
 
-	cout << "traced child after a clone() is first stopped by signal " 
+	cout << "traced child after a clone() is first stopped by signal "
 	     << getSignalName(WSTOPSIG(status)) << endl;
 
 	ptrace(PTRACE_SYSCALL,newpid,NULL,NULL);
 #endif
       }
-    }     
+    }
     else
       if (entering)
       {
@@ -987,7 +987,7 @@ public:
 	    importString(exec,pid,parm1<char *>(regs),200);
 	    // do we need that limit ???
 
-	    cout << "execve syscall for " 
+	    cout << "execve syscall for "
 		 << exec
 		 << " executable"
 		 << endl;
@@ -1047,8 +1047,8 @@ public:
     else
       cout << "exiting ";
 
-    cout << getSyscallName(syscall) << " syscall: parm1=" 
-	 << hex << showbase << parm1<int>(regs) 
+    cout << getSyscallName(syscall) << " syscall: parm1="
+	 << hex << showbase << parm1<int>(regs)
 	 << dec << endl;
 #endif
 
@@ -1103,8 +1103,8 @@ public:
     else
       cout << "exiting ";
 
-    cout << getSyscallName(syscall) << " syscall: parm1=" 
-	 << hex << showbase << parm1<int>(regs) 
+    cout << getSyscallName(syscall) << " syscall: parm1="
+	 << hex << showbase << parm1<int>(regs)
 	 << dec << endl;
 #endif
 
@@ -1259,7 +1259,7 @@ private:
     case PF_INET6:
       cout << "PF_INET6";
       break;
-    case PF_IPX:   
+    case PF_IPX:
       cout << "PF_IPX";
       break;
     case PF_NETLINK:
@@ -1268,10 +1268,10 @@ private:
     case PF_X25:
       cout << "PF_X25";
       break;
-    case PF_AX25:  
+    case PF_AX25:
       cout << "PF_AX25";
       break;
-    case PF_ATMPVC: 
+    case PF_ATMPVC:
       cout << "PF_ATMPVC";
       break;
     case PF_APPLETALK:
@@ -1281,8 +1281,8 @@ private:
       cout << "PF_PACKET";
       break;
     default:
-      cout << "??? (" << hex 
-	   << showbase << parms[0] 
+      cout << "??? (" << hex
+	   << showbase << parms[0]
 	   << noshowbase << dec << ")";
       break;
     }
@@ -1298,7 +1298,7 @@ private:
     case SOCK_SEQPACKET:
       cout << "SOCK_SEQPACKET";
       break;
-    case SOCK_RAW:   
+    case SOCK_RAW:
       cout << "SOCK_RAW";
       break;
     case SOCK_RDM:
@@ -1308,8 +1308,8 @@ private:
       cout << "SOCK_PACKET";
       break;
     default:
-      cout << "??? (" << hex 
-	   << showbase << parms[0] 
+      cout << "??? (" << hex
+	   << showbase << parms[0]
 	   << noshowbase << dec << ")";
       break;
     }
@@ -1332,13 +1332,13 @@ const int NetworkWatcher::listOfSyscalls[]={SYS_socketcall,-1};
 const int NetworkWatcher::nbSubcallParms[]=
   { 2, // socketcall
     3, // socket
-    3, // bind  
+    3, // bind
     3, // connect
-    2, // listen     
-    3, // accept     
+    2, // listen
+    3, // accept
     3, // getsockname
     3, // getpeername
-    4, // socketpair 
+    4, // socketpair
     4, // send
     4, // recv
     6, // sendto
@@ -1349,7 +1349,7 @@ const int NetworkWatcher::nbSubcallParms[]=
     5, // sendmsg
     5  // recvmsg
   };
- 
+
 // greatest number in the array above
 const int NetworkWatcher::maxNbParms=6;
 
@@ -1365,11 +1365,11 @@ const int NetworkWatcher::maxNbParms=6;
 //	/* copy_from_user should be SMP safe. */
 //	if (copy_from_user(a, args, nargs[call]))
 //		return -EFAULT;
-//		
+//
 //	a0=a[0];
 //	a1=a[1];
-//	
-//	switch(call) 
+//
+//	switch(call)
 //	{
 //		case SYS_SOCKET:
 //			err = sys_socket(a0,a1,a[2]);
@@ -1436,4 +1436,3 @@ const int NetworkWatcher::maxNbParms=6;
 // Local Variables:
 // mode: C++
 // End:
-

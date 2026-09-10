@@ -1310,7 +1310,7 @@ public:
 		initStopSolverShouldExecuteFlag();
 		setTimerThreadShouldShutdown(false);
 		setSolverIsRunning(false);
-		
+
 		childpid = 0;
 
 #ifdef WATCHSYSCALLS
@@ -1594,7 +1594,7 @@ public:
 
 			//We create the stop solver thread now,
 			//It will wait for some condition variables before actually executing.
-			err = pthread_create(&stopSolverThreadTID, NULL, waitAndKillSolver,NULL); 
+			err = pthread_create(&stopSolverThreadTID, NULL, waitAndKillSolver,NULL);
 			if (err)
 				 cout << "Failed to create a thread to stop solver" << endl;
 
@@ -1614,7 +1614,7 @@ public:
 			instance->stopSolver("Solver termination detected (return from wait4)");
 
 			//This should cause the timer thread to terminate
-			
+
 			cout << "Requesting Timer Thread Should Shutdown \n";
 			setTimerThreadShouldShutdown(true);
 
@@ -1630,9 +1630,9 @@ public:
 			pthread_join(timerThreadTID, NULL);
 
 			cout << "Timer Thread Done\n";
-		
 
-			
+
+
 			// the program we started has just terminated but some of its
 			// processes can still be running. Kill them all!
 			// A kill(-childpid,SIGKILL) alone is not sufficient because
@@ -1644,7 +1644,7 @@ public:
 				procTree->sendSignalToProcessGroups(SIGKILL);
 			} else {
 				// fallback
-				
+
 			}*/
 
 			if (timeStamping) {
@@ -1662,7 +1662,7 @@ public:
 			//we have already done our best attempt at a clean up.
 			//So we will just always call kill just in case.
 			kill(-childpid, SIGKILL);
-			
+
 
 			cout << endl;
 

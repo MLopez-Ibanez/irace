@@ -40,7 +40,7 @@ public:
   {
     const char *p=buf;
     int n;
-    
+
     do
     {
       n=::write(fd,p,len);
@@ -48,11 +48,11 @@ public:
       {
 	if(errno==EINTR)
 	  continue;
-	
+
 	perror("write failed: ");
 	break;
       }
-      
+
       len-=n;
       p+=n;
     }
@@ -112,16 +112,16 @@ public:
     data=NULL;
   }
 
-  CircularBufferFilter(int fd, 
-		       unsigned long long int activateSize, 
+  CircularBufferFilter(int fd,
+		       unsigned long long int activateSize,
 		       unsigned long long int maxSize)
   {
     data=NULL;
     setup(fd,activateSize,maxSize);
   }
 
-  void setup(int fd, 
-	     unsigned long long int activateSize, 
+  void setup(int fd,
+	     unsigned long long int activateSize,
 	     unsigned long long int maxSize)
   {
     this->fd=fd;
@@ -173,7 +173,7 @@ public:
 	r+=n;
 	w+=n;
 	if (w>=bufferSize)
-	  w=0;	
+	  w=0;
       } while(len>0);
     }
   }

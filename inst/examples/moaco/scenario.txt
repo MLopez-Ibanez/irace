@@ -10,4 +10,3 @@ trainInstancesDir = "./Instances"
 maxExperiments = 10000
 
 targetEvaluator = "./target-evaluator"
-

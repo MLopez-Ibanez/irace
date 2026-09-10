@@ -26,7 +26,7 @@ time_irace <- function(...)
   scenario <- checkScenario (scenario)
 
   expect_true(irace:::checkTargetFiles(scenario = scenario))
-  
+
   confs <- irace(scenario = scenario)
   final_ids <- sort(as.character(confs$.ID.[1:scenario$testNbElites]))
   expect_gt(nrow(confs), 0L)

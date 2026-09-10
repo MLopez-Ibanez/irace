@@ -40,7 +40,7 @@ class ProcessTree
 {
 private:
   typedef map<pid_t,ProcessData *> ProcMap;
-  
+
   ProcMap tree;
   pid_t currentRootPID;
 
@@ -214,7 +214,7 @@ public:
 
     readTasksRec(root);
   }
-  
+
   /**
    * update informations on processes which are a child of root.
    *
@@ -278,9 +278,9 @@ public:
       {
 	pid_t pid=(*it).first;
 
-	s << "  %CPU=" << static_cast<int>(pcpu*100) 
-	  << " pid=" << pid 
-	  << " uid=" << data->getUid() 
+	s << "  %CPU=" << static_cast<int>(pcpu*100)
+	  << " pid=" << pid
+	  << " uid=" << data->getUid()
 	  << " cmd=";
 
 	dumpCmdLine(s,pid);
@@ -335,13 +335,13 @@ public:
     dumpCPUTimeAndVSize(out,userTime+systemTime,VSize);
   }
 
-  void dumpCPUTimeAndVSize(ostream &out, 
+  void dumpCPUTimeAndVSize(ostream &out,
 			   float currentCPUTime, float currentVSize)
   {
-    cout << "Current children cumulated CPU time (s) " 
+    cout << "Current children cumulated CPU time (s) "
 	 << currentCPUTime << endl;
 
-    cout << "Current children cumulated vsize (KiB) " 
+    cout << "Current children cumulated vsize (KiB) "
 	 << static_cast<long>(currentVSize+0.5) << endl;
   }
 
@@ -458,7 +458,7 @@ protected:
       else
 	if ((*it).first!=1) // init has no father
 	{
-	  cout << "Ooops! Can't find parent pid " << parent 
+	  cout << "Ooops! Can't find parent pid " << parent
 	       << " of child pid " <<  (*it).first << endl;
 	  dumpProcessTree(cout);
 	}
@@ -549,7 +549,7 @@ protected:
 
       // give some time to the father to wait for its children
       struct timespec delay={0,020000000}; // 20 ms
-      
+
       // use a loop in case of an interrupt
       while(nanosleep(&delay,&delay)==-1 && errno==EINTR);
     }
@@ -604,7 +604,7 @@ protected:
 	return;
       }
 
-      cout << "!!! unable to read " << processdir << " filesystem (" 
+      cout << "!!! unable to read " << processdir << " filesystem ("
 	   << strerror(errno) << ") !!!" << endl;
       return;
     }
@@ -619,7 +619,7 @@ protected:
       if (tid==pid)
 	continue;
 
-      //cout << "task " << dirEntry->d_name 
+      //cout << "task " << dirEntry->d_name
       //     << " (pid=" << pid << ")" << endl;
 
       tree[tid]=new ProcessData(pid,tid);
@@ -634,7 +634,7 @@ protected:
   void listProcessesRec(set<pid_t> &list,pid_t pid)
   {
     ProcessData *data=tree[pid];
-    
+
     if (!data)
       return;
 
@@ -647,7 +647,7 @@ protected:
   void dumpProcessTreeRec(ostream &out,pid_t pid)
   {
     ProcessData *data=tree[pid];
-    
+
     if (!data)
       return;
 
@@ -665,7 +665,7 @@ protected:
       return;
 
     ProcessData *data=(*it).second;
-    
+
     if (!data)
       return;
 
@@ -682,14 +682,14 @@ protected:
     int fd;
 
     snprintf(fileName,sizeof(fileName),"/proc/%d/cmdline",pid);
-    
+
     fd=open(fileName,O_RDONLY);
 
     if(fd>0)
     {
       unsigned int size=0,r;
 
-      while(size<sizeof(buffer) && 
+      while(size<sizeof(buffer) &&
 	    (r=read(fd,buffer+size,sizeof(buffer)-size))>0)
 	size+=r;
 

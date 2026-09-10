@@ -16,7 +16,7 @@ ROOT_E.FIC	"" i (0,100)            | ROOT_E.FFI == "false"
         ROOT_E.FFI=expression(ROOT_T_FIC.sum < 0),
         ROOT_E.FIC=expression(ROOT_E.FFI == "false")))
   })
-  
+
   test_that("error checking", {
 
     ref <- parametersNew(param_real(name = "tmp", lower = 0, upper=1,

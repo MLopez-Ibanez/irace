@@ -1,9 +1,9 @@
 import os
-from genericWrapper4AC.domain_specific.satwrapper import SatWrapper 
+from genericWrapper4AC.domain_specific.satwrapper import SatWrapper
 
 
 class MiniSATWrapper(SatWrapper):
-    
+
 
     def get_command_line_args(self, runargs, config):
         '''
@@ -23,13 +23,13 @@ class MiniSATWrapper(SatWrapper):
             A command call list to execute the target algorithm.
         '''
         solver_binary = os.path.join(os.path.dirname(__file__), "minisat")
-        cmd = "%s -rnd-seed=%d" %(solver_binary, runargs["seed"])       
+        cmd = "%s -rnd-seed=%d" %(solver_binary, runargs["seed"])
         for name, value in config.items():
             cmd += " %s=%s" %(name,  value)
-        cmd += " %s" %(runargs["instance"])        
-    
+        cmd += " %s" %(runargs["instance"])
+
         return cmd
-    
+
 if __name__ == "__main__":
     wrapper = MiniSATWrapper()
-    wrapper.main()  
+    wrapper.main()

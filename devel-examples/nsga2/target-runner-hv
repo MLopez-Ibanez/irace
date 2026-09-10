@@ -51,7 +51,7 @@ error() {
 $EXE ${FIXED_PARAMS} ${CAND_PARAMS} 1> $STDOUT 2> $STDERR
 echo "$EXE ${FIXED_PARAMS} ${CAND_PARAMS} 1> $STDOUT 2> $STDERR" > $STDERR
 
-# The output of the candidate $CANDIDATE should be written in the file 
+# The output of the candidate $CANDIDATE should be written in the file
 # "${STDOUT}". Does this file exist?
 if [ ! -s "${STDOUT}" ]; then
     # In this case, the file does not exist. Let's exit with an error. In this
@@ -72,4 +72,3 @@ COST=$(cat "${STDOUT}_dat_hv" | grep -e '^[0-9]' | cut -f1)
 rm -f ${STDOUT}* ${STDERR}
 # irace minimizes by default but hypervolume should be maximized.
 echo -$COST
-

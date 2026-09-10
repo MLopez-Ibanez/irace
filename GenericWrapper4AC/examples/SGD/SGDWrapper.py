@@ -21,13 +21,13 @@ class SGDWrapper(AbstractWrapper):
     '''
         Simple wrapper for an external SDG script
     '''
-    
+
     def __init__(self):
         logging.basicConfig()
         AbstractWrapper.__init__(self)
-        
+
         self._return_value = None
-    
+
     def get_command_line_args(self, runargs, config):
         '''
         Returns the command line call string to execute the target algorithm (here: Spear).
@@ -45,14 +45,14 @@ class SGDWrapper(AbstractWrapper):
             A command call list to execute the target algorithm.
         '''
         cmd = "python examples/SGD/sgd_ta.py %s random_state %d " %(runargs["instance"], runargs["seed"])
-        cmd += " ".join(["%s %s" %(name[1:], value) for name, value in config.items()]) 
-        
-        return cmd 
-    
+        cmd += " ".join(["%s %s" %(name[1:], value) for name, value in config.items()])
+
+        return cmd
+
     def process_results(self, filepointer, exit_code):
         '''
         Parse a results file to extract the run's status (SUCCESS/CRASHED/etc) and other optional results.
-    
+
         Args:
             filepointer: a pointer to the file containing the solver execution standard out.
             exit_code : exit code of target algorithm
@@ -64,9 +64,9 @@ class SGDWrapper(AbstractWrapper):
                 "quality" : <a domain specific measure of the quality of the solution [optional]>,
                 "misc" : <a (comma-less) string that will be associated with the run [optional]>
             }
-            ATTENTION: The return values will overwrite the measured results of the runsolver (if runsolver was used). 
+            ATTENTION: The return values will overwrite the measured results of the runsolver (if runsolver was used).
         '''
-        
+
         self.logger.debug("reading solver results from %s" % (filepointer.name))
 
         # If solver result file is empty, we also assume a crash
@@ -86,7 +86,7 @@ class SGDWrapper(AbstractWrapper):
 
         return resultMap
 
-        
+
 if __name__ == "__main__":
     wrapper = SGDWrapper()
-    wrapper.main()    
+    wrapper.main()

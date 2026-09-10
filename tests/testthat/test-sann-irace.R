@@ -24,13 +24,13 @@ target_runner <- function(experiment, scenario)
   D <- 3
   par <- runif(D, min = -1, max = 1)
   fn <- function(x) (instance * f_rastrigin(x) + (1 - instance) * f_rosenbrock(x))
-  
+
   tmax = 1 + configuration[["tmax"]]
   temp = 11.0 + configuration[["temp"]]
   stopifnot(tmax > 0)
   stopifnot(temp > 0)
   res <- withr::with_seed(seed,
-                  optim(par, fn, method = "SANN", 
+                  optim(par, fn, method = "SANN",
                         control = list(maxit = 10, tmax = tmax, temp = temp))
                 )
   list(cost = res$value, call = toString(experiment))
@@ -53,12 +53,12 @@ sann_irace <- function(log.param=FALSE, ...)
      parameters_table <- '
        tmax "" i,log (1, 5000)
        temp "" r,log (1, 100)
-       '      
+       '
   else
      parameters_table <- '
        tmax "" i (1, 5000)
        temp "" r (1, 100)
-     '  
+     '
   parameters <- readParameters(text = parameters_table)
 
   scenario <- list(targetRunner = target_runner,

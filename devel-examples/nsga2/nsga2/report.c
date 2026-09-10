@@ -45,7 +45,7 @@ void report_pop (population *pop, FILE *fpt)
         //fprintf(fpt,"%e\t",pop->ind[i].constr_violation);
         //fprintf(fpt,"%d\t",pop->ind[i].rank);
         //fprintf(fpt,"%e\n",pop->ind[i].crowd_dist);
-        fprintf(fpt,"\n");        
+        fprintf(fpt,"\n");
     }
     return;
 }

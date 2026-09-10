@@ -47,13 +47,13 @@ class Runner(object):
         self.candidate = candidate
         self.parameters = parameters
         self.max_tests = max_tests
-        self.filename_prefix = 'c' + str(candidate) + '-' + str(instanceid) + '-' + str(seed) 
+        self.filename_prefix = 'c' + str(candidate) + '-' + str(instanceid) + '-' + str(seed)
 
         # default exec function
         self.execute = self.execute1
 
         self.maximize = maximize
-        
+
         # logging (by default only errors are logged)
         filename = self.filename_prefix + '.' + socket.gethostname() + '_' + str(os.getpid())
         self.logger = logging.getLogger('target-runner')
@@ -66,7 +66,7 @@ class Runner(object):
         hdlr.setFormatter(formatter)
         self.logger.addHandler(hdlr)
         self.logger.setLevel(log_level)
-    
+
     # changes the way the child process is executed
     def exec_mode(self, mode, max_time = 3600):
         self.execute = mode
@@ -286,17 +286,17 @@ class Runner(object):
                                     str(test) + ' of ' + str(self.max_tests))
                 continue
             # parsing the output
-            try: 
+            try:
                 cost = self.parse_output(out)
-            except: 
+            except:
                 test += 1
                 self.logger.warning('something failed in parse_output: *RETRYING* ' + \
                                     str(test) + ' of ' + str(self.max_tests))
                 continue
-            
+
             if cost is None:
                 cost = ""
-            
+
             try:
                 check = float(cost)
             except:
@@ -311,7 +311,7 @@ class Runner(object):
                     cost = cost[1:]
                 else:
                     cost = '-' + cost
-                    
+
             break
 
         # printing the result
@@ -367,18 +367,18 @@ def parse_output(out):
         return match.group(1);
     else:
         return "No match"
-        
+
 if __name__=='__main__':
 
     if len(sys.argv) < 5:
         print("\nUsage: " + __file__ + " <candidate_id> <instance_id> <seed> <instance_path_name> <list of parameters>\n")
         sys.exit(1)
-    
+
     bindir = get_execdir()
     # Path to the target-algorithm executable
     executable = '~/bin/acotsp'
     fixed_params = ' --tries 1 --time 1 --quiet '
-   
+
     # reading parameters and setting problem specific stuff
     ## FIXME: Convert this to a class that takes sys.argv and sets the correct
     ## variables.

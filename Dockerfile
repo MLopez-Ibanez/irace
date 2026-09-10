@@ -1,6 +1,6 @@
 FROM debian:bullseye
 ARG DEBIAN_FRONTEND=noninteractive
-WORKDIR /usr/app 
+WORKDIR /usr/app
 COPY scripts scripts
 RUN scripts/setup.sh
 COPY . .

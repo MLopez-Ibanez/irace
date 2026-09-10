@@ -1,5 +1,5 @@
 '''
-@author:     Marius Lindauer  
+@author:     Marius Lindauer
 @copyright:  2018 ML4AAD. All rights reserved.
 @license:    BSD
 '''
@@ -16,7 +16,7 @@ from genericWrapper4AC.data.data import Data
 
 def get_parser():
     '''
-        Creates an ArgumentParser object 
+        Creates an ArgumentParser object
         and adds the general arguments, such as runsolver-path, temp-file-dir, mem-limit, max_quality
     '''
 
@@ -41,9 +41,9 @@ def get_parser():
 
 def get_extended_parser(parser:ArgumentParser):
     '''
-        Extends the parser created in get_parser by optional arguments supported 
+        Extends the parser created in get_parser by optional arguments supported
         in the new aclib format
-        
+
         Arguments
         parser: Argumentparser
     '''
@@ -105,7 +105,7 @@ def parse_config_old(main_args, target_args: typing.List[str]):
 
         Arguments
         --------
-        main_args: Namespace 
+        main_args: Namespace
             arguments parsed by argparse
         target_args: typing.List[str]
             arguments not parsed so far
@@ -116,7 +116,7 @@ def parse_config_old(main_args, target_args: typing.List[str]):
     '''
 
     d = Data()
-    
+
     d.instance = target_args[0]
     d.specifics = target_args[1]
     # runsolver only rounds down to integer
@@ -139,7 +139,7 @@ def parse_config_new(main_args, target_args: typing.List[str]):
 
         Arguments
         --------
-        main_args: Namespace 
+        main_args: Namespace
             arguments parsed by argparse
         target_args: typing.List[str]
             arguments not parsed so far
@@ -148,7 +148,7 @@ def parse_config_new(main_args, target_args: typing.List[str]):
         -------
         d: ~genericWrapper4AC.data.data.Data
     '''
-    
+
     d = Data()
 
     d.instance = main_args.instance

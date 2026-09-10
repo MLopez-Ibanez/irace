@@ -7,6 +7,6 @@
   # https://github.com/oracle/fastr/issues/191
   R_engine <- R.version$engine
   if (!is.null(R_engine) && R_engine == "FastR")
-    .irace.format.perf <<- "%16.10g"  
+    .irace.format.perf <<- "%16.10g"
   invisible()
 }

@@ -100,7 +100,7 @@ int main(int argc, char **argv)
 	if (withTimestamp)
 	  cout << timestamp << "\t";
 	cout << s << endl;
-      } 
+      }
     }
   }
   catch (exception &e)
@@ -111,4 +111,3 @@ int main(int argc, char **argv)
     exit(1);
   }
 }
-

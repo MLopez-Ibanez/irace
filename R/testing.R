@@ -14,7 +14,7 @@
 #'
 #' @seealso
 #'  [testing_fromlog()]
-#' 
+#'
 #' @author Manuel López-Ibáñez
 #' @export
 testConfigurations <- function(configurations, scenario)
@@ -22,23 +22,23 @@ testConfigurations <- function(configurations, scenario)
   # We need to set up a default scenario (and repeat all checks) in case
   # we are called directly instead of being called after executing irace.
   scenario <- checkScenario(scenario)
-  
+
   testInstances <- scenario[["testInstances"]]
   instances_id <- names(testInstances)
   if (length(testInstances) == 0L) irace_error("No test instances given")
   if (is.null(instances_id)) irace_error("testInstances must have names")
-  
+
   # 2147483647 is the maximum value for a 32-bit signed integer.
   # We use replace = TRUE, because replace = FALSE allocates memory for each possible number.
   ## FIXME: scenario[["testInstances"]] and scenario$instances behave differently,
   ## we should unify them so that the seeds are also saved in scenario.
   instanceSeed <- runif_integer(length(testInstances))
   names(instanceSeed) <- instances_id
-  
+
   # If there is no ID (e.g., after using readConfigurations), then add it.
   if (".ID." %not_in% colnames(configurations))
     configurations[[".ID."]] <- seq_nrow(configurations)
-  
+
   # Create experiment list
   experiments <- createExperimentList(configurations, parameters = scenario$parameters,
     instances = testInstances, instances_ID = instances_id, seeds = instanceSeed,

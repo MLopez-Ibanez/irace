@@ -28,7 +28,7 @@ class TestCalls(unittest.TestCase):
         self.assertEqual(wrapper.data.seed, 42)
         self.assertEqual(wrapper.data.runlength, 0)
         self.assertFalse(wrapper.data.new_format)
-        
+
     def test_minisat_new(self):
 
         wrapper = MiniSATWrapper()
@@ -47,7 +47,7 @@ class TestCalls(unittest.TestCase):
         self.assertEqual(wrapper.data.cost, wrapper.data.time)
         self.assertIsNone(wrapper.data.runlength)
         self.assertTrue(wrapper.data.new_format)
-        
+
     def test_sgd_old(self):
 
         wrapper = SGDWrapper()
@@ -61,7 +61,7 @@ class TestCalls(unittest.TestCase):
         self.assertEqual(wrapper.data.status, "SUCCESS")
         self.assertGreater(2, wrapper.data.time)
         self.assertGreater(1, wrapper.data.cost)
-        # the irace hack should not change the results 
+        # the irace hack should not change the results
         # for set cost values
         self.assertNotEqual(wrapper.data.cost, wrapper.data.time)
         self.assertEqual(wrapper.data.seed, 9)
@@ -81,7 +81,7 @@ class TestCalls(unittest.TestCase):
         self.assertEqual(wrapper.data.status, "SUCCESS")
         self.assertGreater(2, wrapper.data.time)
         self.assertGreater(1, wrapper.data.cost)
-        # the irace hack should not change the results 
+        # the irace hack should not change the results
         # for set cost values
         self.assertNotEqual(wrapper.data.cost, wrapper.data.time)
         self.assertEqual(wrapper.data.seed, 9)

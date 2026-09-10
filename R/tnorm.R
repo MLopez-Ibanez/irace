@@ -16,10 +16,10 @@
 ##
 ## There is also https://cran.r-project.org/web/packages/truncnorm/
 
-## Function to sample according to a truncated normal distribution 
-## This function comes from the R package 'msm' maintained by 
+## Function to sample according to a truncated normal distribution
+## This function comes from the R package 'msm' maintained by
 ## Christopher Jackson <chris.jackson at mrc-bsu.cam.ac.uk>
-# 
+#
 # Package: msm
 # Version: 1.7.1
 # Date: 2023-03-23
@@ -59,7 +59,7 @@ rtnorm <- function (n, mean = 0, sd = 1, lower, upper) {
   } else if (lower > upper) {
     return(ret) # return NaN
   } else if (sdzero) {
-    return(rep_len(mean, n)) # SD zero, so set the sampled value to the mean. 
+    return(rep_len(mean, n)) # SD zero, so set the sampled value to the mean.
   } else if ((lower < 0) && (upper > 0) && (upper - lower > sqrt(2*pi))) {
     # standard "simulate from normal and reject if outside limits" method. Use if bounds are wide.
     ind.no <- seq_len(n)
@@ -105,6 +105,6 @@ rtnorm <- function (n, mean = 0, sd = 1, lower, upper) {
       ret[ind.u[done]] <- z[done]
       ind.u <- ind.u[!done]
     }
-  }        
+  }
   ret*sd + mean
 }

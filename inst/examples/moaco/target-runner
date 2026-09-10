@@ -59,4 +59,3 @@ $EXE ${FIXED_PARAMS} ${PARAMS} 1> $STDOUT
 RET=$?
 echo "OK" >& 2
 exit $RET
-

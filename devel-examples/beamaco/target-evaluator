@@ -1,7 +1,7 @@
 #!/bin/bash
 ###############################################################################
 # This script is run after all candidate configurations have been run on
-# a single instance. 
+# a single instance.
 #
 # PARAMETERS:
 # $1 is the candidate  configuration number
@@ -10,8 +10,8 @@
 # $4 is the instance name
 # $5 is the number of candidates alive in this iteration
 #
-# ONLY FOR ELITIST RACE: The rest ($* after `shift 5') are the ids of the 
-# candidates alive in this iteration. This list can be used to calculate the 
+# ONLY FOR ELITIST RACE: The rest ($* after `shift 5') are the ids of the
+# candidates alive in this iteration. This list can be used to calculate the
 # hypervolume using previous execution results.
 #
 # RETURN VALUE:
@@ -34,4 +34,3 @@ COST=`cat ${NUMCAND}.run.output | grep -e '^[0-9]' | cut -f1`
 echo "$COST"
 rm -f ${NUMCAND}.run.output ${NUMCAND}.run.stderr
 #exit 0
-

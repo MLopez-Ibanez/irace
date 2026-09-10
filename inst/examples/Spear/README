@@ -2,7 +2,7 @@ Example configuration scenario: Spear
 =====================================
 
 This example scenario was inspired by ParamILS. The Spear program can
-be downloaded from: 
+be downloaded from:
 
  http://www.cs.ubc.ca/labs/beta/Projects/ParamILS/algorithms.html
 
@@ -21,9 +21,8 @@ different scenario for which source code is available.
  http://www.cs.ubc.ca/labs/beta/Projects/ParamILS/benchmark_instances/SpearSWV/SWV-scrambled-last302.tar.gz
 
 
-Two parameter files are provided: 
+Two parameter files are provided:
 
  * parameters-cat.txt only contains categorical parameters.
 
  * parameters-mixed.txt contains a mix of numerical and categorical parameters.
-

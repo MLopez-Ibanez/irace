@@ -89,7 +89,7 @@ CommandArgsParser <- R6::R6Class("CommandArgsParser", cloneable = FALSE, lock_cl
 # `cmdline_usage()` prints the output of `--help`
 #
 # @param cmdline_args Definition of the command-line arguments.
-# 
+#
 # @export
 cmdline_usage <- function(cmdline_args)
 {

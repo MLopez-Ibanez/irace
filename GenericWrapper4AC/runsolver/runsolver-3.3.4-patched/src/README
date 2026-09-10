@@ -3,7 +3,7 @@ runsolver with fixes from Steve Ramage
 Please note that we implemented some bug fixes in the runsolver-3.3.4.
 Please see below the original README from the runsolver by Olivier Roussel.
 
-========================================================================== 
+==========================================================================
 
 runsolver Copyright (C) 2010 Olivier ROUSSEL (roussel@cril.univ-artois.fr)
 
@@ -29,4 +29,4 @@ For now, the code is Linux specific.
 runsolver is free software, distributed under the terms of the [GNU] General
 Public License as published by the Free Software Foundation,
 version 3 of the License (or any later version).  For more information,
-see the file LICENSE-GPL-3.0.txt. 
+see the file LICENSE-GPL-3.0.txt.

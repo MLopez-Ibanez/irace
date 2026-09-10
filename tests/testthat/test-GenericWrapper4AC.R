@@ -34,22 +34,22 @@ test_that("GenericWrapper4AC", {
   expect_equal(output[[2]]$status, "TIMEOUT")
   expect_equal(output[[2]]$cost, 0.5)
   expect_true(is.null(output[[2]]$error))
-  
+
   experiments <- irace:::createExperimentList(configurations,
                                               parameters = parameters,
                                               instances = scenario$instances,
                                               instances_ID = rep("cost", 2),
                                               seeds = 2, bounds = NULL)
   expect_error(irace:::execute_experiments(race_state, experiments, scenario), "CRASHED")
-               
+
   experiments <- irace:::createExperimentList(configurations,
                                               parameters = parameters,
                                               instances = scenario$instances,
                                               instances_ID = rep("cost", 2),
                                               seeds = 3, bounds = NULL)
   expect_error(irace:::execute_experiments(race_state, experiments, scenario), "ABORT")
-  
-  
+
+
   scenario <- modifyList(scenario,
                          list(capping = TRUE, boundMax = 1, maxTime = 10,
                               maxExperiments = NULL))
@@ -80,7 +80,7 @@ test_that("GenericWrapper4AC", {
                                               seeds = 2,
                                               bounds = scenario$boundMax)
   expect_error(irace:::execute_experiments(race_state, experiments, scenario), "CRASHED")
-               
+
   experiments <- irace:::createExperimentList(configurations,
                                               parameters = parameters,
                                               instances = scenario$instances,
@@ -115,7 +115,7 @@ test_that("GenericWrapper4AC", {
                                               seeds = 2,
                                               bounds = scenario$boundMax)
   expect_error(irace:::execute_experiments(race_state, experiments, scenario), "CRASHED")
-               
+
   experiments <- irace:::createExperimentList(configurations,
                                               parameters = parameters,
                                               instances = scenario$instances,

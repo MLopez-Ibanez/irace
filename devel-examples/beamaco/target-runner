@@ -23,5 +23,3 @@ shift 4 || exit 1
 CAND_PARAMS=$*
 
 exec $EXE -S 1 --time 1 -r 1 -i $INSTANCE $* 1> ${CANDIDATE}.run.output 2> ${CANDIDATE}.run.stderr
-
-

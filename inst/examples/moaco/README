@@ -8,7 +8,7 @@ traveling salesperson problem (bTSP):
 
     Manuel López-Ibáñez and Thomas Stützle. The Automatic Design of
     Multi-Objective Ant Colony Optimization Algorithms. IEEE
-    Transactions on Evolutionary Computation, 2012. 
+    Transactions on Evolutionary Computation, 2012.
     doi:10.1109/TEVC.2011.2182651
     (PDF preprint) https://iridia.ulb.ac.be/IridiaTrSeries/link/IridiaTr2011-003.pdf
 
@@ -24,6 +24,3 @@ instances:
 TSP instances and more information is available at:
 
 https://iridia.ulb.ac.be/supp/IridiaSupp2016-003/index.html
-
-
-

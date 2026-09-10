@@ -23,7 +23,7 @@
 /* # define osy */
 /* # define srn */
 /* # define tnk */
-// # define ctp1 
+// # define ctp1
 /* # define ctp2 */
 /* # define ctp3 */
 /* # define ctp4 */
@@ -37,7 +37,7 @@ void dtlz1 (double *xreal, double *xbin, int **gene, double *obj, double *constr
 {
       neval++;
       unsigned i, j;
-      for (i = 0; i < nobj; i++) obj[i] = 0.0; 
+      for (i = 0; i < nobj; i++) obj[i] = 0.0;
       int k = nreal - nobj + 1;
       double g = 0.0;
       for (i = nreal - k + 1; i <= nreal; i++) g += pow(xreal[i-1]-0.5,2) - cos(20 * M_PI * (xreal[i-1]-0.5));
@@ -55,7 +55,7 @@ void dtlz2 (double *xreal, double *xbin, int **gene, double *obj, double *constr
 {
       neval++;
       unsigned i, j;
-      for (i = 0; i < nobj; i++) obj[i] = 0.0; 
+      for (i = 0; i < nobj; i++) obj[i] = 0.0;
       int k = nreal - nobj + 1;
       double g = 0.0;
       for (i = nreal - k + 1; i <= nreal; i++) g += pow(xreal[i-1]-0.5,2);
@@ -72,7 +72,7 @@ void dtlz3 (double *xreal, double *xbin, int **gene, double *obj, double *constr
 {
       neval++;
       unsigned i, j;
-      for (i = 0; i < nobj; i++) obj[i] = 0.0; 
+      for (i = 0; i < nobj; i++) obj[i] = 0.0;
       int k = nreal - nobj + 1;
       double g = 0.0;
       for (i = nreal - k + 1; i <= nreal; i++) g += pow(xreal[i-1]-0.5,2) - cos( 20 * M_PI * (xreal[i-1] - 0.5) );
@@ -90,7 +90,7 @@ void dtlz4 (double *xreal, double *xbin, int **gene, double *obj, double *constr
 {
       neval++;
       unsigned i, j, alpha = 100;
-      for (i = 0; i < nobj; i++) obj[i] = 0.0; 
+      for (i = 0; i < nobj; i++) obj[i] = 0.0;
       int k = nreal - nobj + 1;
       double g = 0.0;
       for (i = nreal - k + 1; i <= nreal; i++) g += pow(xreal[i-1]-0.5,2);
@@ -107,7 +107,7 @@ void dtlz5 (double *xreal, double *xbin, int **gene, double *obj, double *constr
 {
       neval++;
       unsigned i, j;
-      for (i = 0; i < nobj; i++) obj[i] = 0.0; 
+      for (i = 0; i < nobj; i++) obj[i] = 0.0;
       int k = nreal - nobj + 1;
       double g = 0.0, t;
       double theta[nobj-1];
@@ -128,7 +128,7 @@ void dtlz6 (double *xreal, double *xbin, int **gene, double *obj, double *constr
 {
       neval++;
       unsigned i, j;
-      for (i = 0; i < nobj; i++) obj[i] = 0.0; 
+      for (i = 0; i < nobj; i++) obj[i] = 0.0;
       int k = nreal - nobj + 1;
       double g = 0.0, t;
       double theta[nobj-1];
@@ -149,7 +149,7 @@ void dtlz7 (double *xreal, double *xbin, int **gene, double *obj, double *constr
 {
       neval++;
       unsigned i;
-      for (i = 0; i < nobj; i++) obj[i] = 0.0; 
+      for (i = 0; i < nobj; i++) obj[i] = 0.0;
       int k = nreal - nobj + 1;
       double g = 0.0, h = 0.0;
       for (i = nreal - k + 1; i <= nreal; i++) g += xreal[i-1];

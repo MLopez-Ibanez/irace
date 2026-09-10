@@ -3,8 +3,8 @@
 
 '''
 genericWrapper -- template for an AClib target algorithm wrapper
-abstract methods for generation of callstring and parsing of solver output 
-@author:     Marius Lindauer  
+abstract methods for generation of callstring and parsing of solver output
+@author:     Marius Lindauer
 @copyright:  2018 ML4AAD. All rights reserved.
 @license:    BSD
 '''
@@ -79,16 +79,16 @@ class AbstractWrapper(object):
     def main(self, exit:bool=True):
         '''
             main method of the generic wrapper
-            1. parses cmd arguments; 
+            1. parses cmd arguments;
             2. calls target algorithm wrapped by runsolver
             3. parses outputs
             4. terminates
-            
+
             Arguments
             ---------
             exit: bool
-                exit with sys.exit at the end 
-            
+                exit with sys.exit at the end
+
         '''
 
         signal.signal(signal.SIGTERM, signalHandler)
@@ -192,7 +192,7 @@ class AbstractWrapper(object):
             --------
             target_cmd: str
                 target cmd (from get_command_line_args)
-                
+
         '''
         random_id = random.randint(0, 1000000)
         self._watcher_file = NamedTemporaryFile(
@@ -232,7 +232,7 @@ class AbstractWrapper(object):
 
     def read_runsolver_output(self):
         '''
-            reads self._watcher_file, 
+            reads self._watcher_file,
             extracts runtime
             and returns if memout or timeout found
         '''
@@ -277,7 +277,7 @@ class AbstractWrapper(object):
     def print_result_string(self):
         '''
             print result in old ParamILS format
-            and also in new AClib format 
+            and also in new AClib format
               if it new call string format was used
         '''
 
@@ -389,6 +389,6 @@ class AbstractWrapper(object):
                 "quality" : <a domain specific measure of the quality of the solution [optional]>,
                 "misc" : <a (comma-less) string that will be associated with the run [optional]>
             }
-            ATTENTION: The return values will overwrite the measured results of the runsolver (if runsolver was used). 
+            ATTENTION: The return values will overwrite the measured results of the runsolver (if runsolver was used).
         '''
         raise NotImplementedError()

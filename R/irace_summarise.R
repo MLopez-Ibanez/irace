@@ -1,14 +1,14 @@
 #' Summarise the results of a run of irace
-#' 
+#'
 #' @inheritParams has_testing_data
 #'
 #' @return `list()`
-#' 
+#'
 #' @examples
 #' irace_results <- read_logfile(system.file("exdata/irace-acotsp.Rdata",
 #'                                           package="irace", mustWork=TRUE))
 #' irace_summarise(irace_results)
-#' 
+#'
 #' @author Manuel López-Ibáñez
 #' @concept analysis
 #' @export
@@ -32,7 +32,7 @@ irace_summarise <- function(iraceResults)
     experiment_log <- iraceResults$experimentLog
   } else if (is.null(experiment_log))
     stop("Experiment log is NULL")
-  
+
   version <- iraceResults$irace_version
   if (is.null(version))
     version <- iraceResults$irace.version
@@ -45,7 +45,7 @@ irace_summarise <- function(iraceResults)
   rejected_ids <- iraceResults$state$rejected_ids
   if (is.null(rejected_ids))
     rejected_ids <- iraceResults$state$rejectedIDs
-  
+
   list(
     version = version,
     n_iterations = n_iterations,

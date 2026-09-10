@@ -159,7 +159,7 @@ public:
       snprintf(fileName,sizeof(fileName),"/proc/%d/task/%d/stat",pid,tid);
     else
       snprintf(fileName,sizeof(fileName),"/proc/%d/stat",pid);
-    
+
     if ((file=fopen(fileName,"r"))!=NULL)
     {
       struct stat info;
@@ -180,7 +180,7 @@ public:
 
 	return false;
       }
-      
+
       fclose(file);
     }
     else
@@ -231,7 +231,7 @@ public:
     if(!valid)
       cout << "FAILED TO READ EACH FIELD\n";
 #endif
-    
+
     if (!tid)
     {
       snprintf(fileName,sizeof(fileName),"/proc/%d/statm",pid);
@@ -271,7 +271,7 @@ public:
    * update data on this process
    *
    * return false iff the process doesn't exit any more
-   */ 
+   */
   bool update()
   {
     return read(pid,tid);
@@ -347,7 +347,7 @@ public:
 		    s.comm,
 		    &s.state,
 		    &s.ppid, &s.pgrp, &s.session, &s.tty_nr, &s.tpgid,
-		    &s.flags, &s.minflt, &s.cminflt, 
+		    &s.flags, &s.minflt, &s.cminflt,
 		    &s.majflt, &s.cmajflt,
 		    &s.utime, &s.stime, &s.cutime, &s.cstime,
 		    &s.priority, &s.nice,
@@ -356,14 +356,14 @@ public:
 		    &s.starttime,
 		    &s.vsize,
 		    &s.rss,
-		    &s.rlim, &s.startcode, &s.endcode, 
+		    &s.rlim, &s.startcode, &s.endcode,
 		    &s.startstack, &s.kstkesp, &s.kstkeip,
 		    /*     s.signal, s.blocked, s.sigignore, s.sigcatch,   */ /* can't use */
-		    &s.wchan, 
-		    /* &s.nswap, &s.cnswap, */  
+		    &s.wchan,
+		    /* &s.nswap, &s.cnswap, */
 		    /* nswap and cnswap dead for 2.4.xx and up */
 		    /* -- Linux 2.0.35 ends here -- */
-		    &s.exit_signal, &s.processor,  
+		    &s.exit_signal, &s.processor,
 		    /* 2.2.1 ends with "exit_signal" */
 		    /* -- Linux 2.2.8 to 2.5.17 end here -- */
 		    &s.rtprio, &s.sched  /* both added to 2.5.18 */
@@ -477,7 +477,7 @@ public:
   {
     cpu_set_t mask;
     allocatedCores.clear();
-  
+
     sched_getaffinity(pid,sizeof(cpu_set_t),&mask);
 
     for(int i=0;i<CPU_SETSIZE;++i)
@@ -496,7 +496,7 @@ public:
     for(size_t beg=0;beg<allocatedCores.size();beg=end)
     {
       end=beg+1;
-      while(end<allocatedCores.size() && 
+      while(end<allocatedCores.size() &&
 	    allocatedCores[end]==allocatedCores[end-1]+1)
 	++end;
 
@@ -520,8 +520,8 @@ ostream &operator <<(ostream &out, const ProcessData &data)
   if (data.tid)
     out << "/tid=" << data.tid;
 
-  out << "] ppid=" << data.ppid 
-      << " vsize=" << data.vsize/1024 
+  out << "] ppid=" << data.ppid
+      << " vsize=" << data.vsize/1024
       << " CPUtime=" << data.getOverallCPUTime()
       << " cores=";
 
@@ -530,7 +530,7 @@ ostream &operator <<(ostream &out, const ProcessData &data)
   out << endl;
 
   if (data.tid)
-    out << "/proc/" << data.pid << "/task/" 
+    out << "/proc/" << data.pid << "/task/"
 	<< data.tid << "/stat : " << data.statLine;
   else
     out << "/proc/" << data.pid << "/stat : " << data.statLine;

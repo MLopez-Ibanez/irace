@@ -5,9 +5,9 @@ Timer <- R6::R6Class("Timer", cloneable = TRUE, lock_class = TRUE, lock_objects 
   },
   elapsed = function() {
     x <- proc.time() - self$start
-    if (!is.na(x[[4L]])) 
+    if (!is.na(x[[4L]]))
         x[[1L]] <- x[[1L]] + x[[4L]]
-    if (!is.na(x[[5L]])) 
+    if (!is.na(x[[5L]]))
         x[[2L]] <- x[[2L]] + x[[5L]]
     c(user=x[[1L]], system=x[[2L]], wallclock=x[[3L]])
   },
@@ -15,4 +15,3 @@ Timer <- R6::R6Class("Timer", cloneable = TRUE, lock_class = TRUE, lock_objects 
     proc.time()[[3L]] - self$start[[3L]]
   })
 )
-

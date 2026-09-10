@@ -37,7 +37,7 @@ struct ExecutionSummary
   bool timeOut; // did the solver exceed the time limit?
   bool memOut; // did the solver exceed the memory limit?
 
-  
+
   ExecutionSummary()
   {
     set();
@@ -53,7 +53,7 @@ struct ExecutionSummary
   {
     byteOrder=0;
   }
-  
+
   bool ok() const
   {
     return byteOrder==0x01020304 && version==3;

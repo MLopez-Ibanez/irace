@@ -5,7 +5,7 @@ Please report bugs here: https://github.com/MLopez-Ibanez/irace/issues
 This file is only kept for historical purposes.
 
 ###############################################################
-# FIXED bugs 
+# FIXED bugs
 ###############################################################
 
 #1 --- fixed at revision 1590
@@ -137,4 +137,3 @@ However, targetEvaluator is called again for elitist configurations even if no
 target-runner call is made. This means that we may double count the time?
 
 In the meantime, I would suggest that you don't use --maxTime for now.
-

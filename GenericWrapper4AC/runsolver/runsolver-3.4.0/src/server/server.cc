@@ -29,20 +29,20 @@ protected:
   //enum PageMapType
 
   uint64_t unmappedPages,ramPages,swapPages,sharedPages;
-  
+
 public:
   MemoryUsage()
   {
     struct utsname unam;
 
     uname(&unam);
-    
+
     vector<string> ver;
     boost::split(ver,unam.release, boost::is_any_of("."));
 
     cout << "rel=" << ver[0] << "." << ver[1] << endl;
   }
-  
+
   bool readMaps(const vector<pid_t> &pidList)
   {
 #warning must add support for hugepages
@@ -51,19 +51,19 @@ public:
 
     set<uint64_t> pagesList;
     pair<set<uint64_t>::iterator,bool> ret;
-    
+
     unmappedPages=ramPages=swapPages=sharedPages=0;
-    
+
     for(pid_t pid: pidList)
     {
       ostringstream mapsfname,pagemapfname;
       mapsfname << "/proc/" << pid << "/maps";
       pagemapfname << "/proc/" << pid << "/pagemap";
-  
+
       ifstream maps(mapsfname.str());
       if(!maps.good())
         return false;
-      
+
       int pagemap=open(pagemapfname.str().c_str(),O_RDONLY);
       if(pagemap<0)
         cout << "access to " << pagemapfname.str() << " denied\n";
@@ -71,7 +71,7 @@ public:
       unsigned long beg,end,inode;
       string perm,path,tmp;
       char c;
-      
+
       while(true)
       {
         path.clear();
@@ -89,7 +89,7 @@ public:
         lastRamPages=ramPages;
         lastSwapPages=swapPages;
         lastSharedPages=sharedPages;
- 
+
         if(pagemap>=0)
         {
           uint64_t desc;
@@ -99,7 +99,7 @@ public:
             cout << "lseek failed:" << strerror(errno) << endl;
 
           //cout << "res=" << hex << res << dec << endl;
-          
+
           for(unsigned long p=beg;p<end;p+=pagesize)
           {
 #warning EOF sur les derniers accès
@@ -109,10 +109,10 @@ public:
               ramPages+=(end-p)/pagesize; // ???
               break;
             }
-            
+
             if(result!=sizeof(desc))
               cout << "error reading page description (res=" << result << "): " << strerror(errno) << "\n";
-            
+
             uint64_t pfn=desc&((1UL<<55)-1); // page frame number
             bool present=desc&(1UL<<63);
             bool swap=desc&(1UL<<62);
@@ -126,7 +126,7 @@ public:
                  << (map?"Map ":"")
                  << (excl?"Excl ":"")
                  << (softDirty?"SoftD ":"")
-                 << " " 
+                 << " "
                  << ((desc>>57)&0xF)
                  << " " << (desc&((1UL<<55)-1)) << dec << endl;
 
@@ -163,14 +163,14 @@ public:
     //for(uint64_t p: pagesList)
     //  cout << " " << hex << p << dec;
     cout << endl;
-    
+
     cout << "unmapped=" << unmappedPages*(pagesize/1024) << "KB\n"
 	 << "ram=" << ramPages*(pagesize/1024) << "KB\n"
 	 << "swap=" << swapPages*(pagesize/1024) << "KB\n"
 	 << "shared=" << sharedPages*(pagesize/1024) << "KB\n"
 	 << "VSS=all=" << (ramPages+unmappedPages+swapPages+sharedPages)*(pagesize/1024) << "KB\n"
 	 << "RSS=ram+shared=" << (ramPages+sharedPages)*(pagesize/1024) << "KB\n";
-      
+
     return true;
   }
 };
@@ -179,7 +179,7 @@ int main()
 {
   MemoryUsage mu;
 
-  
+
   mu.readMaps({getpid()});
 
   sleep(1);
@@ -199,7 +199,7 @@ int main()
   /*
     ./server>/tmp/res
     awk '/^Rss:/ {s=s+$2} END {print s}' /tmp/res
-  
+
     status ne semble pas donner la bonne valeur de RSS (incohérent avec la somme des RSS de smaps)
 
     il y a quelques petites différences avec les valeurs données par smaps

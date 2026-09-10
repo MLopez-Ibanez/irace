@@ -22,14 +22,14 @@ init_sd_numeric <- function(param)
 # OUTPUT: A list of list of vectors. The higher-level list contains
 # one element per categorical parameter.  Each categorical parameter
 # contains a list of vector. This list contains elements which are the
-# .ID. of the configuration. 
+# .ID. of the configuration.
 initialiseModel <- function (parameters, configurations)
 {
   nbConfigurations <- nrow(configurations)
   ids <- as.character(configurations[[".ID."]])
   param_names <- parameters$names_variable
   model <- setNames(vector("list", length(param_names)), param_names)
-                    
+
   for (currentParameter in param_names) {
     param <- parameters$get(currentParameter)
     type <- param[["type"]]
@@ -81,7 +81,7 @@ updateModel <- function(parameters, eliteConfigurations, oldModel,
     # Normalize probabilities.
     p <- p / sum(p)
   }
-  
+
   param_names <- parameters$names_variable
   model_ids <- names(oldModel[[1L]])
   # If the elite is older than the current iteration, it has its own model
@@ -94,8 +94,8 @@ updateModel <- function(parameters, eliteConfigurations, oldModel,
   ids_in_model <- elite_ids
   # If a configuration does not have any entry, copy the parent one.
   ids_in_model[not_in] <- as.character(eliteConfigurations[[".PARENT."]][not_in])
-  newModel <- setNames(vector("list", length(param_names)), param_names)  
-  
+  newModel <- setNames(vector("list", length(param_names)), param_names)
+
   for (currentParameter in param_names) {
     param <- parameters$get(currentParameter)
     irace_assert(all(ids_in_model %in% names(oldModel[[currentParameter]])))
@@ -110,7 +110,7 @@ updateModel <- function(parameters, eliteConfigurations, oldModel,
       this_model[values_not_na] <- mapply(update_prob, this_model[values_not_na], values, SIMPLIFY=FALSE)
     } else {
       irace_assert(type %in% c("i", "r", "o"))
-      if (type == "o") 
+      if (type == "o")
         values <- match(values, param[["domain"]])
       this_model[values_not_na] <- mapply(function(p, value) c(p[[1L]] * num_factor, value),
                                           this_model[values_not_na], values, SIMPLIFY=FALSE)
@@ -140,7 +140,7 @@ restartModel <- function(model, configurations, restart_ids, parameters,
   restart_ids[not_in] <- configurations[[".PARENT."]][order(as.integer(configurations[[".ID."]]))][not_in]
   restart_ids <- as.character(unique(restart_ids))
   restart_ids <- restart_ids[!is.na(restart_ids)]
-  
+
   for (pname in parameters$names_variable) {
     model_param <- model[[pname]]
     irace_assert (all(restart_ids %in% names(model_param)), {

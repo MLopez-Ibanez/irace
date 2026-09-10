@@ -42,43 +42,41 @@ while True:
     except StopIteration:
         break
     value = next(params)
-    
+
     if name == "random_state":
         random_state = int(value)+1
-        
+
     elif name == "loss":
         loss = str(value)
-        
+
     elif name == "penalty":
         penalty = str(value)
-        
+
     elif name == "alpha":
         alpha = float(value)
-        
+
     elif name == "learning_rate":
         learning_rate = str(value)
-        
+
     elif name == "eta0":
         eta0 = float(value)
-        
+
     elif name == "n_iter":
         n_iter = int(value)
-    
+
 sgd = SGDClassifier(random_state=random_state,
                     loss=loss,
                     penalty=penalty,
                     alpha=alpha,
                     learning_rate=learning_rate,
                     eta0=eta0,
-                    max_iter=n_iter)    
-    
+                    max_iter=n_iter)
+
 #print(sgd.loss, sgd.penalty, sgd.alpha, sgd.learning_rate, sgd.eta0)
-        
+
 if sys.argv[1] == "train" or sys.argv[1][:2] == "cv":
     sgd.fit(X_train,y_train)
     print(-1 * sgd.score(X_valid, y_valid))
 else:
     sgd.fit(X_train_f,y_train_f)
     print(-1 * sgd.score(X_test, y_test))
-
-

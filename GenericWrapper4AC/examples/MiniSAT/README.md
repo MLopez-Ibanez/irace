@@ -4,10 +4,10 @@ This example shows how we used the generic wrapper in the Configurable SAT Solve
 As a SAT solver, we use here the well-known solver [MiniSAT](http://minisat.se/).
 
 As a general interface to SAT solvers, we provide the class `genericWrapper4AC.domain_specific.satwrapper`.
-  
-For a new SAT solver, only a single function needs to be implemented: `get_command_line_args()` 
+
+For a new SAT solver, only a single function needs to be implemented: `get_command_line_args()`
 that generates the call string given an instance, a configuration and a cutoff time.
-  
+
 The following, SAT-specific function is already implemented, `process_results()`:
 
   1. Reading the output file of the solver
@@ -35,4 +35,3 @@ With this line, ParamILS/SMAC will know that `MiniSat` returned successfully and
 The alternative call in the new format would be
 
 `python examples/MiniSAT/MiniSATWrapper.py --instance examples/MiniSAT/gzip_vc1071.cnf --cutoff 10 --seed 42 --config -rnd-freq 0 -var-decay 0.001 -cla-decay 0.001 -gc-frac 0.000001 -rfirst 1000`
- 

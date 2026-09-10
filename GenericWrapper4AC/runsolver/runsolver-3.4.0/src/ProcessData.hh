@@ -121,7 +121,7 @@ public:
       snprintf(fileName,sizeof(fileName),"/proc/%d/task/%d/stat",pid,tid);
     else
       snprintf(fileName,sizeof(fileName),"/proc/%d/stat",pid);
-    
+
     if ((file=fopen(fileName,"r"))!=NULL)
     {
       struct stat info;
@@ -142,7 +142,7 @@ public:
 
 	return valid=false;
       }
-      
+
       fclose(file);
     }
     else
@@ -194,9 +194,9 @@ public:
       cout << "FAILED TO READ EACH FIELD (got " << nbFields << " fields)\n";
 #endif
 
-      return valid=false;      
+      return valid=false;
     }
-    
+
     if (!tid)
     {
       snprintf(fileName,sizeof(fileName),"/proc/%d/statm",pid);
@@ -234,7 +234,7 @@ public:
       ifstream in(fileName);
       string tmp;
       int nbFieldsToRead=2;
-      
+
       while(in.good() && nbFieldsToRead>0)
       {
         in >> tmp;
@@ -251,14 +251,14 @@ public:
           }
         getline(in,tmp);
       }
-      
+
       if(nbFieldsToRead!=0)
       {
 #ifdef debug
         cout << "FAILED TO READ EACH FIELD in /proc/" << pid << "/status\n";
 #endif
 
-        return valid=false;      
+        return valid=false;
       }
     }
 
@@ -271,7 +271,7 @@ public:
    * update data on this process
    *
    * return false iff the process doesn't exit any more
-   */ 
+   */
   bool update()
   {
     return read(pid,tid);
@@ -281,7 +281,7 @@ public:
    * do we have valid data?
    */
   bool isValid() const {return valid;}
-  
+
   /**
    * return the % of CPU used by this process (and its children when
    * withChildren is true). The result is between 0 and 1
@@ -314,7 +314,7 @@ public:
   {
     return children;
   }
-  
+
   void addChild(pid_t child)
   {
     children.push_back(child);
@@ -417,10 +417,10 @@ public:
   void getAllocatedCores()
   {
     //return; // ???
-    
+
     cpu_set_t mask;
     allocatedCores.clear();
-  
+
     sched_getaffinity(pid,sizeof(cpu_set_t),&mask);
 
 #warning "don't watse time converting to a vector, just keep the cpu_set_t"
@@ -441,7 +441,7 @@ public:
     for(size_t beg=0;beg<allocatedCores.size();beg=end)
     {
       end=beg+1;
-      while(end<allocatedCores.size() && 
+      while(end<allocatedCores.size() &&
 	    allocatedCores[end]==allocatedCores[end-1]+1)
 	++end;
 
@@ -465,9 +465,9 @@ ostream &operator <<(ostream &out, const ProcessData &data)
   if (data.tid)
     out << "/tid=" << data.tid;
 
-  out << "] ppid=" << data.ppid 
-      << " vsize=" << data.vsize/1024 
-      << " memory=" << data.getMemory() 
+  out << "] ppid=" << data.ppid
+      << " vsize=" << data.vsize/1024
+      << " memory=" << data.getMemory()
       << " CPUtime=" << data.getOverallCPUTime()
       << " cores=";
 
@@ -476,7 +476,7 @@ ostream &operator <<(ostream &out, const ProcessData &data)
   out << endl;
 
   if (data.tid)
-    out << "/proc/" << data.pid << "/task/" 
+    out << "/proc/" << data.pid << "/task/"
 	<< data.tid << "/stat : " << data.statLine;
   else
     out << "/proc/" << data.pid << "/stat : " << data.statLine;

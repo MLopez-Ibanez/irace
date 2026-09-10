@@ -44,7 +44,7 @@ long int safe_strtol(const char *str, const char *errmsg)
         fprintf(stderr, "%s: no number was found (%s)\n", errmsg, str);
         exit(EXIT_FAILURE);
     }
-    
+
     if (*endptr != '\0')
         fprintf(stderr, "%s: the string does not exactly match a number,"
                 " further characters after number: %s\n", errmsg, endptr);
@@ -54,7 +54,7 @@ long int safe_strtol(const char *str, const char *errmsg)
 int main(int argc, char**argv)
 {
     program_name = argv[0];
-    
+
     if (argc < 6) {
         error("Not enough parameters");
     }
@@ -89,8 +89,8 @@ int main(int argc, char**argv)
     } else {
         error("Instance not known");
     }
-    
+
     printf("%.15g\n", cost);
-    
+
     return EXIT_SUCCESS;
 }

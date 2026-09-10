@@ -81,7 +81,7 @@ int main(int argc, char *argv[])
         print_time = false;
     int p_int = -1;
     double p_real = -1;
-    
+
     for (; idx < argc; idx++) {
         const char *param = argv[idx++];
         if (idx >= argc) {

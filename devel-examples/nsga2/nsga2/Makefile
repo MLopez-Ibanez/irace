@@ -12,4 +12,3 @@ $(MAIN):$(OBJS)
 	$(CC) $(CFLAGS) -c $<
 clean:
 	$(RM) $(OBJS) $(MAIN)
-

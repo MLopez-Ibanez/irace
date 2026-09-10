@@ -119,7 +119,7 @@ private:
      * resource==-1 means that this is a fake limit (which is not
      * enforced via setrlimit())
      */
-    Limit(int resource) : resource(resource) 
+    Limit(int resource) : resource(resource)
     {
       scale=0;
     }
@@ -128,17 +128,17 @@ private:
 
     void output(ostream &out)
     {
-      out << "Enforcing " << name << ": " 
+      out << "Enforcing " << name << ": "
 	  << limit << " " << unit << endl;
     }
 
     void outputEnforcedLimit(ostream &out)
     {
-      out << "Current " << name << ": " 
+      out << "Current " << name << ": "
 	  << getEnforcedLimit() << " " << unit << endl;
     }
 
-    void enforceLimit() 
+    void enforceLimit()
     {
       if (resource<0)
 	return; // this is a fake limit, don't enforce anything
@@ -156,7 +156,7 @@ private:
 	perror("setrlimit failed");
     }
 
-    rlim_t getEnforcedLimit() 
+    rlim_t getEnforcedLimit()
     {
       if (resource<0)
 	return limit; // this is a fake limit, don't ask the system
@@ -222,43 +222,43 @@ public:
   class SoftCPULimit : public Limit
   {
   public:
-    SoftCPULimit(rlim_t cpuTime) : Limit(-1) 
+    SoftCPULimit(rlim_t cpuTime) : Limit(-1)
     {
       name="CPUTime limit (soft limit, will send SIGTERM then SIGKILL)";
       unit="seconds";
       setLimit(cpuTime);
     }
   };
-  
+
   /**
    * This is a fake limit. It doesn't enforce anything by its own.
    */
   class WallClockLimit : public Limit
   {
   public:
-    WallClockLimit(rlim_t wallClockTime) : Limit(-1) 
+    WallClockLimit(rlim_t wallClockTime) : Limit(-1)
     {
       name="wall clock limit (soft limit, will send SIGTERM then SIGKILL)";
       unit="seconds";
       setLimit(wallClockTime);
     }
   };
-  
+
   class HardCPULimit : public Limit
   {
   public:
-    HardCPULimit(rlim_t cpuTime) : Limit(RLIMIT_CPU) 
+    HardCPULimit(rlim_t cpuTime) : Limit(RLIMIT_CPU)
     {
       name="CPUTime limit (hard limit, will send SIGXCPU)";
       unit="seconds";
       setLimit(cpuTime);
     }
   };
-  
+
   class FileSizeLimit : public Limit
   {
   public:
-    FileSizeLimit(rlim_t fileSize) : Limit(RLIMIT_FSIZE) 
+    FileSizeLimit(rlim_t fileSize) : Limit(RLIMIT_FSIZE)
     {
       name="FSIZE limit";
       unit="KiB";
@@ -266,25 +266,25 @@ public:
       setLimit(fileSize);
     }
   };
-  
+
   class NumberOfFilesLimit : public Limit
   {
   public:
-    NumberOfFilesLimit(rlim_t nbFiles) : Limit(RLIMIT_NOFILE) 
+    NumberOfFilesLimit(rlim_t nbFiles) : Limit(RLIMIT_NOFILE)
     {
       name="NbFILES limit";
       unit="files";
       setLimit(nbFiles);
     }
   };
-  
+
   class StackSizeLimit : public Limit
   {
   public:
     /**
      * won't enforce limit
      */
-    StackSizeLimit() : Limit(RLIMIT_STACK) 
+    StackSizeLimit() : Limit(RLIMIT_STACK)
     {
       name="StackSize limit";
       unit="KiB";
@@ -294,7 +294,7 @@ public:
     /**
      * will enforce limit
      */
-    StackSizeLimit(rlim_t size) : Limit(RLIMIT_STACK) 
+    StackSizeLimit(rlim_t size) : Limit(RLIMIT_STACK)
     {
       name="Stack size limit";
       unit="KiB";
@@ -302,7 +302,7 @@ public:
       setLimit(size);
     }
   };
-  
+
 
 private:
   // this is the object in charge of monitoring the solver and its children
@@ -347,10 +347,10 @@ private:
 
   ofstream out;
 
-  // when set, redirect the standard input of the child to this file 
+  // when set, redirect the standard input of the child to this file
   char *inputRedirectionFilename=nullptr;
 
-  // when set, redirect the standard output of the child to this file 
+  // when set, redirect the standard output of the child to this file
   char *outputRedirectionFilename=nullptr;
 
   // a class to timestamp each line of some output streams
@@ -386,7 +386,7 @@ public:
     // delete limits
     for(Limit *l: limits)
       delete l;
-    
+
     // cancel redirection before we leave
     if (coutSaveBuf)
       cout.rdbuf(coutSaveBuf);
@@ -488,9 +488,9 @@ public:
     watcher.setCPULimit(sec);
 
     // SoftCPULimit doesn't enforce anything by its own
-    addLimit(new SoftCPULimit(sec)); 
+    addLimit(new SoftCPULimit(sec));
 
-    addLimit(new HardCPULimit(sec+30)); 
+    addLimit(new HardCPULimit(sec+30));
     // add an extra delay because we want to stop the solver by
     // stopSolver() instead of SIGXCPU
   }
@@ -500,7 +500,7 @@ public:
     watcher.setWallClockLimit(sec);
 
     // WallClockLimit doesn't enforce anything by its own
-    addLimit(new WallClockLimit(sec)); 
+    addLimit(new WallClockLimit(sec));
   }
 
   /**
@@ -559,7 +559,7 @@ public:
    *
    * @parm limit: must be dynamically allocated
    */
-  void addLimit(Limit *limit) 
+  void addLimit(Limit *limit)
   {
     limits.push_back(limit);
   }
@@ -583,7 +583,7 @@ public:
     }
 
     if (timeStamping && usePTY)
-      cout << "Using a pseudo terminal to collect output from the solver" 
+      cout << "Using a pseudo terminal to collect output from the solver"
 	   << endl;
   }
 
@@ -600,7 +600,7 @@ public:
    * necessarily belong to the same processor (unless it has only one
    * core!)
    */
-  void selectCores(const string &desc, bool physicalView)  
+  void selectCores(const string &desc, bool physicalView)
   {
     vector<unsigned short int> availableCores,selectedCores;
 
@@ -665,7 +665,7 @@ public:
   void printCoresListSyntax()
   {
     cout << "Syntax of a core list:\n"
-	 << "  range first-last or individual numbers separated by commas\n" 
+	 << "  range first-last or individual numbers separated by commas\n"
 	 << "  examples: 0-1,5,7 or 0,1,5,7 or 0-7\n"
 	 << endl;
   }
@@ -695,7 +695,7 @@ public:
       else
 	watcher.setChildReaper(true);
     }
-    
+
     struct sigaction handler;
 
     handler.sa_sigaction=watcherSigHandler;
@@ -707,9 +707,9 @@ public:
       way, we don't have to encapsulate system calls in a loop which
       would restart them when they return with
       errno=EINTR. Alternatively, we could have used
-      siginterrupt(). 
+      siginterrupt().
 
-      The SA_NOCLDSTOP prevent us from getting a SIGCHLD each time a 
+      The SA_NOCLDSTOP prevent us from getting a SIGCHLD each time a
       process is stopped for tracing.
     */
 
@@ -785,7 +785,7 @@ public:
 
       int err=pthread_create(&timeStamperTID,NULL,timeStampThread,NULL);
       if (err)
-	cout << "Failed to create a thread to timestamp the solver output" 
+	cout << "Failed to create a thread to timestamp the solver output"
 	     << endl;
     }
 
@@ -810,7 +810,7 @@ public:
 
 	// create a new process group (for several reasons, see for
 	// example ProcessTree::rootProcessEnded())
-	setpgid(0,0); 
+	setpgid(0,0);
 
 	if (inputRedirectionFilename)
 	{
@@ -826,7 +826,7 @@ public:
 	  if (err<0)
 	    throw runtime_error(string("dup2 failed during input redirection: ")
 				+strerror(errno));
-	  
+
 	  close(fd);
 	}
 
@@ -849,7 +849,7 @@ public:
 	  if (err<0)
 	    throw runtime_error(string("dup2 failed during output redirection: ")
 				+strerror(errno));
-	  
+
 	  close(fd);
 	}
 
@@ -861,11 +861,11 @@ public:
 	    int fd;
 
 	    char *pts=ptsname(ptymaster);
-	      
+
 	    if (pts==NULL)
 	      throw runtime_error(string("Failed to get pty slave name:")
 				  +strerror(errno));
-	      
+
 	    fd=open(pts,O_RDWR);
 	    if (fd<0)
 	      throw runtime_error(string("open of pty slave failed: ")
@@ -880,7 +880,7 @@ public:
 	    if (err<0)
 	      throw runtime_error(string("dup2 failed during output redirection: ")
 				  +strerror(errno));
-	  
+
 	    close(fd);
 	  }
 	  else
@@ -975,10 +975,10 @@ public:
 	getrusage(RUSAGE_SELF,&r);
 	cout << "runsolver used "
 	     << r.ru_utime.tv_sec+r.ru_utime.tv_usec*1E-6
-	     << " second user time and " 
-	     << r.ru_stime.tv_sec+r.ru_stime.tv_usec*1E-6 
-	     << " second system time\n" 
-	     << endl;	
+	     << " second user time and "
+	     << r.ru_stime.tv_sec+r.ru_stime.tv_usec*1E-6
+	     << " second system time\n"
+	     << endl;
 
 	cout << "The end" << endl;
       }
@@ -1004,10 +1004,10 @@ void numaInfo()
 {
   if(numa_available()==-1)
     return;
-  
+
   int nbNodes=numa_num_configured_nodes();
   long mem,memFree;
-  
+
   cout << "NUMA information:\n";
   cout << "  number of nodes: " << nbNodes << endl;
   for(int i=0;i<nbNodes;++i)
@@ -1029,7 +1029,7 @@ void numaInfo()
     }
     cout << endl;
   }
-  
+
   cout << endl;
 }
 #endif
@@ -1091,7 +1091,7 @@ void usage(char *prgname)
        << "       [--cleanup-own-ipc-queues | --cleanup-all-ipc-queues]\n"
        << "       [--bin-var filename]\n"
        << "       [--watchdog delay]\n"
-       << "       command args...\n" 
+       << "       command args...\n"
        << endl;
 
   cout << "Vsize and rss+swap limits must be expressed in mega-bytes." << endl;
@@ -1110,9 +1110,9 @@ void usage(char *prgname)
   cout << "-o filename or --solver-data filename\n"
        << "  redirects the solver output (both stdout and stderr) to filename\n"
        << "--signal signalName\n"
-       << "  send signal <signalName> instead of SIGTERM\n" 
+       << "  send signal <signalName> instead of SIGTERM\n"
        << "--input filename\n"
-       << "  redirects the standard input of the runned program to filename\n" 
+       << "  redirects the standard input of the runned program to filename\n"
        << "--timestamp\n"
        << "  instructs to timestamp each line of the solver standard output and\n"
        << "  error files (which are then redirected to stdout)\n"
@@ -1122,7 +1122,7 @@ void usage(char *prgname)
        << "  limits the size of the solver output.\n"
        << "  Currently implies --timestamp. The solver output will be limited\n"
        << "  to a maximum of <max> MiB. The first <start> MiB will be\n"
-       << "  preserved as well as the last <max-start> MiB.\n" 
+       << "  preserved as well as the last <max-start> MiB.\n"
        << "--phys-cores list\n"
        << "  allocate a subset of the cores to the solver. The list contains\n"
        << "  core numbers separated by commas, or ranges first-last. This list\n"
@@ -1148,10 +1148,10 @@ void usage(char *prgname)
        << "  output. This fools the solver which will line-buffer its output.\n"
        << "--cleanup-own-ipc-queues\n"
        << "  on exit, delete IPC queues that the user owns and to which the solver\n"
-       << "  was the last process to read/write [may fail to delete some queues]\n" 
+       << "  was the last process to read/write [may fail to delete some queues]\n"
        << "--cleanup-all-ipc-queues\n"
        << "  on exit, delete all IPC queues that the user created [will also delete\n"
-       << "  queues that don't belong to the solver]\n" 
+       << "  queues that don't belong to the solver]\n"
        << "--bin-var filename\n"
        << "  save the most relevant information (times,...) about the solver\n"
        << "  execution in a binary format file named filename. The format of\n"
@@ -1195,7 +1195,7 @@ int main(int argc, char **argv)
   // memLimit in KiB
   long vsizeLimit=0,memLimit=0;
   // difference between the 'hard' and the 'soft' limit (in KiB)
-  int vsizeSoftToHardLimit=50*1024; 
+  int vsizeSoftToHardLimit=50*1024;
 
   int watchdogDelay=0;
 
@@ -1302,13 +1302,13 @@ int main(int argc, char **argv)
 #ifdef WITH_NUMA
     numaInfo();
 #endif
-    
+
     if (optind == argc)
       usage (argv[0]);
 
     cout << "command line: " << cmdline << endl
 	 << endl;
-    
+
     vector<unsigned short int> cores;
 
     getAllocatedCoresByProcessorOrder(cores);
@@ -1318,10 +1318,10 @@ int main(int argc, char **argv)
     cout << "\n\n";
 
     if (vsizeLimit)
-      solver.setVSizeLimit(vsizeLimit,vsizeSoftToHardLimit);	
+      solver.setVSizeLimit(vsizeLimit,vsizeSoftToHardLimit);
 
     if (memLimit)
-      solver.setMemoryLimit(memLimit);	
+      solver.setMemoryLimit(memLimit);
 
     solver.printLimits(cout);
 
@@ -1352,4 +1352,3 @@ alarm to receive SIGALRM at the timeout ???
 // Local Variables:
 // mode: C++
 // End:
-

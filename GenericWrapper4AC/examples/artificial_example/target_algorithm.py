@@ -16,7 +16,7 @@ import sys, time
 inst_ = sys.argv[1]
 hardness = int(inst_.split(":")[1])
 
-# seed 
+# seed
 seed = int(sys.argv[2])
 
 params = iter(sys.argv[3:])
@@ -31,17 +31,16 @@ while True:
     except StopIteration:
         break
     value = next(params)
-    
+
     if name == "int_param":
         x1 = int(value)
-        
+
     elif name == "float_param":
         x2 = float(value)
-        
+
     elif name == "str_param":
         x3 = str_dict.get(value, 0)
-        
+
 time.sleep(seed/100)
 
 print("%f" %((x1+x2+x3)*hardness))
-

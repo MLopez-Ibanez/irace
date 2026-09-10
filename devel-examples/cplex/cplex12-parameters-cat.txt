@@ -1,9 +1,9 @@
-# PARAMETERS FILE OF CPLEX 
+# PARAMETERS FILE OF CPLEX
 # BASED ON THE CPLEX EXAMPLE OF SMAC VERSION 2.06 RELEASED ON AUGUST 2013
 # name 	switch 	type	values	[conditions (using R syntax)]
 
-# barrier growth limit. Allegedly called bargrowth. in R, >= 1.0. Now that I check results numerically this can be optimized. Default=1e+12 
-barrier_limits_growth	"barrier_limits_growth "	c	(1e+6,1e+8,1e+10,1e+12,1e+14) 
+# barrier growth limit. Allegedly called bargrowth. in R, >= 1.0. Now that I check results numerically this can be optimized. Default=1e+12
+barrier_limits_growth	"barrier_limits_growth "	c	(1e+6,1e+8,1e+10,1e+12,1e+14)
 
 # barrier algorithm. Default=0
 barrier_algorithm	"barrier_algorithm "	c	(0,1,2,3)
@@ -12,16 +12,16 @@ barrier_algorithm	"barrier_algorithm "	c	(0,1,2,3)
 barrier_crossover	"barrier_crossover "	c	(-1,0,1,2)
 
 # barrier maximum correction limit. Default=-1
-barrier_limits_corrections	"barrier_limits_corrections "	c	(-1,0,1,4,16,64) 
+barrier_limits_corrections	"barrier_limits_corrections "	c	(-1,0,1,4,16,64)
 
 # barrier ordering algorithm. Default=0
-barrier_ordering	"barrier_ordering "	c	(0,1,2,3) 
+barrier_ordering	"barrier_ordering "	c	(0,1,2,3)
 
 # barrier starting point algorithm. Default=1
 barrier_startalg	"barrier_startalg "	c	(1,2,3,4)
 
 #MEMORYEMPHASIS. No auto. Binary. Disallow emphasis_memory yes. Default=no
-emphasis_memory	"emphasis_memory "	c	(no) 
+emphasis_memory	"emphasis_memory "	c	(no)
 
 # MIP emphasis switch. Default=0
 emphasis_mip	"emphasis_mip "	c	(0,1,2,3,4)
@@ -99,7 +99,7 @@ mip_ordertype	"mip_ordertype "	c	(0,1,2,3)
 mip_strategy_backtrack	"mip_strategy_backtrack "	c	(0.9,0.99,0.999,0.9999,0.99999,0.999999)
 
 # MIP strategy best bound interval. Default=7, in N+_0. 0 is equivalent to infinity. Instead of 0, we follow SMAC and use 1000.
-mip_strategy_bbinterval	"mip_strategy_bbinterval "	c	(2,4,7,15,30,1000) 
+mip_strategy_bbinterval	"mip_strategy_bbinterval "	c	(2,4,7,15,30,1000)
 
 # MIP branching direction. Default=0
 mip_strategy_branch	"mip_strategy_branch "	c	(-1,0,1)
@@ -201,7 +201,7 @@ sifting_algorithm	"sifting_algorithm "	c	(0,1,2,3,4)
 simplex_crash	"simplex_crash "	c	(-1,0,1)
 
 # dual simplex pricing algorithm. Default=0
-simplex_dgradient	"simplex_dgradient "	c	(0,1,2,3,4,5) 
+simplex_dgradient	"simplex_dgradient "	c	(0,1,2,3,4,5)
 
 # simplex perturbation limit. Default=0, in N+, poorly informed
 simplex_limits_perturbation	"simplex_limits_perturbation "	c	(0,1,4,16,64)
@@ -216,10 +216,9 @@ simplex_perturbation_switch	"simplex_perturbation_switch "	c	(no,yes)
 simplex_pgradient	"simplex_pgradient "	c	(-1,0,1,2,3,4)
 
 # simplex pricing candidate list size. Default=0, in N+, poorly informed
-simplex_pricing	"simplex_pricing "	c	(0,1,4,16,64) 
- #simplex refactoring frequency. Default=0. N+. Simplex refactorization interval. Hoyt's LP notes say Chvtal suggests an optimal refactorization interval of 16. 
+simplex_pricing	"simplex_pricing "	c	(0,1,4,16,64)
+ #simplex refactoring frequency. Default=0. N+. Simplex refactorization interval. Hoyt's LP notes say Chvtal suggests an optimal refactorization interval of 16.
 simplex_refactor	"simplex_refactor "	c	(0,4,16,64,256)
 
 # Markowitz tolerance. 0.0001 to 0.99999. Default=0.01
 simplex_tolerances_markowitz	"simplex_tolerances_markowitz "	c	(0.0001, 0.001, 0.01, 0.1, 0.5)
-

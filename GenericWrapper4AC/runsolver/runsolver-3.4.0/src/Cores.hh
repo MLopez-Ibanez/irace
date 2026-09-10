@@ -21,7 +21,7 @@ void getExistingCores(vector<unsigned short int> &list, bool physicalView)
 {
   char fname[128];
   string buffer;
-  ifstream f; 
+  ifstream f;
   cpu_set_t cores;
 
   CPU_ZERO(&cores);
@@ -92,7 +92,7 @@ void getAllocatedCoresByProcessorOrder(vector<unsigned short int> &allocatedCore
 {
   char fname[128];
   string buffer;
-  ifstream f; 
+  ifstream f;
   cpu_set_t affinityMask;
 
   allocatedCores.clear();
@@ -153,7 +153,7 @@ void getAllocatedCores(vector<unsigned short int> &list, pid_t pid=0)
 {
   cpu_set_t mask;
   list.clear();
-  
+
   sched_getaffinity(pid,sizeof(cpu_set_t),&mask);
 
   for(unsigned int i=0;i<sizeof(cpu_set_t)<<3;++i)
@@ -168,7 +168,7 @@ void getAllocatedCores(vector<unsigned short int> &list, pid_t pid=0)
 void printAllocatedCores(ostream &s, const vector<unsigned short int> &list)
 {
   size_t end;
-  
+
   for(size_t beg=0;beg<list.size();beg=end)
   {
     end=beg+1;
@@ -191,11 +191,11 @@ void printAllocatedCores(ostream &s, const vector<unsigned short int> &list)
 cpu_set_t affinityMask(const vector<unsigned short int> &cores)
 {
   cpu_set_t mask;
-  
+
   CPU_ZERO(&mask);
   for(size_t i=0;i<cores.size();++i)
     CPU_SET(cores[i],&mask);
-  
+
   return mask;
 }
 

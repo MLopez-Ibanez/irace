@@ -125,7 +125,7 @@ firstTest = 7
 ## Enable/disable deterministic algorithm mode, if enabled irace
 ## will not use an instance more that once in each race. Note that
 ## if the number of instances provided is less than firstTest, no
-## statistical test will be performed. 
+## statistical test will be performed.
 # deterministic = 0
 
 ## Seed of the random number generator (must be a positive integer, NA
@@ -169,7 +169,7 @@ firstTest = 7
 ## elitist irace.
 # elitistNewInstances  = 1
 
-## Limit for the elitist race, number of statistical test performed without 
+## Limit for the elitist race, number of statistical test performed without
 ## elimination of configurations.
 # elitistLimit  = 2
 

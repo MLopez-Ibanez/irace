@@ -2,13 +2,13 @@ version 3.4.0 2017-08-12
 
 - use (and require) prctl(PR_SET_CHILD_SUBREAPER,...) (available since Linux 3.4)
 - fixed incorrect parsing of SwapFree/SwapTotal
-	
+
 version 3.3.7   2016-
 
 - introduction of a new memory limit (-R, --rss-swap-limit) to cope with programs that map a lot of virtual memory but actually use only a portion of it (such as Java). This limit is set on the sum of RSS (Resident Set Size, or in other words, amount of RAM used) and swap.
 
 - renaming of (-M, --mem-limit) as (-V, --vsize-limit). (-M, --mem-limit) becomes deprecated because its name is ambiguous. It will be removed in a future release.
-	
+
 version 3.3.6	2016-
 
 - introduction of the --sig option to select which signal to send to the solver
@@ -21,13 +21,13 @@ version 3.3.6	2016-
 - added a --watchdog option, in order to kill runsolver after a given delay (for debugging)
 
 - fixed a bug which caused runsolver to kill itself sometimes just after the solver end
-	
+
 version 3.3.5	2015-02-03
 
-- fixed problem with concurrent access to process tree, which caused some 
+- fixed problem with concurrent access to process tree, which caused some
   random crashes
 
-- removed the interception of system calls, which is unused, too costly and 
+- removed the interception of system calls, which is unused, too costly and
   complicates compilation.
 
 version 3.3.4	2013-11-28
@@ -149,7 +149,7 @@ version 3.2.2	2007-04-13
 
 - added code to detect when the time of a child is not reported to its
 parent. When this occurs, the 'lost time' is recorded and added at the
-end.  
+end.
 
 - minors changes in the messages that are printed when the time of a
 child is not reported to its parent.
@@ -159,4 +159,3 @@ version 3.2.1	2007-02-27
 - added option --wall-clock-limit to deal with frozen solvers
 
 - minor changes in the timer thread
-

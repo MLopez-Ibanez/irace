@@ -30,17 +30,17 @@ irace_main() {
     exec qsub -v PATH <<EOF
 #!/bin/bash
 #$ -N $JOBNAME
-#$ -l $MACHINE 
+#$ -l $MACHINE
 #$ -l $QUEUE
-#$ -pe $PARALLEL_ENV $NB_PARALLEL_PROCESS 
+#$ -pe $PARALLEL_ENV $NB_PARALLEL_PROCESS
 #$ -m ase
 #      b     Mail is sent at the beginning of the job.
 #      e     Mail is sent at the end of the job.
 #      a     Mail is sent when the job is aborted or rescheduled.
 #      s     Mail is sent when the job is suspended.
 #
-#$ -o $EXECDIR/irace.stdout 
-#$ -e $EXECDIR/irace.stderr 
+#$ -o $EXECDIR/irace.stdout
+#$ -e $EXECDIR/irace.stderr
 #$ -cwd
 #$ -binding linear:256
 #  The cluster that we use in IRIDIA seems to require the option above
@@ -118,7 +118,7 @@ for i in $(seq $START $REPETITIONS); do
     echo "execution directory: $EXECDIR"
     rm -rf $EXECDIR
     mkdir -p $EXECDIR
-    let RUNSEED=SEED+i-1 
+    let RUNSEED=SEED+i-1
     irace_main $(printf '%002d' $i) &
     sleep 1
 done

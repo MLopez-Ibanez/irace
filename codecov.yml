@@ -16,8 +16,8 @@ comment:
 #       default:
 #         target: auto
 #         threshold: 1%
-        
-        
+
+
 component_management:
   default_rules:  # default rules that will be inherited by all components
     statuses:
@@ -29,7 +29,7 @@ component_management:
   #     name: tests  # this is a display name, and can be changed freely
   #     paths:
   #       - tests/**
-  #     statuses:          
+  #     statuses:
   #       - type: project
   #         target: 100%
   #         informational: true
