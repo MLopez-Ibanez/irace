@@ -64,6 +64,7 @@ fix_configurations <- function(configurations, parameters, debugLevel = 0L, file
   if (debugLevel >= 2L)
     print(configurations, digits=15L)
   namesParameters <- parameters[["names"]]
+  ## FIXME: Use data.table within this function.
   # This ignores fixed parameters unless they are given with a different value.
   if (ncol(configurations) != length(namesParameters)
     || !setequal(colnames(configurations), namesParameters)) {
@@ -146,7 +147,7 @@ fix_configurations <- function(configurations, parameters, debugLevel = 0L, file
         digits = parameters$get(pname)[["digits"]])
     }
     # Loop over all configurations.
-    # FIXME: Vectorize this loop
+    ## FIXME: Make it faster by handling all configurations at once, one parameter at a time.
     values <- configurations[[pname]]
     for (k in seq_nrow(configurations)) {
       currentValue <- values[k]
