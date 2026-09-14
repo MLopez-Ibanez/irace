@@ -79,7 +79,8 @@ test_that("target_evaluator maxTime", {
      quiet = TRUE,
      parameters = parameters))
   expect_true(scenario$capping)
-  expect_silent(confs <- irace(scenario = scenario))
+  options(warn=2)
+  confs <- irace(scenario = scenario)
   expect_gt(nrow(confs), 0L)
 
   scenario$targetRunner <- wrap_target_runner_error(target_runner, limit)
