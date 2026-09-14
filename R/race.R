@@ -805,7 +805,7 @@ elitist_race <- function(race_state, maxExp,
             print(is.infinite(Results[k, which_elites]))
           })
           is_rejected[which_elites] <- rejected
-          is_elite[rejected] <- 0L
+          is_elite[is_rejected] <- 0L
           which_elites <- which_elites[!rejected]
           n_elite <- length(which_elites)
 

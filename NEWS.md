@@ -11,6 +11,10 @@
    irace internals. Check the [User Guide](https://mlopez-ibanez.github.io/irace/irace-package.pdf) for more details and an example
    implementation.
 
+## Fixes
+
+ * Fix bug when rejecting configurations.  The bug triggers a warning in R 4.7.
+
 # irace 4.4.4
 
  * The package contains an example of using `irace` to tune algorithms

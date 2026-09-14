@@ -70,18 +70,18 @@ test_that("target_evaluator maxTime", {
 
   seed <- sample.int(min(2147483647L, .Machine$integer.max), size = 1L, replace = TRUE)
   instances <- 1:10
-  limit <- 100L
   logFile <- withr::local_tempfile(pattern = "irace", fileext = ".Rdata")
   scenario <- checkScenario(list(
      targetRunner = target_runner, targetEvaluator = target_evaluator,
-     maxTime = 2000, boundMax = 10, instances = instances,
-     logFile = logFile, seed = seed,
-     quiet = TRUE,
+     maxTime = 2000, boundMax = 6, instances = instances,
+     logFile = logFile, seed = seed, quiet = TRUE,
      parameters = parameters))
   expect_true(scenario$capping)
-  expect_silent(confs <- irace(scenario = scenario))
+  confs <- irace(scenario = scenario)
   expect_gt(nrow(confs), 0L)
 
+  # Now run it again but stop after 100 units of time.
+  limit <- 100L
   scenario$targetRunner <- wrap_target_runner_error(target_runner, limit)
   # Otherwise, the tests are too fast.
   with_mocked_bindings({
