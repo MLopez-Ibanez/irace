@@ -1,5 +1,31 @@
 withr::with_output_sink("test-sobol.Rout", {
 
+  test_that("irace completes with more than 1024 parameters", {
+    withr::local_options(list(.irace.quiet = FALSE))
+    withr::local_seed(42L)
+    parameters <- readParameters(text = paste(
+      sprintf('p%d "" r (0, 1)', seq_len(1025L)), collapse = "\n"))
+
+    scenario <- list(
+      targetRunner = function(experiment, scenario) {
+        list(cost = sum(unlist(experiment$configuration[scenario$parameters$names])))
+      },
+      instances = seq_len(10L),
+      maxExperiments = 100L,
+      nbIterations = 2L,
+      minNbSurvival = 1L,
+      postselection = FALSE,
+      seed = 42L,
+      logFile = "",
+      parameters = parameters)
+
+    expect_no_warning(
+      expect_warning(confs <- irace(scenario), "falling back to uniform sampling"))
+    expect_gt(nrow(confs), 0L)
+    values <- as.matrix(confs[, parameters$names])
+    expect_true(all(is.finite(values) & values >= 0 & values <= 1))
+  })
+
   test_that("bug with conditional dependent", {
     parameters  <- parametersNew(param_cat(name = "algorithm", values = c("as", "mmas", "ras", "acs")),
       param_real(name = "alpha", lower = 0.0, upper=5.0),

@@ -139,6 +139,12 @@ generate_sobol <- function(parameters, n, repair = NULL)
 
 sampleSobol <- function(parameters, n, repair = NULL)
 {
+  # spacefillr::generate_sobol_set() supports at most 1024 dimensions.
+  if (parameters$nbVariable > 1024L) {
+    irace_warning("Cannot use Sobol sampling with ", parameters$nbVariable,
+      " variable parameters (maximum: 1024); falling back to uniform sampling.")
+    return(sampleUniform(parameters, n, repair = repair))
+  }
   newConfigurations <- generate_sobol(parameters, n, repair)
   newConfigurations <- unique(newConfigurations)
   forbidden <- parameters$forbidden

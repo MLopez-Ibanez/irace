@@ -14,6 +14,9 @@
 ## Fixes
 
  * Fix bug when rejecting configurations.  The bug triggers a warning in R 4.7.
+ * Fix #99: Sampling falls back to uniform sampling with a warning if there are
+   more than 1024 parameters, which exceeds the dimension limit of the
+   Sobol method.
 
 # irace 4.4.4
 
