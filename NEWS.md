@@ -2,6 +2,12 @@
 
 **If you are viewing this file on CRAN, please check [latest news on the irace website](https://mlopez-ibanez.github.io/irace/news/index.html) where the formatting is also better.**
 
+## Fixes
+
+ * Fix #103: The soft restart no longer fails with `subscript out of bounds`
+   when a parameter with a dependent domain is inactive because a parameter
+   that defines its domain is inactive.  Reported by @Saethox.
+
 
 # irace 4.5
 
