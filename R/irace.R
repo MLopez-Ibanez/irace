@@ -46,10 +46,13 @@ numeric.configurations.equal <- function(x, configurations, parameters, threshol
     param <- parameters$get(pname)
 
     is_dep <- param[["is_dependent"]]
-    x_domain <- if (is_dep) getDependentBound(param, x) else param[["domain"]]
-    x_range <- x_domain[[2L]] - x_domain[[1L]]
-
     X <- x[[pname]]
+    # The domain is only used if X is not NA. Otherwise, the parameters that
+    # define a dependent domain may be NA as well, and so is the domain.
+    if (!is.na(X)) {
+      x_domain <- if (is_dep) getDependentBound(param, x) else param[["domain"]]
+      x_range <- x_domain[[2L]] - x_domain[[1L]]
+    }
     # FIXME: Since at the end we select a subset of configurations, we could use selected here.
     y <- configurations[[pname]]
     ## FIXME: This can probably done much faster by doing a matrix operation that updates
