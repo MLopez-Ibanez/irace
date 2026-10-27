@@ -25,7 +25,6 @@ jobs:
     runs-on: ${{ matrix.os }}
     name: Check ${{ matrix.os }} (${{ matrix.r }})
     timeout-minutes: 30
-
     strategy:
       fail-fast: false
       matrix:
@@ -57,11 +56,11 @@ jobs:
           http-user-agent: ${{ matrix.http-user-agent }}
           use-public-rspm: true
 
-      # special branch required for TeX Live 2023 fix
       - uses: r-lib/actions/setup-tinytex@v2-branch
       - run: tlmgr --version
 
       - name: Install additional LaTeX packages
+        timeout-minutes: 5
         run: |
           tlmgr update --self
           tlmgr install ${{ env.LATEX_PACKAGES }}
@@ -116,7 +115,10 @@ jobs:
       - uses: r-lib/actions/setup-tinytex@v2-branch
 
       - name: Install additional LaTeX packages
-        run: tlmgr install ${{ env.LATEX_PACKAGES }}
+        timeout-minutes: 5
+        run: |
+          tlmgr update --self
+          tlmgr install ${{ env.LATEX_PACKAGES }}
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
@@ -193,7 +195,10 @@ jobs:
       - uses: r-lib/actions/setup-tinytex@v2-branch
 
       - name: Install additional LaTeX packages
-        run: tlmgr install ${{ env.LATEX_PACKAGES }}
+        timeout-minutes: 5
+        run: |
+          tlmgr update --self
+          tlmgr install ${{ env.LATEX_PACKAGES }}
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
