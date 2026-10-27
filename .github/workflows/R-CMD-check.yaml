@@ -62,6 +62,7 @@ jobs:
       - run: tlmgr --version
 
       - name: Install additional LaTeX packages
+        timeout-minutes: 5
         run: |
           tlmgr update --self
           tlmgr install ${{ env.LATEX_PACKAGES }}
@@ -116,6 +117,7 @@ jobs:
       - uses: r-lib/actions/setup-tinytex@v2-branch
 
       - name: Install additional LaTeX packages
+        timeout-minutes: 5
         run: tlmgr install ${{ env.LATEX_PACKAGES }}
 
       - uses: r-lib/actions/setup-r-dependencies@v2
@@ -193,6 +195,7 @@ jobs:
       - uses: r-lib/actions/setup-tinytex@v2-branch
 
       - name: Install additional LaTeX packages
+        timeout-minutes: 5
         run: tlmgr install ${{ env.LATEX_PACKAGES }}
 
       - uses: r-lib/actions/setup-r-dependencies@v2
