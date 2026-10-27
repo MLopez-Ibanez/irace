@@ -62,7 +62,9 @@ jobs:
       - run: tlmgr --version
 
       - name: Install additional LaTeX packages
-        run: tlmgr install ${{ env.LATEX_PACKAGES }}
+        run: |
+          tlmgr update --self
+          tlmgr install ${{ env.LATEX_PACKAGES }}
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
