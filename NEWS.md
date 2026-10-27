@@ -7,6 +7,8 @@
  * Fix #103: The soft restart no longer fails with `subscript out of bounds`
    when a parameter with a dependent domain is inactive because a parameter
    that defines its domain is inactive.  Reported by @Saethox.
+ * Fix #102: `irace()` no longer fails when a parameter is named `n`, `nx`,
+   `param` or `this_model`.  Reported by @Saethox.
 
 
 # irace 4.5
