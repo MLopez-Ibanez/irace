@@ -63,7 +63,7 @@ jobs:
         timeout-minutes: 5
         run: |
           tlmgr update --self
-          tlmgr install ${{ env.LATEX_PACKAGES }}
+          tlmgr --no-persistent-downloads install ${{ env.LATEX_PACKAGES }}
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
@@ -118,7 +118,7 @@ jobs:
         timeout-minutes: 5
         run: |
           tlmgr update --self
-          tlmgr install ${{ env.LATEX_PACKAGES }}
+          tlmgr --no-persistent-downloads install ${{ env.LATEX_PACKAGES }}
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
@@ -198,7 +198,7 @@ jobs:
         timeout-minutes: 5
         run: |
           tlmgr update --self
-          tlmgr install ${{ env.LATEX_PACKAGES }}
+          tlmgr --no-persistent-downloads install ${{ env.LATEX_PACKAGES }}
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
