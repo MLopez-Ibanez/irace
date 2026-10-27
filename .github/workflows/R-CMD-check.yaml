@@ -60,7 +60,7 @@ jobs:
       - run: tlmgr --version
 
       - name: Install additional LaTeX packages
-        timeout-minutes: 5
+        timeout-minutes: 15
         run: |
           tlmgr update --self
           tlmgr --no-persistent-downloads install ${{ env.LATEX_PACKAGES }}
