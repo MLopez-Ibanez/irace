@@ -595,9 +595,7 @@ clamp <- function(x, lower, upper) pmax.int(lower, pmin.int(x, upper))
 
 truncate_rows <- function(x, n)
 {
-  nx <- nrow(x)
-  if (nx <= n) return(x)
-  x[-seq.int(n + 1L, nx), ]
+  if (nrow(x) <= n) x else utils::head(x, n)
 }
 
 

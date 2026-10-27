@@ -119,12 +119,16 @@ generate_sobol <- function(parameters, n, repair = NULL)
         }
         idx_satisfied <- which_satisfied(confs, param[["condition"]])
         if (length(idx_satisfied)) {
+          # Inside `[.data.table`, a parameter column named like a local variable
+          # would shadow it, so the expressions below only call functions.
+          this_domain <- function(x) list(get_dependent_domain(param, x))
+          this_quantile <- function(x, ...) param_quantile(param, x, ...)
           if (param[["is_dependent"]]) {
-            confs[idx_satisfied, let(.DOMAIN = list(get_dependent_domain(param, .SD))), by=.I, .SDcols=prev_names]
-            confs[idx_satisfied, .NEWVALUE := param_quantile(param, .SD, domain = unlist(.DOMAIN)), by=.I, .SDcols=p]
+            confs[idx_satisfied, let(.DOMAIN = this_domain(.SD)), by=.I, .SDcols=prev_names]
+            confs[idx_satisfied, .NEWVALUE := this_quantile(.SD, domain = unlist(.DOMAIN)), by=.I, .SDcols=p]
             set(confs, j = ".DOMAIN", value = NULL)
           } else {
-            confs[idx_satisfied, .NEWVALUE := param_quantile(param, unlist(.SD)), .SDcols=p]
+            confs[idx_satisfied, .NEWVALUE := this_quantile(unlist(.SD)), .SDcols=p]
           }
           set(confs, j = c(p, ".NEWVALUE"), value = list(confs[[".NEWVALUE"]], NULL))
         } else {
@@ -250,8 +254,11 @@ sample_from_model <- function(parameters, eliteConfigurations, model,
     this_model <- model[[pname]]
     # Avoid the cost of method lookup at every call of dep_rmodel().
     this_sample_model <- utils::getS3method("sample_model", class(param)[1L])
+    # Inside `[.data.table`, a parameter column named like a local variable
+    # would shadow it, so the expressions below only call functions.
     if (param[["is_dependent"]]) {
-      dep_rmodel <- function(x, sd_mean) {
+      dep_rmodel <- function(x, parent) {
+        sd_mean <- this_model[[parent]]
         domain <- get_dependent_domain(param, x)
         if (is.na(domain[[1L]])) return(NA)
         # If parameters are dependent standard deviation must be computed
@@ -260,12 +267,13 @@ sample_from_model <- function(parameters, eliteConfigurations, model,
         if (sd < .Machine$double.eps) return(domain[[1L]])
         this_sample_model(param, n = 1L, model = c(sd, sd_mean[[2L]]), domain = domain)
       }
-      newConfigurations[idx_satisfied, c(pname) := dep_rmodel(.SD, this_model[[.PARENT.]]), by=.I, .SDcols=parameters$depends[[pname]]]
+      newConfigurations[idx_satisfied, c(pname) := dep_rmodel(.SD, .PARENT.), by=.I, .SDcols=parameters$depends[[pname]]]
       next # We are done with this parameter.
     }
+    rmodel <- function(n, parent) this_sample_model(param, n, this_model[[parent]])
     # .BY is a list, so take the first argument.
     newConfigurations[idx_satisfied,
-      c(pname) := list(this_sample_model(param, .N, this_model[[ .BY[[1L]] ]])),
+      c(pname) := list(rmodel(.N, .BY[[1L]])),
       by = .PARENT.]
   }
   set(newConfigurations, j = ".PARENT.", value = as.integer(newConfigurations[[".PARENT."]]))
