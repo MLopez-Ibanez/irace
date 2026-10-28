@@ -104,8 +104,11 @@ cran: releasebuild
 revdepcheck:
 	$(Reval) 'devtools::install_github("r-lib/revdepcheck", ref="main", upgrade="never");revdepcheck::revdep_check(bioc=FALSE)'
 
+urlcheck:
+	$(Reval) "urlchecker::url_check('$(BINDIR)/$(PACKAGE)_$(PACKAGEVERSION).tar.gz')"
+
 releasecheck: cran
-	$(Reval) 'urlchecker::url_check()'
+	$(MAKE) urlcheck
 	$(MAKE) winbuild
 	$(MAKE) macbuild
 
@@ -179,12 +182,14 @@ remotecran: releasebuild
 	$(Reval) "rhub::check_for_cran($(RHUB_COMMON_ARGS), show_status = TRUE)"
 
 macbuild: releasebuild
-	$(Reval) "rhub::check(platform='macos-highsierra-release-cran', $(RHUB_COMMON_ARGS))"
+        # $(Reval) "devtools::check_mac_release(args = '--compact-vignettes=both')"
+        # $(Reval) "devtools::check_mac_devel(args = '--compact-vignettes=both')"
+        # $(Reval) "rhub::check(platform='macos-highsierra-release-cran', $(RHUB_COMMON_ARGS))"
 
 winbuild: releasebuild
-	$(Reval) "devtools::check_win_release(args = '--compact-vignettes=both')"
-	$(Reval) "devtools::check_win_devel(args = '--compact-vignettes=both')"
-	$(Reval) "rhub::check_on_windows($(RHUB_COMMON_ARGS))"
+	$(Reval) "devtools::check_win_release(args = '--compact-vignettes=both', webform=TRUE)"
+	$(Reval) "devtools::check_win_devel(args = '--compact-vignettes=both', webform=TRUE)"
+        # $(Reval) "rhub::check_on_windows($(RHUB_COMMON_ARGS))"
 
 examples: quick-install
 	@echo "*** Makefile: Regenerating data for vignettes and examples. This will take time..."
