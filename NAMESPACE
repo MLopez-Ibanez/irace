@@ -67,14 +67,16 @@ import(matrixStats)
 import(stats)
 import(withr)
 importFrom(R6,R6Class)
-importFrom(graphics,abline)
-importFrom(graphics,axis)
-importFrom(graphics,boxplot)
-importFrom(graphics,bxp)
-importFrom(graphics,grid)
-importFrom(graphics,par)
-importFrom(graphics,plot)
-importFrom(graphics,points)
-importFrom(graphics,strwidth)
+importFrom(graphics,
+  abline,
+  axis,
+  boxplot,
+  bxp,
+  grid,
+  par,
+  plot,
+  points,
+  strwidth
+)
 importFrom(spacefillr,generate_sobol_set)
 importFrom(utils,str)
