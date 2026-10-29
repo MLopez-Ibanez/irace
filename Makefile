@@ -83,6 +83,7 @@ vignettes/$(PACKAGE)-package.bib: vignettes/$(PACKAGE)-package.aux
 	&& mv tmp-$(PACKAGE)-package.bib $(PACKAGE)-package.bib
 
 releasevignette: gendoc
+	@$(RM) $(PACKAGEDIR)/vignettes/*.aux  $(PACKAGEDIR)/vignettes/*.bbl $(PACKAGEDIR)/vignettes/*.out
 	test -s $(PACKAGEDIR)/vignettes/$(PACKAGE)-package.bib || $(MAKE) nonreleasevignette
 	@$(call Rsed,$(PACKAGEDIR)/vignettes/$(PACKAGE)-package.Rnw,"^\\\\setboolean{Release}{false}","\\\\setboolean{Release}{true}")
 
