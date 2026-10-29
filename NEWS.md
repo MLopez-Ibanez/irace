@@ -8,11 +8,8 @@
 
 ## Fixes
 
- * Fix #103: The soft restart no longer fails with `subscript out of bounds`
-   when a parameter with a dependent domain is inactive because a parameter
-   that defines its domain is inactive.  Reported by @Saethox.
- * Fix #102: `irace()` no longer fails when a parameter is named `n`, `nx`,
-   `param` or `this_model`.  Reported by @Saethox.
+* Fix #103: The soft restart no longer fails with `subscript out of bounds` when a parameter with a dependent domain is inactive because a parameter that defines its domain is inactive.  (Reported by @Saethox)
+* Fix #102: `irace()` no longer fails when a parameter is named `n`, `nx`, `param` or `this_model`.  (Reported by @Saethox)
 
 
 # irace 4.5
@@ -38,8 +35,7 @@
    implemented in Julia language.
 
  * Fix #94: `sample_model.ParamOrd()` now samples uniformly when the model mean
-   is `NA`, avoiding `NA` values for active ordinal parameters.  Reported by
-   @Saethox.
+   is `NA`, avoiding `NA` values for active ordinal parameters.  (Reported by @Saethox)
 
  * Fix #97: `psRace()` errors when the post-selection race has nothing left to
    run. Fixed by @ivchicano.
