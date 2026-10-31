@@ -178,21 +178,23 @@ jobs:
 
   pkgdown:
     needs: R-CMD-check
-    if: contains('
+    if: github.event_name == 'pull_request' || (github.event_name == 'push' && contains('
         refs/heads/master
         refs/heads/main
-      ', github.ref) && github.event_name == 'push'
+      ', github.ref))
     runs-on: ubuntu-latest
-    # Only restrict concurrency for non-PR jobs
     concurrency:
-      group: pkgdown-${{ github.event_name != 'pull_request' || github.run_id }}
+      group: pkgdown-${{ github.event.pull_request.number || github.run_id }}
+      cancel-in-progress: true
     timeout-minutes: 30
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
     permissions:
-      contents: write
+      contents: read
     steps:
       - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
 
       - uses: r-lib/actions/setup-r@v2
         with:
@@ -222,11 +224,54 @@ jobs:
         shell: Rscript {0}
 
       - name: Build site
-        run: pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)
+        run: pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE, run_dont_run = ${{ github.event_name == 'pull_request' }})
         shell: Rscript {0}
 
+      - name: Stage PR preview
+        if: github.event_name == 'pull_request'
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          mkdir -p preview
+          cp -r docs preview/site
+          echo "$PR_NUMBER" > preview/pr-number
+
+      - name: Upload PR preview
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v6
+        with:
+          name: docs-preview-r
+          path: preview/
+          retention-days: 3
+
+      - name: Upload site for deployment
+        if: github.event_name == 'push'
+        uses: actions/upload-artifact@v6
+        with:
+          name: pkgdown-site
+          path: docs/
+          retention-days: 1
+
+  pkgdown-deploy:
+    needs: pkgdown
+    if: github.event_name == 'push' && contains('
+        refs/heads/master
+        refs/heads/main
+      ', github.ref)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    concurrency:
+      group: gh-pages-deploy
+      cancel-in-progress: false
+    steps:
+      - name: Download site
+        uses: actions/download-artifact@v8
+        with:
+          name: pkgdown-site
+          path: docs
+
       - name: Deploy to GitHub pages 🚀
-        if: success() && github.event_name != 'pull_request'
         uses: JamesIves/github-pages-deploy-action@v4.5.0
         with:
           clean: true
