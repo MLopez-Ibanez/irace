@@ -22,7 +22,7 @@ jobs:
         with:
           ref: gh-pages
 
-      - name: Remove preview folder for PR #${{ github.event.pull_request.number }}
+      - name: Remove preview folder for PR ${{ github.event.pull_request.number }}
         env:
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |

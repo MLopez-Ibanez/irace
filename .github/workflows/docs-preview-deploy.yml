@@ -70,7 +70,7 @@ jobs:
             });
             core.setOutput('open', String(pr.state === 'open'));
 
-      - name: Deploy PR #${{ steps.pr.outputs.number }} preview 🚀
+      - name: Deploy PR ${{ steps.pr.outputs.number }} preview 🚀
         if: steps.pr-state.outputs.open == 'true'
         uses: JamesIves/github-pages-deploy-action@v4
         with:
@@ -79,7 +79,7 @@ jobs:
           single-commit: true
           clean: true
 
-      - name: Comment PR #${{ steps.pr.outputs.number }} preview link
+      - name: Comment PR ${{ steps.pr.outputs.number }} preview link
         if: steps.pr-state.outputs.open == 'true'
         uses: actions/github-script@v9
         env:
