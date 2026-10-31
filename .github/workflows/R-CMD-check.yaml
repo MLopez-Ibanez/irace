@@ -233,3 +233,67 @@ jobs:
           single-commit: true
           branch: gh-pages
           folder: docs
+
+  pkgdown-preview:
+    needs: R-CMD-check
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    concurrency:
+      group: pkgdown-preview-${{ github.event.pull_request.number }}
+      cancel-in-progress: true
+    permissions:
+      contents: read
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      - uses: r-lib/actions/setup-tinytex@v2-branch
+
+      - name: Install additional LaTeX packages
+        timeout-minutes: 5
+        env:
+          TEXLIVE_PREFER_OWN: 1
+        run: |
+          tlmgr update --self
+          tlmgr --version
+          tlmgr --no-prefetch install ${{ env.LATEX_PACKAGES }}
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::pkgdown, mlr=?ignore, Rmpi=?ignore, any::remotes
+          needs: website
+          install-pandoc: true
+
+      - name: Install package with vignettes
+        run: |
+          remotes::install_local(".", build = TRUE, upgrade = "never", force = TRUE, build_opts = c("--no-resave-data"), build_manual = TRUE, build_vignettes = TRUE)
+          dir.create("./pkgdown/assets/")
+          file.copy(system.file("doc/irace-package.pdf",package="irace", mustWork=TRUE), "./pkgdown/assets/", overwrite=TRUE)
+        shell: Rscript {0}
+
+      - name: Build site
+        run: pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE, run_dont_run = TRUE)
+        shell: Rscript {0}
+
+      - name: Stage PR preview
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          mkdir -p preview
+          cp -r docs preview/site
+          echo "$PR_NUMBER" > preview/pr-number
+
+      - name: Upload PR preview
+        uses: actions/upload-artifact@v6
+        with:
+          name: docs-preview-r
+          path: preview/
+          retention-days: 3
