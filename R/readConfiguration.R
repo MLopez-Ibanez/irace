@@ -26,6 +26,7 @@
 #' ```
 #' The order of the columns does not necessarily have to be the same
 #' as in the file containing the definition of the parameters.
+#' Variable parameters may be omitted if they are inactive in every configuration.
 #'
 #' @seealso
 #'   [readParameters()] to obtain a valid parameter structure from a parameters file.
@@ -64,6 +65,7 @@ fix_configurations <- function(configurations, parameters, debugLevel = 0L, file
   if (debugLevel >= 2L)
     print(configurations, digits=15L)
   namesParameters <- parameters[["names"]]
+  omitted <- setdiff(namesParameters, colnames(configurations))
   ## FIXME: Use data.table within this function.
   # This ignores fixed parameters unless they are given with a different value.
   if (ncol(configurations) != length(namesParameters)
@@ -83,50 +85,23 @@ fix_configurations <- function(configurations, parameters, debugLevel = 0L, file
       }
       return(NULL)
     }
-    # All non-fixed parameters must appear in column names.
-    varParameters <- parameters$names_variable
-    missing <- setdiff(varParameters, colnames(configurations))
-    if (length(missing) > 0) {
-      if (is.null(filename)) {
-        irace_error("The parameter names (",
-          strlimit(paste(missing, collapse=", ")),
-          ") are missing from the configurations provided.")
-      } else {
-        irace_error("The parameter names (",
-          strlimit(paste(missing, collapse=", ")),
-          ") are missing from the first row of file ", filename)
-      }
-      return(NULL)
-    }
-    # Add any missing fixed parameters.
-    missing <- setdiff(namesParameters, colnames(configurations))
-    if (length(missing) > 0L) {
-      irace_assert(all(parameters$isFixed[missing]))
-      configurations <- cbind.data.frame(configurations, parameters$domains[missing],
-        stringsAsFactors = FALSE)
-      # We can have fixed parameters that are conditional and disabled,
-      # thus their value should be NA.
-      for (pname in missing) {
-        param <- parameters$get(pname)
-        condition <- param[["condition"]]
-        for (k in seq_nrow(configurations)) {
-          if (!conditionsSatisfied(condition, configurations[k, ])) {
-            configurations[k, pname] <- NA
-          }
-        }
-      }
+    # Add omitted columns before evaluating conditions and dependent domains.
+    for (pname in omitted) {
+      value <- if (parameters$isFixed[[pname]]) parameters$domains[[pname]] else NA_character_
+      configurations[[pname]] <- rep(value, nrow(configurations))
     }
   }
   # Reorder columns.
   configurations <- configurations[, namesParameters, drop = FALSE]
 
-  # Loop over all parameters.
-  for (param in parameters$get()) {
+  # Resolve parents before parameters whose conditions or domains depend on them.
+  for (param in parameters$get_ordered()) {
     pname <- param[["name"]]
     type <- param[["type"]]
     domain <- param[["domain"]]
     is_dep_param <- param[["is_dependent"]]
     condition <- param[["condition"]]
+    is_omitted <- pname %in% omitted
     # Fix up numeric columns.
     if (type == "i") {
       # For integers, only accept an integer.
@@ -167,6 +142,14 @@ fix_configurations <- function(configurations, parameters, debugLevel = 0L, file
               currentValue, "\" instead of NA")
             return(NULL)
           }
+        }
+        if (is_omitted && !parameters$isFixed[[pname]]) {
+          conf_error(k, " is invalid because parameter \"", pname,
+                     "\" is missing from the configurations provided.")
+          return(NULL)
+        }
+        # Check that the value is among the valid ones.
+        if (is_dep_param) {
           lower <- dep_domain[1L]
           upper <- dep_domain[2L]
           if (is.na(currentValue) || currentValue < lower || currentValue > upper) {
@@ -195,6 +178,8 @@ fix_configurations <- function(configurations, parameters, debugLevel = 0L, file
                       paste0(domain, collapse="\", \""), "\")")
           return(NULL)
         }
+      } else if (is_omitted && parameters$isFixed[[pname]]) {
+        configurations[k, pname] <- NA
       } else if (!is.na(currentValue)) {
         conf_error (k, " is invalid because parameter \"", pname,
                     "\" is not enabled because of condition \"",

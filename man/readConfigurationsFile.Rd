@@ -41,6 +41,7 @@ param_1    param_2
 
 The order of the columns does not necessarily have to be the same
 as in the file containing the definition of the parameters.
+Variable parameters may be omitted if they are inactive in every configuration.
 }
 \seealso{
 \code{\link[=readParameters]{readParameters()}} to obtain a valid parameter structure from a parameters file.
